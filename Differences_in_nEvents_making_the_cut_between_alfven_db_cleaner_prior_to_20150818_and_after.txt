@@ -1,0 +1,223 @@
+IDL Version 8.4.1 (linux x86_64 m64). (c) 2015, Exelis Visual Information Solutions, Inc.
+Installation number: 212858-3.
+Licensed for use by: Dartmouth College
+
+Data dir set to /SPENCEdata/Research/Cusp/database/
+IDL> .run "/home/spencerh/Research/Cusp/storms_Alfvens/journals/JOURNAL__20150818__generate_stats_for_Alfvens_storms_GRL.pro"
+% Compiled module: JOURNAL__20150818__GENERATE_STATS_FOR_ALFVENS_STORMS_GRL.
+
+IDL> JOURNAL__20150818__GENERATE_STATS_FOR_ALFVENS_STORMS_GRL
+Restoring dartdb/saves/Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav...
+Restoring dartdb/saves/Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--cdbtime.sav...
+Restoring saves_output_etc/superposed_large_storm_output_w_n_Alfven_events--20150817.dat...
+There is already a maximus struct loaded! Not loading Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav
+
+IDL> .run "/home/spencerh/Research/Cusp/storms_Alfvens/journals/JOURNAL__20150818__generate_stats_for_Alfvens_storms_GRL.pro"
+% Compiled module: JOURNAL__20150818__GENERATE_STATS_FOR_ALFVENS_STORMS_GRL.
+IDL> .run "/tmp/idltemp20245HJ2"
+% Compiled module: $MAIN$.
+Restoring dartdb/saves/Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav...
+Restoring dartdb/saves/Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--cdbtime.sav...
+Restoring saves_output_etc/superposed_large_storm_output_w_n_Alfven_events--20150817.dat...
+There is already a maximus struct loaded! Not loading Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav
+
+****From get_chaston_ind.pro****
+DBFile = Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav
+
+Hemisphere: Northern AND Southern
+Min ILAT: 50
+Max ILAT: 85
+Losing 5448 events due to ILAT restriction
+
+MLT range: 0–24
+ N events in MLT range: 1165350
+N outside MLT range: 0
+
+Min magCurrent: 10
+Max Neg magCurrent: -10
+N lost due to magCurrent restriction: 853218
+
+
+****From alfven_db_cleaner.pro****
+Lost 31732 events to NaNs and infinities...
+Lost 36682 events to user-defined cutoffs for various quantities...
+****END alfven_db_cleaner.pro****
+
+N burst elements: 61988
+N survey elements: 1103362
+
+There are 300018 total events making the cut.
+
+****END get_chaston_ind.pro****
+
+This array is sorted!
+No duplicates in this array!
+***************
+Stats for BURST ORBS
+
+Min burst orbs: 1518
+Max burst orbs: 16360
+
+Earliest time for burst orbs: 1997-01-08/19:42:23.719
+Latest time for burst orbs: 2000-10-05/21:52:19.774
+
+N Elements in provided inds: 12487
+N uniq burst orbs: 645
+
+#Burst events/Total events:  12487/300018    (4.16 %)
+This array is sorted!
+No duplicates in this array!
+***************
+Stats for SURVEY ORBS
+
+Min survey orbs: 505
+Max survey orbs: 16361
+
+Earliest time for survey orbs: 1996-10-07/03:45:14.749
+Latest time for survey orbs: 2000-10-06/00:05:35.277
+
+N Elements in provided inds: 287531
+N uniq survey orbs: 7648
+
+#Survey events/Total events:  287531/300018    (95.84 %)
+This array is sorted!
+No duplicates in this array!
+***************
+Stats for BURST STORM ORBS
+
+Min burst storm orbs: 1518
+Max burst storm orbs: 16360
+
+Earliest time for burst storm orbs: 1997-01-08/19:42:23.719
+Latest time for burst storm orbs: 2000-10-05/21:52:19.774
+
+N Elements in provided inds: 2452
+N uniq burst storm orbs: 96
+
+#Burst storm events/Total storm events:  2452/87488    (2.80 %)
+This array is sorted!
+No duplicates in this array!
+***************
+Stats for SURVEY STORM ORBS
+
+Min survey storm orbs: 1504
+Max survey storm orbs: 16361
+
+Earliest time for survey storm orbs: 1997-01-07/12:38:32.023
+Latest time for survey storm orbs: 2000-10-06/00:05:35.277
+
+N Elements in provided inds: 85006
+N uniq survey storm orbs: 1404
+
+#Survey events/Total storm events:  85006/87488    (97.16 %)
+
+
+~~|~~|~||~|~|~~|~|~||~AFTER UPDATING ALFVEN_DB_CLEANER (307666 EVENTS)~~_~_~_~~_~_~~~(~(~~I~K
+
+IDL> .full_reset_session
+Data dir set to /SPENCEdata/Research/Cusp/database/
+IDL> .run "/home/spencerh/Research/Cusp/storms_Alfvens/journals/JOURNAL__20150818__generate_stats_for_Alfvens_storms_GRL.pro"
+% Compiled module: JOURNAL__20150818__GENERATE_STATS_FOR_ALFVENS_STORMS_GRL.
+IDL> JOURNAL__20150818__GENERATE_STATS_FOR_ALFVENS_STORMS_GRL
+Restoring dartdb/saves/Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav...
+Restoring dartdb/saves/Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--cdbtime.sav...
+Restoring saves_output_etc/superposed_large_storm_output_w_n_Alfven_events--20150817.dat...
+% Compiled module: GET_CHASTON_IND.
+There is already a maximus struct loaded! Not loading Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav
+
+****From get_chaston_ind.pro****
+DBFile = Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav
+
+% Compiled module: CGSETUNION.
+Hemisphere: Northern AND Southern
+Min ILAT: 50
+Max ILAT: 85
+Losing 5448 events due to ILAT restriction
+
+% Compiled module: CGSETINTERSECTION.
+MLT range: 0–24
+ N events in MLT range: 1165350
+N outside MLT range: 0
+
+Min magCurrent: 10
+Max Neg magCurrent: -10
+N lost due to magCurrent restriction: 853218
+
+% Compiled module: ALFVEN_DB_CLEANER.
+
+****From alfven_db_cleaner.pro****
+Lost 31732 events to NaNs and infinities...
+Lost 5299 events to user-defined cutoffs for various quantities...
+****END alfven_db_cleaner.pro****
+
+N burst elements: 61988
+N survey elements: 1103362
+
+There are 307666 total events making the cut.
+
+****END get_chaston_ind.pro****
+
+% Compiled module: PRINT_MIN_MAX_NUNIQ_IN_MAXIMUS.
+% Compiled module: CHECK_SORTED.
+This array is sorted!
+% Compiled module: CHECK_DUPES.
+No duplicates in this array!
+***************
+Stats for BURST ORBS
+
+Min burst orbs: 1518
+Max burst orbs: 16360
+
+Earliest time for burst orbs: 1997-01-08/19:42:23.719
+Latest time for burst orbs: 2000-10-05/21:52:19.774
+
+N Elements in provided inds: 18458
+N uniq burst orbs: 685
+
+#Burst events/Total events:  18458/307666    (6.00 %)
+This array is sorted!
+No duplicates in this array!
+***************
+Stats for SURVEY ORBS
+
+Min survey orbs: 505
+Max survey orbs: 16361
+
+Earliest time for survey orbs: 1996-10-07/03:45:14.749
+Latest time for survey orbs: 2000-10-06/00:05:35.277
+
+N Elements in provided inds: 289208
+N uniq survey orbs: 7670
+
+#Survey events/Total events:  289208/307666    (94.00 %)
+This array is sorted!
+No duplicates in this array!
+***************
+Stats for BURST STORM ORBS
+
+Min burst storm orbs: 1518
+Max burst storm orbs: 16360
+
+Earliest time for burst storm orbs: 1997-01-08/19:42:23.719
+Latest time for burst storm orbs: 2000-10-05/21:52:19.774
+
+N Elements in provided inds: 2452
+N uniq burst storm orbs: 96
+
+#Burst storm events/Total storm events:  2452/87488    (2.80 %)
+This array is sorted!
+No duplicates in this array!
+***************
+Stats for SURVEY STORM ORBS
+
+Min survey storm orbs: 1504
+Max survey storm orbs: 16361
+
+Earliest time for survey storm orbs: 1997-01-07/12:38:32.023
+Latest time for survey storm orbs: 2000-10-06/00:05:35.277
+
+N Elements in provided inds: 85006
+N uniq survey storm orbs: 1404
+
+#Survey events/Total storm events:  85006/87488    (97.16 %)
+IDL> 
