@@ -161,7 +161,6 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   ;;****************************************
   ; Add auroral zone to plot?
 
-  print,'dat'
   IF KEYWORD_SET(overlayAurZone) THEN BEGIN
 
      ;;get boundaries
