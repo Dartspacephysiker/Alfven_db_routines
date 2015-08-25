@@ -11,7 +11,7 @@ PRO JOURNAL__20150820__WHY_WE_SHOULD_RESTRICT_WIDTH_TIME_AND_SAMPLE_T
   good_i=get_chaston_ind(maximus,/both_hemis)
 
   ;;See? sample_ts greater than 0.01 leave this harmonic junk in the DB
-  cghistoplot,maximus.sample_t,maxinput=0.2
+  cghistoplot,maximus.sample_t,maxinput=0.2,/WINDOW
 
   ;;what exactly is this appropriately low frequency?
   apropos_sample_t_i = cgsetintersection(good_i,where(maximus.sample_t LT 0.01))
@@ -23,9 +23,9 @@ PRO JOURNAL__20150820__WHY_WE_SHOULD_RESTRICT_WIDTH_TIME_AND_SAMPLE_T
   print,1./0.00195312
   ; 512 Hz
 
-  cghistoplot,maximus.width_time(where(maximus.sample_t LE 0.1)),maxinput=4
-  cghistoplot,maximus.width_time(where(maximus.sample_t LE 0.2)),maxinput=4
-  cghistoplot,maximus.width_time(where(maximus.sample_t LE 0.01)),maxinput=4
+  CGWINDOW,'cghistoplot',maximus.width_time(where(maximus.sample_t LE 0.1)),maxinput=4,BINSIZE=0.05
+  CGWINDOW,'cghistoplot',maximus.width_time(where(maximus.sample_t LE 0.2)),maxinput=4,BINSIZE=0.05
+  CGWINDOW,'cghistoplot',maximus.width_time(where(maximus.sample_t LE 0.01)),maxinput=4,BINSIZE=0.05
 
   ;;Produce the hard evidence, boys
   ;; cghistoplot,maximus.width_time(where(maximus.sample_t LE 0.1)),maxinput=4,TITLE='Temporal width of events for sample periods LT 0.1 S (GT 10 Hz)',output='maxHisto--WIDTH_TIME_for_SAMPLE_T_LT_0.1--20150820.png'
