@@ -179,9 +179,12 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
 
   ;; IF NOT KEYWORD_SET(dbFile) THEN restore,defDBFile ELSE restore,dbFile
   IF N_ELEMENTS(dbFile) EQ 0 AND maximus EQ !NULL THEN BEGIN
-     print,'Restoring default DBfile...'
-     dbFile = defDBFile
-     RESTORE,dbFile
+     ;; print,'Restoring default DBfile...'
+     ;; dbFile = defDBFile
+     ;; dbFile = defDBFile
+     ;; RESTORE,dbFile
+     print,'Restoring default DBfile via LOAD_MAXIMUS_AND_CDBTIME...'
+     LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime
   ENDIF ELSE BEGIN
      IF N_ELEMENTS(maximus) GT 0 THEN PRINT, "maximus struct already provided! Not restoring any DB file..."
   ENDELSE
@@ -310,7 +313,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
      curPlot = scatterplot(lons,lats,sym_size=1.0, $
                            SYMBOL='o',/overplot, $
                            SYM_TRANSPARENCY=sTrans, $
-                           SYM_COLOR=plot_i_color, $
+                           SYM_COLOR=color_list, $
                            TITLE=plotTitle) ;,$;SYM_SIZE=0.5, $ ;There is such a high density of points that we need transparency
 
   ENDELSE     

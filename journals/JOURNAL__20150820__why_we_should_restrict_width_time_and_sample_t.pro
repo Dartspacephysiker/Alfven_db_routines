@@ -4,6 +4,9 @@
 ;that is out of the spin plane.
 ; NOTE: Lines for ChastonDB at bottom
 
+;2015/09/26
+;Note: If we combine the sample_t restriction with good_i, there is no apparent difference between the distribution corresponding
+; to >= 32 Hz and that corresponding to >= 128 Hz. This means the data are being cast out some other way.
 PRO JOURNAL__20150820__WHY_WE_SHOULD_RESTRICT_WIDTH_TIME_AND_SAMPLE_T
 
   restore,'/SPENCEdata/Research/Cusp/database/dartdb/saves/Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav'
@@ -26,6 +29,11 @@ PRO JOURNAL__20150820__WHY_WE_SHOULD_RESTRICT_WIDTH_TIME_AND_SAMPLE_T
   CGWINDOW,'cghistoplot',maximus.width_time(where(maximus.sample_t LE 0.1)),maxinput=4,BINSIZE=0.05
   CGWINDOW,'cghistoplot',maximus.width_time(where(maximus.sample_t LE 0.2)),maxinput=4,BINSIZE=0.05
   CGWINDOW,'cghistoplot',maximus.width_time(where(maximus.sample_t LE 0.01)),maxinput=4,BINSIZE=0.05
+
+  ;;what if we now combine this with good_i?
+  CGWINDOW,'cghistoplot',maximus.width_time(cgsetintersection(good_i,where(maximus.sample_t le 0.1))),maxinput=4,BINSIZE=0.05
+  CGWINDOW,'cghistoplot',maximus.width_time(cgsetintersection(good_i,where(maximus.sample_t le 0.2))),maxinput=4,BINSIZE=0.05
+  CGWINDOW,'cghistoplot',maximus.width_time(cgsetintersection(good_i,where(maximus.sample_t le 0.01))),maxinput=4,BINSIZE=0.05
 
   ;;Produce the hard evidence, boys
   ;; cghistoplot,maximus.width_time(where(maximus.sample_t LE 0.1)),maxinput=4,TITLE='Temporal width of events for sample periods LT 0.1 S (GT 10 Hz)',output='maxHisto--WIDTH_TIME_for_SAMPLE_T_LT_0.1--20150820.png'

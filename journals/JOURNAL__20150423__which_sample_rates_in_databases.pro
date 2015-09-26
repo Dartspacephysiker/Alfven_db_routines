@@ -3,13 +3,12 @@
 ; Working directory: /SPENCEdata/software/sdt/batch_jobs/Alfven_study/as5_14F
 ; Date: Thu Apr 23 12:03 2015
  
-dbFile='/SPENCEdata/Research/Cusp/ACE_FAST/scripts_for_processing_Dartmouth_data/Dartdb_02282015--500-14999--maximus--cleaned.sav'
+dbFile='/SPENCEdata/Research/Cusp/database/dartdb/saves/old_dbs/Dartdb_02282015--500-14999--maximus--cleaned--DEPRECATED.sav'
 restore,dbFile
 
 ;only for given current sizes
 maximus=resize_maximus(maximus,maximus_ind=6,min_for_ind=10,max_for_ind=2000,/ONLY_ABSVALS)
 
-print,maximus.sample_t[0-99]
 print,maximus.sample_t[0:99]
 
 uniq_sample_ts_i=uniq(maximus.sample_t,sort(maximus.sample_t))
