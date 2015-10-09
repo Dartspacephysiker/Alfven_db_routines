@@ -10,7 +10,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
 
   defHemi     = 'North'
   defMinI     = 50
-  defMaxI     = 85
+  defMaxI     = 86
   defBinI     = 2.0
 
   defMinMC    = 10

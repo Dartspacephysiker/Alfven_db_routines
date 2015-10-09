@@ -1,10 +1,9 @@
 ;+
-; NAME: PLOT_ALFVEN_STATS_IMF_SCREENING
+; NAME:    SET_IMF_PARAMS_AND_IND_DEFAULTS
 ;
-; PURPOSE: Plot FAST data processed by Chris Chaston's ALFVEN_STATS_5 procedure (with mods).
-;          All data are binned by MLT and ILAT (bin sizes can be set manually).
+; PURPOSE: For the love, it is high time to consolidate like thirty different codes all doing the same thing a little differently
 ;
-; CALLING SEQUENCE: PLOT_ALFVEN_STATS_IMF_SCREENING
+; CALLING SEQUENCE: 
 ;
 ; INPUTS:
 ;
