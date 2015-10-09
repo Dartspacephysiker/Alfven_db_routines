@@ -1,4 +1,4 @@
-PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,DBDir=DBDir,DBFile=DBFile,DB_tFile=DB_tFile,DO_CHASTDB=chastDB,LUN=lun
+PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,DBDir=DBDir,DBFile=DBFile,DB_tFile=DB_tFile,LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout
 
