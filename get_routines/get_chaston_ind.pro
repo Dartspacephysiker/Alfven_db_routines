@@ -8,7 +8,7 @@
 ;2015/10/09 Overhauling so that this can be used for time histos or Alfven DB structures
 ;2015/08/15 Added NO_BURSTDATA keyword
 
-FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,CDBTIME=cdbTime,CbHASTDB=CHASTDB, $
+FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CbHASTDB=CHASTDB, $
                          ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange,CHARERANGE=charERange, $
                          BOTH_HEMIS=both_hemis,NORTH=north,SOUTH=south,HEMI=hemi, $
                          HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
@@ -31,10 +31,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,CDBTIME=cdbTime,Cb
   SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI,MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi
 
   IF KEYWORD_SET(get_time_i_NOT_alfvendb_i) THEN BEGIN
-     LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=cdbTimeFile
+     LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile
      is_maximus = 0
   ENDIF ELSE BEGIN
-     LOAD_MAXIMUS_AND_CDBTIME,dbStruct,cdbTime,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=cdbTimeFile,DO_CHASTDB=chastDB
+     LOAD_MAXIMUS_AND_CDBTIME,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile,DO_CHASTDB=chastDB
      is_maximus = 1
   ENDELSE
 
@@ -52,13 +52,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,CDBTIME=cdbTime,Cb
 
   ;;;;;;;;;;;;;;;
   ;;Check whether this is a maximus or fastloc struct
-  IF TAG_EXIST(dbStruct,'mag_current') THEN BEGIN
-     PRINTF,lun,"This is a FAST Alfvén wave database..."
-     is_maximus = 1
-  ENDIF ELSE BEGIN
-     PRINTF,lun,"This is a FAST ephemeris database..."
-     is_maximus = 0
-  ENDELSE
+  IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
 
   ;;;;;;;;;;;;
   ;;Handle latitudes
