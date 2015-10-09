@@ -45,8 +45,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
 
   ; Handle MLT and ILAT
   SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minMLT,MAXMLT=maxMLT,BINM=binMLT, $
-                                MINILAT=minILAT,MAXILAT=maxILAT,BINI=binILAT,MIN_MAGCURRENT=minMC, $
-                                MAX_NEGMAGCURRENT=maxNegMC, $
+                                MINILAT=minILAT,MAXILAT=maxILAT,BINI=binILAT, $
+                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                 HEMI=hemi,LUN=lun
 
   ;;***********************************************

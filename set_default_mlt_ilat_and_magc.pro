@@ -49,7 +49,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
         ENDELSE
      ENDELSE
   ENDELSE
-  IF N_ELEMENTS(binI) EQ 0 THEN binI = defMaxI
+  IF N_ELEMENTS(binI) EQ 0 THEN binI = defBinI
 
   IF N_ELEMENTS(minMC) EQ 0 THEN minMC = defMinMC                  ; Minimum current derived from mag data, in microA/m^2
   IF N_ELEMENTS(maxNegMC) EQ 0 THEN maxNegMC = defMaxNegMC         ; Current must be less than this, if it's going to make the cut
