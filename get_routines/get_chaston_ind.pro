@@ -8,15 +8,17 @@
 ;2015/10/09 Overhauling so that this can be used for time histos or Alfven DB structures
 ;2015/08/15 Added NO_BURSTDATA keyword
 
-FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CbHASTDB=CHASTDB, $
+FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CHASTDB=CHASTDB, $
                          ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange,CHARERANGE=charERange, $
                          BOTH_HEMIS=both_hemis,NORTH=north,SOUTH=south,HEMI=hemi, $
                          HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
+                         MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                         MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
                          NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i
   COMPILE_OPT idl2
  
-  COMMON ContVars, minM, maxM, minI, maxI,binM,binI,minMC,maxNegMC
+;;  COMMON ContVars, minM, maxM, minI, maxI,binM,binI,minMC,maxNegMC
 
   ;For statistical auroral oval
   defHwMAurOval=0

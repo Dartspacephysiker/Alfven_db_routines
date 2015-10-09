@@ -1,4 +1,4 @@
-FUNCTION GET_ALTITUDE_INDS,minAlt,maxAlt,LUN=lun
+FUNCTION GET_ALTITUDE_INDS,dbStruct,minAlt,maxAlt,LUN=lun
 
   alt_i=where(dbStruct.alt GE altitudeRange[0] AND dbStruct.alt LE altitudeRange[1])
   
