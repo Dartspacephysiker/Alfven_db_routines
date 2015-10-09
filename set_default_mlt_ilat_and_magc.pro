@@ -1,4 +1,4 @@
-PRO SETDEFAULTMLT_ILAT_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI,MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi,LUN=lun
+PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI,MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi,LUN=lun
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; If no provided locations, then don't restrict based on ILAT, MLT
@@ -47,7 +47,7 @@ PRO SETDEFAULTMLT_ILAT_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXIL
      ENDELSE
   ENDELSE
 
-  IF N_ELEMENTS(minMC) EQ 0 THEN minMC = defMinMagC                  ; Minimum current derived from mag data, in microA/m^2
-  IF N_ELEMENTS(maxNegMC) EQ 0 THEN maxNegMC = defMaxNegMagC         ; Current must be less than this, if it's going to make the cut
+  IF N_ELEMENTS(minMC) EQ 0 THEN minMC = defMinMC                  ; Minimum current derived from mag data, in microA/m^2
+  IF N_ELEMENTS(maxNegMC) EQ 0 THEN maxNegMC = defMaxNegMC         ; Current must be less than this, if it's going to make the cut
 
 END

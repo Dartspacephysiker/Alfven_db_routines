@@ -1,4 +1,4 @@
-FUNCTION GET_ORBRANGE_INDS,maximus,minOrb,maxOrb,LUN=lun
+FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
@@ -7,7 +7,7 @@ FUNCTION GET_ORBRANGE_INDS,maximus,minOrb,maxOrb,LUN=lun
      STOP
   ENDIF
 
-  ind_orbs=where(maximus.orbit GE orbRange[0] AND maximus.orbit LE orbRange[1])
+  ind_orbs=where(dbStruct.orbit GE orbRange[0] AND dbStruct.orbit LE orbRange[1])
 
   printf,lun,"Min orbit: " + strcompress(orbRange[0],/remove_all)
   printf,lun,"Max orbit: " + strcompress(orbRange[1],/remove_all)

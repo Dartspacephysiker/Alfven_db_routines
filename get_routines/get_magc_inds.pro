@@ -8,7 +8,7 @@ FUNCTION GET_MAGC_INDS,maximus,minMC,maxNegMC,N_OUTSIDE_MAGC=n_magc_outside_rang
 
   PRINTF,lun,'Min magCurrent: ' + STRCOMPRESS(minMC,/REMOVE_ALL)
   PRINTF,lun,'Max Neg magCurrent: ' + STRCOMPRESS(maxNegMC,/REMOVE_ALL)
-  PRINTF,lun,'N lost due to magCurrent restriction: ' + STRCOMPRESS(n_magc_LT_abs10,/REMOVE_ALL)
+  PRINTF,lun,'N lost due to magCurrent restriction: ' + STRCOMPRESS(n_magc_outside_range,/REMOVE_ALL)
   PRINTF,lun,''
 
   RETURN,magc_i

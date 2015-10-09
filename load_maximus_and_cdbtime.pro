@@ -1,4 +1,6 @@
-PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime,DBDir=DBDir,DBFile=DBFile,DB_tFile=DB_tFile,DO_CHASTDB=chastDB
+PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime,DBDir=DBDir,DBFile=DBFile,DB_tFile=DB_tFile,DO_CHASTDB=chastDB,LUN=lun
+
+  IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout
 
   DefDBDir = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
   DefDBFile = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav'

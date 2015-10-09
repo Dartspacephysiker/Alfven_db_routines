@@ -5,15 +5,17 @@
 ;See 'current_event_Poynt_flux_vs_imf.pro' for
 ;more info, since that's where this code comes from.
 
+;2015/10/09 Overhauling so that this can be used for time histos or Alfven DB structures
 ;2015/08/15 Added NO_BURSTDATA keyword
 
-FUNCTION get_chaston_ind,maximus,satellite,lun,DBFILE=dbfile,CDBTIME=cdbTime,CbHASTDB=CHASTDB, $
+FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,CDBTIME=cdbTime,CbHASTDB=CHASTDB, $
                          ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange,CHARERANGE=charERange, $
                          BOTH_HEMIS=both_hemis,NORTH=north,SOUTH=south,HEMI=hemi, $
                          HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
-                         NO_BURSTDATA=no_burstData
-  
+                         NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i
+  COMPILE_OPT idl2
+ 
   COMMON ContVars, minM, maxM, minI, maxI,binM,binI,minMC,maxNegMC
 
   ;For statistical auroral oval
@@ -21,11 +23,20 @@ FUNCTION get_chaston_ind,maximus,satellite,lun,DBFILE=dbfile,CDBTIME=cdbTime,CbH
   defHwMKpInd=7
 
   defLun = -1
+
+  is_maximus = 0        ;We assume this is not maximus
   ;;***********************************************
   ;;Load up all the dater, working from ~/Research/ACE_indices_data/idl
   
-  SETDEFAULTMLT_ILAT_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI,MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi
-  LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=cdbTimeFile,DO_CHASTDB=chastDB
+  SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI,MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi
+
+  IF KEYWORD_SET(get_time_i_NOT_alfvendb_i) THEN BEGIN
+     LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=cdbTimeFile
+     is_maximus = 0
+  ENDIF ELSE BEGIN
+     LOAD_MAXIMUS_AND_CDBTIME,dbStruct,cdbTime,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=cdbTimeFile,DO_CHASTDB=chastDB
+     is_maximus = 1
+  ENDELSE
 
   IF ~KEYWORD_SET(HwMAurOval) THEN HwMAurOval = defHwMAurOval
   IF ~KEYWORD_SET(HwMKpInd) THEN HwMKpInd = defHwMKpInd
@@ -39,31 +50,43 @@ FUNCTION get_chaston_ind,maximus,satellite,lun,DBFILE=dbfile,CDBTIME=cdbTime,CbH
   printf,lun,"DBFile = " + dbfile
   printf,lun,""
 
-  ;;generate indices based on restrictions in interp_plots.pro
+  ;;;;;;;;;;;;;;;
+  ;;Check whether this is a maximus or fastloc struct
+  IF TAG_EXIST(dbStruct,'mag_current') THEN BEGIN
+     PRINTF,lun,"This is a FAST Alfvén wave database..."
+     is_maximus = 1
+  ENDIF ELSE BEGIN
+     PRINTF,lun,"This is a FAST ephemeris database..."
+     is_maximus = 0
+  ENDELSE
 
   ;;;;;;;;;;;;
   ;;Handle latitudes
-  ilat_i = GET_ILAT_INDS(maximus,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ilat,LUN=lun)
+  ilat_i = GET_ILAT_INDS(dbStruct,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ilat,LUN=lun)
   ;;;;;;;;;;;;
   ;;Handle longitudes
-  mlt_i = GET_MLT_INDS(maximus,minM,maxM,DAYSIDE=dayside,NIGHTSIDE=nightside,N_ILAT=n_ilat,N_OUTSIDE_MLT=n_outside_MLT,LUN=lun)
+  mlt_i = GET_MLT_INDS(dbStruct,minM,maxM,DAYSIDE=dayside,NIGHTSIDE=nightside,N_ILAT=n_ilat,N_OUTSIDE_MLT=n_outside_MLT,LUN=lun)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Want just Holzworth/Meng statistical auroral oval?
-  IF HwMAurOval THEN ind_region=cgsetintersection(ind_region,where(abs(maximus.ilat) GT auroral_zone(maximus.mlt,HwMKpInd,/lat)/(!DPI)*180.))
+  IF HwMAurOval THEN ind_region=cgsetintersection(ind_region,where(abs(dbStruct.ilat) GT auroral_zone(dbStruct.mlt,HwMKpInd,/lat)/(!DPI)*180.))
 
-  magc_i = GET_MAGC_INDS(maximus,minMC,maxNegMC,N_OUTSIDE_MAGC=n_magc_outside_range)
 
   ;;;;;;;;;;;;;;;;;;;;;;
   ;;Now combine them all
-  ind_region=cgsetintersection(ilat_i,mlt_i)
-  ind_region_magc=cgsetintersection(ind_region,magc_i)
+  final_i=cgsetintersection(ilat_i,mlt_i)
+  IF is_maximus THEN BEGIN
+     magc_i = GET_MAGC_INDS(dbStruct,minMC,maxNegMC,N_OUTSIDE_MAGC=n_magc_outside_range)
+     final_i=cgsetintersection(final_i,magc_i)
+  ENDIF
+
   
   ;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Limits on orbits to use?
   IF KEYWORD_SET (orbRange) THEN BEGIN
      IF N_ELEMENTS(orbRange) EQ 2 THEN BEGIN
-        ind_orbs = GET_ORBRANGE_INDS(maximus,orbRange[0],orbRange[1],LUN=lun)
+        orb_i = GET_ORBRANGE_INDS(dbStruct,orbRange[0],orbRange[1],LUN=lun)
+        final_i=cgsetintersection(final_i,orb_i)
      ENDIF ELSE BEGIN
         printf,lun,"Incorrect input for keyword 'orbRange'!!"
         printf,lun,"Please use orbRange=[minOrb maxOrb]"
@@ -71,13 +94,12 @@ FUNCTION get_chaston_ind,maximus,satellite,lun,DBFILE=dbfile,CDBTIME=cdbTime,CbH
      ENDELSE
   ENDIF
   
-  ind_region_magc=cgsetintersection(ind_region_magc,ind_orbs)
 
   ;;limits on altitudes to use?
   IF KEYWORD_SET (altitudeRange) THEN BEGIN
      IF N_ELEMENTS(altitudeRange) EQ 2 THEN BEGIN
-        alt_i = GET_ALTITUDE_INDS(maximus,altitudeRange[0],altitudeRange[1],LUN=lun)
-        ind_region_magc=cgsetintersection(ind_region_magc,alt_i)
+        alt_i = GET_ALTITUDE_INDS(dbStruct,altitudeRange[0],altitudeRange[1],LUN=lun)
+        final_i=cgsetintersection(final_i,alt_i)
      ENDIF ELSE BEGIN
         printf,lun,"Incorrect input for keyword 'altitudeRange'!!"
         printf,lun,"Please use altitudeRange=[minAlt maxAlt]"
@@ -86,15 +108,15 @@ FUNCTION get_chaston_ind,maximus,satellite,lun,DBFILE=dbfile,CDBTIME=cdbTime,CbH
   ENDIF
   
   ;;limits on characteristic electron energies to use?
-  IF KEYWORD_SET (charERange) THEN BEGIN
+  IF KEYWORD_SET (charERange) AND is_maximus THEN BEGIN
      IF N_ELEMENTS(charERange) EQ 2 THEN BEGIN
         
         printf,lun,"Min characteristic electron energy: " + strcompress(charERange[0],/remove_all)
         printf,lun,"Max characteristic electron energy: " + strcompress(charERange[1],/remove_all)
 
-        IF KEYWORD_SET(chastDB) THEN  ind_n_orbs=where(maximus.char_elec_energy GE charERange[0] AND maximus.char_elec_energy LE charERange[1]) $
-           ELSE ind_n_orbs=where(maximus.max_chare_losscone GE charERange[0] AND maximus.max_chare_losscone LE charERange[1])
-        ind_region_magc=cgsetintersection(ind_region_magc,ind_n_orbs)
+        IF KEYWORD_SET(chastDB) THEN  orb_i=where(dbStruct.char_elec_energy GE charERange[0] AND dbStruct.char_elec_energy LE charERange[1]) $
+           ELSE orb_i=where(dbStruct.max_chare_losscone GE charERange[0] AND dbStruct.max_chare_losscone LE charERange[1])
+        final_i=cgsetintersection(final_i,orb_i)
      ENDIF ELSE BEGIN
         printf,lun,"Incorrect input for keyword 'charERange'!!"
         printf,lun,"Please use charERange=[minCharE maxCharE]"
@@ -105,25 +127,26 @@ FUNCTION get_chaston_ind,maximus,satellite,lun,DBFILE=dbfile,CDBTIME=cdbTime,CbH
   ;;gotta screen to make sure it's in ACE db too:
   ;;Only so many are useable, since ACE data start in 1998
   
-  sat_i=GET_SATELLITE_INDS(maximus,satellite,LUN=lun)
-  ind_region_magc_ACEstart=ind_region_magc(where(ind_region_magc GE sat_i,$
-                                                                 nGood,complement=lost,ncomplement=nlost))
-  lost=ind_region_magc(lost)
+  sat_i=GET_SATELLITE_INDS(dbStruct,satellite,LUN=lun)
+  final_i_ACEstart=final_i[where(final_i GE sat_i,$
+                                                                 nGood,complement=lost,ncomplement=nlost)]
+  lost=final_i[lost]
 
   ;;Now, clear out all the garbage (NaNs & Co.)
-  ;; IF KEYWORD_SET(chastDB) THEN restore,defChastDB_cleanIndFile ELSE good_i = alfven_db_cleaner(maximus,LUN=lun)
-  ;; IF KEYWORD_SET(chastDB) THEN good_i = alfven_db_cleaner(maximus,LUN=lun,/IS_CHASTDB) ELSE good_i = alfven_db_cleaner(maximus,LUN=lun)
-  good_i = alfven_db_cleaner(maximus,LUN=lun,IS_CHASTDB=chastDB)
-
-  IF good_i NE !NULL THEN ind_region_magc_ACEstart=cgsetintersection(ind_region_magc_ACEstart,good_i)
+  ;; IF KEYWORD_SET(chastDB) THEN restore,defChastDB_cleanIndFile ELSE good_i = alfven_db_cleaner(dbStruct,LUN=lun)
+  ;; IF KEYWORD_SET(chastDB) THEN good_i = alfven_db_cleaner(dbStruct,LUN=lun,/IS_CHASTDB) ELSE good_i = alfven_db_cleaner(dbStruct,LUN=lun)
+  IF is_maximus THEN BEGIN
+     good_i = alfven_db_cleaner(dbStruct,LUN=lun,IS_CHASTDB=chastDB)
+     IF good_i NE !NULL THEN final_i_ACEstart=cgsetintersection(final_i_ACEstart,good_i)
+  ENDIF
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;Now some other user-specified exclusions set by keyword
 
-  IF ~KEYWORD_SET(chastDB) THEN BEGIN
-     burst_i = WHERE(maximus.burst,nBurst,COMPLEMENT=survey_i,NCOMPLEMENT=nSurvey,/NULL)
+  IF (~KEYWORD_SET(chastDB) AND is_maximus) THEN BEGIN
+     burst_i = WHERE(dbStruct.burst,nBurst,COMPLEMENT=survey_i,NCOMPLEMENT=nSurvey,/NULL)
      IF KEYWORD_SET(no_burstData) THEN BEGIN
-        ind_region_magc_ACEstart = cgsetintersection(survey_i,ind_region_magc_ACEstart)
+        final_i_ACEstart = cgsetintersection(survey_i,final_i_ACEstart)
         
         printf,lun,""
         printf,lun,"You're losing " + strtrim(nBurst) + " events because you've excluded burst data."
@@ -133,16 +156,11 @@ FUNCTION get_chaston_ind,maximus,satellite,lun,DBFILE=dbfile,CDBTIME=cdbTime,CbH
      PRINTF,lun,''
   ENDIF
 
-  IF KEYWORD_SET (charERange) AND N_ELEMENTS(charERange) EQ 2 THEN BEGIN
-     printf,lun,"Min characteristic electron energy: " + strcompress(charERange[0],/remove_all)
-     printf,lun,"Max characteristic electron energy: " + strcompress(charERange[1],/remove_all)
-  ENDIF
-
-  printf,lun,"There are " + strtrim(n_elements(ind_region_magc_ACEstart),2) + " total events making the cut." 
+  printf,lun,"There are " + strtrim(n_elements(final_i_ACEstart),2) + " total indices making the cut." 
   PRINTF,lun,''
   printf,lun,"****END get_chaston_ind.pro****"
   printf,lun,""
 
-  RETURN, ind_region_magc_ACEstart
+  RETURN, final_i_ACEstart
   
 END
