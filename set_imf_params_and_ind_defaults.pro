@@ -3,7 +3,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     minMLT=minMLT,maxMLT=maxMLT,BINMLT=binMLT,MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
                                     MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                     HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                                    BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax, $
+                                    BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax,BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
                                     PARAMSTRING=paramString, PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
                                     SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                     HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
