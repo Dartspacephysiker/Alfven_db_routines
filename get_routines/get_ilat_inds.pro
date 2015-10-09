@@ -42,12 +42,12 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ila
      PRINTF,lun,'Hemisphere: Northern AND Southern'
   ENDIF ELSE BEGIN
      IF STRUPCASE(hemi) EQ "SOUTH" THEN BEGIN
-        PRINTF,lun,'Hemisphere: Southern'
         ilat_i=where(maximus.ilat GE minI AND maximus.ilat LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT)
+        ;; PRINTF,lun,'Hemisphere: Southern'
      ENDIF ELSE BEGIN
         IF STRUPCASE(hemi) EQ "NORTH" THEN BEGIN
            ilat_i=where(maximus.ilat GE minI AND maximus.ilat LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT) 
-           PRINTF,lun,'Hemisphere: Northern'
+           ;; PRINTF,lun,'Hemisphere: Northern'
         ENDIF ELSE BEGIN
            PRINTF,lun,"Invalid hemisphere provided! Can't get ILAT indices..."
            STOP
@@ -55,11 +55,8 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ila
      ENDELSE
   ENDELSE
 
-  PRINTF,lun,'Min ILAT: ' + STRCOMPRESS(minI,/REMOVE_ALL)
-  PRINTF,lun,'Max ILAT: ' + STRCOMPRESS(maxI,/REMOVE_ALL)
   PRINTF,lun,'Losing ' + STRCOMPRESS(n_not_ILAT,/REMOVE_ALL) + ' events due to ILAT restriction'
   PRINTF,lun,''
-
 
   RETURN,ilat_i
 

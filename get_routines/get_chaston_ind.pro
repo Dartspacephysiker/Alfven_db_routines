@@ -49,7 +49,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   ;;Welcome message
   printf,lun,""
   printf,lun,"****From get_chaston_ind.pro****"
-  printf,lun,"DBFile = " + dbfile
+  printf,lun,FORMAT='("DBFile                        :",T35,A0)',dbFile
   printf,lun,""
 
   ;;;;;;;;;;;;;;;
@@ -107,9 +107,6 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   IF KEYWORD_SET (charERange) AND is_maximus THEN BEGIN
      IF N_ELEMENTS(charERange) EQ 2 THEN BEGIN
         
-        printf,lun,"Min characteristic electron energy: " + strcompress(charERange[0],/remove_all)
-        printf,lun,"Max characteristic electron energy: " + strcompress(charERange[1],/remove_all)
-
         IF KEYWORD_SET(chastDB) THEN  orb_i=where(dbStruct.char_elec_energy GE charERange[0] AND dbStruct.char_elec_energy LE charERange[1]) $
            ELSE orb_i=where(dbStruct.max_chare_losscone GE charERange[0] AND dbStruct.max_chare_losscone LE charERange[1])
         final_i=cgsetintersection(final_i,orb_i)
@@ -147,8 +144,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
         printf,lun,""
         printf,lun,"You're losing " + strtrim(nBurst) + " events because you've excluded burst data."
      ENDIF
-     PRINTF,lun,'N burst elements: ' + STRCOMPRESS(nBurst,/REMOVE_ALL)
-     PRINTF,lun,'N survey elements: ' + STRCOMPRESS(nSurvey,/REMOVE_ALL)
+     PRINTF,lun,FORMAT='("N burst elements              :",T35,I0)',nBurst
+     PRINTF,lun,FORMAT='("N survey elements             :",T35,I0)',nSurvey
      PRINTF,lun,''
   ENDIF
 

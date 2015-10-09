@@ -1,5 +1,81 @@
+;+
+; NAME: PLOT_ALFVEN_STATS_IMF_SCREENING
+;
+; PURPOSE: Plot FAST data processed by Chris Chaston's ALFVEN_STATS_5 procedure (with mods).
+;          All data are binned by MLT and ILAT (bin sizes can be set manually).
+;
+; CALLING SEQUENCE: PLOT_ALFVEN_STATS_IMF_SCREENING
+;
+; INPUTS:
+;
+; OPTIONAL INPUTS:   
+;                *DATABASE PARAMETERS
+;                    CLOCKSTR          :  Interplanetary magnetic field clock angle.
+;                                            Can be 'dawnward', 'duskward', 'bzNorth', 'bzSouth', 'all_IMF',
+;                                            'dawn-north', 'dawn-south', 'dusk-north', or 'dusk-south'.
+;		     ANGLELIM1         :     
+;		     ANGLELIM2         :     
+;		     ORBRANGE          :  Two-element vector, lower and upper limit on orbits to include   
+;		     ALTITUDERANGE     :  Two-element vector, lower and upper limit on altitudes to include   
+;                    CHARERANGE        :  Two-element vector, lower ahd upper limit on characteristic energy of electrons in 
+;                                            the LOSSCONE (could change it to total in get_chaston_ind.pro).
+;                    POYNTRANGE        :  Two-element vector, lower and upper limit Range of Poynting flux values to include.
+; 		     MINMLT            :  MLT min  (Default: 9)
+; 		     MAXMLT            :  MLT max  (Default: 15)
+; 		     BINMLT            :  MLT binsize  (Default: 0.5)
+;		     MINILAT           :  ILAT min (Default: 64)
+;		     MAXILAT           :  ILAT max (Default: 80)
+;		     BINILAT           :  ILAT binsize (Default: 2.0)
+;                    BYMIN             :  Minimum value of IMF By during an event to accept the event for inclusion in the analysis.
+;                    BZMIN             :  Minimum value of IMF Bz during an event to accept the event for inclusion in the analysis.
+;                    BYMAX             :  Maximum value of IMF By during an event to accept the event for inclusion in the analysis.
+;                    BZMAX             :  Maximum value of IMF Bz during an event to accept the event for inclusion in the analysis.
+;                    HEMI              :  Hemisphere for which to show statistics. Can be "North", "South", or "Both".
+;
+;                *IMF SATELLITE PARAMETERS
+;                    SATELLITE         :  Satellite to use for checking FAST data against IMF.
+;                                           Can be any of "ACE", "wind", "wind_ACE", or "OMNI" (default).
+;                    OMNI_COORDS       :  If using "OMNI" as the satellite, choose between GSE or GSM coordinates for the database.
+;                    DELAY             :  Time (in seconds) to lag IMF behind FAST observations. 
+;                                         Binzheng Zhang has found that current IMF conditions at ACE or WIND usually rear   
+;                                            their heads in the ionosphere about 11 minutes after they are observed.
+;                    STABLEIMF         :  Time (in minutes) over which stability of IMF is required to include data.
+;                                            NOTE! Cannot be less than 1 minute.
+;                    SMOOTHWINDOW      :  Smooth IMF data over a given window (default: none)
+;
+;                *HOLZWORTH/MENG STATISTICAL AURORAL OVAL PARAMETERS 
+;                    HWMAUROVAL        :  Only include those data that are above the statistical auroral oval.
+;                    HWMKPIND          :  Kp Index to use for determining the statistical auroral oval (def: 7)
+;
+;                  *VARIOUS OUTPUT OPTIONS
+;		     PARAMSTRPREFIX    :     
+;		     PARAMSTRSUFFIX    :     
+;
+; KEYWORD PARAMETERS:
+;
+; OUTPUTS:
+;
+; OPTIONAL OUTPUTS: 
+;                    MAXIMUS           :  Return maximus structure used in this pro.
+;
+; PROCEDURE:
+;
+; EXAMPLE: 
+;     Use Chaston's original (ALFVEN_STATS_3) database, only including orbits falling in the range 1000-4230
+;     plot_alfven_stats_imf_screening,clockstr="duskward",/do_chastdb,$
+;                                          plotpref='NESSF2014_reproduction_Jan2015--orbs1000-4230',ORBRANGE=[1000,4230]
+;
+;
+;
+; MODIFICATION HISTORY: Best to follow my mod history on the Github repository...
+;                       
+;                       2015/10/09 : This pro was born in an attempt to consolidate probably four or five versions of the same
+;                                    code floating around the FAST repositories. Not any longer!
+;                       
+;                       
+;-
 PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-                                    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, NUMORBLIM=numOrbLim, $
+                                    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                     minMLT=minMLT,maxMLT=maxMLT,BINMLT=binMLT,MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
                                     MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                     HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
@@ -7,38 +83,39 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     PARAMSTRING=paramString, PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
                                     SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                     HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
-                                    LUN=lun
+                                    HOYDIA=hoyDia,LUN=lun
 
   COMPILE_OPT idl2
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
   ;;***********************************************
   ;;Tons of defaults
   
-  defCharERange = [4.0,300]
-  defAltRange = [1000.0, 5000.0]
+  defOrbRange            = [0,40000]
+  defCharERange          = [4.0,300]
+  defAltRange            = [1000.0, 5000.0]
 
   ; satellite defaults
-  defSatellite = "OMNI"    ;either "ACE", "wind", "wind_ACE", or "OMNI" (default, you see)
-  defOmni_Coords = "GSM"             ; either "GSE" or "GSM"
+  defSatellite           = "OMNI"    ;either "ACE", "wind", "wind_ACE", or "OMNI" (default, you see)
+  defOmni_Coords         = "GSM"             ; either "GSE" or "GSM"
 
-  defDelay = 900
+  defDelay               = 900
 
-  defstableIMF = 0S             ;Set to a time (in minutes) over which IMF stability is required
+  defstableIMF           = 0S             ;Set to a time (in minutes) over which IMF stability is required
   defIncludeNoConsecData = 0    ;Setting this to 1 includes Chaston data for which  
                                 ;there's no way to calculate IMF stability
                                 ;Only valid for stableIMF GE 1
-  defCheckBothWays = 0          
+  defCheckBothWays       = 0          
   
-  defBx_over_ByBz_Lim = 0       ;Set this to the max ratio of Bx / SQRT(By*By + Bz*Bz)
+  defBx_over_ByBz_Lim    = 0       ;Set this to the max ratio of Bx / SQRT(By*By + Bz*Bz)
   
   ;for statistical auroral oval
-  defHwMAurOval=0
-  defHwMKpInd=7
+  defHwMAurOval          = 0
+  defHwMKpInd            = 7
 
-  defClockStr = 'dawnward'
+  defClockStr            = 'dawnward'
   
-  defAngleLim1 = 60.0
-  defAngleLim2 = 120.0
+  defAngleLim1           = 60.0
+  defAngleLim2           = 120.0
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Now set up vars
@@ -51,6 +128,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
 
   ;;***********************************************
   ;;RESTRICTIONS ON DATA, SOME VARIABLES
+  IF N_ELEMENTS(orbRange) EQ 0 THEN orbRange = defOrbRange         ; 4,~300 eV in Strangeway
+
   IF N_ELEMENTS(charERange) EQ 0 THEN charERange = defCharERange         ; 4,~300 eV in Strangeway
 
   IF N_ELEMENTS(altitudeRange) EQ 0 THEN altitudeRange = defAltRange ;Rob Pfaff says no lower than 1000m
@@ -143,16 +222,24 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
 
   printf,lun,""
   printf,lun,"**********DATA SUMMARY**********"
-  printf,lun,satellite+" satellite data delay: " + strtrim(delay,2) + " seconds"
-  printf,lun,"IMF stability requirement: " + strtrim(stableIMF,2) + " minutes"
-  printf,lun,"Screening parameters: [Min] [Max]"
-  printf,lun,"Mag current: " + strtrim(maxNEGMC,2) + " " + strtrim(minMC,2)
-  printf,lun,"MLT: " + strtrim(minMLT,2) + " " + strtrim(maxMLT,2)
-  printf,lun,"ILAT: " + strtrim(minILAT,2) + " " + strtrim(maxILAT,2)
-  printf,lun,"Hemisphere: " + hemStr
-  printf,lun,"IMF Predominance: " + clockStr
-  printf,lun,"Angle lim 1: " + strtrim(angleLim1,2)
-  printf,lun,"Angle lim 2: " + strtrim(angleLim2,2)
+  printf,lun,FORMAT='(A4, " satellite delay          :",T35,I8,T45," seconds")',satellite,delay
+  printf,lun,FORMAT='("IMF stability requirement     :",T35,I8,T45," minutes")',stableIMF
+  printf,lun,FORMAT='("")'
+  printf,lun,"************"
+  printf,lun,FORMAT='("Screening parameters          :",T35,"   [Min]",T45,"   [Max]")'
+  printf,lun,FORMAT='("")'
+  printf,lun,FORMAT='("MLT                           :",T35,I8,T45,I8)',minMLT,maxMLT
+  printf,lun,FORMAT='("ILAT                          :",T35,I8,T45,I8)',minILAT,maxILAT
+  printf,lun,FORMAT='("Mag current                   :",T35,G8.2,T45,G8.2)',maxNEGMC,minMC
+  printf,lun,FORMAT='("")'
+  printf,lun,FORMAT='("Orbits                        :",T35,I8,T45,I8)',orbRange[0],orbRange[1]
+  printf,lun,FORMAT='("Altitude                      :",T35,I8,T45,I8)',altitudeRange[0],altitudeRange[1]
+  printf,lun,FORMAT='("Char electron energy (eV)     :",T35,G8.2,T45,G8.2)',charERange[0],charERange[1]
+  printf,lun,FORMAT='("")'
+  printf,lun,FORMAT='("Hemisphere                    :",T35,A8)',hemStr
+  printf,lun,FORMAT='("IMF Predominance              :",T35,A8)',clockStr
+  printf,lun,FORMAT='("Angle lim 1                   :",T35,I8)',angleLim1
+  printf,lun,FORMAT='("Angle lim 2                   :",T35,I8)',angleLim2
 
 
   ;;######ELECTRON FLUXES, ENERGY AND NUMBER 

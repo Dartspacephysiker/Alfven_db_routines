@@ -105,7 +105,7 @@ function alfven_db_cleaner,maximus,IS_CHASTDB=is_chastDB,LUN=lun
   printf,lun,"****From alfven_db_cleaner.pro****"
 
   nlost = n_events-n_elements(good_i)
-  printf,lun,"Lost " + strcompress(nlost,/REMOVE_ALL) + " events to NaNs and infinities..."
+  printf,lun,FORMAT='("N lost to NaNs, infinities    :",T35,I0)',nlost
   n_events -=nlost
   
   ;******************
@@ -202,7 +202,7 @@ function alfven_db_cleaner,maximus,IS_CHASTDB=is_chastDB,LUN=lun
   ENDELSE
 
   nlost = n_events-n_elements(good_i)
-  printf,lun,"Lost " + strcompress(nlost,/REMOVE_ALL) + " events to user-defined cutoffs for various quantities..."
+  printf,lun,FORMAT='("N lost to user-defined cutoffs:",T35,I0)', nlost
 
   printf,lun,"****END alfven_db_cleaner.pro****"
   printf,lun,""

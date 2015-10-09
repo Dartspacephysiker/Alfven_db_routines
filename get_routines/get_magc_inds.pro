@@ -6,9 +6,7 @@ FUNCTION GET_MAGC_INDS,maximus,minMC,maxNegMC,N_OUTSIDE_MAGC=n_magc_outside_rang
   magc_i_le_NegMC=where(maximus.mag_current LE maxNegMC)
   magc_i=where(maximus.mag_current LE maxNegMC OR maximus.mag_current GE minMC,NCOMPLEMENT=n_magc_outside_range)
 
-  PRINTF,lun,'Min magCurrent: ' + STRCOMPRESS(minMC,/REMOVE_ALL)
-  PRINTF,lun,'Max Neg magCurrent: ' + STRCOMPRESS(maxNegMC,/REMOVE_ALL)
-  PRINTF,lun,'N lost due to magCurrent restriction: ' + STRCOMPRESS(n_magc_outside_range,/REMOVE_ALL)
+  PRINTF,lun,FORMAT='("N lost to current thresh      :",T35,I0)',n_magc_outside_range
   PRINTF,lun,''
 
   RETURN,magc_i

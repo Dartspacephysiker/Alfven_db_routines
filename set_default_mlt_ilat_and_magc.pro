@@ -54,4 +54,9 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
   IF N_ELEMENTS(minMC) EQ 0 THEN minMC = defMinMC                  ; Minimum current derived from mag data, in microA/m^2
   IF N_ELEMENTS(maxNegMC) EQ 0 THEN maxNegMC = defMaxNegMC         ; Current must be less than this, if it's going to make the cut
 
+  minM=FLOOR(minM*4.0)/4.0  ;to 1/4 precision
+  maxM=FLOOR(maxM*4.0)/4.0 
+  minI=FLOOR(minI*4.0)/4.0 
+  maxI=FLOOR(maxI*4.0)/4.0 
+
 END
