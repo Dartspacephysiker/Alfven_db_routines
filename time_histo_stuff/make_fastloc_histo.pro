@@ -13,7 +13,7 @@
 ;indices file by running get_fastloc_inds__IMF_conds with keyword /MAKE_OUTINDSFILE, then provide
 ;those indices as the keyword FASTLOC_INDS here.
 
-PRO make_fastloc_histo,TIMEHISTO=timeHisto, FASTLOC_INDS=fastLoc_inds, $
+PRO make_fastloc_histo,OUTTIMEHISTO=outTimeHisto, FASTLOC_INDS=fastLoc_inds, $
                        MINMLT=minMLT,MAXMLT=maxMLT,BINMLT=binMLT, $
                        MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
                        MINALT=minAlt,MAXALT=maxAlt,BINALT=binAlt, $
@@ -22,63 +22,6 @@ PRO make_fastloc_histo,TIMEHISTO=timeHisto, FASTLOC_INDS=fastLoc_inds, $
                        OUTFILEPREFIX=outFilePrefix,OUTFILESUFFIX=outFileSuffix, OUTDIR=outDir, $
                        OUTPUT_TEXTFILE=output_textFile
 
-  ;defaults
-  defFastLocDir = '/SPENCEdata/Research/Cusp/database/time_histos/'
-  defFastLocFile = 'fastLoc_intervals2--500-16361_all--20150613.sav'
-  defFastLocTimeFile = 'fastLoc_intervals2--500-16361_all--20150613--times.sav'
-  defOutFilePrefix = 'fastLoc_intervals2--'
-  defOutFileSuffix = '--timeHisto'
-  defOutDir = '/SPENCEdata/Research/Cusp/database/time_histos/'
-
-  ;; defSmallestMinBinStr = '--smallestBinMin'
-  ;; defDelta_T = 5 ;5 seconds
-
-  ;; defMinMLT = 0.0
-  ;; defMaxMLT = 24.0
-  defMinMLT = 6.0
-  defMaxMLT = 18.0
-  defBinMLT = 1.0
-
-  defMinILAT = 60
-  ;; defMaxILAT = 89.0
-  ;; defBinILAT = 3.0
-  defMaxILAT = 84.0
-  defBinILAT = 2.0
-
-  ;; defMinALT = 0.0
-  ;; defMaxALT = 5000.0
-  ;; defBinALT = 1000.0
-
-  ;files
-  IF NOT KEYWORD_SET(fastLocDir) THEN fastLocDir = defFastLocDir
-  IF NOT KEYWORD_SET(fastLocFile) THEN fastLocFile = defFastLocFile
-  IF NOT KEYWORD_SET(fastLocTimeFile) THEN fastLocTimeFile = defFastLocTimeFile
-  IF NOT KEYWORD_SET(outFilePrefix) THEN outFilePrefix = defOutFilePrefix
-  IF NOT KEYWORD_SET(outFileSuffix) THEN outFileSuffix = defOutFileSuffix
-  IF NOT KEYWORD_SET(outDir) THEN outDir = defOutDir
-
-  ;; IF NOT KEYWORD_SET(delta_T) THEN delta_T = defDelta_T
-
-  ;MLT
-  IF NOT N_ELEMENTS(minMLT) EQ 0 THEN minMLT = defMinMLT
-  IF NOT KEYWORD_SET(maxMLT) THEN maxMLT = defMaxMLT
-  IF NOT KEYWORD_SET(binMLT) THEN binMLT = defBinMLT
-
-  ;ILAT
-  IF NOT KEYWORD_SET(minILAT) THEN minILAT = defMinILAT
-  IF NOT KEYWORD_SET(maxILAT) THEN maxILAT = defMaxILAT
-  IF NOT KEYWORD_SET(binILAT) THEN binILAT = defBinILAT
-
-  ;Don't do altitudes now
-  ;; IF 
-  ;; IF NOT KEYWORD_SET(minALT) THEN minALT = defMinALT
-  ;; IF NOT KEYWORD_SET(maxALT) THEN maxALT = defMaxALT
-  ;; IF NOT KEYWORD_SET(binALT) THEN binALT = defBinALT
-
-  ;open dem files
-  RESTORE,fastLocDir+fastLocFile
-  IF FILE_TEST(fastLocDir+fastLocTimeFile) THEN RESTORE, fastLocDir+fastLocTimeFile 
-  
   ;avoid any trickery
   nFastLoc = N_ELEMENTS(fastLoc.orbit)
   nFastLoc_Times = N_ELEMENTS(fastLoc_Times)
@@ -142,7 +85,7 @@ PRO make_fastloc_histo,TIMEHISTO=timeHisto, FASTLOC_INDS=fastLoc_inds, $
   nMLT = N_ELEMENTS(mlts)
   nILAT = N_ELEMENTS(ilats)
 
-  timeHisto = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
+  outTimeHisto = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
 
   ;loop over MLTs and ILATs
   FOR j=0, nILAT-2 DO BEGIN 
@@ -154,7 +97,7 @@ PRO make_fastloc_histo,TIMEHISTO=timeHisto, FASTLOC_INDS=fastLoc_inds, $
                                        fastLoc.ILAT GE ilats[j] AND fastLoc.ILAT LT ilats[j+1],/NULL)
         IF tempInds NE !NULL THEN BEGIN
            tempBinTime = TOTAL(DOUBLE(fastLoc_delta_t(tempInds)))
-           timeHisto[i,j] = tempBinTime
+           outTimeHisto[i,j] = tempBinTime
 
            IF KEYWORD_SET(output_textFile) THEN PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T20,F0.3)',mlts[i],ilats[j],DOUBLE(tempBinTime)/60.0
         ENDIF ELSE tempBinTime = DOUBLE(0.0)
@@ -164,7 +107,7 @@ PRO make_fastloc_histo,TIMEHISTO=timeHisto, FASTLOC_INDS=fastLoc_inds, $
   ;save the file
   IF NOT KEYWORD_SET(fastLoc_Inds) AND $
   NOT ((outFilePrefix EQ defOutFilePrefix) AND (outFileSuffix EQ defOutFileSuffix)) THEN BEGIN
-     save,timeHisto,FILENAME=outDir+outFileName
+     save,outTimeHisto,FILENAME=outDir+outFileName
      print,'Saving ' + outDir+outFileName + '...'
   ENDIF ELSE BEGIN
      print,'Not saving ' + outDir+outFileName+'...'

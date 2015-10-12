@@ -6,15 +6,9 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,DBDir=DBDir,DBFile=DBFi
   DefDBFile = 'fastLoc_intervals2--500-16361_all--20150613.sav'
   DefDB_tFile = 'fastLoc_intervals2--500-16361_all--20150613--times.sav'
 
-  IF KEYWORD_SET(chastDB) THEN BEGIN
-     DBDir='/SPENCEdata/Research/Cusp/database/processed/'
-     DBFile = "maximus.dat"
-     DB_tFile = "cdbtime.sav"
-  ENDIF ELSE BEGIN
-     IF N_ELEMENTS(DBDir) EQ 0 THEN DBDir = DefDBDir
-     IF N_ELEMENTS(DBFile) EQ 0 THEN DBFile = DefDBFile
-     IF N_ELEMENTS(DB_tFile) EQ 0 THEN DB_tFile = DefDB_tFile
-  ENDELSE
+  IF N_ELEMENTS(DBDir) EQ 0 THEN DBDir = DefDBDir
+  IF N_ELEMENTS(DBFile) EQ 0 THEN DBFile = DefDBFile
+  IF N_ELEMENTS(DB_tFile) EQ 0 THEN DB_tFile = DefDB_tFile
   
   IF N_ELEMENTS(fastLoc) EQ 0 THEN BEGIN
      IF FILE_TEST(DBDir+DBFile) THEN RESTORE,DBDir+DBFile

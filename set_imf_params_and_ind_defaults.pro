@@ -240,7 +240,4 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   printf,lun,FORMAT='("Angle lim 1                   :",T35,I8)',angleLim1
   printf,lun,FORMAT='("Angle lim 2                   :",T35,I8)',angleLim2
 
-
-  ;;######ELECTRON FLUXES, ENERGY AND NUMBER 
-  ;;;MAKE THESE THEIR OWN ROUTINES
 END
