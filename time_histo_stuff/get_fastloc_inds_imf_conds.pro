@@ -8,7 +8,7 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
                                BYMIN=byMin, BYMAX=byMax, BZMIN=bzMin, BZMAX=bzMax, SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                               MAKE_OUTINDSFILE=make_outIndsFile, $
+                               MAKE_OUTINDSFILE=make_outIndsFile,OUTINDSFILEBASENAME=outIndsFileBasename, $
                                FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
                                FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                BURSTDATA_EXCLUDED=burstData_excluded
@@ -20,7 +20,7 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
   minI=-88
   maxI=88
 
-  fastLocOutputDir = '/SPENCEdata/Research/Cusp/ACE_FAST/out/fastloc_timehistos_output/'
+  fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/time_histos/'
 
   IF NOT KEYWORD_SET(lun) THEN lun = -1 ;stdout
   
@@ -46,7 +46,7 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
                    ;;'"--byMin_",F0.1,"--byMax_",F0.1,"--bzMin_",F0.1,"--bzMax_",F0.1,' + $
                    '"--hemi_",A0,' + $
                    '"--chareRange_",F0.2,"-",F0.2,"--altRange_",F0.2,"-",F0.2,"--orbRange",I0,"-",I0,' + $
-                   '"--stableIMF_",I0,"min--delay_",I0,"min")'
+                   '"--stableIMF_",I0,"min--delay_",I0,"sec")'
   outIndsFileBasename = STRING(FORMAT=basenameFormat,defOutIndsPrefix,clockStr,angleLim1,angleLim2,satellite,omni_Coords, $
                                ;;byMin,byMax,bzMin,bzMax, $
                                hemi, $

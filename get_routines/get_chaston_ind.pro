@@ -18,8 +18,6 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
                          NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i
   COMPILE_OPT idl2
  
-;;  COMMON ContVars, minM, maxM, minI, maxI,binM,binI,minMC,maxNegMC
-
   ;For statistical auroral oval
   defHwMAurOval=0
   defHwMKpInd=7
