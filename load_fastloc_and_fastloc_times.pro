@@ -1,4 +1,6 @@
-PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,DBDir=DBDir,DBFile=DBFile,DB_tFile=DB_tFile,LUN=lun
+PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t,DBDir=DBDir,DBFile=DBFile,DB_tFile=DB_tFile,LUN=lun
+
+  COMPILE_OPT idl2
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout
 

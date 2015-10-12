@@ -2,6 +2,8 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                                   MINILAT=minI,MAXILAT=maxI,BINI=binI, $
                                   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi,LUN=lun
 
+  COMPILE_OPT idl2
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; If no provided locations, then don't restrict based on ILAT, MLT
   defMinM     = 6

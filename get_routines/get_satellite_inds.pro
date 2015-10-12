@@ -1,5 +1,7 @@
 FUNCTION GET_SATELLITE_INDS,maximus,satellite,LUN=lun
 
+  COMPILE_OPT idl2
+
   defSatellite = 'OMNI'
 
   IF ~KEYWORD_SET(satellite) THEN BEGIN

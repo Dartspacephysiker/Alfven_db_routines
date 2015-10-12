@@ -1,5 +1,7 @@
 FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun
 
+  COMPILE_OPT idl2
+
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
   IF minOrb GT maxOrb THEN BEGIN

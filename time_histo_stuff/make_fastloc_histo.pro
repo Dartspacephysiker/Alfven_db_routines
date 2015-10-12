@@ -13,11 +13,11 @@
 ;indices file by running get_fastloc_inds__IMF_conds with keyword /MAKE_OUTINDSFILE, then provide
 ;those indices as the keyword FASTLOC_INDS here.
 
-PRO make_fastloc_histo,OUTTIMEHISTO=outTimeHisto, FASTLOC_INDS=fastLoc_inds, $
+PRO make_fastloc_histo,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
+                       OUTTIMEHISTO=outTimeHisto, FASTLOC_INDS=fastLoc_inds, $
                        MINMLT=minMLT,MAXMLT=maxMLT,BINMLT=binMLT, $
                        MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
                        MINALT=minAlt,MAXALT=maxAlt,BINALT=binAlt, $
-                       DELTA_T=delta_T, $
                        FASTLOCFILE=fastLocFile,FASTLOCTIMEFILE=fastLocTimeFile, $
                        OUTFILEPREFIX=outFilePrefix,OUTFILESUFFIX=outFileSuffix, OUTDIR=outDir, $
                        OUTPUT_TEXTFILE=output_textFile

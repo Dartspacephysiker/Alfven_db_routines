@@ -1,5 +1,7 @@
 PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime,DBDir=DBDir,DBFile=DBFile,DB_tFile=DB_tFile,DO_CHASTDB=chastDB,LUN=lun
 
+  COMPILE_OPT idl2
+
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout
 
   DefDBDir = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'

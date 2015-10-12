@@ -27,6 +27,8 @@
 
 function alfven_db_cleaner,maximus,IS_CHASTDB=is_chastDB,LUN=lun
 
+  COMPILE_OPT idl2
+
   ;;If not lun, just send to stdout
   IF NOT KEYWORD_SET(lun) THEN lun = -1
 

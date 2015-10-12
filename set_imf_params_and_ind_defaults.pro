@@ -199,10 +199,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
 
   ;;********************************************
   ;;Set up some other strings
-  IF minILAT GT 0 THEN hemStr='North' ELSE IF maxILAT LT 0 THEN hemStr='South' $
-  ELSE BEGIN 
-     printf,lun,"Which hemisphere?" & hemStr = '??'
-  ENDELSE
+  ;; IF minILAT GT 0 THEN hemStr='North' ELSE IF maxILAT LT 0 THEN hemStr='South' $
+  ;; ELSE BEGIN 
+  ;;    printf,lun,"Which hemisphere?" & hemStr = '??'
+  ;; ENDELSE
   
   ;;satellite string
   omniStr = ""
@@ -216,7 +216,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   IF N_ELEMENTS(paramStrPrefix) EQ 0 THEN paramStrPrefix = "" ;; ELSE paramStrPrefix = paramStrPrefix + "--"
 
   ;;parameter string
-  paramString=paramStrPrefix+hemStr+'_'+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+"_"+delayStr+$
+  paramString=paramStrPrefix+hemi+'_'+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+"_"+delayStr+$
            byMinStr+byMaxStr+bzMinStr+bzMaxStr+paramStrSuffix+hoyDia
 
   printf,lun,""
@@ -235,7 +235,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   printf,lun,FORMAT='("Altitude                      :",T35,I8,T45,I8)',altitudeRange[0],altitudeRange[1]
   printf,lun,FORMAT='("Char electron energy (eV)     :",T35,G8.2,T45,G8.2)',charERange[0],charERange[1]
   printf,lun,FORMAT='("")'
-  printf,lun,FORMAT='("Hemisphere                    :",T35,A8)',hemStr
+  printf,lun,FORMAT='("Hemisphere                    :",T35,A8)',hemi
   printf,lun,FORMAT='("IMF Predominance              :",T35,A8)',clockStr
   printf,lun,FORMAT='("Angle lim 1                   :",T35,I8)',angleLim1
   printf,lun,FORMAT='("Angle lim 2                   :",T35,I8)',angleLim2

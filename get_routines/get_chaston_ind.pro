@@ -133,8 +133,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
      IF good_i NE !NULL THEN final_i_ACEstart=cgsetintersection(final_i_ACEstart,good_i)
   ENDIF
 
-  IF N_ELEMENTS(dbTimes) EQ 0 THEN dbTimes=str_to_time( dbStruct.time( final_i_ACEstart ) ) $
-  ELSE dbTimes = dbTimes[final_i_ACEstart]
+  ;; IF N_ELEMENTS(dbTimes) EQ 0 THEN dbTimes=str_to_time( dbStruct.time( final_i_ACEstart ) ) $
+  ;; ELSE dbTimes = dbTimes[final_i_ACEstart]
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;Now some other user-specified exclusions set by keyword

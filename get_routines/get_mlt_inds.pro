@@ -1,5 +1,7 @@
 FUNCTION GET_MLT_INDS,maximus,minM,maxM,DAYSIDE=dayside,NIGHTSIDE=nightside,N_ILAT=n_ilat,N_OUTSIDE_MLT=n_outside_MLT,LUN=lun
 
+  COMPILE_OPT idl2
+
   IF KEYWORD_SET(dayside) THEN BEGIN
      mlt_i = WHERE(maximus.mlt GE 0.0 AND maximus.mlt LE 18.0,NCOMPLEMENT=n_outside_MLT)
      

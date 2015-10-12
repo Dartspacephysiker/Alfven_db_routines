@@ -1,5 +1,7 @@
 FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ilat,LUN=lun
 
+  COMPILE_OPT idl2
+
   IF N_ELEMENTS(lun) EQ 0 THEN lun=-1 ;;stdout
 
   IF N_ELEMENTS(maximus) EQ 0 THEN BEGIN
