@@ -9,7 +9,7 @@
 ;2015/08/15 Added NO_BURSTDATA keyword
 
 FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CHASTDB=CHASTDB, $
-                         ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange,CHARERANGE=charERange, $
+                         ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange,CHARERANGE=charERange,POYNTRANGE=poyntRange, $
                          BOTH_HEMIS=both_hemis,NORTH=north,SOUTH=south,HEMI=hemi, $
                          HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                          MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
@@ -114,6 +114,19 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
         RETURN, -1
      ENDELSE
   ENDIF
+
+  ;; was using this to compare our Poynting flux estimates against Keiling et al. 2003 Fig. 3
+  IF KEYWORD_SET(poyntRange) AND is_maximus THEN BEGIN
+     IF N_ELEMENTS(poyntRange) NE 2 OR (poyntRange[1] LE poyntRange[0]) THEN BEGIN
+        PRINT,"Invalid Poynting range specified! poyntRange should be a two-element vector, [minPoynt maxPoynt]"
+        PRINT,"No Poynting range set..."
+        RETURN, -1
+     ENDIF ELSE BEGIN
+        plot_i=cgsetintersection(plot_i,where(dbStruct.pFluxEst GE poyntRange[0] AND dbStruct.pFluxEst LE poyntRange[1]))
+        printf,lun,FORMAT='("Poynting flux limits (eV)     :",T35,G8.2,T45,G8.2)',poyntRange[0],poyntRange[1]
+     ENDELSE
+  ENDIF
+
 
   ;;gotta screen to make sure it's in ACE db too:
   ;;Only so many are useable, since ACE data start in 1998
