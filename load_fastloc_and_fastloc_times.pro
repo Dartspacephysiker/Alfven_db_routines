@@ -5,7 +5,8 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t,DBDir=D
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout
 
   DefDBDir = '/SPENCEdata/Research/Cusp/database/time_histos/'
-  DefDBFile = 'fastLoc_intervals2--500-16361_all--20150613.sav'
+  ;; DefDBFile = 'fastLoc_intervals2--500-16361_all--20150613.sav'
+  DefDBFile = 'fastLoc_intervals2--500-16361_all--w_lshell--20151015.sav'
   DefDB_tFile = 'fastLoc_intervals2--500-16361_all--20150613--times.sav'
 
   IF N_ELEMENTS(DBDir) EQ 0 THEN DBDir = DefDBDir

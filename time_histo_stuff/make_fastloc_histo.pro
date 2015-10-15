@@ -17,6 +17,7 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
                        OUTTIMEHISTO=outTimeHisto, FASTLOC_INDS=fastLoc_inds, $
                        MINMLT=minMLT,MAXMLT=maxMLT,BINMLT=binMLT, $
                        MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
+                       DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
                        MINALT=minAlt,MAXALT=maxAlt,BINALT=binAlt, $
                        FASTLOCFILE=fastLocFile,FASTLOCTIMEFILE=fastLocTimeFile, $
                        OUTFILEPREFIX=outFilePrefix,OUTFILESUFFIX=outFileSuffix, OUTDIR=outDir, $
@@ -37,11 +38,14 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
+  IF KEYWORD_SET(DO_lShell) THEN latTypeStr = "_lShell" ELSE latTypeStr = "_ILAT"
   ;set up outfilename
   ;It's gotta be standardized!
   minOrb = MIN(fastLoc.orbit,MAX=maxOrb)
-  fNameSansPref = STRING(format='(A0,I0,"-",I0,"-",G0.2,"_MLT--",I0,"-",I0,"-",G0.2,"_ILAT",A0)', $
-                         outFilePrefix,minMLT,maxMLT,binMLT,minILAT,maxILAT,binILAT,outFileSuffix)
+  fNameSansPref = STRING(format='(A0,I0,"-",I0,"-",G0.2,"_MLT--",I0,"-",I0,"-",G0.2,A0,A0)', $
+                         outFilePrefix,minMLT,maxMLT,binMLT, $
+                         (KEYWORD_SET(do_lShell) ? minLshell : minILAT),(KEYWORD_SET(do_lShell) ? maxLshell : maxILAT), $
+                         (KEYWORD_SET(do_lShell) ? binLshell : binILAT),latTypeStr,outFileSuffix)
   outFileName=fNameSansPref + ".sav"
 
   IF FILE_TEST(outDir+outFileName) THEN BEGIN
@@ -60,8 +64,8 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
         
         OPENW,textLun,outDir+textFileName,/GET_LUN
         PRINTF,textLun,"Output from make_fastloc_histo"
-        PRINTF,textLun,"The filename gives {min,max,binsize}{MLT,ILAT}--{min,max}Orb"
-        PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T20,"Time in bin (minutes)")'
+        PRINTF,textLun,"The filename gives {min,max,binsize}{MLT,(ILAT|lShell)}--{min,max}Orb"
+        PRINTF,textLun,FORMAT='("MLT",T10,"(ILAT|lShell)",T25,"Time in bin (minutes)")'
      ENDIF
      
      ;;avoid any trickery
@@ -92,10 +96,10 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      
                                 ;set up grid
      nXlines=(maxMLT-minMLT)/binMLT + 1
-     nYlines=(maxILAT-minILAT)/binILAT + 1
+     nYlines=((KEYWORD_SET(do_lShell) ? maxLshell : maxILAT)-(KEYWORD_SET(do_lShell) ? minLshell : minILAT))/(KEYWORD_SET(do_lShell) ? binLshell : binILAT) + 1
      
      mlts=indgen(nXlines)*binMLT+minMLT
-     ilats=indgen(nYlines)*binILAT+minILAT
+     ilats=indgen(nYlines)*(KEYWORD_SET(do_lShell) ? binLshell : binILAT)+(KEYWORD_SET(do_lShell) ? minLshell : minILAT)
      
      nMLT = N_ELEMENTS(mlts)
      nILAT = N_ELEMENTS(ilats)
@@ -106,10 +110,11 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      FOR j=0, nILAT-2 DO BEGIN 
         FOR i=0, nMLT-2 DO BEGIN 
            ;; tempNCounts = N_ELEMENTS(WHERE(fastLoc.MLT GE mlts[i] AND fastLoc.MLT LT mlts[i+1] AND $
-           ;;                                fastLoc.ILAT GE ilats[j] AND fastLoc.ILAT LT ilats[j+1],/NULL))
+           ;;                                (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) GE ilats[j] AND (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) LT ilats[j+1],/NULL))
            ;; tempBinTime = tempNCounts * delta_T
            tempInds = WHERE(fastLoc.MLT GE mlts[i] AND fastLoc.MLT LT mlts[i+1] AND $
-                            fastLoc.ILAT GE ilats[j] AND fastLoc.ILAT LT ilats[j+1],/NULL)
+                            (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) GE ilats[j] AND $
+                            (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) LT ilats[j+1],/NULL)
            IF tempInds NE !NULL THEN BEGIN
               tempBinTime = TOTAL(DOUBLE(fastLoc_delta_t[tempInds]))
               outTimeHisto[i,j] = tempBinTime
