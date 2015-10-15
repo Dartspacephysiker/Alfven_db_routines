@@ -1,5 +1,6 @@
 PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                                   MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                                  MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
                                   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi,LUN=lun
 
   COMPILE_OPT idl2
@@ -14,6 +15,10 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
   defMinI     = 50
   defMaxI     = 86
   defBinI     = 2.0
+
+  defMinL     = (cos(defMinI*!PI/180.))^(-2)
+  defMaxL     = (cos(defMaxI*!PI/180.))^(-2)
+  defBinL     = 0.5
 
   defMinMC    = 10
   defMaxNegMC = -10
@@ -52,6 +57,10 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
      ENDELSE
   ENDELSE
   IF N_ELEMENTS(binI) EQ 0 THEN binI = defBinI
+
+  IF N_ELEMENTS(minL) EQ 0 THEN minL=defMinL
+  IF N_ELEMENTS(maxL) EQ 0 THEN maxL=defMaxL
+  IF N_ELEMENTS(binL) EQ 0 THEN binL=defBinL
 
   IF N_ELEMENTS(minMC) EQ 0 THEN minMC = defMinMC                  ; Minimum current derived from mag data, in microA/m^2
   IF N_ELEMENTS(maxNegMC) EQ 0 THEN maxNegMC = defMaxNegMC         ; Current must be less than this, if it's going to make the cut

@@ -14,8 +14,8 @@ FUNCTION RESIZE_FASTLOC,fastLoc,fastLoc_inds,FASTLOC_TIMES=fastLoc_times,FASTLOC
            FIELDS_MODE:fastLoc.FIELDS_MODE(fastLoc_inds),$
            INTERVAL:fastLoc.INTERVAL(fastLoc_inds),$
            INTERVAL_START:fastLoc.INTERVAL_START(fastLoc_inds),$
-           INTERVAL_STOP:fastLoc.INTERVAL_STOP(fastLoc_inds)$
-          }
+           INTERVAL_STOP:fastLoc.INTERVAL_STOP(fastLoc_inds),$
+           LSHELL:fastLoc.lShell(fastLoc_inds)}
   
   IF N_ELEMENTS(fastLoc_Times) NE 0 THEN fastLoc_Times = fastLoc_Times[fastLoc_inds]
   IF N_ELEMENTS(fastLoc_delta_t) NE 0 THEN fastLoc_delta_t = fastLoc_delta_t[fastLoc_inds]

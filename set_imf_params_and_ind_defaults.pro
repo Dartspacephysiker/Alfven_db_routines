@@ -71,11 +71,12 @@
 ;                       2015/10/09 : This pro was born in an attempt to consolidate probably four or five versions of the same
 ;                                    code floating around the FAST repositories. Not any longer!
 ;                       
-;                       
+;                       2015/10/15 : Adding L-shell stuff
 ;-
 PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                     ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                     minMLT=minMLT,maxMLT=maxMLT,BINMLT=binMLT,MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
+                                    DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
                                     MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                     HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                     BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax,BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
@@ -119,9 +120,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Now set up vars
 
-  ; Handle MLT and ILAT
+  ; Handle MLT and ILAT ... and L-shell
   SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minMLT,MAXMLT=maxMLT,BINM=binMLT, $
                                 MINILAT=minILAT,MAXILAT=maxILAT,BINI=binILAT, $
+                                MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
                                 MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                 HEMI=hemi,LUN=lun
 
@@ -192,6 +194,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      bzMaxStr='bzMax_' + String(bzMax,format='(D0.1)') + '_'
   ENDIF
 
+  lShellStr=''
+  IF KEYWORD_SET(do_lShell) THEN lShellStr='lShell--'
 
   ;Aujour d'hui
   hoyDia= STRCOMPRESS(STRMID(SYSTIME(0), 4, 3),/REMOVE_ALL) + "_" + $
@@ -216,7 +220,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   IF N_ELEMENTS(paramStrPrefix) EQ 0 THEN paramStrPrefix = "" ;; ELSE paramStrPrefix = paramStrPrefix + "--"
 
   ;;parameter string
-  paramString=paramStrPrefix+hemi+'_'+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+"_"+delayStr+$
+  paramString=paramStrPrefix+hemi+'_'+clockStr+"--"+lShellStr+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+"_"+delayStr+$
            byMinStr+byMaxStr+bzMinStr+bzMaxStr+paramStrSuffix+hoyDia
 
   printf,lun,""
@@ -229,6 +233,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   printf,lun,FORMAT='("")'
   printf,lun,FORMAT='("MLT                           :",T35,I8,T45,I8)',minMLT,maxMLT
   printf,lun,FORMAT='("ILAT                          :",T35,I8,T45,I8)',minILAT,maxILAT
+  printf,lun,FORMAT='("(L-shell)                     :",T35,I8,T45,I8)',minlShell,maxlShell
   printf,lun,FORMAT='("Mag current                   :",T35,G8.2,T45,G8.2)',maxNEGMC,minMC
   printf,lun,FORMAT='("")'
   printf,lun,FORMAT='("Orbits                        :",T35,I8,T45,I8)',orbRange[0],orbRange[1]

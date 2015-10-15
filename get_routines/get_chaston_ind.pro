@@ -5,6 +5,7 @@
 ;See 'current_event_Poynt_flux_vs_imf.pro' for
 ;more info, since that's where this code comes from.
 
+;2015/10/15 Added L-shell stuff
 ;2015/10/09 Overhauling so that this can be used for time histos or Alfven DB structures
 ;2015/08/15 Added NO_BURSTDATA keyword
 
@@ -13,6 +14,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
                          BOTH_HEMIS=both_hemis,NORTH=north,SOUTH=south,HEMI=hemi, $
                          HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                          MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                         DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
                          MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
                          NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i
@@ -28,7 +30,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   ;;***********************************************
   ;;Load up all the dater, working from ~/Research/ACE_indices_data/idl
   
-  SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI,MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi
+  SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
+                                  MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                                  MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                                  MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi,LUN=lun
 
   IF KEYWORD_SET(get_time_i_NOT_alfvendb_i) THEN BEGIN
      LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile
@@ -56,10 +61,14 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
 
   ;;;;;;;;;;;;
   ;;Handle latitudes
-  ilat_i = GET_ILAT_INDS(dbStruct,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ilat,LUN=lun)
+  IF KEYWORD_SET(do_lShell) THEN BEGIN
+     lshell_i = GET_LSHELL_INDS(dbStruct,minL,maxL,hemi,N_LSHELL=n_lshell,N_NOT_LSHELL=n_not_lshell,LUN=lun)
+  ENDIF ELSE BEGIN
+     ilat_i = GET_ILAT_INDS(dbStruct,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ilat,LUN=lun)
+  ENDELSE
   ;;;;;;;;;;;;
   ;;Handle longitudes
-  mlt_i = GET_MLT_INDS(dbStruct,minM,maxM,DAYSIDE=dayside,NIGHTSIDE=nightside,N_ILAT=n_ilat,N_OUTSIDE_MLT=n_outside_MLT,LUN=lun)
+  mlt_i = GET_MLT_INDS(dbStruct,minM,maxM,DAYSIDE=dayside,NIGHTSIDE=nightside,N_MLT=n_mlt,N_OUTSIDE_MLT=n_outside_MLT,LUN=lun)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Want just Holzworth/Meng statistical auroral oval?
@@ -68,7 +77,12 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
 
   ;;;;;;;;;;;;;;;;;;;;;;
   ;;Now combine them all
-  final_i=cgsetintersection(ilat_i,mlt_i)
+  IF KEYWORD_SET(do_lShell) THEN BEGIN
+     final_i=cgsetintersection(lshell_i,mlt_i)
+  ENDIF ELSE BEGIN
+     final_i=cgsetintersection(ilat_i,mlt_i)
+  ENDELSE
+
   IF is_maximus THEN BEGIN
      magc_i = GET_MAGC_INDS(dbStruct,minMC,maxNegMC,N_OUTSIDE_MAGC=n_magc_outside_range)
      final_i=cgsetintersection(final_i,magc_i)
@@ -132,8 +146,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   ;;Only so many are useable, since ACE data start in 1998
   
   sat_i=GET_SATELLITE_INDS(dbStruct,satellite,LUN=lun)
-  final_i_ACEstart=final_i[where(final_i GE sat_i,$
-                                                                 nGood,complement=lost,ncomplement=nlost)]
+  final_i_ACEstart=final_i[where(final_i GE sat_i,nGood,complement=lost,ncomplement=nlost)]
   lost=final_i[lost]
 
   ;;Now, clear out all the garbage (NaNs & Co.)
