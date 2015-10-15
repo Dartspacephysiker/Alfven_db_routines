@@ -1,7 +1,7 @@
 ;2015/08/25
 ;Tell me when we have data for 
 PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
-                                        MAXIMUS=maximus,CDBTIME=cdbtime, RESTRICT_W_THESEINDS=restrict, $
+                                        DBSTRUCT=dbStruct,DBTIMES=dbTimes, RESTRICT_W_THESEINDS=restrict, $
                                         OUT_INDS=inds, $
                                         UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
                                         INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs,TSPANS_ORBS=tspans_orbs, $
@@ -17,18 +17,18 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
         PRINT,'Restricting with specified inds...'
         PRINT,'(' + STRCOMPRESS(N_ELEMENTS(restrict),/REMOVE_ALL) + ' inds provided...)'
      ENDIF
-     ;; maximus=RESIZE_MAXIMUS(maximus,CDBTIME=cdbtime,inds=restrict)
+     ;; dbStruct=RESIZE_MAXIMUS(dbStruct,CDBTIME=dbTimes,inds=restrict)
   ENDIF ELSE BEGIN
      IF KEYWORD_SET(verbose) THEN BEGIN
         PRINT,'No restriction on inds...'
      ENDIF
-     restrict = INDGEN(N_ELEMENTS(maximus),/L64)
+     restrict = INDGEN(N_ELEMENTS(dbStruct),/L64)
   ENDELSE
 
-  inds_ii = WHERE(cdbTime(restrict) GE t1 AND cdbTime(restrict) LE t2,nInds)
-  inds = restrict(inds_ii)
-
+  inds_ii = WHERE(dbTimes(restrict) GE t1 AND dbTimes(restrict) LE t2,nInds)
   IF inds_ii[0] EQ -1 THEN BEGIN
+
+     inds = -1
 
      uniq_orb_inds = -1
      uniq_orbs = -1
@@ -39,10 +39,12 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
 
   ENDIF ELSE BEGIN
 
-     uniq_orb_inds_ii = UNIQ(maximus.orbit(inds))
+     inds = restrict(inds_ii)
+
+     uniq_orb_inds_ii = UNIQ(dbStruct.orbit(inds))
      uniq_orb_inds = inds(uniq_orb_inds_ii)
 
-     uniq_orbs = maximus.orbit(uniq_orb_inds)
+     uniq_orbs = dbStruct.orbit(uniq_orb_inds)
      nUniq_orbs = N_ELEMENTS(uniq_orb_inds)
      
      inds_orbs = MAKE_ARRAY(nUniq_orbs,2,/L64)
@@ -52,7 +54,7 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
      FOR i=0,nUniq_orbs-1 DO BEGIN
         orb = uniq_orbs[i]
 
-        orbInds_ii = WHERE(maximus.orbit(inds) EQ orb)
+        orbInds_ii = WHERE(dbStruct.orbit(inds) EQ orb)
         orbInds = inds(orbInds_ii)
 
         IF KEYWORD_SET(verbose) THEN BEGIN
@@ -61,7 +63,7 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
            PRINT,''
         ENDIF
 
-        IF orbInds_ii[0] NE -1 THEN orbMin = MIN(cdbTime(orbInds),orbMin_ii,MAX=orbMax,SUBSCRIPT_MAX=orbMax_ii)
+        IF orbInds_ii[0] NE -1 THEN orbMin = MIN(dbTimes(orbInds),orbMin_ii,MAX=orbMax,SUBSCRIPT_MAX=orbMax_ii)
         
         inds_orbs[i,0] = orbInds(orbMin_ii)
         inds_orbs[i,1] = orbInds(orbMax_ii)
