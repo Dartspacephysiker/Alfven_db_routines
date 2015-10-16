@@ -16,19 +16,26 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
   defMaxI     = 86
   defBinI     = 2.0
 
-  defMinL     = (cos(defMinI*!PI/180.))^(-2)
-  defMaxL     = (cos(defMaxI*!PI/180.))^(-2)
-  defBinL     = 0.5
+  ;; defMinL     = (cos(defMinI*!PI/180.))^(-2)
+  ;; defMaxL     = (cos(defMaxI*!PI/180.))^(-2)
+  defMinL     = 1
+  defMaxL     = 20
+  defBinL     = 1.0
 
   defMinMC    = 10
   defMaxNegMC = -10
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
+  ;;Handle MLTs
   IF N_ELEMENTS(minM) EQ 0 THEN minM=defMinM
   IF N_ELEMENTS(maxM) EQ 0 THEN maxM=defMaxM
   IF N_ELEMENTS(binM) EQ 0 THEN binM=defBinM
 
+  minM=FLOOR(minM*4.0)/4.0  ;to 1/4 precision
+  maxM=FLOOR(maxM*4.0)/4.0 
+
+  ;;Handle ILATs
   IF N_ELEMENTS(hemi) EQ 0 THEN BEGIN
      hemi = defHemi
      hemi = STRUPCASE(hemi)
@@ -58,16 +65,16 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
   ENDELSE
   IF N_ELEMENTS(binI) EQ 0 THEN binI = defBinI
 
+  minI=FLOOR(minI*4.0)/4.0 
+  maxI=FLOOR(maxI*4.0)/4.0 
+
+  ;;Handle L-shells
   IF N_ELEMENTS(minL) EQ 0 THEN minL=defMinL
   IF N_ELEMENTS(maxL) EQ 0 THEN maxL=defMaxL
   IF N_ELEMENTS(binL) EQ 0 THEN binL=defBinL
 
+  ;;Handle mag current
   IF N_ELEMENTS(minMC) EQ 0 THEN minMC = defMinMC                  ; Minimum current derived from mag data, in microA/m^2
   IF N_ELEMENTS(maxNegMC) EQ 0 THEN maxNegMC = defMaxNegMC         ; Current must be less than this, if it's going to make the cut
-
-  minM=FLOOR(minM*4.0)/4.0  ;to 1/4 precision
-  maxM=FLOOR(maxM*4.0)/4.0 
-  minI=FLOOR(minI*4.0)/4.0 
-  maxI=FLOOR(maxI*4.0)/4.0 
 
 END

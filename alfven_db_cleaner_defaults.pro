@@ -82,3 +82,17 @@
   
   ;;Cutoff for width_time (FAST spin period is 4.946 s)
   width_t_cutoff = 4.946*0.5
+
+
+  ;;just to be safe
+  mlt_hcutoff = 24
+  mlt_lcutoff = 0
+
+  ilat_hcutoff = 90
+  ilat_lcutoff = -90
+
+  orbit_hcutoff = 16361
+  orbit_lcutoff = 500
+
+  fieldsmode_lcutoff = 0
+
