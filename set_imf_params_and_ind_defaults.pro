@@ -223,26 +223,4 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   paramString=paramStrPrefix+hemi+'_'+clockStr+"--"+lShellStr+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+"_"+delayStr+$
            byMinStr+byMaxStr+bzMinStr+bzMaxStr+paramStrSuffix+hoyDia
 
-  printf,lun,""
-  printf,lun,"**********DATA SUMMARY**********"
-  printf,lun,FORMAT='(A4, " satellite delay          :",T35,I8,T45," seconds")',satellite,delay
-  printf,lun,FORMAT='("IMF stability requirement     :",T35,I8,T45," minutes")',stableIMF
-  printf,lun,FORMAT='("")'
-  printf,lun,"************"
-  printf,lun,FORMAT='("Screening parameters          :",T35,"   [Min]",T45,"   [Max]")'
-  printf,lun,FORMAT='("")'
-  printf,lun,FORMAT='("MLT                           :",T35,I8,T45,I8)',minMLT,maxMLT
-  printf,lun,FORMAT='("ILAT                          :",T35,I8,T45,I8)',minILAT,maxILAT
-  printf,lun,FORMAT='("(L-shell)                     :",T35,I8,T45,I8)',minlShell,maxlShell
-  printf,lun,FORMAT='("Mag current                   :",T35,G8.2,T45,G8.2)',maxNEGMC,minMC
-  printf,lun,FORMAT='("")'
-  printf,lun,FORMAT='("Orbits                        :",T35,I8,T45,I8)',orbRange[0],orbRange[1]
-  printf,lun,FORMAT='("Altitude                      :",T35,I8,T45,I8)',altitudeRange[0],altitudeRange[1]
-  printf,lun,FORMAT='("Char electron energy (eV)     :",T35,G8.2,T45,G8.2)',charERange[0],charERange[1]
-  printf,lun,FORMAT='("")'
-  printf,lun,FORMAT='("Hemisphere                    :",T35,A8)',hemi
-  printf,lun,FORMAT='("IMF Predominance              :",T35,A8)',clockStr
-  printf,lun,FORMAT='("Angle lim 1                   :",T35,I8)',angleLim1
-  printf,lun,FORMAT='("Angle lim 2                   :",T35,I8)',angleLim2
-
 END

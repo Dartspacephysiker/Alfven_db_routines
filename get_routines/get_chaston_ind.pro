@@ -8,6 +8,7 @@
 ;2015/10/15 Added L-shell stuff
 ;2015/10/09 Overhauling so that this can be used for time histos or Alfven DB structures
 ;2015/08/15 Added NO_BURSTDATA keyword
+;2015;10/19 Added PRINT_PARAM_SUMMARY keyword
 
 FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CHASTDB=CHASTDB, $
                          ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange,CHARERANGE=charERange,POYNTRANGE=poyntRange, $
@@ -17,7 +18,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
                          DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
                          MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
-                         NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i
+                         NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i, $
+                         PRINT_PARAM_SUMMARY=print_param_summary
   COMPILE_OPT idl2
  
   ;For statistical auroral oval
@@ -25,6 +27,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   defHwMKpInd=7
 
   defLun = -1
+
+  ;; defPrintSummary = 0
 
   is_maximus = 0        ;We assume this is not maximus
   ;;***********************************************
@@ -48,6 +52,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
 
 
   IF ~KEYWORD_SET(lun) THEN lun = defLun ;stdout
+
+  ;; IF ~KEYWORD_SET(print_param_summary) THEN print_param_summary = defPrintSummary
 
   ;;Welcome message
   printf,lun,""
@@ -180,6 +186,17 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   PRINTF,lun,''
   printf,lun,"****END get_chaston_ind.pro****"
   printf,lun,""
+
+  IF KEYWORD_SET(print_param_summary) THEN PRINT_SUMMARY_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+   ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+   minMLT=minM,maxMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+   DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+   HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
+   BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax, BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+   PARAMSTRING=paramStr, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
+   SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
+   HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
+   HOYDIA=hoyDia,LUN=lun
 
   RETURN, final_i_ACEstart
   
