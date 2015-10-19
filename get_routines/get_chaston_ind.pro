@@ -34,10 +34,28 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   ;;***********************************************
   ;;Load up all the dater, working from ~/Research/ACE_indices_data/idl
   
+  IF ~KEYWORD_SET(lun) THEN lun = defLun ;stdout
+
+  IF KEYWORD_SET(both_hemis) THEN BEGIN
+     PRINTF,lun,"hemi set to 'BOTH' via keyword /BOTH_HEMIS"
+     hemi="BOTH"
+  ENDIF ELSE BEGIN
+     IF KEYWORD_SET(north) THEN BEGIN
+        PRINTF,lun,"hemi set to 'NORTH' via keyword /NORTH"
+        hemi="NORTH"
+     ENDIF ELSE BEGIN
+        IF KEYWORD_SET(south) THEN BEGIN
+           PRINTF,lun,"hemi set to 'SOUTH' via keyword /SOUTH"
+           hemi="SOUTH"
+        ENDIF
+     ENDELSE
+  ENDELSE
+
+
   SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
-                                  MINILAT=minI,MAXILAT=maxI,BINI=binI, $
-                                  MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
-                                  MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi,LUN=lun
+                                MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                                MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi,LUN=lun
 
   IF KEYWORD_SET(get_time_i_NOT_alfvendb_i) THEN BEGIN
      LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile
@@ -50,8 +68,6 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   IF ~KEYWORD_SET(HwMAurOval) THEN HwMAurOval = defHwMAurOval
   IF ~KEYWORD_SET(HwMKpInd) THEN HwMKpInd = defHwMKpInd
 
-
-  IF ~KEYWORD_SET(lun) THEN lun = defLun ;stdout
 
   ;; IF ~KEYWORD_SET(print_param_summary) THEN print_param_summary = defPrintSummary
 
@@ -182,21 +198,22 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
      PRINTF,lun,''
   ENDIF
 
+  IF KEYWORD_SET(print_param_summary) THEN PRINT_SUMMARY_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+     ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+     minMLT=minM,maxMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+     DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+     MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+     HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
+     BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax, BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+     PARAMSTRING=paramStr, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
+     SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
+     HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
+     HOYDIA=hoyDia,LUN=lun
+  
   printf,lun,"There are " + strtrim(n_elements(final_i_ACEstart),2) + " total indices making the cut." 
   PRINTF,lun,''
   printf,lun,"****END get_chaston_ind.pro****"
   printf,lun,""
-
-  IF KEYWORD_SET(print_param_summary) THEN PRINT_SUMMARY_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-   ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-   minMLT=minM,maxMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
-   DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-   HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-   BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax, BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
-   PARAMSTRING=paramStr, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
-   SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-   HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
-   HOYDIA=hoyDia,LUN=lun
 
   RETURN, final_i_ACEstart
   

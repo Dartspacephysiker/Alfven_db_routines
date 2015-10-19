@@ -1,7 +1,10 @@
+;2015/10/19 Barnebarn
+
 PRO PRINT_SUMMARY_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
    minMLT=minM,maxMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
    DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
    HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
    BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax, BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
    PARAMSTRING=paramStr, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
@@ -17,10 +20,10 @@ PRO PRINT_SUMMARY_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angle
   printf,lun,"************"
   printf,lun,FORMAT='("Screening parameters",T30,":",T35,"   [Min]",T45,"   [Max]")'
   printf,lun,FORMAT='("")'
-  IF KEYWORD_SET(minMLT)    AND KEYWORD_SET(maxMLT)    THEN printf,lun,FORMAT='("MLT",T30,":",T35,I8,T45,I8)',minMLT,maxMLT
-  IF KEYWORD_SET(maxILAT)   AND KEYWORD_SET(maxILAT)   THEN printf,lun,FORMAT='("ILAT",T30,":",T35,I8,T45,I8)',minILAT,maxILAT
-  IF KEYWORD_SET(minlShell) AND KEYWORD_SET(maxlShell) THEN printf,lun,FORMAT='("(L-shell)",T30,":",T35,I8,T45,I8)',minlShell,maxlShell
-  IF KEYWORD_SET(minMC)     AND KEYWORD_SET(maxMC)     THEN printf,lun,FORMAT='("Mag current",T30,":",T35,G8.2,T45,G8.2)',maxNEGMC,minMC
+  IF KEYWORD_SET(minM)  AND KEYWORD_SET(maxM)     THEN printf,lun,FORMAT='("MLT",T30,":",T35,I8,T45,I8)',minM,maxM
+  IF KEYWORD_SET(maxI)  AND KEYWORD_SET(maxI)     THEN printf,lun,FORMAT='("ILAT",T30,":",T35,I8,T45,I8)',minI,maxI
+  IF KEYWORD_SET(minL)  AND KEYWORD_SET(maxL)     THEN printf,lun,FORMAT='("(L-shell)",T30,":",T35,I8,T45,I8)',minL,maxL
+  IF KEYWORD_SET(minMC) AND KEYWORD_SET(maxNegMC) THEN printf,lun,FORMAT='("Mag current",T30,":",T35,G8.2,T45,G8.2)',maxNegMC,minMC
   printf,lun,FORMAT='("")'
   IF KEYWORD_SET(orbRange)      THEN printf,lun,FORMAT='("Orbits",T30,":",T35,I8,T45,I8)',orbRange[0],orbRange[1]
   IF KEYWORD_SET(altitudeRange) THEN printf,lun,FORMAT='("Altitude",T30,":",T35,I8,T45,I8)',altitudeRange[0],altitudeRange[1]
