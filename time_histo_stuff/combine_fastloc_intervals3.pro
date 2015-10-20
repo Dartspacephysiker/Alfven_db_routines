@@ -1,7 +1,10 @@
-;2015/04/07 This files reads what gets parsed by rd_fastloc_output
-;fastloc_intervals1 uses electron data to get data intervals and outputs FAST ephemeris data at the same resolution as the ESA data.
-;fastloc_intervals2 uses electron data to get data intervals, but outputs data with 5-s resolution (as opposed to the resolution of
-;the particle data).
+;2015/10/20 This files reads what gets parsed by rd_fastloc3_output
+;*fastloc_intervals1 uses electron data to get data intervals and outputs FAST ephemeris data at the same resolution as the ESA data.
+;*fastloc_intervals2 uses electron data to get data intervals, but outputs data with 5-s resolution (as opposed to the resolution of
+;  the particle data).
+;*fastloc_intervals3 uses electron data to get data intervals at 5-s resolution, and very importantly includes the sample period of 
+;  the fluxgate magnetometer.
+
 PRO combine_fastloc_intervals3,fastLoc
 
   date='20151020'
@@ -16,7 +19,9 @@ PRO combine_fastloc_intervals3,fastLoc
   fNameSuffLen=STRLEN(fNameSuffix)
 
   outDir='/SPENCEdata/Research/Cusp/database/time_histos/'
-  outSuffix='500-12500--below_aur_oval'
+  ;; outSuffix='500-3126--below_aur_oval'
+  ;; outSuffix='3127-5999--below_aur_oval'
+  outSuffix='6000-12999--below_aur_oval'
   outFileSansFExt = 'fastLoc_intervals3--'+outSuffix+'--'+date
   outFile = outFileSansFExt+'.sav'
   outTimeFile = outFileSansFExt+'--times.sav'
@@ -25,8 +30,8 @@ PRO combine_fastloc_intervals3,fastLoc
  ;open file to write list of orbits included
   OPENW,outlun,contents_file,/get_lun
 
-  min_orbit=500
-  max_orbit=12500
+  min_orbit=6000
+  max_orbit=12999
   ;; max_orbit=16361
 
   FOR j=min_orbit,max_orbit DO BEGIN

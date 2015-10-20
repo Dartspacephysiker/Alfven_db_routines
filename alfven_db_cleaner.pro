@@ -12,6 +12,8 @@
 ; OUTPUTS:
 ;
 ; MODIFICATION HISTORY:  
+; 2015/10/20    Incorporating BASIC_DB_CLEANER routine here to try to keep some uniformity between the Alfven wave DB and the FAST
+;               ephemeris DB.
 ; 2015/08/19    A bunch of limits got changed yesterday. I think I include more extreme events, but based on the distributions of the
 ;                 relevant quantities, they don't seem to be physically unreasonable.
 ; 2015/08/18    Thought about adding specific keyword so that ChastDB gets treated on its own each time.
@@ -42,73 +44,75 @@ function alfven_db_cleaner,maximus,IS_CHASTDB=is_chastDB,LUN=lun
 
   @alfven_db_cleaner_defaults.pro
 
+  good_i = BASIC_DB_CLEANER(maximus)
+
   ;**********
   ;   NaNs  *
   ;**********
 
-  IF ~KEYWORD_SET(IS_CHASTDB) THEN BEGIN
-     ;; Get rid of junk in various dangerous quantities we might be using
+  ;; IF ~KEYWORD_SET(IS_CHASTDB) THEN BEGIN
+  ;;    ;; Get rid of junk in various dangerous quantities we might be using
      
-     ;;number of events in total
-     n_events = n_elements(maximus.alfvenic)
+  ;;    ;;number of events in total
+  ;;    ;; n_events = n_elements(maximus.alfvenic)
      
-     ;; Cutoff values
+  ;;    ;; Cutoff values
   
-     ;;Gots to be alfvenic
-     alfvenic=1
+  ;;    ;;Gots to be alfvenic
+  ;;    alfvenic=1
 
-     ;; alfvenicness
-     good_i = where(maximus.alfvenic GT 0.1,/NULL )
+  ;;    ;; alfvenicness
+  ;;    ;; good_i = where(maximus.alfvenic GT 0.1,/NULL )
      
-     ;; delta Bs and delta Es
-     good_i = cgsetintersection(good_i,WHERE(FINITE(maximus.delta_B),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.delta_E),/NULL))
+  ;;    ;; delta Bs and delta Es
+  ;;    ;; good_i = cgsetintersection(good_i,WHERE(FINITE(maximus.delta_B),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.delta_E),/NULL))
      
-     ;; Now electron stuff
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.elec_energy_flux),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.integ_elec_energy_flux),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.eflux_losscone_integ),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.total_eflux_integ),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.max_chare_losscone),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.max_chare_total),/NULL))
+  ;;    ;; Now electron stuff
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.elec_energy_flux),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.integ_elec_energy_flux),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.eflux_losscone_integ),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.total_eflux_integ),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.max_chare_losscone),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.max_chare_total),/NULL))
      
-     ;; Now ion stuff
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.ion_energy_flux),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.ion_flux),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.ion_flux_up),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.integ_ion_flux),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.integ_ion_flux_up),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.char_ion_energy),/NULL))
+  ;;    ;; Now ion stuff
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.ion_energy_flux),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.ion_flux),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.ion_flux_up),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.integ_ion_flux),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.integ_ion_flux_up),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.char_ion_energy),/NULL))
      
-  ENDIF ELSE BEGIN
+  ;; ENDIF ELSE BEGIN
 
-     n_events = n_ELEMENTS(maximus.time)
-     ;; delta Bs and delta Es
-     good_i = indgen(n_events,/L64)
-     good_i = cgsetintersection(good_i,WHERE(FINITE(maximus.delta_B),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.delta_E),/NULL))
+  ;;    n_events = n_ELEMENTS(maximus.time)
+  ;;    ;; delta Bs and delta Es
+  ;;    ;; good_i = indgen(n_events,/L64)
+  ;;    ;; good_i = cgsetintersection(good_i,WHERE(FINITE(maximus.delta_B),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.delta_E),/NULL))
      
-     ;; Now electron stuff
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.elec_energy_flux),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.integ_elec_energy_flux),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.char_elec_energy),/NULL))
+  ;;    ;; Now electron stuff
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.elec_energy_flux),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.integ_elec_energy_flux),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.char_elec_energy),/NULL))
      
-     ;; Now ion stuff
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.ion_energy_flux),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.ion_flux),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.ion_flux_up),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.integ_ion_flux),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.integ_ion_flux_up),/NULL))
-     good_i = cgsetintersection(good_i,where(FINITE(maximus.char_ion_energy),/NULL))
+  ;;    ;; Now ion stuff
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.ion_energy_flux),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.ion_flux),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.ion_flux_up),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.integ_ion_flux),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.integ_ion_flux_up),/NULL))
+  ;;    ;; good_i = cgsetintersection(good_i,where(FINITE(maximus.char_ion_energy),/NULL))
 
-  ENDELSE 
+  ;; ENDELSE
 
   printf,lun,""
   printf,lun,"****From alfven_db_cleaner.pro****"
 
-  nlost = n_events-n_elements(good_i)
-  printf,lun,FORMAT='("N lost to NaNs, infinities    :",T35,I0)',nlost
-  n_events -=nlost
+  ;; nlost = n_events-n_elements(good_i)
+  ;; printf,lun,FORMAT='("N lost to NaNs, infinities    :",T35,I0)',nlost
+  ;; n_events -=nlost
   
   ;******************
   ;   Other limits  *
