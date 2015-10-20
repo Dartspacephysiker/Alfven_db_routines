@@ -1,12 +1,13 @@
 ;2015/04/07 The purpose of this pro is to read the files outputted by any of the fastloc* batch jobs
 ;and slap them into a 'dat' struct for us
-PRO rd_fastloc3_output,filename,dat,outname
+;2015/10/20 Included FNAMESUFF keyword so that we can still pull the interval number out of the file name
+PRO rd_fastloc3_output,filename,dat,outname,FNAMESUFFLEN=fNameSuffLen
   fieldtypes=[3,7,4,4,4,4,4]
   fieldnames=['Orbit','Time','ALT','MLT','ILAT','FIELDS_MODE','SAMPLE_T']
   fieldlocations=[0,10,34,47,60,73,86]
   fieldgroups=[0,1,2,3,4,5,6]
 
-  data_template={version:3.0,$
+  data_template={version:1.0,$
                  datastart:8,$
                  delimiter:' ',$
                  missingvalue:!Values.F_NAN,$
@@ -35,7 +36,7 @@ PRO rd_fastloc3_output,filename,dat,outname
  
   ;interval stuff
   fNameLength = STRLEN(filename)
-  interval = LONG(STRMID(filename,fNameLength-1,1))
+  interval = LONG(STRMID(filename,fNameLength-1-(KEYWORD_SET(fNameSuffLen) ? fNameSuffLen : 0),1))
   interval = MAKE_ARRAY(n_elements(dat.orbit),VALUE=interval)
   t_start =  MAKE_ARRAY(n_elements(dat.orbit),VALUE=t_start)
   t_stop =  MAKE_ARRAY(n_elements(dat.orbit),VALUE=t_stop)

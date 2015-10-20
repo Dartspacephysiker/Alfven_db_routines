@@ -4,7 +4,7 @@
 ;the particle data).
 PRO combine_fastloc_intervals3,fastLoc
 
-  date='20151016'
+  date='20151020'
 
   fastLoc_DB='/SPENCEdata/software/sdt/batch_jobs/FASTlocation/batch_output__intervals/'
   contents_file='./orbits_contained_in_fastloc_'+date+'.txt'
@@ -13,9 +13,10 @@ PRO combine_fastloc_intervals3,fastLoc
   ;; fNameSuffix=''
   fNamePrefix='Dartmouth_fastloc_intervals3'
   fNameSuffix='--below_aur_oval'
+  fNameSuffLen=STRLEN(fNameSuffix)
 
   outDir='/SPENCEdata/Research/Cusp/database/time_histos/'
-  outSuffix='500-16361--below_aur_oval'
+  outSuffix='500-12500--below_aur_oval'
   outFileSansFExt = 'fastLoc_intervals3--'+outSuffix+'--'+date
   outFile = outFileSansFExt+'.sav'
   outTimeFile = outFileSansFExt+'--times.sav'
@@ -25,7 +26,8 @@ PRO combine_fastloc_intervals3,fastLoc
   OPENW,outlun,contents_file,/get_lun
 
   min_orbit=500
-  max_orbit=16361
+  max_orbit=12500
+  ;; max_orbit=16361
 
   FOR j=min_orbit,max_orbit DO BEGIN
      
@@ -38,7 +40,7 @@ PRO combine_fastloc_intervals3,fastLoc
            IF result THEN BEGIN
               print,j,jj
               printf,outlun,j,jj
-              rd_fastloc3_output,result,dat
+              rd_fastloc3_output,result,dat,FNAMESUFFLEN=fNameSuffLen
               IF j GT min_orbit THEN BEGIN
                  fastLoc={ORBIT:[fastLoc.orbit,dat.orbit],$
                           TIME:[fastLoc.time,dat.time],$
