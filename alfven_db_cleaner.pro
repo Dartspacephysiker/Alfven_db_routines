@@ -44,7 +44,8 @@ function alfven_db_cleaner,maximus,IS_CHASTDB=is_chastDB,LUN=lun
 
   @alfven_db_cleaner_defaults.pro
 
-  good_i = BASIC_DB_CLEANER(maximus)
+  n_events = n_elements(maximus.orbit)
+  good_i = BASIC_DB_CLEANER(maximus,DO_CHASTDB=is_chastDB)
 
   ;**********
   ;   NaNs  *
