@@ -177,7 +177,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   IF is_maximus THEN BEGIN
      good_i = alfven_db_cleaner(dbStruct,LUN=lun,IS_CHASTDB=chastDB)
      IF good_i NE !NULL THEN final_i_ACEstart=cgsetintersection(final_i_ACEstart,good_i)
-  ENDIF
+  ENDIF ELSE BEGIN
+     good_i = fastloc_cleaner(dbStruct,LUN=lun)
+     IF good_i NE !NULL THEN final_i_ACEstart=cgsetintersection(final_i_ACEstart,good_i)
+  ENDELSE
 
   ;; IF N_ELEMENTS(dbTimes) EQ 0 THEN dbTimes=str_to_time( dbStruct.time( final_i_ACEstart ) ) $
   ;; ELSE dbTimes = dbTimes[final_i_ACEstart]

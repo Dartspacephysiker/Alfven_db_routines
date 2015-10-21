@@ -22,7 +22,7 @@ PRO combine_fastloc_intervals3,fastLoc
   ;; outSuffix='500-3126--below_aur_oval'
   ;; outSuffix='3127-5999--below_aur_oval'
   ;; outSuffix='6000-10780--below_aur_oval'
-  outSuffix='10781-14770--below_aur_oval'
+  outSuffix='14064-16361--below_aur_oval'
   outFileSansFExt = 'fastLoc_intervals3--'+outSuffix+'--'+date
   outFile = outFileSansFExt+'.sav'
   outTimeFile = outFileSansFExt+'--times.sav'
@@ -31,9 +31,8 @@ PRO combine_fastloc_intervals3,fastLoc
  ;open file to write list of orbits included
   OPENW,outlun,contents_file,/get_lun
 
-  min_orbit=10781
-  max_orbit=14770
-  ;; max_orbit=16361
+  min_orbit=14064
+  max_orbit=16361
 
   FOR j=min_orbit,max_orbit DO BEGIN
      
