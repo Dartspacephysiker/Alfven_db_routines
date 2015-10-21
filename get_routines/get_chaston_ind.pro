@@ -96,7 +96,6 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   ;;Want just Holzworth/Meng statistical auroral oval?
   IF HwMAurOval THEN ind_region=cgsetintersection(ind_region,where(abs(dbStruct.ilat) GT auroral_zone(dbStruct.mlt,HwMKpInd,/lat)/(!DPI)*180.))
 
-
   ;;;;;;;;;;;;;;;;;;;;;;
   ;;Now combine them all
   IF KEYWORD_SET(do_lShell) THEN BEGIN
@@ -167,9 +166,11 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   ;;gotta screen to make sure it's in ACE db too:
   ;;Only so many are useable, since ACE data start in 1998
   
-  sat_i=GET_SATELLITE_INDS(dbStruct,satellite,LUN=lun)
-  final_i_ACEstart=final_i[where(final_i GE sat_i,nGood,complement=lost,ncomplement=nlost)]
-  lost=final_i[lost]
+  IF KEYWORD_SET(satellite) THEN BEGIN
+     sat_i=GET_SATELLITE_INDS(dbStruct,satellite,LUN=lun)
+     final_i_ACEstart=final_i[where(final_i GE sat_i,nGood,complement=lost,ncomplement=nlost)]
+     lost=final_i[lost]
+  ENDIF
 
   ;;Now, clear out all the garbage (NaNs & Co.)
   ;; IF KEYWORD_SET(chastDB) THEN restore,defChastDB_cleanIndFile ELSE good_i = alfven_db_cleaner(dbStruct,LUN=lun)

@@ -6,10 +6,12 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
                           MASKMIN=maskMin, $
                           SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                           HEMI=hemi, $
+                          DO_IMF_CONDS=do_IMF_conds, $
                           CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                           BYMIN=byMin, BZMIN=bzMin, $
                           BYMAX=byMax, BZMAX=bzMax, $
                           DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
+                          DO_UTC_RANGE=DO_UTC_range,T1_ARR=t1_arr,T2_ARR=t2_arr, $             
                           NPLOTS=nPlots, NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
                           EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, LOGEFPLOT=logEfPlot, $
                           ABSEFLUX=abseflux, NOPOSEFLUX=noPosEFlux, NONEGEFLUX=noNegEflux, EPLOTRANGE=EPlotRange, $
@@ -258,17 +260,19 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
 
   IF KEYWORD_SET(nEventPerMinPlot) OR KEYWORD_SET(probOccurrencePlot) THEN BEGIN 
      tHistDenominator = GET_TIMEHIST_DENOMINATOR(CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-                                                 ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                                 ORBRANGE=orbRang0e, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                                 DO_IMF_CONDS=do_IMF_conds, $
                                                  BYMIN=byMin, BYMAX=byMax, BZMIN=bzMin, BZMAX=bzMax, SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                                                 HEMI=hemi, $
                                                  DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
+                                                 DO_UTC_RANGE=DO_UTC_range,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                                  MINM=minM,MAXM=maxM,BINM=binM, $
                                                  MINI=minI,MAXI=maxI,BINI=binI, $
                                                  DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
+                                                 HEMI=hemi, $
                                                  FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastLoc_delta_t, $
                                                  FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                                  BURSTDATA_EXCLUDED=burstData_excluded, $
-                                                 DATANAME=dataName,DATARAWPTR=dataRawPtr,KEEPME=keepme)
+                                                 DATANAMEARR=dataNameArr,DATARAWPTRARR=dataRawPtrArr,KEEPME=keepme)
      
      ;;########NEvents/minute########
      IF KEYWORD_SET(nEventPerMinPlot) THEN BEGIN
