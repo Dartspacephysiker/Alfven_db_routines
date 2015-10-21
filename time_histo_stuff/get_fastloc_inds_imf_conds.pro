@@ -1,8 +1,9 @@
 ;+
+;2015/10/21 Now using output from fastloc_intervals3, which includes magnetometer sampling rates
 ;2015/04/09
 ;this can be used as a standalone routine or else called by plot_alfven_stats_imf_screening when
 ;making a plot of n events per minute
-;-o
+;-
 PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                BYMIN=byMin, BYMAX=byMax, BZMIN=bzMin, BZMAX=bzMax, SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
@@ -27,18 +28,45 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
   ;;Load FASTLoc & Co.
   LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t,DBDir=DBDir,DBFile=FastLocFile,DB_tFile=FastLocTimeFile,LUN=lun
   
-  SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-                                  ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                                  minMLT=minM,maxMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
-                                  MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-                                  HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                                  BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax, BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
-                                  PARAMSTRING=paramStr, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
-                                  SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                                  HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
-                                  HOYDIA=hoyDia,LUN=lun  
+  SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, POYNTRANGE=poyntRange, $
+                             MINMLT=minM,MAXMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                             DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+                             MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+                             HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
+                             MIN_NEVENTS=min_nEvents, MASKMIN=maskMin, $
+                             HEMI=hemi, $
+                             NPLOTS=nPlots, $
+                             EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, $
+                             ENUMFLPLOTS=eNumFlPlots, ENUMFLPLOTTYPE=eNumFlPlotType, $
+                             PPLOTS=pPlots, $
+                             IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, $
+                             CHAREPLOTS=charEPlots, CHARETYPE=charEType, $
+                             ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
+                             NEVENTPERORBPLOT=nEventPerOrbPlot, $
+                             NEVENTPERMINPLOT=nEventPerMinPlot, $
+                             PROBOCCURRENCEPLOT=probOccurrencePlot, $
+                             SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
+                             MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, $
+                             DATADIR=dataDir, NO_BURSTDATA=no_burstData, $
+                             WRITEASCII=writeASCII, WRITEHDF5=writeHDF5, WRITEPROCESSEDH2D=writeProcessedH2d, $
+                             SAVERAW=saveRaw, RAWDIR=rawDir, $
+                             SHOWPLOTSNOSAVE=showPlotsNoSave, $
+                             PLOTDIR=plotDir, PLOTPREFIX=plotPrefix, PLOTSUFFIX=plotSuffix, $
+                             MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
+                             OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
+                             KEEPME=keepMe, $
+                             PARAMSTRING=paramString,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
+                             HOYDIA=hoyDia,LUN=lun,_EXTRA=e
 
-  defOutIndsPrefix = 'fastLoc_intervals2'
+  SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+                                    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                    BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax,BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+                                    PARAMSTRING=paramString, $
+                                    SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
+                                    DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
+                                    LUN=lun
+
+  defOutIndsPrefix = 'fastLoc_intervals3'
 
   ;;********************************************
   ;;Build output filename based on stuff provided

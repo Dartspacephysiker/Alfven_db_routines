@@ -29,7 +29,6 @@
 ;                    BZMIN             :  Minimum value of IMF Bz during an event to accept the event for inclusion in the analysis.
 ;                    BYMAX             :  Maximum value of IMF By during an event to accept the event for inclusion in the analysis.
 ;                    BZMAX             :  Maximum value of IMF Bz during an event to accept the event for inclusion in the analysis.
-;                    HEMI              :  Hemisphere for which to show statistics. Can be "North", "South", or "Both".
 ;
 ;                *IMF SATELLITE PARAMETERS
 ;                    SATELLITE         :  Satellite to use for checking FAST data against IMF.
@@ -46,9 +45,6 @@
 ;                    HWMAUROVAL        :  Only include those data that are above the statistical auroral oval.
 ;                    HWMKPIND          :  Kp Index to use for determining the statistical auroral oval (def: 7)
 ;
-;                  *VARIOUS OUTPUT OPTIONS
-;		     PARAMSTRPREFIX    :     
-;		     PARAMSTRSUFFIX    :     
 ;
 ; KEYWORD PARAMETERS:
 ;
@@ -75,15 +71,11 @@
 ;-
 PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                     ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                                    minMLT=minMLT,maxMLT=maxMLT,BINMLT=binMLT,MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
-                                    DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
-                                    MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-                                    HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                     BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax,BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
-                                    PARAMSTRING=paramString, PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
+                                    PARAMSTRING=paramString, $
                                     SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                                    HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
-                                    HOYDIA=hoyDia,LUN=lun
+                                    DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
+                                    LUN=lun
 
   COMPILE_OPT idl2
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
@@ -108,24 +100,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   
   defBx_over_ByBz_Lim    = 0       ;Set this to the max ratio of Bx / SQRT(By*By + Bz*Bz)
   
-  ;for statistical auroral oval
-  defHwMAurOval          = 0
-  defHwMKpInd            = 7
-
   defClockStr            = 'dawnward'
   
   defAngleLim1           = 60.0
   defAngleLim2           = 120.0
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;Now set up vars
-
-  ; Handle MLT and ILAT ... and L-shell
-  SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minMLT,MAXMLT=maxMLT,BINM=binMLT, $
-                                MINILAT=minILAT,MAXILAT=maxILAT,BINI=binILAT, $
-                                MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
-                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-                                HEMI=hemi,LUN=lun
 
   ;;***********************************************
   ;;RESTRICTIONS ON DATA, SOME VARIABLES
@@ -135,10 +113,6 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
 
   IF N_ELEMENTS(altitudeRange) EQ 0 THEN altitudeRange = defAltRange ;Rob Pfaff says no lower than 1000m
   
-  ;Auroral oval
-  IF N_ELEMENTS(HwMAurOval) EQ 0 THEN HwMAurOval = defHwMAurOval
-  IF N_ELEMENTS(HwMKpInd) EQ 0 THEN HwMKpInd = defHwMKpInd
-
   ;;********************************************
   ;;satellite data options
   
@@ -194,19 +168,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      bzMaxStr='bzMax_' + String(bzMax,format='(D0.1)') + '_'
   ENDIF
 
-  lShellStr=''
-  IF KEYWORD_SET(do_lShell) THEN lShellStr='lShell--'
-
-  ;Aujour d'hui
-  hoyDia= STRCOMPRESS(STRMID(SYSTIME(0), 4, 3),/REMOVE_ALL) + "_" + $
-          STRCOMPRESS(STRMID(SYSTIME(0), 8,2),/REMOVE_ALL) + "_" + STRCOMPRESS(STRMID(SYSTIME(0), 22, 2),/REMOVE_ALL)
-
   ;;********************************************
   ;;Set up some other strings
-  ;; IF minILAT GT 0 THEN hemStr='North' ELSE IF maxILAT LT 0 THEN hemStr='South' $
-  ;; ELSE BEGIN 
-  ;;    printf,lun,"Which hemisphere?" & hemStr = '??'
-  ;; ENDELSE
   
   ;;satellite string
   omniStr = ""
@@ -216,11 +179,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
 
   IF KEYWORD_SET(smoothWindow) THEN smoothStr = strtrim(smoothWindow,2)+"min_IMFsmooth--" ELSE smoothStr=""
 
-  IF N_ELEMENTS(paramStrSuffix) EQ 0 THEN paramStrSuffix = "" ;; ELSE paramStrSuffix = "--" + paramStrSuffix
-  IF N_ELEMENTS(paramStrPrefix) EQ 0 THEN paramStrPrefix = "" ;; ELSE paramStrPrefix = paramStrPrefix + "--"
+
 
   ;;parameter string
-  paramString=paramStrPrefix+hemi+'_'+clockStr+"--"+lShellStr+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+"_"+delayStr+$
-           byMinStr+byMaxStr+bzMinStr+bzMaxStr+paramStrSuffix+hoyDia
+  paramString=paramString+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+"_"+delayStr+$
+           byMinStr+byMaxStr+bzMinStr+bzMaxStr
 
 END

@@ -7,8 +7,8 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; If no provided locations, then don't restrict based on ILAT, MLT
-  defMinM     = 6
-  defMaxM     = 18
+  defMinM     = 0
+  defMaxM     = 24
   defBinM     = 1.0
 
   defHemi     = 'North'

@@ -1,6 +1,6 @@
 ;2015/10/19 Barnebarn
 
-PRO PRINT_SUMMARY_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+PRO PRINT_ALFVENDB_PLOTSUMMARY,maximus,plot_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
    minMLT=minM,maxMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
    DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
@@ -10,7 +10,7 @@ PRO PRINT_SUMMARY_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angle
    PARAMSTRING=paramStr, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
    SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
    HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
-   HOYDIA=hoyDia,LUN=lun
+   HOYDIA=hoyDia,MASKMIN=maskMin,LUN=lun
   
   printf,lun,""
   printf,lun,"**********DATA SUMMARY**********"
@@ -33,5 +33,12 @@ PRO PRINT_SUMMARY_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angle
   IF KEYWORD_SET(clockStr)      THEN printf,lun,FORMAT='("IMF Predominance",T30,":",T35,A8)',clockStr
   IF KEYWORD_SET(angleLim1)     THEN printf,lun,FORMAT='("Angle lim 1",T30,":",T35,I8)',angleLim1
   IF KEYWORD_SET(angleLim2)     THEN printf,lun,FORMAT='("Angle lim 2",T30,":",T35,I8)',angleLim2
+
+  IF KEYWORD_SET(maskMin)       THEN printf,lun,FORMAT='("Events per bin req",T30,": >=",T35,I8)',maskMin
+  printf,lun,FORMAT='("Number of orbits used",T30,":",T35,I8)',N_ELEMENTS(UNIQ(maximus.orbit(plot_i),SORT(maximus.orbit(plot_i))))
+  printf,lun,FORMAT='("Total N events",T30,":",T35,I8)',N_ELEMENTS(plot_i)
+;; printf,lun,FORMAT='("Percentage of Chaston DB used: ",T35,I0)' + $
+;;        strtrim((N_ELEMENTS(plot_i))/134925.0*100.0,2) + "%"
+  printf,lun,FORMAT='("Percentage of DB used",T30,":",T35,G8.4,"%")',(FLOAT(N_ELEMENTS(plot_i))/FLOAT(n_elements(maximus.orbit))*100.0)
 
 END

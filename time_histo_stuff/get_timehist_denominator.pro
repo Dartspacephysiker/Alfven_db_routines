@@ -1,7 +1,6 @@
 FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                   ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                   BYMIN=byMin, BYMAX=byMax, BZMIN=bzMin, BZMAX=bzMax, SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                                  LOGNEVENTPERMIN=logNEventPerMin,NEVENTPERMINRANGE=nEventPerMinRange, $
                                   HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                   MINM=minM,MAXM=maxM,BINM=binM, $
                                   MINI=minI,MAXI=maxI,BINI=binI, $

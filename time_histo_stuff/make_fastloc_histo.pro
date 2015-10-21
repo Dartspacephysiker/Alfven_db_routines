@@ -1,3 +1,4 @@
+;2015/10/21 Now using DB produced by fastloc_intervals3
 ;2015/04/07
 ;The purpose of this pro is to now take fastloc output that has been processed by combine_fastloc_intervals and to make a
 ;'denominator histogram', so to speak, so we know where events are actually happening. 
@@ -27,7 +28,7 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
 
 
   ;def outputs
-  defOutFilePrefix = 'fastLoc_intervals2--timeHisto--INDS_from_get_fastloc_inds_imf_conds'
+  defOutFilePrefix = 'fastLoc_intervals3--timeHisto--INDS_from_get_fastloc_inds_imf_conds'
   ;; defOutFileSuffix = '--timeHisto'
   defOutFileSuffix = ''
   defOutDir = '/SPENCEdata/Research/Cusp/database/time_histos/'
