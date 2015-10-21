@@ -38,7 +38,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
 
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
-  GET_NEVENTS_AND_MASK,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
+  GET_H2D_NEVENTS_AND_MASK,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
                          DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                          NEVENTSPLOTRANGE=nEventsPlotRange, $
                          TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -281,7 +281,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
                                   DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                   LOGNEVENTPERMIN=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logNEventPerMin)),NEVENTPERMINRANGE=nEventPerMinRange, $
                                   H2DSTR=h2dStr,TMPLT_H2DSTR=tmplt_h2dStr,H2DFLUXN=h2dFluxN, $
-                                  DATANAME=dataName,DATARAWPTR=dataRawPtr,KEEPME=keepme
+                                  DATANAME=dataName,DATARAWPTR=dataRawPtr
 
         h2dStrArr=[h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 

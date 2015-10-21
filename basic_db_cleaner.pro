@@ -13,7 +13,7 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun,CLEAN_NANS_AND_INFINITIES=clean_nans_
   IF KEYWORD_SET(clean_nans_and_infinities) THEN BEGIN
      dbTags = tag_names(dbStruct)
      IF is_maximus THEN BEGIN
-        IF DO_CHASTDB THEN BEGIN
+        IF KEYWORD_SET(do_ChastDB) THEN BEGIN
            clean_these_inds = [INDGEN(21),28]
         ENDIF ELSE BEGIN
            clean_these_inds = [INDGEN(26),32,48,49,50]

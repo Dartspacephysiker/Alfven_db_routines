@@ -170,7 +170,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
      sat_i=GET_SATELLITE_INDS(dbStruct,satellite,LUN=lun)
      final_i_ACEstart=final_i[where(final_i GE sat_i,nGood,complement=lost,ncomplement=nlost)]
      lost=final_i[lost]
-  ENDIF
+  ENDIF ELSE BEGIN
+     final_i_ACEstart = final_i
+  ENDELSE
 
   ;;Now, clear out all the garbage (NaNs & Co.)
   ;; IF KEYWORD_SET(chastDB) THEN restore,defChastDB_cleanIndFile ELSE good_i = alfven_db_cleaner(dbStruct,LUN=lun)

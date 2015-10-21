@@ -1,4 +1,4 @@
-PRO GET_NEVENTS_AND_MASK,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
+PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
                          DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                          NEVENTSPLOTRANGE=nEventsPlotRange, $
                          TMPLT_H2DSTR=tmplt_h2dStr, $

@@ -242,6 +242,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              PARAMSTRING=paramStr,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
                              HOYDIA=hoyDia,LUN=lun,_EXTRA=e
   
+  SET_UTCPLOT_PARAMS_AND_IND_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                      PARAMSTRING=paramString, $
+                                      LUN=lun
+
   ;;Open file for text summary, if desired
   IF KEYWORD_SET(outputPlotSummary) THEN $
      OPENW,lun,plotDir + 'outputSummary_'+paramStr+'.txt',/GET_LUN $
@@ -304,7 +308,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         BYMIN=byMin, BZMIN=bzMin, $
                         BYMAX=byMax, BZMAX=bzMax, $
                         DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
-                        DO_UTC_RANGE=DO_UTC_range,T1_ARR=t1_arr,T2_ARR=t2_arr, $             
+                        /DO_UTC_RANGE,T1_ARR=t1_arr,T2_ARR=t2_arr, $             
                         NPLOTS=nPlots, NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
                         EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, LOGEFPLOT=logEfPlot, $
                         ABSEFLUX=abseflux, NOPOSEFLUX=noPosEFlux, NONEGEFLUX=noNegEflux, EPLOTRANGE=EPlotRange, $

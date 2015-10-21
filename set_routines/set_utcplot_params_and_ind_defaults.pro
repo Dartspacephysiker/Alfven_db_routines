@@ -42,7 +42,7 @@
 ;                       2015/10/21 : This pro was born while making that newfangled utc plotter deal
 ;                       
 ;-
-PRO SET_UTC_PARAMS_AND_IND_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+PRO SET_UTCPLOT_PARAMS_AND_IND_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                     PARAMSTRING=paramString, $
                                     LUN=lun
 

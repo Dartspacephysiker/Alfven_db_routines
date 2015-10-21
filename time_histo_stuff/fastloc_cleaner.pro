@@ -51,7 +51,7 @@ FUNCTION FASTLOC_CLEANER,fastLoc,LUN=lun
   printf,lun,""
   printf,lun,"****From fastloc_cleaner.pro****"
 
-  good_i = basic_db_cleaner(fastLoc)
+  good_i = basic_db_cleaner(fastLoc,/CLEAN_NANS_AND_INFINITIES)
 
   ;******************
   ;   Other limits  *
