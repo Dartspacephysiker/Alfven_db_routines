@@ -64,7 +64,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
               ENDIF ELSE BEGIN
                  ;;Create a PostScript file.
                  cgPS_Open, plotDir + paramStr+dataNameArr[i]+'.ps' 
-                 interp_polar2dhist,h2dStrArr[i],tempFile,_extra=e 
+                 PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile,_extra=e 
                  cgPS_Close 
                  ;;Create a PNG file with a width of 800 pixels.
                  cgPS2Raster, plotDir + paramStr+dataNameArr[i]+'.ps', $

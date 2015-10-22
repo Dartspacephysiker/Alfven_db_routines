@@ -167,7 +167,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                  ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, POYNTRANGE=poyntRange, NUMORBLIM=numOrbLim, $
                                  MINMLT=minMLT,MAXMLT=maxMLT,BINMLT=binMLT,MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
-                                 DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
+                                 DO_LSHELL=do_lShell,REVERSE_LSHELL=reverse_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
                                  HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                  MIN_NEVENTS=min_nEvents, MASKMIN=maskMin, $
                                  HEMI=hemi, $
@@ -343,7 +343,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
 
   IF N_ELEMENTS(squarePlot) EQ 0 THEN BEGIN
      SAVE_ALFVENDB_TEMPDATA,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,$
-                            MAXM=maxM,MINM=minM,MAXI=maxI,MINI=minI,BINM=binM,BINI=binI,DO_LSHELL=do_lShell,$
+                            MAXM=maxM,MINM=minM,MAXI=maxI,MINI=minI,BINM=binM,BINI=binI, $
+                            DO_LSHELL=do_lShell,REVERSE_LSHELL=reverse_lShell, $
                             MINL=minL,MAXL=maxL,BINL=binL,$
                             RAWDIR=rawDir,PARAMSTR=paramStr,$
                             CLOCKSTR=clockStr,PLOTMEDORAVG=plotMedOrAvg,STABLEIMF=stableIMF,HOYDIA=hoyDia,HEMI=hemi,TEMPFILE=tempFile

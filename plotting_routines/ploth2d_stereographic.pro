@@ -82,17 +82,28 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      ilats   = LSHELL_TO_ILAT_PARABOLA_FIT(lShells,MINL=minL,MAXL=maxL,MINI=minI,MAXI=maxI)
      ;; ilats   = ROUND(ilats)
      ilats   = DOUBLE(ROUND(ilats*4))/4
+
+     ;; gridLats      = LSHELL_TO_ILAT_PARABOLA_FIT(defGridLshells,MINL=minL,MAXL=maxL,MINI=minI,MAXI=maxI)
+     ;; gridLatNames  = defGridLshells
+     gridLats      = LSHELL_TO_ILAT_PARABOLA_FIT(lShells[0:-1:3],MINL=minL,MAXL=maxL,MINI=minI,MAXI=maxI)
+     gridLatNames  = lShells[0:-1:3]
+
+     IF KEYWORD_SET(reverse_lShell) THEN BEGIN
+        temp.data = REVERSE(temp.data,2)
+        gridLatNames = REVERSE(gridLatNames)
+     ENDIF
   ENDIF ELSE BEGIN
      nYlines=(maxI-minI)/binI + 1
      ilats=indgen(nYlines)*binI + minI
+
+     gridLats      = defGridLats
+     gridLatNames  = defGridLats
   ENDELSE
 
 
   IF mirror THEN BEGIN
      ilats = -1.0 * ilats 
   ENDIF
-
-  mlts=mlts*15
 
   ;;binary matrix to tell us where masked values are
   masked=(h2dStrArr[nPlots].data GT 250.0)
@@ -114,48 +125,33 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   IF OOB_HIGH_i[0] NE -1 THEN h2descl(OOB_HIGH_i) = BYTE(nLevels-1)
   IF OOB_LOW_i[0] NE -1 THEN h2descl(OOB_LOW_i) = 0B
 
-  mltFactor=binM*15/2.0
-
-  ;Initialize integrals for each hemi
-  dawnIntegral=(temp.do_plotIntegral) ? 0L : DOUBLE(0.0)
-  duskIntegral=(temp.do_plotIntegral) ? 0L : DOUBLE(0.0)
-
+  ;;******************************
+  ;;PLOT STUFF
+  ;;******************************
   ;;Get polyfill vertices
-  lonsLats = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(lons,lats, $
-                                                     BINSIZE_LON=binsize_lon,BINSIZE_LAT=binsize_lat, $
-                                                     CONVERT_MLT_TO_LON=convert_MLT_to_lon, $
-                                                     DEBUG=debug)
+  lonsLats = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(mlts,ilats, $
+                                                     BINSIZE_LON=binM,BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
+                                                     /CONVERT_MLT_TO_LON,COUNTERCLOCKWISE=KEYWORD_SET(reverse_lShell))
 
-  H2D_STEREOGRAPHIC_EXECUTE_POLYFILL,lonsLats, $
-                                     H2D_MASKED=h2d_masked,MASKCOLOR=maskColor, $
-                                     DEBUG=debug
+  ;;Fill up dat plot
+  H2D_STEREOGRAPHIC_EXECUTE_POLYFILL,lonsLats,h2descl, $
+                                     H2D_MASKED=masked,MASKCOLOR=maskColor
+  ;;Calc an integral?
   IF temp.do_plotIntegral THEN BEGIN
-     H2D_STEREOGRAPHIC_INTEGRAL,data,lonsLats, $
-                                H2D_MASKED=h2d_masked, $
-                                INTEGRAL=integ,ABSINTEGRAL=absInteg, $
+     H2D_STEREOGRAPHIC_INTEGRAL,temp,lonsLats, $
+                                H2D_MASKED=masked, $
+                                INTEGRAL=integral,ABSINTEGRAL=absIntegral, $
                                 DAWNINTEGRAL=dawnIntegral,DUSKINTEGRAL=duskIntegral
   ENDIF
-
 
   ;;******************************
   ;;Grid stuffs
   ;;******************************
-
-  IF KEYWORD_SET(do_lShell) THEN BEGIN
-     ;; lats      = LSHELL_TO_ILAT_PARABOLA_FIT(defGridLshells,MINL=minL,MAXL=maxL,MINI=minI,MAXI=maxI)
-     ;; latNames  = defGridLshells
-     lats      = LSHELL_TO_ILAT_PARABOLA_FIT(lShells[0:-1:3],MINL=minL,MAXL=maxL,MINI=minI,MAXI=maxI)
-     latNames  = lShells[0:-1:3]
-  ENDIF ELSE BEGIN
-     lats      = defGridLats
-     latNames  = defGridLats
-  ENDELSE
-
-  ;;add grid to latitude lines
+  ;;add thicker grid to a few latitude lines
   cgMap_Grid, Clip_Text=1, /NoClip, thick=(!D.Name EQ 'PS') ? defGridBoldLineThick_PS : defGridBoldLineThick,$
               LINESTYLE=defBoldGridLineStyle,COLOR=defGridColor, $
               LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : defBoldLatDelta),LONDELTA=defBoldLonDelta, $
-              LATS=(KEYWORD_SET(do_lShell) ? lats : !NULL)
+              LATS=(KEYWORD_SET(do_lShell) ? gridLats : !NULL)
               
 
   ;; Add map grid. Set the Clip_Text keyword to enable the NO_CLIP graphics keyword. 
@@ -181,17 +177,17 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
 
      IF mirror THEN BEGIN
         ;;    ;;IF N_ELEMENTS(wholeCap) NE 0 THEN lonNames = [lonNames[0],REVERSE(lonNames[1:*])]
-        lats = -1.0 * lats
-        latNames = -1.0 * latNames
+        gridLats = -1.0 * gridLats
+        gridLatNames = -1.0 * gridLatNames
      ENDIF 
      
-     latNames=STRING(latNames,format=latLabelFormat)
-     latNames[mirror ? -1 : 0] = latNames[mirror ? -1 : 0] + ( KEYWORD_SET(DO_lShell) ? " L-shell" : " ILAT" )
+     gridLatNames=STRING(gridLatNames,format=latLabelFormat)
+     gridLatNames[mirror ? -1 : 0] = gridLatNames[mirror ? -1 : 0] + ( KEYWORD_SET(DO_lShell) ? " L-shell" : " ILAT" )
 
      cgMap_Grid, Clip_Text=1, /NoClip, /LABEL, /NO_GRID, linestyle=0, thick=3, color=defGridTextColor, $
 ;;                 latdelta=(KEYWORD_SET(do_lShell) ? binL : binI )*4,$
-                 LATS=lats, $
-                 LATNAMES=latNames, $
+                 LATS=gridLats, $
+                 LATNAMES=gridLatNames, $
                  ;; LATLABEL=(mean([minM,maxM]))*15+15, $
                  LATLABEL=45, $
                  ;;latlabel=((maxM-minM)/2.0+minM)*15-binM*7.5,
@@ -226,8 +222,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   IF temp.do_plotIntegral THEN BEGIN
      IF N_ELEMENTS(clockStr) NE 0 THEN cgText,lTexPos1,bTexPos1+clockStrOffset,"IMF " + clockStr,/NORMAL,CHARSIZE=defCharSize 
      
-     IF NOT (temp.is_logged) THEN cgText,lTexPos1,bTexPos2,'|Integral|: ' + string(absInteg,Format=integralLabelFormat),/NORMAL,CHARSIZE=defCharSize
-     cgText,lTexPos1,bTexPos1,'Integral: ' + string(integ,Format=integralLabelFormat),/NORMAL,CHARSIZE=defCharSize 
+     IF NOT (temp.is_logged) THEN cgText,lTexPos1,bTexPos2,'|Integral|: ' + string(absIntegral,Format=integralLabelFormat),/NORMAL,CHARSIZE=defCharSize
+     cgText,lTexPos1,bTexPos1,'Integral: ' + string(integral,Format=integralLabelFormat),/NORMAL,CHARSIZE=defCharSize 
      cgText,lTexPos2,bTexPos1,'Dawnward: ' + string(dawnIntegral,Format=integralLabelFormat),/NORMAL,CHARSIZE=defCharSize 
      cgText,lTexPos2,bTexPos2,'Duskward: ' + string(duskIntegral,Format=integralLabelFormat),/NORMAL,CHARSIZE=defCharSize 
   ENDIF
