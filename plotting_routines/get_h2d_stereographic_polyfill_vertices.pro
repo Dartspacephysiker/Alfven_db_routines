@@ -20,7 +20,9 @@ FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
   FOR j=0, nLats-2 DO BEGIN 
      FOR i=0, nLons-2 DO BEGIN 
         IF KEYWORD_SET(counterclockwise) THEN BEGIN
-           tempLats=[lats[nLats-1-j],lats[nLats-1-j]-binsize_lat/2.0,lats[nLats-2-j]]
+           ;; tempLats=[lats[nLats-1-j],lats[nLats-1-j]-binsize_lat/2.0,lats[nLats-2-j]]
+           ;; tempLons=[lons[i],lons[i],lons[i]] 
+           tempLats=[lats[j+1],lats[j+1]-binsize_lat/2.0,lats[j]]
            tempLons=[lons[i],lons[i],lons[i]] 
         ENDIF ELSE BEGIN
            tempLats=[lats[j],lats[j]+binsize_lat/2.0,lats[j+1]] 
@@ -34,7 +36,9 @@ FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
         ENDIF
 
         IF KEYWORD_SET(counterclockwise) THEN BEGIN
-           tempLats=[lats[nLats-1-j],tempLats,lats[nLats-2-j],REVERSE(tempLats)] 
+           ;; tempLats=[lats[nLats-1-j],tempLats,lats[nLats-2-j],REVERSE(tempLats)] 
+           ;; tempLons=[lons[i]+lonFactor,tempLons,lons[i]+lonFactor,tempLons+lonFactor*2]  
+           tempLats=[lats[j+1],tempLats,lats[j],REVERSE(tempLats)] 
            tempLons=[lons[i]+lonFactor,tempLons,lons[i]+lonFactor,tempLons+lonFactor*2]  
         ENDIF ELSE BEGIN
            tempLats=[lats[j],tempLats,lats[j+1],REVERSE(tempLats)] 
