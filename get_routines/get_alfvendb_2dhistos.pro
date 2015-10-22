@@ -260,7 +260,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
 
   IF KEYWORD_SET(nEventPerMinPlot) OR KEYWORD_SET(probOccurrencePlot) THEN BEGIN 
      tHistDenominator = GET_TIMEHIST_DENOMINATOR(CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-                                                 ORBRANGE=orbRang0e, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                                 ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                                  DO_IMF_CONDS=do_IMF_conds, $
                                                  BYMIN=byMin, BYMAX=byMax, BZMIN=bzMin, BZMAX=bzMax, SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                                  DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $

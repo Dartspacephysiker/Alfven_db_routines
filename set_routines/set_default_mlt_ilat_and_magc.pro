@@ -18,8 +18,8 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
 
   ;; defMinL     = (cos(defMinI*!PI/180.))^(-2)
   ;; defMaxL     = (cos(defMaxI*!PI/180.))^(-2)
-  defMinL     = 1
-  defMaxL     = 20
+  defMinL     = 2.5      ;50.768 ILAT
+  defMaxL     = 20       ;77.079 ILAT
   defBinL     = 1.0
 
   defMinMC    = 10

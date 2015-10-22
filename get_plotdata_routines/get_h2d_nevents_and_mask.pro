@@ -20,8 +20,8 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=m
 
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
-  h2dFluxN=hist_2d(maximus.mlt(plot_i),$
-                   (KEYWORD_SET(do_lshell) ? maximus.lshell : maximus.ilat)(plot_i),$
+  h2dFluxN=hist_2d(maximus.mlt[plot_i],$
+                   (KEYWORD_SET(do_lshell) ? maximus.lshell : maximus.ilat)[plot_i],$
                    BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
                    MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                    MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI))
