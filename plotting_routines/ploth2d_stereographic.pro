@@ -7,7 +7,7 @@
 ;; Right now I think I need to do something with reversing tempMLTS or changing the way tempMLTS is
 ;; put together, but I can't be sure
 
-PRO ploth2d_stereographic,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight, $
+PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight, $
                        PLOTTITLE=plotTitle, MIRROR=mirror, $
                        DEBUG=debug,_EXTRA=e
 
@@ -120,40 +120,22 @@ PRO ploth2d_stereographic,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   dawnIntegral=(temp.do_plotIntegral) ? 0L : DOUBLE(0.0)
   duskIntegral=(temp.do_plotIntegral) ? 0L : DOUBLE(0.0)
 
-  ;;Loop over all MLTs and latitudes
-  FOR j=0, N_ELEMENTS(ilats)-2 DO BEGIN 
-     FOR i=0, N_ELEMENTS(mlts)-2 DO BEGIN 
-        ;tempMLTS=[mlts[i],mlts[i+1]] 
-        ;tempILATS=ilats[j:j+1] 
+  ;;Get polyfill vertices
+  lonsLats = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(lons,lats, $
+                                                     BINSIZE_LON=binsize_lon,BINSIZE_LAT=binsize_lat, $
+                                                     CONVERT_MLT_TO_LON=convert_MLT_to_lon, $
+                                                     DEBUG=debug)
 
-        tempILATS=[ilats[j],ilats[j]+(KEYWORD_SET(do_lShell) ? binL : binI )/2.0,ilats[j+1]] 
-        tempMLTS=[mlts[i],mlts[i],mlts[i]] 
+  H2D_STEREOGRAPHIC_EXECUTE_POLYFILL,lonsLats, $
+                                     H2D_MASKED=h2d_masked,MASKCOLOR=maskColor, $
+                                     DEBUG=debug
+  IF temp.do_plotIntegral THEN BEGIN
+     H2D_STEREOGRAPHIC_INTEGRAL,data,lonsLats, $
+                                H2D_MASKED=h2d_masked, $
+                                INTEGRAL=integ,ABSINTEGRAL=absInteg, $
+                                DAWNINTEGRAL=dawnIntegral,DUSKINTEGRAL=duskIntegral
+  ENDIF
 
-        IF KEYWORD_SET(debug) THEN BEGIN
-           print,tempILATS & print,tempMLTS
-           tempMLTS=REBIN(tempMLTS,4)  
-           tempILATS=REBIN(tempILATS,4) 
-        ENDIF
-
-        ;  tempMLTS=[tempMLTS,REVERSE(tempMLTS)] 
-        ;  tempILATS=[tempILATS,tempILATS]
-        tempILATS=[ilats[j],tempILATS,ilats[j+1],REVERSE(tempILATS)] 
-;;        tempMLTS=[mlts[i]+binM*15/2.0,tempMLTS,mlts[i]+binM*15/2.0,tempMLTS+binM*15]  
-        tempMLTS=[mlts[i]+mltFactor,tempMLTS,mlts[i]+mltFactor,tempMLTS+mltFactor*2]  
-;;        IF mirror THEN tempMLTS = ((180 - tempMLTS) + 360) MOD 360
-
-        ;;Integrals
-        IF ~masked[i,j] AND tempMLTS[0] GE 180 AND tempMLTS[5] GE 180 THEN duskIntegral+=(temp.is_logged) ? 10.^temp.data[i,j] : temp.data[i,j] $
-        ELSE IF ~masked[i,j] AND tempMLTS[0] LE 180 AND tempMLTS[5] LE 180 THEN dawnIntegral+=(temp.is_logged) ? 10.^temp.data[i,j] : temp.data[i,j]
-        ;; print,"masked["+strcompress(i,/REMOVE_ALL)+","+strcompress(j,/REMOVE_ALL)+"] is " + strcompress(masked[i,j],/REMOVE_ALL)
-        ;; print,"temp.data["+strcompress(i,/REMOVE_ALL)+","+strcompress(j,/REMOVE_ALL)+"] is " + strcompress(temp.data[i,j],/REMOVE_ALL)
-        ;; print,"dawnint is " + strcompress(dawnIntegral) + " and duskint is " + strcompress(duskIntegral)
-        ;; print,""
-        ;  cgColorFill,[mlts[i],mlts[i+1],mlts[i+1],mlts[i]],[ilats[j:j+1],ilats[j:j+1]],color=h2descl(i,j) 
-        cgColorFill,tempMLTS,tempILATS,color=(masked[i,j]) ? maskColor : h2descl[i,j]
-
-     ENDFOR 
-  ENDFOR
 
   ;;******************************
   ;;Grid stuffs
@@ -169,7 +151,7 @@ PRO ploth2d_stereographic,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      latNames  = defGridLats
   ENDELSE
 
-  ;;add grid to 10-deg latitude lines
+  ;;add grid to latitude lines
   cgMap_Grid, Clip_Text=1, /NoClip, thick=(!D.Name EQ 'PS') ? defGridBoldLineThick_PS : defGridBoldLineThick,$
               LINESTYLE=defBoldGridLineStyle,COLOR=defGridColor, $
               LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : defBoldLatDelta),LONDELTA=defBoldLonDelta, $
@@ -241,23 +223,7 @@ PRO ploth2d_stereographic,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ;cgText, 90, minI-5, 'dawnward',Alignment=0.5,Charsize=defCharSize
   ;cgText, -90, minI-5, 'duskward',Alignment=0.5,Charsize=defCharSize  
 
-  ;;Integral text
-  ;;REMEMBER: h2dStrArr[nPlots].data is the MASK
-
-  ;;******************************
-  ;;Integral stuffs
-  ;;******************************
   IF temp.do_plotIntegral THEN BEGIN
-     IF temp.is_logged THEN BEGIN
-        integ=ALOG10(TOTAL(10.0^(temp.data[WHERE(~masked)])))
-        absInteg=integ
-        dawnIntegral=ALOG10(dawnIntegral)
-        duskIntegral=ALOG10(duskIntegral)
-     ENDIF ELSE BEGIN
-        integ=TOTAL(temp.data[WHERE(~masked)])
-        absInteg=TOTAL(ABS(temp.data[WHERE(~masked)]))
-     ENDELSE     
-        
      IF N_ELEMENTS(clockStr) NE 0 THEN cgText,lTexPos1,bTexPos1+clockStrOffset,"IMF " + clockStr,/NORMAL,CHARSIZE=defCharSize 
      
      IF NOT (temp.is_logged) THEN cgText,lTexPos1,bTexPos2,'|Integral|: ' + string(absInteg,Format=integralLabelFormat),/NORMAL,CHARSIZE=defCharSize
@@ -296,18 +262,6 @@ PRO ploth2d_stereographic,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                        REPLICATE(" ",cbSpacingStr_High),$
                        String(upperLab, Format=temp.labelFormat)]
 
-  ;; IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
-  ;;    ;; Add a colorbar.
-  ;;    cgColorbar, NColors=nCBColors, Bottom=cbBottom, Divisions=nCBColors, $
-  ;;                OOB_Low=cbOOBLowVal, $
-  ;;                OOB_High=cbOOBHighVal, $ 
-  ;;                Range=cbRange, $
-  ;;                Title=cbTitle, $
-  ;;                /Discrete, $
-  ;;                Position=cbPosition, TEXTTHICK=cbTextThick, VERTICAL=cbVertical, $
-  ;;                TLocation=cbTLocation, TCharSize=cbTCharSize,$
-  ;;                ticknames=cbTickNames
-  ;; ENDIF ELSE BEGIN
   cgColorbar, NCOLORS=nCBColors, DIVISIONS=nCBColors, BOTTOM=cbBottom, $
               OOB_Low=cbOOBLowVal, $
               OOB_High=cbOOBHighVal, $ 
@@ -318,6 +272,6 @@ PRO ploth2d_stereographic,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
               TLOCATION=cbTLocation, TCHARSIZE=cbTCharSize,$
               CHARSIZE=cbTCharSize,$
               TICKNAMES=cbTickNames
-  ;; ENDELSE
+
 
 END
