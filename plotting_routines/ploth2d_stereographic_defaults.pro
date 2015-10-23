@@ -21,8 +21,8 @@
      ctBrewer_allPosData      = 0
      ctReverse_allPosData     = 0
      maskColor                = "black"
-     defGridColor             = "dark gray"
-     defGridTextColor         = "white"
+     defGridColor             = "white"
+     defGridTextColor         = "gray"
   ENDIF ELSE BEGIN
      ctIndex_allPosData       = 16 ;This is the one I usually use
      ctBrewer_allPosData      = 1

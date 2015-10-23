@@ -4,27 +4,28 @@ PRO PRINT_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
                                           ;; MAXIMUS=maximus,CDBTIME=cdbtime, $
                                           ;; OUT_INDS=inds, $
                                           UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
-                                          INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs,TSPANS_ORBS=tspans_orbs, $
-                                          PRETTY=pretty,SUMMARY=summary,EXTRA=extra,LUN=lun
+                                          INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs, $
+                                          TSPANS_ORBS=tspans_orbs,TSPANTOTAL=tSpanTotal, $
+                                          PRETTY=pretty,SUMMARY=summary,EXTRA=extra,LUN=lun,DEBUG=debug
 
   IF ~KEYWORD_SET(lun) THEN lun = -1 ;stdout
 
   IF uniq_orb_inds[0] EQ -1 THEN BEGIN
 
      nUniq_orbs = 0
-
-     PRINTF,lun,FORMAT='("uniq_orb_inds",T14,":",T16,I0)',uniq_orb_inds
-     PRINTF,lun,FORMAT='("uniq_orbs",T14,":",T16,I0)',uniq_orbs
-     PRINTF,lun,FORMAT='("nUniq_orbs",T14,":",T16,I0)',nUniq_orbs
-
-     PRINTF,lun,FORMAT='("inds_orbs",T14,":",T16,I0)',inds_orbs
-     PRINTF,lun,FORMAT='("tRanges_orbs",T14,":",T16,I0)',tRanges_orbs
-     PRINTF,lun,''
-
+     IF KEYWORD_SET(debug) THEN BEGIN
+        
+        PRINTF,lun,FORMAT='("uniq_orb_inds",T14,":",T16,I0)',uniq_orb_inds
+        PRINTF,lun,FORMAT='("uniq_orbs",T14,":",T16,I0)',uniq_orbs
+        PRINTF,lun,FORMAT='("nUniq_orbs",T14,":",T16,I0)',nUniq_orbs
+        
+        PRINTF,lun,FORMAT='("inds_orbs",T14,":",T16,I0)',inds_orbs
+        PRINTF,lun,FORMAT='("tRanges_orbs",T14,":",T16,I0)',tRanges_orbs
+        PRINTF,lun,''
+     ENDIF
   ENDIF ELSE BEGIN
      
      nUniq_orbs = N_ELEMENTS(uniq_orb_inds)
-     tSpanTotal = 0
 
      ;; PRINTF,lun,''
      IF KEYWORD_SET(pretty) THEN BEGIN
@@ -45,12 +46,11 @@ PRO PRINT_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
      ENDIF
 
      FOR i=0,nUniq_orbs-1 DO BEGIN
-        tSpanTotal += tSpans_orbs[i]
         orb = uniq_orbs[i]
 
         IF KEYWORD_SET(pretty) THEN PRINTF,lun,FORMAT='("*****Orbit",T14,I5,"*****")',orb
 
-        IF inds_orbs[0] NE -1 THEN BEGIN
+        IF inds_orbs[i,0] NE -1 THEN BEGIN
            IF KEYWORD_SET(pretty) THEN BEGIN
               PRINTF,lun,FORMAT='("Start index",T14,":",T16,I0)',inds_orbs[i,0]
               PRINTF,lun,FORMAT='("Stop index",T14,":",T16,I0)',inds_orbs[i,1]

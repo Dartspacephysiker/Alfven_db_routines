@@ -5,25 +5,27 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                         OUT_INDS_LIST=inds_list, $
                                         UNIQ_ORBS_LIST=uniq_orbs_list,UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
                                         INDS_ORBS_LIST=inds_orbs_list,TRANGES_ORBS_LIST=tranges_orbs_list,TSPANS_ORBS_LIST=tspans_orbs_list, $
-                                        PRINT_DATA_AVAILABILITY=print_data_availability, VERBOSE=verbose,LIST_TO_ARR=list_to_arr
+                                        PRINT_DATA_AVAILABILITY=print_data_availability, LIST_TO_ARR=list_to_arr, $
+                                        VERBOSE=verbose, DEBUG=debug, LUN=lun
+
+  COMPILE_OPT idl2
+
+  IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
   IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
 
-  IF KEYWORD_SET(verbose) THEN BEGIN
-     PRINT,'GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES'
-     print,'N UTC Ranges: ' + N_ELEMENTS(T1_ARR)
-  ENDIF
+  PRINTF,lun,'GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES'
 
   IF KEYWORD_SET(restrict) THEN BEGIN
      IF KEYWORD_SET(verbose) THEN BEGIN
-        PRINT,'Restricting with specified inds...'
-        PRINT,'(' + STRCOMPRESS(N_ELEMENTS(restrict),/REMOVE_ALL) + ' inds provided...)'
+        PRINTF,LUN,'Restricting with specified inds...'
+        PRINTF,LUN,'(' + STRCOMPRESS(N_ELEMENTS(restrict),/REMOVE_ALL) + ' inds provided...)'
 
      ENDIF
      ;; dbStruct=RESIZE_MAXIMUS(dbStruct,DBTIMES=dbTimes,inds=restrict)
   ENDIF ELSE BEGIN
      IF KEYWORD_SET(verbose) THEN BEGIN
-        PRINT,'No restriction on inds...'
+        PRINTF,LUN,'No restriction on inds...'
      ENDIF
      restrict = INDGEN(N_ELEMENTS(dbStruct),/L64)
   ENDELSE
@@ -50,11 +52,13 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
   WHILE nGood EQ 0 DO BEGIN
 
      GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1_arr[iFirst],T2=t2_arr[iFirst], $
-                                      DBSTRUCT=dbStruct,DBTIMES=dbTimes, RESTRICT_W_THESEINDS=restrict, $
-                                      OUT_INDS=inds, $
-                                      UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
-                                      INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs,TSPANS_ORBS=tspans_orbs, $
-                                      PRINT_DATA_AVAILABILITY=print_data_availability, VERBOSE=verbose
+                                         DBSTRUCT=dbStruct,DBTIMES=dbTimes, RESTRICT_W_THESEINDS=restrict, $
+                                         OUT_INDS=inds, $
+                                         UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
+                                         INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs, $
+                                         TSPANS_ORBS=tspans_orbs,TSPANTOTAL=tSpanTotal, $
+                                         PRINT_DATA_AVAILABILITY=print_data_availability, $
+                                         VERBOSE=verbose, DEBUG=debug
 
      IF inds[0] NE -1 THEN BEGIN
         nGood += 1
@@ -64,6 +68,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
         inds_orbs_list     = LIST(inds_orbs)
         tranges_orbs_list  = LIST(tranges_orbs)
         tspans_orbs_list   = LIST(tspans_orbs)
+        arrTSpanTotal      = tSpanTotal
      ENDIF
      iFirst++
   ENDWHILE
@@ -74,20 +79,42 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                          DBSTRUCT=dbStruct,DBTIMES=dbTimes, RESTRICT_W_THESEINDS=restrict, $
                                          OUT_INDS=inds, $
                                          UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
-                                         INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs,TSPANS_ORBS=tspans_orbs, $
-                                         PRINT_DATA_AVAILABILITY=print_data_availability, VERBOSE=verbose
+                                         INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs, $
+                                         TSPANS_ORBS=tSpans_orbs,TSPANTOTAL=tSpanTotal, $
+                                         PRINT_DATA_AVAILABILITY=print_data_availability, $
+                                         VERBOSE=verbose,DEBUG=debug
      IF inds[0] NE -1 THEN BEGIN
+        nGood++
         inds_list.add,inds
         uniq_orbs_list.add,uniq_orbs
         uniq_orb_inds_list.add,uniq_orb_inds
         inds_orbs_list.add,inds_orbs
         tranges_orbs_list.add,tranges_orbs
         tspans_orbs_list.add,tspans_orbs
-        nGood++
+        arrTSpanTotal   += tSpanTotal
      ENDIF
 
   ENDFOR
   
+  IF KEYWORD_SET(print_data_availability) THEN BEGIN
+     arrTotUniqOrbs       = 0
+     arrTotInds           = 0
+     FOR k = 0,N_ELEMENTS(uniq_orbs_list) DO BEGIN
+        arrTotUniqOrbs   += N_ELEMENTS(uniq_orbs_list[k])
+        arrTotInds       += N_ELEMENTS(inds_list[k])
+     ENDFOR
+
+     PRINTF,lun,'***********************************'
+     PRINTF,lun,'***SUMMARY OF DATA FOR UTC ARRAY***'
+     PRINTF,lun,'UTC Range for array: ' + TIME_TO_STR(t1_arr[0]) + ' through ' + TIME_TO_STR(t2_arr[-1])
+     PRINTF,lun,'N UTC Ranges: ' + N_ELEMENTS(T1_ARR)
+     PRINTF,lun,FORMAT='("Array total event indices",T38,":",T40,F0.2)',arrTotInds
+     PRINTF,lun,FORMAT='("Array total N unique orbits",T38,":",T40,F0.2)',arrTotUniqOrbs
+     PRINTF,lun,FORMAT='("Array total of all interval lengths w/ data (hrs)",T38,":",T40,F0.2)',arrTSpanTotal/3600.
+     PRINTF,lun,'***********************************'
+     PRINTF,lun,''
+  ENDIF
+
   IF KEYWORD_SET(list_to_arr) THEN BEGIN
 
      inds_arr             = inds_list[0]

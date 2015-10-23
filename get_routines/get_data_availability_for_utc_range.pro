@@ -4,8 +4,10 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
                                         DBSTRUCT=dbStruct,DBTIMES=dbTimes, RESTRICT_W_THESEINDS=restrict, $
                                         OUT_INDS=inds, $
                                         UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
-                                        INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs,TSPANS_ORBS=tspans_orbs, $
-                                        PRINT_DATA_AVAILABILITY=print_data_availability, VERBOSE=verbose
+                                        INDS_ORBS=inds_orbs,TRANGES_ORBS=tRanges_orbs, $
+                                        TSPANS_ORBS=tSpans_orbs,TSPANTOTAL=tSpanTotal, $
+                                        PRINT_DATA_AVAILABILITY=print_data_availability, $
+                                        VERBOSE=verbose,DEBUG=debug
 
   IF KEYWORD_SET(verbose) THEN BEGIN
      PRINT,'GET_DATA_AVAILABILITY_FOR_UTC_RANGE'
@@ -46,10 +48,11 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
 
      uniq_orbs = dbStruct.orbit(uniq_orb_inds)
      nUniq_orbs = N_ELEMENTS(uniq_orb_inds)
-     
+
      inds_orbs = MAKE_ARRAY(nUniq_orbs,2,/L64)
-     tranges_orbs = MAKE_ARRAY(nUniq_orbs,2,/DOUBLE)
-     tspans_orbs = MAKE_ARRAY(nUniq_orbs,/DOUBLE)
+     tRanges_orbs = MAKE_ARRAY(nUniq_orbs,2,/DOUBLE)
+     tSpans_orbs = MAKE_ARRAY(nUniq_orbs,/DOUBLE)
+     tSpanTotal = 0
      
      FOR i=0,nUniq_orbs-1 DO BEGIN
         orb = uniq_orbs[i]
@@ -57,7 +60,7 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
         orbInds_ii = WHERE(dbStruct.orbit(inds) EQ orb)
         orbInds = inds(orbInds_ii)
 
-        IF KEYWORD_SET(verbose) THEN BEGIN
+        IF KEYWORD_SET(debug) THEN BEGIN
            PRINT,'Checking out orb' + STRCOMPRESS(orb,/REMOVE_ALL) + '  (' + STRCOMPRESS(i,/REMOVE_ALL) + ' / ' + STRCOMPRESS(nUniq_orbs-1,/REMOVE_ALL) + ')'
            PRINT,'nInds : ' + STRCOMPRESS(N_ELEMENTS(orbInds),/REMOVE_ALL)
            PRINT,''
@@ -68,19 +71,22 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
         inds_orbs[i,0] = orbInds(orbMin_ii)
         inds_orbs[i,1] = orbInds(orbMax_ii)
 
-        tranges_orbs[i,0] = orbMin
-        tranges_orbs[i,1] = orbMax
+        tRanges_orbs[i,0] = orbMin
+        tRanges_orbs[i,1] = orbMax
         
-        tspans_orbs[i] = orbMax - orbMin
+        tSpans_orbs[i] = orbMax - orbMin
+        tSpanTotal    += tSpans_orbs[i]
      ENDFOR
+     
+     IF KEYWORD_SET(print_data_availability) THEN BEGIN
+        PRINT_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
+                                              UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
+                                              INDS_ORBS=inds_orbs,TRANGES_ORBS=tRanges_orbs, $
+                                              TSPANS_ORBS=tSpans_orbs,TSPANTOTAL=tSpanTotal, $
+                                              /SUMMARY,DEBUG=debug
+     ENDIF
      
   ENDELSE
 
-  IF KEYWORD_SET(print_data_availability) THEN BEGIN
-     PRINT_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
-                                           UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
-                                           INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs,TSPANS_ORBS=tspans_orbs, $
-                                           /SUMMARY
-  ENDIF
 
 END

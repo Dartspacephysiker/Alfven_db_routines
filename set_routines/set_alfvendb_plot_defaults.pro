@@ -11,6 +11,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
                                PPLOTS=pPlots, $
                                IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, $
                                CHAREPLOTS=charEPlots, CHARETYPE=charEType, $
+                               CHARIEPLOTS=chariEPlots, $
                                ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
                                NEVENTPERORBPLOT=nEventPerOrbPlot, $
                                NEVENTPERMINPLOT=nEventPerMinPlot, $
@@ -21,7 +22,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
                                WRITEASCII=writeASCII, WRITEHDF5=writeHDF5, WRITEPROCESSEDH2D=writeProcessedH2d, $
                                SAVERAW=saveRaw, RAWDIR=rawDir, $
                                SHOWPLOTSNOSAVE=showPlotsNoSave, $
-                               PLOTDIR=plotDir, PLOTPREFIX=plotPrefix, PLOTSUFFIX=plotSuffix, $
+                               PLOTDIR=plotDir, $
                                MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                                OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
                                KEEPME=keepMe, $
@@ -79,6 +80,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
   IF N_ELEMENTS(ionPlots) EQ 0 THEN ionPlots =  0                         ;ion Plots?
   IF N_ELEMENTS(charEPlots) EQ 0 THEN charEPlots =  0                     ;char E plots?
   IF N_ELEMENTS(charEType) EQ 0 THEN charEType = defCharEPlotType         ;options are "lossCone" and "Total"
+  IF N_ELEMENTS(chariEPlots) EQ 0 THEN chariEPlots =  0                     ;char E plots?
   IF N_ELEMENTS(orbContribPlot) EQ 0 THEN orbContribPlot =  0             ;Contributing orbits plot?
   IF N_ELEMENTS(orbTotPlot) EQ 0 THEN orbTotPlot =  0                     ;"Total orbits considered" plot?
   IF N_ELEMENTS(orbFreqPlot) EQ 0 THEN orbFreqPlot =  0                   ;Contributing/total orbits plot?
