@@ -34,6 +34,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
                           MEDIANPLOT=medianPlot, MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                           LOGAVGPLOT=logAvgPlot, $
                           ALL_LOGPLOTS=all_logPlots, $
+                          PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix, $
                           LUN=lun
   
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
@@ -273,6 +274,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
                                                  HEMI=hemi, $
                                                  FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastLoc_delta_t, $
                                                  FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, FASTLOCOUTPUTDIR=fastLocOutputDir, $
+                                                 INDSFILEPREFIX=ParamStrPrefix,INDSFILESUFFIX=paramStrSuffix, $
                                                  BURSTDATA_EXCLUDED=burstData_excluded, $
                                                  DATANAMEARR=dataNameArr,DATARAWPTRARR=dataRawPtrArr,KEEPME=keepme)
      

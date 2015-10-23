@@ -82,31 +82,32 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
 
   ;;;;;;;;;;;;
-  ;;Handle latitudes
-  IF KEYWORD_SET(do_lShell) THEN BEGIN
-     lshell_i = GET_LSHELL_INDS(dbStruct,minL,maxL,hemi,N_LSHELL=n_lshell,N_NOT_LSHELL=n_not_lshell,LUN=lun)
-  ENDIF ELSE BEGIN
-     ilat_i = GET_ILAT_INDS(dbStruct,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ilat,LUN=lun)
-  ENDELSE
-  ;;;;;;;;;;;;
   ;;Handle longitudes
   mlt_i = GET_MLT_INDS(dbStruct,minM,maxM,DAYSIDE=dayside,NIGHTSIDE=nightside,N_MLT=n_mlt,N_OUTSIDE_MLT=n_outside_MLT,LUN=lun)
 
+  ;;;;;;;;;;;;
+  ;;Handle latitudes, combine with mlt
+  IF KEYWORD_SET(do_lShell) THEN BEGIN
+     lshell_i = GET_LSHELL_INDS(dbStruct,minL,maxL,hemi,N_LSHELL=n_lshell,N_NOT_LSHELL=n_not_lshell,LUN=lun)
+     region_i = CGSETINTERSECTION(lshell_i,mlt_i)
+  ENDIF ELSE BEGIN
+     ilat_i   = GET_ILAT_INDS(dbStruct,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ilat,LUN=lun)
+     region_i = CGSETINTERSECTION(ilat_i,mlt_i)
+  ENDELSE
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Want just Holzworth/Meng statistical auroral oval?
-  IF HwMAurOval THEN ind_region=cgsetintersection(ind_region,where(abs(dbStruct.ilat) GT auroral_zone(dbStruct.mlt,HwMKpInd,/lat)/(!DPI)*180.))
+  IF HwMAurOval THEN region_i=CGSETINTERSECTION(region_i,where(abs(dbStruct.ilat) GT auroral_zone(dbStruct.mlt,HwMKpInd,/lat)/(!DPI)*180.))
 
   ;;;;;;;;;;;;;;;;;;;;;;
   ;;Now combine them all
   IF KEYWORD_SET(do_lShell) THEN BEGIN
-     final_i=cgsetintersection(lshell_i,mlt_i)
   ENDIF ELSE BEGIN
-     final_i=cgsetintersection(ilat_i,mlt_i)
   ENDELSE
 
   IF is_maximus THEN BEGIN
      magc_i = GET_MAGC_INDS(dbStruct,minMC,maxNegMC,N_OUTSIDE_MAGC=n_magc_outside_range)
-     final_i=cgsetintersection(final_i,magc_i)
+     region_i=CGSETINTERSECTION(region_i,magc_i)
   ENDIF
 
   
@@ -115,7 +116,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   IF KEYWORD_SET (orbRange) THEN BEGIN
      IF N_ELEMENTS(orbRange) EQ 2 THEN BEGIN
         orb_i = GET_ORBRANGE_INDS(dbStruct,orbRange[0],orbRange[1],LUN=lun)
-        final_i=cgsetintersection(final_i,orb_i)
+        region_i=CGSETINTERSECTION(region_i,orb_i)
      ENDIF ELSE BEGIN
         printf,lun,"Incorrect input for keyword 'orbRange'!!"
         printf,lun,"Please use orbRange=[minOrb maxOrb]"
@@ -128,7 +129,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   IF KEYWORD_SET (altitudeRange) THEN BEGIN
      IF N_ELEMENTS(altitudeRange) EQ 2 THEN BEGIN
         alt_i = GET_ALTITUDE_INDS(dbStruct,altitudeRange[0],altitudeRange[1],LUN=lun)
-        final_i=cgsetintersection(final_i,alt_i)
+        region_i=CGSETINTERSECTION(region_i,alt_i)
      ENDIF ELSE BEGIN
         printf,lun,"Incorrect input for keyword 'altitudeRange'!!"
         printf,lun,"Please use altitudeRange=[minAlt maxAlt]"
@@ -142,7 +143,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
         
         IF KEYWORD_SET(chastDB) THEN  orb_i=where(dbStruct.char_elec_energy GE charERange[0] AND dbStruct.char_elec_energy LE charERange[1]) $
            ELSE orb_i=where(dbStruct.max_chare_losscone GE charERange[0] AND dbStruct.max_chare_losscone LE charERange[1])
-        final_i=cgsetintersection(final_i,orb_i)
+        region_i=CGSETINTERSECTION(region_i,orb_i)
      ENDIF ELSE BEGIN
         printf,lun,"Incorrect input for keyword 'charERange'!!"
         printf,lun,"Please use charERange=[minCharE maxCharE]"
@@ -157,7 +158,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
         PRINT,"No Poynting range set..."
         RETURN, -1
      ENDIF ELSE BEGIN
-        plot_i=cgsetintersection(plot_i,where(dbStruct.pFluxEst GE poyntRange[0] AND dbStruct.pFluxEst LE poyntRange[1]))
+        plot_i=CGSETINTERSECTION(plot_i,where(dbStruct.pFluxEst GE poyntRange[0] AND dbStruct.pFluxEst LE poyntRange[1]))
         printf,lun,FORMAT='("Poynting flux limits (eV)     :",T35,G8.2,T45,G8.2)',poyntRange[0],poyntRange[1]
      ENDELSE
   ENDIF
@@ -168,10 +169,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   
   IF KEYWORD_SET(satellite) THEN BEGIN
      sat_i=GET_SATELLITE_INDS(dbStruct,satellite,LUN=lun)
-     final_i_ACEstart=final_i[where(final_i GE sat_i,nGood,complement=lost,ncomplement=nlost)]
-     lost=final_i[lost]
+     region_i_ACEstart=region_i[where(region_i GE sat_i,nGood,complement=lost,ncomplement=nlost)]
+     lost=region_i[lost]
   ENDIF ELSE BEGIN
-     final_i_ACEstart = final_i
+     region_i_ACEstart = region_i
   ENDELSE
 
   ;;Now, clear out all the garbage (NaNs & Co.)
@@ -179,14 +180,14 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   ;; IF KEYWORD_SET(chastDB) THEN good_i = alfven_db_cleaner(dbStruct,LUN=lun,/IS_CHASTDB) ELSE good_i = alfven_db_cleaner(dbStruct,LUN=lun)
   IF is_maximus THEN BEGIN
      good_i = alfven_db_cleaner(dbStruct,LUN=lun,IS_CHASTDB=chastDB)
-     IF good_i NE !NULL THEN final_i_ACEstart=cgsetintersection(final_i_ACEstart,good_i)
+     IF good_i NE !NULL THEN region_i_ACEstart=CGSETINTERSECTION(region_i_ACEstart,good_i)
   ENDIF ELSE BEGIN
      good_i = fastloc_cleaner(dbStruct,LUN=lun)
-     IF good_i NE !NULL THEN final_i_ACEstart=cgsetintersection(final_i_ACEstart,good_i)
+     IF good_i NE !NULL THEN region_i_ACEstart=CGSETINTERSECTION(region_i_ACEstart,good_i)
   ENDELSE
 
-  ;; IF N_ELEMENTS(dbTimes) EQ 0 THEN dbTimes=str_to_time( dbStruct.time( final_i_ACEstart ) ) $
-  ;; ELSE dbTimes = dbTimes[final_i_ACEstart]
+  ;; IF N_ELEMENTS(dbTimes) EQ 0 THEN dbTimes=str_to_time( dbStruct.time( region_i_ACEstart ) ) $
+  ;; ELSE dbTimes = dbTimes[region_i_ACEstart]
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;Now some other user-specified exclusions set by keyword
@@ -194,7 +195,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   IF (~KEYWORD_SET(chastDB) AND is_maximus) THEN BEGIN
      burst_i = WHERE(dbStruct.burst,nBurst,COMPLEMENT=survey_i,NCOMPLEMENT=nSurvey,/NULL)
      IF KEYWORD_SET(no_burstData) THEN BEGIN
-        final_i_ACEstart = cgsetintersection(survey_i,final_i_ACEstart)
+        region_i_ACEstart = CGSETINTERSECTION(survey_i,region_i_ACEstart)
         
         printf,lun,""
         printf,lun,"You're losing " + strtrim(nBurst) + " events because you've excluded burst data."
@@ -216,11 +217,11 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
      HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
      HOYDIA=hoyDia,LUN=lun
   
-  printf,lun,"There are " + strtrim(n_elements(final_i_ACEstart),2) + " total indices making the cut." 
+  printf,lun,"There are " + strtrim(n_elements(region_i_ACEstart),2) + " total indices making the cut." 
   PRINTF,lun,''
   printf,lun,"****END get_chaston_ind.pro****"
   printf,lun,""
 
-  RETURN, final_i_ACEstart
+  RETURN, region_i_ACEstart
   
 END

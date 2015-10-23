@@ -243,7 +243,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                              OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
                              KEEPME=keepMe, $
-                             PARAMSTRING=paramStr,PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
+                             PARAMSTRING=paramString,PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
                              HOYDIA=hoyDia,LUN=lun,_EXTRA=e
   
   SET_UTCPLOT_PARAMS_AND_IND_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
@@ -252,24 +252,26 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
 
   ;;Open file for text summary, if desired
   IF KEYWORD_SET(outputPlotSummary) THEN $
-     OPENW,lun,plotDir + 'outputSummary_'+paramStr+'.txt',/GET_LUN $
+     OPENW,lun,plotDir + 'outputSummary_'+paramString+'.txt',/GET_LUN $
   ELSE lun=-1                   ;-1 is lun for STDOUT
   
   ;;********************************************************
   ;;Now clean and tap the database
-  good_i = get_chaston_ind(maximus,satellite,lun, $
-                            DBTIMES=cdbTime,dbfile=dbfile,CHASTDB=do_chastdb,HEMI=hemi, $
-                            ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange,POYNTRANGE=poyntRange, $
-                            MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
-                            DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
-                            HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd)
+  good_i = GET_CHASTON_IND(maximus,satellite,lun, $
+                           DBTIMES=cdbTime,dbfile=dbfile,CHASTDB=do_chastdb,HEMI=hemi, $
+                           ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange,POYNTRANGE=poyntRange, $
+                           MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                           DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                           HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd)
   
   GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
      DBSTRUCT=maximus,DBTIMES=cdbTime, RESTRICT_W_THESEINDS=good_i, $
-     OUT_INDS_LIST=plot_i,LIST_TO_ARR=1, $
+     OUT_INDS_LIST=plot_i,  $
      UNIQ_ORBS_LIST=uniq_orbs_list,UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
      INDS_ORBS_LIST=inds_orbs_list,TRANGES_ORBS_LIST=tranges_orbs_list,TSPANS_ORBS_LIST=tspans_orbs_list, $
-     PRINT_DATA_AVAILABILITY=print_data_availability, VERBOSE=verbose
+     PRINT_DATA_AVAILABILITY=print_data_availability, $
+     LIST_TO_ARR=1,$
+     VERBOSE=verbose, DEBUG=debug, LUN=lun
 
   ;;;;;;;;;;;;;;;;;;;;;;
   ;;Plot lims
@@ -290,7 +292,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                              MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                              HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                             PARAMSTRING=paramStr, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
+                             PARAMSTRING=paramString, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
                              HEMI=hemi, $
                              HOYDIA=hoyDia,MASKMIN=maskMin,LUN=lun
 
@@ -312,7 +314,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         BYMIN=byMin, BZMIN=bzMin, $
                         BYMAX=byMax, BZMAX=bzMax, $
                         DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
-                        /DO_UTC_RANGE,T1_ARR=t1_arr,T2_ARR=t2_arr, $             
+                        /DO_UTC_RANGE,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                         NPLOTS=nPlots, NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
                         EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, LOGEFPLOT=logEfPlot, $
                         ABSEFLUX=abseflux, NOPOSEFLUX=noPosEFlux, NONEGEFLUX=noNegEflux, EPLOTRANGE=EPlotRange, $
@@ -335,6 +337,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         MEDIANPLOT=medianPlot, MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                         LOGAVGPLOT=logAvgPlot, $
                         ALL_LOGPLOTS=all_logPlots, $
+                        PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix, $
                         LUN=lun
 
   ;;********************************************************
@@ -348,12 +351,13 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
   ENDIF
 
   IF N_ELEMENTS(squarePlot) EQ 0 THEN BEGIN
-     SAVE_ALFVENDB_TEMPDATA,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,$
+     SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,$
                             MAXM=maxM,MINM=minM,MAXI=maxI,MINI=minI,BINM=binM,BINI=binI, $
                             DO_LSHELL=do_lShell,REVERSE_LSHELL=reverse_lShell, $
                             MINL=minL,MAXL=maxL,BINL=binL,$
-                            RAWDIR=rawDir,PARAMSTR=paramStr,$
-                            CLOCKSTR=clockStr,PLOTMEDORAVG=plotMedOrAvg,STABLEIMF=stableIMF,HOYDIA=hoyDia,HEMI=hemi,TEMPFILE=tempFile
+                            RAWDIR=rawDir,PARAMSTR=paramString,$
+                            CLOCKSTR=clockStr,PLOTMEDORAVG=plotMedOrAvg,STABLEIMF=stableIMF,HOYDIA=hoyDia,HEMI=hemi, $
+                            LUN=lun
   ENDIF
 
   ;;Now plots
@@ -361,7 +365,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                          SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ 
                          JUSTDATA=justData, SHOWPLOTSNOSAVE=showPlotsNoSave, $
                          PLOTDIR=plotDir, PLOTMEDORAVG=plotMedOrAvg, $
-                         PARAMSTR=paramStr, DEL_PS=del_PS, $
+                         PARAMSTR=paramString, DEL_PS=del_PS, $
                          HEMI=hemi, $
                          CLOCKSTR=clockStr, _EXTRA = e
 
@@ -372,13 +376,13 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
 
   ;;Save raw data, if desired
   IF KEYWORD_SET(saveRaw) THEN BEGIN
-     SAVE, /ALL, filename=rawDir+'fluxplots_'+paramStr+".dat"
+     SAVE, /ALL, filename=rawDir+'fluxplots_'+paramString+".dat"
 
   ENDIF
 
   WRITE_ALFVENDB_2DHISTOS,MAXIMUS=maximus,PLOT_I=plot_i, $
                           WRITEHDF5=writeHDF5,WRITEPROCESSEDH2D=WRITEPROCESSEDH2D,WRITEASCII=writeASCII, $
                           H2DSTRARR=h2dStrArr,DATARAWPTRARR=dataRawPtrArr,DATANAMEARR=dataNameArr, $
-                          PARAMSTR=paramStr,PLOTDIR=plotDir
+                          PARAMSTR=paramString,PLOTDIR=plotDir
 
 END

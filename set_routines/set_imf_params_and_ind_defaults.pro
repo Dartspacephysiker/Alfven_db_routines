@@ -82,7 +82,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   ;;***********************************************
   ;;Tons of defaults
   
-  defOrbRange            = [0,40000]
+  defOrbRange            = [0,16361]
   defCharERange          = [4.0,300]
   defAltRange            = [1000.0, 5000.0]
 

@@ -23,6 +23,7 @@
      maskColor                = "black"
      defGridColor             = "white"
      defGridTextColor         = "gray"
+
   ENDIF ELSE BEGIN
      ctIndex_allPosData       = 16 ;This is the one I usually use
      ctBrewer_allPosData      = 1

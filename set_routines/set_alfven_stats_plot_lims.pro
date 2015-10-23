@@ -37,7 +37,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS,EPLOTRANGE=EPlotRange, $
 
   defNEventPerOrbRange      = [0.01,7]
 
-  defProbOccurrenceRange    = [0.01,0.5]
+  defProbOccurrenceRange    = [1e-4,1.0]
   ;; defLogProbOccurrenceRange = [10e-4,10e0]
 
   IF N_ELEMENTS(ENumFlPlotRange) EQ 0 THEN BEGIN   ;;For linear or log e- number flux plotrange

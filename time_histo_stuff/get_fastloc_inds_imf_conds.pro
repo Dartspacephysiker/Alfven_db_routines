@@ -9,7 +9,8 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
                                BYMIN=byMin, BYMAX=byMax, BZMIN=bzMin, BZMAX=bzMax, SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                               MAKE_OUTINDSFILE=make_outIndsFile,OUTINDSFILEBASENAME=outIndsFileBasename, $
+                               MAKE_OUTINDSFILE=make_outIndsFile, $
+                               OUTINDSPREFIX=outIndsPrefix,OUTINDSSUFFIX=outIndsSuffix,OUTINDSFILEBASENAME=outIndsFileBasename, $
                                FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
                                FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                BURSTDATA_EXCLUDED=burstData_excluded
@@ -67,7 +68,8 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
                                     LUN=lun
 
   defOutIndsPrefix = 'fastLoc_intervals3'
-
+  IF KEYWORD_SET(outIndsPrefix) THEN outIndsPrefix = defOutIndsPrefix + outIndsPrefix ELSE outIndsPrefix = defOutIndsPrefix
+  IF ~KEYWORD_SET(outIndsSuffix) THEN outIndsSuffix = ''
   ;;********************************************
   ;;Build output filename based on stuff provided
   ;;Should include clockStr, angleLim1,angleLim2, satellite, omnicoords, bymin, stableimf, delay, smoothwindow
@@ -76,7 +78,7 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
                    '"--hemi_",A0,' + $
                    '"--chareRange_",F0.2,"-",F0.2,"--altRange_",F0.2,"-",F0.2,"--orbRange",I0,"-",I0,' + $
                    '"--stableIMF_",I0,"min--delay_",I0,"sec")'
-  outIndsFileBasename = STRING(FORMAT=basenameFormat,defOutIndsPrefix,clockStr,angleLim1,angleLim2,satellite,omni_Coords, $
+  outIndsFileBasename = STRING(FORMAT=basenameFormat,outIndsPrefix,clockStr,angleLim1,angleLim2,satellite,omni_Coords, $
                                ;;byMin,byMax,bzMin,bzMax, $
                                hemi, $
                                charerange[0],charerange[1],altitudeRange[0],altitudeRange[1],orbRange[0],orbRange[1], $

@@ -5,7 +5,8 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                         OUT_INDS_LIST=inds_list, $
                                         UNIQ_ORBS_LIST=uniq_orbs_list,UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
                                         INDS_ORBS_LIST=inds_orbs_list,TRANGES_ORBS_LIST=tranges_orbs_list,TSPANS_ORBS_LIST=tspans_orbs_list, $
-                                        PRINT_DATA_AVAILABILITY=print_data_availability, LIST_TO_ARR=list_to_arr, $
+                                        PRINT_DATA_AVAILABILITY=print_data_availability, $
+                                        LIST_TO_ARR=list_to_arr, $
                                         VERBOSE=verbose, DEBUG=debug, LUN=lun
 
   COMPILE_OPT idl2
@@ -57,7 +58,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                          UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
                                          INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs, $
                                          TSPANS_ORBS=tspans_orbs,TSPANTOTAL=tSpanTotal, $
-                                         PRINT_DATA_AVAILABILITY=print_data_availability, $
+                                         PRINT_DATA_AVAILABILITY=verbose, $
                                          VERBOSE=verbose, DEBUG=debug
 
      IF inds[0] NE -1 THEN BEGIN
@@ -81,7 +82,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                          UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
                                          INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs, $
                                          TSPANS_ORBS=tSpans_orbs,TSPANTOTAL=tSpanTotal, $
-                                         PRINT_DATA_AVAILABILITY=print_data_availability, $
+                                         PRINT_DATA_AVAILABILITY=verbose, $
                                          VERBOSE=verbose,DEBUG=debug
      IF inds[0] NE -1 THEN BEGIN
         nGood++
@@ -99,7 +100,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
   IF KEYWORD_SET(print_data_availability) THEN BEGIN
      arrTotUniqOrbs       = 0
      arrTotInds           = 0
-     FOR k = 0,N_ELEMENTS(uniq_orbs_list) DO BEGIN
+     FOR k = 0,N_ELEMENTS(uniq_orbs_list)-1 DO BEGIN
         arrTotUniqOrbs   += N_ELEMENTS(uniq_orbs_list[k])
         arrTotInds       += N_ELEMENTS(inds_list[k])
      ENDFOR
@@ -107,7 +108,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
      PRINTF,lun,'***********************************'
      PRINTF,lun,'***SUMMARY OF DATA FOR UTC ARRAY***'
      PRINTF,lun,'UTC Range for array: ' + TIME_TO_STR(t1_arr[0]) + ' through ' + TIME_TO_STR(t2_arr[-1])
-     PRINTF,lun,'N UTC Ranges: ' + N_ELEMENTS(T1_ARR)
+     PRINTF,lun,'N UTC Ranges: ' + STRCOMPRESS(N_ELEMENTS(T1_ARR),/REMOVE_ALL)
      PRINTF,lun,FORMAT='("Array total event indices",T38,":",T40,F0.2)',arrTotInds
      PRINTF,lun,FORMAT='("Array total N unique orbits",T38,":",T40,F0.2)',arrTotUniqOrbs
      PRINTF,lun,FORMAT='("Array total of all interval lengths w/ data (hrs)",T38,":",T40,F0.2)',arrTSpanTotal/3600.

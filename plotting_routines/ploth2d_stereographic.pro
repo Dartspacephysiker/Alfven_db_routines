@@ -11,6 +11,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                        PLOTTITLE=plotTitle, MIRROR=mirror, $
                        DEBUG=debug,_EXTRA=e
 
+  print,'biz'
   @ploth2d_stereographic_defaults.pro
 
   restore,ancillaryData
@@ -64,9 +65,19 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   IF temp.is_fluxData AND ~temp.is_logged THEN BEGIN
      ;;This is the one for doing sweet flux plots that include negative values 
      cgLoadCT, ctIndex, BREWER=ctBrewer, REVERSE=ctReverse, NCOLORS=nLevels
+
   ENDIF ELSE BEGIN
      ;;This one is the one we use for nEvent- and orbit-type plots (plots w/ all positive values)
      cgLoadCT, ctIndex_allPosData, BREWER=ctBrewer_allPosData, REVERSE=ctReverse_allPosData, NCOLORS=nLevels
+
+     IF chrisPosScheme THEN BEGIN
+        ;;make last color dark red
+        TVLCT,r,g,b,/GET   
+        r[nLevels-1]             = 150
+        g[nLevels-1]             = 0
+        b[nLevels-1]             = 0
+        TVLCT,r,g,b
+     ENDIF
   ENDELSE
 
   ; Set up the contour levels.
@@ -237,12 +248,14 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ;;set up colorbal labels
   IF NOT KEYWORD_SET(temp.labelFormat) THEN temp.labelFormat=defLabelFormat
   lowerLab=(temp.is_logged AND temp.logLabels) ? 10.^(temp.lim[0]) : temp.lim[0]
-  IF temp.do_midCBLabel THEN BEGIN
-     midLab=(temp.is_logged AND temp.logLabels) ? 10.^((temp.lim[0]+temp.lim[1])/2) : ((temp.lim[0]+temp.lim[1])/2)
-     ENDIF ELSE BEGIN
-        midLab=''
-     ENDELSE
   UpperLab=(temp.is_logged AND temp.logLabels) ? 10.^temp.lim[1] : temp.lim[1]
+
+  IF temp.do_midCBLabel THEN BEGIN
+     midLab = (temp.lim[1] + temp.lim[0])/2.0
+     IF temp.logLabels THEN midLab = 10.^midLab
+  ENDIF ELSE BEGIN
+     midLab=''
+  ENDELSE
 
   cbSpacingStr_low  = (nLevels-1)/2-is_OOBLow
   cbSpacingStr_high = (nLevels-1)/2-is_OOBHigh

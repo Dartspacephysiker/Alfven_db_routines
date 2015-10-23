@@ -49,12 +49,13 @@ PRO SET_UTCPLOT_PARAMS_AND_IND_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitud
   COMPILE_OPT idl2
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
   ;;***********************************************
-  ;;Tons of defaults
+  ;;You know
   
-  defOrbRange            = [0,40000]
+  defOrbRange            = [0,16361]
   defCharERange          = [4.0,8000]
   defAltRange            = [500.0, 5000.0]
 
+  defParamString         = "user-specified_UTCRange"
 
   ;;***********************************************
   ;;RESTRICTIONS ON DATA, SOME VARIABLES
@@ -64,6 +65,6 @@ PRO SET_UTCPLOT_PARAMS_AND_IND_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitud
 
   IF N_ELEMENTS(altitudeRange) EQ 0 THEN altitudeRange = defAltRange ;Rob Pfaff says no lower than 1000m
   
-  paramString="user-specified_UTCRange"
+  IF N_ELEMENTS(paramString) EQ 0 THEN paramString = defParamString 
 
 END

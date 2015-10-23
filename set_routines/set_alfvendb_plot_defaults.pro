@@ -37,8 +37,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
   defHwMKpInd            = 7
 
   ;Aujour d'hui
-  hoyDia= STRCOMPRESS(STRMID(SYSTIME(0), 4, 3),/REMOVE_ALL) + "_" + $
-          STRCOMPRESS(STRMID(SYSTIME(0), 8,2),/REMOVE_ALL) + "_" + STRCOMPRESS(STRMID(SYSTIME(0), 22, 2),/REMOVE_ALL)
+  GET_TODAY_STRING,hoyDia
 
   ; Handle MLT and ILAT ... and L-shell
   SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minMLT,MAXMLT=maxMLT,BINM=binMLT, $
@@ -128,8 +127,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
   ;;tap DBs, and setup output
   IF KEYWORD_SET(no_burstData) THEN inc_burstStr ='burstData_excluded--' ELSE inc_burstStr=''
 
-  IF KEYWORD_SET(medianplot) THEN plotMedOrAvg = "_med" ELSE BEGIN
-     IF KEYWORD_SET(logAvgPlot) THEN plotMedOrAvg = "_logAvg" ELSE plotMedOrAvg = "_avg"
+  IF KEYWORD_SET(medianplot) THEN plotMedOrAvg = "median" ELSE BEGIN
+     IF KEYWORD_SET(logAvgPlot) THEN plotMedOrAvg = "logAvg" ELSE plotMedOrAvg = "avg"
   ENDELSE
 
   ;;Set minimum allowable number of events for a histo bin to be displayed
@@ -147,7 +146,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
      polarContStr='polarCont_'
   ENDIF
 
-  paramString=hoyDia+'--'+paramStrPrefix+hemi+"--"+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
+  paramString=hoyDia+'--'+paramStrPrefix+'--'+hemi+"--"+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
   
   ;;Shouldn't be leftover, unused params from batch call
   IF ISA(e) THEN BEGIN

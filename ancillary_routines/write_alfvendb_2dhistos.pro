@@ -2,14 +2,14 @@
 PRO WRITE_ALFVENDB_2DHISTOS,MAXIMUS=maximus,PLOT_I=plot_i, $
                             WRITEHDF5=writeHDF5,WRITEPROCESSEDH2D=WRITEPROCESSEDH2D,WRITEASCII=writeASCII, $
                             H2DSTRARR=h2dStrArr,DATARAWPTRARR=dataRawPtrArr,DATANAMEARR=dataNameArr, $
-                            PARAMSTR=paramStr,PLOTDIR=plotDir
+                            PARAMSTRING=paramString,PLOTDIR=plotDir
 
    ;;********************************************************
    ;;Thanks, IDL Coyote--time to write out lots of data
    IF KEYWORD_SET(writeHDF5) THEN BEGIN 
       ;;write out raw data here
       FOR j=0, N_ELEMENTS(h2dStrArr)-2 DO BEGIN 
-         fname=plotDir + dataNameArr[j]+paramStr+'.h5' 
+         fname=plotDir + dataNameArr[j]+paramString+'.h5' 
          PRINT,"Writing HDF5 file: " + fname 
          fileID=H5F_CREATE(fname) 
          datatypeID=H5T_IDL_CREATE(h2dStrArr[j].data) 
@@ -24,7 +24,7 @@ PRO WRITE_ALFVENDB_2DHISTOS,MAXIMUS=maximus,PLOT_I=plot_i, $
       ;;HELP, s.mydata._DATA, /STRUCTURE  
       IF KEYWORD_SET(writeProcessedH2d) THEN BEGIN 
          FOR j=0, N_ELEMENTS(h2dStrArr)-2 DO BEGIN 
-            fname=plotDir + dataNameArr[j]+paramStr+'.h5' 
+            fname=plotDir + dataNameArr[j]+paramString+'.h5' 
             PRINT,"Writing HDF5 file: " + fname 
             fileID=H5F_CREATE(fname) 
             
@@ -51,7 +51,7 @@ PRO WRITE_ALFVENDB_2DHISTOS,MAXIMUS=maximus,PLOT_I=plot_i, $
    IF KEYWORD_SET(writeASCII) THEN BEGIN 
       ;;These are the "raw" data, just as we got them from Chris
       FOR j = 0, n_elements(dataRawPtrArr)-3 DO BEGIN 
-         fname=plotDir + dataNameArr[j]+paramStr+'.ascii' 
+         fname=plotDir + dataNameArr[j]+paramString+'.ascii' 
          PRINT,"Writing ASCII file: " + fname 
          OPENW,lun2, fname, /get_lun 
 
@@ -67,7 +67,7 @@ PRO WRITE_ALFVENDB_2DHISTOS,MAXIMUS=maximus,PLOT_I=plot_i, $
       ;;NOW DO PROCESSED H2D DATA 
       IF KEYWORD_SET(writeProcessedH2d) THEN BEGIN 
          FOR i = 0, n_elements(h2dStrArr)-1 DO BEGIN 
-            fname=plotDir + "h2d_"+dataNameArr[i]+paramStr+'.ascii' 
+            fname=plotDir + "h2d_"+dataNameArr[i]+paramString+'.ascii' 
             PRINT,"Writing ASCII file: " + fname 
             OPENW,lun2, fname, /get_lun 
             FOR j = 0, N_ELEMENTS(outH2DBinsMLT) - 1 DO BEGIN 
