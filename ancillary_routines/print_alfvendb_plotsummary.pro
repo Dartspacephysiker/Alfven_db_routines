@@ -1,6 +1,6 @@
 ;2015/10/19 Barnebarn
 
-PRO PRINT_ALFVENDB_PLOTSUMMARY,maximus,plot_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,good_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                minMLT=minM,maxMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                                DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
@@ -35,11 +35,11 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY,maximus,plot_i,CLOCKSTR=clockStr, ANGLELIM1=angle
   IF KEYWORD_SET(angleLim2)     THEN PRINTF,lun,FORMAT='("Angle lim 2",T30,":",T35,I8)',angleLim2
 
   IF KEYWORD_SET(maskMin)       THEN PRINTF,lun,FORMAT='("Events per bin req",T30,": >=",T35,I8)',maskMin
-  PRINTF,lun,FORMAT='("Number of orbits used",T30,":",T35,I8)',N_ELEMENTS(UNIQ(maximus.orbit(plot_i),SORT(maximus.orbit(plot_i))))
-  PRINTF,lun,FORMAT='("Total N events",T30,":",T35,I8)',N_ELEMENTS(plot_i)
+  PRINTF,lun,FORMAT='("Number of orbits used",T30,":",T35,I8)',N_ELEMENTS(UNIQ(dbStruct.orbit[good_i],SORT(dbStruct.orbit[good_i])))
+  PRINTF,lun,FORMAT='("Total N events",T30,":",T35,I8)',N_ELEMENTS(good_i)
 ;; PRINTF,lun,FORMAT='("Percentage of Chaston DB used: ",T35,I0)' + $
-;;        strtrim((N_ELEMENTS(plot_i))/134925.0*100.0,2) + "%"
-  PRINTF,lun,FORMAT='("Percentage of DB used",T30,":",T35,G8.4,"%")',(FLOAT(N_ELEMENTS(plot_i))/FLOAT(n_elements(maximus.orbit))*100.0)
+;;        strtrim((N_ELEMENTS(good_i))/134925.0*100.0,2) + "%"
+  PRINTF,lun,FORMAT='("Percentage of DB used",T30,":",T35,G8.4,"%")',(FLOAT(N_ELEMENTS(good_i))/FLOAT(N_ELEMENTS(dbStruct.orbit))*100.0)
   PRINTF,lun,''
   IF KEYWORD_SET(paramString) THEN PRINTF,lun,FORMAT='("Parameter string",T30,":",T35,A0)',paramString
 

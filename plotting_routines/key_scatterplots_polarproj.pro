@@ -258,30 +258,6 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
      ENDELSE
   END
 
-  ;;screen on maximus? YES
-
-  ;;dayside
-  ;; IF KEYWORD_SET(dayside) THEN BEGIN
-  ;;    maximus = resize_maximus(maximus,MAXIMUS_IND=4,MIN_FOR_IND=6,MAX_FOR_IND=18)  ;; Dayside MLTs
-  ;;    maximus = resize_maximus(maximus,MAXIMUS_IND=5,MIN_FOR_IND=60,MAX_FOR_IND=84) ;; ILAT range
-  ;; ENDIF
-
-  ;;nightside
-  ;;Not currently functional, because resize_maximus can't handle selecting MLTS 18-6, you see
-  ;; IF KEYWORD_SET(nightside) THEN BEGIN
-  ;;    maximus = resize_maximus(maximus,MAXIMUS_IND=4,MIN_FOR_IND=6,MAX_FOR_IND=18)    ;; Nightside MLTs
-  ;;    maximus = resize_maximus(maximus,MAXIMUS_IND=5,MIN_FOR_IND=60,MAX_FOR_IND=84)   ;; ILAT range
-  ;; ENDIF
-
-  ;; screen by characteristic energy
-  ;; IF KEYWORD_SET(charEScr) THEN maximus = resize_maximus(maximus,MAXIMUS_IND=12,MIN_FOR_IND=4,MAX_FOR_IND=300)  
-
-  ;; screen by magnetometer current
-  ;; min_absMagcScr=10
-  ;; max_absMagcScr=500
-  ;; IF KEYWORD_SET(absMagcScr) THEN maximus = resize_maximus(maximus,MAXIMUS_IND=6,MIN_FOR_IND=min_absMagcScr,MAX_FOR_IND=max_absMagcScr)  
-
-
   ;;****************************************
   ;; Plotting
 

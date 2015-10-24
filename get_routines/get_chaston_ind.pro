@@ -169,25 +169,25 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   
   IF KEYWORD_SET(satellite) THEN BEGIN
      sat_i=GET_SATELLITE_INDS(dbStruct,satellite,LUN=lun)
-     region_i_ACEstart=region_i[where(region_i GE sat_i,nGood,complement=lost,ncomplement=nlost)]
+     good_i=region_i[where(region_i GE sat_i,nGood,complement=lost,ncomplement=nlost)]
      lost=region_i[lost]
   ENDIF ELSE BEGIN
-     region_i_ACEstart = region_i
+     good_i = region_i
   ENDELSE
 
   ;;Now, clear out all the garbage (NaNs & Co.)
-  ;; IF KEYWORD_SET(chastDB) THEN restore,defChastDB_cleanIndFile ELSE good_i = alfven_db_cleaner(dbStruct,LUN=lun)
-  ;; IF KEYWORD_SET(chastDB) THEN good_i = alfven_db_cleaner(dbStruct,LUN=lun,/IS_CHASTDB) ELSE good_i = alfven_db_cleaner(dbStruct,LUN=lun)
+  ;; IF KEYWORD_SET(chastDB) THEN restore,defChastDB_cleanIndFile ELSE cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun)
+  ;; IF KEYWORD_SET(chastDB) THEN cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun,/IS_CHASTDB) ELSE cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun)
   IF is_maximus THEN BEGIN
-     good_i = alfven_db_cleaner(dbStruct,LUN=lun,IS_CHASTDB=chastDB)
-     IF good_i NE !NULL THEN region_i_ACEstart=CGSETINTERSECTION(region_i_ACEstart,good_i)
+     cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun,IS_CHASTDB=chastDB)
+     IF cleaned_i NE !NULL THEN good_i=CGSETINTERSECTION(good_i,cleaned_i)
   ENDIF ELSE BEGIN
-     good_i = fastloc_cleaner(dbStruct,LUN=lun)
-     IF good_i NE !NULL THEN region_i_ACEstart=CGSETINTERSECTION(region_i_ACEstart,good_i)
+     cleaned_i = fastloc_cleaner(dbStruct,LUN=lun)
+     IF cleaned_i NE !NULL THEN good_i=CGSETINTERSECTION(good_i,cleaned_i)
   ENDELSE
 
-  ;; IF N_ELEMENTS(dbTimes) EQ 0 THEN dbTimes=str_to_time( dbStruct.time( region_i_ACEstart ) ) $
-  ;; ELSE dbTimes = dbTimes[region_i_ACEstart]
+  ;; IF N_ELEMENTS(dbTimes) EQ 0 THEN dbTimes=str_to_time( dbStruct.time( good_i ) ) $
+  ;; ELSE dbTimes = dbTimes[good_i]
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;Now some other user-specified exclusions set by keyword
@@ -195,7 +195,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   IF (~KEYWORD_SET(chastDB) AND is_maximus) THEN BEGIN
      burst_i = WHERE(dbStruct.burst,nBurst,COMPLEMENT=survey_i,NCOMPLEMENT=nSurvey,/NULL)
      IF KEYWORD_SET(no_burstData) THEN BEGIN
-        region_i_ACEstart = CGSETINTERSECTION(survey_i,region_i_ACEstart)
+        good_i = CGSETINTERSECTION(survey_i,good_i)
         
         printf,lun,""
         printf,lun,"You're losing " + strtrim(nBurst) + " events because you've excluded burst data."
@@ -205,23 +205,25 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
      PRINTF,lun,''
   ENDIF
 
-  IF KEYWORD_SET(print_param_summary) THEN PRINT_SUMMARY_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-     ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-     minMLT=minM,maxMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
-     DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-     MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-     HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-     BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax, BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
-     PARAMSTRING=paramStr, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
-     SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-     HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
-     HOYDIA=hoyDia,LUN=lun
+  IF KEYWORD_SET(print_param_summary) THEN BEGIN
+     PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,good_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+                                ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                minMLT=minM,maxMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                                DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
+                                BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax, BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+                                PARAMSTRING=paramString, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
+                                SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
+                                HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
+                                HOYDIA=hoyDia,MASKMIN=maskMin,LUN=lun
+  ENDIF
   
-  printf,lun,"There are " + strtrim(n_elements(region_i_ACEstart),2) + " total indices making the cut." 
+  printf,lun,"There are " + strtrim(n_elements(good_i),2) + " total indices making the cut." 
   PRINTF,lun,''
   printf,lun,"****END get_chaston_ind.pro****"
   printf,lun,""
 
-  RETURN, region_i_ACEstart
+  RETURN, good_i
   
 END
