@@ -7,12 +7,14 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_list,alf_y_list,HISTOTYPE=
    HISTDATA=histData, $
    HISTTBINS=histTBins, $
    NEVHISTDATA=nEvHistData, $
-   TAFTERSTORM=tafterstorm,TBEFORESTORM=tBeforeStorm, $
+   TAFTEREPOCH=tafterepoch,TBEFOREEPOCH=tBeforeEpoch, $
    HISTOBINSIZE=histoBinSize,NEVTOT=nEvTot, $
    NONZERO_I=nz_i
    ;; CHISTDATA=cHistData, $
    ;; SAVEFILE=saveFile,SAVESTR=saveStr, $
   
+
+  IF ~KEYWORD_SET(histoType) THEN histoType = 0
 
   nEpochs = N_ELEMENTS(alf_t_list)
 
@@ -26,11 +28,11 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_list,alf_y_list,HISTOTYPE=
         IF KEYWORD_SET(only_nEvents) OR histoType GT 0 THEN BEGIN
            IF N_ELEMENTS(nEvHistData) EQ 0 THEN BEGIN
               nEvHistData=histogram(alf_t,LOCATIONS=histTBins, $
-                                    MAX=tAfterStorm,MIN=-tBeforeStorm, $
+                                    MAX=tAfterEpoch,MIN=-tBeforeEpoch, $
                                     BINSIZE=histoBinSize)
            ENDIF ELSE BEGIN
               nEvHistData=histogram(alf_t,LOCATIONS=histTBins, $
-                                    MAX=tAfterStorm,MIN=-tBeforeStorm, $
+                                    MAX=tAfterEpoch,MIN=-tBeforeEpoch, $
                                     BINSIZE=histoBinSize, $
                                     INPUT=histData)
            ENDELSE
@@ -53,11 +55,11 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_list,alf_y_list,HISTOTYPE=
            
            IF N_ELEMENTS(hData) EQ 0 THEN BEGIN
               hData=hist1d(alf_t,alf_y,LOCATIONS=histTBins, $
-                              MAX=tAfterStorm,MIN=-tBeforeStorm, $
+                              MAX=tAfterEpoch,MIN=-tBeforeEpoch, $
                               BINSIZE=histoBinSize)
            ENDIF ELSE BEGIN
               hData=hist1d(alf_t,alf_y,LOCATIONS=histTBins, $
-                              MAX=tAfterStorm,MIN=-tBeforeStorm, $
+                              MAX=tAfterEpoch,MIN=-tBeforeEpoch, $
                               BINSIZE=histoBinSize, $
                               INPUT=hData)
            ENDELSE

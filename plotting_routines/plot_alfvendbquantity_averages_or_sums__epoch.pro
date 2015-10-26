@@ -48,4 +48,110 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, HISTOTYP
      outPlot = plot
   ENDELSE
 
+  ;;ALL BAD STUFF! This has to be incorporated. Here's the tip: Make this guideline plotter general, and simply feed it the
+  ;;appropriate order-of-magnitude values. Then you be happy, my man.
+  STOP
+
+  ;;DO YOU WANT THIS BACKGROUND THING? You definitely want the guideline stuff below
+  IF KEYWORD_SET(bkgrnd_maxInd) AND ~noPlots THEN BEGIN
+     
+     ;;PLOT_GUIDELINE,guideline_vals, $
+    ;;For plotting guidelines
+     ;; guide_linestyle='__'
+     ;; plot_bkgrnd_8=plot(tBins[safe_i]+0.5*min_NEVBINSIZE, $
+     ;;                    MAKE_ARRAY(N_ELEMENTS(safe_i),VALUE=10.^8), $
+     ;;                    XRANGE=xRange, $
+     ;;                    YRANGE=(KEYWORD_SET(yRange_maxInd)) ? $
+     ;;                    yRange_maxInd : [minDat,maxDat], $
+     ;;                    YLOG=(log_DBQuantity) ? 1 : 0, $
+     ;;                    AXIS_STYLE=0, $
+     ;;                    LINESTYLE=guide_linestyle, $
+     ;;                    ;; SYMBOL='', $
+     ;;                    ;; SYM_SIZE=1.5, $
+     ;;                    COLOR='black', $
+     ;;                    THICK=1.5, $
+     ;;                    MARGIN=plotMargin_max, $
+     ;;                    /CURRENT)
+
+     safe_i=(log_DBQuantity) ? WHERE(FINITE(bkgrnd_maxInd) AND bkgrnd_maxInd GT 0.) : WHERE(FINITE(bkGrnd_maxInd))
+     
+     y_offset = (log_DBQuantity) ? 1. : TOTAL(bkgrnd_maxind[safe_i])*0.1
+     ;; y_offset = 0.
+     IF N_ELEMENTS(tBins) EQ 0 THEN STOP
+     plot_bkgrnd_max=plot(tBins[safe_i]+0.5*min_NEVBINSIZE, $
+                          (log_DBQuantity) ? 10^(bkgrnd_maxInd[safe_i]-y_offset) : bkgrnd_maxInd[safe_i]-y_offset, $
+                          XRANGE=xRange, $
+                          YRANGE=(KEYWORD_SET(yRange_maxInd)) ? $
+                          yRange_maxInd : [minDat,maxDat], $
+                          YLOG=(log_DBQuantity) ? 1 : 0, $
+                          NAME='Background Alfvén activity', $
+                          AXIS_STYLE=0, $
+                          LINESTYLE='--', $
+                          COLOR='blue', $
+                          THICK=2.0, $
+                          SYMBOL='d', $
+                          SYM_SIZE=2.5, $
+                          MARGIN=plotMargin_max, $
+                          /CURRENT)
+     
+     legPosY=(KEYWORD_SET(yRange_maxInd) ? yRange_maxInd : [minDat,maxDat])
+     IF (log_DBQuantity) THEN BEGIN
+        ;; legPosY=10.^MEAN(ALOG10(legPosY))
+        legPosY=10.^(ALOG10(legPosY[1])-ALOG10(5))
+     ENDIF ELSE legPosY=MEAN(legPosY)
+     
+     leg = LEGEND(TARGET=[avgplot,plot_bkgrnd_max], $
+                  POSITION=[-15.,legPosY], /DATA, $
+                  /AUTO_TEXT_COLOR)
+     
+     
+     ;;For plotting guidelines
+     guide_linestyle='__'
+     plot_bkgrnd_8=plot(tBins[safe_i]+0.5*min_NEVBINSIZE, $
+                        MAKE_ARRAY(N_ELEMENTS(safe_i),VALUE=10.^8), $
+                        XRANGE=xRange, $
+                        YRANGE=(KEYWORD_SET(yRange_maxInd)) ? $
+                        yRange_maxInd : [minDat,maxDat], $
+                        YLOG=(log_DBQuantity) ? 1 : 0, $
+                        AXIS_STYLE=0, $
+                        LINESTYLE=guide_linestyle, $
+                        ;; SYMBOL='', $
+                        ;; SYM_SIZE=1.5, $
+                        COLOR='black', $
+                        THICK=1.5, $
+                        MARGIN=plotMargin_max, $
+                        /CURRENT)
+     plot_bkgrnd_7=plot(tBins[safe_i]+0.5*min_NEVBINSIZE, $
+                        MAKE_ARRAY(N_ELEMENTS(safe_i),VALUE=10.^7), $
+                        XRANGE=xRange, $
+                        YRANGE=(KEYWORD_SET(yRange_maxInd)) ? $
+                        yRange_maxInd : [minDat,maxDat], $
+                        YLOG=(log_DBQuantity) ? 1 : 0, $
+                        AXIS_STYLE=0, $
+                        LINESTYLE=guide_linestyle, $
+                        ;; SYMBOL='', $
+                        ;; SYM_SIZE=1.5, $
+                        COLOR='black', $
+                        THICK=1.5, $
+                        MARGIN=plotMargin_max, $
+                        /CURRENT)
+     plot_bkgrnd_6=plot(tBins[safe_i]+0.5*min_NEVBINSIZE, $
+                        MAKE_ARRAY(N_ELEMENTS(safe_i),VALUE=10.^6), $
+                        XRANGE=xRange, $
+                        YRANGE=(KEYWORD_SET(yRange_maxInd)) ? $
+                        yRange_maxInd : [minDat,maxDat], $
+                        YLOG=(log_DBQuantity) ? 1 : 0, $
+                        AXIS_STYLE=0, $
+                        LINESTYLE=guide_linestyle, $
+                        ;; SYMBOL='', $
+                        ;; SYM_SIZE=1.5, $
+                        COLOR='black', $
+                        THICK=1.5, $
+                        MARGIN=plotMargin_max, $
+                        /CURRENT)
+     
+     out_maxPlotAll = plot_bkgrnd_max
+     
+  ENDIF
+
 END

@@ -21,7 +21,7 @@ PRO PLOT_ALFVENDB_DATA_AVAILABILITY__EPOCH,tRanges_orbs,centerTime, $
      WAIT,1
   ENDIF
 
-  nOrbs=N_ELEMENTS(tRanges_orbs)
+  nOrbs=N_ELEMENTS(tRanges_orbs[*,0])
   tVals=MAKE_ARRAY(nOrbs,/DOUBLE)
   FOR j=0,nOrbs-1 DO BEGIN
      tVals[j] = (MEAN(tRanges_orbs[j,*])-centerTime)/3600.
@@ -58,7 +58,7 @@ PRO PLOT_ALFVENDB_DATA_AVAILABILITY__EPOCH,tRanges_orbs,centerTime, $
                      ;; SYM_TRANSPARENCY=(i EQ 2) ? 60 : defSymTransp) ;this line is for making events on plot #3 stand out
                      SYM_TRANSPARENCY=0)
 
-  plot_showDat.SYM_FILLED = 1
+  dataAvailPlot.SYM_FILLED = 1
   
   ;; ENDIF  ;; end show_data_avail
   
