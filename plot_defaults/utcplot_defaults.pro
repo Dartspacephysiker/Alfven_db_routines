@@ -4,6 +4,9 @@
   plotMargin=[0.13, 0.20, 0.13, 0.15]
   defPlotMargin_max=[0.13, 0.1, 0.07, 0.1]
 
+  defNegColor                = 'green'
+  defPosColor                = 'red'
+
   defSymTransp               = 97
   defLineTransp              = 75
   defLineThick               = 2.5

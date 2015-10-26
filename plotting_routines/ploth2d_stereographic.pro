@@ -118,7 +118,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
 
   ;;binary matrix to tell us where masked values are
   masked=(h2dStrArr[nPlots].data GT 250.0)
-  IF KEYWORD_SET(reverse_lShell) THEN masked = REVERSE(masked,2)
+  IF KEYWORD_SET(reverse_lShell) THEN masked[*,1:-1] = REVERSE(masked[*,1:-1],2)
   notMasked=WHERE(~masked)
 
   h2descl=MAKE_ARRAY(SIZE(temp.data,/DIMENSIONS),VALUE=0)

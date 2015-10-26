@@ -21,7 +21,7 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_list,alf_y_list,HISTOTYPE=
   FOR i=0,nEpochs-1 DO BEGIN
      
         
-     IF N_ELEMENTS(alf_t_list[i]) GT 0 AND alf_t_list[i,0] NE -1 THEN BEGIN
+     IF N_ELEMENTS(alf_t_list[i]) GT 1 AND alf_t_list[i,0] NE -1 THEN BEGIN
         alf_t = alf_t_list[i]
 
         ;:Make nEvent histo if requested or if necessary for doing averaging
