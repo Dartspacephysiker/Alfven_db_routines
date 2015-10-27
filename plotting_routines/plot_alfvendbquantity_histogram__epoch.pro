@@ -1,9 +1,10 @@
-PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,TSTAMPS=tStamps,NAME=name, $
+PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
+   XRANGE=xRange, $
    HISTORANGE=histoRange, $
+   YTITLE=yTitle, $
    MARGIN=margin, $
    PLOTTITLE=plotTitle, $
    OVERPLOT_HIST=overplot_hist, $
-   YTITLE=yTitle, $
    LAYOUT=layout, $
    WINDOW=window,HISTOPLOT=histoPlot, $
    BKGRND_HIST=bkgrnd_hist,BKGRNDHISTOPLOT=bkgrndHistoPlot, $
@@ -29,7 +30,7 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,TSTAMPS=tStamps,NA
   
   IF KEYWORD_SET(overplot_hist) THEN BEGIN
      yaxis = AXIS('Y', LOCATION='right', TARGET=histoPlot, $
-                  TITLE=yTitle, $
+                  TITLE=yTitle, $p
                   MAJOR=nMajorTicks, $
                   MINOR=nMinorTicks, $
                   TICKFONT_SIZE=defHistoYticksize, $
@@ -63,7 +64,7 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,TSTAMPS=tStamps,NA
      IF N_ELEMENTS(outBkgrndPlot) GT 0 THEN outBkgrndPlot=[outBkgrndPlot,bkgrndHistoPlot] ELSE outBkgrndPlot = bkgrndHistoPlot
   ENDIF ELSE BEGIN
      outPlot = histoPlot
-     outBkgrndPlot = bkgrndHistoPlot
+     IF N_ELEMENTS(bkgrndHistoPlot) GT 0 THEN outBkgrndPlot = bkgrndHistoPlot
   ENDELSE
   
 END

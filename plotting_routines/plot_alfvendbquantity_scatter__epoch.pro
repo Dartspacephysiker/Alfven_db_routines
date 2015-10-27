@@ -41,7 +41,7 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
                YTICKFONT_STYLE=max_ytickfont_style, $
                MARGIN=KEYWORD_SET(margin) ? margin : defPlotMargin_max, $
                CURRENT=current, $
-               OVERPLOT=overplot, $
+               OVERPLOT=overplot_alfvendbquantity, $
                LAYOUT=layout, $
                CLIP=clip, $
                SYM_TRANSPARENCY=KEYWORD_SET(symTransparency) ? symTransparency : defSymTransp)

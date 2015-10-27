@@ -1,7 +1,7 @@
 ;2015/10/22
 PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, HISTOTYPE=histoType, $ 
-                                 NEVHISTDATA=nEvHistData, $
-                                 TAFTERSTORM=tafterstorm,TBEFORESTORM=tBeforeStorm, $
+                                 ;; NEVHISTDATA=nEvHistData, $
+                                 TAFTEREPOCH=tafterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
                                  HISTOBINSIZE=histoBinSize, $
                                  NONZERO_I=nz_i, $
                                  SYMCOLOR=symColor,SYMTRANSPARENCY=symTransparency,SYMBOL=symbol, $
