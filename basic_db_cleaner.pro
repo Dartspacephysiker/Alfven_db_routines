@@ -5,6 +5,7 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun,CLEAN_NANS_AND_INFINITIES=clean_nans_
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
   n_events = n_elements(dbStruct.orbit)
   n_good = n_events
+  tot_nLost = 0
   
   IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
   
@@ -24,16 +25,25 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun,CLEAN_NANS_AND_INFINITIES=clean_nans_
      
      FOR i = 0,N_ELEMENTS(clean_these_inds)-1 DO BEGIN
         IF N_ELEMENTS(good_i) EQ 0 THEN BEGIN
-           good_i = WHERE(FINITE(dbStruct.(clean_these_inds[i])),/NULL)
-           nLost  = n_good-n_elements(good_i)
-           n_good = n_good - nLost
-           IF nLost GT 100 THEN BEGIN
-              PRINTF,lun,FORMAT='("Just lost",I0," events to NaNs/infs in ",A0,"!!")',nLost,dbTags[clean_these_inds[i]]
+           good_i     = WHERE(FINITE(dbStruct.(clean_these_inds[i])),/NULL)
+           nLost      = n_good-n_elements(good_i)
+           tot_nLost += nLost
+           n_good     = n_good - nLost
+
+           IF nLost GT 0 THEN BEGIN
+              PRINTF,lun,FORMAT='("NaNs/infs in ",A20,T40,": ",I0)',dbTags[clean_these_inds[i]],nLost
            ENDIF
         ENDIF ELSE BEGIN
            test_i = WHERE(FINITE(dbStruct.(clean_these_inds[i])),/NULL)
            IF N_ELEMENTS(test_i) GT 0 THEN BEGIN
-              good_i = cgsetintersection(test_i,good_i)
+              good_i     = cgsetintersection(test_i,good_i)
+              nLost      = n_good-n_elements(good_i)
+              tot_nLost += nLost
+              n_good     = n_good - nLost
+
+              IF nLost GT 0 THEN BEGIN
+                 PRINTF,lun,FORMAT='("NaNs/infs in ",A20,T40,": ",I0)',dbTags[clean_these_inds[i]],nLost
+              ENDIF
            ENDIF ELSE BEGIN
               PRINTF,lun,"Lost all indices to " + mTags[clean_these_inds[i]] + "!"
            ENDELSE
@@ -41,23 +51,50 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun,CLEAN_NANS_AND_INFINITIES=clean_nans_
      ENDFOR
   ENDIF
   
-  nLost = n_events-n_elements(good_i)
-  n_good -= nLost
-  printf,lun,FORMAT='("N lost to NaNs, infinities",T31,":",T35,I0)',nLost
+  ;; nLost = n_events-n_elements(good_i)
+  ;; n_good -= nLost
+  printf,lun,FORMAT='("NaNs, infinities",T40,": ",I0)',tot_nLost
   
   ;;Now handle the rest
-  IF KEYWORD_SET(clean_nans_and_infinities) THEN $
-     good_i = cgsetintersection(good_i,WHERE(dbStruct.ILAT LE ilat_hcutoff AND dbStruct.ILAT GE ilat_lcutoff)) $
-  ELSE $
+  IF KEYWORD_SET(clean_nans_and_infinities) THEN BEGIN
+     good_i = cgsetintersection(good_i,WHERE(dbStruct.ILAT LE ilat_hcutoff AND dbStruct.ILAT GE ilat_lcutoff)) 
+  ENDIF ELSE BEGIN
      good_i = WHERE(dbStruct.ILAT LE ilat_hcutoff AND dbStruct.ILAT GE ilat_lcutoff)
+  ENDELSE
+  nlost      = n_good-n_elements(good_i)
+  tot_nLost += nLost
+  n_good -= nLost
+  IF nLost GT 0 THEN BEGIN
+     PRINTF,lun,FORMAT='("N lost to basic ILAT restr",T40,": ",I0)',nlost
+  ENDIF
 
   good_i = cgsetintersection(good_i,WHERE(dbStruct.MLT LE mlt_hcutoff AND dbStruct.MLT GE 0.0))
-  good_i = cgsetintersection(good_i,WHERE(dbStruct.ORBIT LE orbit_hcutoff AND dbStruct.ORBIT GE orbit_lcutoff))
-  good_i = cgsetintersection(good_i,where(dbStruct.sample_t LE sample_t_hcutoff,/NULL))
+  nlost      = n_good-n_elements(good_i)
+  tot_nLost += nLost
+  n_good -= nLost
+  IF nLost GT 0 THEN BEGIN
+     PRINTF,lun,FORMAT='("N lost to basic MLT restr",T40,": ",I0)',nlost
+  ENDIF
 
-  nlost = n_good-n_elements(good_i)
-  printf,lun,FORMAT='("N lost to basic cutoffs",T31,":",T35,I0)',nlost
-  printf,lun,FORMAT='("N surviving basic screening",T31,":",T35,I0)',n_good
+  good_i = cgsetintersection(good_i,WHERE(dbStruct.ORBIT LE orbit_hcutoff AND dbStruct.ORBIT GE orbit_lcutoff))
+  nlost      = n_good-n_elements(good_i)
+  tot_nLost += nLost
+  n_good -= nLost
+  IF nLost GT 0 THEN BEGIN
+     PRINTF,lun,FORMAT='("N lost to basic ORBIT restr",T40,": ",I0)',nlost
+  ENDIF
+
+  good_i = cgsetintersection(good_i,where(dbStruct.sample_t LE sample_t_hcutoff,/NULL))
+  nlost      = n_good-n_elements(good_i)
+  tot_nLost += nLost
+  n_good -= nLost
+  IF nLost GT 0 THEN BEGIN
+     PRINTF,lun,FORMAT='("N lost to basic sample freq restr",T40,": ",I0)',nlost
+  ENDIF
+
+  ;; nlost = n_good-n_elements(good_i)
+  printf,lun,FORMAT='("N lost to basic cutoffs",T40,": ",I0)',tot_nlost
+  printf,lun,FORMAT='("N surviving basic screening",T40,": ",I0)',n_good
   printf,lun,"****END basic_db_cleaner.pro****"
   printf,lun,""
 

@@ -50,10 +50,10 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, HISTOTYP
 
   ;;ALL BAD STUFF! This has to be incorporated. Here's the tip: Make this guideline plotter general, and simply feed it the
   ;;appropriate order-of-magnitude values. Then you be happy, my man.
-  STOP
+  ;; STOP
 
   ;;DO YOU WANT THIS BACKGROUND THING? You definitely want the guideline stuff below
-  IF KEYWORD_SET(bkgrnd_maxInd) AND ~noPlots THEN BEGIN
+  IF KEYWORD_SET(bkgrnd_maxInd) THEN BEGIN
      
      ;;PLOT_GUIDELINE,guideline_vals, $
     ;;For plotting guidelines

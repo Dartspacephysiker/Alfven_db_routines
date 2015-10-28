@@ -2,22 +2,31 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
    XRANGE=xRange, $
    HISTORANGE=histoRange, $
    YTITLE=yTitle, $
+   LOGYPLOT=logYPlot, $
    MARGIN=margin, $
    PLOTTITLE=plotTitle, $
    OVERPLOT_HIST=overplot_hist, $
+   CURRENT=current, $
    LAYOUT=layout, $
-   WINDOW=window,HISTOPLOT=histoPlot, $
+   HISTOPLOT=histoPlot, $
    BKGRND_HIST=bkgrnd_hist,BKGRNDHISTOPLOT=bkgrndHistoPlot, $
    OUTPLOT=outPlot,OUTBKGRNDPLOT=outBkgrndPlot, $
    ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array   
 
   @utcplot_defaults.pro
+  
+  IF KEYWORD_SET(logYPlot) THEN BEGIN
+     safe_i = WHERE(histData GT 0)
+     histTBins = histTBins[safe_i]
+     histData = histData[safe_i]
+  ENDIF
 
   histoPlot=plot(histTBins,histData, $
                 ;; /STAIRSTEP, $
                  /HISTOGRAM, $
                  TITLE=plotTitle, $
                  YRANGE=KEYWORD_SET(histoRange) ? histoRange : defNEvYRange, $
+                 YLog=KEYWORD_SET(logYPlot) ? 1 : 0, $
                  YTITLE=KEYWORD_SET(overplot_hist) ? !NULL : yTitle, $
                  NAME=KEYWORD_SET(name) ? name : defHistoName, $
                  XRANGE=xRange, $
@@ -26,7 +35,7 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
                  MARGIN=margin, $
                  LAYOUT=layout, $
                  THICK=defHistoThick, $ ;OVERPLOT=KEYWORD_SET(overplot_hist),$
-                 CURRENT=KEYWORD_SET(overplot_hist))
+                 CURRENT=KEYWORD_SET(current) OR KEYWORD_SET(overplot_hist))
   
   IF KEYWORD_SET(overplot_hist) THEN BEGIN
      yaxis = AXIS('Y', LOCATION='right', TARGET=histoPlot, $

@@ -1,17 +1,26 @@
 ;+
+;;Note, MINMLT,MAXILAT, etc., keywords got added 2015/10/27, and they may screw up other stuff. Just so
+;;you know!
 ;2015/10/21 Now using output from fastloc_intervals3, which includes magnetometer sampling rates
 ;2015/04/09
 ;this can be used as a standalone routine or else called by plot_alfven_stats_imf_screening when
 ;making a plot of n events per minute
 ;-
-PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i,T1_ARR=t1_arr,T2_ARR=t2_arr, $
+PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
+                               LIST_TO_ARR=list_to_arr, $
+                               T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                HEMI=hemi, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                MAKE_OUTINDSFILE=make_outIndsFile, $
                                OUTINDSPREFIX=outIndsPrefix,OUTINDSSUFFIX=outIndsSuffix,OUTINDSFILEBASENAME=outIndsFileBasename, $
                                FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
-                               FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, FASTLOCOUTPUTDIR=fastLocOutputDir
+                               FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, FASTLOCOUTPUTDIR=fastLocOutputDir, $
+                               ;;Note, all of the following keywords got added 2015/10/27, and they may screw up other stuff. Just so
+                               ;;you know!
+                               RESTRICT_ALTRANGE=restrict_altRange,RESTRICT_CHARERANGE=restrict_charERange, $
+                               MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                               DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL
 
   COMPILE_OPT idl2
 
@@ -24,6 +33,8 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i,T1_ARR=t1_arr,T2_ARR=t2_arr, $
 
   IF NOT KEYWORD_SET(lun) THEN lun = -1 ;stdout
   
+  IF N_ELEMENTS(list_to_arr) EQ 0 THEN list_to_arr = 1
+
   ;;Load FASTLoc & Co.
   LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t,DBDir=DBDir,DBFile=FastLocFile,DB_tFile=FastLocTimeFile,LUN=lun
   
@@ -91,7 +102,7 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i,T1_ARR=t1_arr,T2_ARR=t2_arr, $
      
      GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
         DBSTRUCT=fastLoc,DBTIMES=fastLoc_times, RESTRICT_W_THESEINDS=good_i, $
-        OUT_INDS_LIST=fastLocInterped_i,/LIST_TO_ARR, $
+        OUT_INDS_LIST=fastLocInterped_i,LIST_TO_ARR=list_to_arr, $
         UNIQ_ORBS_LIST=uniq_orbs_list,UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
         INDS_ORBS_LIST=inds_orbs_list,TRANGES_ORBS_LIST=tranges_orbs_list,TSPANS_ORBS_LIST=tspans_orbs_list, $
         PRINT_DATA_AVAILABILITY=print_data_availability
