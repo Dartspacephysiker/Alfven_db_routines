@@ -47,6 +47,7 @@ function alfven_db_cleaner,maximus,IS_CHASTDB=is_chastDB,LUN=lun
   n_events = n_elements(maximus.orbit)
   good_i = BASIC_DB_CLEANER(maximus,DO_CHASTDB=is_chastDB,/CLEAN_NANS_AND_INFINITIES)
 
+  n_basic = N_ELEMENTS(good_i)
   ;**********
   ;   NaNs  *
   ;**********
@@ -208,7 +209,7 @@ function alfven_db_cleaner,maximus,IS_CHASTDB=is_chastDB,LUN=lun
 
   ENDELSE
 
-  nlost = n_events-n_elements(good_i)
+  nlost = n_basic-n_elements(good_i)
   printf,lun,FORMAT='("N lost to user-defined cutoffs:",T35,I0)', nlost
 
   printf,lun,"****END alfven_db_cleaner.pro****"
