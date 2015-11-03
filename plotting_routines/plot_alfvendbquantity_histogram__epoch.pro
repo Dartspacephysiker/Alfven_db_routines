@@ -3,6 +3,7 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
    HISTORANGE=histoRange, $
    YTITLE=yTitle, $
    LOGYPLOT=logYPlot, $
+   YTICKFORMAT=yTickFormat, $
    MARGIN=margin, $
    PLOTTITLE=plotTitle, $
    OVERPLOT_HIST=overplot_hist, $
@@ -44,7 +45,8 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
                   MINOR=nMinorTicks, $
                   TICKFONT_SIZE=defHistoYticksize, $
                   TICKFONT_STYLE=defHistoYtickfontstyle, $
-                  TICKFORMAT=defHistoTickFormat, $
+                  ;; TICKFORMAT=KEYWORD_SET(yTickFormat) ? yTickFormat : defHistoTickFormat, $
+                  TICKFORMAT=!NULL, $
                   TEXTPOS=1, $
                   COLOR=defHistoColor)
   ENDIF

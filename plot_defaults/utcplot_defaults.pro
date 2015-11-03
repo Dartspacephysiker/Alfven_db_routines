@@ -43,6 +43,7 @@
   defHistoTickFormat         = '(I0)'
   defHistoRange              = [0,7500]
   defHistoThick               = 6.5
+;;  defProbOccurrenceTickFmt   = '(F0.3)'
 
   defBkgrndHistoName         = 'Background histogram'
   defBkgrndHistoColor        = 'blue'
