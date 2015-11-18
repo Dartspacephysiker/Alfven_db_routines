@@ -1,5 +1,5 @@
 ;2015/10/22
-PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, HISTOTYPE=histoType, $ 
+PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $ 
                                  ;; NEVHISTDATA=nEvHistData, $
                                  TAFTEREPOCH=tafterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
                                  HISTOBINSIZE=histoBinSize, $

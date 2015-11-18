@@ -1,5 +1,5 @@
 ;2015/11/03
-FUNCTION MAKE_EPOCHSLICE_HIST_STRUCT,yData, $
+FUNCTION MAKE_ALFVENDBQUANTITY_HIST_STRUCT,yData, $
                                      BINSIZE=binsize, $
                                      MAXVAL=maxVal, $
                                      MINVAL=minVal, $
@@ -14,7 +14,7 @@ FUNCTION MAKE_EPOCHSLICE_HIST_STRUCT,yData, $
                               REVERSE_INDICES=ri)
   ENDIF
 
-  es_hist_tmplt = {tmplt_es_hist, $
+  alfdbq_hist_tmplt = {tmplt_alfdbq_hist, $
                    hist         : LIST(), $
                    min          : DOUBLE(0), $
                    max          : DOUBLE(0), $
@@ -23,13 +23,13 @@ FUNCTION MAKE_EPOCHSLICE_HIST_STRUCT,yData, $
                    locs         : LIST()}
   
   
-  IF N_ELEMENTS(minVal) GT 0 THEN es_hist_tmplt.min = minVal
-  IF N_ELEMENTS(maxVal) GT 0 THEN es_hist_tmplt.max = maxVal
-  IF N_ELEMENTS(binsize) GT 0 THEN es_hist_tmplt.binsize = binsize
-  IF N_ELEMENTS(hist) GT 0 THEN es_hist_tmplt.hist.add,hist
-  IF N_ELEMENTS(ri) GT 0 AND KEYWORD_SET(do_rev_inds) THEN es_hist_tmplt.ri.add,ri
-  IF N_ELEMENTS(locs) GT 0 THEN es_hist_tmplt.locs.add,locs
+  IF N_ELEMENTS(minVal) GT 0 THEN alfdbq_hist_tmplt.min = minVal
+  IF N_ELEMENTS(maxVal) GT 0 THEN alfdbq_hist_tmplt.max = maxVal
+  IF N_ELEMENTS(binsize) GT 0 THEN alfdbq_hist_tmplt.binsize = binsize
+  IF N_ELEMENTS(hist) GT 0 THEN alfdbq_hist_tmplt.hist.add,hist
+  IF N_ELEMENTS(ri) GT 0 AND KEYWORD_SET(do_rev_inds) THEN alfdbq_hist_tmplt.ri.add,ri
+  IF N_ELEMENTS(locs) GT 0 THEN alfdbq_hist_tmplt.locs.add,locs
 
-  RETURN,es_hist_tmplt
+  RETURN,alfdbq_hist_tmplt
 
 END

@@ -21,7 +21,7 @@ FUNCTION MAKE_EPOCHSLICE_STRUCT, $
                      eEnd               : DOUBLE(0), $
                      is_logged          : 0, $
                      yList              : LIST(), $
-                     yHistStr           : MAKE_EPOCHSLICE_HIST_STRUCT(), $
+                     yHistStr           : MAKE_ALFVENDBQUANTITY_HIST_STRUCT(), $
                      has_hist           : BYTE(0), $
                      tList              : LIST(), $
                      moments            : MAKE_MOMENT_STRUCT(), $
@@ -36,7 +36,7 @@ FUNCTION MAKE_EPOCHSLICE_STRUCT, $
 
      IF KEYWORD_SET(DO_HIST) THEN BEGIN
         eSlice_tmplt.has_hist  = 1
-        eSlice_tmplt.yHistStr = MAKE_EPOCHSLICE_HIST_STRUCT(yData, $
+        eSlice_tmplt.yHistStr = MAKE_ALFVENDBQUANTITY_HIST_STRUCT(yData, $
                                                             MINVAL=hMin, $
                                                             MAXVAL=hMax, $
                                                             BINSIZE=hBinsize, $

@@ -32,10 +32,10 @@ PRO SET_PLOT_DIR,plotDir, $
   ENDELSE
 
   IF KEYWORD_SET(add_today) AND KEYWORD_SET(add_suff) THEN BEGIN
-     plotDir = plotDir + GET_TODAY_STRING() + '--' + add_suff + '/'
+     plotDir = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '--' + add_suff + '/'
   ENDIF ELSE BEGIN
      IF KEYWORD_SET(add_today) THEN BEGIN
-        plotDir = plotDir + GET_TODAY_STRING() + '/'
+        plotDir = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '/'
      ENDIF ELSE BEGIN
         IF KEYWORD_SET(add_suff) THEN BEGIN
            plotDir = plotDir + add_suff + '/'

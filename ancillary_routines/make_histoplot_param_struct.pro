@@ -9,6 +9,8 @@ FUNCTION MAKE_HISTOPLOT_PARAM_STRUCT, $
    YLOG=yLog, $
    HISTBINSIZE=histBinsize, $
    XP_ARE_LOGGED=xP_are_logged, $
+   ;; MARGIN=margin, $
+   ;; LAYOUT=layout, $
    LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
@@ -31,14 +33,16 @@ FUNCTION MAKE_HISTOPLOT_PARAM_STRUCT, $
 
   pHistParam_tmplt = {tmplt_pHistParam, $
                       NAME               : KEYWORD_SET(NAME) ? NAME : '', $
-                      xRange             : KEYWORD_SET(xRange) ? xRange : MAKE_ARRAY(2,/DOUBLE), $
-                      yRange             : KEYWORD_SET(yRange) ? yRange : MAKE_ARRAY(2,/DOUBLE), $
+                      xRange             : KEYWORD_SET(xRange) ? DOUBLE(xRange) : MAKE_ARRAY(2,/DOUBLE), $
+                      yRange             : KEYWORD_SET(yRange) ? DOUBLE(yRange) : MAKE_ARRAY(2,/DOUBLE), $
                       title              : KEYWORD_SET(title) ? title : '', $
                       xTitle             : KEYWORD_SET(xTitle) ? xTitle : '', $
                       yTitle             : KEYWORD_SET(yTitle) ? yTitle : '', $
                       yLog               : KEYWORD_SET(yLog) ? yLog : BYTE(0), $
                       histBinsize        : KEYWORD_SET(histBinsize) ? histBinsize : DOUBLE(0), $
                       xP_are_logged      : KEYWORD_SET(xP_are_logged) ? xP_are_logged : BYTE(0)}
+                      ;; margin             : KEYWORD_SET(margin) ? margin : !NULL, $
+                      ;; layout             : KEYWORD_SET(layout) ? layout : !NULL}
   
   RETURN,pHistParam_tmplt
 
