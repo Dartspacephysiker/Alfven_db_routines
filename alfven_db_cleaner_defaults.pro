@@ -48,7 +48,8 @@
   
   ;; characteristic ion energy cutoffs
   char_ion_e_hcutoff = 1.0e4
-  char_ion_e_lcutoff = 1.0e-2  
+  ;; char_ion_e_lcutoff = 1.0e-2  
+  char_ion_e_lcutoff = -1.0e4
   
   ;; cutoffs for sample_t, fields instrument
   ;; 512 Hz

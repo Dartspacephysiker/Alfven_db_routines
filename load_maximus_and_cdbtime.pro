@@ -1,8 +1,16 @@
-PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime,DBDir=DBDir,DBFile=DBFile,DB_tFile=DB_tFile,DO_CHASTDB=chastDB,LUN=lun
+PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
+                             DBDir=DBDir, $
+                             DBFile=DBFile, $
+                             DB_TFILE=DB_tFile, $
+                             CORRECT_FLUXES=correct_fluxes, $
+                             DO_CHASTDB=chastDB, $
+                             LUN=lun
 
   COMPILE_OPT idl2
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout
+
+  IF N_ELEMENTS(correct_fluxes) EQ 0 THEN correct_fluxes = 1
 
   DefDBDir             = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
   ;;DefDBFile            = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav'
@@ -38,5 +46,9 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime,DBDir=DBDir,DBFile=DBFile,DB_tFile=
   ENDIF ELSE BEGIN
      PRINTF,lun,"There is already a cdbTime struct loaded! Not loading " + DB_tFile
   ENDELSE
+
+  IF correct_fluxes THEN BEGIN
+     CORRECT_ALFVENDB_FLUXES,maximus
+  ENDIF
 
 END

@@ -37,7 +37,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
   defHwMKpInd            = 7
 
   ;Aujour d'hui
-  GET_TODAY_STRING,hoyDia
+  hoyDia=GET_TODAY_STRING()
 
   ; Handle MLT and ILAT ... and L-shell
   SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minMLT,MAXMLT=maxMLT,BINM=binMLT, $

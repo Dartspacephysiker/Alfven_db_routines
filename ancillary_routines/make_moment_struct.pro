@@ -24,11 +24,15 @@ FUNCTION MAKE_MOMENT_STRUCT,inputData, $
 
      ;be judicious about nBoot
      CASE 1 OF
-        (nData GT 0) AND (nData LT 1000)     : nBoot = 1000
-        (nData GE 1000) AND (nData LT 5000)  : nBoot = 100
-        (nData GE 5000) AND (nData LT 10000) : nBoot = 50
-        (nData GE 10000) AND (nData LT 100000) : nBoot = 10
-        (nData GE 100000) : BEGIN
+        ;; (nData GT 0) AND (nData LT 1000)     : nBoot = 1000
+        ;; (nData GE 1000) AND (nData LT 5000)  : nBoot = 100
+        ;; (nData GE 5000) AND (nData LT 10000) : nBoot = 50
+        ;; (nData GE 10000) AND (nData LT 100000) : nBoot = 10
+        (nData GT 0) AND (nData LT 1000)       : nBoot = 2
+        (nData GE 1000) AND (nData LT 5000)    : nBoot = 2
+        (nData GE 5000) AND (nData LT 10000)   : nBoot = 2
+        (nData GE 10000) AND (nData LT 100000) : nBoot = 2
+        (nData GE 100000)                      : BEGIN
            PRINT,"More than 100000 elements being provided to BOOTSTRAP_MEDIAN! Setting nBoot = 2..."
            nBoot = 2
         END
