@@ -17,7 +17,7 @@ FUNCTION GET_LSHELL_INDS,maximus,minL,maxL,hemi,N_LSHELL=n_lshell,N_NOT_LSHELL=n
                 where(maximus.lshell GE minL AND maximus.lshell LE maxL AND maximus.ilat GT 0), $
                 where(maximus.lshell GE minL AND maximus.lshell LE maxL AND maximus.ilat LT 0))
      n_lshell = N_ELEMENTS(lshell_i)
-     n_not_lshell = N_ELEMENTS(cdbTime)-n_lshell
+     n_not_lshell = N_ELEMENTS(maximus.time)-n_lshell
 
      PRINTF,lun,'Hemisphere: Northern AND Southern'
   ENDIF ELSE BEGIN

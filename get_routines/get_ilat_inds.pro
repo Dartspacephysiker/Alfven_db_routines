@@ -1,3 +1,7 @@
+;Made sometime in late 2015
+;Mods
+;2015/12/03
+;Converting all negative ILATs to positive when using HEMI='BOTH'
 FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ilat,LUN=lun
 
   COMPILE_OPT idl2
@@ -17,6 +21,8 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ila
      n_not_ilat = N_ELEMENTS(maximus.ilat)-n_ilat
 
      PRINTF,lun,'Hemisphere: Northern AND Southern'
+     PRINTF,lun,"Converting negative ILAT values (Southern Hemi) to positive with ABS function..."
+     maximus.ilat[ilat_i] = ABS(maximus.ilat[ilat_i])
   ENDIF ELSE BEGIN
      IF STRUPCASE(hemi) EQ "SOUTH" THEN BEGIN
         ilat_i=where(maximus.ilat GE minI AND maximus.ilat LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT)

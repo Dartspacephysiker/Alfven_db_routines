@@ -1,3 +1,6 @@
+;;2015/12/02 Fixed the reverse_lshell thing so that radial bins get SHIFTed outward by one
+;;           position. Without this fix, it appeared that FAST had data below L=2 (50 
+;;           deg ILAT), which FAST never did. Now all is well in Zion.
 ;;2015/10/21 Changed a ton of stuff. Look out. (Specifically, added a new defaults file for plot labels, removed dependence on string
 ;;checking to see if plot has logged data, and stuff así
 
@@ -100,7 +103,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      gridLatNames  = lShells[0:-1:3]
 
      IF KEYWORD_SET(reverse_lShell) THEN BEGIN
-        temp.data = REVERSE(temp.data,2)
+        temp.data = SHIFT(REVERSE(temp.data,2),0,-1)
         gridLatNames = REVERSE(gridLatNames)
      ENDIF
   ENDIF ELSE BEGIN
@@ -118,7 +121,10 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
 
   ;;binary matrix to tell us where masked values are
   masked=(h2dStrArr[nPlots].data GT 250.0)
-  IF KEYWORD_SET(reverse_lShell) THEN masked[*,1:-1] = REVERSE(masked[*,1:-1],2)
+  IF KEYWORD_SET(reverse_lShell) THEN BEGIN
+     masked[*,1:-1] = REVERSE(masked[*,1:-1],2)
+     masked         = SHIFT(masked,0,-1)
+  ENDIF
   notMasked=WHERE(~masked)
 
   h2descl=MAKE_ARRAY(SIZE(temp.data,/DIMENSIONS),VALUE=0)
