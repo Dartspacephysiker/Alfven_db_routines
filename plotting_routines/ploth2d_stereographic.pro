@@ -11,8 +11,10 @@
 ;; put together, but I can't be sure
 
 PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight, $
-                       PLOTTITLE=plotTitle, MIRROR=mirror, $
-                       DEBUG=debug,_EXTRA=e
+                          PLOTTITLE=plotTitle, MIRROR=mirror, $
+                          DEBUG=debug, $
+                          NO_COLORBAR=no_colorbar, $
+                          _EXTRA=e
 
   print,'biz'
   @ploth2d_stereographic_defaults.pro
@@ -36,7 +38,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      IF midnight EQ 0 THEN midnight=!NULL
   ENDIF
   
-  IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
+  ;; IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
+  IF ~KEYWORD_SET(wholeCap) THEN BEGIN
      position = [0.1, 0.075, 0.9, 0.75] 
      lim=[(mirror) ? -maxI : minI,minM*15,(mirror) ? -minI : maxI,maxM*15]
   ENDIF ELSE BEGIN
@@ -188,7 +191,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      IF mirror THEN lonLabel = -1.0 * lonLabel ;mirror dat
   ENDELSE 
 
-  IF N_ELEMENTS(wholeCap) GT 0 THEN BEGIN
+  IF KEYWORD_SET(wholeCap) THEN BEGIN
+  ;; IF N_ELEMENTS(wholeCap) GT 0 THEN BEGIN
      factor=6.0
      mltSites=(INDGEN((maxM-minM)/factor)*factor+minM)
      lonNames=[string(minM,format=lonLabelFormat)+" MLT",STRING(mltSites[1:-1],format=lonLabelFormat)]
@@ -251,43 +255,44 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ;;Colorbar stuffs
   ;;******************************
 
-  ;;set up colorbal labels
-  IF NOT KEYWORD_SET(temp.labelFormat) THEN temp.labelFormat=defLabelFormat
-  lowerLab=(temp.is_logged AND temp.logLabels) ? 10.^(temp.lim[0]) : temp.lim[0]
-  UpperLab=(temp.is_logged AND temp.logLabels) ? 10.^temp.lim[1] : temp.lim[1]
-
-  IF temp.do_midCBLabel THEN BEGIN
-     midLab = (temp.lim[1] + temp.lim[0])/2.0
-     IF temp.logLabels THEN midLab = 10.^midLab
-  ENDIF ELSE BEGIN
-     midLab=''
-  ENDELSE
-
-  cbSpacingStr_low  = (nLevels-1)/2-is_OOBLow
-  cbSpacingStr_high = (nLevels-1)/2-is_OOBHigh
-
-  cbOOBLowVal       = (temp.lim[0] LE MIN(temp.data(notMasked))) ? !NULL : 0B
-  cbOOBHighVal      = (temp.lim[1] GE MAX(temp.data(notMasked))) ? !NULL : BYTE(nLevels-1)
-  cbRange           = temp.lim
-  cbTitle           = plotTitle
-  nCBColors         = nlevels-is_OOBHigh-is_OOBLow
-  cbBottom          = BYTE(is_OOBLow)
-  cbTickNames       = [String(lowerLab, Format=temp.labelFormat), $
-                       REPLICATE(" ",cbSpacingStr_Low),$
-                       (temp.DO_midCBLabel ? String(midLab, Format=temp.labelFormat) : " "), $
-                       REPLICATE(" ",cbSpacingStr_High),$
-                       String(upperLab, Format=temp.labelFormat)]
-
-  cgColorbar, NCOLORS=nCBColors, DIVISIONS=nCBColors, BOTTOM=cbBottom, $
-              OOB_Low=cbOOBLowVal, $
-              OOB_High=cbOOBHighVal, $ 
-              /Discrete, $
-              RANGE=cbRange, $
-              TITLE=cbTitle, $
-              POSITION=cbPosition, TEXTTHICK=cbTextThick, VERTICAL=cbVertical, $
-              TLOCATION=cbTLocation, TCHARSIZE=cbTCharSize,$
-              CHARSIZE=cbTCharSize,$
-              TICKNAMES=cbTickNames
-
-
+  IF ~KEYWORD_SET(no_colorBar) THEN BEGIN
+     ;;set up colorbal labels
+     IF NOT KEYWORD_SET(temp.labelFormat) THEN temp.labelFormat=defLabelFormat
+     lowerLab=(temp.is_logged AND temp.logLabels) ? 10.^(temp.lim[0]) : temp.lim[0]
+     UpperLab=(temp.is_logged AND temp.logLabels) ? 10.^temp.lim[1] : temp.lim[1]
+     
+     IF temp.do_midCBLabel THEN BEGIN
+        midLab = (temp.lim[1] + temp.lim[0])/2.0
+        IF temp.logLabels THEN midLab = 10.^midLab
+     ENDIF ELSE BEGIN
+        midLab=''
+     ENDELSE
+     
+     cbSpacingStr_low  = (nLevels-1)/2-is_OOBLow
+     cbSpacingStr_high = (nLevels-1)/2-is_OOBHigh
+     
+     cbOOBLowVal       = (temp.lim[0] LE MIN(temp.data(notMasked))) ? !NULL : 0B
+     cbOOBHighVal      = (temp.lim[1] GE MAX(temp.data(notMasked))) ? !NULL : BYTE(nLevels-1)
+     cbRange           = temp.lim
+     cbTitle           = plotTitle
+     nCBColors         = nlevels-is_OOBHigh-is_OOBLow
+     cbBottom          = BYTE(is_OOBLow)
+     cbTickNames       = [String(lowerLab, Format=temp.labelFormat), $
+                          REPLICATE(" ",cbSpacingStr_Low),$
+                          (temp.DO_midCBLabel ? String(midLab, Format=temp.labelFormat) : " "), $
+                          REPLICATE(" ",cbSpacingStr_High),$
+                          String(upperLab, Format=temp.labelFormat)]
+     
+     cgColorbar, NCOLORS=nCBColors, DIVISIONS=nCBColors, BOTTOM=cbBottom, $
+                 OOB_Low=cbOOBLowVal, $
+                 OOB_High=cbOOBHighVal, $ 
+                 /Discrete, $
+                 RANGE=cbRange, $
+                 TITLE=cbTitle, $
+                 POSITION=cbPosition, TEXTTHICK=cbTextThick, VERTICAL=cbVertical, $
+                 TLOCATION=cbTLocation, TCHARSIZE=cbTCharSize,$
+                 CHARSIZE=cbTCharSize,$
+                 TICKNAMES=cbTickNames
+     
+  ENDIF
 END

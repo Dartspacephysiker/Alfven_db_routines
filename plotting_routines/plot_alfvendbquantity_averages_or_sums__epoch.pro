@@ -13,11 +13,12 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                                  CURRENT=current, $
                                  MARGIN=margin, $
                                  LAYOUT=layout, $
-                                 OUTPLOT=outPlot,ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array
+                                 OUTPLOT=outPlot, $
+                                 ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array
   
   @utcplot_defaults.pro
 
-  plot=plot(histTBins[nz_i],histData[nz_i], $
+  plot=plot(histTBins[nz_i]+histoBinsize*0.5,histData[nz_i], $
             NAME=KEYWORD_SET(plotName) ? plotName : defAvgPlotName, $
             TITLE=plotTitle, $
             XTITLE=KEYWORD_SET(xTitle) ? xTitle : defXTitle, $
@@ -25,13 +26,14 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
             XRANGE=KEYWORD_SET(xRange) ? xRange : !NULL, $
             YRANGE=KEYWORD_SET(yRange) ? yRange : !NULL, $
             YLOG=KEYWORD_SET(logYPlot), $
-            AXIS_STYLE=defAvgSymAxisStyle, $
+            AXIS_STYLE=N_ELEMENTS(outPlot) GT 0 ? 0 : defAvgSymAxisStyle, $
             LINESTYLE=defAvgSymLinestyle, $
-            COLOR=defAvgSymColor, $
+            COLOR=KEYWORD_SET(symColor) ? symColor : defAvgSymColor, $
             THICK=defAvgLineThick, $
             SYMBOL=defAvgSym, $
             SYM_SIZE=defAvgSymSize, $
-            SYM_COLOR=defAvgSymColor, $ ;, $
+            SYM_COLOR=KEYWORD_SET(symColor) ? symColor : defAvgSymColor, $ ;, $
+            SYM_THICK=defAvgSymThick, $
             XTICKFONT_SIZE=max_xtickfont_size, $
             XTICKFONT_STYLE=max_xtickfont_style, $
             YTICKFONT_SIZE=max_ytickfont_size, $

@@ -25,7 +25,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
   @fluxplot_defaults.pro
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
-
   IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
 
   nDataz = 0
@@ -60,20 +59,20 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
   h2dStr.is_fluxData = 1
 
   IF KEYWORD_SET(get_eFlux) THEN BEGIN
-     dataName = "eFlux"
-     h2dStr.labelFormat = fluxPlotColorBarLabelFormat
-     h2dStr.logLabels = logeFluxLabels
-     h2dStr.do_plotIntegral = eFlux_doPlotIntegral
+     dataName               = "eFlux"
+     h2dStr.labelFormat     = fluxPlotColorBarLabelFormat
+     h2dStr.logLabels       = logeFluxLabels
+     h2dStr.do_plotIntegral = eFlux_do_plotIntegral
 
      ;;If not allowing negative fluxes
      IF STRUPCASE(fluxplottype) EQ STRUPCASE("Integ") THEN BEGIN
-        h2dStr.title = '09-Max e- Flux, whole dist. (ergs/cm!U2!N-s), at ionos.'
+        h2dStr.title = title__alfDB_ind_09
         ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.integ_elec_energy_flux),NCOMPLEMENT=lost),plot_i) ;;NaN check
         ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
         inData= maximus.integ_elec_energy_flux[plot_i] 
      ENDIF ELSE BEGIN
         IF STRUPCASE(fluxplottype) EQ STRUPCASE("Max") THEN BEGIN
-           h2dStr.title = '08-Max l.c. e- Flux (ergs/cm!U2!N-s), at ionos.'
+           h2dStr.title = title__alfDB_ind_08
            ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.elec_energy_flux),NCOMPLEMENT=lost),plot_i) ;;NaN check
            ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
            inData = maximus.elec_energy_flux[plot_i]
@@ -82,26 +81,27 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
   ENDIF
 
   IF KEYWORD_SET(get_eNumFlux) THEN BEGIN
-     dataName = "eNumFl"
-     h2dStr.labelFormat = fluxPlotColorBarLabelFormat
-     h2dStr.logLabels = logeFluxLabels
-     h2dStr.do_plotIntegral = eFlux_doPlotIntegral
+     dataName               = "eNumFl"
+     h2dStr.labelFormat     = fluxPlotColorBarLabelFormat
+     h2dStr.logLabels       = logeFluxLabels
+     h2dStr.do_plotIntegral = eFlux_do_plotIntegral
+     h2dStr.do_midCBLabel   = eFlux_do_midCBLabel
 
      IF STRUPCASE(fluxPlotType) EQ STRUPCASE("Total_Eflux_Integ") THEN BEGIN
-        h2dStr.title = '11-Total Integ. e- Flux (ergs/cm!U2!N-s), at ionos.'
+        h2dStr.title = title__alfDB_ind_11
 
         ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.total_eflux_integ),NCOMPLEMENT=lost),plot_i) ;;NaN check
         ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
         inData= maximus.total_eflux_integ[plot_i] 
      ENDIF ELSE BEGIN
         IF STRUPCASE(fluxPlotType) EQ STRUPCASE("Eflux_Losscone_Integ") THEN BEGIN
-           h2dStr.title = '10-Integ. L.C. e- Flux (ergs/cm!U2!N-s), at ionos.'
+           h2dStr.title = title__alfDB_ind_10
            ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.eflux_losscone_integ),NCOMPLEMENT=lost),plot_i) ;;NaN check
            ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
            inData = maximus.eflux_losscone_integ[plot_i]
         ENDIF ELSE BEGIN
            IF STRUPCASE(fluxPlotType) EQ STRUPCASE("ESA_Number_flux") THEN BEGIN
-              h2dStr.title = 'e- Flux (#/cm!U2!N-s), at s/c alt.'
+              h2dStr.title = title__alfDB_esa_nFlux
               ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.esa_current),NCOMPLEMENT=lost),plot_i) ;;NaN check
               ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
            ENDIF
@@ -113,11 +113,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
      
   IF KEYWORD_SET(get_pFlux) THEN BEGIN
 
-     h2dStr.title= 'Poynting Flux (mW/m!U2!N)'
-     dataName = "pFlux_"
-     h2dStr.labelFormat = fluxPlotColorBarLabelFormat
-     h2dStr.logLabels = logPFluxLabels
-     h2dStr.do_plotIntegral = PFlux_doPlotIntegral
+     h2dStr.title           = title__alfDB_ind_49
+     dataName               = "pFlux_"
+     h2dStr.labelFormat     = fluxPlotColorBarLabelFormat
+     h2dStr.logLabels       = logPFluxLabels
+     h2dStr.do_plotIntegral = PFlux_do_plotIntegral
+     h2dStr.do_midCBLabel   = PFlux_do_midCBLabel
 
      inData = maximus.pFluxEst[plot_i]
 
@@ -125,37 +126,38 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
 
   IF KEYWORD_SET(get_iFlux) THEN BEGIN
      ;; h2dStr.title= "Ion Flux (ergs/cm!U2!N-s)"
-     dataName = "iflux" 
-     h2dStr.labelFormat = fluxPlotColorBarLabelFormat
-     h2dStr.logLabels = logiFluxLabels
-     h2dStr.do_plotIntegral = iFlux_doPlotIntegral
+     dataName               = "iflux" 
+     h2dStr.labelFormat     = fluxPlotColorBarLabelFormat
+     h2dStr.logLabels       = logiFluxLabels
+     h2dStr.do_plotIntegral = iFlux_do_plotIntegral
+     h2dStr.do_midCBLabel   = iFlux_do_midCBLabel
 
      IF STRUPCASE(fluxplottype) EQ STRUPCASE("Integ") THEN BEGIN
-        h2dStr.title= '17-Integ. Ion Flux (#/cm!U2!N), at ionos.'
+        h2dStr.title= title__alfDB_ind_17
         ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.integ_ion_flux),NCOMPLEMENT=lost),plot_i) ;;NaN check
         ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
      inData=maximus.integ_ion_flux[plot_i]
      ENDIF ELSE BEGIN
         IF STRUPCASE(fluxplottype) EQ STRUPCASE("Max") THEN BEGIN
-           h2dStr.title= '15-Max Ion Flux (#/cm!U2!N-s), at s/c alt.'
+           h2dStr.title= title__alfDB_ind_15
            ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.ion_flux),NCOMPLEMENT=lost),plot_i) ;;NaN check
            ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."pp
            inData=maximus.ion_flux[plot_i]
         ENDIF ELSE BEGIN
            IF STRUPCASE(fluxplottype) EQ STRUPCASE("Max_Up") THEN BEGIN
-              h2dStr.title= '16-Max Upward Ion Flux (#/cm!U2!N-s), at s/c alt.'
+              h2dStr.title= title__alfDB_ind_16
               ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.ion_flux_up),NCOMPLEMENT=lost),plot_i) ;;NaN check
               ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
               inData=maximus.ion_flux_up[plot_i]
            ENDIF ELSE BEGIN
               IF STRUPCASE(fluxplottype) EQ STRUPCASE("Integ_Up") THEN BEGIN
-                 h2dStr.title= '18-Integ. Upward Ion Flux (#/cm!U2!N), at ionos.'
+                 h2dStr.title= title__alfDB_ind_18
                  ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.integ_ion_flux_up),NCOMPLEMENT=lost),plot_i) ;;NaN check
                  ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
                  inData=maximus.integ_ion_flux_up[plot_i]
               ENDIF ELSE BEGIN
                  IF STRUPCASE(fluxplottype) EQ STRUPCASE("Energy") THEN BEGIN
-                    h2dStr.title= '14-Max Ion Energy Flux (ergs/cm!U2!N-s), s/c alt.'
+                    h2dStr.title= title__alfDB_ind_14
                     ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.ion_energy_flux),NCOMPLEMENT=lost),plot_i) ;;NaN check
                     ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
                     inData=maximus.ion_energy_flux[plot_i]
@@ -167,18 +169,20 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
   ENDIF
 
   IF KEYWORD_SET(get_ChareE) THEN BEGIN
-     h2dCharEStr.title = 'e- Characteristic Energy (eV)'
-     dataName = 'charEE'
-     h2dStr.labelFormat = fluxPlotChareCBLabelFormat
-     h2dStr.logLabels = logChareLabels
-     h2dStr.do_plotIntegral = Charee_doPlotIntegral
+     dataName               = 'charEE'
+     h2dStr.labelFormat     = fluxPlotChareCBLabelFormat
+     h2dStr.logLabels       = logChareLabels
+     h2dStr.do_plotIntegral = Charee_do_plotIntegral
+     h2dStr.do_midCBLabel   = Charee_do_midCBLabel
 
      IF STRUPCASE(fluxplottype) EQ STRUPCASE("lossCone") THEN BEGIN
+        h2dStr.title      = title__alfDB_ind_12
         ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.max_chare_losscone),NCOMPLEMENT=lost),plot_i) ;;NaN check
         ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
         inData=maximus.max_chare_losscone[plot_i] 
      ENDIF ELSE BEGIN
         IF STRUPCASE(fluxplottype) EQ STRUPCASE("Total") THEN BEGIN
+           h2dStr.title      = title__alfDB_ind_13
            ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.max_chare_total),NCOMPLEMENT=lost),plot_i) ;;NaN check
            ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
            inData=maximus.max_chare_total[plot_i]
@@ -187,12 +191,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
   ENDIF
 
   IF KEYWORD_SET(get_ChariE) THEN BEGIN
-     h2dCharEStr.title = 'Ion Characteristic Energy (eV)'
-     dataName = 'charIE'
-     h2dStr.labelFormat = fluxPlotChariCBLabelFormat
-     h2dStr.logLabels = logChariLabels
-     h2dStr.do_plotIntegral = Charie_doPlotIntegral
-
+     h2dStr.title           = title__alfDB_ind_19
+     dataName               = 'charIE'
+     h2dStr.labelFormat     = fluxPlotChariCBLabelFormat
+     h2dStr.logLabels       = logChariLabels
+     h2dStr.do_plotIntegral = Charie_do_plotIntegral
+     h2dStr.do_midCBLabel   = Charie_do_midCBLabel
      ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.char_ion_energy),NCOMPLEMENT=lost),plot_i) ;;NaN check
      ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + dataName + " data..."
      inData=maximus.char_ion_energy[plot_i] 
@@ -262,7 +266,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
 
      IF KEYWORD_SET(print_mandm) THEN BEGIN
         PRINTF,lun,h2dStr.title
-        PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)',MAX(h2dStr.data),MIN(h2dStr.data)
+        PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)',MAX(h2dStr.data[h2d_nonzero_nEv_i]),MIN(h2dStr.data[h2d_nonzero_nEv_i])
      ENDIF
 
      IF KEYWORD_SET(logAvgPlot) THEN h2dStr.data[where(h2dFluxN NE 0,/null)] = 10^(h2dStr.data[where(h2dFluxN NE 0,/null)])

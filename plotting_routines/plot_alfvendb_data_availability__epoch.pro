@@ -1,4 +1,5 @@
 PRO PLOT_ALFVENDB_DATA_AVAILABILITY__EPOCH,tRanges_orbs,centerTime, $
+   XRANGE=xRange, $
    BOTTOM_YRANGE=bottom_yRange, $
    LAYOUT=layout, $
    CURRENT=current, $

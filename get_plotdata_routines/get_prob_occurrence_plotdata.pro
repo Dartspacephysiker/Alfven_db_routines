@@ -5,12 +5,19 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                                  MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
                                  DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                                  OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                                 H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                                  H2DSTR=h2dStr,TMPLT_H2DSTR=tmplt_h2dStr, $
-                                 DATANAME=dataName,DATARAWPTR=dataRawPtr
+                                 DATANAME=dataName,DATARAWPTR=dataRawPtr, $
+                                 PRINT_MAX_AND_MIN=print_mandm, $
+                                 LUN=lun
+
 
   COMPILE_OPT idl2
   
   @orbplot_tplot_defaults.pro
+
+  IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
+  IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
@@ -65,6 +72,11 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
      widthData[where(widthData GT 0,/null)]=ALOG10(widthData[WHERE(widthData GT 0,/null)]) 
      h2dStr.title =  'Log ' + h2dStr.title
      h2dStr.lim = ALOG10(h2dStr.lim)
+  ENDIF
+
+  IF KEYWORD_SET(print_mandm) THEN BEGIN
+     PRINTF,lun,h2dStr.title
+     PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)',MAX(h2dStr.data[h2d_nonzero_nEv_i]),MIN(h2dStr.data[h2d_nonzero_nEv_i])
   ENDIF
 
   dataRawPtr = PTR_NEW(widthData)

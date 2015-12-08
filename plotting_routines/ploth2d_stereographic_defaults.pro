@@ -1,7 +1,7 @@
 ;2015/10/21
 ;Maybe this makes life a little easier
 
-  wholecap = 1
+  wholecap = 0
 
   charSize                    = cgDefCharSize()*((N_ELEMENTS(wholeCap) EQ 0) ? 1.0 : 0.7 )
   charSize = cgDefCharSize()*((N_ELEMENTS(wholeCap) EQ 0) ? 1.3 : 0.7 )
@@ -68,7 +68,8 @@
   ;;**********************************
   ;;Wholecap vs. not-wholecap defaults
   ;;**********************************
-  IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
+  ;; IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
+  IF ~KEYWORD_SET(wholeCap) THEN BEGIN
      cbPosition       = [0.25, 0.89, 0.75, 0.91]
      cbTLocation      = "TOP"
      cbVertical       = 0

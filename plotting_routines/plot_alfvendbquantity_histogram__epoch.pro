@@ -7,6 +7,7 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
    MARGIN=margin, $
    PLOTTITLE=plotTitle, $
    OVERPLOT_HIST=overplot_hist, $
+   COLOR=color, $
    CURRENT=current, $
    LAYOUT=layout, $
    HISTOPLOT=histoPlot, $
@@ -32,7 +33,7 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
                  NAME=KEYWORD_SET(name) ? name : defHistoName, $
                  XRANGE=xRange, $
                  AXIS_STYLE=(KEYWORD_SET(overplot_hist)) ? 0 : 1, $
-                 COLOR='red', $
+                 COLOR=KEYWORD_SET(color) ? color : 'red', $
                  MARGIN=margin, $
                  LAYOUT=layout, $
                  THICK=defHistoThick, $ ;OVERPLOT=KEYWORD_SET(overplot_hist),$
@@ -48,7 +49,7 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
                   ;; TICKFORMAT=KEYWORD_SET(yTickFormat) ? yTickFormat : defHistoTickFormat, $
                   TICKFORMAT=!NULL, $
                   TEXTPOS=1, $
-                  COLOR=defHistoColor)
+                  COLOR=KEYWORD_SET(color) ? color : defHistoColor)
   ENDIF
 
   IF KEYWORD_SET(bkgrnd_hist) THEN BEGIN
@@ -72,10 +73,15 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
 
   IF KEYWORD_SET(add_plot_to_plot_array) THEN BEGIN
      IF N_ELEMENTS(outPlot) GT 0 THEN outPlot=[outPlot,histoPlot] ELSE outPlot = histoPlot
-     IF N_ELEMENTS(outBkgrndPlot) GT 0 THEN outBkgrndPlot=[outBkgrndPlot,bkgrndHistoPlot] ELSE outBkgrndPlot = bkgrndHistoPlot
-  ENDIF ELSE BEGIN
-     outPlot = histoPlot
-     IF N_ELEMENTS(bkgrndHistoPlot) GT 0 THEN outBkgrndPlot = bkgrndHistoPlot
-  ENDELSE
+  ENDIF
+     ;; IF N_ELEMENTS(outBkgrndPlot) GT 0 AND $
+     ;;    N_ELEMENTS(bkgrndHistoPlot) GT 0 $
+     ;; THEN outBkgrndPlot=[outBkgrndPlot,bkgrndHistoPlot] ELSE outBkgrndPlot = bkgrndHistoPlot
+  ;; ENDIF ELSE BEGIN
+  ;;    outPlot = histoPlot
+     ;; IF N_ELEMENTS(bkgrndHistoPlot) GT 0 AND $
+     ;;    N_ELEMENTS(bkgrndHistoPlot) GT 0 $
+     ;; THEN outBkgrndPlot = bkgrndHistoPlot
+  ;; ENDELSE
   
 END

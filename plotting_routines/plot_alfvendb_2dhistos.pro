@@ -4,6 +4,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            PLOTDIR=plotDir, PLOTMEDORAVG=plotMedOrAvg, $
                            PARAMSTR=paramStr, DEL_PS=del_PS, $
                            HEMI=hemi, $
+                           NO_COLORBAR=no_colorbar, $
                            CLOCKSTR=clockStr, LUN=lun, $
                            _EXTRA = e
 
@@ -64,7 +65,9 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
               ENDIF ELSE BEGIN
                  ;;Create a PostScript file.
                  cgPS_Open, plotDir + paramStr+dataNameArr[i]+'.ps' 
-                 PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile,_extra=e 
+                 PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
+                                       NO_COLORBAR=no_colorbar, $
+                                       _extra=e 
                  cgPS_Close 
                  ;;Create a PNG file with a width of 800 pixels.
                  cgPS2Raster, plotDir + paramStr+dataNameArr[i]+'.ps', $

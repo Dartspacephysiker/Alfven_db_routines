@@ -204,6 +204,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                                  OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
                                  PRINT_ALFVENDB_2DHISTOS=print_alfvendb_2dhistos, $
+                                 OUT_TEMPFILE=out_tempFile, $
+                                 NO_COLORBAR=no_colorbar, $
                                  LUN=lun, PRINT_DATA_AVAILABILITY=print_data_availability, VERBOSE=verbose, _EXTRA = e
   
   COMPILE_OPT idl2
@@ -370,6 +372,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                          PLOTDIR=plotDir, PLOTMEDORAVG=plotMedOrAvg, $
                          PARAMSTR=paramString, DEL_PS=del_PS, $
                          HEMI=hemi, $
+                         NO_COLORBAR=no_colorbar, $
                          CLOCKSTR=clockStr, _EXTRA = e
 
   ;;Haven't finished writing this yet
@@ -390,6 +393,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
      SAVE, /ALL, filename=rawDir+'fluxplots_'+paramString+".dat"
 
   ENDIF
+
+  out_tempFile=tempFile
 
   WRITE_ALFVENDB_2DHISTOS,MAXIMUS=maximus,PLOT_I=plot_i, $
                           WRITEHDF5=writeHDF5,WRITEPROCESSEDH2D=WRITEPROCESSEDH2D,WRITEASCII=writeASCII, $

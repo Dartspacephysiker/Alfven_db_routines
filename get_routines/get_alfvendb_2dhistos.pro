@@ -297,10 +297,12 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
      ;;########Event probability########
      IF KEYWORD_SET(probOccurrencePlot) THEN BEGIN
         GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
-                                     LOGPROBOCCURRENCE=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logProbOccurrence)), PROBOCCURRENCERANGE=probOccurrenceRange, DO_WIDTH_X=do_width_x, $
+                                     LOGPROBOCCURRENCE=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logProbOccurrence)), $
+                                     PROBOCCURRENCERANGE=probOccurrenceRange, DO_WIDTH_X=do_width_x, $
                                      MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
                                      DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                      OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                                     H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                                      H2DSTR=h2dStr,TMPLT_H2DSTR=tmplt_h2dStr, $
                                      DATANAME=dataName,DATARAWPTR=dataRawPtr
 
