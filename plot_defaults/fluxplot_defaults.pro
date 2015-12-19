@@ -1,6 +1,6 @@
-fluxPlotColorBarLabelFormat = '(D0.1)'
+fluxPlotColorBarLabelFormat = '(D0.2)'
 fluxPlotChareCBLabelFormat = '(D0.1)'
-fluxPlotChariCBLabelFormat = '(D0.1)'
+fluxPlotChariCBLabelFormat = '(D0.2)'
 
 logeFluxLabels         = 0
 logPFluxLabels         = 0
@@ -16,7 +16,7 @@ Charie_do_plotIntegral = 0
 
 eFlux_do_midCBLabel    = 0
 PFlux_do_midCBLabel    = 1
-iFlux_do_midCBLabel    = 0
+iFlux_do_midCBLabel    = 1
 Charee_do_midCBLabel   = 1
 Charie_do_midCBLabel   = 1
 
