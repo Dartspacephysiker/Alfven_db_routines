@@ -24,7 +24,8 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ila
      ;; PRINTF,lun,"Converting negative ILAT values (Southern Hemi) to positive with ABS function..."
      ;; maximus.ilat[ilat_i] = ABS(maximus.ilat[ilat_i])
      PRINT,"STOP: Why were you ever converting negs to pos in the first place?"
-     STOP
+     WAIT,2
+     ;; STOP
   ENDIF ELSE BEGIN
      IF STRUPCASE(hemi) EQ "SOUTH" THEN BEGIN
         ilat_i=where(maximus.ilat GE minI AND maximus.ilat LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT)

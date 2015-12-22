@@ -6,11 +6,11 @@ PRO COMBINE_MAPPING_RATIO_FILES,mapRatio,LUN=lun
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
 
   date                 = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
-  maxOrb               = 10000
+  maxOrb               = 16361
 
   outDir               = '/SPENCEdata/Research/Cusp/database/'
   outFile              = outDir + 'mapratio_for_20151014_DB--up_to' + $
-                         STRCOMPRESS(maxOrb,/REMOVE_ALL) + '--' + date
+                         STRCOMPRESS(maxOrb,/REMOVE_ALL) + '--' + date + '.dat'
 
   batchDir             = '/SPENCEdata/software/sdt/batch_jobs/map_Poyntingflux__20151217/output/'
   filePref             = 'mapping_ratio--orb_'
@@ -53,6 +53,6 @@ PRO COMBINE_MAPPING_RATIO_FILES,mapRatio,LUN=lun
 
   ENDFOR
 
-  save,mapRatio
+  save,mapRatio,FILENAME=outFile
 
 END
