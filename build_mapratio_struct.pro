@@ -1,5 +1,6 @@
 ;2015/12/19 A thing for build our struct with quantities for mapping from
 ;  FAST altitude to the ionosphere at 100 km
+; This gets called by COMBINE_MAPPING_RATIO_FILES
 PRO BUILD_MAPRATIO_STRUCT,mapRatio,mag1,mag2,ratio,times,orbit
 
 
