@@ -1,8 +1,8 @@
-;2015/12/22 Add burst too
-;Deprecated the old one. I've got a bad conversion factor to mW/m^2 in it, 
-; but this one is right
+;2015/08/20 Add burst too
 
-PRO add_pflux_to_maximus,maximus
+PRO add_pflux_to_maximus__20150820,maximus
+
+  is_burst = 0B
 
                    maximus={orbit:maximus.orbit,$
                             alfvenic:maximus.alfvenic,$
@@ -52,11 +52,8 @@ PRO add_pflux_to_maximus,maximus
                             TOTAL_UPWARD_ION_OUTFLOW_SINGLE:maximus.TOTAL_UPWARD_ION_OUTFLOW_SINGLE,$
                             TOTAL_UPWARD_ION_OUTFLOW_MULTIPLE_TOT:maximus.TOTAL_UPWARD_ION_OUTFLOW_MULTIPLE_TOT,$
                             TOTAL_ALFVEN_UPWARD_ION_OUTFLOW:maximus.TOTAL_ALFVEN_UPWARD_ION_OUTFLOW, $
-                            ;; BURST:MAKE_ARRAY(N_ELEMENTS(maximus.time),VALUE=is_Burst,/BYTE), $
-                            BURST:maximus.burst, $
-                            ;; PFLUXEST:maximus.delta_e*maximus.delta_b * 1.0e-9 / (4.0e-7 * !PI)}
-                            PFLUXEST:maximus.delta_e*maximus.delta_b * 1.0e-2 / (4.0 * !PI), $
-                            LSHELL:maximus.lshell}
+                            BURST:MAKE_ARRAY(N_ELEMENTS(maximus.time),VALUE=is_Burst,/BYTE), $
+                            PFLUXEST:maximus.delta_e*maximus.delta_b * 1.0e-9 / (4.0e-7 * !PI)}
 
 
 

@@ -264,14 +264,25 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
                          OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
      h2dStr.data[h2d_nonzero_nEv_i]=h2dStr.data[h2d_nonzero_nEv_i]/h2dFluxN[h2d_nonzero_nEv_i] 
 
-     IF KEYWORD_SET(print_mandm) THEN BEGIN
-        PRINTF,lun,h2dStr.title
-        PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)',MAX(h2dStr.data[h2d_nonzero_nEv_i]),MIN(h2dStr.data[h2d_nonzero_nEv_i])
-     ENDIF
-
      IF KEYWORD_SET(logAvgPlot) THEN h2dStr.data[where(h2dFluxN NE 0,/null)] = 10^(h2dStr.data[where(h2dFluxN NE 0,/null)])
 
   ENDELSE
+
+  IF KEYWORD_SET(print_mandm) THEN BEGIN
+     IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
+        fmt = 'G10.4' 
+     ENDIF ELSE BEGIN
+        fmt = 'F10.2'
+     ENDELSE
+     PRINTF,lun,h2dStr.title
+     ;; PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)', $
+     ;;        MAX(h2dStr.data[h2d_nonzero_nEv_i]), $
+     ;;        MIN(h2dStr.data[h2d_nonzero_nEv_i])
+     PRINTF,lun,FORMAT='("Max, min:",T20,' + fmt + ',T35,' + fmt + ')', $
+            MAX(h2dStr.data[h2d_nonzero_nEv_i]), $
+            MIN(h2dStr.data[h2d_nonzero_nEv_i])
+  ENDIF
+
 
   ;;Do custom range for flux plot, if requested
   IF  KEYWORD_SET(plotRange) THEN h2dStr.lim=plotRange $
