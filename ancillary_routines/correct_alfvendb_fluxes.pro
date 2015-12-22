@@ -1,3 +1,4 @@
+;+
 ;2015/11/27
 ;This pro is coming about because it has come to my attention that there are myriad
 ; discrepancies in the sign convention used from one flux quantity to the other in the 
@@ -65,10 +66,22 @@
 ;>18-INTEG_ION_FLUX_UP          : Flip sign in S Hemi
 ;>19-CHAR_ION_ENERGY            : How to handle? Division of two quantities where hemi isn't
 ;>accounted for
+;
+;
+;2015/12/22
+;Added MAP_PFLUX_TO_IONOS keyword, based on my recent work to collect mapping ratios.
+;This is represented in pros such as LOAD_MAPPING_RATIO, and the SDT batch job in the folder
+;map_Poyntingflux_20151217.
+;-
 PRO CORRECT_ALFVENDB_FLUXES,maximus, $
+                            MAP_PFLUX_TO_IONOS=map_pflux, $
                             LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
+
+  IF N_ELEMENTS(map_pflux) EQ 0 THEN BEGIN
+     map_pflux = 1
+  ENDIF
 
   IS_STRUCT_ALFVENDB_OR_FASTLOC,maximus,is_maximus
 
@@ -168,6 +181,13 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;;19-CHAR_ION_ENERGY--what to do?
      PRINTF,lun,'19-CHAR_ION_ENERGY         (In AS5, division of two quantities where hemi is not accounted for--how to interpret sign?)'
 
+
+     ;;Added 2015/12/22
+     IF KEYWORD_SET(map_pflux) THEN BEGIN
+        PRINTF,lun,'49-PFLUXEST                Map to ionosphere, multiplying by B_alt/B_100km'
+        LOAD_MAPPING_RATIO_DB,mapRatio
+        maximus.pFluxEst = maximus.pFluxEst * mapRatio.ratio
+     ENDIF
 
      ;;Now add the CORRECTED_FLUXES tag to maximus
      maximus=CREATE_STRUCT(NAME='maximus',maximus,'CORRECTED_FLUXES',1)     

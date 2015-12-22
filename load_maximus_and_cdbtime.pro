@@ -1,9 +1,14 @@
+;2015/12/22 Added DO_NOT_MAP_PFLUX_keyword and FORCE_LOAD keywords
 PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              DBDir=DBDir, $
                              DBFile=DBFile, $
                              DB_TFILE=DB_tFile, $
                              CORRECT_FLUXES=correct_fluxes, $
+                             DO_NOT_MAP_PFLUX=do_not_map_pflux, $
                              DO_CHASTDB=chastDB, $
+                             FORCE_LOAD_MAXIMUS=force_load_maximus, $
+                             FORCE_LOAD_CDBTIME=force_load_cdbTime, $
+                             FORCE_LOAD_BOTH=force_load_BOTH, $
                              LUN=lun
 
   COMPILE_OPT idl2
@@ -11,6 +16,12 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout
 
   IF N_ELEMENTS(correct_fluxes) EQ 0 THEN correct_fluxes = 1
+
+  IF KEYWORD_SET(force_load_both) THEN BEGIN
+     PRINTF,lun,"Forcing load of maximus and cdbTime..."
+     force_load_maximus = 1
+     force_load_cdbtime = 1
+  ENDIF
 
   DefDBDir             = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
   ;;DefDBFile            = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav'
@@ -27,7 +38,10 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      IF N_ELEMENTS(DB_tFile) EQ 0 THEN DB_tFile = DefDB_tFile
   ENDELSE
   
-  IF N_ELEMENTS(maximus) EQ 0 THEN BEGIN
+  IF N_ELEMENTS(maximus) EQ 0 OR KEYWORD_SET(force_load_maximus) THEN BEGIN
+     IF KEYWORD_SET(force_load_maximus) THEN BEGIN
+        PRINTF,lun,"Forcing load, whether or not we already have maximus..."
+     ENDIF
      IF FILE_TEST(DBDir+DBFile) THEN RESTORE,DBDir+DBFile
      IF maximus EQ !NULL THEN BEGIN
         PRINT,"Couldn't load maximus!"
@@ -37,7 +51,10 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      PRINTF,lun,"There is already a maximus struct loaded! Not loading " + DBFile
   ENDELSE
 
-  IF N_ELEMENTS(cdbTime) EQ 0 THEN BEGIN
+  IF N_ELEMENTS(cdbTime) EQ 0 OR KEYWORD_SET(force_load_cdbTime) THEN BEGIN
+     IF KEYWORD_SET(force_load_cdbTime) THEN BEGIN
+        PRINTF,lun,"Forcing load, whether or not we already have cdbTime..."
+     ENDIF
      IF FILE_TEST(DBDir+DB_tFile) THEN RESTORE,DBDir+DB_tFile
      IF cdbTime EQ !NULL THEN BEGIN
         PRINT,"Couldn't load cdbTime!"
@@ -48,7 +65,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   ENDELSE
 
   IF correct_fluxes THEN BEGIN
-     CORRECT_ALFVENDB_FLUXES,maximus
+     CORRECT_ALFVENDB_FLUXES,maximus,MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux)
   ENDIF
+
 
 END
