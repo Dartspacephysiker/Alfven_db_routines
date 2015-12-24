@@ -270,17 +270,21 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
 
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
-        fmt = 'G10.4' 
+        fmt    = 'G10.4' 
+        maxh2d = MAX(h2dStr.data[h2d_nonzero_nEv_i])
+        minh2d = MIN(h2dStr.data[h2d_nonzero_nEv_i])
      ENDIF ELSE BEGIN
-        fmt = 'F10.2'
+        fmt    = 'F10.2'
+        maxh2d = ALOG10(MAX(h2dStr.data[h2d_nonzero_nEv_i]))
+        minh2d = ALOG10(MIN(h2dStr.data[h2d_nonzero_nEv_i]))
      ENDELSE
      PRINTF,lun,h2dStr.title
      ;; PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)', $
      ;;        MAX(h2dStr.data[h2d_nonzero_nEv_i]), $
      ;;        MIN(h2dStr.data[h2d_nonzero_nEv_i])
      PRINTF,lun,FORMAT='("Max, min:",T20,' + fmt + ',T35,' + fmt + ')', $
-            MAX(h2dStr.data[h2d_nonzero_nEv_i]), $
-            MIN(h2dStr.data[h2d_nonzero_nEv_i])
+            maxh2d, $
+            minh2d
   ENDIF
 
 

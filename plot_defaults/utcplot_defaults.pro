@@ -63,3 +63,14 @@
   defShowSymbol              = 'tu'
   defShowSymSize             = 2.0
   defRes                     = 200
+
+  ;;For error plots
+  ;; defEb_capsize              = 0.5 
+  ;; defEb_color                = 'MAROON'
+  ;; defEb_linestyle            = '--'
+  ;; defEb_thick                = 2.5
+  defEb_capsize              = !NULL ;0.5 
+  defEb_color                = defAvgSymColor
+  defEb_linestyle            = defAvgSymLinestyle
+  defEb_thick                = defAvgSymThick
+  

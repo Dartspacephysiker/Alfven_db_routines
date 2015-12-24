@@ -184,7 +184,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
 
      ;;Added 2015/12/22
      IF KEYWORD_SET(map_pflux) THEN BEGIN
-        PRINTF,lun,'49-PFLUXEST                Map to ionosphere, multiplying by B_alt/B_100km'
+        PRINTF,lun,'49-PFLUXEST                Map to ionosphere, multiplying by B_100km/B_alt'
         LOAD_MAPPING_RATIO_DB,mapRatio
         maximus.pFluxEst = maximus.pFluxEst * mapRatio.ratio
      ENDIF

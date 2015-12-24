@@ -9,7 +9,7 @@ FUNCTION MAKE_ALFVENDBQUANTITY_HIST_STRUCT,yData, $
      hist         = HISTOGRAM(yData, $
                               BINSIZE=binsize, $
                               LOCATIONS=locs, $
-                           MIN=minVal, $
+                              MIN=minVal, $
                               MAX=maxVal, $
                               REVERSE_INDICES=ri)
   ENDIF

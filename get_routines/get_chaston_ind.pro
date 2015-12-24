@@ -12,7 +12,10 @@
 
 FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CHASTDB=CHASTDB, $
                          ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange,CHARERANGE=charERange,POYNTRANGE=poyntRange, $
-                         BOTH_HEMIS=both_hemis,NORTH=north,SOUTH=south,HEMI=hemi, $
+                         BOTH_HEMIS=both_hemis, $
+                         NORTH=north, $
+                         SOUTH=south, $
+                         HEMI=hemi, $
                          HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                          MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                          DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
@@ -55,7 +58,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                                 MINILAT=minI,MAXILAT=maxI,BINI=binI, $
                                 MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
-                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi,LUN=lun
+                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+                                HEMI=hemi, $
+                                LUN=lun
 
   IF KEYWORD_SET(get_time_i_NOT_alfvendb_i) THEN BEGIN
      LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile

@@ -4,9 +4,20 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                                  TAFTEREPOCH=tafterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
                                  HISTOBINSIZE=histoBinSize, $
                                  NONZERO_I=nz_i, $
-                                 SYMCOLOR=symColor,SYMTRANSPARENCY=symTransparency,SYMBOL=symbol, $
+                                 SYMCOLOR=symColor, $
+                                 SYMTRANSPARENCY=symTransparency, $
+                                 SYMBOL=symbol, $
+                                 LINESTYLE=lineStyle, $
+                                 LINETHICKNESS=lineThickness, $
+                                 NO_AVG_SYMBOL=no_avg_symbol, $
                                  PLOTNAME=plotName, $
                                  PLOTTITLE=plotTitle, $
+                                 ERROR_PLOT=error_plot, $
+                                 ERROR_BARS=error_bars, $
+                                 ERRORBAR_CAPSIZE=eb_capsize, $
+                                 ERRORBAR_COLOR=eb_color, $ 
+                                 ERRORBAR_LINESTYLE=eb_linestyle, $
+                                 ERRORBAR_THICK=eb_thick, $
                                  XTITLE=xTitle,XRANGE=xRange, $
                                  YTITLE=yTitle,YRANGE=yRange,LOGYPLOT=logYPlot, $
                                  OVERPLOT=overPlot, $
@@ -14,35 +25,109 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                                  MARGIN=margin, $
                                  LAYOUT=layout, $
                                  OUTPLOT=outPlot, $
-                                 ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array
+                                 ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array, $
+                                 LUN=lun
   
   @utcplot_defaults.pro
 
-  plot=plot(histTBins[nz_i]+histoBinsize*0.5,histData[nz_i], $
-            NAME=KEYWORD_SET(plotName) ? plotName : defAvgPlotName, $
-            TITLE=plotTitle, $
-            XTITLE=KEYWORD_SET(xTitle) ? xTitle : defXTitle, $
-            YTITLE=yTitle, $
-            XRANGE=KEYWORD_SET(xRange) ? xRange : !NULL, $
-            YRANGE=KEYWORD_SET(yRange) ? yRange : !NULL, $
-            YLOG=KEYWORD_SET(logYPlot), $
-            AXIS_STYLE=N_ELEMENTS(outPlot) GT 0 ? 0 : defAvgSymAxisStyle, $
-            LINESTYLE=defAvgSymLinestyle, $
-            COLOR=KEYWORD_SET(symColor) ? symColor : defAvgSymColor, $
-            THICK=defAvgLineThick, $
-            SYMBOL=defAvgSym, $
-            SYM_SIZE=defAvgSymSize, $
-            SYM_COLOR=KEYWORD_SET(symColor) ? symColor : defAvgSymColor, $ ;, $
-            SYM_THICK=defAvgSymThick, $
-            XTICKFONT_SIZE=max_xtickfont_size, $
-            XTICKFONT_STYLE=max_xtickfont_style, $
-            YTICKFONT_SIZE=max_ytickfont_size, $
-            YTICKFONT_STYLE=max_ytickfont_style, $
-            CURRENT=current, $
-            OVERPLOT=overplot, $
-            LAYOUT=layout, $
-            MARGIN=KEYWORD_SET(margin) ? margin : defPlotMargin_max)
-  
+  IF ~KEYWORD_SET(lun) THEN lun = -1 ;stdout
+
+  name                    = KEYWORD_SET(plotName) ? plotName : defAvgPlotName
+  title                   = plotTitle
+  xTitle                  = KEYWORD_SET(xTitle) ? xTitle : defXTitle
+  yTitle                  = yTitle
+  xRange                  = KEYWORD_SET(xRange) ? xRange : !NULL
+  yRange                  = KEYWORD_SET(yRange) ? yRange : !NULL
+  yLog                    = KEYWORD_SET(logYPlot)
+  axis_style              = N_ELEMENTS(outPlot) GT 0 ? 0 : defAvgSymAxisStyle
+  lineStyle               = KEYWORD_SET(lineStyle) ? lineStyle : defAvgSymLinestyle
+  color                   = KEYWORD_SET(symColor) ? symColor : defAvgSymColor
+  thick                   = KEYWORD_SET(lineThickness) ? lineThickness : defAvgLineThick
+  symbol                  = KEYWORD_SET(no_avg_symbol) ? !NULL : defAvgSym
+  sym_size                = KEYWORD_SET(no_avg_symbol) ? !NULL : defAvgSymSize
+  sym_color               = KEYWORD_SET(symColor) ? symColor : defAvgSymColor
+  sym_thick               = KEYWORD_SET(no_avg_symbol) ? !NULL : defAvgSymThick
+  xTickFont_size          = max_xtickfont_size
+  xTickFont_STYLE         = max_xtickfont_style
+  yTickFont_SIZE          = max_ytickfont_size
+  yTickFont_STYLE         = max_ytickfont_style
+  ;; CURRENT=current
+  ;; OVERPLOT=overplot
+  ;; LAYOUT=layout
+  margin                  = KEYWORD_SET(margin) ? margin : defPlotMargin_max
+
+  ;;errorbar stuf
+  ;; errorBar_capsize=KEYWORD_SET(eb_capsize) ? eb_capsize : defEb_capsize
+  ;; errorBar_color=KEYWORD_SET(eb_color) ? eb_color : defEb_color
+  ;; errorBar_lineStyle=KEYWORD_SET(eb_linestyle) ? eb_linestyle : defEb_linestyle
+  ;; errorBar_thick=KEYWORD_SET(eb_thick) ? eb_thick : defEb_thick
+  errorBar_color          = KEYWORD_SET(symColor) ? symColor : defEb_color
+  errorBar_lineStyle      = KEYWORD_SET(lineStyle) ? lineStyle : defEb_linestyle
+  errorBar_thick          = KEYWORD_SET(lineThickness) ? lineThickness : defEb_thick
+
+
+  IF KEYWORD_SET(error_plot) THEN BEGIN
+
+     IF N_ELEMENTS(error_bars) EQ 0 OR $
+        N_ELEMENTS(error_bars[0,*]) NE N_ELEMENTS(histData) THEN BEGIN
+        PRINTF,lun,"N error bars doesn't match N hist elements! Bogus!"
+     ENDIF
+
+     plot=ERRORPLOT(histTBins[nz_i],histData[nz_i],error_bars[*,nz_i], $
+               NAME=name, $
+               TITLE=title, $
+               XTITLE=xTitle, $
+               YTITLE=yTitle, $
+               XRANGE=xRange, $
+               YRANGE=yRange, $
+               YLOG=yLog, $
+               AXIS_STYLE=axis_style, $
+               LINESTYLE=lineStyle, $
+               COLOR=color, $
+               THICK=thick, $
+               SYMBOL=symbol, $
+               SYM_SIZE=sym_size, $
+               SYM_COLOR=sym_color, $ ;, $
+               SYM_THICK=sym_thick, $
+               XTICKFONT_SIZE=xTickFont_size, $
+               XTICKFONT_STYLE=xTickFont_style, $
+               YTICKFONT_SIZE=yTickFont_size, $
+               YTICKFONT_STYLE=yTickFont_style, $
+               CURRENT=current, $
+               OVERPLOT=overplot, $
+               LAYOUT=layout, $
+               MARGIN=margin, $
+               ERRORBAR_COLOR=errorBar_color, $
+               ERRORBAR_LINESTYLE=errorBar_lineStyle, $
+               ERRORBAR_THICK=errorBar_thick)
+
+  ENDIF ELSE BEGIN
+
+     plot=plot(histTBins[nz_i],histData[nz_i], $
+               NAME=name, $
+               TITLE=title, $
+               XTITLE=xTitle, $
+               YTITLE=yTitle, $
+               XRANGE=xRange, $
+               YRANGE=yRange, $
+               YLOG=yLog, $
+               AXIS_STYLE=axis_style, $
+               LINESTYLE=lineStyle, $
+               COLOR=color, $
+               THICK=thick, $
+               SYMBOL=symbol, $
+               SYM_SIZE=sym_size, $
+               SYM_COLOR=sym_color, $ ;, $
+               SYM_THICK=sym_thick, $
+               XTICKFONT_SIZE=xTickFont_size, $
+               XTICKFONT_STYLE=xTickFont_style, $
+               YTICKFONT_SIZE=yTickFont_size, $
+               YTICKFONT_STYLE=yTickFont_style, $
+               CURRENT=current, $
+               OVERPLOT=overplot, $
+               LAYOUT=layout, $
+               MARGIN=margin)
+  ENDELSE
   
   IF KEYWORD_SET(add_plot_to_plot_array) THEN BEGIN
      IF N_ELEMENTS(outPlot) GT 0 THEN outPlot=[outPlot,plot] ELSE outPlot = plot
