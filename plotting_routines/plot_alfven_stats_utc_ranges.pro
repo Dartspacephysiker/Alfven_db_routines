@@ -169,9 +169,12 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  MINMLT=minM,MAXMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                                  DO_LSHELL=do_lShell,REVERSE_LSHELL=reverse_lShell, $
                                  MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+                                 BOTH_HEMIS=both_hemis, $
+                                 NORTH=north, $
+                                 SOUTH=south, $
+                                 HEMI=hemi, $
                                  HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                  MIN_NEVENTS=min_nEvents, MASKMIN=maskMin, $
-                                 HEMI=hemi, $
                                  DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                  NPLOTS=nPlots, $
                                  EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, LOGEFPLOT=logEfPlot, $
@@ -262,7 +265,11 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
   ;;********************************************************
   ;;Now clean and tap the database
   good_i = GET_CHASTON_IND(maximus,satellite,lun, $
-                           DBTIMES=cdbTime,dbfile=dbfile,CHASTDB=do_chastdb,HEMI=hemi, $
+                           BOTH_HEMIS=both_hemis, $
+                           NORTH=north, $
+                           SOUTH=south, $
+                           HEMI=hemi, $
+                           DBTIMES=cdbTime,dbfile=dbfile,CHASTDB=do_chastdb, $
                            ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange,POYNTRANGE=poyntRange, $
                            MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                            MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $

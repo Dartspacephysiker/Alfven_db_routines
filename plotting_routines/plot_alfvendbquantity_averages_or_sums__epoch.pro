@@ -28,6 +28,8 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                                  ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array, $
                                  LUN=lun
   
+  COMPILE_OPT idl2
+
   @utcplot_defaults.pro
 
   IF ~KEYWORD_SET(lun) THEN lun = -1 ;stdout
