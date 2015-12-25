@@ -18,10 +18,11 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=bin
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                       MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? MINL : MINI),$
                                       MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? MAXL : MAXI))
-  h2dStr={tmplt_h2dStr}
+  ;; h2dStr={tmplt_h2dStr}
+  h2dStr           = tmplt_h2dStr
   h2dStr.data[*,*] = 0
-  h2dStr.title="Num Contributing Orbits"
-  dataName = "orbsContributing_"
+  h2dStr.title     = "Num Contributing Orbits"
+  dataName         = "orbsContributing_"
 
   h2dOrbN=INTARR(N_ELEMENTS(tmplt_h2dStr.data[*,0]),N_ELEMENTS(tmplt_h2dStr.data[0,*]))
   orbArr=INTARR(N_ELEMENTS(uniqueOrbs_i),N_ELEMENTS(tmplt_h2dStr.data[*,0]),N_ELEMENTS(tmplt_h2dStr.data[0,*]))

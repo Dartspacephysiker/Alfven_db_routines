@@ -18,11 +18,12 @@ PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
                                       MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                                       MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI))
-  h2dStr = {tmplt_h2dStr}
-  h2dStr.data[*,*] = 0
-  h2dStr.lim=nEventPerOrbRange
+  ;; h2dStr = {tmplt_h2dStr}
+  h2dStr            = tmplt_h2dStr
+  h2dStr.data[*,*]  = 0
+  h2dStr.lim        = nEventPerOrbRange
   
-  nEvByAppStr=""
+  nEvByAppStr       = ""
   IF KEYWORD_SET(divNEvByApplicable) THEN nEvByAppStr="Applicable_"
   h2dStr.title= 'Number of Events per ' + nEvByAppStr + 'Orbit'
   dataName = "nEventPerOrb_" +nEvByAppStr

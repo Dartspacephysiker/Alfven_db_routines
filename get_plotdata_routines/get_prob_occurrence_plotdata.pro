@@ -23,7 +23,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                       MIN1=minM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
                                       MAX1=maxM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI))
-  h2dStr                     = {tmplt_h2dStr}
+  ;; h2dStr                     = {tmplt_h2dStr}
+  h2dStr                     = tmplt_h2dStr
   h2dStr.title               = "Probability of occurrence"
   h2dStr.lim                 = probOccurrenceRange
 

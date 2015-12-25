@@ -9,17 +9,18 @@ PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
                                       MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                                       MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI))
-  h2dStr={tmplt_h2dStr}
-  h2dStr.title="Orbit Frequency"
-  dataName = "orbFreq_"
+  ;; h2dStr={tmplt_h2dStr}
+  h2dStr          = tmplt_h2dStr
+  h2dStr.title    = "Orbit Frequency"
+  dataName        = "orbFreq_"
   
-  h2dStr.data=h2dContribOrbStr.data
+  h2dStr.data     = h2dContribOrbStr.data
   h2dStr.data[h2d_nonZero_allOrb_i]=DOUBLE(h2dContribOrbStr.data[h2d_nonZero_allOrb_i])/h2dTotOrbStr.data[h2d_nonZero_allOrb_i]
   
   IF N_ELEMENTS(orbFreqRange) EQ 0 OR N_ELEMENTS(orbFreqRange) NE 2 THEN $
-     h2dStr.lim=[MIN(h2dStr.data),MAX(h2dStr.data)] $
+     h2dStr.lim   = [MIN(h2dStr.data),MAX(h2dStr.data)] $
   ELSE $
-     h2dStr.lim=orbFreqRange
+     h2dStr.lim   = orbFreqRange
   
   ;;The following snippet is meant to compare nonzero totorb data with nonzero contriborb data
   ;;What if I use indices where neither tot orbits nor contributing orbits is zero?

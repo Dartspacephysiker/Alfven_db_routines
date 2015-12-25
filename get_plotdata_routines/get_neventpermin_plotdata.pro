@@ -13,13 +13,14 @@ PRO GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lshell) ? binL : binI),$
                                       MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? MINL : MINI),$
                                       MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? MAXL : MAXI))
-  h2dStr={tmplt_h2dStr}
-  h2dStr.title = 'N Events per minute'
-  dataName = "nEventPerMin"
-  h2dStr.lim=nEventPerMinRange
+  ;; h2dStr={tmplt_h2dStr}
+  h2dStr          = tmplt_h2dStr
+  h2dStr.title    = 'N Events per minute'
+  dataName        = "nEventPerMin"
+  h2dStr.lim      = nEventPerMinRange
 
-  h2dStr.data=h2dFluxN
-  h2dNonzeroNEv_i=WHERE(h2dFluxN NE 0,/NULL)
+  h2dStr.data     = h2dFluxN
+  h2dNonzeroNEv_i = WHERE(h2dFluxN NE 0,/NULL)
   
                                 ;output from get_timehist_denominator is in seconds, but we'll do minutes
   tHistDenominator = tHistDenominator[h2dNonzeroNEv_i]/60.0 ;Only divide by number of minutes that FAST spent in bin for given IMF conditions

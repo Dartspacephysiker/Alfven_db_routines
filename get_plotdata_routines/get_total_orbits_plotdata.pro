@@ -20,12 +20,15 @@ PRO GET_TOTAL_ORBITS_PLOTDATA,maximus,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MA
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
                                       MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                                       MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI))
-  h2dStr={tmplt_h2dStr}
+  ;; h2dStr={tmplt_h2dStr}
+  h2dStr           = tmplt_h2dStr
   h2dStr.data[*,*] = 0
-  h2dStr.title="Total Orbits"
-  dataName = "orbTot_"
+  h2dStr.title     = "Total Orbits"
+  dataName         = "orbTot_"
 
-  orbArr=INTARR(N_ELEMENTS(uniqueOrbs_i),N_ELEMENTS(tmplt_h2dStr.data[*,0]),N_ELEMENTS(tmplt_h2dStr.data[0,*]))
+  orbArr           = INTARR(N_ELEMENTS(uniqueOrbs_i), $
+                            N_ELEMENTS(tmplt_h2dStr.data[*,0]), $
+                            N_ELEMENTS(tmplt_h2dStr.data[0,*]))
     
   ;;FOR j=0, N_ELEMENTS(uniqueOrbs_i)-1 DO BEGIN 
   ;;   tempOrb=maximus.orbit(ind_region_magc_geabs10_acestart(uniqueOrbs_i[j])) 
