@@ -144,24 +144,24 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   OOB_HIGH_i                = WHERE(temp.data GT temp.lim[1] AND ~masked)
   OOB_LOW_i                 = WHERE(temp.data LT temp.lim[0] AND ~masked)
 
-  IF OOB_HIGH_i[0] NE -1 THEN BEGIN
+  IF OOB_HIGH_i[0] NE -1 OR temp.force_oobHigh THEN BEGIN
      is_OOBHigh             = 1
   ENDIF
 
-  IF OOB_LOW_i[0] NE -1 THEN BEGIN
+  IF OOB_LOW_i[0] NE -1 OR temp.force_oobLow THEN BEGIN
      is_OOBLow              = 1
   ENDIF
   
-  h2descl(notMasked)        = BYTSCL(temp.data(notMasked), $
+  h2descl[notMasked]        = BYTSCL(temp.data(notMasked), $
                                      top=nLevels-1-is_OOBHigh-is_OOBLow, $
                                      MAX=temp.lim[1], $
                                      MIN=temp.lim[0] ) + is_OOBLow
 
   IF OOB_HIGH_i[0] NE -1 THEN BEGIN
-     h2descl(OOB_HIGH_i)    = BYTE(nLevels-1)
+     h2descl[OOB_HIGH_i]    = BYTE(nLevels-1)
   ENDIF
   IF OOB_LOW_i[0] NE -1 THEN BEGIN
-     h2descl(OOB_LOW_i)     = 0B
+     h2descl[OOB_LOW_i]     = 0B
   ENDIF
 
   ;;******************************
@@ -370,8 +370,10 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      cbSpacingStr_low  = (nLevels-1)/2-is_OOBLow
      cbSpacingStr_high = (nLevels-1)/2-is_OOBHigh
      
-     cbOOBLowVal       = (temp.lim[0] LE MIN(temp.data(notMasked))) ? !NULL : 0B
-     cbOOBHighVal      = (temp.lim[1] GE MAX(temp.data(notMasked))) ? !NULL : BYTE(nLevels-1)
+     cbOOBLowVal       = (temp.lim[0] LE MIN(temp.data(notMasked)) AND ~temp.force_oobLow) ? $
+                         !NULL : 0B
+     cbOOBHighVal      = (temp.lim[1] GE MAX(temp.data(notMasked)) AND ~temp.force_oobHigh) ? $
+                         !NULL : BYTE(nLevels-1)
      cbRange           = temp.lim
      cbTitle           = plotTitle
      nCBColors         = nlevels-is_OOBHigh-is_OOBLow

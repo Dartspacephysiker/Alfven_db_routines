@@ -7,10 +7,13 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=m
                          MASKMIN=maskMin, $
                          DATANAME=dataName,DATARAWPTR=dataRawPtr
 
-  IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN $
+  IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                       MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
                                       MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
+
+  ENDIF
+
   h2dStr={tmplt_h2dStr}
   h2dStr.title="Number of events"
   dataName="nEvents_"

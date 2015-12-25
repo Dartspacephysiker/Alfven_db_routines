@@ -51,10 +51,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
   ENDIF
   IF KEYWORD_SET(noPosFlux) AND KEYWORD_SET (logFluxPlot) THEN absFlux = 1
 
-  IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN $
+  IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
                                       MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                                       MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI))
+  ENDIF
+
   h2dStr={tmplt_h2dStr}
   h2dStr.is_fluxData = 1
 

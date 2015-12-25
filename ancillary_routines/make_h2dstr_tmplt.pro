@@ -1,7 +1,12 @@
 ;;2015/10/14
-FUNCTION MAKE_H2DSTR_TMPLT,MIN1 = min1in, MIN2 = min2in, $
-                      MAX1 = max1in, MAX2 = max2in, $
-                      BIN1 = b1in, BIN2 = b2in
+;2015/12/25 Added force_oobHigh and force_oobLow keywords
+FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
+                           MAX1=max1in,MAX2=max2in, $
+                           BIN1=b1in,BIN2=b2in, $
+                           CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                           CB_FORCE_OOBLOW=cb_force_oobLow
+                           
+                           
 
 
     ;Supply default values for keywords.
@@ -29,7 +34,9 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1 = min1in, MIN2 = min2in, $
                   labelFormat     : '', $
                   do_midCBLabel   : 0, $
                   logLabels       : 0, $
-                  do_plotIntegral : 0}
+                  do_plotIntegral : 0, $
+                  force_oobHigh   : KEYWORD_SET(cb_force_oobHigh), $
+                  force_oobLow    : KEYWORD_SET(cb_force_oobLow)}
 
     RETURN,h2dStr_tmplt
 
