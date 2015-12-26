@@ -74,3 +74,22 @@
   defEb_linestyle            = defAvgSymLinestyle
   defEb_thick                = defAvgSymThick
   
+
+  ;;For histoplot_alfvendbquantities plots
+  defHPlot_title__fSize      = 18
+  defHPlot_sp_title__fSize   = 14               ;for stormphase plots, 3 panels instead of 2
+
+  defHPlot_xTitle__xCoord    = 0.5
+  defHPlot_xTitle__yCoord    = 0.03
+  defHPlot_xTitle__hAlign    = 0.5
+  defHPlot_xTitle__fSize     = 18
+
+  defHPlot_legend__vSpace    = 0.01
+
+  defHPlot__firstMarg        = [0.17,0.09,0.005,0.09]
+  defHPlot__marg             = [0.10,0.09,0.11,0.09]
+  defHPlot__lastMarg         = [0.005,0.09,0.17,0.09]
+
+  defHPlot_sp__firstMarg     = [0.20,0.09,0.00,0.09]
+  defHPlot_sp__marg          = [0.10,0.09,0.10,0.09]
+  defHPlot_sp__lastMarg      = [0.00,0.09,0.20,0.09]
