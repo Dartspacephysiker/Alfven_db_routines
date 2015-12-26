@@ -6,6 +6,9 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
    RESTRICT_ALTRANGE=restrict_altRange,RESTRICT_CHARERANGE=restrict_charERange, $
    MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
    DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+   ;; BOTH_HEMIS=both_hemis, $
+   ;; NORTH=north, $
+   ;; SOUTH=south, $
    HEMI=hemi, $
    NEPOCHS=nEpochs, $
    OUTINDSPREFIX=outIndsPrefix, $
@@ -41,7 +44,11 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
                               MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
                               DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL
    
-        IF N_ELEMENTS(fastLoc_i_list) NE nEpochs THEN STOP
+        IF N_ELEMENTS(fastLoc_i_list) NE nEpochs THEN BEGIN
+           PRINT,"There are very possibly issues with this plot; be careful ..."
+           WAIT,3
+        ENDIF
+
         iFirst = 0
         WHILE N_ELEMENTS(fastloc_t_list) EQ 0 DO BEGIN
            IF N_ELEMENTS(fastLoc_i_list[iFirst]) NE 0 THEN BEGIN

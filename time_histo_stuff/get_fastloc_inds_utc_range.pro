@@ -24,10 +24,10 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
 
   COMPILE_OPT idl2
 
-  minM=0
-  maxM=24
-  minI=-88
-  maxI=88
+  ;; minM=0
+  ;; maxM=24
+  ;; minI=-88
+  ;; maxI=88
 
   fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/time_histos/'
 

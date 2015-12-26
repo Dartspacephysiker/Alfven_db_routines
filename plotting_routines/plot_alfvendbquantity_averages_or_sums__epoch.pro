@@ -19,6 +19,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                                  ERRORBAR_LINESTYLE=eb_linestyle, $
                                  ERRORBAR_THICK=eb_thick, $
                                  XTITLE=xTitle,XRANGE=xRange, $
+                                 XHIDELABEL=xHideLabel, $
                                  YTITLE=yTitle,YRANGE=yRange,LOGYPLOT=logYPlot, $
                                  OVERPLOT=overPlot, $
                                  CURRENT=current, $
@@ -50,15 +51,15 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
   sym_color               = KEYWORD_SET(symColor) ? symColor : defAvgSymColor
   sym_thick               = KEYWORD_SET(no_avg_symbol) ? !NULL : defAvgSymThick
   xTickFont_size          = max_xtickfont_size
-  xTickFont_STYLE         = max_xtickfont_style
-  yTickFont_SIZE          = max_ytickfont_size
-  yTickFont_STYLE         = max_ytickfont_style
+  xTickFont_style         = max_xtickfont_style
+  yTickFont_size          = max_ytickfont_size
+  yTickFont_style         = max_ytickfont_style
   ;; CURRENT=current
   ;; OVERPLOT=overplot
   ;; LAYOUT=layout
   margin                  = KEYWORD_SET(margin) ? margin : defPlotMargin_max
 
-  ;;errorbar stuf
+  ;;errorbar stuff
   ;; errorBar_capsize=KEYWORD_SET(eb_capsize) ? eb_capsize : defEb_capsize
   ;; errorBar_color=KEYWORD_SET(eb_color) ? eb_color : defEb_color
   ;; errorBar_lineStyle=KEYWORD_SET(eb_linestyle) ? eb_linestyle : defEb_linestyle
@@ -66,6 +67,13 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
   errorBar_color          = KEYWORD_SET(symColor) ? symColor : defEb_color
   errorBar_lineStyle      = KEYWORD_SET(lineStyle) ? lineStyle : defEb_linestyle
   errorBar_thick          = KEYWORD_SET(lineThickness) ? lineThickness : defEb_thick
+
+
+  IF KEYWORD_SET(xHideLabel) THEN BEGIN
+     xShowLabel = 0
+  ENDIF ELSE BEGIN
+     xShowLabel = 1
+  ENDELSE
 
 
   IF KEYWORD_SET(error_plot) THEN BEGIN
@@ -81,6 +89,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                XTITLE=xTitle, $
                YTITLE=yTitle, $
                XRANGE=xRange, $
+               XSHOWTEXT=KEYWORD_SET(overplot) ? !NULL : xShowLabel, $
                YRANGE=yRange, $
                YLOG=yLog, $
                AXIS_STYLE=axis_style, $
@@ -91,6 +100,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                SYM_SIZE=sym_size, $
                SYM_COLOR=sym_color, $ ;, $
                SYM_THICK=sym_thick, $
+               FONT_SIZE=xTickFont_size, $
                XTICKFONT_SIZE=xTickFont_size, $
                XTICKFONT_STYLE=xTickFont_style, $
                YTICKFONT_SIZE=yTickFont_size, $
@@ -111,6 +121,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                XTITLE=xTitle, $
                YTITLE=yTitle, $
                XRANGE=xRange, $
+               XSHOWTEXT=KEYWORD_SET(overplot) ? !NULL : xShowLabel, $
                YRANGE=yRange, $
                YLOG=yLog, $
                AXIS_STYLE=axis_style, $
@@ -130,6 +141,13 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                LAYOUT=layout, $
                MARGIN=margin)
   ENDELSE
+  
+  IF xShowLabel THEN BEGIN
+     ax                = plot.axes
+     IF N_ELEMENTS(ax) GT 2 THEN BEGIN
+        ax[2].showText = 0
+     ENDIF
+  ENDIF
   
   IF KEYWORD_SET(add_plot_to_plot_array) THEN BEGIN
      IF N_ELEMENTS(outPlot) GT 0 THEN outPlot=[outPlot,plot] ELSE outPlot = plot

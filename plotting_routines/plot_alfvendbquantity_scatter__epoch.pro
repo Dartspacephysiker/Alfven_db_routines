@@ -3,8 +3,12 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
                                          ;; ALFDBSTRUCT=alfDB,ALFDBTIME=alfDBTime,PLOT_I=plot_i,CENTERTIME=centerTime,$
                                          ALF_T=alf_t,ALF_Y=alf_y, $
                                          PLOTTITLE=plotTitle, $
-                                         XTITLE=xTitle,XRANGE=xRange, $
-                                         YTITLE=yTitle,YRANGE=yRange,LOGYPLOT=logYPlot, $
+                                         XTITLE=xTitle, $
+                                         XRANGE=xRange, $
+                                         XHIDELABEL=xHideLabel, $
+                                         YTITLE=yTitle, $
+                                         YRANGE=yRange, $
+                                         LOGYPLOT=logYPlot, $
                                          OVERPLOT_ALFVENDBQUANTITY=overplot_alfvendbquantity, $
                                          CURRENT=current, $
                                          MARGIN=margin, $
@@ -23,12 +27,19 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
   ;;    alf_t = alfDBTime[plot_i]-centerTime
   ;; ENDIF
 
+  IF KEYWORD_SET(xHideLabel) THEN BEGIN
+     xShowLabel = 0
+  ENDIF ELSE BEGIN
+     xShowLabel = 1
+  ENDELSE
+
   IF N_ELEMENTS(alf_t) GT 1 THEN BEGIN
      plot=plot(alf_t, $
                alf_y, $
                XTITLE=KEYWORD_SET(xTitle) ? xTitle : defXTitle, $
                YTITLE=KEYWORD_SET(overplot_alfvendbquantity) ? !NULL : yTitle, $
                XRANGE=KEYWORD_SET(xRange) ? xRange : [MIN(alf_t),MAX(alf_t)], $
+               XSHOWTEXT=KEYWORD_SET(overplot_alfvendbquantity) ? !NULL : xShowLabel, $
                YRANGE=KEYWORD_SET(yRange) ? yRange : [MIN(alf_y),MAX(alf_y)], $
                YLOG=KEYWORD_SET(logYPlot) ? 1 : 0, $
                AXIS_STYLE=(KEYWORD_SET(overplot_alfvendbquantity)) ? 0 : 1, $
@@ -58,6 +69,13 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
                      COLOR=KEYWORD_SET(symColor) ? symColor : max_scatter_color)
      ENDIF
      
+     IF xShowLabel THEN BEGIN
+        ax                = plot.axes
+        IF N_ELEMENTS(ax) GT 2 THEN BEGIN
+           ax[2].showText = 0
+        ENDIF
+     ENDIF
+
      IF KEYWORD_SET(add_plot_to_plot_array) THEN BEGIN
         IF N_ELEMENTS(outPlot) GT 0 THEN outPlot=[outPlot,plot] ELSE outPlot = plot
      ENDIF ELSE BEGIN

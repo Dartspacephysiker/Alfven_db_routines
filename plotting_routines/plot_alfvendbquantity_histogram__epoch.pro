@@ -1,5 +1,6 @@
 PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
    XRANGE=xRange, $
+   XHIDELABEL=xHideLabel, $
    HISTORANGE=histoRange, $
    YTITLE=yTitle, $
    LOGYPLOT=logYPlot, $
@@ -23,6 +24,12 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
      histData = histData[safe_i]
   ENDIF
 
+  IF KEYWORD_SET(xHideLabel) THEN BEGIN
+     xShowLabel = 0
+  ENDIF ELSE BEGIN
+     xShowLabel = 1
+  ENDELSE
+
   histoPlot=plot(histTBins,histData, $
                 ;; /STAIRSTEP, $
                  /HISTOGRAM, $
@@ -32,6 +39,7 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
                  YTITLE=KEYWORD_SET(overplot_hist) ? !NULL : yTitle, $
                  NAME=KEYWORD_SET(name) ? name : defHistoName, $
                  XRANGE=xRange, $
+                 XSHOWTEXT=xShowLabel, $
                  AXIS_STYLE=(KEYWORD_SET(overplot_hist)) ? 0 : 1, $
                  COLOR=KEYWORD_SET(color) ? color : 'red', $
                  MARGIN=margin, $
@@ -39,9 +47,16 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
                  THICK=defHistoThick, $ ;OVERPLOT=KEYWORD_SET(overplot_hist),$
                  CURRENT=KEYWORD_SET(current) OR KEYWORD_SET(overplot_hist))
   
+  IF xShowLabel THEN BEGIN
+     ax                = histoPlot.axes
+     IF N_ELEMENTS(ax) GT 2 THEN BEGIN
+        ax[2].showText = 0
+     ENDIF
+  ENDIF
+
   IF KEYWORD_SET(overplot_hist) THEN BEGIN
      yaxis = AXIS('Y', LOCATION='right', TARGET=histoPlot, $
-                  TITLE=yTitle, $p
+                  TITLE=yTitle, $
                   MAJOR=nMajorTicks, $
                   MINOR=nMinorTicks, $
                   TICKFONT_SIZE=defHistoYticksize, $
