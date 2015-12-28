@@ -2,11 +2,18 @@
 ;Now I want to get data for a who' lotta ranges!
 ;NOTE: It is recommended that you use GET_FASTLOC_INDS_UTC_RANGE to get ephemeris indices! It handles all the screening and defaults.
 PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
-                                        DBSTRUCT=dbStruct,DBTIMES=dbTimes, RESTRICT_W_THESEINDS=restrict, $
+                                        DBSTRUCT=dbStruct, $
+                                        DBTIMES=dbTimes, $
+                                        RESTRICT_W_THESEINDS=restrict, $
+                                        OUT_GOOD_TARR_I=out_good_tArr_i, $
                                         OUT_INDS_LIST=inds_list, $
-                                        UNIQ_ORBS_LIST=uniq_orbs_list,UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
-                                        INDS_ORBS_LIST=inds_orbs_list,TRANGES_ORBS_LIST=tranges_orbs_list,TSPANS_ORBS_LIST=tspans_orbs_list, $
+                                        UNIQ_ORBS_LIST=uniq_orbs_list, $
+                                        UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
+                                        INDS_ORBS_LIST=inds_orbs_list, $
+                                        TRANGES_ORBS_LIST=tranges_orbs_list, $
+                                        TSPANS_ORBS_LIST=tspans_orbs_list, $
                                         PRINT_DATA_AVAILABILITY=print_data_availability, $
+                                        SUMMARY=summary, $
                                         LIST_TO_ARR=list_to_arr, $
                                         VERBOSE=verbose, DEBUG=debug, LUN=lun
 
@@ -49,8 +56,9 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
   ;; inds = restrict(inds_ii)
 
   ;;Initialize, please
-  nGood = 0
-  iFirst = 0
+  nGood              = 0
+  iFirst             = 0
+  out_good_tArr_i    = !NULL
   WHILE nGood EQ 0 DO BEGIN
 
      GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1_arr[iFirst],T2=t2_arr[iFirst], $
@@ -63,7 +71,8 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                          VERBOSE=verbose, DEBUG=debug
 
      IF inds[0] NE -1 THEN BEGIN
-        nGood += 1
+        nGood             += 1
+        out_good_tArr_i    = [out_good_tArr_i,iFirst]
         inds_list          = LIST(inds)
         uniq_orbs_list     = LIST(uniq_orbs)
         uniq_orb_inds_list = LIST(uniq_orb_inds)
@@ -87,6 +96,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                          VERBOSE=verbose,DEBUG=debug
      IF inds[0] NE -1 THEN BEGIN
         nGood++
+        out_good_tArr_i    = [out_good_tArr_i,i]
         inds_list.add,inds
         uniq_orbs_list.add,uniq_orbs
         uniq_orb_inds_list.add,uniq_orb_inds
@@ -98,7 +108,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
 
   ENDFOR
   
-  IF KEYWORD_SET(print_data_availability) THEN BEGIN
+  IF KEYWORD_SET(print_data_availability) OR KEYWORD_SET(summary) THEN BEGIN
      arrTotUniqOrbs       = 0
      arrTotInds           = 0
      FOR k = 0,N_ELEMENTS(uniq_orbs_list)-1 DO BEGIN
@@ -110,8 +120,9 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
      PRINTF,lun,'***SUMMARY OF DATA FOR UTC ARRAY***'
      PRINTF,lun,'UTC Range for array: ' + TIME_TO_STR(t1_arr[0]) + ' through ' + TIME_TO_STR(t2_arr[-1])
      PRINTF,lun,'N UTC Ranges: ' + STRCOMPRESS(N_ELEMENTS(T1_ARR),/REMOVE_ALL)
-     PRINTF,lun,FORMAT='("Array total event indices",T38,":",T40,F0.2)',arrTotInds
-     PRINTF,lun,FORMAT='("Array total N unique orbits",T38,":",T40,F0.2)',arrTotUniqOrbs
+     PRINTF,lun,'N with data : ' + STRCOMPRESS(nGood,/REMOVE_ALL)
+     PRINTF,lun,FORMAT='("Array total event indices",T38,":",T40,I0)',arrTotInds
+     PRINTF,lun,FORMAT='("Array total N unique orbits",T38,":",T40,I0)',arrTotUniqOrbs
      PRINTF,lun,FORMAT='("Array total of all interval lengths w/ data (hrs)",T38,":",T40,F0.2)',arrTSpanTotal/3600.
      PRINTF,lun,'***********************************'
      PRINTF,lun,''

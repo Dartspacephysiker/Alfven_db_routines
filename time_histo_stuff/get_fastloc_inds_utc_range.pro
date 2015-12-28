@@ -8,19 +8,37 @@
 ;-
 PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                                LIST_TO_ARR=list_to_arr, $
-                               T1_ARR=t1_arr,T2_ARR=t2_arr, $
-                               ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                               T1_ARR=t1_arr, $
+                               T2_ARR=t2_arr, $
+                               OUT_GOOD_TARR_I=out_good_tArr_i, $
+                               ORBRANGE=orbRange, $
+                               ALTITUDERANGE=altitudeRange, $
+                               CHARERANGE=charERange, $
                                HEMI=hemi, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                MAKE_OUTINDSFILE=make_outIndsFile, $
-                               OUTINDSPREFIX=outIndsPrefix,OUTINDSSUFFIX=outIndsSuffix,OUTINDSFILEBASENAME=outIndsFileBasename, $
-                               FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
-                               FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, FASTLOCOUTPUTDIR=fastLocOutputDir, $
+                               OUTINDSPREFIX=outIndsPrefix, $
+                               OUTINDSSUFFIX=outIndsSuffix, $
+                               OUTINDSFILEBASENAME=outIndsFileBasename, $
+                               FASTLOC_STRUCT=fastLoc, $
+                               FASTLOC_TIMES=fastLoc_Times, $
+                               FASTLOC_DELTA_T=fastloc_delta_t, $
+                               FASTLOCFILE=fastLocFile, $
+                               FASTLOCTIMEFILE=fastLocTimeFile, $
+                               FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                ;;Note, all of the following keywords got added 2015/10/27, and they may screw up other stuff. Just so
                                ;;you know!
-                               RESTRICT_ALTRANGE=restrict_altRange,RESTRICT_CHARERANGE=restrict_charERange, $
-                               MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
-                               DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL
+                               RESTRICT_ALTRANGE=restrict_altRange, $
+                               RESTRICT_CHARERANGE=restrict_charERange, $
+                               MINMLT=minM, $
+                               MAXMLT=maxM,BINM=binM, $
+                               MINILAT=minI, $
+                               MAXILAT=maxI, $
+                               BINI=binI, $
+                               DO_LSHELL=do_lshell, $
+                               MINLSHELL=minL, $
+                               MAXLSHELL=maxL, $
+                               BINL=binL
 
   COMPILE_OPT idl2
 
@@ -101,12 +119,20 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                               HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd)
      
      GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
-        DBSTRUCT=fastLoc,DBTIMES=fastLoc_times, RESTRICT_W_THESEINDS=good_i, $
-        OUT_INDS_LIST=fastLocInterped_i,LIST_TO_ARR=list_to_arr, $
-        UNIQ_ORBS_LIST=uniq_orbs_list,UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
-        INDS_ORBS_LIST=inds_orbs_list,TRANGES_ORBS_LIST=tranges_orbs_list,TSPANS_ORBS_LIST=tspans_orbs_list, $
-        PRINT_DATA_AVAILABILITY=print_data_availability
-     
+                                                   DBSTRUCT=fastLoc, $
+                                                   OUT_GOOD_TARR_I=out_good_tArr_i, $
+                                                   DBTIMES=fastLoc_times, $
+                                                   RESTRICT_W_THESEINDS=good_i, $
+                                                   OUT_INDS_LIST=fastLocInterped_i, $
+                                                   LIST_TO_ARR=list_to_arr, $
+                                                   UNIQ_ORBS_LIST=uniq_orbs_list, $
+                                                   UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
+                                                   INDS_ORBS_LIST=inds_orbs_list, $
+                                                   TRANGES_ORBS_LIST=tranges_orbs_list, $
+                                                   TSPANS_ORBS_LIST=tspans_orbs_list, $
+                                                   /PRINT_DATA_AVAILABILITY, $
+                                                   /SUMMARY
+                                                  
      IF KEYWORD_SET(make_outIndsFile) THEN BEGIN
         PRINT,'Saving outindsfile ' + outIndsFilename + '...'
         save,fastLocInterped_i,minm,maxm,binm,mini,maxi,bini,minl,maxl,binl, $

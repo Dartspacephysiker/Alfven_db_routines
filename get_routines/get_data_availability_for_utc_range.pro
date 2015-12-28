@@ -24,61 +24,62 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
      IF KEYWORD_SET(verbose) THEN BEGIN
         PRINT,'No restriction on inds...'
      ENDIF
-     restrict = INDGEN(N_ELEMENTS(dbStruct),/L64)
+     restrict               = INDGEN(N_ELEMENTS(dbStruct),/L64)
   ENDELSE
 
   inds_ii = WHERE(dbTimes(restrict) GE t1 AND dbTimes(restrict) LE t2,nInds)
   IF inds_ii[0] EQ -1 THEN BEGIN
 
-     inds = -1
+     inds                   = -1
 
-     uniq_orb_inds = -1
-     uniq_orbs = -1
-     nUniq_orbs = 0
+     uniq_orb_inds          = -1
+     uniq_orbs              = -1
+     nUniq_orbs             = 0
 
-     inds_orbs = -1
-     tRanges_orbs = -1
+     inds_orbs              = -1
+     tRanges_orbs           = -1
 
   ENDIF ELSE BEGIN
 
-     inds = restrict(inds_ii)
+     inds                   = restrict(inds_ii)
 
-     uniq_orb_inds_ii = UNIQ(dbStruct.orbit(inds))
-     uniq_orb_inds = inds(uniq_orb_inds_ii)
+     uniq_orb_inds_ii       = UNIQ(dbStruct.orbit(inds))
+     uniq_orb_inds          = inds(uniq_orb_inds_ii)
 
-     uniq_orbs = dbStruct.orbit(uniq_orb_inds)
-     nUniq_orbs = N_ELEMENTS(uniq_orb_inds)
+     uniq_orbs              = dbStruct.orbit(uniq_orb_inds)
+     nUniq_orbs             = N_ELEMENTS(uniq_orb_inds)
 
-     inds_orbs = MAKE_ARRAY(nUniq_orbs,2,/L64)
-     tRanges_orbs = MAKE_ARRAY(nUniq_orbs,2,/DOUBLE)
-     tSpans_orbs = MAKE_ARRAY(nUniq_orbs,/DOUBLE)
-     tSpanTotal = 0
+     inds_orbs              = MAKE_ARRAY(nUniq_orbs,2,/L64)
+     tRanges_orbs           = MAKE_ARRAY(nUniq_orbs,2,/DOUBLE)
+     tSpans_orbs            = MAKE_ARRAY(nUniq_orbs,/DOUBLE)
+     tSpanTotal             = 0
      
      FOR i=0,nUniq_orbs-1 DO BEGIN
-        orb = uniq_orbs[i]
+        orb                 = uniq_orbs[i]
 
-        orbInds_ii = WHERE(dbStruct.orbit(inds) EQ orb)
-        orbInds = inds(orbInds_ii)
+        orbInds_ii          = WHERE(dbStruct.orbit(inds) EQ orb)
+        orbInds             = inds(orbInds_ii)
 
         IF KEYWORD_SET(debug) THEN BEGIN
-           PRINT,'Checking out orb' + STRCOMPRESS(orb,/REMOVE_ALL) + '  (' + STRCOMPRESS(i,/REMOVE_ALL) + ' / ' + STRCOMPRESS(nUniq_orbs-1,/REMOVE_ALL) + ')'
-           PRINT,'nInds : ' + STRCOMPRESS(N_ELEMENTS(orbInds),/REMOVE_ALL)
+           PRINT,'Checking out orb' + STRCOMPRESS(orb,/REMOVE_ALL) + '  (' + STRCOMPRESS(i+1,/REMOVE_ALL) + ' / ' + STRCOMPRESS(nUniq_orbs,/REMOVE_ALL) + ')'
+           nInds = orbInds[0] EQ -1 ? 0 : N_ELEMENTS(orbInds)
+           PRINT,'nInds : ' + STRCOMPRESS(nInds,/REMOVE_ALL)
            PRINT,''
         ENDIF
 
         IF orbInds_ii[0] NE -1 THEN orbMin = MIN(dbTimes(orbInds),orbMin_ii,MAX=orbMax,SUBSCRIPT_MAX=orbMax_ii)
         
-        inds_orbs[i,0] = orbInds(orbMin_ii)
-        inds_orbs[i,1] = orbInds(orbMax_ii)
+        inds_orbs[i,0]      = orbInds(orbMin_ii)
+        inds_orbs[i,1]      = orbInds(orbMax_ii)
 
-        tRanges_orbs[i,0] = orbMin
-        tRanges_orbs[i,1] = orbMax
+        tRanges_orbs[i,0]   = orbMin
+        tRanges_orbs[i,1]   = orbMax
         
-        tSpans_orbs[i] = orbMax - orbMin
-        tSpanTotal    += tSpans_orbs[i]
+        tSpans_orbs[i]      = orbMax - orbMin
+        tSpanTotal         += tSpans_orbs[i]
      ENDFOR
      
-     IF KEYWORD_SET(print_data_availability) THEN BEGIN
+     IF KEYWORD_SET(print_data_availability) OR uniq_orb_inds[0] EQ -1 THEN BEGIN
         PRINT_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
                                               UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
                                               INDS_ORBS=inds_orbs,TRANGES_ORBS=tRanges_orbs, $

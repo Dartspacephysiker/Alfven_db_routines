@@ -35,6 +35,7 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
                               LIST_TO_ARR=0, $
                               T1_ARR=t1_arr, $
                               T2_ARR=t2_arr, $
+                              OUT_GOOD_TARR_I=out_good_tArr_i, $
                               OUTINDSPREFIX=savePlotMaxName, $
                               FASTLOC_STRUCT=fastLoc, $
                               FASTLOC_TIMES=fastLoc_times, $
@@ -44,16 +45,17 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
                               MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
                               DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL
    
-        IF N_ELEMENTS(fastLoc_i_list) NE nEpochs THEN BEGIN
+        IF N_ELEMENTS(out_good_tArr_i) NE N_ELEMENTS(fastloc_i_list) THEN BEGIN
            PRINT,"There are very possibly issues with this plot; be careful ..."
            WAIT,3
         ENDIF
 
-        iFirst = 0
+        iFirst                   = 0
+        tempCT                   = centerTime[out_good_tArr_i]
         WHILE N_ELEMENTS(fastloc_t_list) EQ 0 DO BEGIN
            IF N_ELEMENTS(fastLoc_i_list[iFirst]) NE 0 THEN BEGIN
               IF fastLoc_i_list[iFirst,0] NE -1 THEN BEGIN
-                 fastloc_t_list = LIST((fastLoc_times[fastLoc_i_list[iFirst]] - centerTime[iFirst])/3600.0)
+                 fastloc_t_list  = LIST((fastLoc_times[fastLoc_i_list[iFirst]] - tempCT[iFirst])/3600.0)
                  fastloc_dt_list = LIST(fastLoc_delta_t[fastLoc_i_list[iFirst]])
               ENDIF
            ENDIF
@@ -62,14 +64,14 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
         FOR i = iFirst, N_ELEMENTS(fastloc_i_list)-1 DO BEGIN
            IF N_ELEMENTS(fastLoc_i_list[iFirst]) NE 0 THEN BEGIN
               IF fastLoc_i_list[i,0] NE -1 THEN BEGIN
-                 fastloc_t_list.add,(fastLoc_times[fastLoc_i_list[i]] - centerTime[i])/3600.0
-                 fastloc_dt_list.add,fastLoc_delta_t[fastLoc_i_list[iFirst]]
+                 fastloc_t_list.add,(fastLoc_times[fastLoc_i_list[i]] - tempCT[i])/3600.0
+                 fastloc_dt_list.add,fastLoc_delta_t[fastLoc_i_list[i]]
               ENDIF
            ENDIF
         ENDFOR
-        fastloc_i = LIST_TO_1DARRAY(fastLoc_i_list,/SKIP_NEG1_ELEMENTS,/WARN)
-        fastloc_t = LIST_TO_1DARRAY(fastLoc_t_list,/SKIP_NEG1_ELEMENTS,/WARN)
-        fastloc_dt = LIST_TO_1DARRAY(fastLoc_dt_list,/SKIP_NEG1_ELEMENTS,/WARN)
+        fastloc_i               = LIST_TO_1DARRAY(fastLoc_i_list,/SKIP_NEG1_ELEMENTS,/WARN)
+        fastloc_t               = LIST_TO_1DARRAY(fastLoc_t_list,/SKIP_NEG1_ELEMENTS,/WARN)
+        fastloc_dt              = LIST_TO_1DARRAY(fastLoc_dt_list,/SKIP_NEG1_ELEMENTS,/WARN)
 
         GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,fastloc_t,fastloc_dt, $
            HISTOTYPE=0, $    ;no averaging!

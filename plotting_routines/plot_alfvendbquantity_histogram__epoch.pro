@@ -64,7 +64,8 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
                   ;; TICKFORMAT=KEYWORD_SET(yTickFormat) ? yTickFormat : defHistoTickFormat, $
                   TICKFORMAT=!NULL, $
                   TEXTPOS=1, $
-                  COLOR=KEYWORD_SET(color) ? color : defHistoColor)
+                  ;; COLOR=KEYWORD_SET(color) ? color : defHistoColor)
+                  COLOR='BLACK')
   ENDIF
 
   IF KEYWORD_SET(bkgrnd_hist) THEN BEGIN

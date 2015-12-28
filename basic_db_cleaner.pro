@@ -1,5 +1,7 @@
 ;2015/10/20
 ;This one applies to both maximus and fastLoc structs
+;            Mod history
+; 2015/12/28 Fastloc has a bunch of strange sample_t values (negatives), so I'm junking them
 FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun,CLEAN_NANS_AND_INFINITIES=clean_nans_and_infinities,DO_CHASTDB=do_ChastDB
   
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
@@ -84,7 +86,8 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun,CLEAN_NANS_AND_INFINITIES=clean_nans_
      PRINTF,lun,FORMAT='("N lost to basic ORBIT restr",T40,": ",I0)',nlost
   ENDIF
 
-  good_i = cgsetintersection(good_i,where(dbStruct.sample_t LE sample_t_hcutoff,/NULL))
+  ;; good_i = cgsetintersection(good_i,where(dbStruct.sample_t LE sample_t_hcutoff,/NULL))
+  good_i = cgsetintersection(good_i,where(ABS(dbStruct.sample_t) LE sample_t_hcutoff,/NULL))
   nlost      = n_good-n_elements(good_i)
   tot_nLost += nLost
   n_good -= nLost

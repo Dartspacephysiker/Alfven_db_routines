@@ -8,8 +8,8 @@
 ;2015/10/15 Added L-shell stuff
 ;2015/10/09 Overhauling so that this can be used for time histos or Alfven DB structures
 ;2015/08/15 Added NO_BURSTDATA keyword
-;2015;10/19 Added PRINT_PARAM_SUMMARY keyword
-
+;2015/10/19 Added PRINT_PARAM_SUMMARY keyword
+;2015/12/28 There are a bunch of weird sample_t values in fastloc. I'm junking them in fastloc_cleaner.
 FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CHASTDB=CHASTDB, $
                          ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange,CHARERANGE=charERange,POYNTRANGE=poyntRange, $
                          BOTH_HEMIS=both_hemis, $

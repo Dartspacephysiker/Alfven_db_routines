@@ -57,7 +57,7 @@
   ;; nMajorTicks=5
   ;; nMinorTicks=3
   nMajorTicks                =  5
-  nMinorTicks                =  2
+  nMinorTicks                =  3
   
   ;;For showing data availability
   defShowSymbol              = 'tu'
