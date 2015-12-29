@@ -21,6 +21,7 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
    RM_ZERO_I=rm_z_i, $
    RUNNING_BIN_SPACING=bin_spacing, $
    RUNNING_SMOOTH_NPOINTS=running_smooth_nPoints, $
+   WINDOW_SUM=window_sum, $
    MAKE_ERROR_BARS=make_error_bars, $
    ERROR_BAR_NBOOT=error_bar_nBoot, $
    OUT_ERROR_BARS=out_error_bars, $
@@ -48,38 +49,62 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
                               BINSIZE=histoBinSize, $
                               INPUT=nEvHistData)
      ENDELSE
-     nz_i = WHERE(nEvHistData NE 0,COMPLEMENT=z_i)
 
      ;;Do weighted histos
      IF ~KEYWORD_SET(only_nEvents) THEN BEGIN
 
-        IF histoType EQ 2 THEN BEGIN
-           ;;probably not necessary; performing log of the data should already be handled by GET_DATA_FOR_ALFVENDB_EPOCH_PLOTS
-           ;; alf_y_arr = ABS(alf_y_arr)
-           valid_i   = WHERE(FINITE(alf_y_arr))
-           ;; alf_t_arr = alf_t_arr[valid_i]
-           alf_t_dat = alf_t_arr[valid_i]
-           alf_y_dat = ALOG10(alf_y_arr[valid_i])
-        ENDIF ELSE BEGIN
-           alf_t_dat = alf_t_arr
-           alf_y_dat = alf_y_arr
-        ENDELSE
+        IF KEYWORD_SET(window_sum) THEN BEGIN
+           PRINTF,lun,'Performing window sum ...'
+           alf_t_dat    = alf_t_arr
+           alf_y_dat    = alf_y_arr
 
-        IF N_ELEMENTS(histData) EQ 0 THEN BEGIN
-           histData  = hist1d(alf_t_dat,alf_y_dat, $;LOCATIONS=histTBins, $
-                              MAX=tAfterEpoch,MIN=-tBeforeEpoch, $
-                              BINSIZE=histoBinSize)
+           histData     = RUNNING_AVERAGE(alf_t_dat, alf_y_dat,window_sum, $
+                                          ;; BIN_R_EDGES=0.5, $
+                                          BIN_CENTERS=histTBins, $
+                                          BIN_SPACING=bin_spacing, $
+                                          OUT_NONZERO_I=nz_i, $
+                                          OUT_ZERO_I=z_i, $
+                                          SMOOTH_NPOINTS=running_smooth_nPoints, $
+                                          WINDOW_SUM=window_sum, $
+                                          ;; MAKE_ERROR_BARS=make_error_bars, $
+                                          ;; ERROR_BAR_NBOOT=error_bar_nBoot, $
+                                          ;; OUT_ERROR_BARS=out_error_bars, $
+                                          XMIN=-tBeforeEpoch, $
+                                          XMAX=tAfterEpoch, $
+                                          /DROP_EDGES)
+
         ENDIF ELSE BEGIN
-           histData  = hist1d(alf_t_dat,alf_y_dat, $;LOCATIONS=histTBins, $
-                              MAX=tAfterEpoch,MIN=-tBeforeEpoch, $
-                              BINSIZE=histoBinSize, $
-                              INPUT=histData)
+
+           nz_i = WHERE(nEvHistData NE 0,COMPLEMENT=z_i)
+           IF histoType EQ 2 THEN BEGIN
+              ;;probably not necessary; performing log of the data should already be handled by GET_DATA_FOR_ALFVENDB_EPOCH_PLOTS
+              ;; alf_y_arr = ABS(alf_y_arr)
+              valid_i   = WHERE(FINITE(alf_y_arr))
+              ;; alf_t_arr = alf_t_arr[valid_i]
+              alf_t_dat = alf_t_arr[valid_i]
+              alf_y_dat = ALOG10(alf_y_arr[valid_i])
+           ENDIF ELSE BEGIN
+              alf_t_dat = alf_t_arr
+              alf_y_dat = alf_y_arr
+           ENDELSE
+           
+           IF N_ELEMENTS(histData) EQ 0 THEN BEGIN
+              histData  = hist1d(alf_t_dat,alf_y_dat, $ ;LOCATIONS=histTBins, $
+                                 MAX=tAfterEpoch,MIN=-tBeforeEpoch, $
+                                 BINSIZE=histoBinSize)
+           ENDIF ELSE BEGIN
+              histData  = hist1d(alf_t_dat,alf_y_dat, $ ;LOCATIONS=histTBins, $
+                                 MAX=tAfterEpoch,MIN=-tBeforeEpoch, $
+                                 BINSIZE=histoBinSize, $
+                                 INPUT=histData)
+           ENDELSE
+           
         ENDELSE
      ENDIF
   ENDIF
 
   ;;Perform averaging, if requested
-  IF histoType GT 0 THEN BEGIN
+  IF histoType GT 0 THEN BEGIN ; OR KEYWORD_SET(window_sum) THEN BEGIN
 
      IF KEYWORD_SET(running_average) AND KEYWORD_SET(running_median) THEN BEGIN
         PRINTF,lun,"Both running average and running median are set! Bogus!"
@@ -87,7 +112,8 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
         STOP
      ENDIF
 
-     IF KEYWORD_SET(running_average) THEN BEGIN
+     ;; IF KEYWORD_SET(running_average) OR KEYWORD_SET(window_sum) THEN BEGIN
+     IF KEYWORD_SET(running_average) OR KEYWORD_SET(window_sum) THEN BEGIN
 
         ra_y              = RUNNING_AVERAGE(alf_t_dat, alf_y_dat,running_average, $
                                             ;; BIN_R_EDGES=0.5, $
@@ -96,6 +122,7 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
                                             OUT_NONZERO_I=ra_nz_i, $
                                             OUT_ZERO_I=ra_z_i, $
                                             SMOOTH_NPOINTS=running_smooth_nPoints, $
+                                            WINDOW_SUM=window_sum, $
                                             MAKE_ERROR_BARS=make_error_bars, $
                                             ERROR_BAR_NBOOT=error_bar_nBoot, $
                                             OUT_ERROR_BARS=out_error_bars, $
@@ -148,18 +175,20 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
         ENDIF
      ENDIF
 
-     IF nz_i[0] NE -1 THEN BEGIN
-        histData = DOUBLE(histData)
-        histData[nz_i] = histData[nz_i]/nEvHistData[nz_i]
-        histData[z_i] = 0
-
-        IF histoType EQ 2 THEN BEGIN
-           histData[nz_i] = 10^(histData[nz_i])
-           histData[z_i] = 1e-10
-        ENDIF
-     ENDIF ELSE BEGIN
-        PRINTF,lun,"It's all bad! Couldn't find any histo elements that were nonzero..."
-     ENDELSE
+     IF ~KEYWORD_SET(window_sum) THEN BEGIN
+        IF nz_i[0] NE -1 THEN BEGIN
+           histData = DOUBLE(histData)
+           histData[nz_i] = histData[nz_i]/nEvHistData[nz_i]
+           histData[z_i] = 0
+           
+           IF histoType EQ 2 THEN BEGIN
+              histData[nz_i] = 10^(histData[nz_i])
+              histData[z_i] = 1e-10
+           ENDIF
+        ENDIF ELSE BEGIN
+           PRINTF,lun,"It's all bad! Couldn't find any histo elements that were nonzero..."
+        ENDELSE
+     ENDIF
   ENDIF
 
   ;; cHistData = TOTAL(histData, /CUMULATIVE) / nEvTot
