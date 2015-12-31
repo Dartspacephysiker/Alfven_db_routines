@@ -1,38 +1,53 @@
-PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
-                         DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
-                         NEVENTSPLOTRANGE=nEventsPlotRange, $
-                         TMPLT_H2DSTR=tmplt_h2dStr, $
-                         H2DSTR=h2dStr,H2DMASKSTR=h2dMaskStr, $
-                         H2DFLUXN=h2dFluxN,H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                         MASKMIN=maskMin, $
-                         DATANAME=dataName,DATARAWPTR=dataRawPtr
+PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
+                             MINM=minM,MAXM=maxM,BINM=binM, $
+                             MINI=minI,MAXI=maxI,BINI=binI, $
+                             DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
+                             NEVENTSPLOTRANGE=nEventsPlotRange, $
+                             TMPLT_H2DSTR=tmplt_h2dStr, $
+                             H2DSTR=h2dStr,H2DMASKSTR=h2dMaskStr, $
+                             H2DFLUXN=h2dFluxN,H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                             MASKMIN=maskMin, $
+                             DATANAME=dataName,DATARAWPTR=dataRawPtr, $
+                             CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                             CB_FORCE_OOBLOW=cb_force_oobLow, $
+                             PRINT_MANDM=print_mAndM, $
+                             LUN=lun
+
+  IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
+
+  IF N_ELEMENTS(print_mAndM) EQ 0 THEN print_mAndM = 1
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                       MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
-                                      MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
+                                      MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI), $
+                                      CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                      CB_FORCE_OOBLOW=cb_force_oobLow)
 
   ENDIF
 
-  h2dStr={tmplt_h2dStr}
-  h2dStr.title="Number of events"
-  dataName="nEvents_"
+  h2dStr              = tmplt_h2dStr
+  h2dStr.title        = "Number of events"
+  dataName            = "nEvents_"
 
-  h2dMaskStr={tmplt_h2dStr}
-  h2dMaskStr.title="Histogram mask"
+  h2dMaskStr          = tmplt_h2dStr
+  h2dMaskStr.title    = "Histogram mask"
 
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
-  h2dFluxN=hist_2d(maximus.mlt[plot_i],$
-                   (KEYWORD_SET(do_lShell) ? maximus.lshell : maximus.ilat)[plot_i],$
-                   BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
-                   MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
-                   MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
+  h2dFluxN            = HIST_2D(maximus.mlt[plot_i],$
+                                (KEYWORD_SET(do_lShell) ? $
+                                 maximus.lshell : maximus.ilat)[plot_i],$
+                                BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
+                                MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
+                                MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
 
   h2dStr.data=h2dFluxN
-  h2dStr.lim=(KEYWORD_SET(nEventsPlotRange) AND N_ELEMENTS(nEventsPlotRange) EQ 2) ? DOUBLE(nEventsPlotRange) : DOUBLE([MIN(h2dFluxN),MAX(h2dFluxN)]) 
-
-  dataRawPtr=PTR_NEW(h2dFluxN) 
+  h2dStr.lim          = KEYWORD_SET(nEventsPlotRange) AND N_ELEMENTS(nEventsPlotRange) EQ 2 ? $
+                        DOUBLE(nEventsPlotRange) : $
+                        DOUBLE([MIN(h2dFluxN),MAX(h2dFluxN)]) 
+  h2dStr.logLabels    = 1
+  dataRawPtr          = PTR_NEW(h2dFluxN) 
 
   ;;Make a mask for plots so that we can show where no data exists
   h2dMaskStr.data=h2dFluxN
@@ -41,4 +56,21 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=m
 
   h2d_nonzero_nEv_i = WHERE( h2dFluxN GT 0,/NULL)
   
+  IF KEYWORD_SET(print_mandm) THEN BEGIN
+     ;; IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
+        fmt    = 'G10.4' 
+        maxh2d = MAX(h2dStr.data[h2d_nonzero_nEv_i])
+        minh2d = MIN(h2dStr.data[h2d_nonzero_nEv_i])
+     ;; ENDIF ELSE BEGIN
+     ;;    fmt    = 'F10.2'
+     ;;    maxh2d = ALOG10(MAX(h2dStr.data[h2d_nonzero_nEv_i]))
+     ;;    minh2d = ALOG10(MIN(h2dStr.data[h2d_nonzero_nEv_i]))
+     ;; ENDELSE
+     PRINTF,lun,h2dStr.title
+     PRINTF,lun,FORMAT='("Max, min:",T20,' + fmt + ',T35,' + fmt + ')', $
+            maxh2d, $
+            minh2d
+  ENDIF
+
+
 END

@@ -14,7 +14,7 @@ iFlux_do_plotIntegral        = 0
 Charee_do_plotIntegral       = 0
 Charie_do_plotIntegral       = 0
 
-eFlux_do_midCBLabel          = 0
+eFlux_do_midCBLabel          = 1
 PFlux_do_midCBLabel          = 1
 iFlux_do_midCBLabel          = 1
 Charee_do_midCBLabel         = 1

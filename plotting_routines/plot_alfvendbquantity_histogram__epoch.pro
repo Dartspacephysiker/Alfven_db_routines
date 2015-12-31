@@ -5,6 +5,7 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
    YTITLE=yTitle, $
    LOGYPLOT=logYPlot, $
    YTICKFORMAT=yTickFormat, $
+   HISTOGRAM=histogram, $
    MARGIN=margin, $
    PLOTTITLE=plotTitle, $
    OVERPLOT_HIST=overplot_hist, $
@@ -18,6 +19,8 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
 
   @utcplot_defaults.pro
   
+  IF N_ELEMENTS(histogram) EQ 0 THEN histogram = 1
+
   IF KEYWORD_SET(logYPlot) THEN BEGIN
      safe_i = WHERE(histData GT 0)
      histTBins = histTBins[safe_i]
@@ -32,7 +35,7 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
 
   histoPlot=plot(histTBins,histData, $
                 ;; /STAIRSTEP, $
-                 /HISTOGRAM, $
+                 HISTOGRAM=histogram, $
                  TITLE=plotTitle, $
                  YRANGE=KEYWORD_SET(histoRange) ? histoRange : defNEvYRange, $
                  YLog=KEYWORD_SET(logYPlot) ? 1 : 0, $
