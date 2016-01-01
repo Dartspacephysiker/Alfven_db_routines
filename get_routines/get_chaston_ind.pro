@@ -39,20 +39,20 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
   
   IF ~KEYWORD_SET(lun) THEN lun = defLun ;stdout
 
-  IF KEYWORD_SET(both_hemis) THEN BEGIN
-     PRINTF,lun,"hemi set to 'BOTH' via keyword /BOTH_HEMIS"
-     hemi="BOTH"
-  ENDIF ELSE BEGIN
-     IF KEYWORD_SET(north) THEN BEGIN
-        PRINTF,lun,"hemi set to 'NORTH' via keyword /NORTH"
-        hemi="NORTH"
-     ENDIF ELSE BEGIN
-        IF KEYWORD_SET(south) THEN BEGIN
-           PRINTF,lun,"hemi set to 'SOUTH' via keyword /SOUTH"
-           hemi="SOUTH"
-        ENDIF
-     ENDELSE
-  ENDELSE
+  ;; IF KEYWORD_SET(both_hemis) THEN BEGIN
+  ;;    PRINTF,lun,"hemi set to 'BOTH' via keyword /BOTH_HEMIS"
+  ;;    hemi="BOTH"
+  ;; ENDIF ELSE BEGIN
+  ;;    IF KEYWORD_SET(north) THEN BEGIN
+  ;;       PRINTF,lun,"hemi set to 'NORTH' via keyword /NORTH"
+  ;;       hemi="NORTH"
+  ;;    ENDIF ELSE BEGIN
+  ;;       IF KEYWORD_SET(south) THEN BEGIN
+  ;;          PRINTF,lun,"hemi set to 'SOUTH' via keyword /SOUTH"
+  ;;          hemi="SOUTH"
+  ;;       ENDIF
+  ;;    ENDELSE
+  ;; ENDELSE
 
 
   SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
@@ -60,6 +60,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
                                 MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
                                 MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                 HEMI=hemi, $
+                                BOTH_HEMIS=both_hemis, $
+                                NORTH=north, $
+                                SOUTH=south, $
                                 LUN=lun
 
   IF KEYWORD_SET(get_time_i_NOT_alfvendb_i) THEN BEGIN

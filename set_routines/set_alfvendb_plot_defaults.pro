@@ -5,6 +5,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                MIN_NEVENTS=min_nEvents, MASKMIN=maskMin, $
                                HEMI=hemi, $
+                               NORTH=north, $
+                               SOUTH=south, $
+                               BOTH_HEMIS=both_hemis, $
                                NPLOTS=nPlots, $
                                EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, $
                                ENUMFLPLOTS=eNumFlPlots, ENUMFLPLOTTYPE=eNumFlPlotType, $
@@ -44,7 +47,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
                                 MINILAT=minILAT,MAXILAT=maxILAT,BINI=binILAT, $
                                 MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
                                 MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-                                HEMI=hemi,LUN=lun
+                                HEMI=hemi, $
+                                NORTH=north, $
+                                SOUTH=south, $
+                                BOTH_HEMIS=both_hemis, $
+                                LUN=lun
 
   ;;***********************************************
   ;;Tons of defaults

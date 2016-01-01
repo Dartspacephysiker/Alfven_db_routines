@@ -1,7 +1,13 @@
+;2015/01/01 Added NORTH, SOUTH, BOTH_HEMIS keywords
 PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                                   MINILAT=minI,MAXILAT=maxI,BINI=binI, $
                                   MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
-                                  MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC,HEMI=hemi,LUN=lun
+                                  MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+                                  HEMI=hemi, $
+                                  NORTH=north, $
+                                  SOUTH=south, $
+                                  BOTH_HEMIS=both_hemis, $
+                                  LUN=lun
 
   COMPILE_OPT idl2
 
@@ -37,9 +43,24 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
 
   ;;Handle ILATs
   IF N_ELEMENTS(hemi) EQ 0 THEN BEGIN
-     hemi = defHemi
-     hemi = STRUPCASE(hemi)
-     PRINTF,lun,"No hemisphere specified! Set to default: " + hemi + "..."
+     IF KEYWORD_SET(both_hemis) THEN BEGIN
+        PRINTF,lun,"hemi set to 'BOTH' via keyword /BOTH_HEMIS"
+        hemi="BOTH"
+     ENDIF ELSE BEGIN
+        IF KEYWORD_SET(north) THEN BEGIN
+           PRINTF,lun,"hemi set to 'NORTH' via keyword /NORTH"
+           hemi="NORTH"
+        ENDIF ELSE BEGIN
+           IF KEYWORD_SET(south) THEN BEGIN
+              PRINTF,lun,"hemi set to 'SOUTH' via keyword /SOUTH"
+              hemi="SOUTH"
+           ENDIF ELSE BEGIN
+              hemi = defHemi
+              hemi = STRUPCASE(hemi)
+              PRINTF,lun,"No hemisphere specified! Set to default: " + hemi + "..."
+           ENDELSE
+        ENDELSE
+     ENDELSE
   ENDIF ELSE BEGIN
      hemi = STRUPCASE(hemi)
   ENDELSE

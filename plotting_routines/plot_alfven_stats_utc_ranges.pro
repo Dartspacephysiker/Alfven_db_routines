@@ -211,7 +211,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  NO_COLORBAR=no_colorbar, $
                                  CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                  CB_FORCE_OOBLOW=cb_force_oobLow, $
-                                 LUN=lun, PRINT_DATA_AVAILABILITY=print_data_availability, VERBOSE=verbose, _EXTRA = e
+                                 LUN=lun, $
+                                 PRINT_DATA_AVAILABILITY=print_data_availability, $
+                                 VERBOSE=verbose, $
+                                 _EXTRA = e
   
   COMPILE_OPT idl2
   !EXCEPT=0                     ;Do report errors, please
@@ -231,6 +234,9 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                              MIN_NEVENTS=min_nEvents, MASKMIN=maskMin, $
                              HEMI=hemi, $
+                             NORTH=north, $
+                             SOUTH=south, $
+                             BOTH_HEMIS=both_hemis, $
                              NPLOTS=nPlots, $
                              EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, $
                              ENUMFLPLOTS=eNumFlPlots, ENUMFLPLOTTYPE=eNumFlPlotType, $

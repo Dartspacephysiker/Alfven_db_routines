@@ -3,11 +3,16 @@
 ;2015/04/09
 ;this can be used as a standalone routine or else called by plot_alfven_stats_imf_screening when
 ;making a plot of n events per minute
+;2016/01/01 Added NORTH, SOUTH, and BOTH_HEMIS keywords.
 ;-
 PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                BYMIN=byMin, BYMAX=byMax, BZMIN=bzMin, BZMAX=bzMax, SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                               HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
+                               HEMI=hemi, $
+                               BOTH_HEMIS=both_hemis, $
+                               NORTH=north, $
+                               SOUTH=south, $
+                               DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                MAKE_OUTINDSFILE=make_outIndsFile, $
                                OUTINDSPREFIX=outIndsPrefix,OUTINDSSUFFIX=outIndsSuffix,OUTINDSFILEBASENAME=outIndsFileBasename, $
@@ -36,6 +41,9 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
                              HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                              MIN_NEVENTS=min_nEvents, MASKMIN=maskMin, $
                              HEMI=hemi, $
+                             BOTH_HEMIS=both_hemis, $
+                             NORTH=north, $
+                             SOUTH=south, $
                              NPLOTS=nPlots, $
                              EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, $
                              ENUMFLPLOTS=eNumFlPlots, ENUMFLPLOTTYPE=eNumFlPlotType, $
