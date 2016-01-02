@@ -18,49 +18,51 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
   IF N_ELEMENTS(print_mAndM) EQ 0 THEN print_mAndM = 1
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
-     tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
-                                      MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
-                                      MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI), $
-                                      CB_FORCE_OOBHIGH=cb_force_oobHigh, $
-                                      CB_FORCE_OOBLOW=cb_force_oobLow)
-
+     tmplt_h2dStr               = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
+                                                    MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
+                                                    MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI), $
+                                                    CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                                    CB_FORCE_OOBLOW=cb_force_oobLow)
+     
   ENDIF
 
-  h2dStr              = tmplt_h2dStr
-  h2dStr.title        = "Number of events"
-  dataName            = "nEvents_"
+  h2dStr                        = tmplt_h2dStr
+  h2dStr.title                  = "Number of events"
+  h2dStr.labelFormat            = '(I0)'
+  h2dStr.DO_midCBLabel          = 1
+  dataName                      = "nEvents_"
 
-  h2dMaskStr          = tmplt_h2dStr
-  h2dMaskStr.title    = "Histogram mask"
+  h2dMaskStr                    = tmplt_h2dStr
+  h2dMaskStr.title              = "Histogram mask"
 
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
-  h2dFluxN            = HIST_2D(maximus.mlt[plot_i],$
-                                (KEYWORD_SET(do_lShell) ? $
-                                 maximus.lshell : maximus.ilat)[plot_i],$
-                                BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
-                                MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
-                                MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
+  h2dFluxN                      = HIST_2D(maximus.mlt[plot_i],$
+                                          (KEYWORD_SET(do_lShell) ? $
+                                           maximus.lshell : maximus.ilat)[plot_i],$
+                                          BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
+                                          MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
+                                          MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
 
-  h2dStr.data=h2dFluxN
-  h2dStr.lim          = KEYWORD_SET(nEventsPlotRange) AND N_ELEMENTS(nEventsPlotRange) EQ 2 ? $
-                        DOUBLE(nEventsPlotRange) : $
-                        DOUBLE([MIN(h2dFluxN),MAX(h2dFluxN)]) 
-  h2dStr.logLabels    = 1
-  dataRawPtr          = PTR_NEW(h2dFluxN) 
+  h2dStr.data                   = h2dFluxN
+  h2dStr.lim                    = KEYWORD_SET(nEventsPlotRange) AND N_ELEMENTS(nEventsPlotRange) EQ 2 ? $
+                                  DOUBLE(nEventsPlotRange) : $
+                                  DOUBLE([MIN(h2dFluxN),MAX(h2dFluxN)]) 
+  h2dStr.logLabels              = 1
+  dataRawPtr                    = PTR_NEW(h2dFluxN) 
 
   ;;Make a mask for plots so that we can show where no data exists
-  h2dMaskStr.data=h2dFluxN
-  h2dMaskStr.data(where(h2dStr.data LT maskMin,/NULL))=255
-  h2dMaskStr.data(where(h2dStr.data GE maskMin,/NULL))=0
+  h2dMaskStr.data               = h2dFluxN
+  h2dMaskStr.data[where(h2dStr.data LT maskMin,/NULL)]=255
+  h2dMaskStr.data[where(h2dStr.data GE maskMin,/NULL)]=0
 
-  h2d_nonzero_nEv_i = WHERE( h2dFluxN GT 0,/NULL)
+  h2d_nonzero_nEv_i             = WHERE(h2dFluxN GT 0,/NULL)
   
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      ;; IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
-        fmt    = 'G10.4' 
-        maxh2d = MAX(h2dStr.data[h2d_nonzero_nEv_i])
-        minh2d = MIN(h2dStr.data[h2d_nonzero_nEv_i])
+        fmt                     = 'G10.4' 
+        maxh2d                  = MAX(h2dStr.data[h2d_nonzero_nEv_i])
+        minh2d                  = MIN(h2dStr.data[h2d_nonzero_nEv_i])
      ;; ENDIF ELSE BEGIN
      ;;    fmt    = 'F10.2'
      ;;    maxh2d = ALOG10(MAX(h2dStr.data[h2d_nonzero_nEv_i]))

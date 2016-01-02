@@ -211,6 +211,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  NO_COLORBAR=no_colorbar, $
                                  CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                  CB_FORCE_OOBLOW=cb_force_oobLow, $
+                                 FANCY_PLOTNAMES=fancy_plotNames, $
                                  LUN=lun, $
                                  PRINT_DATA_AVAILABILITY=print_data_availability, $
                                  VERBOSE=verbose, $
@@ -368,6 +369,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         ALL_LOGPLOTS=all_logPlots, $
                         PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix, $
                         TMPLT_H2DSTR=tmplt_h2dStr, $
+                        FANCY_PLOTNAMES=fancy_plotNames, $
                         LUN=lun
 
   ;;********************************************************

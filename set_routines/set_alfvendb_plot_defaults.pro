@@ -158,7 +158,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
   ;;Shouldn't be leftover, unused params from batch call
   IF ISA(e) THEN BEGIN
      IF $
-        NOT tag_exist(e,"mirror") AND NOT tag_exist(e,"plottitle") $ ;keywords for interp_polar2dhist
+        NOT tag_exist(e,"mirror") AND NOT tag_exist(e,"plottitle") AND NOT tag_exist(e,"midnight") $ ;keywords for interp_polar2dhist
      THEN BEGIN                 ;Check for passed variables here
         help,e
         print,e

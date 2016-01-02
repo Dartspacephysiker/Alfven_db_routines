@@ -106,11 +106,11 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ;;********************************************
   ;;If this file already exists, see if it will work for us!
 
-  IF FILE_TEST(outIndsFilename) THEN BEGIN 
-     PRINT,"Restoring " + outIndsFilename + "..."
-     RESTORE,outIndsFilename
-     WAIT,1
-  ENDIF ELSE BEGIN
+  ;; IF FILE_TEST(outIndsFilename) THEN BEGIN 
+     ;; PRINT,"Restoring " + outIndsFilename + "..."
+     ;; RESTORE,outIndsFilename
+     ;; WAIT,1
+  ;; ENDIF ELSE BEGIN
      good_i = get_chaston_ind(fastLoc,satellite,lun,GET_TIME_I_NOT_ALFVENDB_I=1, $
                               DBTIMES=fastLoc_times,DBFILE=FastLocFile, HEMI=hemi, $
                               ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange,POYNTRANGE=poyntRange, $
@@ -140,6 +140,6 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
              fastLocOutputDir,fastLocFile,fastLocTimeFile, $
              filename=outIndsFilename
      ENDIF
-  ENDELSE
+  ;; ENDELSE
 
 END

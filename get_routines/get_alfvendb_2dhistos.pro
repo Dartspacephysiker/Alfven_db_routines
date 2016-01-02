@@ -104,6 +104,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           PARAMSTRPREFIX=paramStrPrefix, $
                           PARAMSTRSUFFIX=paramStrSuffix, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
+                          FANCY_PLOTNAMES=fancy_plotNames, $
                           LUN=lun
   
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
@@ -171,7 +172,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MEDHISTOUTDATA=medHistOutData, $
                        MEDHISTOUTTXT=medHistOutTxt, $
                        MEDHISTDATADIR=medHistDataDir, $
-                       LOGAVGPLOT=logAvgPlot
+                       LOGAVGPLOT=logAvgPlot, $
+                       FANCY_PLOTNAMES=fancy_plotNames
+
      
      h2dStrArr=[h2dStrArr,h2dStr] 
      IF keepMe THEN BEGIN
@@ -212,7 +215,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MEDHISTOUTDATA=medHistOutData, $
                        MEDHISTOUTTXT=medHistOutTxt, $
                        MEDHISTDATADIR=medHistDataDir, $
-                       LOGAVGPLOT=logAvgPlot
+                       LOGAVGPLOT=logAvgPlot, $
+                       FANCY_PLOTNAMES=fancy_plotNames
 
      h2dStrArr=[h2dStrArr,h2dStr] 
      IF keepMe THEN BEGIN 
@@ -254,7 +258,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MEDHISTOUTDATA=medHistOutData, $
                        MEDHISTOUTTXT=medHistOutTxt, $
                        MEDHISTDATADIR=medHistDataDir, $
-                       LOGAVGPLOT=logAvgPlot
+                       LOGAVGPLOT=logAvgPlot, $
+                       FANCY_PLOTNAMES=fancy_plotNames
      
      h2dStrArr=[h2dStrArr,h2dStr] 
      IF keepMe THEN BEGIN 
@@ -296,7 +301,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MEDHISTOUTDATA=medHistOutData, $
                        MEDHISTOUTTXT=medHistOutTxt, $
                        MEDHISTDATADIR=medHistDataDir, $
-                       LOGAVGPLOT=logAvgPlot
+                       LOGAVGPLOT=logAvgPlot, $
+                       FANCY_PLOTNAMES=fancy_plotNames
      
      h2dStrArr=[h2dStrArr,h2dStr] 
      IF keepMe THEN BEGIN 
@@ -338,7 +344,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MEDHISTOUTDATA=medHistOutData, $
                        MEDHISTOUTTXT=medHistOutTxt, $
                        MEDHISTDATADIR=medHistDataDir, $
-                       LOGAVGPLOT=logAvgPlot
+                       LOGAVGPLOT=logAvgPlot, $
+                       FANCY_PLOTNAMES=fancy_plotNames
 
      h2dStrArr=[h2dStrArr,h2dStr] 
      IF keepMe THEN BEGIN 
@@ -379,7 +386,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MEDHISTOUTDATA=medHistOutData, $
                        MEDHISTOUTTXT=medHistOutTxt, $
                        MEDHISTDATADIR=medHistDataDir, $
-                       LOGAVGPLOT=logAvgPlot
+                       LOGAVGPLOT=logAvgPlot, $
+                       FANCY_PLOTNAMES=fancy_plotNames
      
      h2dStrArr=[h2dStrArr,h2dStr] 
      IF keepMe THEN BEGIN 
@@ -539,7 +547,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  STABLEIMF=stableIMF, $
                                                  SMOOTHWINDOW=smoothWindow, $
                                                  INCLUDENOCONSECDATA=includeNoConsecData, $
-                                                 DO_UTC_RANGE=DO_UTC_range, $
+                                                 DO_UTC_RANGE=do_UTC_range, $
                                                  T1_ARR=t1_arr, $
                                                  T2_ARR=t2_arr, $
                                                  MINM=minM, $
@@ -629,19 +637,21 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
 
   ;;********************************************************
   ;;If something screwy goes on, better take stock of it and alert user
+  n_zero                     = N_ELEMENTS(h2dStrArr[0])-N_ELEMENTS(h2d_nonzero_nEv_i)
   FOR i = 2, N_ELEMENTS(h2dStrArr)-1 DO BEGIN 
      IF n_elements(where(h2dStrArr[i].data EQ 0,/NULL)) LT $
-        n_elements(where(h2dFluxN EQ 0,/NULL)) THEN BEGIN 
-        printf,lun,"h2dStrArr."+h2dStrArr[i].title + " has ", strtrim(n_elements(where(h2dStrArr[i].data EQ 0)),2)," elements that are zero, whereas FluxN has ", strtrim(n_elements(where(h2dFluxN EQ 0)),2),"." 
+        n_zero THEN BEGIN 
+        printf,lun,"h2dStrArr."+h2dStrArr[i].title + " has ", strtrim(n_elements(where(h2dStrArr[i].data EQ 0)),2)," elements that are zero, whereas FluxN has ", strtrim(n_zero,2),"." 
      printf,lun,"Sorry, can't plot anything meaningful." & ENDIF
   ENDFOR
 
   ;;Now that we're done using nplots, let's log it, if requested:
   IF KEYWORD_SET(nPlots) AND ( KEYWORD_SET(logNEventsPlot) OR KEYWORD_SET(all_logPlots) ) THEN BEGIN
-     dataNameArr[0] = 'log_' + dataNameArr[0]
-     h2dStrArr[0].data(where(h2dStrArr.data GT 0)) = ALOG10(h2dStrArr[0].data(where(h2dStrArr.data GT 0)))
-     h2dStrArr[0].lim = [(h2dStrArr[0].lim[0] LT 1) ? 0 : ALOG10(h2dStrArr[0].lim[0]),ALOG10(h2dStrArr[0].lim[1])] ;lower bound must be one
-     h2dStrArr[0].title = 'Log ' + h2dStrArr[0].title
+     dataNameArr[0]         = 'log_' + dataNameArr[0]
+     h2dStrArr[0].data[h2d_nonzero_nEv_i] = ALOG10(h2dStrArr[0].data[h2d_nonzero_nEv_i])
+     h2dStrArr[0].lim       = [(h2dStrArr[0].lim[0] LT 1) ? 0 : ALOG10(h2dStrArr[0].lim[0]),ALOG10(h2dStrArr[0].lim[1])] ;lower bound must be one
+     h2dStrArr[0].title     = 'Log ' + h2dStrArr[0].title
+     h2dStrArr[0].is_logged = 1
   ENDIF
 
 

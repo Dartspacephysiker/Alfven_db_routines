@@ -22,10 +22,10 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
 
   COMPILE_OPT idl2
 
-  minM=0
-  maxM=24
-  minI=-88
-  maxI=88
+  ;; minM=0
+  ;; maxM=24
+  ;; minI=-88
+  ;; maxI=88
 
   fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/time_histos/'
 
@@ -121,10 +121,10 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
   outIndsFilename = fastLocOutputDir+outIndsFileBasename+byMinStr+byMaxStr+bzMinStr+bzMaxStr+smoothStr+'.sav'
   ;;********************************************
   ;;If this file already exists, see if it will work for us!
-  IF FILE_TEST(outIndsFilename) THEN BEGIN 
-     PRINT,"Restoring " + outIndsFilename + "..."
-     RESTORE,outIndsFilename
-  ENDIF ELSE BEGIN
+  ;; IF FILE_TEST(outIndsFilename) THEN BEGIN 
+  ;;    PRINT,"Restoring " + outIndsFilename + "..."
+  ;;    RESTORE,outIndsFilename
+  ;; ENDIF ELSE BEGIN
      fastLocInterped_i = GET_RESTRICTED_AND_INTERPED_DB_INDICES(fastLoc,satellite,delay,LUN=lun, $
                          DBTIMES=fastLoc_times,dbfile=dbfile, HEMI=hemi, $
                          ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
@@ -142,6 +142,6 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
              delay,satdbdir,omni_coords,fastLocOutputDir,fastLocFile,fastLocTimeFile, $
              filename=outIndsFilename
      ENDIF
-  ENDELSE
+  ;; ENDELSE
 
 END

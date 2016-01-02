@@ -117,8 +117,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      nYlines                = (maxI-minI)/binI + 1
      ilats                  = indgen(nYlines)*binI + minI
 
-     gridLats               = defGridLats
-     gridLatNames           = defGridLats
+     gridLats               = defGridLats * (ABS(minI)/minI)
+     gridLatNames           = defGridLats * (ABS(minI)/minI)
   ENDELSE
 
 
@@ -275,7 +275,10 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
 
      lats                           = !NULL
      FOR l=0,nLats-1 DO lats        = [lats,minLatLabel+l*10]
-     latNames                       = STRING(FORMAT='(I2)',lats)
+     IF minI GT 0 THEN $
+        latNames                    = STRING(FORMAT='(I2)',lats) $
+     ELSE $
+        latNames                    = STRING(FORMAT='(I3)',lats)
 
      cgMap_Grid, Clip_Text=1, $
                  /NoClip, $

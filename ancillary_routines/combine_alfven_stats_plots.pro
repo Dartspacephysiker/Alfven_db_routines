@@ -24,8 +24,8 @@
 ;-
 PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
                                TEMPFILES=tempFiles, $
-                               LOGAVGPLOTS=logAvgPlots, $
-                               MEDIANPLOT=medianPlot, $
+                               ;; LOGAVGPLOTS=logAvgPlots, $
+                               ;; MEDIANPLOT=medianPlot, $
                                OUT_IMGS_ARR=out_imgs_arr, $
                                OUT_TITLEOBJS_ARR=out_titleObjs_arr, $
                                COMBINED_TO_BUFFER=combined_to_buffer, $
@@ -39,18 +39,18 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
      ;;Get the number of plots to combine
      RESTORE,tempFiles[0]
      nPlots                           = N_ELEMENTS(dataNameArr)-1
-     PRINT,FORMAT='("Combining these plots: ",10(I0, :,"  "))',dataNameArr[0:nPlots-1]
+     PRINT,FORMAT='("Combining these plots: ",10(A0, :,"  "))',dataNameArr[0:nPlots-1]
 
      ;;What kind?
-     IF KEYWORD_SET(logAvgPlot) THEN BEGIN
-        statType                      = 'log_avg'
-     ENDIF ELSE BEGIN
-        IF KEYWORD_SET(medianPlot) THEN BEGIN
-           statType                   = 'median'
-        ENDIF ELSE BEGIN
-           statType                   = 'avg'
-        ENDELSE
-     ENDELSE
+     ;; IF KEYWORD_SET(logAvgPlot) THEN BEGIN
+     ;;    statType                      = 'log_avg'
+     ;; ENDIF ELSE BEGIN
+     ;;    IF KEYWORD_SET(medianPlot) THEN BEGIN
+     ;;       statType                   = 'median'
+     ;;    ENDIF ELSE BEGIN
+     ;;       statType                   = 'avg'
+     ;;    ENDELSE
+     ;; ENDELSE
 
      ;;Generate list of file names
      plotFileArr                      = !NULL
@@ -61,8 +61,8 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
      plotFileArr__list                = LIST(plotFileArr)
 
      ;;Reset the plotFileArr and get the rest, if any
-     plotFileArr                      = !NULL
      FOR i=1, nPlots-1 DO BEGIN
+        plotFileArr                   = !NULL
         FOR j=0,2 DO BEGIN
            RESTORE,tempFiles[j]
            plotFileArr                = [plotFileArr,plotDir+paramStr+dataNameArr[i]+'.png']
@@ -71,16 +71,13 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
      ENDFOR
 
      out_imgs_arr                     = !NULL
-     out_titleobs_arr                 = !NULL
+     out_titleObjs_arr                = !NULL
      FOR i=0,nPlots-1 DO BEGIN
 
-        IF ~KEYWORD_SET(save_combined_name) THEN BEGIN
-           save_combined_name = GET_TODAY_STRING() + '--' + dataNameArr[0] + $
-                                (KEYWORD_SET(plotSuffix) ? plotSuffix : '') + $
-                                '--' + statType + '--combined.png'
-        ENDIF
-        
+        save_combined_name         = paramStr + dataNameArr[i] + $
+                                     (KEYWORD_SET(plotSuffix) ? plotSuffix : '') + '--combined.png'
         PRINT,"Saving to " + save_combined_name + "..."
+
         TILE_THREE_PLOTS,plotFileArr__list[i],titles, $
                          OUT_IMGS=out_imgs, $
                          OUT_TITLEOBJS=out_titleObjs, $
@@ -90,8 +87,13 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
                          PLOTDIR=plotDir, $
                          DELETE_PLOTS_WHEN_FINISHED=delete_plots_when_finished
 
-        out_imgs_arr                 = [out_imgs_arr,out_imgs]
-        out_titleObjs_arr            = [out_titleObjs_arr,out_titleObjs]
+        IF N_ELEMENTS(out_imgs) GT 0 THEN BEGIN
+           out_imgs_arr              = [out_imgs_arr,out_imgs]
+        ENDIF
+
+        IF N_ELEMENTS(out_titleObjs) GT 0 THEN BEGIN
+           out_titleObjs_arr         = [out_titleObjs_arr,out_titleObjs]
+        ENDIF
      ENDFOR
 
 END

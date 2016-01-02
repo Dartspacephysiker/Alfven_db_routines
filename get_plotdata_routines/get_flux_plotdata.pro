@@ -17,11 +17,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
                       WRITEHDF5=writeHDF5,WRITEASCII=writeASCII,SQUAREPLOT=squarePlot,SAVERAW=saveRaw, $
                       GET_EFLUX=get_eflux,GET_ENUMFLUX=get_eNumFlux,GET_PFLUX=get_pFlux,GET_IFLUX=get_iFlux, $
                       GET_CHAREE=get_ChareE,GET_CHARIE=get_chariE, $
-                      PRINT_MAX_AND_MIN=print_mandm
+                      PRINT_MAX_AND_MIN=print_mandm, $
+                      FANCY_PLOTNAMES=fancy_plotNames, $
                       LUN=lun
   
   COMPILE_OPT idl2
 
+  ;;The loaded defaults take advantage of KEYWORD_SET(fancy_plotNames)
   @fluxplot_defaults.pro
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
