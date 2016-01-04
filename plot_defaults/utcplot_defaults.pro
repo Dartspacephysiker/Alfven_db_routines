@@ -25,8 +25,9 @@
   avg_symThick               =  2.0           
   avg_Thick                  =  2.5              
                              
-  max_scatter_symbol         = '+'
-  max_scatter_color          = 'r'
+  max_scatter_symbol         = 'x'
+  ;; max_scatter_color          = 'r'
+  max_scatter_color          = 'black'
   defXTitle                  = 'Hours since center UTC'
                              
   ;;For averages/sums epoch plots

@@ -6,7 +6,7 @@ fluxPlotChariCBLabelFormat   = '(D0.2)'
 logeFluxLabels               = 1
 logPFluxLabels               = 1
 logiFluxLabels               = 0
-logChareLabels               = 0
+logChareLabels               = 1
 logChariLabels               = 1
 
 eFlux_do_plotIntegral        = 0

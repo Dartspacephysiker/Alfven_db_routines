@@ -62,7 +62,9 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
                      TITLE=yTitle, $
                      MAJOR=nMajorTicks, $
                      MINOR=nMinorTicks, $
-                     ;; TICKFONT_SIZE=defHistoYticksize, $
+                     ;; TICKNAME=['60','70','80'], $  ;;temp for journal__20160104__stormthing
+                     ;; TICKVALUES=[60,70,80], $
+                     TICKFONT_SIZE=max_ytickfont_size, $
                      ;; TICKFONT_STYLE=defHistoYtickfontstyle, $
                   ;; TICKFORMAT=defHistoTickFormat, $
                      TEXTPOS=1, $

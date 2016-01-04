@@ -1,14 +1,11 @@
   ;; mag current cutoffs
-  ;; magc_hcutOff = 5.0e2          ;junks 245 events above, 256 below
-  ;; magc_hcutOff = 8.0e2
-  magc_hcutOff = 1.0e4           ;junks 36 events with sample_freq restriction
+  magc_hcutOff = 5.0e2          ;junks 245 events above, 256 below
+  magc_hcutOff = 8.0e2
   ;; magc_lcutOff = -1.0e3 ;
   
   ;; delta_B cutoffs
-  ;; dB_hcutOff = 1.0e3            ;junks 190 events
-  ;; dB_lcutOff = -1.0e3 ;
-  dB_hcutOff = 1.0e4            ;junks 3 events when including restriction on sample frequency
-  dB_lcutOff = -1.0e4 ;
+  dB_hcutOff = 1.0e3            ;junks 190 events
+  dB_lcutOff = -1.0e3 ;
   ;;  dB_lcutOff = 0.0 ; Below zero should be garbage?
   
   ;; delta_E cutoffs
@@ -19,10 +16,8 @@
   ;; losscone electron flux cutoffs
   ;; ef_lc_integ_hcutoff = 1.0e7   ;junks 191 events
   ;; ef_lc_integ_lcutoff = -1.0e7
-  ;; ef_lc_integ_hcutoff = 1.0e9   ;junks 139 events
-  ;; ef_lc_integ_lcutoff = -1.0e9
-  ef_lc_integ_hcutoff = 1.0e12   ;junks 19 events, or 2 with sample-frequency restriction
-  ef_lc_integ_lcutoff = -1.0e13  ;junks 20 events, or 0 with sample-frequency restriction
+  ef_lc_integ_hcutoff = 1.0e9   ;junks 191 events
+  ef_lc_integ_lcutoff = -1.0e9
   
   ;; electron energy flux cutoffs
   ;; 2015/08/19
@@ -45,17 +40,16 @@
   
   ;; ion energy flux cutoffs
   ieflux_hcutoff = 5.0e1
-  ieflux_hcutoff = 110          ;highest event is 106.78, I believe
   ieflux_lcutoff = 0.0          ;below zero is junk, eh?
   
   ;; upward ion flux cutoffs
-  iflux_up_hcutoff = 1.0e12     ;changed from 1.0e11 2016/01/04. 
+  iflux_up_hcutoff = 1.0e11
   iflux_up_lcutoff = 0.0   
   
   ;; characteristic ion energy cutoffs
-  char_ion_e_hcutoff = 1.0e6
+  char_ion_e_hcutoff = 1.0e4
   ;; char_ion_e_lcutoff = 1.0e-2  
-  char_ion_e_lcutoff = -2.5e4
+  char_ion_e_lcutoff = -1.0e4
   
   ;; cutoffs for sample_t, fields instrument
   ;; 512 Hz
@@ -88,9 +82,7 @@
   ;; sample_t_hcutoff = 0.2
   
   ;;Cutoff for width_time (FAST spin period is 4.946 s)
-  ;;Is it valid to cut it off at half a spin period? Perhaps not ...
-  ;; width_t_cutoff = 4.946*0.5
-  width_t_cutoff = 20
+  width_t_cutoff = 4.946*0.5
 
 
   ;;just to be safe

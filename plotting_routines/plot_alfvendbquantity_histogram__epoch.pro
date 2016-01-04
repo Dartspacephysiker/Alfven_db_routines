@@ -60,7 +60,7 @@ PRO PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins,histData,NAME=name, $
   IF KEYWORD_SET(overplot_hist) THEN BEGIN
      yaxis = AXIS('Y', LOCATION='right', TARGET=histoPlot, $
                   TITLE=yTitle, $
-                  MAJOR=nMajorTicks, $
+                  MAJOR=nMajorTicks+1, $
                   MINOR=nMinorTicks, $
                   TICKFONT_SIZE=defHistoYticksize, $
                   TICKFONT_STYLE=defHistoYtickfontstyle, $
