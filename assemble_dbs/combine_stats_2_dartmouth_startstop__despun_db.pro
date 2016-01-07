@@ -1,12 +1,17 @@
+;2016/01/08
+;orbit 3620 is bogus for some reason
+;so were a ton of them; I thought alfven_stats_5 would skip creating files with no Alfven waves, but it was making blanks...
+
 PRO COMBINE_STATS_2_DARTMOUTH_STARTSTOP__DESPUN_DB,maximus
   
   date          = '20160108'
   Dartmouth_DB  = '/SPENCEdata/software/sdt/batch_jobs/Alfven_study/as5_14F/batch_output__ucla_mag_despin_201512/'
   contents_file = './orbits_contained_in_DartDBfile_' + date + '--startstops_included.txt'
   ;; outfile       = 'Dartdb_' + date + '--502-3619--maximus.sav'
-  ;;orbit 3620 is bogus for some reason
   outDir        = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
-  outfile       = outDir + 'Dartdb_' + date + '--3621-16361--maximus.sav'
+  ;; outfile       = outDir + 'Dartdb_' + date + '--500-16361--maximus.sav'
+  outfile       = outDir + 'Dartdb_' + date + '--3621-10168--maximus.sav'
+  outfile       = outDir + 'Dartdb_' + date + '--10170-16361--maximus.sav'
 
   filePref      = 'Dartmouth_as5_dflux'
   fileSuff      = '----below_aur_oval--ucla_mag_despin'
@@ -14,8 +19,8 @@ PRO COMBINE_STATS_2_DARTMOUTH_STARTSTOP__DESPUN_DB,maximus
 ;open file to write list of orbits included
   OPENW,outlun,contents_file,/get_lun
 
-  min_orbit=3621
-  max_orbit=16361
+  min_orbit     = 10170
+  max_orbit     = 16361
 
   for j=min_orbit,max_orbit do begin
 
