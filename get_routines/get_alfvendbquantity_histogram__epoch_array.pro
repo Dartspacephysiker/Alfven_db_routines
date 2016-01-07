@@ -24,6 +24,7 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
    WINDOW_SUM=window_sum, $
    MAKE_ERROR_BARS=make_error_bars, $
    ERROR_BAR_NBOOT=error_bar_nBoot, $
+   ERROR_BAR_CONFLIMIT=error_bar_confLimit, $
    OUT_ERROR_BARS=out_error_bars, $
    NEVHISTDATA=nEvHistData, $
    TAFTEREPOCH=tAfterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
@@ -125,6 +126,7 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
                                             WINDOW_SUM=window_sum, $
                                             MAKE_ERROR_BARS=make_error_bars, $
                                             ERROR_BAR_NBOOT=error_bar_nBoot, $
+                                            ERROR_BAR_CONFLIMIT=error_bar_confLimit, $
                                             OUT_ERROR_BARS=out_error_bars, $
                                             XMIN=-tBeforeEpoch, $
                                             XMAX=tAfterEpoch, $

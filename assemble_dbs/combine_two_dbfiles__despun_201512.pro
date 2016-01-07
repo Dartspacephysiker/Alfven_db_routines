@@ -12,15 +12,15 @@ PRO COMBINE_TWO_DBFILES__DESPUN_201512,maximus,cdbTime, $
   date                 = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
   
   defDBDir1            = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
-  defDBFile1           = 'Dartdb_20160108--502-3619--maximus.sav'
-  defDB_tFile1         = 'Dartdb_20160108--502-3619--cdbtime.sav'
+  defDBFile1           = 'Dartdb_20160107--502-10168--despun--maximus.sav'
+  defDB_tFile1         = 'Dartdb_20160107--502-10168--despun--cdbtime.sav'
 
   defDBDir2            = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
-  defDBFile2           = 'Dartdb_20160108--3621-10168--maximus.sav'
-  defDB_tFile2         = 'Dartdb_20160108--3621-10168--cdbtime.sav'
+  defDBFile2           = 'Dartdb_20160108--10170-16361--despun--maximus.sav'
+  defDB_tFile2         = 'Dartdb_20160108--10170-16361--despun--cdbtime.sav'
 
   IF KEYWORD_SET(save_combined_file) THEN BEGIN
-     suff = date + '--500-16361_despun--'
+     suff = date + '--502-16361_despun--'
      outDir='/SPENCEdata/Research/Cusp/database/dartdb/saves/'
      IF ~KEYWORD_SET(outFile) THEN outFile=outDir+'Dartdb_' + suff + 'maximus.sav'
      IF ~KEYWORD_SET(out_tFile) THEN out_tFile=outDir+'Dartdb_' + suff + 'cdbtime.sav'
@@ -114,6 +114,6 @@ PRO COMBINE_TWO_DBFILES__DESPUN_201512,maximus,cdbTime, $
 
   ENDIF
 
-  return
+  RETURN
 
 end

@@ -14,7 +14,7 @@ PRO JOURNAL__20150818__kill_maximus_dupes
  
   check_dupes,cdbtime,OUT_DUPE_I=out_dupe_i,printdupes='n'
 
-  UNIQ_II=uniq(cdbtime(out_dupe_i))
+  UNIQ_II=uniq(cdbtime[out_dupe_i])
   
   uniq_i=uniq(cdbtime)
 

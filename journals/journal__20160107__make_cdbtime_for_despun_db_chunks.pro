@@ -1,10 +1,9 @@
 ;2016/01/07
-
 PRO JOURNAL__20160107__MAKE_CDBTIME_FOR_DESPUN_DB_CHUNKS
 
   outDBDir             = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
   outDBFile            = 'Dartdb_20160108--502-16361--despun--maximus.sav'
-  outDB_tFile          = 'Dartdb_20160108--502-3619--despun--cdbtime.sav'
+  outDB_tFile          = 'Dartdb_20160108--502-16361--despun--cdbtime.sav'
 
   defDBDir1            = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
   defDBFile1           = 'Dartdb_20160108--502-3619--maximus.sav'
@@ -33,7 +32,22 @@ PRO JOURNAL__20160107__MAKE_CDBTIME_FOR_DESPUN_DB_CHUNKS
   maximus3             = maximus
   cdbTime3             = STR_TO_TIME(maximus3.time)
 
-  maximus              = [maximus1,maximus2,maximus3]
-  cdbTime              = [cdbTime1,cdbTime2,cdbTime3]
+  ;;combine and save mah'mus
+  ;;it doesn't work, gotta do something like COMBINE_TWO_DBFILES__DESPUN_201512
+  ;; maximus              = [maximus1,maximus2,maximus3]
+  ;; save,maximus,filename=outDBDir + outDBFile
+
+  ;;combine and save cdbTime
+  ;; cdbTime              = [cdbTime1,cdbTime2,cdbTime3]
+  ;; save,cdbTime,filename=outDBDir + outDB_tFile
   
+  ;; cdbtime=cdbtime1
+  ;; save,cdbtime,filename=defDBDir1+defDB_tFile1
+
+  ;; cdbtime=cdbtime2
+  ;; save,cdbtime,filename=defDBDir2+defDB_tFile2
+
+  ;; cdbtime=cdbtime3
+  ;; save,cdbtime,filename=defDBDir3+defDB_tFile3
+
 END
