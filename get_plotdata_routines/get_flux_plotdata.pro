@@ -65,9 +65,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
 
   IF KEYWORD_SET(get_eFlux) THEN BEGIN
      dataName               = "eFlux"
-     h2dStr.labelFormat     = fluxPlotColorBarLabelFormat
+     h2dStr.labelFormat     = fluxPlotEPlotCBLabelFormat
      h2dStr.logLabels       = logeFluxLabels
      h2dStr.do_plotIntegral = eFlux_do_plotIntegral
+     h2dStr.do_midCBLabel   = eFlux_do_midCBLabel
 
      ;;If not allowing negative fluxes
      IF STRUPCASE(fluxplottype) EQ STRUPCASE("Integ") THEN BEGIN
@@ -120,7 +121,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
 
      h2dStr.title           = title__alfDB_ind_49
      dataName               = "pFlux_"
-     h2dStr.labelFormat     = fluxPlotColorBarLabelFormat
+     h2dStr.labelFormat     = fluxPlotPPlotCBLabelFormat
      h2dStr.logLabels       = logPFluxLabels
      h2dStr.do_plotIntegral = PFlux_do_plotIntegral
      h2dStr.do_midCBLabel   = PFlux_do_midCBLabel

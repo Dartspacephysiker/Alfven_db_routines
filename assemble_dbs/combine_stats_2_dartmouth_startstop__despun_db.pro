@@ -1,30 +1,26 @@
-pro combine_stats_2_Dartmouth_startstop_inc,maximus
-;12/14/2014 
-;This might not work as written; it still needs to be tested
+PRO COMBINE_STATS_2_DARTMOUTH_STARTSTOP__DESPUN_DB,maximus
   
-  date='20150609'
-  Dartmouth_DB='/SPENCEdata/software/sdt/batch_jobs/Alfven_study/as5_14F/batch_output/'
-  contents_file='./orbits_contained_in_DartDBfile_' + date + '--startstops_included.txt'
-  ;;  contents_file='./orbits_contained_in_DartDBfile_' + date + '--first5000--startstops_included.txt'
-  ;; outfile='Dartdb_' + date + '--500-14999--maximus.sav'
-  outDir = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
-  outfile=outDir+'Dartdb_' + date + '--16150-16169--maximus.sav'
+  date          = '20160108'
+  Dartmouth_DB  = '/SPENCEdata/software/sdt/batch_jobs/Alfven_study/as5_14F/batch_output__ucla_mag_despin_201512/'
+  contents_file = './orbits_contained_in_DartDBfile_' + date + '--startstops_included.txt'
+  ;; outfile       = 'Dartdb_' + date + '--502-3619--maximus.sav'
+  ;;orbit 3620 is bogus for some reason
+  outDir        = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
+  outfile       = outDir + 'Dartdb_' + date + '--3621-16361--maximus.sav'
 
-  ;; below_aur_ovalStr=''
-  below_aur_ovalStr='below_aur_oval'
+  filePref      = 'Dartmouth_as5_dflux'
+  fileSuff      = '----below_aur_oval--ucla_mag_despin'
 
 ;open file to write list of orbits included
   OPENW,outlun,contents_file,/get_lun
 
-  ;; min_orbit=500
-  ;; max_orbit=15000
-  min_orbit=16150
-  max_orbit=16169
+  min_orbit=3621
+  max_orbit=16361
 
   for j=min_orbit,max_orbit do begin
 
 ;    filename='Dartmouth_as5_startstop_dflux'+'_'+strcompress(j,/remove_all)+'_0'
-     filename='Dartmouth_as5_dflux'+'_'+strcompress(j,/remove_all)+'_0'+below_aur_ovalStr
+     filename   = filePref+'_'+strcompress(j,/remove_all)+'_0' + fileSuff
                                 ;filename='orb'+strcompress(j,/remove_all)+'_dflux'
      result=file_which(Dartmouth_DB,filename)
      if result then begin
@@ -33,10 +29,10 @@ pro combine_stats_2_Dartmouth_startstop_inc,maximus
            if result then begin
               print,j,jj
               printf,outlun,j,jj
-              rdf_stats_dartmouth_as5_startstop_inc,result,dat
+              rdf_stats_dartmouth_as5_startstop_inc__despun,result,dat
               if j GT min_orbit then begin
-                 maximus={orbit:[maximus.orbit,dat.orbit],$
-                          alfvenic:[maximus.alfvenic,dat.alfvenic],$
+                 maximus={ORBIT:[maximus.orbit,dat.orbit],$
+                          ALFVENIC:[maximus.alfvenic,dat.alfvenic],$
                           TIME:[maximus.time,dat.time],$
                           ALT:[maximus.alt,dat.alt],$
                           MLT:[maximus.mlt,dat.mlt],$
@@ -83,14 +79,13 @@ pro combine_stats_2_Dartmouth_startstop_inc,maximus
                           TOTAL_UPWARD_ION_OUTFLOW_SINGLE:[maximus.TOTAL_UPWARD_ION_OUTFLOW_SINGLE,dat.TOTAL_UPWARD_ION_OUTFLOW_SINGLE],$
                           TOTAL_UPWARD_ION_OUTFLOW_MULTIPLE_TOT:[maximus.TOTAL_UPWARD_ION_OUTFLOW_MULTIPLE_TOT,dat.TOTAL_UPWARD_ION_OUTFLOW_MULTIPLE_TOT],$
                           TOTAL_ALFVEN_UPWARD_ION_OUTFLOW:[maximus.TOTAL_ALFVEN_UPWARD_ION_OUTFLOW,dat.TOTAL_ALFVEN_UPWARD_ION_OUTFLOW]}
+                          ;; PFLUXEST:maximus.delta_b*maximus.delta_e*4.0e-7*!PI, $
+                          ;; LSHELL:maximus.}
               endif else begin
-                 maximus=dat
+                 maximus = dat
               endelse
            endif
-;           filename='Dartmouth_as5_startstop_dflux'+'_'+strcompress(j,/remove_all)+'_'+strcompress(jj+1,/remove_all)
-;           filename='Dartmouth_as5_dflux'+'_'+strcompress(j,/remove_all)+'_'+strcompress(jj+1,/remove_all)
-           filename='Dartmouth_as5_dflux'+'_'+strcompress(j,/remove_all)+'_'+strcompress(jj+1,/remove_all)+below_aur_ovalStr
-;    filename='dflux'+'_startstop_'+strcompress(j,/remove_all)+'_'+strcompress(jj+1,/remove_all)
+           filename      = filePref + '_'+strcompress(j,/remove_all)+'_'+strcompress(jj+1,/remove_all)+fileSuff
         endfor
      endif
   endfor

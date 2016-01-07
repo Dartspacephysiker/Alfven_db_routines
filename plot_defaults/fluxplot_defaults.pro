@@ -1,5 +1,7 @@
-fluxPlotColorBarLabelFormat  = '(D0.1)'
 ;; fluxPlotColorBarLabelFormat  = '(I0)'
+fluxPlotColorBarLabelFormat  = '(D0.1)'
+fluxPlotPPlotCBLabelFormat   = '(D0.1)'
+fluxPlotEPlotCBLabelFormat   = '(D0.1)'
 fluxPlotChareCBLabelFormat   = '(D0.1)'
 fluxPlotChariCBLabelFormat   = '(D0.2)'
 
