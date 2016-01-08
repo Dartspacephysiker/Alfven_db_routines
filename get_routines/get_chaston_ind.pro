@@ -10,7 +10,10 @@
 ;2015/08/15 Added NO_BURSTDATA keyword
 ;2015/10/19 Added PRINT_PARAM_SUMMARY keyword
 ;2015/12/28 There are a bunch of weird sample_t values in fastloc. I'm junking them in fastloc_cleaner.
-FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CHASTDB=CHASTDB, $
+;2016/01/07 Added DESPUNDB keyword to let us get dat despun database
+FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
+                         CHASTDB=chastDB, $
+                         DESPUNDB=despunDB, $
                          ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange,CHARERANGE=charERange,POYNTRANGE=poyntRange, $
                          BOTH_HEMIS=both_hemis, $
                          NORTH=north, $
@@ -69,7 +72,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes,CH
      LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile
      is_maximus = 0
   ENDIF ELSE BEGIN
-     LOAD_MAXIMUS_AND_CDBTIME,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile,DO_CHASTDB=chastDB
+     LOAD_MAXIMUS_AND_CDBTIME,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile, $
+                              DO_CHASTDB=chastDB, $
+                              DO_DESPUNDB=despunDB
+
      is_maximus = 1
   ENDELSE
 

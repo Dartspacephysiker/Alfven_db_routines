@@ -190,7 +190,8 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ENDIF
 
      ;;Now add the CORRECTED_FLUXES tag to maximus
-     maximus=CREATE_STRUCT(NAME='maximus',maximus,'CORRECTED_FLUXES',1)     
+     ;; maximus=CREATE_STRUCT(NAME='maximus',maximus,'CORRECTED_FLUXES',1)     
+     maximus=CREATE_STRUCT(maximus,'CORRECTED_FLUXES',1)     
      PRINTF,lun,'...Finished correcting fluxes in Alfvén DB!'
 
   ENDIF ELSE BEGIN

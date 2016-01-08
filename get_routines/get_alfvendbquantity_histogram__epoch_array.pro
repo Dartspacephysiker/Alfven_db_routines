@@ -21,6 +21,10 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
    RM_ZERO_I=rm_z_i, $
    RUNNING_BIN_SPACING=bin_spacing, $
    RUNNING_SMOOTH_NPOINTS=running_smooth_nPoints, $
+   RUNNING_BIN_L_OFFSET=bin_l_offset, $
+   RUNNING_BIN_R_OFFSET=bin_r_offset, $
+   RUNNING_BIN_L_EDGES=bin_l_edges, $
+   RUNNING_BIN_R_EDGES=bin_r_edges, $
    WINDOW_SUM=window_sum, $
    MAKE_ERROR_BARS=make_error_bars, $
    ERROR_BAR_NBOOT=error_bar_nBoot, $
@@ -60,7 +64,10 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
            alf_y_dat    = alf_y_arr
 
            histData     = RUNNING_AVERAGE(alf_t_dat, alf_y_dat,window_sum, $
-                                          ;; BIN_R_EDGES=0.5, $
+                                          BIN_L_OFFSET=bin_l_offset, $
+                                          BIN_R_OFFSET=bin_r_offset, $
+                                          BIN_L_EDGES=bin_l_edges, $
+                                          BIN_R_EDGES=bin_r_edges, $
                                           BIN_CENTERS=histTBins, $
                                           BIN_SPACING=bin_spacing, $
                                           OUT_NONZERO_I=nz_i, $
@@ -117,7 +124,10 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
      IF KEYWORD_SET(running_average) OR KEYWORD_SET(window_sum) THEN BEGIN
 
         ra_y              = RUNNING_AVERAGE(alf_t_dat, alf_y_dat,running_average, $
-                                            ;; BIN_R_EDGES=0.5, $
+                                            BIN_L_OFFSET=bin_l_offset, $
+                                            BIN_R_OFFSET=bin_r_offset, $
+                                            BIN_L_EDGES=bin_l_edges, $
+                                            BIN_R_EDGES=bin_r_edges, $
                                             BIN_CENTERS=ra_t, $
                                             BIN_SPACING=bin_spacing, $
                                             OUT_NONZERO_I=ra_nz_i, $
@@ -150,7 +160,10 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
      IF KEYWORD_SET(running_median) THEN BEGIN
 
         rm_y              = RUNNING_MEDIAN(alf_t_dat, alf_y_dat, running_median, $
-                                           ;; BIN_R_EDGES=0.5, $
+                                           BIN_L_OFFSET=bin_l_offset, $
+                                           BIN_R_OFFSET=bin_r_offset, $
+                                           BIN_L_EDGES=bin_l_edges, $
+                                           BIN_R_EDGES=bin_r_edges, $
                                            BIN_CENTERS=rm_t, $
                                            BIN_SPACING=bin_spacing, $
                                            OUT_NONZERO_I=rm_nz_i, $

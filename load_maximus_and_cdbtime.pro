@@ -6,6 +6,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              CORRECT_FLUXES=correct_fluxes, $
                              DO_NOT_MAP_PFLUX=do_not_map_pflux, $
                              DO_CHASTDB=chastDB, $
+                             DO_DESPUNDB=despunDB, $
                              FORCE_LOAD_MAXIMUS=force_load_maximus, $
                              FORCE_LOAD_CDBTIME=force_load_cdbTime, $
                              FORCE_LOAD_BOTH=force_load_BOTH, $
@@ -26,17 +27,30 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   DefDBDir             = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
   ;;DefDBFile            = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav'
   ;; DefDBFile            = 'Dartdb_20151014--500-16361_inc_lower_lats--burst_1000-16361--w_Lshell--maximus.sav'
+
+  ;;commented out 2016/01/07 while checking out the despun database
   DefDBFile            = 'Dartdb_20151222--500-16361_inc_lower_lats--burst_1000-16361--w_Lshell--correct_pFlux--maximus.sav'
   DefDB_tFile          = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--cdbtime.sav'
+
+  defDespunDBFile      = 'Dartdb_20160107--502-16361_despun--maximus--pflux--lshell--burst--noDupes.sav'
+  defDespunDB_tFile    = 'Dartdb_20160107--502-16361_despun--cdbtime--noDupes.sav'
+
 
   IF KEYWORD_SET(chastDB) THEN BEGIN
      DBDir='/SPENCEdata/Research/Cusp/database/processed/'
      DBFile = "maximus.dat"
      DB_tFile = "cdbtime.sav"
   ENDIF ELSE BEGIN
-     IF N_ELEMENTS(DBDir) EQ 0 THEN DBDir = DefDBDir
-     IF N_ELEMENTS(DBFile) EQ 0 THEN DBFile = DefDBFile
-     IF N_ELEMENTS(DB_tFile) EQ 0 THEN DB_tFile = DefDB_tFile
+     IF KEYWORD_SET(despunDB) THEN BEGIN
+        DBDir = defDBDir
+        DBFile = defDespunDBFile
+        DB_tFile = defDespunDB_tFile
+        PRINTF,lun,"Doing despun DB!"
+     ENDIF ELSE BEGIN
+        IF N_ELEMENTS(DBDir) EQ 0 THEN DBDir = DefDBDir
+        IF N_ELEMENTS(DBFile) EQ 0 THEN DBFile = DefDBFile
+        IF N_ELEMENTS(DB_tFile) EQ 0 THEN DB_tFile = DefDB_tFile
+     ENDELSE
   ENDELSE
   
   IF N_ELEMENTS(maximus) EQ 0 OR KEYWORD_SET(force_load_maximus) THEN BEGIN
@@ -66,7 +80,11 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   ENDELSE
 
   IF correct_fluxes THEN BEGIN
-     CORRECT_ALFVENDB_FLUXES,maximus,MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux)
+     IF KEYWORD_SET(despunDB) THEN BEGIN
+        PRINTF,lun,'Not mapping to the ionosphere because we have no mapping database for the new despun data set!'
+     ENDIF
+     ;; CORRECT_ALFVENDB_FLUXES,maximus,MAP_PFLUX_TO_IONOS=0
+     CORRECT_ALFVENDB_FLUXES,maximus,MAP_PFLUX_TO_IONOS=~(KEYWORD_SET(do_not_map_pflux) OR KEYWORD_SET(despunDB))
   ENDIF
 
 
