@@ -1,4 +1,5 @@
 ;2015/12/22 Added DO_NOT_MAP_PFLUX_keyword and FORCE_LOAD keywords
+;2016/01/07 Added DO_DESPUNDB keyword
 PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              DBDir=DBDir, $
                              DBFile=DBFile, $
@@ -80,11 +81,13 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   ENDELSE
 
   IF correct_fluxes THEN BEGIN
-     IF KEYWORD_SET(despunDB) THEN BEGIN
-        PRINTF,lun,'Not mapping to the ionosphere because we have no mapping database for the new despun data set!'
-     ENDIF
-     ;; CORRECT_ALFVENDB_FLUXES,maximus,MAP_PFLUX_TO_IONOS=0
-     CORRECT_ALFVENDB_FLUXES,maximus,MAP_PFLUX_TO_IONOS=~(KEYWORD_SET(do_not_map_pflux) OR KEYWORD_SET(despunDB))
+     ;; IF KEYWORD_SET(despunDB) THEN BEGIN
+     ;;    PRINTF,lun,'Not mapping to the ionosphere because we have no mapping database for the new despun data set!'
+     ;; ENDIF
+     ;; CORRECT_ALFVENDB_FLUXES,maximus,MAP_PFLUX_TO_IONOS=~(KEYWORD_SET(do_not_map_pflux) OR KEYWORD_SET(despunDB))
+     CORRECT_ALFVENDB_FLUXES,maximus, $
+                             MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux), $
+                             DO_DESPUNDB=do_despunDB
   ENDIF
 
 

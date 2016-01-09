@@ -51,6 +51,8 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
 
   IF NOT KEYWORD_SET(lun) THEN lun = -1 ;stdout
   
+  PRINTF,lun,'GET_FASTLOC_INDS_UTC_RANGE is starting...'
+
   IF N_ELEMENTS(list_to_arr) EQ 0 THEN list_to_arr = 1
 
   ;;Load FASTLoc & Co.

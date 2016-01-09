@@ -1,14 +1,14 @@
 ;2015/12/19 Time to map Poyntingf flux
 ; Remember, Chaston et al. [2003] justify the use of the Poynting flux estimate in the Alf DB
 ; Check it out if you're curious
-PRO COMBINE_MAPPING_RATIO_FILES,mapRatio,LUN=lun
+PRO CHECK_MAPPING_RATIO_FILES,mapRatio,LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
 
   date                 = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
   maxOrb               = 16361
 
-  outDir               = '/SPENCEdata/Research/Cusp/database/dartdb/saves/mapratio_dbs/'
+  outDir               = '/SPENCEdata/Research/Cusp/database/'
   outFile              = outDir + 'mapratio_for_20151014_DB--up_to' + $
                          STRCOMPRESS(maxOrb,/REMOVE_ALL) + '--' + date + '.dat'
 

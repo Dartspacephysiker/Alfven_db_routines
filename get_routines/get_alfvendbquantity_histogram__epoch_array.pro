@@ -44,16 +44,60 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
 
   IF N_ELEMENTS(alf_t_arr) GT 1 AND alf_t_arr[0] NE -1 THEN BEGIN
      ;;Make nEvent histo if requested or if necessary for doing averaging
-     IF N_ELEMENTS(nEvHistData) EQ 0 THEN BEGIN
-        nEvHistData=histogram(alf_t_arr,LOCATIONS=histTBins, $
-                              MAX=tAfterEpoch,MIN=-tBeforeEpoch, $
-                              BINSIZE=histoBinSize)
-     ENDIF ELSE BEGIN
-        nEvHistData=histogram(alf_t_arr,LOCATIONS=histTBins, $
-                              MAX=tAfterEpoch,MIN=-tBeforeEpoch, $
-                              BINSIZE=histoBinSize, $
-                              INPUT=nEvHistData)
-     ENDELSE
+        ;;Window summing uses different bin types
+        IF ~KEYWORD_SET(window_sum) THEN BEGIN
+           IF N_ELEMENTS(nEvHistData) EQ 0 THEN BEGIN
+              nEvHistData       = HISTOGRAM(alf_t_arr,LOCATIONS=histTBins, $
+                                            MAX=tAfterEpoch,MIN=-tBeforeEpoch, $
+                                            BINSIZE=histoBinSize)
+           ENDIF ELSE BEGIN
+              nEvHistData       = HISTOGRAM(alf_t_arr,LOCATIONS=histTBins, $
+                                            MAX=tAfterEpoch,MIN=-tBeforeEpoch, $
+                                            BINSIZE=histoBinSize, $
+                                            INPUT=nEvHistData)
+              
+           ENDELSE
+        ENDIF ELSE BEGIN
+           ;;calculate nEvent bins with bins from RUNNING_HISTO with window_sum as 
+           IF N_ELEMENTS(nEvHistData) EQ 0 THEN BEGIN
+              nEvHistData       = RUNNING_HISTO(alf_t_arr,window_sum, $
+                                                BIN_CENTERS=histTBins, $
+                                                BIN_SPACING=bin_spacing, $
+                                                BIN_L_OFFSET=bin_l_offset, $
+                                                BIN_R_OFFSET=bin_r_offset, $
+                                                BIN_L_EDGES=bin_l_edges, $
+                                                BIN_R_EDGES=bin_r_edges, $
+                                                XMIN=-tBeforeEpoch, $
+                                                XMAX=tAfterEpoch, $
+                                                DONT_TRUNCATE_EDGES=dont_truncate_edges, $
+                                                /DROP_EDGES, $
+                                                OUT_NONZERO_i=nz_i, $
+                                                OUT_ZERO_I=z_i, $
+                                                LUN=lun)
+              
+              histoBinsize      = (bin_r_edges[1]-bin_l_edges[1])
+              PRINTF,lun,'Histo binsize set to ' + STRCOMPRESS(histobinSize,/REMOVE_ALL) + ' because of window_sum ...'
+           ENDIF ELSE BEGIN
+              temp_nEvHistData   = nEvHistData
+
+              nEvHistData        = RUNNING_HISTO(alf_t_arr,window_sum, $
+                                                 BIN_CENTERS=histTBins, $
+                                                 BIN_SPACING=bin_spacing, $
+                                                 BIN_L_OFFSET=bin_l_offset, $
+                                                 BIN_R_OFFSET=bin_r_offset, $
+                                                 BIN_L_EDGES=bin_l_edges, $
+                                                 BIN_R_EDGES=bin_r_edges, $
+                                                 XMIN=-tBeforeEpoch, $
+                                                 XMAX=tAfterEpoch, $
+                                                 DONT_TRUNCATE_EDGES=dont_truncate_edges, $
+                                                 /DROP_EDGES, $
+                                                 OUT_NONZERO_i=nz_i, $
+                                                 OUT_ZERO_I=z_i, $
+                                                 LUN=lun)
+
+              nEvHistData        = nEvHistData + temp_nEvHistData
+           ENDELSE
+        ENDELSE
 
      ;;Do weighted histos
      IF ~KEYWORD_SET(only_nEvents) THEN BEGIN
@@ -121,7 +165,7 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
      ENDIF
 
      ;; IF KEYWORD_SET(running_average) OR KEYWORD_SET(window_sum) THEN BEGIN
-     IF KEYWORD_SET(running_average) OR KEYWORD_SET(window_sum) THEN BEGIN
+     IF KEYWORD_SET(running_average) THEN BEGIN
 
         ra_y              = RUNNING_AVERAGE(alf_t_dat, alf_y_dat,running_average, $
                                             BIN_L_OFFSET=bin_l_offset, $

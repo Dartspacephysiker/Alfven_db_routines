@@ -1,7 +1,7 @@
-;2015/12/19 Time to map Poyntingf flux
+;2016/01/09 Time to map Poynting flux for the DESPUN db!
 ; Remember, Chaston et al. [2003] justify the use of the Poynting flux estimate in the Alf DB
 ; Check it out if you're curious
-PRO COMBINE_MAPPING_RATIO_FILES,mapRatio,LUN=lun
+PRO COMBINE_MAPPING_RATIO_FILES__DESPUN_DB,mapRatio,LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
 
@@ -9,13 +9,13 @@ PRO COMBINE_MAPPING_RATIO_FILES,mapRatio,LUN=lun
   maxOrb               = 16361
 
   outDir               = '/SPENCEdata/Research/Cusp/database/dartdb/saves/mapratio_dbs/'
-  outFile              = outDir + 'mapratio_for_20151014_DB--up_to' + $
+  outFile              = outDir + 'mapratio_for_20160107_despun_DB--up_to' + $
                          STRCOMPRESS(maxOrb,/REMOVE_ALL) + '--' + date + '.dat'
 
-  batchDir             = '/SPENCEdata/software/sdt/batch_jobs/map_Poyntingflux__20151217/output/'
+  batchDir             = '/SPENCEdata/software/sdt/batch_jobs/map_Poyntingflux__20151217/output__despundb_20160107/'
   filePref             = 'mapping_ratio--orb_'
 
-  load_maximus_and_cdbtime,maximus
+  load_maximus_and_cdbtime,maximus,/DO_DESPUNDB
 
   uniqOrbs             = maximus.orbit[UNIQ(maximus.orbit)]
 

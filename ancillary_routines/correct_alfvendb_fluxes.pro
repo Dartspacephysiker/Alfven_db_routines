@@ -72,9 +72,11 @@
 ;Added MAP_PFLUX_TO_IONOS keyword, based on my recent work to collect mapping ratios.
 ;This is represented in pros such as LOAD_MAPPING_RATIO, and the SDT batch job in the folder
 ;map_Poyntingflux_20151217.
+;Added DO_DESPUNDB keyword.
 ;-
 PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             MAP_PFLUX_TO_IONOS=map_pflux, $
+                            DO_DESPUNDB=do_despunDB, $
                             LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
@@ -185,7 +187,8 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;;Added 2015/12/22
      IF KEYWORD_SET(map_pflux) THEN BEGIN
         PRINTF,lun,'49-PFLUXEST                Map to ionosphere, multiplying by B_100km/B_alt'
-        LOAD_MAPPING_RATIO_DB,mapRatio
+        LOAD_MAPPING_RATIO_DB,mapRatio, $
+                              DO_DESPUNDB=do_despunDB
         maximus.pFluxEst = maximus.pFluxEst * mapRatio.ratio
      ENDIF
 

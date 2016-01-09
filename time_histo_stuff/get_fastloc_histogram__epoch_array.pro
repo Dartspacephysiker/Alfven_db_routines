@@ -18,6 +18,7 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
    TAFTEREPOCH=tAfterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
    HISTOBINSIZE=histoBinSize,NEVTOT=nEvTot, $
    WINDOW_SUM=window_sum, $
+   RUNNING_BIN_SPACING=running_bin_spacing, $
    RUNNING_BIN_L_OFFSET=bin_l_offset, $
    RUNNING_BIN_R_OFFSET=bin_r_offset, $
    FASTLOC_I_LIST=fastLoc_i_list,FASTLOC_T_LIST=fastLoc_t_list,FASTLOC_DT_LIST=fastLoc_dt_list, $
@@ -81,6 +82,7 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
            HISTDATA=histData, $
            HISTTBINS=histTBins, $
            ;; NEVHISTDATA=nEvHistData_pos, $
+           RUNNING_BIN_SPACING=running_bin_spacing, $
            RUNNING_BIN_L_OFFSET=bin_l_offset, $
            RUNNING_BIN_R_OFFSET=bin_r_offset, $
            TAFTEREPOCH=tAfterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
