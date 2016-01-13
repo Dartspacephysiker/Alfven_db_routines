@@ -34,10 +34,14 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
    TAFTEREPOCH=tAfterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
    HISTOBINSIZE=histoBinSize,NEVTOT=nEvTot, $
    NONZERO_I=nz_i, $
+   PRINT_MAXIND_SEA_STATS=print_maxInd_sea_stats, $
    LUN=lun
 
   COMPILE_OPT idl2
 
+  ;for printing stats
+  epoch_stats_ranges            = [[-60,0],[0,10],[10,20],[20,30],[30,40],[40,60]] ;pre-storm, 10 hours after commencement, and 10-20 hours after
+  
   IF ~KEYWORD_SET(lun) THEN lun = -1 ;stdout
 
   IF ~KEYWORD_SET(histoType) THEN histoType = 0
@@ -123,7 +127,9 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
                                           ;; OUT_ERROR_BARS=out_error_bars, $
                                           XMIN=-tBeforeEpoch, $
                                           XMAX=tAfterEpoch, $
-                                          /DROP_EDGES)
+                                          /DROP_EDGES, $
+                                          PRINT_STATS_FOR_THESE_RANGES=KEYWORD_SET(print_maxInd_sea_stats) ? epoch_stats_ranges : !NULL, $
+                                          LUN=lun)
 
         ENDIF ELSE BEGIN
 
@@ -184,7 +190,9 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
                                             OUT_ERROR_BARS=out_error_bars, $
                                             XMIN=-tBeforeEpoch, $
                                             XMAX=tAfterEpoch, $
-                                            /DROP_EDGES)
+                                            /DROP_EDGES, $
+                                            PRINT_STATS_FOR_THESE_RANGES=KEYWORD_SET(print_maxInd_sea_stats) ? epoch_stats_ranges : !NULL, $
+                                            LUN=lun)
 
         IF histoType EQ 2 THEN BEGIN
 
@@ -218,7 +226,8 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
                                            OUT_ERROR_BARS=out_error_bars, $
                                            XMIN=-tBeforeEpoch, $
                                            XMAX=tAfterEpoch, $
-                                           /DROP_EDGES)
+                                           /DROP_EDGES, $
+                                           PRINT_STATS_FOR_THESE_RANGES=KEYWORD_SET(print_maxInd_sea_stats) ? epoch_stats_ranges : !NULL)
 
         IF histoType EQ 2 THEN BEGIN
 

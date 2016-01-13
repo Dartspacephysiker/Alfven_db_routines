@@ -2,7 +2,12 @@
 ;This one applies to both maximus and fastLoc structs
 ;            Mod history
 ; 2015/12/28 Fastloc has a bunch of strange sample_t values (negatives), so I'm junking them
-FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun,CLEAN_NANS_AND_INFINITIES=clean_nans_and_infinities,DO_CHASTDB=do_ChastDB
+;; 2016/01/13 New USING_HEAVIES keyword for times when TEAMS data are coming into play
+FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
+                          CLEAN_NANS_AND_INFINITIES=clean_nans_and_infinities, $
+                          DO_LSHELL=DO_lshell, $
+                          USING_HEAVIES=using_heavies, $
+                          DO_CHASTDB=do_ChastDB
   
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
   n_events = n_elements(dbStruct.orbit)
@@ -19,8 +24,18 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun,CLEAN_NANS_AND_INFINITIES=clean_nans_
         IF KEYWORD_SET(do_ChastDB) THEN BEGIN
            clean_these_inds = [INDGEN(21),28]
         ENDIF ELSE BEGIN
-           clean_these_inds = [INDGEN(26),32,48,49,50]
+           IF KEYWORD_SET(using_heavies) THEN BEGIN
+              PRINTF,lun,'Cleaning heavies!'
+              clean_these_inds = [INDGEN(33),48,49]
+           ENDIF ELSE BEGIN
+              clean_these_inds = [INDGEN(26),32,48,49]
+           ENDELSE
         ENDELSE
+
+        IF KEYWORD_SET(do_lshell) THEN BEGIN
+           PRINTF,lun,'Cleaning L-shell!'
+           clean_these_inds = [clean_these_inds,50]
+        ENDIF
      ENDIF ELSE BEGIN
         clean_these_inds = INDGEN(N_ELEMENTS(dbTags))
      ENDELSE

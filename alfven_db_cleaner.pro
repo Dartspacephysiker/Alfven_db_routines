@@ -23,11 +23,15 @@
 ;;   TOTAL_ALFVEN_ELECTRON_ENERGY_DFLUX, TOTAL_ION_OUTFLOW_MULTIPLE_TOT, TOTAL_ALFVEN_ION_OUTFLOW, 
 ;;   TOTAL_UPWARD_ION_OUTFLOW_MULTIPLE_TOT, TOTAL_ALFVEN_UPWARD_ION_OUTFLOW
 ;; I never use these quantities, so I'm ignoring their NaNs.
+;; 2016/01/13 New USING_HEAVIES keyword for times when TEAMS data are coming into play
 ; 
 ; 
 ;-
 
-function alfven_db_cleaner,maximus,IS_CHASTDB=is_chastDB,LUN=lun
+FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
+                           DO_LSHELL=DO_lshell, $
+                           USING_HEAVIES=using_heavies, $
+                           LUN=lun
 
   COMPILE_OPT idl2
 
@@ -45,7 +49,10 @@ function alfven_db_cleaner,maximus,IS_CHASTDB=is_chastDB,LUN=lun
   @alfven_db_cleaner_defaults.pro
 
   n_events = n_elements(maximus.orbit)
-  good_i = BASIC_DB_CLEANER(maximus,DO_CHASTDB=is_chastDB,/CLEAN_NANS_AND_INFINITIES)
+  good_i = BASIC_DB_CLEANER(maximus,DO_CHASTDB=is_chastDB, $
+                            /CLEAN_NANS_AND_INFINITIES, $
+                            DO_LSHELL=DO_lshell, $
+                            USING_HEAVIES=using_heavies)
 
   n_basic = N_ELEMENTS(good_i)
   ;**********

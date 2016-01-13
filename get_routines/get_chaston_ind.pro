@@ -11,6 +11,7 @@
 ;2015/10/19 Added PRINT_PARAM_SUMMARY keyword
 ;2015/12/28 There are a bunch of weird sample_t values in fastloc. I'm junking them in fastloc_cleaner.
 ;2016/01/07 Added DESPUNDB keyword to let us get dat despun database
+;2016/01/13 Added USING_HEAVIES keyword for those magical times when personen wants to use TEAMS data
 FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                          CHASTDB=chastDB, $
                          DESPUNDB=despunDB, $
@@ -24,7 +25,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                          DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                          MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
+                         USING_HEAVIES=using_heavies, $
                          NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i, $
+                         CORRECT_FLUXES=correct_fluxes, $
                          PRINT_PARAM_SUMMARY=print_param_summary
   COMPILE_OPT idl2
  
@@ -72,9 +75,18 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile
      is_maximus = 0
   ENDIF ELSE BEGIN
+     IF N_ELEMENTS(correct_fluxes) EQ 0 THEN BEGIN
+        IF N_ELEMENTS(dbStruct) GT 0 THEN BEGIN
+           PRINTF,lun,'GET_CHASTON_IND: Not attempting to correct fluxes since dbStruct already loaded ...'
+           correct_fluxes = 0
+        ENDIF ELSE BEGIN
+           correct_fluxes = 1
+        ENDELSE
+     ENDIF
      LOAD_MAXIMUS_AND_CDBTIME,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile, $
                               DO_CHASTDB=chastDB, $
-                              DO_DESPUNDB=despunDB
+                              DO_DESPUNDB=despunDB, $
+                              CORRECT_FLUXES=correct_fluxes
 
      is_maximus = 1
   ENDELSE
@@ -193,7 +205,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
   ;; IF KEYWORD_SET(chastDB) THEN restore,defChastDB_cleanIndFile ELSE cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun)
   ;; IF KEYWORD_SET(chastDB) THEN cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun,/IS_CHASTDB) ELSE cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun)
   IF is_maximus THEN BEGIN
-     cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun,IS_CHASTDB=chastDB)
+     cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun, $
+                                   IS_CHASTDB=chastDB, $
+                                   DO_LSHELL=DO_lshell, $
+                                   USING_HEAVIES=using_heavies)
      IF cleaned_i NE !NULL THEN good_i=CGSETINTERSECTION(good_i,cleaned_i)
   ENDIF ELSE BEGIN
      cleaned_i = fastloc_cleaner(dbStruct,LUN=lun)

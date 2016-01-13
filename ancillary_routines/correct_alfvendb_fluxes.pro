@@ -7,6 +7,11 @@
 ;;;;;;;;;;;;;;;;;;;;;
 ;Modification history
 ;;;;;;;;;;;;;;;;;;;;;
+;2016/01/13
+;Now we have this ritzy despun database, and I want to correct the fluxes of the heavy ion species.
+; If you check out JOURNAL__20160113__SUP_WITH_DESPUN_ION_DATA, you'll see where I get the idea
+; that we need to correct heavy ions the same way that we correct the ion ESA data.
+
 ;2015/12/03
 ;Added whether or not each quantity is mapped to the ionosphere below, as well as to 
 ; the titles of the plots given by GET_FLUX_PLOTDATA
@@ -73,10 +78,14 @@
 ;This is represented in pros such as LOAD_MAPPING_RATIO, and the SDT batch job in the folder
 ;map_Poyntingflux_20151217.
 ;Added DO_DESPUNDB keyword.
+;
+;2016/01/13
+;Adding stuff for heavy ions, since the new despun DB can do dat
 ;-
 PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             MAP_PFLUX_TO_IONOS=map_pflux, $
                             DO_DESPUNDB=do_despunDB, $
+                            USING_HEAVIES=using_heavies, $
                             LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
@@ -183,6 +192,22 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;;19-CHAR_ION_ENERGY--what to do?
      PRINTF,lun,'19-CHAR_ION_ENERGY         (In AS5, division of two quantities where hemi is not accounted for--how to interpret sign?)'
 
+
+     IF KEYWORD_SET(using_heavies) THEN BEGIN
+
+     ;;26-PROTON_FLUX_UP
+        maximus.proton_flux_up[north_i] = -1 * maximus.proton_flux_up[north_i]
+        PRINTF,lun,'26-PROTON_FLUX_UP             (Flip sign in N Hemi)'
+
+     ;;28-OXY_FLUX_UP
+        maximus.oxy_flux_up[north_i] = -1 * maximus.oxy_flux_up[north_i]
+        PRINTF,lun,'28-OXY_FLUX_UP                (Flip sign in N Hemi)'
+
+     ;;30-HELIUM_FLUX_UP
+        maximus.helium_flux_up[north_i] = -1 * maximus.helium_flux_up[north_i]
+        PRINTF,lun,'30-HELIUM_FLUX_UP             (Flip sign in N Hemi)'
+
+     ENDIF
 
      ;;Added 2015/12/22
      IF KEYWORD_SET(map_pflux) THEN BEGIN

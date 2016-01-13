@@ -23,9 +23,12 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
    RUNNING_BIN_R_OFFSET=bin_r_offset, $
    FASTLOC_I_LIST=fastLoc_i_list,FASTLOC_T_LIST=fastLoc_t_list,FASTLOC_DT_LIST=fastLoc_dt_list, $
    NONZERO_I=nz_i, $
+   PRINT_MAXIND_SEA_STATS=print_maxInd_sea_stats, $
    FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_times,FASTLOC_DELTA_T=fastLoc_delta_t, $
-   SAVE_OR_RESTORE_IF_POSSIBLE=save_or_restore_if_possible
+   SAVE_OR_RESTORE_IF_POSSIBLE=save_or_restore_if_possible, $
+   LUN=lun
 
+  IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
    
    IF N_ELEMENTS(fastLoc) EQ 0 OR N_ELEMENTS(fastLoc_times) EQ 0 OR N_ELEMENTS(fastLoc_delta_t) EQ 0 THEN BEGIN
       LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastLoc_times,fastloc_delta_t
@@ -88,6 +91,8 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
            TAFTEREPOCH=tAfterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
            HISTOBINSIZE=histoBinSize,NEVTOT=nEvTot, $
            WINDOW_SUM=window_sum, $
-           NONZERO_I=nz_i
+           NONZERO_I=nz_i, $
+           PRINT_MAXIND_SEA_STATS=print_maxInd_sea_stats, $
+           LUN=lun
 
 END

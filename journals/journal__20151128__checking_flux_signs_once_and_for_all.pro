@@ -4,7 +4,7 @@
 ;"20151127--why_flux_is_so_weird_in_Alfven_DB.txt" contains the detailed info
 PRO JOURNAL__20151128__CHECKING_FLUX_SIGNS_ONCE_AND_FOR_ALL
 
-  load_maximus_and_cdbtime,maximus
+  load_maximus_and_cdbtime,maximus,CORRECT_FLUXES=0
   maxTags = TAG_NAMES(maximus)
 
   gi_n=GET_CHASTON_IND(maximus,/NORTH)

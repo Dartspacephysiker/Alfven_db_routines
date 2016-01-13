@@ -8,6 +8,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              DO_NOT_MAP_PFLUX=do_not_map_pflux, $
                              DO_CHASTDB=chastDB, $
                              DO_DESPUNDB=despunDB, $
+                             USING_HEAVIES=using_heavies, $
                              FORCE_LOAD_MAXIMUS=force_load_maximus, $
                              FORCE_LOAD_CDBTIME=force_load_cdbTime, $
                              FORCE_LOAD_BOTH=force_load_BOTH, $
@@ -65,6 +66,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      ENDIF
   ENDIF ELSE BEGIN
      PRINTF,lun,"There is already a maximus struct loaded! Not loading " + DBFile
+     DBFile = 'Previously loaded maximus struct'
   ENDELSE
 
   IF N_ELEMENTS(cdbTime) EQ 0 OR KEYWORD_SET(force_load_cdbTime) THEN BEGIN
@@ -78,6 +80,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      ENDIF
   ENDIF ELSE BEGIN
      PRINTF,lun,"There is already a cdbTime struct loaded! Not loading " + DB_tFile
+     DBFile = 'Previously loaded cdbTime array'
   ENDELSE
 
   IF correct_fluxes THEN BEGIN
@@ -87,7 +90,9 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      ;; CORRECT_ALFVENDB_FLUXES,maximus,MAP_PFLUX_TO_IONOS=~(KEYWORD_SET(do_not_map_pflux) OR KEYWORD_SET(despunDB))
      CORRECT_ALFVENDB_FLUXES,maximus, $
                              MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux), $
-                             DO_DESPUNDB=do_despunDB
+                             DO_DESPUNDB=do_despunDB, $
+                             USING_HEAVIES=using_heavies
+
   ENDIF
 
 
