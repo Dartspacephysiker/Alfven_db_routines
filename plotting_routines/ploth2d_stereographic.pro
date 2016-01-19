@@ -124,6 +124,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
 
   IF mirror THEN BEGIN
      ilats                  = -1.0 * ilats 
+     gridLats                     = -1.0 * gridLats
+     ;; gridLatNames                 = -1.0 * gridLatNames
   ENDIF
 
   ;;binary matrix to tell us where masked values are
@@ -230,11 +232,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                                         STRING(mltSites[1:-1], $
                                                format=lonLabelFormat)]
 
-     IF mirror THEN BEGIN
-        ;;    ;;IF N_ELEMENTS(wholeCap) NE 0 THEN lonNames = [lonNames[0],REVERSE(lonNames[1:*])]
-        gridLats                     = -1.0 * gridLats
-        gridLatNames                 = -1.0 * gridLatNames
-     ENDIF 
+     ;; IF mirror THEN BEGIN
+     ;;    ;;    ;;IF N_ELEMENTS(wholeCap) NE 0 THEN lonNames = [lonNames[0],REVERSE(lonNames[1:*])]
+     ;;    gridLats                     = -1.0 * gridLats
+     ;;    gridLatNames                 = -1.0 * gridLatNames
+     ;; ENDIF 
      
      gridLatNames                    = STRING(gridLatNames,format=latLabelFormat)
      gridLatNames[mirror ? -1 : 0]   = gridLatNames[mirror ? -1 : 0] + $
@@ -269,8 +271,13 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      ;; nLats                          = N_ELEMENTS(latNames)
 
      ;;Latitudes
-     minLatLabel                    = CEIL(minI/10.)*10
-     maxLatLabel                    = FLOOR(maxI/10.)*10
+     IF mirror THEN BEGIN
+        minLatLabel                    = CEIL(-maxI/10.)*10
+        maxLatLabel                    = FLOOR(-minI/10.)*10
+     ENDIF ELSE BEGIN
+        minLatLabel                    = CEIL(minI/10.)*10
+        maxLatLabel                    = FLOOR(maxI/10.)*10
+     ENDELSE
      nLats                          = (maxLatLabel-minLatLabel)/10+1
 
      lats                           = !NULL
@@ -278,7 +285,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      IF minI GT 0 THEN $
         latNames                    = STRING(FORMAT='(I2)',lats) $
      ELSE $
-        latNames                    = STRING(FORMAT='(I3)',lats)
+        latNames                    = STRING(FORMAT='(I3)',KEYWORD_SET(mirror) ? -lats : lats)
 
      cgMap_Grid, Clip_Text=1, $
                  /NoClip, $

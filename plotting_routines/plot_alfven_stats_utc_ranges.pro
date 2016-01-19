@@ -205,7 +205,9 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  JUSTDATA=justData, SHOWPLOTSNOSAVE=showPlotsNoSave, $
                                  PLOTDIR=plotDir, PLOTPREFIX=plotPrefix, PLOTSUFFIX=plotSuffix, $
                                  MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
-                                 OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
+                                 OUTPUTPLOTSUMMARY=outputPlotSummary, $
+                                 DEL_PS=del_PS, $
+                                 EPS_OUTPUT=eps_output, $
                                  PRINT_ALFVENDB_2DHISTOS=print_alfvendb_2dhistos, $
                                  OUT_TEMPFILE=out_tempFile, $
                                  NO_COLORBAR=no_colorbar, $
@@ -400,9 +402,11 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                          PARAMSTR=paramString, DEL_PS=del_PS, $
                          HEMI=hemi, $
                          NO_COLORBAR=no_colorbar, $
-                         CB_FORCE_OOBHIGH=cb_force_oobHigh, $
-                         CB_FORCE_OOBLOW=cb_force_oobLow, $
-                         CLOCKSTR=clockStr, _EXTRA = e
+                         ;; CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                         ;; CB_FORCE_OOBLOW=cb_force_oobLow, $
+                         CLOCKSTR=clockStr, $
+                         EPS_OUTPUT=eps_output, $
+                         _EXTRA = e
 
   ;;Haven't finished writing this yet
   ;; IF KEYWORD_SET(print_alfvendb_2dhistos) THEN BEGIN

@@ -1,3 +1,5 @@
+;2016/01/15 EPS Output keyword added 
+;2016/01/19
 PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=tempFile, $
                            SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ 
                            JUSTDATA=justData, SHOWPLOTSNOSAVE=showPlotsNoSave, $
@@ -9,6 +11,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            ;; CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                            ;; CB_FORCE_OOBLOW=cb_force_oobLow, $
                            LUN=lun, $
+                           EPS_OUTPUT=eps_output, $
                            _EXTRA = e
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
@@ -98,16 +101,18 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  SET_PLOT, mydevice
               ENDIF ELSE BEGIN
                  ;;Create a PostScript file.
-                 CGPS_Open, plotDir + paramStr+dataNameArr[i]+'.ps' 
+                 CGPS_Open, plotDir + paramStr+dataNameArr[i]+'.ps',ENCAPSULATED=eps_output
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
                                        NO_COLORBAR=no_colorbar, $
                                        _EXTRA=e 
                  CGPS_Close 
                  ;;Create a PNG file with a width of 800 pixels.
-                 CGPS2RASTER, plotDir + paramStr+dataNameArr[i]+'.ps', $
-                              /PNG, $
-                              WIDTH=800, $
-                              DELETE_PS=del_PS
+                 IF ~KEYWORD_SET(eps_output) THEN BEGIN
+                    CGPS2RASTER, plotDir + paramStr+dataNameArr[i]+'.ps', $
+                                 /PNG, $
+                                 WIDTH=800, $
+                                 DELETE_PS=del_PS
+                 ENDIF
               ENDELSE
               
            ENDFOR    

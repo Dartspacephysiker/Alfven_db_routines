@@ -1,7 +1,8 @@
 ;;2015/10/12 Created
 ;;The DO_WIDTH_X keyword allows one to use spatial width of the current filaments instead of temporal, if so desired
 PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
-                                 LOGPROBOCCURRENCE=logProbOccurrence, PROBOCCURRENCERANGE=probOccurrenceRange,DO_WIDTH_X=do_width_x, $
+                                 LOGPROBOCCURRENCE=logProbOccurrence, PROBOCCURRENCERANGE=probOccurrenceRange, $
+                                 DO_WIDTH_X=do_width_x, $
                                  MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
                                  DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                                  OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
