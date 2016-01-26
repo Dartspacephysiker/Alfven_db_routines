@@ -4,10 +4,17 @@
 ;this can be used as a standalone routine or else called by plot_alfven_stats_imf_screening when
 ;making a plot of n events per minute
 ;2016/01/01 Added NORTH, SOUTH, and BOTH_HEMIS keywords.
+;2016/01/23 Added DO_ABS_BZM{IN,AX} keywords
 ;-
 PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                               BYMIN=byMin, BYMAX=byMax, BZMIN=bzMin, BZMAX=bzMax, SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
+                               BYMIN=byMin, $
+                               BYMAX=byMax, $
+                               BZMIN=bzMin, $
+                               BZMAX=bzMax, $
+                               DO_ABS_BZMIN=abs_bzMin, $
+                               DO_ABS_BZMAX=abs_bzMax, $
+                               SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                HEMI=hemi, $
                                BOTH_HEMIS=both_hemis, $
                                NORTH=north, $
@@ -69,7 +76,13 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
 
   SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                     ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                                    BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax,BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+                                    BYMIN=byMin, $
+                                    BZMIN=bzMin, $
+                                    BYMAX=byMax, $
+                                    BZMAX=bzMax, $
+                                    DO_ABS_BZMIN=abs_bzMin, $
+                                    DO_ABS_BZMAX=abs_bzMax, $
+                                    BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
                                     PARAMSTRING=paramString, $
                                     SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                     DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
@@ -130,7 +143,14 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
                          ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                          MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
                          DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
-                         BYMIN=byMin,BZMIN=bzMin,BYMAX=byMax,BZMAX=bzMax,CLOCKSTR=clockStr,BX_OVER_BYBZ=Bx_over_ByBz_Lim, $
+                                                                BYMIN=byMin, $
+                                                                BZMIN=bzMin, $
+                                                                BYMAX=byMax, $
+                                                                BZMAX=bzMax, $
+                                                                DO_ABS_BZMIN=abs_bzMin, $
+                                                                DO_ABS_BZMAX=abs_bzMax, $
+                                                                CLOCKSTR=clockStr, $
+                                                                BX_OVER_BYBZ=Bx_over_ByBz_Lim, $
                          STABLEIMF=stableIMF,OMNI_COORDS=omni_Coords,ANGLELIM1=angleLim1,ANGLELIM2=angleLim2, $
                          HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd,NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=1)
      

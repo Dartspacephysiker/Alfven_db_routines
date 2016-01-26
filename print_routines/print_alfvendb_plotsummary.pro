@@ -6,7 +6,13 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,good_i,CLOCKSTR=clockStr, ANGLELIM1=angl
                                DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                               BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax, BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+                               BYMIN=byMin, $
+                               BZMIN=bzMin, $
+                               BYMAX=byMax, $
+                               BZMAX=bzMax, $
+                               DO_ABS_BZMIN=abs_bzMin, $
+                               DO_ABS_BZMAX=abs_bzMax, $
+                               BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
                                PARAMSTRING=paramString, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
                                SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $

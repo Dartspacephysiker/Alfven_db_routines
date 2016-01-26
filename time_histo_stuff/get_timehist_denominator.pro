@@ -1,7 +1,13 @@
 FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                   ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                   DO_IMF_CONDS=do_IMF_conds, $
-                                  BYMIN=byMin, BYMAX=byMax, BZMIN=bzMin, BZMAX=bzMax, SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
+                                  BYMIN=byMin, $
+                                  BYMAX=byMax, $
+                                  BZMIN=bzMin, $
+                                  BZMAX=bzMax, $
+                                  DO_ABS_BZMIN=abs_bzMin, $
+                                  DO_ABS_BZMAX=abs_bzMax, $
+                                  SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                   DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                   DO_UTC_RANGE=DO_UTC_range,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                   MINM=minM,MAXM=maxM,BINM=binM, $
@@ -49,7 +55,13 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
   IF KEYWORD_SET(do_IMF_conds) THEN BEGIN
      GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                 ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                                BYMIN=byMin, BYMAX=byMax, BZMIN=bzMin, BZMAX=bzMax, SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
+                                BYMIN=byMin, $
+                                BYMAX=byMax, $
+                                BZMIN=bzMin, $
+                                BZMAX=bzMax, $
+                                DO_ABS_BZMIN=abs_bzMin, $
+                                DO_ABS_BZMAX=abs_bzMax, $
+                                SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                 HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                 HWMAUROVAL=0,HWMKPIND=!NULL, $
                                 ;; MAKE_OUTINDSFILE=1, $
@@ -112,7 +124,13 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
                           DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                           MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                           HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                          BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax, BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+                          BYMIN=byMin, $
+                          BZMIN=bzMin, $
+                          BYMAX=byMax, $
+                          BZMAX=bzMax, $
+                          DO_ABS_BZMIN=abs_bzMin, $
+                          DO_ABS_BZMAX=abs_bzMax, $
+                          BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
                           PARAMSTRING=paramString, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
                           DO_UTC_RANGE=DO_UTC_range,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                           DO_IMF_CONDS=do_IMF_conds, $

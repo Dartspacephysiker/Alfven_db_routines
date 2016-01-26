@@ -30,6 +30,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           BZMIN=bzMin, $
                           BYMAX=byMax, $
                           BZMAX=bzMax, $
+                          DO_ABS_BZMIN=abs_bzMin, $
+                          DO_ABS_BZMAX=abs_bzMax, $
                           DELAY=delay, $
                           STABLEIMF=stableIMF, $
                           SMOOTHWINDOW=smoothWindow, $
@@ -541,6 +543,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  BYMAX=byMax, $
                                                  BZMIN=bzMin, $
                                                  BZMAX=bzMax, $
+                                                 DO_ABS_BZMIN=abs_bzMin, $
+                                                 DO_ABS_BZMAX=abs_bzMax, $
                                                  SATELLITE=satellite, $
                                                  OMNI_COORDS=omni_Coords, $
                                                  DELAY=delay, $

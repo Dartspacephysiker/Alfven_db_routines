@@ -6,7 +6,13 @@ PRO PRINT_TIMEHISTO_SUMMARY,fastLoc,good_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim
                             DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                             MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                             HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                            BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax, BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+                            BYMIN=byMin, $
+                            BZMIN=bzMin, $
+                            BYMAX=byMax, $
+                            BZMAX=bzMax, $
+                            DO_ABS_BZMIN=abs_bzMin, $
+                            DO_ABS_BZMAX=abs_bzMax, $
+                            BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
                             PARAMSTRING=paramString, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
                             DO_UTC_RANGE=DO_UTC_range,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                             DO_IMF_CONDS=do_IMF_conds, $

@@ -29,11 +29,11 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi,N_ILAT=n_ilat,N_NOT_ILAT=n_not_ila
   ENDIF ELSE BEGIN
      IF STRUPCASE(hemi) EQ "SOUTH" THEN BEGIN
         ilat_i=where(maximus.ilat GE minI AND maximus.ilat LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT)
-        ;; PRINTF,lun,'Hemisphere: Southern'
+        PRINTF,lun,'Hemisphere: Southern'
      ENDIF ELSE BEGIN
         IF STRUPCASE(hemi) EQ "NORTH" THEN BEGIN
            ilat_i=where(maximus.ilat GE minI AND maximus.ilat LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT) 
-           ;; PRINTF,lun,'Hemisphere: Northern'
+           PRINTF,lun,'Hemisphere: Northern'
         ENDIF ELSE BEGIN
            PRINTF,lun,"Invalid hemisphere provided! Can't get ILAT indices..."
            STOP

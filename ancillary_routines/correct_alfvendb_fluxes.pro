@@ -81,17 +81,23 @@
 ;
 ;2016/01/13
 ;Adding stuff for heavy ions, since the new despun DB can do dat
+;2016/01/26 Added MAP_HEAVIES keyword
 ;-
 PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             MAP_PFLUX_TO_IONOS=map_pflux, $
                             DO_DESPUNDB=do_despunDB, $
                             USING_HEAVIES=using_heavies, $
+                            MAP_HEAVIES=map_heavies, $
                             LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
 
   IF N_ELEMENTS(map_pflux) EQ 0 THEN BEGIN
      map_pflux = 1
+  ENDIF
+  
+  IF N_ELEMENTS(map_heavies) EQ 0 THEN  BEGIN
+     map_heavies = 1
   ENDIF
 
   IS_STRUCT_ALFVENDB_OR_FASTLOC,maximus,is_maximus
@@ -207,6 +213,17 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         maximus.helium_flux_up[north_i] = -1 * maximus.helium_flux_up[north_i]
         PRINTF,lun,'30-HELIUM_FLUX_UP             (Flip sign in N Hemi)'
 
+        IF KEYWORD_SET(map_heavies) THEN BEGIN
+           LOAD_MAPPING_RATIO_DB,mapRatio, $
+                                 DO_DESPUNDB=do_despunDB
+           maximus.proton_flux_up = maximus.proton_flux_up * mapRatio.ratio
+           maximus.oxy_flux_up = maximus.oxy_flux_up * mapRatio.ratio
+           maximus.helium_flux_up = maximus.helium_flux_up * mapRatio.ratio
+           PRINTF,lun,"Mapped the following to the ionosphere, multiplying by B_100km/B_alt"
+           PRINTF,lun,'-->26-PROTON_FLUX_UP'
+           PRINTF,lun,'-->28-OXY_FLUX_UP'
+           PRINTF,lun,'-->30-HELIUM_FLUX_UP'
+        ENDIF
      ENDIF
 
      ;;Added 2015/12/22
