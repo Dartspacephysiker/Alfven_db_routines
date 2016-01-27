@@ -12,6 +12,8 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
                                BYMAX=byMax, $
                                BZMIN=bzMin, $
                                BZMAX=bzMax, $
+                               DO_ABS_BYMIN=abs_byMin, $
+                               DO_ABS_BYMAX=abs_byMax, $
                                DO_ABS_BZMIN=abs_bzMin, $
                                DO_ABS_BZMAX=abs_bzMax, $
                                SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
@@ -80,6 +82,8 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
                                     BZMIN=bzMin, $
                                     BYMAX=byMax, $
                                     BZMAX=bzMax, $
+                                    DO_ABS_BYMIN=abs_byMin, $
+                                    DO_ABS_BYMAX=abs_byMax, $
                                     DO_ABS_BZMIN=abs_bzMin, $
                                     DO_ABS_BZMAX=abs_bzMax, $
                                     BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
@@ -147,6 +151,8 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
                                                                 BZMIN=bzMin, $
                                                                 BYMAX=byMax, $
                                                                 BZMAX=bzMax, $
+                                                                DO_ABS_BYMIN=abs_byMin, $
+                                                                DO_ABS_BYMAX=abs_byMax, $
                                                                 DO_ABS_BZMIN=abs_bzMin, $
                                                                 DO_ABS_BZMAX=abs_bzMax, $
                                                                 CLOCKSTR=clockStr, $

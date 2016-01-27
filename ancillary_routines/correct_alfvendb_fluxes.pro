@@ -82,22 +82,28 @@
 ;2016/01/13
 ;Adding stuff for heavy ions, since the new despun DB can do dat
 ;2016/01/26 Added MAP_HEAVIES keyword
+;2016/01/27 Added MAP_IONFLUX keyword
 ;-
 PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             MAP_PFLUX_TO_IONOS=map_pflux, $
                             DO_DESPUNDB=do_despunDB, $
                             USING_HEAVIES=using_heavies, $
-                            MAP_HEAVIES=map_heavies, $
+                            MAP_HEAVIES_TO_IONOS=map_heavies, $
+                            MAP_IONFLUX_TO_IONOS=map_ionflux, $
                             LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
 
   IF N_ELEMENTS(map_pflux) EQ 0 THEN BEGIN
-     map_pflux = 1
+     map_pflux                     = 1
   ENDIF
   
+  IF N_ELEMENTS(map_ionflux) EQ 0 THEN BEGIN
+     map_ionflux                   = 1
+  ENDIF
+
   IF N_ELEMENTS(map_heavies) EQ 0 THEN  BEGIN
-     map_heavies = 1
+     map_heavies                   = 1
   ENDIF
 
   IS_STRUCT_ALFVENDB_OR_FASTLOC,maximus,is_maximus
@@ -106,22 +112,22 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
   IF is_maximus THEN BEGIN
      IF TAG_EXIST(maximus,"CORRECTED_FLUXES") THEN BEGIN
         IF maximus.corrected_fluxes THEN BEGIN
-           do_correction = 0
+           do_correction           = 0
         ENDIF ELSE BEGIN
-           do_correction = 1
+           do_correction           = 1
         ENDELSE
      ENDIF ELSE BEGIN
-        do_correction = 1
+        do_correction              = 1
      ENDELSE
   ENDIF ELSE BEGIN
      PRINTF,lun,"Can't correct Alfven DB fluxes! This isn't a FAST Alfvén wave database..."
-     do_correction = 0
+     do_correction                 = 0
   ENDELSE
 
   ;;Perform correction if so
   IF do_correction THEN BEGIN
-     north_i = WHERE(maximus.ilat GT 0)
-     south_i = WHERE(maximus.ilat LT 0)
+     north_i                       = WHERE(maximus.ilat GT 0)
+     south_i                       = WHERE(maximus.ilat LT 0)
 
      PRINTF,lun,"Corrected the following: "
 
@@ -131,7 +137,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      PRINTF,lun,"ELECTRONS: Earthward flow is positive"
 
      ;;07-ESA_CURRENT
-     maximus.esa_current[north_i] = -1 * maximus.esa_current[north_i]
+     maximus.esa_current[north_i]  = -1 * maximus.esa_current[north_i]
      PRINTF,lun,'07-ESA_CURRENT             (Flip sign in N Hemi)'
      
      ;;08-ELEC_ENERGY_FLUX 
@@ -173,7 +179,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;; maximus.ion_flux[north_i] = -1 * maximus.ion_flux[north_i]
      ;; PRINTF,lun,'ION_FLUX             (Flip sign in N Hemi)'
      ;;new
-     maximus.ion_flux[south_i] = -1 * maximus.ion_flux[south_i]
+     maximus.ion_flux[south_i]     = -1 * maximus.ion_flux[south_i]
      PRINTF,lun,'15-ION_FLUX                (Flip sign in S Hemi)'
      
      ;;16-ION_FLUX_UP uses abs val
@@ -198,6 +204,11 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;;19-CHAR_ION_ENERGY--what to do?
      PRINTF,lun,'19-CHAR_ION_ENERGY         (In AS5, division of two quantities where hemi is not accounted for--how to interpret sign?)'
 
+     IF KEYWORD_SET(map_heavies) OR KEYWORD_SET(map_pflux) OR KEYWORD_SET(map_ionflux) THEN BEGIN
+        LOAD_MAPPING_RATIO_DB,mapRatio, $
+                              DO_DESPUNDB=do_despunDB
+        PRINTF,lun,"***Mapped the following to the ionosphere, multiplying by B_100km/B_alt"
+     ENDIF
 
      IF KEYWORD_SET(using_heavies) THEN BEGIN
 
@@ -214,12 +225,9 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         PRINTF,lun,'30-HELIUM_FLUX_UP             (Flip sign in N Hemi)'
 
         IF KEYWORD_SET(map_heavies) THEN BEGIN
-           LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                 DO_DESPUNDB=do_despunDB
            maximus.proton_flux_up = maximus.proton_flux_up * mapRatio.ratio
-           maximus.oxy_flux_up = maximus.oxy_flux_up * mapRatio.ratio
+           maximus.oxy_flux_up    = maximus.oxy_flux_up * mapRatio.ratio
            maximus.helium_flux_up = maximus.helium_flux_up * mapRatio.ratio
-           PRINTF,lun,"Mapped the following to the ionosphere, multiplying by B_100km/B_alt"
            PRINTF,lun,'-->26-PROTON_FLUX_UP'
            PRINTF,lun,'-->28-OXY_FLUX_UP'
            PRINTF,lun,'-->30-HELIUM_FLUX_UP'
@@ -228,15 +236,21 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
 
      ;;Added 2015/12/22
      IF KEYWORD_SET(map_pflux) THEN BEGIN
-        PRINTF,lun,'49-PFLUXEST                Map to ionosphere, multiplying by B_100km/B_alt'
-        LOAD_MAPPING_RATIO_DB,mapRatio, $
-                              DO_DESPUNDB=do_despunDB
-        maximus.pFluxEst = maximus.pFluxEst * mapRatio.ratio
+        maximus.pFluxEst          = maximus.pFluxEst * mapRatio.ratio
+        PRINTF,lun,'-->49-PFLUXEST'
+     ENDIF
+
+     IF KEYWORD_SET(map_ionflux) THEN BEGIN
+        maximus.ion_energy_flux   = maximus.ion_energy_flux * mapRatio.ratio
+        maximus.ion_flux          = maximus.ion_flux * mapRatio.ratio
+        maximus.ion_flux_up       = maximus.ion_flux_up * mapRatio.ratio
+        PRINTF,lun,'-->15-ION_FLUX'
+        PRINTF,lun,'-->16-ION_FLUX_UP'
      ENDIF
 
      ;;Now add the CORRECTED_FLUXES tag to maximus
      ;; maximus=CREATE_STRUCT(NAME='maximus',maximus,'CORRECTED_FLUXES',1)     
-     maximus=CREATE_STRUCT(maximus,'CORRECTED_FLUXES',1)     
+     maximus                      = CREATE_STRUCT(maximus,'CORRECTED_FLUXES',1)     
      PRINTF,lun,'...Finished correcting fluxes in Alfvén DB!'
 
   ENDIF ELSE BEGIN

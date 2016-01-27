@@ -1,4 +1,7 @@
-PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
+PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM, $
+                                 SHIFTM=shiftM, $
+                                 BINM=binM, $
+                                 MINI=minI,MAXI=maxI,BINI=binI, $
                                  ORBFREQRANGE=orbFreqRange, $
                                  H2DSTR=h2dStr,TMPLT_H2DSTR=tmplt_h2dStr, $
                                  H2DCONTRIBORBSTR=h2dContribOrbStr,H2DTOTORBSTR=h2dTotOrbStr, $
@@ -8,7 +11,11 @@ PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
                                       MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                                      MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI))
+                                      MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
+                                      SHIFT1=shiftM,SHIFT2=shiftI, $
+                                      CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                      CB_FORCE_OOBLOW=cb_force_oobLow)
+
   ;; h2dStr={tmplt_h2dStr}
   h2dStr          = tmplt_h2dStr
   h2dStr.title    = "Orbit Frequency"

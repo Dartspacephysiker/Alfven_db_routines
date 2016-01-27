@@ -16,7 +16,9 @@
 
 PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
                        OUTTIMEHISTO=outTimeHisto, FASTLOC_INDS=fastLoc_inds, $
-                       MINMLT=minMLT,MAXMLT=maxMLT,BINMLT=binMLT, $
+                       MINMLT=minMLT,MAXMLT=maxMLT, $
+                       BINMLT=binMLT, $
+                       SHIFTMLT=shiftM, $
                        MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
                        DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
                        MINALT=minAlt,MAXALT=maxAlt,BINALT=binAlt, $
@@ -57,7 +59,8 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
         PRINTF,lun,"Error! No outTimeHisto is in this file! Possibly corrupted/old timehisto file?"
         STOP
      ENDIF
-  ENDIF ELSE BEGIN
+  ENDIF
+  ;; ENDIF ELSE BEGIN
 
                                 ;are we doing a text file?
      IF KEYWORD_SET(output_textFile) THEN BEGIN
@@ -102,18 +105,24 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      mlts=indgen(nXlines)*binMLT+minMLT
      ilats=indgen(nYlines)*(KEYWORD_SET(do_lShell) ? binLshell : binILAT)+(KEYWORD_SET(do_lShell) ? minLshell : minILAT)
      
-     nMLT = N_ELEMENTS(mlts)
-     nILAT = N_ELEMENTS(ilats)
+     nMLT                           = N_ELEMENTS(mlts)
+     nILAT                          = N_ELEMENTS(ilats)
      
-     outTimeHisto = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
+     outTimeHisto                   = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
      
+     ;;fix MLTs
+     IF shiftM GT 0. THEN PRINT,'Shifting fastLoc MLTs by ' + STRCOMPRESS(shiftM,/REMOVE_ALL) + '...'
+     fastLocMLTs                    = fastLoc.mlt-shiftM 
+     fastLocMLTs[WHERE(fastLocMLTs LT 0.)] = fastLocMLTs[WHERE(fastLocMLTs LT 0.)] + 24.
+
+
                                 ;loop over MLTs and ILATs
      FOR j=0, nILAT-2 DO BEGIN 
         FOR i=0, nMLT-2 DO BEGIN 
-           ;; tempNCounts = N_ELEMENTS(WHERE(fastLoc.MLT GE mlts[i] AND fastLoc.MLT LT mlts[i+1] AND $
+           ;; tempNCounts = N_ELEMENTS(WHERE(fastLocMLTs GE mlts[i] AND fastLocMLTs LT mlts[i+1] AND $
            ;;                                (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) GE ilats[j] AND (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) LT ilats[j+1],/NULL))
            ;; tempBinTime = tempNCounts * delta_T
-           tempInds = WHERE(fastLoc.MLT GE mlts[i] AND fastLoc.MLT LT mlts[i+1] AND $
+           tempInds = WHERE(fastLocMLTs GE mlts[i] AND fastLocMLTs LT mlts[i+1] AND $
                             (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) GE ilats[j] AND $
                             (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) LT ilats[j+1],/NULL)
            IF tempInds NE !NULL THEN BEGIN
@@ -138,6 +147,6 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      PRINTF,lun,'Saving ' + outDir+outFileName + '...'
      
      IF KEYWORD_SET(output_textFile) THEN CLOSE,textLun
-  ENDELSE
+  ;; ENDELSE
 
 END

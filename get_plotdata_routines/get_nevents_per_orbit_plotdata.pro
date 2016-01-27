@@ -1,6 +1,9 @@
 ;2015
 ;2015/10/15 This may now have some serious problems as of this date; be sure to check it!
-PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
+PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
+                                   BINM=binM,$
+                                   SHIFTM=shiftM, $
+                                   MINI=minI,MAXI=maxI,BINI=binI, $
                                    DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                    ORBFREQRANGE=orbFreqRange, $
                                    DIVNEVBYAPPLICABLE=divNEvByApplicable,H2D_NONZERO_NEV_I=h2d_Nonzero_nEv_i, $
@@ -17,7 +20,11 @@ PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
                                       MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                                      MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI))
+                                      MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
+                                      SHIFT1=shiftM,SHIFT2=shiftI, $
+                                      CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                      CB_FORCE_OOBLOW=cb_force_oobLow)
+
   ;; h2dStr = {tmplt_h2dStr}
   h2dStr            = tmplt_h2dStr
   h2dStr.data[*,*]  = 0

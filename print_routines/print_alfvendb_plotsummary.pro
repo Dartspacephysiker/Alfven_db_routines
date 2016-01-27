@@ -2,7 +2,10 @@
 
 PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,good_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                               minMLT=minM,maxMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                               minMLT=minM,maxMLT=maxM, $
+                               BINMLT=binM, $
+                               SHIFTMLT=shiftM, $
+                               MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                                DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
@@ -10,6 +13,8 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,good_i,CLOCKSTR=clockStr, ANGLELIM1=angl
                                BZMIN=bzMin, $
                                BYMAX=byMax, $
                                BZMAX=bzMax, $
+                               DO_ABS_BYMIN=abs_byMin, $
+                               DO_ABS_BYMAX=abs_byMax, $
                                DO_ABS_BZMIN=abs_bzMin, $
                                DO_ABS_BZMAX=abs_bzMax, $
                                BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $

@@ -172,6 +172,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ;;Get polyfill vertices
   lonsLats                  = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(mlts,ilats, $
                                                                       BINSIZE_LON=binM, $
+                                                                      SHIFT_LON=temp.shift1, $
                                                                       BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
                                                                       /CONVERT_MLT_TO_LON, $
                                                                       COUNTERCLOCKWISE=KEYWORD_SET(reverse_lShell))
@@ -202,15 +203,21 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
               LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : defBoldLatDelta), $
               LONDELTA=defBoldLonDelta, $
               LATS=(KEYWORD_SET(do_lShell) ? gridLats : !NULL)
-              
 
   ;; Add map grid. Set the Clip_Text keyword to enable the NO_CLIP graphics keyword. 
+  IF KEYWORD_SET(temp.shift1) THEN BEGIN
+     ;; shiftedMLTs                     = ((maxM-minM)/binM+temp.shift1) * 15.
+     shiftedMLTs                     = (indgen((maxm-minm)/binm)*binm+temp.shift1)*15.
+  ENDIF ELSE BEGIN
+     shiftedMLTs                     = !NULL
+  ENDELSE
   cgMap_Grid, CLIP_TEXT=1, $
               /NOCLIP, $
               LINESTYLE=0, $
               THICK=(!D.Name EQ 'PS') ? defGridLineThick_PS : defGridLineThick_PS,$
               COLOR=defGridColor,LONDELTA=binM*15, $
               LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : binI ), $  
+              LONS=shiftedMLTs, $
               ;;LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI )
               LATS=(KEYWORD_SET(do_lShell) ? ilats : !NULL)
 

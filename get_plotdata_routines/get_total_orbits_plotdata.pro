@@ -1,5 +1,8 @@
 ;This thing will give you EVERYWHERE FAST has been, with no screening, so look out!
-PRO GET_TOTAL_ORBITS_PLOTDATA,maximus,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
+PRO GET_TOTAL_ORBITS_PLOTDATA,maximus,MINM=minM,MAXM=maxM, $
+                              BINM=binM, $
+                              SHIFTM=shiftM, $
+                              MINI=minI,MAXI=maxI,BINI=binI, $
                               DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                               ORBTOTRANGE=orbTotRange, $
                               H2DSTR=h2dStr,TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -19,7 +22,11 @@ PRO GET_TOTAL_ORBITS_PLOTDATA,maximus,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MA
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
                                       MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                                      MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI))
+                                      MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
+                                      SHIFT1=shiftM,SHIFT2=shiftI, $
+                                      CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                      CB_FORCE_OOBLOW=cb_force_oobLow)
+
   ;; h2dStr={tmplt_h2dStr}
   h2dStr           = tmplt_h2dStr
   h2dStr.data[*,*] = 0
@@ -43,10 +50,14 @@ PRO GET_TOTAL_ORBITS_PLOTDATA,maximus,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MA
   ;;   h2dStr.data += h2dOrbTemp 
   ;;ENDFOR
   
+  ;;fix MLTs
+  mlts                          = maximus.mlt-shiftM 
+  mlts[WHERE(mlts LT 0.)]       = mlts[WHERE(mlts LT 0.)] + 24.
+
   FOR j=0, N_ELEMENTS(uniqueOrbs_i)-1 DO BEGIN 
      tempOrb=maximus.orbit[uniqueOrbs_i[j]]
      temp_i=WHERE(maximus.orbit EQ tempOrb,/NULL) 
-     h2dOrbTemp=hist_2d(maximus.mlt[temp_i],$
+     h2dOrbTemp=hist_2d(mlts[temp_i],$
                         (KEYWORD_SET(do_lShell) ? maximus.lShell : maximus.ilat )[temp_i],$
                         BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                         MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$

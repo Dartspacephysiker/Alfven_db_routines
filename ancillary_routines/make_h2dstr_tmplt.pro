@@ -3,11 +3,9 @@
 FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                            MAX1=max1in,MAX2=max2in, $
                            BIN1=b1in,BIN2=b2in, $
+                           SHIFT1=s1in,SHIFT2=s2in, $
                            CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                            CB_FORCE_OOBLOW=cb_force_oobLow
-                           
-                           
-
 
     ;Supply default values for keywords.
     min1 = (N_ELEMENTS(min1in) gt 0) ? min1in : (0 < im1min)
@@ -16,6 +14,8 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
     max2 = (N_ELEMENTS(max2in) gt 0) ? max2in : im2max
     b1 = (N_ELEMENTS(b1in) gt 0) ? b1in : 1L
     b2 = (N_ELEMENTS(b2in) gt 0) ? b2in : 1L
+    s1 = (N_ELEMENTS(s1in) GT 0) ? s1in : 0
+    s2 = (N_ELEMENTS(s2in) GT 0) ? s2in : 0
 
     ;Get # of bins for each
     im1bins = FLOOR((max1-min1) / b1) + 1L
@@ -29,6 +29,8 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                   data            : DBLARR(im1bins,im2bins), $
                   title           : "Template for 2D hist structure", $
                   lim             : DBLARR(2), $
+                  shift1          : s1, $
+                  shift2          : s2, $
                   is_logged       : 0, $
                   is_fluxdata     : 0, $
                   labelFormat     : '', $

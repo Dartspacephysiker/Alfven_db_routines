@@ -1,4 +1,7 @@
-PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
+PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
+                                     BINM=binM, $
+                                     SHIFTM=shiftM, $
+                                     MINI=minI,MAXI=maxI,BINI=binI, $
                                      DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                                      ORBCONTRIBRANGE=orbContribRange, $
                                      UNIQUEORBS_I=uniqueOrbs_i,H2D_NONZERO_CONTRIBORBS_I=h2d_nonzero_contribOrbs_i, $
@@ -17,7 +20,10 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=bin
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                       MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? MINL : MINI),$
-                                      MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? MAXL : MAXI))
+                                      MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? MAXL : MAXI), $
+                                      SHIFT1=shiftM,SHIFT2=shiftI, $
+                                      CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                      CB_FORCE_OOBLOW=cb_force_oobLow)
   ;; h2dStr={tmplt_h2dStr}
   h2dStr           = tmplt_h2dStr
   h2dStr.data[*,*] = 0
@@ -28,10 +34,14 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=bin
   orbArr=INTARR(N_ELEMENTS(uniqueOrbs_i),N_ELEMENTS(tmplt_h2dStr.data[*,0]),N_ELEMENTS(tmplt_h2dStr.data[0,*]))
   ;; orbArr=INTARR(N_ELEMENTS(uniqueOrbs_i),N_ELEMENTS(h2dFluxN[*,0]),N_ELEMENTS(h2dFluxN[0,*]))
   
+  ;;fix MLTs
+  mlts                          = maximus.mlt[plot_i]-shiftM 
+  mlts[WHERE(mlts LT 0.)]        = mlts[WHERE(mlts LT 0.)] + 24.
+
   FOR j=0, N_ELEMENTS(uniqueOrbs_i)-1 DO BEGIN 
      tempOrb=maximus.orbit[uniqueOrbs_i[j]] 
      temp_ii=WHERE(maximus.orbit[plot_i] EQ tempOrb,/NULL) 
-     h2dOrbTemp=hist_2d(maximus.mlt[plot_i[temp_ii]],$
+     h2dOrbTemp=hist_2d(mlts[temp_ii],$
                         (KEYWORD_SET(do_lShell) ? maximus.lshell : maximus.ilat)[plot_i[temp_ii]],$
                         BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                         MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? MINL : MINI),$

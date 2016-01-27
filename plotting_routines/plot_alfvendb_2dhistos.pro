@@ -104,6 +104,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  CGPS_Open, plotDir + paramStr+dataNameArr[i]+'.ps',ENCAPSULATED=eps_output
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
                                        NO_COLORBAR=no_colorbar, $
+                                       MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
                                        _EXTRA=e 
                  CGPS_Close 
                  ;;Create a PNG file with a width of 800 pixels.

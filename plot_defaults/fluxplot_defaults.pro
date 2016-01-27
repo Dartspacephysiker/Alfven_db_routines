@@ -41,6 +41,10 @@ ionosphString_pub            = ', mapped to the ionosphere'
 scAltString                  = ', at s/c alt.'
 scAltString_pub              = ', at FAST altitude'
 
+;; IF KEYWORD_SET(fancy_plotNames) THEN BEGIN
+;;    scString                     = scAltString_pub
+;;    ionosString                  = ionosphString_pub
+;; ENDIF
 
 IF KEYWORD_SET(fancy_plotNames) THEN BEGIN
 title__alfDB_ind_08          = 'Max Loss Cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString_pub         ;"Integ"
@@ -53,21 +57,26 @@ title__alfDB_ind_13          = 'e!U-!N Total Characteristic Energy (' + charEUni
 title__alfDB_esa_nFlux       = 'e!U-!N Flux (' + numFluxStr + ')' + scAltString_pub                      ;"ESA_Number_flux"
 
 
-title__alfDB_ind_14          = 'Max Ion Energy Flux (' + energyFluxStr + ')' + scAltString_pub       ;"Energy"
-title__alfDB_ind_15          = 'Max Ion Flux (' + numFluxStr + ')' + scAltString_pub              ;"Max" 
-title__alfDB_ind_16          = 'Max Upward Ion Flux (' + numFluxStr + ')' + scAltString_pub       ;"Max_Up"
+;; title__alfDB_ind_14          = 'Max Ion Energy Flux (' + energyFluxStr + ')' + scAltString_pub       ;"Energy"
+;; title__alfDB_ind_15          = 'Max Ion Flux (' + numFluxStr + ')' + scAltString_pub              ;"Max" 
+;; title__alfDB_ind_16          = 'Max Upward Ion Flux (' + numFluxStr + ')' + scAltString_pub       ;"Max_Up"
+
+;;mapping these to ionos as of 2016/01/27
+title__alfDB_ind_14          = 'Max Ion Energy Flux (' + energyFluxStr + ')' + ionosphString_pub       ;"Energy"
+title__alfDB_ind_15          = 'Max Ion Flux (' + numFluxStr + ')' + ionosphString_pub              ;"Max" 
+title__alfDB_ind_16          = 'Max Upward Ion Flux (' + numFluxStr + ')' + ionosphString_pub       ;"Max_Up"
 
 title__alfDB_ind_17          = 'Integrated Ion Flux (' + integNumFluxStr + ')' + ionosphString_pub               ;"Integ"
 title__alfDB_ind_18          = 'Integrated Upward Ion Flux (' + integNumFluxStr + ')' + ionosphString_pub        ;"Integ_Up"
 
 title__alfDB_ind_19          = 'Ion Characteristic Energy (' + charEUnitString + ')'
 
-title__alfDB_ind_26          = 'Max Upward H+ Flux (' + numFluxStr + ')' + scAltString_pub       ;"Max_Up"
-title__alfDB_ind_27          = 'H+ Characteristic Energy (' + charEUnitString + ')' + scAltString_pub       ;"Max_Up"
-title__alfDB_ind_28          = 'Max Upward O+ Flux (' + numFluxStr + ')' + scAltString_pub       ;"Max_Up"
-title__alfDB_ind_29          = 'O+ Characteristic Energy (' + charEUnitString + ')' + scAltString_pub       ;"Max_Up"
-title__alfDB_ind_30          = 'Max Upward He+ Flux (' + numFluxStr + ')' + scAltString_pub       ;"Max_Up"
-title__alfDB_ind_31          = 'He+ Characteristic Energy (' + charEUnitString + ')' + scAltString_pub       ;"Max_Up"
+;; title__alfDB_ind_26          = 'Max Upward H+ Flux (' + numFluxStr + ')' + scAltString_pub       ;"Max_Up"
+;; title__alfDB_ind_27          = 'H+ Characteristic Energy (' + charEUnitString + ')' + scAltString_pub       ;"Max_Up"
+;; title__alfDB_ind_28          = 'Max Upward O+ Flux (' + numFluxStr + ')' + scAltString_pub       ;"Max_Up"
+;; title__alfDB_ind_29          = 'O+ Characteristic Energy (' + charEUnitString + ')' + scAltString_pub       ;"Max_Up"
+;; title__alfDB_ind_30          = 'Max Upward He+ Flux (' + numFluxStr + ')' + scAltString_pub       ;"Max_Up"
+;; title__alfDB_ind_31          = 'He+ Characteristic Energy (' + charEUnitString + ')' + scAltString_pub       ;"Max_Up"
 
 title__alfDB_ind_26          = 'Max Upward H+ Flux (' + numFluxStr + ')' + ionosphString_pub       ;"Max_Up"
 title__alfDB_ind_27          = 'H+ Characteristic Energy (' + charEUnitString + ')' + scAltString_pub       ;"Max_Up"
@@ -86,9 +95,9 @@ title__alfDB_ind_11          = 'Total Integ. e!U-!N Energy Flux (' + intEnergyFl
 title__alfDB_ind_12          = 'e!U-!N Losscone Characteristic Energy (' + charEUnitString + ')'                  ;"lossCone"
 title__alfDB_ind_13          = 'e!U-!N Total Characteristic Energy (' + charEUnitString + ')'                     ;"Total"
 title__alfDB_esa_nFlux       = 'e!U-!N Flux (' + numFluxStr + ')' + scAltString                      ;"ESA_Number_flux"
-title__alfDB_ind_14          = 'Max Ion Energy Flux (' + energyFluxStr + ')' + scAltString       ;"Energy"
-title__alfDB_ind_15          = 'Max Ion Flux (' + numFluxStr + ')' + scAltString              ;"Max" 
-title__alfDB_ind_16          = 'Max Upward Ion Flux (' + numFluxStr + ')' + scAltString       ;"Max_Up"
+title__alfDB_ind_14          = 'Max Ion Energy Flux (' + energyFluxStr + ')' + ionosphString       ;"Energy"
+title__alfDB_ind_15          = 'Max Ion Flux (' + numFluxStr + ')' + ionosphString              ;"Max" 
+title__alfDB_ind_16          = 'Max Upward Ion Flux (' + numFluxStr + ')' + ionosphString       ;"Max_Up"
 title__alfDB_ind_17          = 'Integ. Ion Flux (' + integNumFluxStr + ')' + ionosphString               ;"Integ"
 title__alfDB_ind_18          = 'Integ. Upward Ion Flux (' + integNumFluxStr + ')' + ionosphString        ;"Integ_Up"
 title__alfDB_ind_19          = 'Ion Characteristic Energy (' + charEUnitString + ')'

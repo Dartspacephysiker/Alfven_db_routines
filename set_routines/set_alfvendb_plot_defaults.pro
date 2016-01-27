@@ -1,5 +1,8 @@
 PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, POYNTRANGE=poyntRange, $
-                               MINMLT=minMLT,MAXMLT=maxMLT,BINMLT=binMLT,MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
+                               MINMLT=minMLT,MAXMLT=maxMLT, $
+                               BINMLT=binMLT, $
+                               SHIFTMLT=shiftMLT, $
+                               MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
                                DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
@@ -43,7 +46,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
   hoyDia=GET_TODAY_STRING()
 
   ; Handle MLT and ILAT ... and L-shell
-  SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minMLT,MAXMLT=maxMLT,BINM=binMLT, $
+  SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minMLT,MAXMLT=maxMLT, $
+                                BINM=binMLT, $
+                                SHIFTMLT=shiftMLT, $
                                 MINILAT=minILAT,MAXILAT=maxILAT,BINI=binILAT, $
                                 MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
                                 MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $

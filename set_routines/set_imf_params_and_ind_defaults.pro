@@ -75,6 +75,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     BZMIN=bzMin, $
                                     BYMAX=byMax, $
                                     BZMAX=bzMax, $
+                                    DO_ABS_BYMIN=abs_byMin, $
+                                    DO_ABS_BYMAX=abs_byMax, $
                                     DO_ABS_BZMIN=abs_bzMin, $
                                     DO_ABS_BZMAX=abs_bzMax, $
                                     BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
@@ -110,10 +112,12 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   
   defClockStr            = 'dawnward'
   
-  defAngleLim1           = 60.0
-  defAngleLim2           = 120.0
-  ;; defAngleLim1           = 45.0
-  ;; defAngleLim2           = 135.0
+  ;; defAngleLim1           = 60.0
+  ;; defAngleLim2           = 120.0
+  ;; defAngleLim1           = 30.0
+  ;; defAngleLim2           = 150.0
+  defAngleLim1           = 45.0
+  defAngleLim2           = 135.0
 
   ;;***********************************************
   ;;RESTRICTIONS ON DATA, SOME VARIABLES

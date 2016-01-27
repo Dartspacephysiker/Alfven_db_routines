@@ -1,12 +1,15 @@
 FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
-                              BINSIZE_LON=binsize_lon,BINSIZE_LAT=binsize_lat, $
+                              BINSIZE_LON=binsize_lon, $
+                              SHIFT_LON=shift_lon, $
+                              BINSIZE_LAT=binsize_lat, $
                               CONVERT_MLT_TO_LON=convert_MLT_to_lon,COUNTERCLOCKWISE=counterclockwise, $
                               DEBUG=debug
 
   COMPILE_OPT idl2
 
   IF KEYWORD_SET(convert_mlt_to_lon) THEN BEGIN
-     lons=lons*15
+     ;;Need to have the lons wrap here!!! Pick it up, boah!
+     lons=(lons+shift_lon)*15
      lonFactor = binsize_lon*15/2.0
   ENDIF ELSE BEGIN
      lonFactor = binsize_lon/2.0

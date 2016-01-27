@@ -3,11 +3,16 @@
 PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                                  LOGPROBOCCURRENCE=logProbOccurrence, PROBOCCURRENCERANGE=probOccurrenceRange, $
                                  DO_WIDTH_X=do_width_x, $
-                                 MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
+                                 MINM=minM,MAXM=maxM, $
+                                 BINM=binM, $
+                                 SHIFTM=shiftM, $
+                                 MINI=minI,MAXI=maxI,BINI=binI, $
                                  DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                                  OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
                                  H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                                 H2DSTR=h2dStr,TMPLT_H2DSTR=tmplt_h2dStr, $
+                                 H2DSTR=h2dStr, $
+                                 H2DFLUXN=h2dFluxN, $
+                                 TMPLT_H2DSTR=tmplt_h2dStr, $
                                  DATANAME=dataName,DATARAWPTR=dataRawPtr, $
                                  PRINT_MAX_AND_MIN=print_mandm, $
                                  LUN=lun
@@ -23,7 +28,9 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                       MIN1=minM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
-                                      MAX1=maxM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI))
+                                      MAX1=maxM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI), $
+                                      SHIFT1=shiftM,SHIFT2=shiftI)
+
   ;; h2dStr                     = {tmplt_h2dStr}
   h2dStr                     = tmplt_h2dStr
   h2dStr.title               = "Probability of occurrence"
@@ -43,8 +50,12 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
      widthData = maximus.width_time[plot_i]
   ENDELSE
 
-  h2dStr.data=hist2d(maximus.mlt[plot_i], $
-                      (KEYWORD_SET(do_lshell) ? maximus.lshell : maximus.ilat)[plot_i],$
+  ;;fix MLTs
+  mlts                          = maximus.mlt[plot_i]-shiftM 
+  mlts[WHERE(mlts LT 0.)]        = mlts[WHERE(mlts LT 0.)] + 24.
+
+  h2dStr.data=hist2d(mlts, $
+                     (KEYWORD_SET(do_lshell) ? maximus.lshell : maximus.ilat)[plot_i],$
                       widthData,$
                       MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
                       MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
@@ -52,17 +63,32 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                       OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
   
   ;;make sure this makes any sense
-  this = WHERE( h2dstr.data EQ 0 )
-  that = WHERE( thistdenominator EQ 0 )
-  nBad = 0
+  this   = WHERE( h2dstr.data EQ 0 )
+  that   = WHERE( thistdenominator EQ 0 )
+  nBad   = 0
+  iBad   = !NULL
   FOR i=0,N_ELEMENTS(that)-1 DO BEGIN
-     test = WHERE( that[i] EQ this )
-     IF test[0] EQ -1 THEN nBad++        
-
+     test                             = WHERE( that[i] EQ this )
+     IF test[0] EQ -1 THEN BEGIN
+        iBad                          = [iBad,that[i]]
+        nBad++
+     ENDIF
   ENDFOR
   IF nBad GT 0 THEN BEGIN
+     nMLTs                            = N_ELEMENTS(outH2DBinsMLT)
      PRINT,STRCOMPRESS(nBad,/REMOVE_ALL) + " instances in the widthData histo where there are supposedly events, but the ephemeris data reports fast was never there!"
      PRINT,"Absurdity"
+     threshold                       = 0.15           ;seconds
+     PRINT,FORMAT='("Index",T10,"MLT",T20,"ILAT",T30,"Width_tval",T45,"N contr. events")'
+     FOR i=0,nBad-1 DO BEGIN
+        ind                           = iBad[i]
+        PRINT,FORMAT='(I0,T10,F0.2,T20,F0.2,T30,F0.3,T45,I0)',ind,outH2DBinsMLT[ind MOD nMLTs],outH2DBinsILAT[ind / nMLTs],h2dStr.data[ind],h2dFluxN[ind]
+        IF h2dstr.data[ind] LT threshold THEN BEGIN
+           PRINT,'-->Below threshold (' + STRCOMPRESS(threshold,/REMOVE_ALL) + '); setting this width_time to zero ...'
+           h2dstr.data[ind]           = 0
+        ENDIF
+     ENDFOR
+     PRINT,""
      STOP
   ENDIF
 

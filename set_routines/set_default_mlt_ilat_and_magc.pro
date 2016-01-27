@@ -1,5 +1,7 @@
 ;2015/01/01 Added NORTH, SOUTH, BOTH_HEMIS keywords
-PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
+PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
+                                  BINM=binM, $
+                                  SHIFTMLT=shiftM, $
                                   MINILAT=minI,MAXILAT=maxI,BINI=binI, $
                                   MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
                                   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
@@ -16,6 +18,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
   defMinM     = 0
   defMaxM     = 24
   defBinM     = 1.0
+  defShiftM   = 0.0
 
   defHemi     = 'North'
   defMinI     = 50
@@ -37,7 +40,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
   IF N_ELEMENTS(minM) EQ 0 THEN minM=defMinM
   IF N_ELEMENTS(maxM) EQ 0 THEN maxM=defMaxM
   IF N_ELEMENTS(binM) EQ 0 THEN binM=defBinM
-
+  IF N_ELEMENTS(shiftM) EQ 0 THEN shiftM=defShiftM
   minM=FLOOR(minM*4.0)/4.0  ;to 1/4 precision
   maxM=FLOOR(maxM*4.0)/4.0 
 

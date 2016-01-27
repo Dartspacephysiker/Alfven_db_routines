@@ -1,5 +1,7 @@
 PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
-                             MINM=minM,MAXM=maxM,BINM=binM, $
+                             MINM=minM,MAXM=maxM, $
+                             BINM=binM, $
+                             SHIFTM=shiftM, $
                              MINI=minI,MAXI=maxI,BINI=binI, $
                              DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                              NEVENTSPLOTRANGE=nEventsPlotRange, $
@@ -21,6 +23,7 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
      tmplt_h2dStr               = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                                     MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
                                                     MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI), $
+                                                    SHIFT1=shiftM,SHIFT2=shiftI, $
                                                     CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                                     CB_FORCE_OOBLOW=cb_force_oobLow)
      
@@ -37,7 +40,11 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
 
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
-  h2dFluxN                      = HIST_2D(maximus.mlt[plot_i],$
+  ;; h2dFluxN                      = HIST_2D(maximus.mlt[plot_i],$
+  mlts                          = maximus.mlt[plot_i]-shiftM      ;shift MLTs backwards, because we want to shift the binning FORWARD
+  mlts[WHERE(mlts LT 0)]        = mlts[WHERE(mlts LT 0)] + 24
+
+  h2dFluxN                      = HIST_2D(mlts,$
                                           (KEYWORD_SET(do_lShell) ? $
                                            maximus.lshell : maximus.ilat)[plot_i],$
                                           BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$

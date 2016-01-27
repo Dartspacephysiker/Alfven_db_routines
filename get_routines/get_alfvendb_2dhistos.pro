@@ -6,6 +6,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           MINMLT=minM, $
                           MAXMLT=maxM, $
                           BINMLT=binM, $
+                          SHIFTMLT=shiftM, $
                           MINILAT=minI, $
                           MAXILAT=maxI, $
                           BINILAT=binI, $
@@ -30,6 +31,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           BZMIN=bzMin, $
                           BYMAX=byMax, $
                           BZMAX=bzMax, $
+                          DO_ABS_BYMIN=abs_byMin, $
+                          DO_ABS_BYMAX=abs_byMax, $
                           DO_ABS_BZMIN=abs_bzMin, $
                           DO_ABS_BZMAX=abs_bzMax, $
                           DELAY=delay, $
@@ -117,6 +120,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                            MINM=minM, $
                            MAXM=maxM, $
                            BINM=binM, $
+                           SHIFTM=shiftM, $
                            MINI=minI, $
                            MAXI=maxI, $
                            BINI=binI, $
@@ -148,6 +152,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MINM=minM, $
                        MAXM=maxM, $
                        BINM=binM, $
+                       SHIFTM=shiftM, $
                        MINI=minI, $
                        MAXI=maxI, $
                        BINI=binI, $
@@ -191,6 +196,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MINM=minM, $
                        MAXM=maxM, $
                        BINM=binM, $
+                       SHIFTM=shiftM, $
                        MINI=minI, $
                        MAXI=maxI, $
                        BINI=binI, $
@@ -235,6 +241,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MINM=minM, $
                        MAXM=maxM, $
                        BINM=binM, $
+                       SHIFTM=shiftM, $
                        MINI=minI, $
                        MAXI=maxI, $
                        BINI=binI, $
@@ -277,6 +284,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MINM=minM, $
                        MAXM=maxM, $
                        BINM=binM, $
+                       SHIFTM=shiftM, $
                        MINI=minI, $
                        MAXI=maxI, $
                        BINI=binI, $
@@ -320,6 +328,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MINM=minM, $
                        MAXM=maxM, $
                        BINM=binM, $
+                       SHIFTM=shiftM, $
                        MINI=minI, $
                        MAXI=maxI, $
                        BINI=binI, $
@@ -363,6 +372,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MINM=minM, $
                        MAXM=maxM, $
                        BINM=binM, $
+                       SHIFTM=shiftM, $
                        MINI=minI, $
                        MAXI=maxI, $
                        BINI=binI, $
@@ -419,6 +429,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                       MINM=minM, $
                                       MAXM=maxM, $
                                       BINM=binM, $
+                                      SHIFTM=shiftM, $
                                       MINI=minI, $
                                       MAXI=maxI, $
                                       BINI=binI, $
@@ -457,6 +468,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                MINM=minM, $
                                MAXM=maxM, $
                                BINM=binM, $
+                               SHIFTM=shiftM, $
                                MINI=minI, $
                                MAXI=maxI, $
                                BINI=binI, $
@@ -486,6 +498,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                   MINM=minM, $
                                   MAXM=maxM, $
                                   BINM=binM, $
+                                  SHIFTM=shiftM, $
                                   MINI=minI, $
                                   MAXI=maxI, $
                                   BINI=binI, $
@@ -509,6 +522,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     MINM=minM, $
                                     MAXM=maxM, $
                                     BINM=binM, $
+                                    SHIFTM=shiftM, $
                                     MINI=minI, $
                                     MAXI=maxI, $
                                     BINI=binI, $
@@ -543,6 +557,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  BYMAX=byMax, $
                                                  BZMIN=bzMin, $
                                                  BZMAX=bzMax, $
+                                                 DO_ABS_BYMIN=abs_byMin, $
+                                                 DO_ABS_BYMAX=abs_byMax, $
                                                  DO_ABS_BZMIN=abs_bzMin, $
                                                  DO_ABS_BZMAX=abs_bzMax, $
                                                  SATELLITE=satellite, $
@@ -557,6 +573,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  MINM=minM, $
                                                  MAXM=maxM, $
                                                  BINM=binM, $
+                                                 SHIFTM=shiftM, $
                                                  MINI=minI, $
                                                  MAXI=maxI, $
                                                  BINI=binI, $
@@ -584,6 +601,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                   MINM=minM, $
                                   MAXM=maxM, $
                                   BINM=binM, $
+                                  SHIFTM=shiftM, $
                                   MINI=minI, $
                                   MAXI=maxI, $
                                   BINI=binI, $
@@ -615,6 +633,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                      MINM=minM, $
                                      MAXM=maxM, $
                                      BINM=binM, $
+                                     SHIFTM=shiftM, $
                                      MINI=minI, $
                                      MAXI=maxI, $
                                      BINI=binI, $
@@ -626,6 +645,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                      OUTH2DBINSILAT=outH2DBinsILAT, $
                                      OUTH2DBINSLSHELL=outH2DBinsLShell, $
                                      H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                     H2DFLUXN=h2dFluxN, $
                                      H2DSTR=h2dStr, $
                                      TMPLT_H2DSTR=tmplt_h2dStr, $
                                      DATANAME=dataName, $

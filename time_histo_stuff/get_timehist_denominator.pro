@@ -5,12 +5,16 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
                                   BYMAX=byMax, $
                                   BZMIN=bzMin, $
                                   BZMAX=bzMax, $
+                                  DO_ABS_BYMIN=abs_byMin, $
+                                  DO_ABS_BYMAX=abs_byMax, $
                                   DO_ABS_BZMIN=abs_bzMin, $
                                   DO_ABS_BZMAX=abs_bzMax, $
                                   SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                   DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                   DO_UTC_RANGE=DO_UTC_range,T1_ARR=t1_arr,T2_ARR=t2_arr, $
-                                  MINM=minM,MAXM=maxM,BINM=binM, $
+                                  MINM=minM,MAXM=maxM, $
+                                  BINM=binM, $
+                                  SHIFTM=shiftM, $
                                   MINI=minI,MAXI=maxI,BINI=binI, $
                                   DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                   HEMI=hemi, $
@@ -59,6 +63,8 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
                                 BYMAX=byMax, $
                                 BZMIN=bzMin, $
                                 BZMAX=bzMax, $
+                                DO_ABS_BYMIN=abs_byMin, $
+                                DO_ABS_BYMAX=abs_byMax, $
                                 DO_ABS_BZMIN=abs_bzMin, $
                                 DO_ABS_BZMAX=abs_bzMax, $
                                 SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
@@ -110,7 +116,9 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
   MAKE_FASTLOC_HISTO,OUTTIMEHISTO=tHistDenominator, $
                      FASTLOC_INDS=fastLocInterped_i, $
                      FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
-                     MINMLT=minM,MAXMLT=maxM,BINMLT=binM, $
+                     MINMLT=minM,MAXMLT=maxM, $
+                     BINMLT=binM, $
+                     SHIFTMLT=shiftM, $
                      MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                      DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                      FASTLOCFILE=fastLocFile,FASTLOCTIMEFILE=fastLocTimeFile, $
@@ -120,7 +128,10 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
 
   PRINT_TIMEHISTO_SUMMARY,fastLoc,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                           ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                          minMLT=minM,maxMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                          minMLT=minM,maxMLT=maxM, $
+                          BINMLT=binM, $
+                          SHIFTMLT=shiftM, $
+                          MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                           DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                           MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                           HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $

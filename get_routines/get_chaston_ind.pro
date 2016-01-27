@@ -237,7 +237,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
   IF KEYWORD_SET(print_param_summary) THEN BEGIN
      PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,good_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                 ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                                minMLT=minM,maxMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                                minMLT=minM,maxMLT=maxM, $
+                                BINMLT=binM, $
+                                SHIFTMLT=shiftM, $
+                                MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                                 DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                                 MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                 HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $

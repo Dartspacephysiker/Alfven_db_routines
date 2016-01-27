@@ -5,7 +5,10 @@
 ;2015/12/03 Fix e- number flux; most of those aren't actually number fluxes
 ; I've added this information to CORRECT_ALFVENDB_FLUXES
 
-PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAXI=maxI,BINI=binI, $
+PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
+                      BINM=binM, $
+                      SHIFTM=shiftM, $
+                      MINI=minI,MAXI=maxI,BINI=binI, $
                       DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                       OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
                       FLUXPLOTTYPE=fluxPlotType,PLOTRANGE=plotRange, $
@@ -55,8 +58,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
      tmplt_h2dStr  = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
-                                      MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                                      MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI))
+                                       MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
+                                       MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
+                                       SHIFT1=shiftM,SHIFT2=shiftI, $
+                                       CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                       CB_FORCE_OOBLOW=cb_force_oobLow)
   ENDIF
 
   ;; h2dStr                    = {tmplt_h2dStr}
@@ -246,31 +252,36 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=minI,MAX
                               (KEYWORD_SET(fluxPlotType) ? STRUPCASE(fluxplottype) : '')
   h2dStr.title              = absnegslogStr + h2dStr.title
 
+  ;;fix MLTs
+  mlts                           = maximus.mlt[plot_i]-shiftM        ;shift MLTs backwards, because we want to shift the binning FORWARD
+  mlts[WHERE(mlts LT 0.)]        = mlts[WHERE(mlts LT 0.)] + 24.
+
   IF KEYWORD_SET(medianplot) THEN BEGIN 
 
      IF KEYWORD_SET(medHistOutData) THEN BEGIN
         medHistDatFile      = medHistDataDir + dataName+"medhist_data.sav"
      ENDIF
 
-     h2dStr.data=median_hist(maximus.mlt[plot_i],(KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[plot_i],$
-                              inData,$
-                              MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                              MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
-                              BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
-                              OBIN1=outH2DBinsMLT,OBIN2=(KEYWORD_SET(do_lshell) ? outH2DBinsLShell : outH2DBinsILAT),$
-                              ABSMED=absFlux,OUTFILE=medHistDatFile,PLOT_I=plot_i) 
+     h2dStr.data=median_hist(mlts, $
+                             (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[plot_i],$
+                             inData,$
+                             MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
+                             MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
+                             BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                             OBIN1=outH2DBinsMLT,OBIN2=(KEYWORD_SET(do_lshell) ? outH2DBinsLShell : outH2DBinsILAT),$
+                             ABSMED=absFlux,OUTFILE=medHistDatFile,PLOT_I=plot_i) 
 
      IF KEYWORD_SET(medHistOutTxt) THEN MEDHISTANALYZER,INFILE=medHistDatFile,outFile=medHistDataDir + dataName + "medhist.txt"
 
   ENDIF ELSE BEGIN 
 
-     h2dStr.data=hist2d(maximus.mlt[plot_i], $
-                         (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[plot_i],$
-                         (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
-                         MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                         MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
-                         BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
-                         OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+     h2dStr.data=hist2d(mlts, $
+                        (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[plot_i],$
+                        (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
+                        MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
+                        MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
+                        BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                        OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
      h2dStr.data[h2d_nonzero_nEv_i]=h2dStr.data[h2d_nonzero_nEv_i]/h2dFluxN[h2d_nonzero_nEv_i] 
 
      IF KEYWORD_SET(logAvgPlot) THEN h2dStr.data[where(h2dFluxN NE 0,/null)] = 10^(h2dStr.data[where(h2dFluxN NE 0,/null)])
