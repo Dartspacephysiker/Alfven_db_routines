@@ -22,6 +22,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   
   @orbplot_tplot_defaults.pro
 
+  OPENW,lun,'/SPENCEdata/Research/Cusp/ACE_FAST/20160130--Alfven_cusp_figure_of_merit/Output_for_SOUTH_proboccurrence.txt',/APPEND,/GET_LUN
+
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
   IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
 
@@ -43,6 +45,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   h2dStr.do_midCBLabel       = defProbOccurrence_do_midCBLabel
   dataName                   = "probOccurrence"
   
+  h2dStr.force_oobHigh       = 0
+
   IF KEYWORD_SET(do_width_x) THEN BEGIN
      widthData = maximus.width_x[plot_i]
      dataName  = "probOccurrence_width_x"
@@ -51,7 +55,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   ENDELSE
 
   ;;fix MLTs
-  mlts                          = maximus.mlt[plot_i]-shiftM 
+  mlts                           = maximus.mlt[plot_i]-shiftM 
   mlts[WHERE(mlts LT 0.)]        = mlts[WHERE(mlts LT 0.)] + 24.
 
   h2dStr.data=hist2d(mlts, $
@@ -76,20 +80,23 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   ENDFOR
   IF nBad GT 0 THEN BEGIN
      nMLTs                            = N_ELEMENTS(outH2DBinsMLT)
-     PRINT,STRCOMPRESS(nBad,/REMOVE_ALL) + " instances in the widthData histo where there are supposedly events, but the ephemeris data reports fast was never there!"
-     PRINT,"Absurdity"
+     PRINTF,lun,STRCOMPRESS(nBad,/REMOVE_ALL) + " instances in the widthData histo where there are supposedly events, but the ephemeris data reports fast was never there!"
+     PRINTF,lun,"Absurdity"
      threshold                       = 0.15           ;seconds
-     PRINT,FORMAT='("Index",T10,"MLT",T20,"ILAT",T30,"Width_tval",T45,"N contr. events")'
+     PRINTF,lun,FORMAT='("Index",T10,"MLT",T20,"ILAT",T30,"Width_tval",T45,"N contr. events")'
      FOR i=0,nBad-1 DO BEGIN
         ind                           = iBad[i]
-        PRINT,FORMAT='(I0,T10,F0.2,T20,F0.2,T30,F0.3,T45,I0)',ind,outH2DBinsMLT[ind MOD nMLTs],outH2DBinsILAT[ind / nMLTs],h2dStr.data[ind],h2dFluxN[ind]
-        IF h2dstr.data[ind] LT threshold THEN BEGIN
-           PRINT,'-->Below threshold (' + STRCOMPRESS(threshold,/REMOVE_ALL) + '); setting this width_time to zero ...'
-           h2dstr.data[ind]           = 0
-        ENDIF
+        PRINTF,lun,FORMAT='(I0,T10,F0.2,T20,F0.2,T30,F0.3,T45,I0)',ind,outH2DBinsMLT[ind MOD nMLTs],outH2DBinsILAT[ind / nMLTs],h2dStr.data[ind],h2dFluxN[ind]
+        ;; IF h2dstr.data[ind] LT threshold THEN BEGIN
+        ;;    PRINTF,lun,,'-->Below threshold (' + STRCOMPRESS(threshold,/REMOVE_ALL) + '); setting this width_time to zero ...'
+        ;;    h2dstr.data[ind]           = 0
+        ;; ENDIF
+        PRINTF,lun,'Setting this width_time to zero ...'
+        h2dstr.data[ind]              = 0
+        tHistDenominator[ind]         = 999999.
      ENDFOR
-     PRINT,""
-     STOP
+     PRINTF,lun,""
+     ;; STOP
   ENDIF
 
   h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/tHistDenominator[WHERE(h2dstr.data GT 0)]
@@ -109,4 +116,6 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
 
   dataRawPtr = PTR_NEW(widthData)
   
+  CLOSE,lun
+
 END

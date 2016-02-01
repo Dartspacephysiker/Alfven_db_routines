@@ -23,6 +23,7 @@
 ;            2016/01/01   Barn
 ;-
 PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
+                               N_TO_COMBINE=n_to_combine, $
                                TEMPFILES=tempFiles, $
                                ;; LOGAVGPLOTS=logAvgPlots, $
                                ;; MEDIANPLOT=medianPlot, $
@@ -38,7 +39,12 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
 
      ;;Get the number of plots to combine
      RESTORE,tempFiles[0]
-     nPlots                           = N_ELEMENTS(dataNameArr)-1
+
+     IF ~KEYWORD_SET(n_to_combine) THEN BEGIN
+        nPlots                        = N_ELEMENTS(dataNameArr)-1
+     ENDIF ELSE BEGIN
+        nPlots                        = n_to_combine
+     ENDELSE
      PRINT,FORMAT='("Combining these plots: ",10(A0, :,"  "))',dataNameArr[0:nPlots-1]
 
      ;;What kind?
