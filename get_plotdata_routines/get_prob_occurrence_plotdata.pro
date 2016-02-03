@@ -117,5 +117,6 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   dataRawPtr = PTR_NEW(widthData)
   
   CLOSE,lun
+  FREE_LUN,lun
 
 END
