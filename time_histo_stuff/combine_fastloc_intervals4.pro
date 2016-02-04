@@ -19,7 +19,7 @@ PRO COMBINE_FASTLOC_INTERVALS4,fastLoc
   ;; maxOrb       = 16361
 
   minOrb          = 500
-  maxOrb          = 510
+  maxOrb          = 4999
 
   fNamePrefix     = 'Dartmouth_fastloc_intervals4'
   fNameSuffix     = '--below_aur_oval.sav'
