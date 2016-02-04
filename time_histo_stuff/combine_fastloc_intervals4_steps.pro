@@ -18,24 +18,21 @@ PRO COMBINE_FASTLOC_INTERVALS4_STEPS,fastLoc
   ;; minOrb                 = 14064
   ;; maxOrb                 = 16361
 
-  minOrb                    = 500
-  maxOrb                    = 4999
+  minOrb                    = 9750
+  maxOrb                    = 11000
   fileStep                  = 250
 
   fNamePrefix               = 'Dartmouth_fastloc_intervals4'
   fNameSuffix               = '--below_aur_oval.sav'
   fNameSuffLen              = STRLEN(fNameSuffix)
 
-  outDir                    = '/SPENCEdata/Research/Cusp/database/time_histos/'
-  ;; outSuffix              = '500-3126--below_aur_oval'
-  ;; outSuffix              = '3127-5999--below_aur_oval'
-  ;; outSuffix              = '6000-10780--below_aur_oval'
+  outDir                    = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/'
 
  ;open file to write list of orbits included
   OPENW,outlun,contents_file,/get_lun
 
   i                         = 0
-  nSteps                    = (maxOrb-minOrb)/fileStep-1
+  nSteps                    = (maxOrb-minOrb)/fileStep
   WHILE i LT nSteps DO BEGIN
 
      stepMin                = minOrb+i*fileStep
@@ -96,7 +93,7 @@ PRO COMBINE_FASTLOC_INTERVALS4_STEPS,fastLoc
      save,fastloc_times,fastLoc_delta_t,FILENAME=outDir+outTimeFile
 
      i++
-  ENDWHILE
+ ENDWHILE
 
 
   RETURN

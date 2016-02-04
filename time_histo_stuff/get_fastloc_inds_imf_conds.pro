@@ -36,7 +36,8 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
   ;; minI=-88
   ;; maxI=88
 
-  fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/time_histos/'
+  ;; fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals3/'
+  fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/'
 
   IF NOT KEYWORD_SET(lun) THEN lun = -1 ;stdout
   
@@ -92,7 +93,8 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
                                     DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
                                     LUN=lun
 
-  defOutIndsPrefix = 'fastLoc_intervals3'
+  ;; defOutIndsPrefix = 'fastLoc_intervals3'
+  defOutIndsPrefix = 'fastLoc_intervals4'
   IF KEYWORD_SET(outIndsPrefix) THEN outIndsPrefix = defOutIndsPrefix + outIndsPrefix ELSE outIndsPrefix = defOutIndsPrefix
   IF ~KEYWORD_SET(outIndsSuffix) THEN outIndsSuffix = ''
   ;;********************************************
