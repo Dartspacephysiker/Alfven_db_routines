@@ -33,7 +33,7 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
   ;; defOutFilePrefix = 'fastLoc_intervals3--timeHisto--INDS_from_get_fastloc_inds_imf_conds'
   ;; defOutDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals3/time_histos/'
 
-  defOutFilePrefix = 'fastLoc_intervals4--timeHisto--INDS_from_get_fastloc_inds_imf_conds'
+  defOutFilePrefix = 'fastLoc_intervals4--timeHisto--inds_from_get_fastloc_inds_imf_conds'
   defOutDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/time_histos/'
 
   IF N_ELEMENTS(outFilePrefix) EQ 0 THEN outFilePrefix = defOutFilePrefix

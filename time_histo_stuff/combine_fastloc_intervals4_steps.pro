@@ -90,7 +90,7 @@ PRO COMBINE_FASTLOC_INTERVALS4_STEPS,fastLoc
      save,fastLoc_Times,fastLoc_delta_t,FILENAME=outDir+outTimeFile_raw
      fastLoc_delta_t[-1]                             = 2.5 ;treat last element specially, since otherwise it is a huge negative number
      ;; fastLoc_delta_t                                = ROUND(fastLoc_delta_t*4.0)/4.0          ;round to nearest quarter of a second
-     fastLoc_delta_t[WHERE(fastLoc_delta_t GT 5.0)]  = 2.5 ;many events with a large delta_t correspond to ends of intervals/orbits
+     fastLoc_delta_t[WHERE(ABS(fastLoc_delta_t) GT 5.0)]  = 2.5 ;many events with a large delta_t correspond to ends of intervals/orbits
 
      PRINT,'Saving fastLoc_times & Co. to ' + outTimeFile + '...'
      save,fastloc_times,fastLoc_delta_t,FILENAME=outDir+outTimeFile

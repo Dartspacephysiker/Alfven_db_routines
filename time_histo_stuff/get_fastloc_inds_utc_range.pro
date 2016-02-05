@@ -1,6 +1,7 @@
 ;+
 ;;Note, MINMLT,MAXILAT, etc., keywords got added 2015/10/27, and they may screw up other stuff. Just so
 ;;you know!
+;2016/02/05 Nowe we have fastloc4, which isn't full of lies.
 ;2015/10/21 Now using output from fastloc_intervals3, which includes magnetometer sampling rates
 ;2015/04/09
 ;this can be used as a standalone routine or else called by plot_alfven_stats_imf_screening when
@@ -47,7 +48,8 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ;; minI=-88
   ;; maxI=88
 
-  fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/time_histos/'
+  ;; fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals3/time_histos/'
+  fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/time_histos/'
 
   IF NOT KEYWORD_SET(lun) THEN lun = -1 ;stdout
   
@@ -92,7 +94,8 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                                       PARAMSTRING=paramString, $
                                       LUN=lun
 
-  defOutIndsPrefix = 'fastLoc_intervals3'
+  ;; defOutIndsPrefix = 'fastLoc_intervals3'
+  defOutIndsPrefix = 'fastLoc_intervals4'
   IF KEYWORD_SET(outIndsPrefix) THEN outIndsPrefix = defOutIndsPrefix + '--' + outIndsPrefix ELSE outIndsPrefix = defOutIndsPrefix
   IF ~KEYWORD_SET(outIndsSuffix) THEN outIndsSuffix = ''
 

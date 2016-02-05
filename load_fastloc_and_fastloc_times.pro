@@ -4,12 +4,20 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t,DBDir=D
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout
 
-  DefDBDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals3/'
+  ;; DefDBDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals2/'
   ;; DefDBFile = 'fastLoc_intervals2--500-16361_all--20150613.sav'
   ;; DefDBFile = 'fastLoc_intervals2--500-16361_all--w_lshell--20151015.sav'
   ;; DefDB_tFile = 'fastLoc_intervals2--500-16361_all--20150613--times.sav'
-  DefDBFile = 'fastLoc_intervals3--500-16361--below_aur_oval--20151020.sav'
-  DefDB_tFile = 'fastLoc_intervals3--500-16361--below_aur_oval--20151020--times.sav'
+
+  ;; DefDBDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals3/'
+  ;; DefDBFile = 'fastLoc_intervals3--500-16361--below_aur_oval--20151020.sav'
+  ;; DefDB_tFile = 'fastLoc_intervals3--500-16361--below_aur_oval--20151020--times.sav'
+
+  DefDBDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/'
+  ;; DefDBFile = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205.sav'
+  ;; DefDB_tFile = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--times.sav'
+  DefDBFile = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--sample_t_le_0.01.sav'
+  DefDB_tFile = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--times--sample_t_le_0.01.sav'
 
   IF N_ELEMENTS(DBDir) EQ 0 THEN DBDir = DefDBDir
   IF N_ELEMENTS(DBFile) EQ 0 THEN DBFile = DefDBFile

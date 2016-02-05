@@ -36,6 +36,7 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
   ;; minI=-88
   ;; maxI=88
 
+  ;; fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals2/'
   ;; fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals3/'
   fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/'
 

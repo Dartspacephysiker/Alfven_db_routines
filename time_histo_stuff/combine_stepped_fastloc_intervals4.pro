@@ -10,8 +10,8 @@ PRO COMBINE_STEPPED_FASTLOC_INTERVALS4,fastLoc
   ;; minOrb                    = 500
   ;; maxOrb                    = 11000
 
-  ;; minOrb                    = 11000
-  minOrb                    = 16000
+  minOrb                    = 11000
+  ;; minOrb                    = 16000
   maxOrb                    = 16500
   fileStep                  = 125
 

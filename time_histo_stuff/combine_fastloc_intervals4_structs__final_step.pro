@@ -13,7 +13,7 @@ PRO COMBINE_FASTLOC_INTERVALS4_STRUCTS__FINAL_STEP,fastLoc
   file1TimeFile_raw        = file1FileSansFExt+'--times.sav_raw'
 
   file2minOrb               = 11000
-  file2maxOrb               = 16248
+  file2maxOrb               = 16499
   file2date                 = '20160205'
 
   file2Suffix              = STRING(FORMAT='(I0,"--",I0,"--below_aur_oval")',file2minOrb,file2maxOrb)
@@ -71,19 +71,18 @@ PRO COMBINE_FASTLOC_INTERVALS4_STRUCTS__FINAL_STEP,fastLoc
         ;; LSHELL:[fastloc1.LSHELL,fastloc2.LSHELL]}
      
 
-  fastLoc_times                                      = [fastLoc_times1,fastLoc_times2]
-  fastLoc_delta_t                                    = [fastLoc_delta_t1,fastLoc_delta_t2]
-
-
   PRINT,'Saving fastLoc to ' + outMaxFile + '...'
   save,fastLoc,FILENAME=outDir+outMaxFile
+
+  ;;Handle den andre
+  fastLoc_times                                      = [fastLoc_times1,fastLoc_times2]
+  fastLoc_delta_t                                    = [fastLoc_delta_t1,fastLoc_delta_t2]
 
   PRINT,'Saving fastLoc_times & Co. to ' + outMaxTimeFile + '...'
   save,fastloc_times,fastLoc_delta_t,FILENAME=outDir+outMaxTimeFile
   
   fastLoc_times                                      = [fastLoc_times1_raw,fastLoc_times2_raw]
   fastLoc_delta_t                                    = [fastLoc_delta_t1_raw,fastLoc_delta_t2_raw]
-
 
   PRINT,'Saving fastLoc_times_raw & Co. to ' + outMaxTimeFile_raw + '...'
   save,fastLoc_Times,fastLoc_delta_t,FILENAME=outDir+outMaxTimeFile_raw
