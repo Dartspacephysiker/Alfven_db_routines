@@ -18,9 +18,12 @@ PRO COMBINE_FASTLOC_INTERVALS4_STEPS,fastLoc
   ;; minOrb                 = 14064
   ;; maxOrb                 = 16361
 
-  minOrb                    = 9750
-  maxOrb                    = 11000
-  fileStep                  = 250
+  ;; minOrb                    = 9750
+  ;; maxOrb                    = 11000
+
+  minOrb                    = 11000
+  maxOrb                    = 16500
+  fileStep                  = 125
 
   fNamePrefix               = 'Dartmouth_fastloc_intervals4'
   fNameSuffix               = '--below_aur_oval.sav'

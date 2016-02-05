@@ -7,9 +7,13 @@ PRO COMBINE_STEPPED_FASTLOC_INTERVALS4,fastLoc
   fastLoc_DB                = '/SPENCEdata/software/sdt/batch_jobs/FASTlocation/batch_output__intervals--20160201/'
   ;; contents_file             = './orbits_contained_in_fastloc_'+date+'.txt'
 
-  minOrb                    = 500
-  maxOrb                    = 11000
-  fileStep                  = 250
+  ;; minOrb                    = 500
+  ;; maxOrb                    = 11000
+
+  ;; minOrb                    = 11000
+  minOrb                    = 16000
+  maxOrb                    = 16500
+  fileStep                  = 125
 
   fNamePrefix               = 'Dartmouth_fastloc_intervals4'
   fNameSuffix               = '--below_aur_oval.sav'
@@ -27,7 +31,7 @@ PRO COMBINE_STEPPED_FASTLOC_INTERVALS4,fastLoc
   ;; OPENW,outlun,contents_file,/get_lun
 
   i                         = 0
-  nSteps                    = (maxOrb-minOrb)/fileStep
+  nSteps                    = (maxOrb-minOrb)/fileStep+1
 
   ;Get list of files to concatenate
   outFileArr                = !NULL
@@ -176,7 +180,7 @@ PRO COMBINE_STEPPED_FASTLOC_INTERVALS4,fastLoc
   fastLoc_delta_t                                    = fastLoc_delta_t_max
 
   PRINT,'Saving fastLoc_times_raw & Co. to ' + outMaxTimeFile + '...'
-  save,fastLoc_Times,fastLoc_delta_t,FILENAME=outDir+outTimeFile_raw
+  save,fastLoc_Times,fastLoc_delta_t,FILENAME=outDir+outMaxTimeFile_raw
 
 
 
