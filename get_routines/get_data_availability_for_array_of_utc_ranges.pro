@@ -1,22 +1,26 @@
 ;2015/10/13
 ;Now I want to get data for a who' lotta ranges!
 ;NOTE: It is recommended that you use GET_FASTLOC_INDS_UTC_RANGE to get ephemeris indices! It handles all the screening and defaults.
-PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
-                                        DBSTRUCT=dbStruct, $
-                                        DBTIMES=dbTimes, $
-                                        RESTRICT_W_THESEINDS=restrict, $
-                                        OUT_GOOD_TARR_I=out_good_tArr_i, $
-                                        OUT_INDS_LIST=inds_list, $
-                                        UNIQ_ORBS_LIST=uniq_orbs_list, $
-                                        UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
-                                        INDS_ORBS_LIST=inds_orbs_list, $
-                                        TRANGES_ORBS_LIST=tranges_orbs_list, $
-                                        TSPANS_ORBS_LIST=tspans_orbs_list, $
-                                        PRINT_DATA_AVAILABILITY=print_data_availability, $
-                                        SUMMARY=summary, $
-                                        LIST_TO_ARR=list_to_arr, $
-                                        VERBOSE=verbose, DEBUG=debug, LUN=lun
-
+;2016/02/06 Added SAVE_INDS_TO_FILENAME keyword
+PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
+   T1_ARR=t1_arr, $
+   T2_ARR=t2_arr, $
+   DBSTRUCT=dbStruct, $
+   DBTIMES=dbTimes, $
+   RESTRICT_W_THESEINDS=restrict, $
+   OUT_GOOD_TARR_I=out_good_tArr_i, $
+   OUT_INDS_LIST=inds_list, $
+   UNIQ_ORBS_LIST=uniq_orbs_list, $
+   UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
+   INDS_ORBS_LIST=inds_orbs_list, $
+   TRANGES_ORBS_LIST=tranges_orbs_list, $
+   TSPANS_ORBS_LIST=tspans_orbs_list, $
+   PRINT_DATA_AVAILABILITY=print_data_availability, $
+   SUMMARY=summary, $
+   LIST_TO_ARR=list_to_arr, $
+   SAVE_INDS_TO_FILENAME=save_filename, $
+   VERBOSE=verbose, DEBUG=debug, LUN=lun
+  
   COMPILE_OPT idl2
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
@@ -153,6 +157,14 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
      tranges_orbs_list    = tranges_orbs_arr
      tspans_orbs_list     = tspans_orbs_arr
      
+  ENDIF
+
+  IF KEYWORD_SET(save_filename) THEN BEGIN
+     PRINTF,lun,'Saving data availability information for UTC ranges to file: ' + save_filename
+     IF N_ELEMENTS(list_to_arr) EQ 0 THEN BEGIN
+        list_to_arr       = 0
+     ENDIF
+     save,inds_list,uniq_orbs_list,uniq_orb_inds_list,inds_orbs_list,tranges_orbs_list,tspans_orbs_list,list_to_arr,FILENAME=save_filename
   ENDIF
 
 END

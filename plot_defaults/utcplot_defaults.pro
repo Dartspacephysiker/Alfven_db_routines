@@ -4,7 +4,7 @@
   plotMargin       = [0.11, 0.12, 0.11, 0.08]
   stackplotMargin  = [0.11, 0.3, 0.08, 0.08]
   margin__max_plot = [0.10, 0.15, 0.10, 0.08]
-  margin__avg_plot = [0.12, 0.15, 0.08, 0.08]
+  margin__avg_plot = [0.10, 0.15, 0.10, 0.08]
   defPlotMargin_max= [0.13, 0.1, 0.07, 0.1]
 
   defNegColor                = 'green'
