@@ -17,6 +17,7 @@ PRO PRINT_ALFVENDB_2DHISTOS, $
    BIN2NAME=bin2name, $
    SAVEOUTPUT=saveOutput, $
    OUTPUTFILENAME=outputFilename, $
+   UNLOG_DATA=unlog_data
    LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun           = -1 ;stdout
@@ -111,7 +112,13 @@ PRO PRINT_ALFVENDB_2DHISTOS, $
   PRINTF,outLun,FORMAT='(A0,T10,A0,T20,"Value ",A0)',bin1name,bin2Name,(KEYWORD_SET(plotMedOrAvg)? '(' + plotMedOrAvg + ')' : '')
   FOR i=0,nH2DtoPrint-1 DO BEGIN  
      PRINTF,outLun,FORMAT='("****",A0,"****")',dataNameArr[i]
-     IF h2dStrArr[i].labelFormat EQ '' THEN BEGIN
+     IF KEYWORD_SET(unlog_data) AND h2dStrArr[i].is_logged THEN BEGIN
+        PRINTF,lun,'Unlogging ' + h2dStrArr[i].title + ' ...'
+        h2dStrArr[i].data                       = 10.^(h2dStrArr[i].data)
+        h2dStrArr[i].is_logged                  = 0
+     ENDIF
+
+     IF h2dStrArr[i].labelFormat EQ '' OR h2dStrArr[i].labelFormat EQ '(D5.3)' THEN BEGIN
         IF h2dStrArr[i].is_logged THEN BEGIN
            h2dStrArr[i].labelFormat             = 'F0.2'
         ENDIF ELSE BEGIN
@@ -122,6 +129,7 @@ PRO PRINT_ALFVENDB_2DHISTOS, $
         pos                                     = STREGEX(h2dstrarr[i].labelformat,'\((.*)\)',length=len,/SUBEXPR)
         h2dStrArr[i].labelFormat                = STRMID(h2dstrarr[i].labelformat,pos[1],len[1])
      ENDELSE
+
      fmtStr                                     = '(F0.2,T10,F0.2,T20,'+h2dStrArr[i].labelFormat+')'
      FOR l=0,nBins1-1 DO BEGIN
         FOR m=0,nBins2-1 DO BEGIN
