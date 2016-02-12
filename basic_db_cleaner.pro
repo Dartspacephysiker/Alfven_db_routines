@@ -102,7 +102,7 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
   ENDIF
 
   ;; good_i = cgsetintersection(good_i,where(dbStruct.sample_t LE sample_t_hcutoff,/NULL))
-  good_i = cgsetintersection(good_i,where(ABS(dbStruct.sample_t) LE sample_t_hcutoff,/NULL))
+  good_i = cgsetintersection(good_i,where(ABS(dbStruct.sample_t) LE sample_t_hcutoff AND ABS(dbStruct.sample_t) GT 0.,/NULL))
   nlost      = n_good-n_elements(good_i)
   tot_nLost += nLost
   n_good -= nLost

@@ -68,6 +68,7 @@
 ;                                    code floating around the FAST repositories. Not any longer!
 ;                       
 ;                       2015/10/15 : Adding L-shell stuff
+;                       2016/02/10 : Added DO_NOT_CONSIDER_IMF keyword
 ;-
 PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                     ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
@@ -80,6 +81,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     DO_ABS_BZMIN=abs_bzMin, $
                                     DO_ABS_BZMAX=abs_bzMax, $
                                     BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+                                    DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
                                     PARAMSTRING=paramString, $
                                     SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                     DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
@@ -146,58 +148,68 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   
   ;;Which IMF clock angle are we doing?
   ;;options are 'duskward', 'dawnward', 'bzNorth', 'bzSouth', and 'all_IMF'
-  IF N_ELEMENTS(clockStr) EQ 0 THEN clockStr = defClockStr
+  IF N_ELEMENTS(clockStr) EQ 0 THEN BEGIN
+     IF KEYWORD_SET(do_not_consider_imf) THEN BEGIN
+        clockStr                      = 'NO_IMF_CONSID'
+        paramString                   = paramString + clockStr
+     ENDIF ELSE BEGIN
+        clockStr = defClockStr
 
-  ;;How to set angles? Note, clock angle is measured with
-  ;;Bz North at zero deg, ranging from -180<clock_angle<180
-  ;;Setting angle limits 45 and 135, for example, gives a 90-deg
-  ;;window for dawnward and duskward plots
-  IF clockStr NE "all_IMF" THEN BEGIN
-     angleLim1=defAngleLim1               ;in degrees
-     angleLim2=defAngleLim2              ;in degrees
-  ENDIF ELSE BEGIN 
-     angleLim1=180.0              ;for doing all IMF
-     angleLim2=180.0 
-  ENDELSE
-
-  ;;Requirement for IMF By magnitude?
-  byMinStr=''
-  byMaxStr=''
-
-  IF KEYWORD_SET(byMin) THEN BEGIN
-     byMinStr='byMin_' + String(byMin,format='(D0.1)') + '_' ;STRCOMPRESS(byMin,/REMOVE_ALL)
+        ;;How to set angles? Note, clock angle is measured with
+        ;;Bz North at zero deg, ranging from -180<clock_angle<180
+        ;;Setting angle limits 45 and 135, for example, gives a 90-deg
+        ;;window for dawnward and duskward plots
+        IF clockStr NE "all_IMF" THEN BEGIN
+           angleLim1=defAngleLim1 ;in degrees
+           angleLim2=defAngleLim2 ;in degrees
+        ENDIF ELSE BEGIN 
+           angleLim1=180.0      ;for doing all IMF
+           angleLim2=180.0 
+        ENDELSE
+        
+        ;;Requirement for IMF By magnitude?
+        byMinStr=''
+        byMaxStr=''
+        
+        IF KEYWORD_SET(byMin) THEN BEGIN
+           byMinStr='byMin_' + String(byMin,format='(D0.1)') + '_' ;STRCOMPRESS(byMin,/REMOVE_ALL)
+        ENDIF
+        IF KEYWORD_SET(byMax) THEN BEGIN
+           byMaxStr='byMax_' + String(byMax,format='(D0.1)') + '_' ;STRCOMPRESS(byMax,/REMOVE_ALL)
+        ENDIF
+        
+        ;;Requirement for IMF Bz magnitude?
+        bzMinStr=''
+        bzMaxStr=''
+        
+        IF KEYWORD_SET(bzMin) THEN BEGIN
+           bzMinStr='bzMin_' + String(bzMin,format='(D0.1)') + '_' 
+        ENDIF
+        IF KEYWORD_SET(bzMax) THEN BEGIN
+           bzMaxStr='bzMax_' + String(bzMax,format='(D0.1)') + '_'
+        ENDIF
+        
+        ;;********************************************
+        ;;Set up some other strings
+        
+        ;;satellite string
+        omniStr = ""
+        IF satellite EQ "OMNI" then omniStr = "_" + omni_Coords 
+        ;;IF delay NE defDelay THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
+        ;; IF delay GT 0 THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
+        IF delay GT 0 THEN delayStr = STRING(FORMAT='(F0.2,"mindelay_")',delay/60.) ELSE delayStr = ""
+        
+        IF KEYWORD_SET(smoothWindow) THEN smoothStr = strtrim(smoothWindow,2)+"min_IMFsmooth--" ELSE smoothStr=""
+        
+        
+        
+        ;;parameter string
+        paramString=paramString+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+"_"+delayStr+$
+                    byMinStr+byMaxStr+bzMinStr+bzMaxStr
+        
+        
+     ENDELSE
   ENDIF
-  IF KEYWORD_SET(byMax) THEN BEGIN
-     byMaxStr='byMax_' + String(byMax,format='(D0.1)') + '_' ;STRCOMPRESS(byMax,/REMOVE_ALL)
-  ENDIF
 
-  ;;Requirement for IMF Bz magnitude?
-  bzMinStr=''
-  bzMaxStr=''
-
-  IF KEYWORD_SET(bzMin) THEN BEGIN
-     bzMinStr='bzMin_' + String(bzMin,format='(D0.1)') + '_' 
-  ENDIF
-  IF KEYWORD_SET(bzMax) THEN BEGIN
-     bzMaxStr='bzMax_' + String(bzMax,format='(D0.1)') + '_'
-  ENDIF
-
-  ;;********************************************
-  ;;Set up some other strings
-  
-  ;;satellite string
-  omniStr = ""
-  IF satellite EQ "OMNI" then omniStr = "_" + omni_Coords 
-  ;;IF delay NE defDelay THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
-  ;; IF delay GT 0 THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
-  IF delay GT 0 THEN delayStr = STRING(FORMAT='(F0.2,"mindelay_")',delay/60.) ELSE delayStr = ""
-
-  IF KEYWORD_SET(smoothWindow) THEN smoothStr = strtrim(smoothWindow,2)+"min_IMFsmooth--" ELSE smoothStr=""
-
-
-
-  ;;parameter string
-  paramString=paramString+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+"_"+delayStr+$
-           byMinStr+byMaxStr+bzMinStr+bzMaxStr
 
 END

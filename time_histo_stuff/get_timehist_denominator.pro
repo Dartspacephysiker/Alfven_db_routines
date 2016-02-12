@@ -110,8 +110,28 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
                                    FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, FASTLOCOUTPUTDIR=fastLocOutputDir
 
         PRINTF,lun,FORMAT='("N fastLoc inds from UTC ranges",T40,": ",I0)',N_ELEMENTS(fastLocInterped_UTC_i)
-     ENDIF
+     ENDIF ELSE BEGIN
+        ;;No restrictions whatsoever, eh?
+        LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t,DBDir=DBDir,DBFile=FastLocFile,DB_tFile=FastLocTimeFile,LUN=lun
+        fastLocInterped_i = GET_RESTRICTED_AND_INTERPED_DB_INDICES(fastLoc,satellite,delay,LUN=lun, $
+                                                                   DBTIMES=fastLoc_times,dbfile=dbfile, HEMI=hemi, $
+                                                                   ORBRANGE=orbRange, $
+                                                                   ALTITUDERANGE=altitudeRange, $
+                                                                   CHARERANGE=charERange, $
+                                                                   MINMLT=minM, $
+                                                                   MAXMLT=maxM, $
+                                                                   BINM=binM, $
+                                                                   MINILAT=minI, $
+                                                                   MAXILAT=maxI, $
+                                                                   BINI=binI, $
+                                                                   DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                                                                   CLOCKSTR=clockStr, $
+                                                                   /DO_NOT_CONSIDER_IMF, $
+                                                                   HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd, $
+                                                                   NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=1)
+     ENDELSE
   ENDELSE
+
 
   MAKE_FASTLOC_HISTO,OUTTIMEHISTO=tHistDenominator, $
                      FASTLOC_INDS=fastLocInterped_i, $

@@ -145,32 +145,32 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
   ;;    PRINT,"Restoring " + outIndsFilename + "..."
   ;;    RESTORE,outIndsFilename
   ;; ENDIF ELSE BEGIN
-     fastLocInterped_i = GET_RESTRICTED_AND_INTERPED_DB_INDICES(fastLoc,satellite,delay,LUN=lun, $
-                         DBTIMES=fastLoc_times,dbfile=dbfile, HEMI=hemi, $
-                         ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                         MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
-                         DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
-                                                                BYMIN=byMin, $
-                                                                BZMIN=bzMin, $
-                                                                BYMAX=byMax, $
-                                                                BZMAX=bzMax, $
-                                                                DO_ABS_BYMIN=abs_byMin, $
-                                                                DO_ABS_BYMAX=abs_byMax, $
-                                                                DO_ABS_BZMIN=abs_bzMin, $
-                                                                DO_ABS_BZMAX=abs_bzMax, $
-                                                                CLOCKSTR=clockStr, $
-                                                                BX_OVER_BYBZ=Bx_over_ByBz_Lim, $
-                         STABLEIMF=stableIMF,OMNI_COORDS=omni_Coords,ANGLELIM1=angleLim1,ANGLELIM2=angleLim2, $
-                         HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd,NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=1)
-     
-     IF KEYWORD_SET(make_outIndsFile) THEN BEGIN
-        PRINT,'Saving outindsfile ' + outIndsFilename + '...'
-        save,fastLocInterped_i,clockStr,angleLim1,angleLim2,smoothWindow,byMin,byMax,bzMin,bzMax, $
-             minm,maxm,binm,mini,maxi,bini,minl,maxl,binl, $
-             altituderange,charerange,orbrange, $
-             delay,satdbdir,omni_coords,fastLocOutputDir,fastLocFile,fastLocTimeFile, $
-             filename=outIndsFilename
-     ENDIF
+  fastLocInterped_i = GET_RESTRICTED_AND_INTERPED_DB_INDICES(fastLoc,satellite,delay,LUN=lun, $
+                                                             DBTIMES=fastLoc_times,dbfile=dbfile, HEMI=hemi, $
+                                                             ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                                             MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                                                             DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                                                             BYMIN=byMin, $
+                                                             BZMIN=bzMin, $
+                                                             BYMAX=byMax, $
+                                                             BZMAX=bzMax, $
+                                                             DO_ABS_BYMIN=abs_byMin, $
+                                                             DO_ABS_BYMAX=abs_byMax, $
+                                                             DO_ABS_BZMIN=abs_bzMin, $
+                                                             DO_ABS_BZMAX=abs_bzMax, $
+                                                             CLOCKSTR=clockStr, $
+                                                             BX_OVER_BYBZ=Bx_over_ByBz_Lim, $
+                                                             STABLEIMF=stableIMF,OMNI_COORDS=omni_Coords,ANGLELIM1=angleLim1,ANGLELIM2=angleLim2, $
+                                                             HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd,NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=1)
+  
+  IF KEYWORD_SET(make_outIndsFile) THEN BEGIN
+     PRINT,'Saving outindsfile ' + outIndsFilename + '...'
+     save,fastLocInterped_i,clockStr,angleLim1,angleLim2,smoothWindow,byMin,byMax,bzMin,bzMax, $
+          minm,maxm,binm,mini,maxi,bini,minl,maxl,binl, $
+          altituderange,charerange,orbrange, $
+          delay,satdbdir,omni_coords,fastLocOutputDir,fastLocFile,fastLocTimeFile, $
+          filename=outIndsFilename
+  ENDIF
   ;; ENDELSE
-
+  
 END

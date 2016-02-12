@@ -159,7 +159,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
      good_i = cgsetintersection(good_i,where(ABS(maximus.char_ion_energy) LE char_ion_e_hcutOff AND ABS(maximus.char_ion_energy) GT char_ion_e_lcutoff,/NULL)) 
 
      ;; Now sample_t stuff
-     good_i = cgsetintersection(good_i,where(maximus.sample_t LE sample_t_hcutoff,/NULL))
+     good_i = cgsetintersection(good_i,where(ABS(maximus.sample_t) LE sample_t_hcutoff,/NULL))
 
      good_i = cgsetintersection(good_i,where(maximus.width_time LE width_t_cutoff,/NULL))
 
