@@ -198,7 +198,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      IF satellite EQ "OMNI" then omniStr = "_" + omni_Coords 
      ;;IF delay NE defDelay THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
      ;; IF delay GT 0 THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
-     IF delay GT 0 THEN delayStr = STRING(FORMAT='(F0.2,"mindelay_")',delay/60.) ELSE delayStr = ""
+     IF N_ELEMENTS(delay) GT 0 THEN delayStr = STRING(FORMAT='(F0.2,"mindelay_")',delay/60.) ELSE delayStr = ""
      
      IF KEYWORD_SET(smoothWindow) THEN smoothStr = strtrim(smoothWindow,2)+"min_IMFsmooth--" ELSE smoothStr=""
      
