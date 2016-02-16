@@ -37,6 +37,12 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
                                DELETE_PLOTS_WHEN_FINISHED=delete_plots_when_finished
    
 
+     ;;Number of files
+  nFiles                              = N_ELEMENTS(tempFiles)
+  IF nFiles GT 3 THEN BEGIN
+     PRINT,'COMBINE_ALFVEN_STATS_PLOTS cannot combine more than 3 plots!'
+     STOP
+  ENDIF
      ;;Get the number of plots to combine
      RESTORE,tempFiles[0]
 
@@ -60,7 +66,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
 
      ;;Generate list of file names
      plotFileArr                      = !NULL
-     FOR j=0,2 DO BEGIN
+     FOR j=0,nFiles-1 DO BEGIN
         RESTORE,tempFiles[j]
         plotFileArr                   = [plotFileArr,plotDir+paramStr+dataNameArr[0]+'.png']
      ENDFOR
@@ -69,7 +75,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
      ;;Reset the plotFileArr and get the rest, if any
      FOR i=1, nPlots-1 DO BEGIN
         plotFileArr                   = !NULL
-        FOR j=0,2 DO BEGIN
+        FOR j=0,nFiles-1 DO BEGIN
            RESTORE,tempFiles[j]
            plotFileArr                = [plotFileArr,plotDir+paramStr+dataNameArr[i]+'.png']
         ENDFOR
