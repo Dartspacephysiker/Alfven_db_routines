@@ -41,6 +41,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           SMOOTHWINDOW=smoothWindow, $
                           INCLUDENOCONSECDATA=includeNoConsecData, $
                           DO_UTC_RANGE=DO_UTC_range, $
+                          STORMSTRING=stormString, $
+                          DSTCUTOFF=dstCutoff, $
                           T1_ARR=t1_arr, $
                           T2_ARR=t2_arr, $             
                           NPLOTS=nPlots, $
@@ -569,6 +571,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  SMOOTHWINDOW=smoothWindow, $
                                                  INCLUDENOCONSECDATA=includeNoConsecData, $
                                                  DO_UTC_RANGE=do_UTC_range, $
+                                                 STORMSTRING=stormString, $
+                                                 DSTCUTOFF=dstCutoff, $
                                                  T1_ARR=t1_arr, $
                                                  T2_ARR=t2_arr, $
                                                  MINM=minM, $

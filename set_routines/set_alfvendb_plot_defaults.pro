@@ -158,7 +158,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
      polarContStr='polarCont_'
   ENDIF
 
-  paramString=hoyDia+'--'+paramStrPrefix+'--'+hemi+"--"+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
+  paramString=hoyDia+'--'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
+              hemi+"--"+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
   
   ;;Shouldn't be leftover, unused params from batch call
   IF ISA(e) THEN BEGIN

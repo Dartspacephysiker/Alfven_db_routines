@@ -17,6 +17,8 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                                CHARERANGE=charERange, $
                                HEMI=hemi, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
+                               STORMSTRING=stormString, $
+                               DSTCUTOFF=dstCutoff, $
                                MAKE_OUTINDSFILE=make_outIndsFile, $
                                OUTINDSPREFIX=outIndsPrefix, $
                                OUTINDSSUFFIX=outIndsSuffix, $
@@ -56,6 +58,23 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   PRINTF,lun,'GET_FASTLOC_INDS_UTC_RANGE is starting...'
 
   IF N_ELEMENTS(list_to_arr) EQ 0 THEN list_to_arr = 1
+
+  IF KEYWORD_SET(stormString) THEN BEGIN
+     IF KEYWORD_SET(DstCutoff) THEN BEGIN
+        stormFile = TODAYS_NONSTORM_MAINPHASE_AND_RECOVERYPHASE_FASTLOC_INDICES(STORMSTRING=stormString,DSTCUTOFF=DstCutoff)
+        IF FILE_TEST(stormFile) THEN BEGIN
+           PRINTF,lun,"Already have " + stormString + "inds! Restoring today's file..."
+           RESTORE,stormFile
+           IF N_ELEMENTS(fastLocInterped_i) GT 0 THEN RETURN ELSE BEGIN
+              PRINTF,lun,"stormFile was a blank! It didn't contain fastLocInterped_i..."
+              STOP
+           ENDELSE
+        ENDIF 
+     ENDIF ELSE BEGIN
+        PRINTF,lun,"stormString is set (" + stormString + "), but no Dst cutoff provided! Something's wrong..."
+        STOP
+     ENDELSE
+  ENDIF
 
   ;;Load FASTLoc & Co.
   LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t,DBDir=DBDir,DBFile=FastLocFile,DB_tFile=FastLocTimeFile,LUN=lun
@@ -102,19 +121,22 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ;;********************************************
   ;;Build output filename based on stuff provided
   ;;Should include clockStr, angleLim1,angleLim2, satellite, omnicoords, bymin, stableimf, delay, smoothwindow
-  basenameFormat = '(A0,"--hemi_",A0,' + $
-                   '"--chareRange_",F0.2,"-",F0.2,"--altRange_",F0.2,"-",F0.2,"--orbRange",I0,"-",I0,A0)'
-  outIndsFileBasename = STRING(FORMAT=basenameFormat,outIndsPrefix,hemi, $
-                               charerange[0],charerange[1],altitudeRange[0],altitudeRange[1],orbRange[0],orbRange[1],outIndsSuffix)
-
-  outIndsFilename = fastLocOutputDir+outIndsFileBasename+'.sav'
+  IF ~KEYWORD_SET(stormFile) THEN BEGIN
+     basenameFormat = '(A0,"--hemi_",A0,' + $
+                      '"--chareRange_",F0.2,"-",F0.2,"--altRange_",F0.2,"-",F0.2,"--orbRange",I0,"-",I0,A0)'
+     outIndsFileBasename = STRING(FORMAT=basenameFormat,outIndsPrefix,hemi, $
+                                  charerange[0],charerange[1],altitudeRange[0],altitudeRange[1],orbRange[0],orbRange[1],outIndsSuffix)
+     outIndsFilename = fastLocOutputDir+outIndsFileBasename+'.sav' 
+     ENDIF ELSE BEGIN
+        outIndsFilename = stormFile
+     ENDELSE
   ;;********************************************
   ;;If this file already exists, see if it will work for us!
 
   ;; IF FILE_TEST(outIndsFilename) THEN BEGIN 
-     ;; PRINT,"Restoring " + outIndsFilename + "..."
-     ;; RESTORE,outIndsFilename
-     ;; WAIT,1
+  ;;    PRINT,"Restoring " + outIndsFilename + "..."
+  ;;    RESTORE,outIndsFilename
+  ;;    ;; WAIT,1
   ;; ENDIF ELSE BEGIN
      good_i = get_chaston_ind(fastLoc,satellite,lun,GET_TIME_I_NOT_ALFVENDB_I=1, $
                               DBTIMES=fastLoc_times,DBFILE=FastLocFile, HEMI=hemi, $

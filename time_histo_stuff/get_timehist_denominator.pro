@@ -11,7 +11,10 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
                                   DO_ABS_BZMAX=abs_bzMax, $
                                   SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                   DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
-                                  DO_UTC_RANGE=DO_UTC_range,T1_ARR=t1_arr,T2_ARR=t2_arr, $
+                                  DO_UTC_RANGE=DO_UTC_range, $
+                                  STORMSTRING=stormString, $
+                                  DSTCUTOFF=dstCutoff, $
+                                  T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                   MINM=minM,MAXM=maxM, $
                                   BINM=binM, $
                                   SHIFTM=shiftM, $
@@ -80,12 +83,14 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
 
      IF KEYWORD_SET(do_UTC_range) THEN BEGIN
         PRINT,"Do you know what you're doing? You've requested both a set of IMF conditions and a UTC range."
-        WAIT,5
+        ;; WAIT,5
         nStart             = N_ELEMENTS(fastLocInterped_i)
         GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_UTC_i,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                    HEMI=hemi, $
                                    HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
+                                   STORMSTRING=stormString, $
+                                   DSTCUTOFF=dstCutoff, $
                                    MAKE_OUTINDSFILE=1, $
                                    OUTINDSPREFIX=indsFilePrefix,OUTINDSSUFFIX=indsFileSuffix,OUTINDSFILEBASENAME=outIndsBasename, $
                                    FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
@@ -104,6 +109,8 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
                                    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                    HEMI=hemi, $
                                    HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
+                                   STORMSTRING=stormString, $
+                                   DSTCUTOFF=dstCutoff, $
                                    ;; MAKE_OUTINDSFILE=1, $
                                    OUTINDSPREFIX=indsFilePrefix,OUTINDSSUFFIX=indsFileSuffix,OUTINDSFILEBASENAME=outIndsBasename, $
                                    FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $

@@ -173,10 +173,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      byMaxStr=''
      
      IF KEYWORD_SET(byMin) THEN BEGIN
-        byMinStr='byMin_' + String(byMin,format='(D0.1)') + '_' ;STRCOMPRESS(byMin,/REMOVE_ALL)
+        byMinStr='_byMin' + String(byMin,format='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
      ENDIF
      IF KEYWORD_SET(byMax) THEN BEGIN
-        byMaxStr='byMax_' + String(byMax,format='(D0.1)') + '_' ;STRCOMPRESS(byMax,/REMOVE_ALL)
+        byMaxStr='_byMax' + String(byMax,format='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
      ENDIF
      
      ;;Requirement for IMF Bz magnitude?
@@ -184,10 +184,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      bzMaxStr=''
      
      IF KEYWORD_SET(bzMin) THEN BEGIN
-        bzMinStr='bzMin_' + String(bzMin,format='(D0.1)') + '_' 
+        bzMinStr='_bzMin' + String(bzMin,format='(D0.1)')
      ENDIF
      IF KEYWORD_SET(bzMax) THEN BEGIN
-        bzMaxStr='bzMax_' + String(bzMax,format='(D0.1)') + '_'
+        bzMaxStr='_bzMax' + String(bzMax,format='(D0.1)')
      ENDIF
      
      ;;********************************************
@@ -198,14 +198,14 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      IF satellite EQ "OMNI" then omniStr = "_" + omni_Coords 
      ;;IF delay NE defDelay THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
      ;; IF delay GT 0 THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
-     IF N_ELEMENTS(delay) GT 0 THEN delayStr = STRING(FORMAT='(F0.2,"mindelay_")',delay/60.) ELSE delayStr = ""
+     IF N_ELEMENTS(delay) GT 0 THEN delayStr = STRING(FORMAT='("_",F0.2,"mindelay")',delay/60.) ELSE delayStr = ""
      
      IF KEYWORD_SET(smoothWindow) THEN smoothStr = strtrim(smoothWindow,2)+"min_IMFsmooth--" ELSE smoothStr=""
      
      
      
      ;;parameter string
-     paramString=paramString+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+"_"+delayStr+$
+     paramString=paramString+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+delayStr+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr
      
      
