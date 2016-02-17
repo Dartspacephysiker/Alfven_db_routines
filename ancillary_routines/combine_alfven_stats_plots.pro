@@ -67,7 +67,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
      IF ~KEYWORD_SET(n_to_combine) THEN BEGIN
         ;;Get the number of plots to combine
         nPlots                        = N_ELEMENTS(dataNames)-1
-        plots_to_combine              = INDGEN(nPlots-1)
+        plots_to_combine              = INDGEN(nPlots)
      ENDIF ELSE BEGIN
         nPlots                        = n_to_combine
         plots_to_combine              = INDGEN(n_to_combine)
