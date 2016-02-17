@@ -67,7 +67,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
      IF ~KEYWORD_SET(n_to_combine) THEN BEGIN
         ;;Get the number of plots to combine
         nPlots                        = N_ELEMENTS(dataNames)-1
-        plots_to_combine              = INDGEN(nPlots-1)
+        plots_to_combine              = INDGEN(nPlots)
      ENDIF ELSE BEGIN
         nPlots                        = n_to_combine
         plots_to_combine              = INDGEN(n_to_combine)
@@ -80,7 +80,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
   plotFileArr                      = !NULL
   FOR j=0,nFiles-1 DO BEGIN
      RESTORE,tempFiles[j]
-     plotFileArr                   = [plotFileArr,plotDir+paramStr+dataNames[plots_to_combine[0]]+'.png']
+     plotFileArr                   = [plotFileArr,plotDir+paramStr+ '--' + dataNames[plots_to_combine[0]]+'.png']
   ENDFOR
   plotFileArr__list                = LIST(plotFileArr)
   
@@ -89,7 +89,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
      plotFileArr                   = !NULL
      FOR j=0,nFiles-1 DO BEGIN
         RESTORE,tempFiles[j]
-        plotFileArr                = [plotFileArr,plotDir+paramStr+dataNames[plots_to_combine[i]]+'.png']
+        plotFileArr                = [plotFileArr,plotDir+paramStr+'--' + dataNames[plots_to_combine[i]]+'.png']
      ENDFOR
      plotFileArr__list.add,plotFileArr
   ENDFOR
@@ -98,8 +98,8 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
   out_titleObjs_arr                = !NULL
   FOR i=0,nPlots-1 DO BEGIN
      
-     save_combined_name         = paramStr + dataNames[plots_to_combine[i]] + $
-                                  (KEYWORD_SET(plotSuffix) ? plotSuffix : '') + '--combined.png'
+     save_combined_name         = paramStr + '--' + dataNames[plots_to_combine[i]] + $
+                                  (KEYWORD_SET(plotSuffix) ? plotSuffix : '') + 'combined.png'
      PRINT,"Saving to " + save_combined_name + "..."
      
      TILE_THREE_PLOTS,plotFileArr__list[i],titles, $
