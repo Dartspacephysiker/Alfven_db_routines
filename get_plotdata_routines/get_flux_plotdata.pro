@@ -126,7 +126,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   IF KEYWORD_SET(get_pFlux) THEN BEGIN
 
      h2dStr.title           = title__alfDB_ind_49
-     dataName               = "pFlux_"
+     dataName               = "pFlux"
      h2dStr.labelFormat     = fluxPlotPPlotCBLabelFormat
      h2dStr.logLabels       = logPFluxLabels
      h2dStr.do_plotIntegral = PFlux_do_plotIntegral
@@ -248,8 +248,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ENDIF
 
   absnegslogStr             = absStr + negStr + posStr + logStr
-  dataName                  = STRTRIM(absnegslogStr,2)+dataName+'_' + $
-                              (KEYWORD_SET(fluxPlotType) ? STRUPCASE(fluxplottype) : '')
+  dataName                  = STRTRIM(absnegslogStr,2)+dataName + $
+                              (KEYWORD_SET(fluxPlotType) ? '_' + STRUPCASE(fluxplottype) : '')
   h2dStr.title              = absnegslogStr + h2dStr.title
 
   ;;fix MLTs

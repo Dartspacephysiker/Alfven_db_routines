@@ -19,58 +19,88 @@ PRO SET_PLOT_DIR,plotDir, $
      0: BEGIN
         do_customDir          = ''
         READ,do_customDir,PROMPT='SET_PLOT_DIR: No keyword set! Are you doing a custom directory?'
-        ;; WHILE proceed EQ 0 DO BEGIN
-           CASE STRUPCASE(STRMID(do_customDir,0,1)) OF
-              'Y': BEGIN
-                 customDir    = ''
-                 READ,customDir,PROMPT='Enter custom directory, with slash at end (e.g., "/the/plot/directory/")'
-                 PRINT,'OK, plotting to ' + customDir + '!'
-                 plotDir      = customDir
-                 proceed      = 1
-                 WAIT,1
-              END
-              'N': BEGIN
-                 response     = 0
-                 valid        = [1,2,3]
-                 READ,response,PROMPT='OK, select (1) for_storms, (2) for_sw_imf, or (3)for_alfvendb'
-                 CASE response OF
-                    1: BEGIN
-                       plotDir = defStormPlotDir                       
-                       proceed = 1
+        CASE STRUPCASE(STRMID(do_customDir,0,1)) OF
+           'Y': BEGIN
+              customDir    = ''
+              READ,customDir,PROMPT='Enter custom directory, with slash at end (e.g., "/the/plot/directory/"): '
+              PRINT,'OK, plotting to ' + customDir + '!'
+              plotDir      = customDir
+              proceed      = 1
+              WAIT,1
+           END
+           'N': BEGIN
+              response     = 0
+              valid        = [1,2,3]
+              READ,response,PROMPT='OK, select (1) for_storms, (2) for_sw_imf, or (3)for_alfvendb: '
+              CASE response OF
+                 1: BEGIN
+                    plotDir = defStormPlotDir                       
+                    proceed = 1
+                 END
+                 2: BEGIN
+                    plotDir = defSW_IMFPlotDir
+                    proceed = 1
+                 END
+                 3: BEGIN
+                    plotDir = defAlfvenDBPlotDir
+                    proceed = 1
+                 END
+                 ELSE: BEGIN
+                    READ,response,PROMPT="Try again, fool. 1, 2, or 3: "
+                    WHILE WHERE(response EQ valid) EQ -1 DO BEGIN
+                       READ,response,PROMPT="Again: "
+                       CASE response OF
+                          1: BEGIN
+                             plotDir = defStormPlotDir                       
+                             proceed = 1
+                          END
+                          2: BEGIN
+                             plotDir = defSW_IMFPlotDir
+                             proceed = 1
+                          END
+                          3: BEGIN
+                             plotDir = defAlfvenDBPlotDir
+                             proceed = 1
+                          END
+                       ENDCASE
+                    ENDWHILE
+                    proceed = 1
+                 END
+              ENDCASE
+
+              ;;Does user want 'TODAY' added to plotDir?
+              IF N_ELEMENTS(add_today) EQ 0 THEN BEGIN
+                 do_add_today    = ''
+                 READ,do_add_today,PROMPT="Do you want to append today's date to " + plotDir + '? (y/n) '
+                 CASE STRUPCASE(STRMID(do_add_today,0,1)) OF
+                    'Y': BEGIN
+                       add_today    = 1
+                       PRINT,'OK, adding today!'
                     END
-                    2: BEGIN
-                       plotDir = defSW_IMFPlotDir
-                       proceed = 1
-                    END
-                    3: BEGIN
-                       plotDir = defAlfvenDBPlotDir
-                       proceed = 1
+                    'N': BEGIN
+                       add_today    = 0
                     END
                     ELSE: BEGIN
-                       READ,response,PROMPT="Try again, fool. 1, 2, or 3."
-                       WHILE WHERE(response EQ valid) EQ -1 DO BEGIN
-                          READ,response,PROMPT="Again."
-                          CASE response OF
-                             1: BEGIN
-                                plotDir = defStormPlotDir                       
-                                proceed = 1
+                       proceed = 0
+                       WHILE proceed EQ 0 DO BEGIN
+                          READ,do_add_today,PROMPT='Uhh, what? Say "Y"es or "N"o'
+                          CASE STRUPCASE(STRMID(do_add_today,0,1)) OF
+                             'Y': BEGIN
+                                add_today    = 1
+                                proceed      = 1
+                                PRINT,'OK, adding today!'
                              END
-                             2: BEGIN
-                                plotDir = defSW_IMFPlotDir
-                                proceed = 1
-                             END
-                             3: BEGIN
-                                plotDir = defAlfvenDBPlotDir
-                                proceed = 1
+                             'N': BEGIN
+                                add_today    = 0
+                                proceed      = 1
                              END
                           ENDCASE
                        ENDWHILE
-                       proceed = 1
                     END
                  ENDCASE
-              END
-           ENDCASE
-        ;; ENDWHILE
+              ENDIF
+           END
+        ENDCASE
      END
      1: BEGIN
         CASE 1 OF

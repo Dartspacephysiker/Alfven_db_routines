@@ -143,7 +143,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   
   IF keepMe THEN BEGIN 
      dataRawPtrArr=dataRawPtr
-     dataNameArr=[dataName,"histoMask_"] 
+     dataNameArr=[dataName,"histoMask"] 
      dataRawPtrArr=[dataRawPtrArr,PTR_NEW(h2dMaskStr.data)] 
   ENDIF
   IF KEYWORD_SET(nPlots) THEN h2dStrArr=[h2dStr,h2dMaskStr] ELSE h2dStrArr = h2dMaskStr

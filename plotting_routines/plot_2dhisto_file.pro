@@ -2,9 +2,13 @@
 PRO PLOT_2DHISTO_FILE,file, $
                       QUANTS_TO_PLOT=quants_to_plot, $
                       PLOTDIR=plotDir, $
+                      OUT_PLOTNAMES=out_plotNames, $
+                      DEL_PS=del_ps, $
                       LUN=lun
 
   IF ~KEYWORD_SET(lun) THEN lun = -1
+
+  IF N_ELEMENTS(del_ps) EQ 0 THEN del_ps = 1 ;junk postscripts by default
 
   IF ~KEYWORD_SET(plotDir) THEN set_plot_dir,plotDir
 
@@ -59,11 +63,30 @@ PRO PLOT_2DHISTO_FILE,file, $
      ENDIF
   ENDELSE
 
+  ;;Get names of quantities
+  IF N_ELEMENTS(dataNameArr) GT 0 THEN BEGIN
+     dataNames                        = dataNameArr
+  ENDIF ELSE BEGIN
+     dataNames                        = !NULL
+     FOR k=0,N_ELEMENTS(h2dStrArr)-1 DO BEGIN
+           dataNames = [dataNames,h2dStrArr[k].title]
+     ENDFOR
+  ENDELSE
+
+  ;;Trim crappy leading chars, if necessary
+  FOR k=0,N_ELEMENTS(dataNames)-1 DO BEGIN
+     curLen                        = STRLEN(dataNames[k])-1
+     WHILE STRMID(dataNames[k],curLen,1) EQ '_' DO BEGIN
+        dataNames[k] = STRMID(dataNames[k],0,curLen)
+        curLen                     = STRLEN(dataNames[k])-1
+     ENDWHILE
+  ENDFOR
+
   ;;Get quantities to plot
   IF N_ELEMENTS(quants_to_plot) EQ 0 THEN BEGIN
      PRINTF,lun,'Here are the quantities we have in h2dStrArr:'
      FOR i=0, nH2D-1 DO BEGIN
-        PRINTF,lun,FORMAT='(I0,T8,A0)',i,h2dStrArr[i].title
+        PRINTF,lun,FORMAT='(I0,T8,A0)',i,dataNames[i]
      ENDFOR
      PRINTF,lun,FORMAT='(I0,T8,A0)',nH2D,'Do ALL plots except mask'
      PRINTF,lun,FORMAT='(I0,T8,A0)',nH2D+1,'Do ALL plots'
@@ -82,7 +105,7 @@ PRO PLOT_2DHISTO_FILE,file, $
   FOR i=0,nPlots-1 DO BEGIN
      quant_i                                         = quants_to_plot[i]
 
-     CGPS_Open, plotDir + paramStr+dataNameArr[quant_i]+'.ps',ENCAPSULATED=eps_output
+     CGPS_Open, plotDir + paramStr+dataNames[quant_i]+'.ps',ENCAPSULATED=eps_output
 
      PLOTH2D_STEREOGRAPHIC,h2dStrArr[quant_i],file, $
                            NO_COLORBAR=no_colorbar, $
@@ -90,10 +113,12 @@ PRO PLOT_2DHISTO_FILE,file, $
                            _EXTRA=e 
      CGPS_Close 
      ;;Create a PNG file with a width of 800 pixels.
-     CGPS2RASTER, plotDir + paramStr+dataNameArr[quant_i]+'.ps', $
+     CGPS2RASTER, plotDir + paramStr+dataNames[quant_i]+'.ps', $
                   /PNG, $
                   WIDTH=800, $
                   DELETE_PS=del_PS
   ENDFOR
+
+  out_plotNames                                      = dataNames
 
 END

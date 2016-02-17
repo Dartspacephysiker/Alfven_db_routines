@@ -91,7 +91,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  interp_polar2dcontour,h2dStrArr[i], $
                                        dataNameArr[i], $
                                        tempFile, $
-                                       FNAME=plotDir + paramStr+dataNameArr[i]+'.png', $
+                                       FNAME=plotDir + paramStr+'--'+dataNameArr[i]+'.png', $
                                        _EXTRA=e
 
                  ;; Close the PostScript file:
@@ -101,7 +101,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  SET_PLOT, mydevice
               ENDIF ELSE BEGIN
                  ;;Create a PostScript file.
-                 CGPS_Open, plotDir + paramStr+dataNameArr[i]+'.ps',ENCAPSULATED=eps_output
+                 CGPS_Open, plotDir + paramStr+'--'+dataNameArr[i]+'.ps',ENCAPSULATED=eps_output
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
                                        NO_COLORBAR=no_colorbar, $
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
@@ -109,7 +109,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  CGPS_Close 
                  ;;Create a PNG file with a width of 800 pixels.
                  IF ~KEYWORD_SET(eps_output) THEN BEGIN
-                    CGPS2RASTER, plotDir + paramStr+dataNameArr[i]+'.ps', $
+                    CGPS2RASTER, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
                                  /PNG, $
                                  WIDTH=800, $
                                  DELETE_PS=del_PS

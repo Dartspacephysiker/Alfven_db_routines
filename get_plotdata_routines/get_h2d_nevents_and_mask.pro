@@ -33,7 +33,7 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
   h2dStr.title                  = "Number of events"
   h2dStr.labelFormat            = '(I0)'
   h2dStr.DO_midCBLabel          = 1
-  dataName                      = "nEvents_"
+  dataName                      = "nEvents"
 
   h2dMaskStr                    = tmplt_h2dStr
   h2dMaskStr.title              = "Histogram mask"
