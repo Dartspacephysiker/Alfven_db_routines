@@ -4,6 +4,7 @@ PRO PLOT_2DHISTO_FILE,file, $
                       PLOTDIR=plotDir, $
                       OUT_PLOTNAMES=out_plotNames, $
                       DEL_PS=del_ps, $
+                      MIDNIGHT=midnight, $
                       LUN=lun
 
   IF ~KEYWORD_SET(lun) THEN lun = -1
@@ -110,6 +111,7 @@ PRO PLOT_2DHISTO_FILE,file, $
      PLOTH2D_STEREOGRAPHIC,h2dStrArr[quant_i],file, $
                            NO_COLORBAR=no_colorbar, $
                            MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
+                           MIDNIGHT=midnight, $
                            _EXTRA=e 
      CGPS_Close 
      ;;Create a PNG file with a width of 800 pixels.

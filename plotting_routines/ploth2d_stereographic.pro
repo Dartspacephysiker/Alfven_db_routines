@@ -21,8 +21,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
 
   restore,ancillaryData
 
-  ;Subtract one since last array is the mask
-  nPlots=N_ELEMENTS(h2dStrArr)-1
+  IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
+     IF ABS(minM - 0.00) LT 0.0001 AND ABS(maxM-24.00) LT 0.0001 THEN wholeCap = 1
+  ENDIF
 
   ; Open a graphics window.
   cgDisplay,color="black"
@@ -89,8 +90,14 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ; Set up the contour levels.
   ;   levels = cgScaleVector(Indgen(nlevels), 0,255)      
   
+
+  ;;Get longitudes for drawing boxes
   nXlines                   = (maxM-minM)/binM + 1
   mlts                      = indgen(nXlines)*binM+minM
+  ;; IF KEYWORD_SET(wholeCap) THEN BEGIN
+  ;;    gridLons               = [0,90,180,270]
+  ;; ENDIF
+
 
   IF KEYWORD_SET(do_lShell) THEN BEGIN
      nYlines                = (maxL-minL)/binL + 1
@@ -117,26 +124,75 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      nYlines                = (maxI-minI)/binI + 1
      ilats                  = indgen(nYlines)*binI + minI
 
-     gridLats               = defGridLats * (ABS(minI)/minI)
-     gridLatNames           = defGridLats * (ABS(minI)/minI)
+     CASE 1 OF
+        (maxI-minI) LE 12: BEGIN
+           minISpacing      = 6
+        END
+        (maxI-minI) LE 20: BEGIN
+           minISpacing      = 8
+        END
+        (maxI-minI) LE 30: BEGIN
+           minISpacing      = 10
+        END
+        (maxI-minI) GT 30: BEGIN
+           minISpacing      = 10
+        END
+     ENDCASE
+
+     satisfied              = 0
+     gridIFactor            = 1
+     WHILE ~satisfied DO BEGIN
+        gridISpacing        = binI * gridIFactor
+        IF gridISpacing LT minISpacing THEN BEGIN
+           gridIFactor++
+        ENDIF ELSE BEGIN
+           satisfied        = 1
+        ENDELSE
+     ENDWHILE
+
+     gridLats               = INDGEN(10)*gridISpacing + minI
+     calcILines             = (maxI-minI)/minISpacing 
+     CASE 1 OF 
+        calcILines LE 3: BEGIN
+           gridLats               = gridLats[WHERE(gridLats GE minI AND gridLats LE maxI)]
+        END
+        calcILines LE 4: BEGIN
+           gridMinIDist           = MIN(ABS(gridLats-minI))
+           gridMaxIDist           = MIN(ABS(gridLats-maxI))
+           IF gridMinIDist LT gridMaxIDist THEN BEGIN
+              gridLats               = gridLats[WHERE(gridLats GT minI AND gridLats LE maxI)]
+           ENDIF ELSE BEGIN
+              gridLats               = gridLats[WHERE(gridLats GE minI AND gridLats LT maxI)]
+           ENDELSE
+        END
+        calcILines GT 4: BEGIN
+           gridLats               = gridLats[WHERE(gridLats GT minI AND gridLats LT maxI)]
+        END
+     ENDCASE
+     gridLats               = FIX(gridLats)
+     gridLatNames           = gridLats
+
+     ;; gridLats               = defGridLats * (ABS(minI)/minI) ;IF WHERE((INDGEN(10)*binI + minI 
+     ;; gridLatNames           = defGridLats * (ABS(minI)/minI)
   ENDELSE
 
 
   IF mirror THEN BEGIN
-     ilats                  = -1.0 * ilats 
+     ilats                        = -1.0 * ilats 
      gridLats                     = -1.0 * gridLats
      ;; gridLatNames                 = -1.0 * gridLatNames
   ENDIF
 
   ;;binary matrix to tell us where masked values are
-  masked                    = (h2dStrArr[nPlots].data GT 250.0)
+  nPlots                          = N_ELEMENTS(h2dStrArr)-1   ;Subtract one since last array is the mask
+  masked                          = (h2dStrArr[nPlots].data GT 250.0)
   IF KEYWORD_SET(reverse_lShell) THEN BEGIN
-     masked[*,1:-1]         = REVERSE(masked[*,1:-1],2)
-     masked                 = SHIFT(masked,0,-1)
+     masked[*,1:-1]               = REVERSE(masked[*,1:-1],2)
+     masked                       = SHIFT(masked,0,-1)
   ENDIF
-  notMasked                 = WHERE(~masked)
+  notMasked                       = WHERE(~masked)
 
-  h2descl                   = MAKE_ARRAY(SIZE(temp.data,/DIMENSIONS),VALUE=0)
+  h2descl                         = MAKE_ARRAY(SIZE(temp.data,/DIMENSIONS),VALUE=0)
 
   ;;Scale this stuff
   ;;The reason for all the trickery is that we want to know what values are out of bounds,
@@ -194,20 +250,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ;;******************************
   ;;Grid stuffs
   ;;******************************
-  ;;add thicker grid to a few latitude lines
-  cgMap_Grid, Clip_Text=1, $
-              /NoClip, $
-              thick=(!D.Name EQ 'PS') ? defGridBoldLineThick_PS : defGridBoldLineThick,$
-              LINESTYLE=defBoldGridLineStyle, $
-              COLOR=defGridColor, $
-              LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : defBoldLatDelta), $
-              LONDELTA=defBoldLonDelta, $
-              LATS=(KEYWORD_SET(do_lShell) ? gridLats : !NULL)
-
   ;; Add map grid. Set the Clip_Text keyword to enable the NO_CLIP graphics keyword. 
   IF KEYWORD_SET(temp.shift1) THEN BEGIN
      ;; shiftedMLTs                     = ((maxM-minM)/binM+temp.shift1) * 15.
      shiftedMLTs                     = (indgen((maxm-minm)/binm)*binm+temp.shift1)*15.
+     ;; gridLons                        = gridLons + temp.shift1
   ENDIF ELSE BEGIN
      shiftedMLTs                     = !NULL
   ENDELSE
@@ -215,11 +262,26 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
               /NOCLIP, $
               LINESTYLE=0, $
               THICK=(!D.Name EQ 'PS') ? defGridLineThick_PS : defGridLineThick_PS,$
-              COLOR=defGridColor,LONDELTA=binM*15, $
-              LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : binI ), $  
+              COLOR=defGridColor, $
+              LONDELTA=binM*15, $
+              ;; LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : binI ), $  
               LONS=shiftedMLTs, $
               ;;LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI )
-              LATS=(KEYWORD_SET(do_lShell) ? ilats : !NULL)
+              LATS=ilats
+              ;; LATS=(KEYWORD_SET(do_lShell) ? ilats : !NULL)
+
+
+  ;;add thicker grid to a few latitude lines
+  cgMap_Grid, Clip_Text=1, $
+              /NoClip, $
+              thick=(!D.Name EQ 'PS') ? defGridBoldLineThick_PS : defGridBoldLineThick,$
+              LINESTYLE=defBoldGridLineStyle, $
+              COLOR=defGridColor, $
+              ;; LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : defBoldLatDelta), $
+              LONDELTA=defBoldLonDelta, $
+              ;; LONS=gridLons, $
+              LATS=gridLats
+
 
   ; Now text. Set the Clip_Text keyword to enable the NO_CLIP graphics keyword. 
   IF KEYWORD_SET(do_lShell) THEN BEGIN
@@ -232,7 +294,6 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ENDELSE 
 
   IF KEYWORD_SET(wholeCap) THEN BEGIN
-  ;; IF N_ELEMENTS(wholeCap) GT 0 THEN BEGIN
      factor                          = 6.0
      mltSites                        = (INDGEN((maxM-minM)/factor)*factor+minM)
      lonNames                        = [string(minM,format=lonLabelFormat) + " MLT", $
@@ -256,14 +317,14 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                  LINESTYLE=0, $
                  THICK=3, $
                  COLOR=defGridTextColor, $
-                 ;; latdelta=(KEYWORD_SET(do_lShell) ? binL : binI )*4,$
                  LATS=gridLats, $
                  LATNAMES=gridLatNames, $
+                 ;; LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI )*4,$
                  ;; LATLABEL=(mean([minM,maxM]))*15+15, $
-                 LATLABEL=45, $
-                 ;; latlabel=((maxM-minM)/2.0+minM)*15-binM*7.5,
-                 LONS=mltSites*15, $
+                 ;; LATLABEL=((maxM-minM)/2.0+minM)*15-binM*7.5,
                  ;;LONNAMES=[strtrim(minM,2)+" MLT",STRTRIM(INDGEN((maxM-minM)/1.0)+(minM+1),2)]
+                 LATLABEL=45, $
+                 LONS=mltSites*15, $
                  LONNAMES=lonNames, $
                  LONLABEL=lonLabel, $
                  CHARSIZE=defCharSize_grid
@@ -295,7 +356,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
         latNames                    = STRING(FORMAT='(I3)',KEYWORD_SET(mirror) ? -lats : lats)
 
      cgMap_Grid, Clip_Text=1, $
-                 /NoClip, $
+                 /NOCLIP, $
+                 /NO_GRID,$
                  /LABEL, $
                  LINESTYLE=0, $
                  THICK=3, $
@@ -304,7 +366,6 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                  LATDELTA=(KEYWORD_SET(do_lShell) ? binL : !NULL ),$
                  LATS=(KEYWORD_SET(do_lShell) ? !NULL : lats), $
                  LATNAMES=latNames, $
-                 /NO_GRID,$
                  LATLABEL=minM*15-10, $
                  LONLABEL=lonLabel,$ 
                  ;; lonlabel=(minI GT 0) ? ((mirror) ? -maxI : minI) : ((mirror) ? -minI : maxI),$ 
@@ -326,13 +387,13 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ;cgText, 90, minI-5, 'dawnward',Alignment=0.5,Charsize=defCharSize
   ;cgText, -90, minI-5, 'duskward',Alignment=0.5,Charsize=defCharSize  
   
-  IF N_ELEMENTS(clockStr) NE 0 THEN BEGIN
-     cgText,lTexPos1, $
-            bTexPos1+clockStrOffset, $
-            "IMF " + clockStr, $
-            /NORMAL, $
-            CHARSIZE=defCharSize 
-  ENDIF
+  ;; IF N_ELEMENTS(clockStr) NE 0 THEN BEGIN
+  ;;    cgText,lTexPos1, $
+  ;;           bTexPos1+clockStrOffset, $
+  ;;           "IMF " + clockStr, $
+  ;;           /NORMAL, $
+  ;;           CHARSIZE=defCharSize 
+  ;; ENDIF
 
   IF temp.do_plotIntegral THEN BEGIN
      
