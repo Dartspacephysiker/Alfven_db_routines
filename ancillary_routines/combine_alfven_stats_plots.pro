@@ -61,7 +61,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
      ENDFOR
   ENDIF
 
-  IF KEYWORD_SET(plots_to_combine) THEN BEGIN
+  IF N_ELEMENTS(plots_to_combine) GT 0 THEN BEGIN
      nPlots                        = N_ELEMENTS(plots_to_combine)
   ENDIF ELSE BEGIN
      IF ~KEYWORD_SET(n_to_combine) THEN BEGIN

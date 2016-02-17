@@ -1,10 +1,9 @@
 ;2015/10/21
 ;Maybe this makes life a little easier
 
-  wholecap = 0
-
-  charSize                    = cgDefCharSize()*((N_ELEMENTS(wholeCap) EQ 0) ? 1.0 : 0.7 )
-  charSize = cgDefCharSize()*((N_ELEMENTS(wholeCap) EQ 0) ? 1.3 : 0.7 )
+  ;; charSize                    = cgDefCharSize()*((N_ELEMENTS(wholeCap) EQ 0) ? 1.0 : 0.7 )
+  ;; charSize = cgDefCharSize()*((N_ELEMENTS(wholeCap) EQ 0) ? 1.3 : 0.7 )
+  charSize                    = cgDefCharSize()*1.3
 
   ;;******************************
   ;;Color tables
@@ -69,7 +68,7 @@
   ;;Wholecap vs. not-wholecap defaults
   ;;**********************************
   ;; IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
-  IF ~KEYWORD_SET(wholeCap) THEN BEGIN
+  ;; IF ~KEYWORD_SET(wholeCap) THEN BEGIN
      cbPosition       = [0.25, 0.89, 0.75, 0.91]
      cbTLocation      = "TOP"
      cbVertical       = 0
@@ -81,17 +80,17 @@
      bTexPos1         = 0.78
      bTexPos2         = 0.74
      clockStrOffset   = -0.7
-  ENDIF ELSE BEGIN
-     cbPosition       = [0.86, 0.10, 0.89, 0.90]
-     cbTLocation      = "RIGHT"                     ;;"RIGHT" only works if cbVertical == 1
-     cbVertical       = 1
-     cbTCharsize      = defCharsize_grid
-     cbTextThick      = 1.5
+  ;; ENDIF ELSE BEGIN
+  ;;    cbPosition       = [0.86, 0.10, 0.89, 0.90]
+  ;;    cbTLocation      = "RIGHT"                     ;;"RIGHT" only works if cbVertical == 1
+  ;;    cbVertical       = 1
+  ;;    cbTCharsize      = defCharsize_grid
+  ;;    cbTextThick      = 1.5
 
-     lTexPos1         = 0.09
-     lTexPos2         = 0.63
-     bTexPos1         = 0.88
-     bTexPos2         = 0.84
-     clockStrOffset   = -0.8
-  ENDELSE
+  ;;    lTexPos1         = 0.09
+  ;;    lTexPos2         = 0.63
+  ;;    bTexPos1         = 0.88
+  ;;    bTexPos2         = 0.84
+  ;;    clockStrOffset   = -0.8
+  ;; ENDELSE
 

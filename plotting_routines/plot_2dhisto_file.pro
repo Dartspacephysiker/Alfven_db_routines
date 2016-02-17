@@ -5,6 +5,8 @@ PRO PLOT_2DHISTO_FILE,file, $
                       OUT_PLOTNAMES=out_plotNames, $
                       DEL_PS=del_ps, $
                       MIDNIGHT=midnight, $
+                      CB_FORCE_OOBLOW=cb_force_ooblow, $
+                      CB_FORCE_OOBHIGH=cb_force_oobhigh, $
                       LUN=lun
 
   IF ~KEYWORD_SET(lun) THEN lun = -1
@@ -110,6 +112,8 @@ PRO PLOT_2DHISTO_FILE,file, $
 
      PLOTH2D_STEREOGRAPHIC,h2dStrArr[quant_i],file, $
                            NO_COLORBAR=no_colorbar, $
+                           CB_FORCE_OOBLOW=cb_force_ooblow, $
+                           CB_FORCE_OOBHIGH=cb_force_oobhigh, $
                            MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
                            MIDNIGHT=midnight, $
                            _EXTRA=e 

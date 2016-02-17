@@ -14,16 +14,16 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                           PLOTTITLE=plotTitle, MIRROR=mirror, $
                           DEBUG=debug, $
                           NO_COLORBAR=no_colorbar, $
+                          CB_FORCE_OOBLOW=cb_force_ooblow, $
+                          CB_FORCE_OOBHIGH=cb_force_oobhigh, $
                           _EXTRA=e
 
-  print,'biz'
-  @ploth2d_stereographic_defaults.pro
-
   restore,ancillaryData
-
   IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
      IF ABS(minM - 0.00) LT 0.0001 AND ABS(maxM-24.00) LT 0.0001 THEN wholeCap = 1
   ENDIF
+
+  @ploth2d_stereographic_defaults.pro
 
   ; Open a graphics window.
   cgDisplay,color="black"
@@ -40,13 +40,13 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ENDIF
   
   ;; IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
-  IF ~KEYWORD_SET(wholeCap) THEN BEGIN
+  ;; IF ~KEYWORD_SET(wholeCap) THEN BEGIN
      position = [0.1, 0.075, 0.9, 0.75] 
      lim=[(mirror) ? -maxI : minI,minM*15,(mirror) ? -minI : maxI,maxM*15]
-  ENDIF ELSE BEGIN
-     position = [0.05, 0.05, 0.85, 0.85] 
-     lim=[(mirror) ? -maxI : minI, 0 ,(mirror) ? -minI : maxI,360] ; lim = [minimum lat, minimum long, maximum lat, maximum long]
-  ENDELSE
+  ;; ENDIF ELSE BEGIN
+  ;;    position = [0.05, 0.05, 0.85, 0.85] 
+  ;;    lim=[(mirror) ? -maxI : minI, 0 ,(mirror) ? -minI : maxI,360] ; lim = [minimum lat, minimum long, maximum lat, maximum long]
+  ;; ENDELSE
 
   IF mirror THEN BEGIN
      IF minI GT 0 THEN centerLat = -90 ELSE centerLat = 90
@@ -95,7 +95,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   nXlines                   = (maxM-minM)/binM + 1
   mlts                      = indgen(nXlines)*binM+minM
   ;; IF KEYWORD_SET(wholeCap) THEN BEGIN
-  ;;    gridLons               = [0,90,180,270]
+     gridLons               = [0,90,180,270,360]
   ;; ENDIF
 
 
@@ -202,6 +202,13 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   OOB_HIGH_i                = WHERE(temp.data GT temp.lim[1] AND ~masked)
   OOB_LOW_i                 = WHERE(temp.data LT temp.lim[0] AND ~masked)
 
+  IF KEYWORD_SET(cb_force_oobHigh) THEN BEGIN
+     temp.force_oobHigh     = 1
+  ENDIF
+  IF KEYWORD_SET(cb_force_oobLow) THEN BEGIN
+     temp.force_oobLow      = 1
+  ENDIF
+
   IF OOB_HIGH_i[0] NE -1 OR temp.force_oobHigh THEN BEGIN
      is_OOBHigh             = 1
   ENDIF
@@ -254,7 +261,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   IF KEYWORD_SET(temp.shift1) THEN BEGIN
      ;; shiftedMLTs                     = ((maxM-minM)/binM+temp.shift1) * 15.
      shiftedMLTs                     = (indgen((maxm-minm)/binm)*binm+temp.shift1)*15.
-     ;; gridLons                        = gridLons + temp.shift1
+     ;; gridLons                        = gridLons + temp.shift1*15
   ENDIF ELSE BEGIN
      shiftedMLTs                     = !NULL
   ENDELSE
@@ -279,7 +286,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
               COLOR=defGridColor, $
               ;; LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : defBoldLatDelta), $
               LONDELTA=defBoldLonDelta, $
-              ;; LONS=gridLons, $
+              LONS=gridLons, $
               LATS=gridLats
 
 
