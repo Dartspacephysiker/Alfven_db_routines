@@ -63,17 +63,21 @@ PRO PLOT_2DHISTO_FILE,file, $
   IF N_ELEMENTS(quants_to_plot) EQ 0 THEN BEGIN
      PRINTF,lun,'Here are the quantities we have in h2dStrArr:'
      FOR i=0, nH2D-1 DO BEGIN
-        PRINTF,lun,i,h2dStrArr[i].title
+        PRINTF,lun,FORMAT='(I0,T8,A0)',i,h2dStrArr[i].title
      ENDFOR
-     PRINTF,lun,nH2D,'Do ALL plots except mask'
-     PRINTF,lun,nH2D+1,'Do ALL plots'
-     READ_ARRAY_FROM_USER,quants_to_plot,PROMPT='Enter plots you want to do, separated by a space',/QUIET
+     PRINTF,lun,FORMAT='(I0,T8,A0)',nH2D,'Do ALL plots except mask'
+     PRINTF,lun,FORMAT='(I0,T8,A0)',nH2D+1,'Do ALL plots'
+
+     nPrompt = STRING(FORMAT='("Enter N plots you want to do (NOTE: Type ",A0," for plots ",I0," and ",I0,"): ")','"1"',nH2D,nH2D+1)
+     READ_ARRAY_FROM_USER,quants_to_plot, $
+                          NPROMPT=nPrompt, $
+                          PROMPT='Enter plots you want to do, separated by a space: ',/QUIET
      
      IF quants_to_plot[0] EQ nH2D   THEN quants_to_plot = INDGEN(nH2D-1)
      IF quants_to_plot[0] EQ nH2D+1 THEN quants_to_plot = INDGEN(nH2D)
   ENDIF ELSE BEGIN
-     nPlots                                             = N_ELEMENTS(quants_to_plot)
   ENDELSE
+  nPlots                                             = N_ELEMENTS(quants_to_plot)
 
   FOR i=0,nPlots-1 DO BEGIN
      quant_i                                         = quants_to_plot[i]

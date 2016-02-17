@@ -19,7 +19,7 @@ PRO SET_PLOT_DIR,plotDir, $
      0: BEGIN
         do_customDir          = ''
         READ,do_customDir,PROMPT='SET_PLOT_DIR: No keyword set! Are you doing a custom directory?'
-        WHILE proceed EQ 0 DO BEGIN
+        ;; WHILE proceed EQ 0 DO BEGIN
            CASE STRUPCASE(STRMID(do_customDir,0,1)) OF
               'Y': BEGIN
                  customDir    = ''
@@ -33,27 +33,44 @@ PRO SET_PLOT_DIR,plotDir, $
                  response     = 0
                  valid        = [1,2,3]
                  READ,response,PROMPT='OK, select (1) for_storms, (2) for_sw_imf, or (3)for_alfvendb'
-                 PRINT,'PROCEED',proceed
-                 PRINT,'RESPONSE',response
-                 WHILE WHERE(response EQ valid) EQ -1 DO BEGIN
-                    READ,response,PROMPT="Try again, fool. 1, 2, or 3."
-                    CASE response OF
-                       1: BEGIN
-                          plotDir = defStormPlotDir                       
-                       END
-                       2: BEGIN
-                          plotDir = defSW_IMFPlotDir
-                       END
-                       3: BEGIN
-                          plotDir = defAlfvenDBPlotDir
-                       END
-                       ELSE: PRINTF,lun,'Again.'
-                    ENDCASE
-                 ENDWHILE
-                 proceed = 1
+                 CASE response OF
+                    1: BEGIN
+                       plotDir = defStormPlotDir                       
+                       proceed = 1
+                    END
+                    2: BEGIN
+                       plotDir = defSW_IMFPlotDir
+                       proceed = 1
+                    END
+                    3: BEGIN
+                       plotDir = defAlfvenDBPlotDir
+                       proceed = 1
+                    END
+                    ELSE: BEGIN
+                       READ,response,PROMPT="Try again, fool. 1, 2, or 3."
+                       WHILE WHERE(response EQ valid) EQ -1 DO BEGIN
+                          READ,response,PROMPT="Again."
+                          CASE response OF
+                             1: BEGIN
+                                plotDir = defStormPlotDir                       
+                                proceed = 1
+                             END
+                             2: BEGIN
+                                plotDir = defSW_IMFPlotDir
+                                proceed = 1
+                             END
+                             3: BEGIN
+                                plotDir = defAlfvenDBPlotDir
+                                proceed = 1
+                             END
+                          ENDCASE
+                       ENDWHILE
+                       proceed = 1
+                    END
+                 ENDCASE
               END
            ENDCASE
-        ENDWHILE
+        ;; ENDWHILE
      END
      1: BEGIN
         CASE 1 OF
