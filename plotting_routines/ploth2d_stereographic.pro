@@ -455,10 +455,10 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      cbSpacingStr_low  = (nLevels-1)/2-is_OOBLow
      cbSpacingStr_high = (nLevels-1)/2-is_OOBHigh
      
-     cbOOBLowVal       = (temp.lim[0] LE MIN(temp.data(notMasked)) AND ~temp.force_oobLow) ? $
-                         !NULL : 0B
-     cbOOBHighVal      = (temp.lim[1] GE MAX(temp.data(notMasked)) AND ~temp.force_oobHigh) ? $
-                         !NULL : BYTE(nLevels-1)
+     cbOOBLowVal       = (MIN(temp.data(notMasked)) LT temp.lim[0] OR temp.force_oobLow) ? $
+                         0B : !NULL
+     cbOOBHighVal      = (MAX(temp.data(notMasked)) GT temp.lim[1] OR temp.force_oobHigh) ? $
+                         BYTE(nLevels-1) : !NULL
      cbRange           = temp.lim
      cbTitle           = plotTitle
      nCBColors         = nlevels-is_OOBHigh-is_OOBLow
