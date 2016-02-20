@@ -8,6 +8,10 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    FORCE_LOAD=force_load, $
                                    LUN=lun
 
+  ;; COMMON FL_VARS,fastLoc,FASTLOC__times,FASTLOC__delta_t, $
+  ;;    FASTLOC__good_i,FASTLOC__cleaned_i,FASTLOC__HAVE_GOOD_I, $
+  ;;    FASTLOC__dbFile,FASTLOC__dbTimesFile
+
   COMPILE_OPT idl2
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout

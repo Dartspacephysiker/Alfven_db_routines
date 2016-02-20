@@ -23,11 +23,11 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                                OUTINDSPREFIX=outIndsPrefix, $
                                OUTINDSSUFFIX=outIndsSuffix, $
                                OUTINDSFILEBASENAME=outIndsFileBasename, $
-                               FASTLOC_STRUCT=fastLoc, $
-                               FASTLOC_TIMES=fastLoc_Times, $
-                               FASTLOC_DELTA_T=fastloc_delta_t, $
-                               FASTLOCFILE=fastLocFile, $
-                               FASTLOCTIMEFILE=fastLocTimeFile, $
+                               ;; FASTLOC_STRUCT=fastLoc, $
+                               ;; FASTLOC_TIMES=fastLoc_Times, $
+                               ;; FASTLOC_DELTA_T=fastloc_delta_t, $
+                               ;; FASTLOCFILE=fastLocFile, $
+                               ;; FASTLOCTIMEFILE=fastLocTimeFile, $
                                FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                ;;Note, all of the following keywords got added 2015/10/27, and they may screw up other stuff. Just so
                                ;;you know!
@@ -44,6 +44,8 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                                BINL=binL
 
   COMPILE_OPT idl2
+
+  COMMON FL_VARS
 
   ;; minM=0
   ;; maxM=24
@@ -77,7 +79,7 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ENDIF
 
   ;;Load FASTLoc & Co.
-  LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t,DBDir=DBDir,DBFile=FastLocFile,DB_tFile=FastLocTimeFile,LUN=lun
+  ;; LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t,DBDir=DBDir,DBFile=FastLocFile,DB_tFile=FastLocTimeFile,LUN=lun
   
   SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, POYNTRANGE=poyntRange, $
                              MINMLT=minM,MAXMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
@@ -138,17 +140,18 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ;;    RESTORE,outIndsFilename
   ;;    ;; WAIT,1
   ;; ENDIF ELSE BEGIN
-     good_i = get_chaston_ind(fastLoc,satellite,lun,GET_TIME_I_NOT_ALFVENDB_I=1, $
-                              DBTIMES=fastLoc_times,DBFILE=FastLocFile, HEMI=hemi, $
+     good_i = get_chaston_ind(fl_fastLoc,satellite,lun,GET_TIME_I_NOT_ALFVENDB_I=1, $
+                              DBTIMES=FASTLOC__times,DBFILE=FASTLOC__dbFile, $
+                              HEMI=hemi, $
                               ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange,POYNTRANGE=poyntRange, $
                               MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
                               DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
                               HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd)
      
      GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
-                                                   DBSTRUCT=fastLoc, $
+                                                   DBSTRUCT=fl__fastLoc, $
                                                    OUT_GOOD_TARR_I=out_good_tArr_i, $
-                                                   DBTIMES=fastLoc_times, $
+                                                   DBTIMES=fastLoc__times, $
                                                    RESTRICT_W_THESEINDS=good_i, $
                                                    OUT_INDS_LIST=fastLocInterped_i, $
                                                    LIST_TO_ARR=list_to_arr, $
@@ -164,7 +167,7 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
         PRINT,'Saving outindsfile ' + outIndsFilename + '...'
         save,fastLocInterped_i,minm,maxm,binm,mini,maxi,bini,minl,maxl,binl, $
              altituderange,charerange,orbrange, $
-             fastLocOutputDir,fastLocFile,fastLocTimeFile, $
+             fastLocOutputDir,fastLoc__dbFile,fastLoc__dbTimesFile, $
              filename=outIndsFilename
      ENDIF
   ;; ENDELSE

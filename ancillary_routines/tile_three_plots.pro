@@ -42,7 +42,14 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
   titleObjs   = MAKE_ARRAY(nImages,/OBJ)
   
   
-  ;; FOR i = 0, N_ELEMENTS(fileNames) - 1 DO BEGIN
+  FOR i = 0,nImages-1 DO BEGIN
+     IF ~FILE_TEST(filenames[i]) THEN BEGIN
+        PRINTF,lun,"Couldn't find " + filenames[i] + "! Not tiling these guys..."
+        RETURN
+     ENDIF
+  ENDFOR
+
+ ;; FOR i = 0, N_ELEMENTS(fileNames) - 1 DO BEGIN
   FOR i = 0,nImages-1 DO BEGIN
      ;; IF KEYWORD_SET(combined_to_buffer) THEN BEGIN
      ;;    imArr[0]    = IMAGE(filenames[i], $

@@ -27,10 +27,23 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
                          USING_HEAVIES=using_heavies, $
                          NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i, $
+                         GET_ALFVENDB_I=get_alfvendb_i, $
                          CORRECT_FLUXES=correct_fluxes, $
-                         PRINT_PARAM_SUMMARY=print_param_summary
+                         PRINT_PARAM_SUMMARY=print_param_summary, $
+                         FASTLOC_DELTA_T=fastloc_delta_t
   COMPILE_OPT idl2
  
+  COMMON MLT_ILAT_MAGC,C_MIMC__minMLT,C_MIMC__maxMLT,C_MIMC__minILAT,C_MIMC__maxILAT,C_MIMC__minMC,C_MIMC__maxMC
+
+  COMMON M_VARS,MAXIMUS,MAXIMUS__HAVE_GOOD_I,MAXIMUS__times, $
+     MAXIMUS__good_i,MAXIMUS__cleaned_i, $
+     MAXIMUS__dbFile,MAXIMUS__dbTimesFile
+
+  COMMON FL_VARS,FL_fastLoc,FASTLOC__times,FASTLOC__delta_t, $
+     FASTLOC__good_i,FASTLOC__cleaned_i,FASTLOC__HAVE_GOOD_I, $
+     FASTLOC__dbFile,FASTLOC__dbTimesFile
+
+
   ;For statistical auroral oval
   defHwMAurOval=0
   defHwMKpInd=7
@@ -39,27 +52,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
 
   ;; defPrintSummary = 0
 
-  is_maximus = 0        ;We assume this is not maximus
-  ;;***********************************************
-  ;;Load up all the dater, working from ~/Research/ACE_indices_data/idl
-  
   IF ~KEYWORD_SET(lun) THEN lun = defLun ;stdout
-
-  ;; IF KEYWORD_SET(both_hemis) THEN BEGIN
-  ;;    PRINTF,lun,"hemi set to 'BOTH' via keyword /BOTH_HEMIS"
-  ;;    hemi="BOTH"
-  ;; ENDIF ELSE BEGIN
-  ;;    IF KEYWORD_SET(north) THEN BEGIN
-  ;;       PRINTF,lun,"hemi set to 'NORTH' via keyword /NORTH"
-  ;;       hemi="NORTH"
-  ;;    ENDIF ELSE BEGIN
-  ;;       IF KEYWORD_SET(south) THEN BEGIN
-  ;;          PRINTF,lun,"hemi set to 'SOUTH' via keyword /SOUTH"
-  ;;          hemi="SOUTH"
-  ;;       ENDIF
-  ;;    ENDELSE
-  ;; ENDELSE
-
 
   SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                                 MINILAT=minI,MAXILAT=maxI,BINI=binI, $
@@ -71,24 +64,100 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                                 SOUTH=south, $
                                 LUN=lun
 
-  IF KEYWORD_SET(get_time_i_NOT_alfvendb_i) THEN BEGIN
-     LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile
-     is_maximus = 0
-  ENDIF ELSE BEGIN
-     IF N_ELEMENTS(correct_fluxes) EQ 0 THEN BEGIN
-        IF N_ELEMENTS(dbStruct) GT 0 THEN BEGIN
-           PRINTF,lun,'GET_CHASTON_IND: Not attempting to correct fluxes since dbStruct already loaded ...'
-           correct_fluxes = 0
+  ;;;;;;;;;;;;;;;
+  ;;Check whether this is a maximus or fastloc struct
+  IF KEYWORD_SET(dbStruct) THEN BEGIN
+     IF KEYWORD_SET(get_time_i_NOT_alfvendb_i) THEN BEGIN
+        is_maximus = 0
+     ENDIF ELSE BEGIN
+        IF KEYWORD_SET(get_alfvendb_i) THEN BEGIN
+           is_maximus = 1
         ENDIF ELSE BEGIN
-           correct_fluxes = 1
+           IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
         ENDELSE
-     ENDIF
-     LOAD_MAXIMUS_AND_CDBTIME,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile, $
-                              DO_CHASTDB=chastDB, $
-                              DO_DESPUNDB=despunDB, $
-                              CORRECT_FLUXES=correct_fluxes
+     ENDELSE
+  ENDIF ELSE BEGIN
+     IF KEYWORD_SET(get_time_i_NOT_alfvendb_i) THEN BEGIN
+        is_maximus = 0
+     ENDIF ELSE BEGIN
+        IF KEYWORD_SET(get_alfvendb_i) THEN BEGIN
+           is_maximus = 1
+        ENDIF
+     ENDELSE
+  ENDELSE
 
-     is_maximus = 1
+  IF ~KEYWORD_SET(get_alfven_db_i) AND ~KEYWORD_SET(get_time_i_not_alfvendb_i) AND ~KEYWORD_SET(dbStruct) THEN BEGIN
+     PRINTF,lun,"Assuming this is maximus ..."
+     is_maximus = 1             ;We assume this is maximus
+  ENDIF
+
+  ;;Get the databases if they're already in mem
+  IF is_maximus THEN BEGIN
+     IF N_ELEMENTS(maximus) NE 0 AND N_ELEMENTS(MAXIMUS__times) NE 0 THEN BEGIN
+        dbStruct                 = maximus
+        dbTimes                  = MAXIMUS__times
+        dbFile                   = MAXIMUS__dbFile
+        dbTimesFile              = MAXIMUS__dbTimesFile
+     ENDIF ELSE BEGIN
+        IF N_ELEMENTS(correct_fluxes) EQ 0 THEN BEGIN
+           IF N_ELEMENTS(dbStruct) GT 0 THEN BEGIN
+              PRINTF,lun,'GET_CHASTON_IND: Not attempting to correct fluxes since dbStruct already loaded ...'
+              correct_fluxes = 0
+           ENDIF ELSE BEGIN
+              correct_fluxes = 1
+           ENDELSE
+        ENDIF
+        LOAD_MAXIMUS_AND_CDBTIME,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile, $
+                                 DO_CHASTDB=chastDB, $
+                                 DO_DESPUNDB=despunDB, $
+                                 CORRECT_FLUXES=correct_fluxes
+        maximus                  = dbStruct
+        MAXIMUS__times           = dbTimes
+        MAXIMUS__dbFile          = dbFile
+        MAXIMUS__dbTimesFile     = dbTimesFile
+     ENDELSE
+  ENDIF ELSE BEGIN
+     IF N_ELEMENTS(FL_fastloc) NE 0 AND N_ELEMENTS(FASTLOC__times) NE 0 THEN BEGIN
+        dbStruct                 = FL_fastloc
+        dbTimes                  = FASTLOC__times
+        fastloc_delta_t          = FASTLOC__delta_t
+        dbFile                   = FASTLOC__dbFile
+        dbTimesFile              = FASTLOC__dbTimesFile
+     ENDIF ELSE BEGIN
+        LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,fastloc_delta_t,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile
+        FL_fastloc                  = dbStruct
+        FASTLOC__times           = dbTimes
+        FASTLOC__delta_t         = fastloc_delta_t
+        FASTLOC__dbFile          = dbFile
+        FASTLOC__dbTimesFile     = dbTimesFile
+     ENDELSE
+  ENDELSE
+
+  ;;Now check to see whether we have the appropriate vars for each guy
+  IF ~is_maximus THEN BEGIN
+     IF ~KEYWORD_SET(FASTLOC__HAVE_GOOD_I) THEN BEGIN
+
+     ENDIF ELSE BEGIN
+        IF N_ELEMENTS(FASTLOC__good_i) NE 0 THEN BEGIN
+           good_i     = FASTLOC__good_i
+           RETURN,good_i
+        ENDIF ELSE BEGIN
+           PRINT,'But you should already have FASTLOC__good_i!!'
+           STOP
+        ENDELSE
+     ENDELSE
+  ENDIF ELSE BEGIN
+     IF ~KEYWORD_SET(MAXIMUS__HAVE_GOOD_I) THEN BEGIN
+
+     ENDIF ELSE BEGIN
+        IF N_ELEMENTS(MAXIMUS__good_i) NE 0 THEN BEGIN
+           good_i     = MAXIMUS__good_i
+           RETURN,good_i
+        ENDIF ELSE BEGIN
+           PRINT,'But you should already have MAXIMUS__good_i!!'
+           STOP
+        ENDELSE
+     ENDELSE
   ENDELSE
 
   IF ~KEYWORD_SET(HwMAurOval) THEN HwMAurOval = defHwMAurOval
@@ -102,10 +171,6 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
   printf,lun,"****From get_chaston_ind.pro****"
   printf,lun,FORMAT='("DBFile                        :",T35,A0)',dbFile
   printf,lun,""
-
-  ;;;;;;;;;;;;;;;
-  ;;Check whether this is a maximus or fastloc struct
-  IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
 
   ;;;;;;;;;;;;
   ;;Handle longitudes
@@ -205,18 +270,19 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
   ;; IF KEYWORD_SET(chastDB) THEN restore,defChastDB_cleanIndFile ELSE cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun)
   ;; IF KEYWORD_SET(chastDB) THEN cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun,/IS_CHASTDB) ELSE cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun)
   IF is_maximus THEN BEGIN
-     cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun, $
-                                   IS_CHASTDB=chastDB, $
-                                   DO_LSHELL=DO_lshell, $
-                                   USING_HEAVIES=using_heavies)
-     IF cleaned_i NE !NULL THEN good_i=CGSETINTERSECTION(good_i,cleaned_i)
+     IF N_ELEMENTS(MAXIMUS__cleaned_i) EQ 0 THEN BEGIN
+        MAXIMUS__cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun, $
+                                               IS_CHASTDB=chastDB, $
+                                               DO_LSHELL=DO_lshell, $
+                                               USING_HEAVIES=using_heavies)
+        IF cleaned_i NE !NULL THEN good_i=CGSETINTERSECTION(good_i,cleaned_i)
+     ENDIF
   ENDIF ELSE BEGIN
-     cleaned_i = fastloc_cleaner(dbStruct,LUN=lun)
-     IF cleaned_i NE !NULL THEN good_i=CGSETINTERSECTION(good_i,cleaned_i)
+     IF N_ELEMENTS(FASTLOC__cleaned_i) EQ 0 THEN BEGIN
+        FASTLOC__cleaned_i = fastloc_cleaner(dbStruct,LUN=lun)
+        IF cleaned_i NE !NULL THEN good_i=CGSETINTERSECTION(good_i,cleaned_i)
+     ENDIF
   ENDELSE
-
-  ;; IF N_ELEMENTS(dbTimes) EQ 0 THEN dbTimes=str_to_time( dbStruct.time( good_i ) ) $
-  ;; ELSE dbTimes = dbTimes[good_i]
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;Now some other user-specified exclusions set by keyword
@@ -255,6 +321,14 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
   PRINTF,lun,''
   printf,lun,"****END get_chaston_ind.pro****"
   printf,lun,""
+
+  IF is_maximus THEN BEGIN
+     MAXIMUS__good_i      = good_i
+     MAXIMUS__HAVE_GOOD_I = 1
+  ENDIF ELSE BEGIN
+     FASTLOC__good_i      = good_i
+     FASTLOC__HAVE_GOOD_I = 1
+  ENDELSE
 
   RETURN, good_i
   

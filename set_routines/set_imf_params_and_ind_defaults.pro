@@ -83,8 +83,14 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
                                     DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
                                     PARAMSTRING=paramString, $
-                                    SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                                    DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
+                                    PARAMSTR_LIST=paramString_list, $
+                                    SATELLITE=satellite, $
+                                    OMNI_COORDS=omni_Coords, $
+                                    DELAY=delay, $
+                                    MULTIPLE_DELAYS=multiple_delays, $
+                                    STABLEIMF=stableIMF, $
+                                    SMOOTHWINDOW=smoothWindow, $
+                                    INCLUDENOCONSECDATA=includeNoConsecData, $
                                     LUN=lun
 
   COMPILE_OPT idl2
@@ -151,6 +157,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   IF KEYWORD_SET(do_not_consider_imf) THEN BEGIN
      clockStr                      = 'NO_IMF_CONSID'
      paramString                   = paramString + clockStr
+     paramString_list              = LIST(paramString)
   ENDIF ELSE BEGIN
      IF N_ELEMENTS(clockStr) EQ 0 THEN BEGIN
         clockStr = defClockStr
@@ -205,10 +212,19 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      
      
      ;;parameter string
-     paramString=paramString+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+delayStr+$
-                 byMinStr+byMaxStr+bzMinStr+bzMaxStr
+     paramString_list                    = LIST()
+     IF KEYWORD_SET(multiple_delays) THEN BEGIN
+        FOR iDel=0,N_ELEMENTS(delay)-1 DO BEGIN
+           paramString=paramString+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+delayStr+$
+                       byMinStr+byMaxStr+bzMinStr+bzMaxStr
      
-     
+           paramString_list.add,paramString
+        ENDFOR
+        ENDIF ELSE BEGIN
+           paramString=paramString+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+delayStr+$
+                       byMinStr+byMaxStr+bzMinStr+bzMaxStr
+           paramString_list.add,paramString
+        ENDELSE
   ENDELSE
 
 

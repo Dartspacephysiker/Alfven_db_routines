@@ -16,6 +16,10 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              FORCE_LOAD_BOTH=force_load_BOTH, $
                              LUN=lun
 
+  ;; COMMON M_VARS,MAXIMUS,MAXIMUS__HAVE_GOOD_I,MAXIMUS__times, $
+  ;;    MAXIMUS__good_i,MAXIMUS__cleaned_i, $
+  ;;    MAXIMUS__dbFile,MAXIMUS__dbTimesFile
+
   COMPILE_OPT idl2
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout

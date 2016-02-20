@@ -1,6 +1,6 @@
 ;2015/10/19 Barnebarn
 
-PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,good_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,plot_i_list,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                minMLT=minM,maxMLT=maxM, $
                                BINMLT=binM, $
@@ -18,14 +18,32 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,good_i,CLOCKSTR=clockStr, ANGLELIM1=angl
                                DO_ABS_BZMIN=abs_bzMin, $
                                DO_ABS_BZMAX=abs_bzMax, $
                                BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
-                               PARAMSTRING=paramString, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
-                               SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                               HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
-                               HOYDIA=hoyDia,MASKMIN=maskMin,LUN=lun
+                               PARAMSTRING=paramString, $
+                               PARAMSTR_LIST=paramString_list, $
+                               PARAMSTRPREFIX=plotPrefix, $
+                               PARAMSTRSUFFIX=plotSuffix,$
+                               SATELLITE=satellite, $
+                               OMNI_COORDS=omni_Coords, $
+                               HEMI=hemi, $
+                               DELAY=delay, $
+                               MULTIPLE_DELAYS=multiple_delays, $
+                               STABLEIMF=stableIMF, $
+                               SMOOTHWINDOW=smoothWindow, $
+                               INCLUDENOCONSECDATA=includeNoConsecData, $
+                               HOYDIA=hoyDia, $
+                               MASKMIN=maskMin, $
+                               LUN=lun
   
   PRINTF,lun,""
   PRINTF,lun,"**********DATA SUMMARY**********"
-  IF KEYWORD_SET(delay)     THEN PRINTF,lun,FORMAT='(A4, " satellite delay",T30,":",T35,I8,T45," seconds")',satellite,delay
+  IF KEYWORD_SET(delay) THEN BEGIN
+     IF KEYWORD_SET(multiple_delays) THEN BEGIN
+        ;; PRINTF,lun,FORMAT='(A4, " sat delays (minutes)",T30,":")',satellite
+        ;; PRINTF,lun,FORMAT='(6(I8, :, ", "))',delay
+     ENDIF ELSE BEGIN
+        PRINTF,lun,FORMAT='(A4, " satellite delay",T30,":",T35,I8,T45," seconds")',satellite,delay
+     ENDELSE
+  ENDIF
   IF KEYWORD_SET(stableIMF) THEN PRINTF,lun,FORMAT='("IMF stability requirement",T30,":",T35,I8,T45," minutes")',stableIMF
   PRINTF,lun,FORMAT='("")'
   PRINTF,lun,"************"
@@ -46,12 +64,29 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,good_i,CLOCKSTR=clockStr, ANGLELIM1=angl
   IF KEYWORD_SET(angleLim2)     THEN PRINTF,lun,FORMAT='("Angle lim 2",T30,":",T35,I8)',angleLim2
 
   IF KEYWORD_SET(maskMin)       THEN PRINTF,lun,FORMAT='("Events per bin req",T30,": >=",T35,I8)',maskMin
-  PRINTF,lun,FORMAT='("Number of orbits used",T30,":",T35,I8)',N_ELEMENTS(UNIQ(dbStruct.orbit[good_i],SORT(dbStruct.orbit[good_i])))
-  PRINTF,lun,FORMAT='("Total N events",T30,":",T35,I8)',N_ELEMENTS(good_i)
-;; PRINTF,lun,FORMAT='("Percentage of Chaston DB used: ",T35,I0)' + $
-;;        strtrim((N_ELEMENTS(good_i))/134925.0*100.0,2) + "%"
-  PRINTF,lun,FORMAT='("Percentage of DB used",T30,":",T35,G8.4,"%")',(FLOAT(N_ELEMENTS(good_i))/FLOAT(N_ELEMENTS(dbStruct.orbit))*100.0)
-  PRINTF,lun,''
-  IF KEYWORD_SET(paramString) THEN PRINTF,lun,FORMAT='("Parameter string",T30,":",T35,A0)',paramString
+
+
+  ;;Handle a few things that depend on whether or not there are multiple_delays
+  nEvTot                        = N_ELEMENTS(dbStruct.orbit)
+  IF KEYWORD_SET(multiple_delays) THEN BEGIN
+     PRINTF,lun,FORMAT='("Delay (min)",T15,"N orbits",T30,"N Events",T45,"% DB used")'
+     FOR iDel=0,N_ELEMENTS(plot_i_list)-1 DO BEGIN
+        nEv                        = N_ELEMENTS(plot_i_list[iDel])
+        PRINTF,lun,FORMAT='(F10.2,T15,I0,T30,I0,T45,F10.2)', $
+               N_ELEMENTS(UNIQ(dbStruct.orbit[plot_i_list[iDel]],SORT(dbStruct.orbit[plot_i_list[iDel]]))), $
+               nEv, $
+               (FLOAT(nEv)/FLOAT(nEvTot)*100.0)               
+     ENDFOR
+     PRINTF,lun,FORMAT='("Parameter string",T30,":",T35,A0)',paramString_list[iDel]
+  ENDIF ELSE BEGIN
+     nEv                        = N_ELEMENTS(plot_i_list[0])
+     PRINTF,lun,FORMAT='("Number of orbits used",T30,":",T35,I8)', $
+            N_ELEMENTS(UNIQ(dbStruct.orbit[plot_i_list[0]],SORT(dbStruct.orbit[plot_i_list[0]])))
+     PRINTF,lun,FORMAT='("Total N events",T30,":",T35,I8)',nEv
+     PRINTF,lun,FORMAT='("Percentage of DB used",T30,":",T35,G8.4,"%")',(FLOAT(nEv)/FLOAT(nEvTot)*100.0)
+     PRINTF,lun,''
+     IF KEYWORD_SET(paramString) THEN PRINTF,lun,FORMAT='("Parameter string",T30,":",T35,A0)',paramString
+  ENDELSE
+
 
 END

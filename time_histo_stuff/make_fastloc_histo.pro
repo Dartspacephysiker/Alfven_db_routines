@@ -33,46 +33,46 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
   ;; defOutFilePrefix = 'fastLoc_intervals3--timeHisto--INDS_from_get_fastloc_inds_imf_conds'
   ;; defOutDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals3/time_histos/'
 
-  defOutFilePrefix = 'fastLoc_intervals4--timeHisto--inds_from_get_fastloc_inds_imf_conds'
-  defOutFileSuffix = ''
-  defOutDir        = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/time_histos/'
+  ;; defOutFilePrefix = 'fastLoc_intervals4--timeHisto--inds_from_get_fastloc_inds_imf_conds'
+  ;; defOutFileSuffix = ''
+  ;; defOutDir        = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/time_histos/'
 
-  IF N_ELEMENTS(outFilePrefix) EQ 0 THEN outFilePrefix = defOutFilePrefix
-  IF N_ELEMENTS(outFileSuffix) EQ 0 THEN outFileSuffix = defOutFileSuffix
-  IF N_ELEMENTS(outDir) EQ 0 THEN outDir = defOutDir
+  ;; IF N_ELEMENTS(outFilePrefix) EQ 0 THEN outFilePrefix = defOutFilePrefix
+  ;; IF N_ELEMENTS(outFileSuffix) EQ 0 THEN outFileSuffix = defOutFileSuffix
+  ;; IF N_ELEMENTS(outDir) EQ 0 THEN outDir = defOutDir
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
   IF KEYWORD_SET(DO_lShell) THEN latTypeStr = "_lShell" ELSE latTypeStr = "_ILAT"
   ;set up outfilename
   ;It's gotta be standardized!
-  minOrb = MIN(fastLoc.orbit,MAX=maxOrb)
-  fNameSansPref = STRING(format='(A0,I0,"-",I0,"-",G0.2,"_MLT--",I0,"-",I0,"-",G0.2,A0,A0)', $
-                         outFilePrefix,minMLT,maxMLT,binMLT, $
-                         (KEYWORD_SET(do_lShell) ? minLshell : minILAT),(KEYWORD_SET(do_lShell) ? maxLshell : maxILAT), $
-                         (KEYWORD_SET(do_lShell) ? binLshell : binILAT),latTypeStr,outFileSuffix)
-  outFileName=fNameSansPref + ".sav"
+  ;; minOrb = MIN(fastLoc.orbit,MAX=maxOrb)
+  ;; fNameSansPref = STRING(format='(A0,I0,"-",I0,"-",G0.2,"_MLT--",I0,"-",I0,"-",G0.2,A0,A0)', $
+  ;;                        outFilePrefix,minMLT,maxMLT,binMLT, $
+  ;;                        (KEYWORD_SET(do_lShell) ? minLshell : minILAT),(KEYWORD_SET(do_lShell) ? maxLshell : maxILAT), $
+  ;;                        (KEYWORD_SET(do_lShell) ? binLshell : binILAT),latTypeStr,outFileSuffix)
+  ;; outFileName=fNameSansPref + ".sav"
 
-  IF FILE_TEST(outDir+outFileName) THEN BEGIN
-     PRINTF,lun,'fastLoc timehisto file already exists: ' + outDir+outFileName
-     PRINTF,lun,"Restoring..."
-     RESTORE,outDir+outFileName
-     IF N_ELEMENTS(outTimeHisto) EQ 0 THEN BEGIN
-        PRINTF,lun,"Error! No outTimeHisto is in this file! Possibly corrupted/old timehisto file?"
-        STOP
-     ENDIF
-  ENDIF
+  ;; IF FILE_TEST(outDir+outFileName) THEN BEGIN
+  ;;    PRINTF,lun,'fastLoc timehisto file already exists: ' + outDir+outFileName
+  ;;    PRINTF,lun,"Restoring..."
+  ;;    RESTORE,outDir+outFileName
+  ;;    IF N_ELEMENTS(outTimeHisto) EQ 0 THEN BEGIN
+  ;;       PRINTF,lun,"Error! No outTimeHisto is in this file! Possibly corrupted/old timehisto file?"
+  ;;       STOP
+  ;;    ENDIF
+  ;; ENDIF
   ;; ENDIF ELSE BEGIN
 
                                 ;are we doing a text file?
-     IF KEYWORD_SET(output_textFile) THEN BEGIN
-        textFileName='txtoutput/'+fNameSansPref + ".txt"
+     ;; IF KEYWORD_SET(output_textFile) THEN BEGIN
+     ;;    textFileName='txtoutput/'+fNameSansPref + ".txt"
         
-        OPENW,textLun,outDir+textFileName,/GET_LUN
-        PRINTF,textLun,"Output from make_fastloc_histo"
-        PRINTF,textLun,"The filename gives {min,max,binsize}{MLT,(ILAT|lShell)}--{min,max}Orb"
-        PRINTF,textLun,FORMAT='("MLT",T10,"(ILAT|lShell)",T25,"Time in bin (minutes)")'
-     ENDIF
+     ;;    OPENW,textLun,outDir+textFileName,/GET_LUN
+     ;;    PRINTF,textLun,"Output from make_fastloc_histo"
+     ;;    PRINTF,textLun,"The filename gives {min,max,binsize}{MLT,(ILAT|lShell)}--{min,max}Orb"
+     ;;    PRINTF,textLun,FORMAT='("MLT",T10,"(ILAT|lShell)",T25,"Time in bin (minutes)")'
+     ;; ENDIF
      
      ;;avoid any trickery
      nFastLoc = N_ELEMENTS(fastLoc.orbit)
@@ -96,9 +96,9 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      ENDIF
      
                                 ;Are we only using a user-supplied array of indices?
-     IF KEYWORD_SET(fastLoc_inds) THEN BEGIN
-        fastLoc = RESIZE_FASTLOC(fastLoc,fastLoc_inds,FASTLOC_TIMES=fastLoc_times,FASTLOC_DELTA_T=fastLoc_delta_t)
-     ENDIF
+     ;; IF KEYWORD_SET(fastLoc_inds) THEN BEGIN
+     ;;    fastLoc = RESIZE_FASTLOC(fastLoc,fastLoc_inds,FASTLOC_TIMES=fastLoc_times,FASTLOC_DELTA_T=fastLoc_delta_t)
+     ;; ENDIF
      
                                 ;set up grid
      nXlines=(maxMLT-minMLT)/binMLT + 1
@@ -110,14 +110,14 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      nMLT                           = N_ELEMENTS(mlts)
      nILAT                          = N_ELEMENTS(ilats)
      
-     outTimeHisto                   = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
+     outTimeHisto                          = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
      
      ;;fix MLTs
      IF shiftM GT 0. THEN PRINT,'Shifting fastLoc MLTs by ' + STRCOMPRESS(shiftM,/REMOVE_ALL) + '...'
-     fastLocMLTs                    = fastLoc.mlt-shiftM 
+     fastLocMLTs                           = fastLoc.mlt[fastLoc_inds]-shiftM 
      fastLocMLTs[WHERE(fastLocMLTs LT 0.)] = fastLocMLTs[WHERE(fastLocMLTs LT 0.)] + 24.
 
-
+     fastLocILATS                          = (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT)[fastLoc_inds]
                                 ;loop over MLTs and ILATs
      FOR j=0, nILAT-2 DO BEGIN 
         FOR i=0, nMLT-2 DO BEGIN 
@@ -125,10 +125,10 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
            ;;                                (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) GE ilats[j] AND (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) LT ilats[j+1],/NULL))
            ;; tempBinTime = tempNCounts * delta_T
            tempInds = WHERE(fastLocMLTs GE mlts[i] AND fastLocMLTs LT mlts[i+1] AND $
-                            (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) GE ilats[j] AND $
-                            (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) LT ilats[j+1],/NULL)
+                            fastLocILATS GE ilats[j] AND $
+                            fastLocILATS LT ilats[j+1],/NULL)
            IF tempInds NE !NULL THEN BEGIN
-              tempBinTime = TOTAL(DOUBLE(fastLoc_delta_t[tempInds]))
+              tempBinTime = TOTAL(DOUBLE(fastLoc_delta_t[fastLoc_inds[tempInds]]))
               outTimeHisto[i,j] = tempBinTime
               
               IF KEYWORD_SET(output_textFile) THEN PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T20,F0.3)',mlts[i],ilats[j],DOUBLE(tempBinTime)/60.0
@@ -145,8 +145,8 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      ;;    PRINTF,lun,'Not saving ' + outDir+outFileName+'...'
      ;; ENDELSE
      
-     save,outTimeHisto,FILENAME=outDir+outFileName
-     PRINTF,lun,'Saving ' + outDir+outFileName + '...'
+     ;; save,outTimeHisto,FILENAME=outDir+outFileName
+     ;; PRINTF,lun,'Saving ' + outDir+outFileName + '...'
      
      IF KEYWORD_SET(output_textFile) THEN CLOSE,textLun
   ;; ENDELSE
