@@ -215,13 +215,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      paramString_list                    = LIST()
      IF KEYWORD_SET(multiple_delays) THEN BEGIN
         FOR iDel=0,N_ELEMENTS(delay)-1 DO BEGIN
-           paramString=paramString+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+delayStr+$
+           paramString_list.add,paramString+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+delayStr[iDel]+$
                        byMinStr+byMaxStr+bzMinStr+bzMaxStr
-     
-           paramString_list.add,paramString
         ENDFOR
         ENDIF ELSE BEGIN
-           paramString=paramString+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+delayStr+$
+           paramString=paramString+clockStr+"--"+strtrim(stableIMF,2)+"stable--"+smoothStr+satellite+omniStr+delayStr[0]+$
                        byMinStr+byMaxStr+bzMinStr+bzMaxStr
            paramString_list.add,paramString
         ENDELSE

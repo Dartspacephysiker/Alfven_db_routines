@@ -1,9 +1,9 @@
 
-PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
-                          H2DSTRARR_LIST=h2dStrArr_List, $
+PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
+                          H2DSTRARR=h2dStrArr, $
                           KEEPME=keepMe, $
-                          DATARAWPTRARR_LIST=dataRawPtrArr_List, $
-                          DATANAMEARR_LIST=dataNameArr_List, $
+                          DATARAWPTRARR=dataRawPtrArr, $
+                          DATANAMEARR=dataNameArr, $
                           MINMLT=minM, $
                           MAXMLT=maxM, $
                           BINMLT=binM, $
@@ -123,20 +123,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
-  IF KEYWORD_SET(multipleDelays) THEN NIter = N_ELEMENTS(delay) ELSE NIter = 1
-
-  h2dStrArr_List                   = LIST()
-  dataNameArr_List                 = LIST()
-  dataRawPtrArr_List               = LIST()
-  FOR iDel=0,NIter-1 DO BEGIN
-     h2dStrArr                     = !NULL
-     dataNameArr                   = !NULL
-     dataRawPtrArr                 = !NULL
-
-
      ;;########Flux_N and Mask########
      ;;First, histo to show where events are
-     GET_H2D_NEVENTS_AND_MASK,maximus,plot_i_list[iDel], $
+     GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
                               MINM=minM, $
                               MAXM=maxM, $
                               BINM=binM, $
@@ -168,7 +157,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
      ;;#####FLUX QUANTITIES#########
      ;;########ELECTRON FLUX########
      IF KEYWORD_SET(eplots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i_list[iDel],/GET_EFLUX, $
+        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_EFLUX, $
                           MINM=minM, $
                           MAXM=maxM, $
                           BINM=binM, $
@@ -212,7 +201,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
      
      ;;########ELECTRON NUMBER FLUX########
      IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i_list[iDel],/GET_ENUMFLUX, $
+        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
                           MINM=minM, $
                           MAXM=maxM, $
                           BINM=binM, $
@@ -256,7 +245,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
      
      ;;########Poynting Flux########
      IF KEYWORD_SET(pplots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i_list[iDel],$
+        GET_FLUX_PLOTDATA,maximus,plot_i,$
                           /GET_PFLUX, $
                           MINM=minM, $
                           MAXM=maxM, $
@@ -300,7 +289,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
      
      ;;########ION FLUX########
      IF KEYWORD_SET(ionPlots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i_list[iDel],/GET_IFLUX, $
+        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_IFLUX, $
                           MINM=minM, $
                           MAXM=maxM, $
                           BINM=binM, $
@@ -344,7 +333,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
 
      ;;########CHARACTERISTIC ELECTRON ENERGY########
      IF KEYWORD_SET(charEPlots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i_list[iDel],/GET_CHAREE, $
+        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_CHAREE, $
                           MINM=minM, $
                           MAXM=maxM, $
                           BINM=binM, $
@@ -388,7 +377,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
      
      ;;########CHARACTERISTIC ION ENERGY########
      IF KEYWORD_SET(chariEPlots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i_list[iDel],/GET_CHARIE, $
+        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_CHARIE, $
                           MINM=minM, $
                           MAXM=maxM, $
                           BINM=binM, $
@@ -439,13 +428,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
      ;;the 3D array are of the format [UniqueOrbs_ii index,MLT,ILAT]
      
      ;;The following two lines shouldn't be necessary; the data are being corrupted somewhere when I run this with clockstr="dawnward"
-     uniqueOrbs_ii=UNIQ(maximus.orbit[plot_i_list[iDel]],SORT(maximus.orbit[plot_i_list[iDel]]))
-     uniqueOrbs_i=plot_i_list[iDel,uniqueOrbs_ii]
+     uniqueOrbs_ii=UNIQ(maximus.orbit[plot_i],SORT(maximus.orbit[plot_i]))
+     uniqueOrbs_i=plot_i[uniqueOrbs_ii]
      nOrbs=N_ELEMENTS(uniqueOrbs_i)
      
      IF KEYWORD_SET(orbContribPlot) OR KEYWORD_SET(orbfreqplot) OR KEYWORD_SET(neventperorbplot) OR KEYWORD_SET(numOrbLim) THEN BEGIN
         
-        GET_CONTRIBUTING_ORBITS_PLOTDATA,maximus,plot_i_list[iDel], $
+        GET_CONTRIBUTING_ORBITS_PLOTDATA,maximus,plot_i, $
                                          MINM=minM, $
                                          MAXM=maxM, $
                                          BINM=binM, $
@@ -538,7 +527,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
      
      ;;########NEvents/orbit########
      IF KEYWORD_SET(nEventPerOrbPlot) THEN BEGIN 
-        GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i_list[iDel], $
+        GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i, $
                                        MINM=minM, $
                                        MAXM=maxM, $
                                        BINM=binM, $
@@ -583,7 +572,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
                                                     DO_ABS_BZMAX=abs_bzMax, $
                                                     SATELLITE=satellite, $
                                                     OMNI_COORDS=omni_Coords, $
-                                                    DELAY=delay[iDel], $
+                                                    DELAY=delay, $
                                                     STABLEIMF=stableIMF, $
                                                     SMOOTHWINDOW=smoothWindow, $
                                                     INCLUDENOCONSECDATA=includeNoConsecData, $
@@ -648,7 +637,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
         
         ;;########Event probability########
         IF KEYWORD_SET(probOccurrencePlot) THEN BEGIN
-           GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i_list[iDel],tHistDenominator, $
+           GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                                         LOGPROBOCCURRENCE=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logProbOccurrence)), $
                                         PROBOCCURRENCERANGE=probOccurrenceRange, $
                                         DO_WIDTH_X=do_width_x, $
@@ -682,7 +671,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
 
         ;;########Time-averaged Poynting flux########
         IF KEYWORD_SET(timeAvgd_pfluxPlot) THEN BEGIN
-           GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i_list[iDel],tHistDenominator, $
+           GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                                         DO_WIDTH_X=do_width_x, $
                                         /DO_TIMEAVGD_PFLUX, $
                                         LOGTIMEAVGD_PFLUX=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logTimeAvgd_PFlux)), $
@@ -735,10 +724,6 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
         h2dStrArr[0].is_logged = 1
      ENDIF
 
-     h2dStrArr_List.add,h2dStrArr
-     dataNameArr_list.add,dataNameArr
-     dataRawPtrArr_list.add,dataRawPtrArr
-  ENDFOR
 
 
 END

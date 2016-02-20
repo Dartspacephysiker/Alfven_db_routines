@@ -72,12 +72,12 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,plot_i_list,CLOCKSTR=clockStr, ANGLELIM1
      PRINTF,lun,FORMAT='("Delay (min)",T15,"N orbits",T30,"N Events",T45,"% DB used")'
      FOR iDel=0,N_ELEMENTS(plot_i_list)-1 DO BEGIN
         nEv                        = N_ELEMENTS(plot_i_list[iDel])
-        PRINTF,lun,FORMAT='(F10.2,T15,I0,T30,I0,T45,F10.2)', $
+        PRINTF,lun,FORMAT='(F10.2,T15,I0,T30,I0,T45,F10.2)',delay[iDel]/60., $
                N_ELEMENTS(UNIQ(dbStruct.orbit[plot_i_list[iDel]],SORT(dbStruct.orbit[plot_i_list[iDel]]))), $
                nEv, $
                (FLOAT(nEv)/FLOAT(nEvTot)*100.0)               
+        PRINTF,lun,FORMAT='("Parameter string",T30,":",T35,A0)',paramString_list[iDel]
      ENDFOR
-     PRINTF,lun,FORMAT='("Parameter string",T30,":",T35,A0)',paramString_list[iDel]
   ENDIF ELSE BEGIN
      nEv                        = N_ELEMENTS(plot_i_list[0])
      PRINTF,lun,FORMAT='("Number of orbits used",T30,":",T35,I8)', $
