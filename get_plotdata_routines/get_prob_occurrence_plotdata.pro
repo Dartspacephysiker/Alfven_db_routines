@@ -8,6 +8,9 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                                  DO_TIMEAVGD_PFLUX=do_timeAvgd_pflux, $
                                  LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
                                  TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
+                                 DO_TIMEAVGD_EFLUXMAX=do_timeAvgd_eFluxMax, $
+                                 LOGTIMEAVGD_EFLUXMAX=logTimeAvgd_EFluxMax, $
+                                 TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
                                  MINM=minM,MAXM=maxM, $
                                  BINM=binM, $
                                  SHIFTM=shiftM, $
@@ -52,6 +55,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
      KEYWORD_SET(do_timeavgd_pflux): BEGIN
         widthData                  = maximus.width_time[plot_i]*maximus.pFluxEst[plot_i]
         dataName                   = "timeAvgd_pFlux"
+        h2dStr.title               = "Time-averaged Poynting flux"
         h2dStr.lim                 = timeAvgd_pFluxRange
         
         h2dStr.labelFormat         = defTimeAvgd_PFluxCBLabelFormat
@@ -62,6 +66,20 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
         h2dStr.do_plotIntegral     = defTimeAvgd_PFlux_doPlotIntegral
         h2dStr.do_midCBLabel       = defTimeAvgd_PFlux_do_midCBLabel
      END                           
+     KEYWORD_SET(do_timeAvgd_eFluxMax): BEGIN
+        widthData                  = maximus.width_time[plot_i]*maximus.elec_energy_flux[plot_i]
+        dataName                   = "timeAvgd_eFluxMax"
+        h2dStr.title               = "Time-averaged electron energy flux"
+        h2dStr.lim                 = timeAvgd_eFluxMaxRange
+        
+        h2dStr.labelFormat         = defTimeAvgd_EFluxMaxCBLabelFormat
+
+        h2dStr.logLabels           = defTimeAvgd_EFluxMaxLogLabels
+        logged                     = KEYWORD_SET(logTimeAvgd_EFluxMax)
+        
+        h2dStr.do_plotIntegral     = defTimeAvgd_EFluxMax_doPlotIntegral
+        h2dStr.do_midCBLabel       = defTimeAvgd_EFluxMax_do_midCBLabel
+     END
      ELSE: BEGIN                   
         widthData                  = maximus.width_time[plot_i]
         dataName                   = "probOccurrence"
@@ -129,7 +147,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   IF KEYWORD_SET(logged) THEN BEGIN 
      h2dStr.is_logged = 1
      h2dStr.data[where(h2dStr.data GT 0,/NULL)]=ALOG10(h2dStr.data[WHERE(h2dStr.data GT 0,/null)]) 
-     widthData[where(widthData GT 0,/null)]=ALOG10(widthData[WHERE(widthData GT 0,/null)]) 
+     widthData[where(widthData GT 0,/NULL)]=ALOG10(widthData[WHERE(widthData GT 0,/null)]) 
      h2dStr.title =  'Log ' + h2dStr.title
      h2dStr.lim = ALOG10(h2dStr.lim)
   ENDIF

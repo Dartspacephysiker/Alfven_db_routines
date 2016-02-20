@@ -128,19 +128,19 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
      medHistOutData = 1
   ENDIF
 
-  IF N_ELEMENTS(paramStrSuffix) EQ 0 THEN paramStrSuffix = "--" ;; ELSE paramStrSuffix = "--" + paramStrSuffix
+  IF N_ELEMENTS(paramStrSuffix) EQ 0 THEN paramStrSuffix = "" ;; ELSE paramStrSuffix = "--" + paramStrSuffix
   IF N_ELEMENTS(paramStrPrefix) EQ 0 THEN paramStrPrefix = "" ;; ELSE paramStrPrefix = paramStrPrefix + "--"
 
   lShellStr=''
-  IF KEYWORD_SET(do_lShell) THEN lShellStr='lShell--'
+  IF KEYWORD_SET(do_lShell) THEN lShellStr='--lShell'
 
   ;;********************************************
   ;;A few other strings to tack on
   ;;tap DBs, and setup output
-  IF KEYWORD_SET(no_burstData) THEN inc_burstStr ='burstData_excluded--' ELSE inc_burstStr=''
+  IF KEYWORD_SET(no_burstData) THEN inc_burstStr ='--burstData_excluded' ELSE inc_burstStr=''
 
-  IF KEYWORD_SET(medianplot) THEN plotMedOrAvg = "median" ELSE BEGIN
-     IF KEYWORD_SET(logAvgPlot) THEN plotMedOrAvg = "logAvg" ELSE plotMedOrAvg = "avg"
+  IF KEYWORD_SET(medianplot) THEN plotMedOrAvg = "--median" ELSE BEGIN
+     IF KEYWORD_SET(logAvgPlot) THEN plotMedOrAvg = "--logAvg" ELSE plotMedOrAvg = "--avg"
   ENDELSE
 
   ;;Set minimum allowable number of events for a histo bin to be displayed
@@ -148,18 +148,18 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
   IF N_ELEMENTS(maskMin) EQ 0 THEN maskMin = defMaskMin $
   ELSE BEGIN
      IF maskMin GT 1 THEN BEGIN
-        maskStr='maskMin_' + STRCOMPRESS(maskMin,/REMOVE_ALL) + '_'
+        maskStr='--maskMin' + STRCOMPRESS(maskMin,/REMOVE_ALL)
      ENDIF
   ENDELSE
   
   ;;doing polar contour?
   polarContStr=''
   IF KEYWORD_SET(polarContour) THEN BEGIN
-     polarContStr='polarCont_'
+     polarContStr='--polarCont'
   ENDIF
 
   paramString=hoyDia+'--'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
-              hemi+"--"+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
+              hemi+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
   
   ;;Shouldn't be leftover, unused params from batch call
   IF ISA(e) THEN BEGIN

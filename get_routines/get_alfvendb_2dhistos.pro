@@ -108,6 +108,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                           TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                           LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
+                          TIMEAVGD_EFLUXMAXPLOT=timeAvgd_eFluxMaxPlot, $
+                          TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
+                          LOGTIMEAVGD_EFLUXMAX=logTimeAvgd_EFluxMax, $
                           MEDIANPLOT=medianPlot, $
                           MEDHISTOUTDATA=medHistOutData, $
                           MEDHISTOUTTXT=medHistOutTxt, $
@@ -554,7 +557,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         IF keepMe THEN dataNameArr=[dataNameArr,dataName]
      ENDIF
      
-     IF KEYWORD_SET(nEventPerMinPlot) OR KEYWORD_SET(probOccurrencePlot) OR KEYWORD_SET(timeAvgd_pfluxPlot) THEN BEGIN 
+     IF KEYWORD_SET(nEventPerMinPlot) OR KEYWORD_SET(probOccurrencePlot) $
+        OR KEYWORD_SET(timeAvgd_pfluxPlot) OR KEYWORD_SET(timeAvgd_eFluxMaxPlot) THEN BEGIN 
         tHistDenominator = GET_TIMEHIST_DENOMINATOR(CLOCKSTR=clockStr, $
                                                     ANGLELIM1=angleLim1, $
                                                     ANGLELIM2=angleLim2, $
@@ -672,10 +676,45 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         ;;########Time-averaged Poynting flux########
         IF KEYWORD_SET(timeAvgd_pfluxPlot) THEN BEGIN
            GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
-                                        DO_WIDTH_X=do_width_x, $
+                                        ;; DO_WIDTH_X=do_width_x, $
                                         /DO_TIMEAVGD_PFLUX, $
                                         LOGTIMEAVGD_PFLUX=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logTimeAvgd_PFlux)), $
                                         TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
+                                        MINM=minM, $
+                                        MAXM=maxM, $
+                                        BINM=binM, $
+                                        SHIFTM=shiftM, $
+                                        MINI=minI, $
+                                        MAXI=maxI, $
+                                        BINI=binI, $
+                                        DO_LSHELL=do_lshell, $
+                                        MINL=minL, $
+                                        MAXL=maxL, $
+                                        BINL=binL, $
+                                        OUTH2DBINSMLT=outH2DBinsMLT, $
+                                        OUTH2DBINSILAT=outH2DBinsILAT, $
+                                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                                        H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                        H2DFLUXN=h2dFluxN, $
+                                        H2DSTR=h2dStr, $
+                                        TMPLT_H2DSTR=tmplt_h2dStr, $
+                                        DATANAME=dataName, $
+                                        DATARAWPTR=dataRawPtr
+           
+           h2dStrArr=[h2dStrArr,h2dStr] 
+           IF keepMe THEN BEGIN 
+              dataNameArr=[dataNameArr,dataName] 
+              dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+           ENDIF 
+        ENDIF
+
+        ;;########Time-averaged Poynting flux########
+        IF KEYWORD_SET(timeAvgd_eFluxMaxPlot) THEN BEGIN
+           GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
+                                        ;; DO_WIDTH_X=do_width_x, $
+                                        /DO_TIMEAVGD_EFLUXMAX, $
+                                        LOGTIMEAVGD_EFLUXMAX=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logTimeAvgd_EFluxMax)), $
+                                        TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
                                         MINM=minM, $
                                         MAXM=maxM, $
                                         BINM=binM, $

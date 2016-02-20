@@ -99,7 +99,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
   FOR i=0,nPlots-1 DO BEGIN
      
      save_combined_name         = paramStr + '--' + dataNames[plots_to_combine[i]] + $
-                                  (KEYWORD_SET(plotSuffix) ? plotSuffix : '') + 'combined.png'
+                                  (KEYWORD_SET(plotSuffix) ? plotSuffix : '') + '--combined.png'
      PRINT,"Saving to " + save_combined_name + "..."
      
      TILE_THREE_PLOTS,plotFileArr__list[i],titles, $
