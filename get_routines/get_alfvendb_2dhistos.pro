@@ -126,6 +126,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
   IF KEYWORD_SET(multipleDelays) THEN NIter = N_ELEMENTS(delay) ELSE NIter = 1
 
   h2dStrArr_List                   = LIST()
+  dataNameArr_List                 = LIST()
+  dataRawPtrArr_List               = LIST()
   FOR iDel=0,NIter-1 DO BEGIN
      h2dStrArr                     = !NULL
      dataNameArr                   = !NULL
@@ -735,7 +737,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i_list, $
 
      h2dStrArr_List.add,h2dStrArr
      dataNameArr_list.add,dataNameArr
-     dataRawPtrArr_list.add,dataRawPrtArr
+     dataRawPtrArr_list.add,dataRawPtrArr
   ENDFOR
 
 
