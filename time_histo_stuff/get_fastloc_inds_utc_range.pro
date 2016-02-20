@@ -45,6 +45,7 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
 
   COMPILE_OPT idl2
 
+  ;;Defined in GET_TIMEHIST_DENOMINATOR, for one
   COMMON FL_VARS
 
   ;; minM=0
@@ -149,7 +150,7 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                               HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd)
      
      GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
-                                                   DBSTRUCT=fl__fastLoc, $
+                                                   DBSTRUCT=fl_fastLoc, $
                                                    OUT_GOOD_TARR_I=out_good_tArr_i, $
                                                    DBTIMES=fastLoc__times, $
                                                    RESTRICT_W_THESEINDS=good_i, $
