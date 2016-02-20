@@ -1,8 +1,16 @@
 ;;2015/10/12 Created
+;;2016/02/20 Added DO_TIMEAVGD_PFLUX keyword to get, well, time-averaged Poynting flux!
 ;;The DO_WIDTH_X keyword allows one to use spatial width of the current filaments instead of temporal, if so desired
 PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
-                                 LOGPROBOCCURRENCE=logProbOccurrence, PROBOCCURRENCERANGE=probOccurrenceRange, $
+                                 LOGPROBOCCURRENCE=logProbOccurrence, $
+                                 PROBOCCURRENCERANGE=probOccurrenceRange, $
                                  DO_WIDTH_X=do_width_x, $
+                                 DO_TIMEAVGD_PFLUX=do_timeAvgd_pflux, $
+                                 LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
+                                 TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
+                                 DO_TIMEAVGD_EFLUXMAX=do_timeAvgd_eFluxMax, $
+                                 LOGTIMEAVGD_EFLUXMAX=logTimeAvgd_EFluxMax, $
+                                 TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
                                  MINM=minM,MAXM=maxM, $
                                  BINM=binM, $
                                  SHIFTM=shiftM, $
@@ -35,24 +43,59 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
 
   ;; h2dStr                     = {tmplt_h2dStr}
   h2dStr                     = tmplt_h2dStr
-  h2dStr.title               = "Probability of occurrence"
-  h2dStr.lim                 = probOccurrenceRange
-
-  h2dStr.labelFormat         = defProbOccurrenceCBLabelFormat
-  h2dStr.logLabels           = defProbOccurrenceLogLabels
-
-  h2dStr.do_plotIntegral     = defProbOccurrence_doPlotIntegral
-  h2dStr.do_midCBLabel       = defProbOccurrence_do_midCBLabel
-  dataName                   = "probOccurrence"
   
-  h2dStr.force_oobHigh       = 0
+  ;; h2dStr.force_oobHigh       = 0
 
-  IF KEYWORD_SET(do_width_x) THEN BEGIN
-     widthData = maximus.width_x[plot_i]
-     dataName  = "probOccurrence_width_x"
-  ENDIF ELSE BEGIN
-     widthData = maximus.width_time[plot_i]
-  ENDELSE
+  CASE 1 OF 
+     KEYWORD_SET(do_width_x): BEGIN
+        widthData                  = maximus.width_x[plot_i]
+        dataName                   = "probOccurrence_width_x"
+        h2dStr.title               = "Event width/Time in bin (km/s)"  ;;but what even is this quantity, bro?
+     END                           
+     KEYWORD_SET(do_timeavgd_pflux): BEGIN
+        widthData                  = maximus.width_time[plot_i]*maximus.pFluxEst[plot_i]
+        dataName                   = "timeAvgd_pFlux"
+        h2dStr.title               = "Time-averaged Poynting flux"
+        h2dStr.lim                 = timeAvgd_pFluxRange
+        
+        h2dStr.labelFormat         = defTimeAvgd_PFluxCBLabelFormat
+
+        h2dStr.logLabels           = defTimeAvgd_PFluxLogLabels
+        logged                     = KEYWORD_SET(logTimeAvgd_PFlux)
+        
+        h2dStr.do_plotIntegral     = defTimeAvgd_PFlux_doPlotIntegral
+        h2dStr.do_midCBLabel       = defTimeAvgd_PFlux_do_midCBLabel
+     END                           
+     KEYWORD_SET(do_timeAvgd_eFluxMax): BEGIN
+        widthData                  = maximus.width_time[plot_i]*maximus.elec_energy_flux[plot_i]
+        dataName                   = "timeAvgd_eFluxMax"
+        h2dStr.title               = "Time-averaged electron energy flux"
+        h2dStr.lim                 = timeAvgd_eFluxMaxRange
+        
+        h2dStr.labelFormat         = defTimeAvgd_EFluxMaxCBLabelFormat
+
+        h2dStr.logLabels           = defTimeAvgd_EFluxMaxLogLabels
+        logged                     = KEYWORD_SET(logTimeAvgd_EFluxMax)
+        
+        h2dStr.do_plotIntegral     = defTimeAvgd_EFluxMax_doPlotIntegral
+        h2dStr.do_midCBLabel       = defTimeAvgd_EFluxMax_do_midCBLabel
+     END
+     ELSE: BEGIN                   
+        widthData                  = maximus.width_time[plot_i]
+        dataName                   = "probOccurrence"
+        h2dStr.title               = "Probability of occurrence"
+
+        h2dStr.lim                 = probOccurrenceRange
+        
+        h2dStr.labelFormat         = defProbOccurrenceCBLabelFormat
+
+        h2dStr.logLabels           = defProbOccurrenceLogLabels
+        logged                     = KEYWORD_SET(logProbOccurrence)
+        
+        h2dStr.do_plotIntegral     = defProbOccurrence_doPlotIntegral
+        h2dStr.do_midCBLabel       = defProbOccurrence_do_midCBLabel
+     END
+  ENDCASE
 
   ;;fix MLTs
   mlts                           = maximus.mlt[plot_i]-shiftM 
@@ -101,10 +144,10 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
 
   h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/tHistDenominator[WHERE(h2dstr.data GT 0)]
 
-  IF KEYWORD_SET(logProbOccurrence) THEN BEGIN 
+  IF KEYWORD_SET(logged) THEN BEGIN 
      h2dStr.is_logged = 1
      h2dStr.data[where(h2dStr.data GT 0,/NULL)]=ALOG10(h2dStr.data[WHERE(h2dStr.data GT 0,/null)]) 
-     widthData[where(widthData GT 0,/null)]=ALOG10(widthData[WHERE(widthData GT 0,/null)]) 
+     widthData[where(widthData GT 0,/NULL)]=ALOG10(widthData[WHERE(widthData GT 0,/null)]) 
      h2dStr.title =  'Log ' + h2dStr.title
      h2dStr.lim = ALOG10(h2dStr.lim)
   ENDIF

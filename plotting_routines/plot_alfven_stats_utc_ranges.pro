@@ -197,7 +197,15 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  NEVENTPERORBPLOT=nEventPerOrbPlot, LOGNEVENTPERORB=logNEventPerOrb, NEVENTPERORBRANGE=nEventPerOrbRange, $
                                  DIVNEVBYAPPLICABLE=divNEvByApplicable, $
                                  NEVENTPERMINPLOT=nEventPerMinPlot, NEVENTPERMINRANGE=nEventPerMinRange, LOGNEVENTPERMIN=logNEventPerMin, $
-                                 PROBOCCURRENCEPLOT=probOccurrencePlot,PROBOCCURRENCERANGE=probOccurrenceRange,LOGPROBOCCURRENCE=logProbOccurrence, $
+                                 PROBOCCURRENCEPLOT=probOccurrencePlot, $
+                                 PROBOCCURRENCERANGE=probOccurrenceRange, $
+                                 LOGPROBOCCURRENCE=logProbOccurrence, $
+                                 TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
+                                 TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
+                                 LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
+                                 TIMEAVGD_EFLUXMAXPLOT=timeAvgd_eFluxMaxPlot, $
+                                 TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
+                                 LOGTIMEAVGD_EFLUXMAX=logtimeAvgd_eFluxMax, $
                                  MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, $
                                  ALL_LOGPLOTS=all_logPlots, $
                                  SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
@@ -376,7 +384,15 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         NEVENTPERORBPLOT=nEventPerOrbPlot, LOGNEVENTPERORB=logNEventPerOrb, NEVENTPERORBRANGE=nEventPerOrbRange, $
                         DIVNEVBYAPPLICABLE=divNEvByApplicable, $
                         NEVENTPERMINPLOT=nEventPerMinPlot, NEVENTPERMINRANGE=nEventPerMinRange, LOGNEVENTPERMIN=logNEventPerMin, $
-                        PROBOCCURRENCEPLOT=probOccurrencePlot,PROBOCCURRENCERANGE=probOccurrenceRange,LOGPROBOCCURRENCE=logProbOccurrence, $
+                        PROBOCCURRENCEPLOT=probOccurrencePlot, $
+                        PROBOCCURRENCERANGE=probOccurrenceRange, $
+                        LOGPROBOCCURRENCE=logProbOccurrence, $
+                        TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
+                        TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
+                        LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
+                        TIMEAVGD_EFLUXMAXPLOT=timeAvgd_eFluxMaxPlot, $
+                        TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
+                        LOGTIMEAVGD_EFLUXMAX=logtimeAvgd_eFluxMax, $
                         MEDIANPLOT=medianPlot, MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                         LOGAVGPLOT=logAvgPlot, $
                         ALL_LOGPLOTS=all_logPlots, $

@@ -2,11 +2,13 @@
 PRO JOURNAL__20160210__OUTRIGHT_PROBOCCURRENCE_TO_COMPARE_WITH_CHASTON_2007
 
   ;The Chaston et al. [2007] stuff
-  hemi                            = 'BOTH'
-  minILAT                         = 60
-  maxILAT                         = 87
+  hemi                            = 'SOUTH'
+  ;; minILAT                         = 65
+  ;; maxILAT                         = 83
+  minILAT                         = -83
+  maxILAT                         = -65
   binILAT                         = 3
-  binMLT                          = 1.5
+  binMLT                          = 0.5
 
   ;; hemi                           = 'NORTH'
   ;; minILAT                        = 55
