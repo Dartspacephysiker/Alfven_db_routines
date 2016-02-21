@@ -23,11 +23,11 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                                OUTINDSPREFIX=outIndsPrefix, $
                                OUTINDSSUFFIX=outIndsSuffix, $
                                OUTINDSFILEBASENAME=outIndsFileBasename, $
-                               ;; FASTLOC_STRUCT=fastLoc, $
-                               ;; FASTLOC_TIMES=fastLoc_Times, $
-                               ;; FASTLOC_DELTA_T=fastloc_delta_t, $
-                               ;; FASTLOCFILE=fastLocFile, $
-                               ;; FASTLOCTIMEFILE=fastLocTimeFile, $
+                               FASTLOC_STRUCT=fastLoc_in, $
+                               FASTLOC_TIMES=fastLoc_Times_in, $
+                               FASTLOC_DELTA_T=fastloc_delta_t_in, $
+                               FASTLOCFILE=fastLocFile_in, $
+                               FASTLOCTIMEFILE=fastLocTimeFile_in, $
                                FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                ;;Note, all of the following keywords got added 2015/10/27, and they may screw up other stuff. Just so
                                ;;you know!
@@ -52,6 +52,26 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ;; maxM=24
   ;; minI=-88
   ;; maxI=88
+
+  IF KEYWORD_SET(fastLoc_in) AND ~KEYWORD_SET(FL_fastLoc) THEN BEGIN
+     FL_fastLoc = fastLoc_in
+  ENDIF
+
+  IF KEYWORD_SET(fastLoc_times_in) AND ~KEYWORD_SET(FASTLOC__times) THEN BEGIN
+     FASTLOC__times = fastloc_times_in
+  ENDIF
+
+  IF KEYWORD_SET(fastLoc_delta_t_in) AND ~KEYWORD_SET(FASTLOC__delta_t) THEN BEGIN
+     FASTLOC__delta_t = fastloc_delta_t_in
+  ENDIF
+
+  IF KEYWORD_SET(fastLocFile_in) AND ~KEYWORD_SET(FASTLOC__dbFile) THEN BEGIN
+     FASTLOC__dbFile = fastLocFile_in
+  ENDIF
+
+  IF KEYWORD_SET(fastLocTimeFile_in) AND ~KEYWORD_SET(FASTLOC__dbTimesFile) THEN BEGIN
+     FASTLOC__dbTimesFile = fastLocTimeFile_in
+  ENDIF
 
   ;; fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals3/time_histos/'
   fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/time_histos/'

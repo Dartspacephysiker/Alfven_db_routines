@@ -1,18 +1,18 @@
-defProbOccurrenceCBLabelFormat        = '(D5.3)'
+defProbOccurrenceCBLabelFormat        = '(D0.3)'
 defProbOccurrenceLogLabels            = 1
 defProbOccurrence_do_midCBLabel       = 1
 
 defProbOccurrence_doPlotIntegral      = 0
 
 
-Deftimeavgd_PFluxCBLabelFormat        = '(G7.3)'
-defTimeAvgd_PFluxLogLabels            = 1
+Deftimeavgd_PFluxCBLabelFormat        = '(D0.3)'
+defTimeAvgd_PFluxLogLabels            = 0
 defTimeAvgd_PFlux_do_midCBLabel       = 1
 
 defTimeAvgd_PFlux_doPlotIntegral      = 0
 
-defTimeAvgd_eFluxMaxCBLabelFormat     = '(G7.3)'
-defTimeAvgd_eFluxMaxLogLabels         = 1
+defTimeAvgd_eFluxMaxCBLabelFormat     = '(D0.3)'
+defTimeAvgd_eFluxMaxLogLabels         = 0
 defTimeAvgd_eFluxMax_do_midCBLabel    = 1
 
 defTimeAvgd_eFluxMax_doPlotIntegral   = 0
@@ -41,8 +41,10 @@ scAltString_pub              = ', at FAST altitude'
 title__probOccurrence        = "Probability of occurrence"
 name__probOccurrence         = "probOccurrence"
 
-title__timeAvgd_pFlux        = 'Time-averaged Poynting flux (' + energyFluxStr + ')' + ionosphString_pub
+;; title__timeAvgd_pFlux        = 'Time-averaged Poynting flux (' + energyFluxStr + ')' + ionosphString_pub
+title__timeAvgd_pFlux        = 'Time-averaged Poynting flux (' + energyFluxStr + ')'
 name__timeAvgd_pFlux         = "timeAvgd_pFlux"
 
-title__timeAvgd_eFluxMax     = 'Time-averaged loss-cone e!U-!N flux (' + energyFluxStr + ')' + ionosphString_pub
+;; title__timeAvgd_eFluxMax     = 'Time-averaged loss-cone e!U-!N flux (' + energyFluxStr + ')' + ionosphString_pub
+title__timeAvgd_eFluxMax     = 'Time-averaged loss-cone e!U-!N flux (' + energyFluxStr + ')'
 name__timeAvgd_eFluxMax      = "timeAvgd_eFluxMax"
