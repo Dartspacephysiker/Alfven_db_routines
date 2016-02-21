@@ -50,12 +50,12 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
      KEYWORD_SET(do_width_x): BEGIN
         widthData                  = maximus.width_x[plot_i]
         dataName                   = "probOccurrence_width_x"
-        h2dStr.title               = "Event width/Time in bin (km/s)"  ;;but what even is this quantity, bro?
+        h2dStr.title               = "Event width/Time in bin (m/s)"  ;;but what even is this quantity, bro?
      END                           
      KEYWORD_SET(do_timeavgd_pflux): BEGIN
         widthData                  = maximus.width_time[plot_i]*maximus.pFluxEst[plot_i]
-        dataName                   = "timeAvgd_pFlux"
-        h2dStr.title               = "Time-averaged Poynting flux"
+        dataName                   = name__timeAvgd_pFlux
+        h2dStr.title               = title__timeAvgd_pFlux
         h2dStr.lim                 = timeAvgd_pFluxRange
         
         h2dStr.labelFormat         = defTimeAvgd_PFluxCBLabelFormat
@@ -68,8 +68,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
      END                           
      KEYWORD_SET(do_timeAvgd_eFluxMax): BEGIN
         widthData                  = maximus.width_time[plot_i]*maximus.elec_energy_flux[plot_i]
-        dataName                   = "timeAvgd_eFluxMax"
-        h2dStr.title               = "Time-averaged electron energy flux"
+        dataName                   = name__timeAvgd_eFluxMax
+        h2dStr.title               = title__timeAvgd_eFluxMax
         h2dStr.lim                 = timeAvgd_eFluxMaxRange
         
         h2dStr.labelFormat         = defTimeAvgd_EFluxMaxCBLabelFormat
@@ -82,8 +82,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
      END
      ELSE: BEGIN                   
         widthData                  = maximus.width_time[plot_i]
-        dataName                   = "probOccurrence"
-        h2dStr.title               = "Probability of occurrence"
+        dataName                   = name__probOccurrence
+        h2dStr.title               = title__probOccurrence
 
         h2dStr.lim                 = probOccurrenceRange
         
@@ -146,8 +146,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
 
   IF KEYWORD_SET(logged) THEN BEGIN 
      h2dStr.is_logged = 1
-     h2dStr.data[where(h2dStr.data GT 0,/NULL)]=ALOG10(h2dStr.data[WHERE(h2dStr.data GT 0,/null)]) 
-     widthData[where(widthData GT 0,/NULL)]=ALOG10(widthData[WHERE(widthData GT 0,/null)]) 
+     h2dStr.data[where(h2dStr.data GT 0,/NULL)]=ALOG10(h2dStr.data[WHERE(h2dStr.data GT 0,/NULL)]) 
+     widthData[where(widthData GT 0,/NULL)]=ALOG10(widthData[WHERE(widthData GT 0,/NULL)]) 
      h2dStr.title =  'Log ' + h2dStr.title
      h2dStr.lim = ALOG10(h2dStr.lim)
   ENDIF

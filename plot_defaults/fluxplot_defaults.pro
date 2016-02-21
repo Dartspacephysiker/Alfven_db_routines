@@ -47,8 +47,8 @@ scAltString_pub              = ', at FAST altitude'
 ;; ENDIF
 
 IF KEYWORD_SET(fancy_plotNames) THEN BEGIN
-title__alfDB_ind_08          = 'Max Loss Cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString_pub         ;"Integ"
-title__alfDB_ind_09          = 'Max e!U-!N Flux, whole dist. (' + energyFluxStr + ')' + ionosphString_pub ;"Max"
+title__alfDB_ind_08          = 'Max Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString_pub    ;"Max"     
+title__alfDB_ind_09          = 'Max e!U-!N Flux, whole dist. (' + energyFluxStr + ')' + ionosphString_pub ;"Integ"
 title__alfDB_ind_10          = 'Integrated Loss Cone e!U-!N Energy Flux (' + intEnergyFluxStr + ')' + ionosphString_pub      ;"Eflux_Losscone_Integ"
 
 title__alfDB_ind_11          = 'Total Integrated e!U-!N Energy Flux (' + intEnergyFluxStr + ')' + ionosphString_pub     ;"Total_Eflux_Integ"

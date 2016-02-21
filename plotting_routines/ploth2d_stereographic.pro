@@ -169,11 +169,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
            gridLats               = gridLats[WHERE(gridLats GT minI AND gridLats LT maxI)]
         END
      ENDCASE
-     gridLats               = FIX(gridLats)
-     gridLatNames           = gridLats
+     ;; gridLats               = FIX(gridLats)
+     ;; gridLatNames           = gridLats
 
-     ;; gridLats               = defGridLats * (ABS(minI)/minI) ;IF WHERE((INDGEN(10)*binI + minI 
-     ;; gridLatNames           = defGridLats * (ABS(minI)/minI)
+     gridLats               = defGridLats * (ABS(minI)/minI) ;IF WHERE((INDGEN(10)*binI + minI 
+     gridLatNames           = defGridLats * (ABS(minI)/minI)
   ENDELSE
 
 
