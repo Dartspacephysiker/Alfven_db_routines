@@ -206,18 +206,20 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;; maximus.integ_ion_flux[south_i] = -1 * maximus.integ_ion_flux[south_i]
      ;; PRINTF,lun,'17-INTEG_ION_FLUX          (Flip sign in S Hemi)'
      ;;new
-     maximus.integ_ion_flux[north_i] = -1 * maximus.integ_ion_flux[north_i]
-     PRINTF,lun,'17-INTEG_ION_FLUX          (Flip sign in N Hemi)'
-     correctStr += '17-INTEG_ION_FLUX          (Flip sign in N Hemi)' + STRING(10B)
+     maximus.integ_ion_flux             =  100 * maximus.integ_ion_flux
+     maximus.integ_ion_flux[north_i]    =   -1 * maximus.integ_ion_flux[north_i]
+     PRINTF,lun,'17-INTEG_ION_FLUX          (Flip sign in N Hemi, scale to #/cm-s)'
+     correctStr += '17-INTEG_ION_FLUX          (Flip sign in N Hemi, scale to #/cm-s)' + STRING(10B)
 
      ;;18-INTEG_ION_FLUX_UP
      ;;old
      ;; maximus.integ_ion_flux_up[south_i] = -1 *maximus.integ_ion_flux_up[south_i]
      ;; PRINTF,lun,'18-INTEG_ION_FLUX_UP       (Flip sign in S Hemi)'
      ;;new
-     maximus.integ_ion_flux_up[north_i] = -1 *maximus.integ_ion_flux_up[north_i]
-     PRINTF,lun,'18-INTEG_ION_FLUX_UP       (Flip sign in N Hemi)'
-     correctStr += '18-INTEG_ION_FLUX_UP       (Flip sign in N Hemi)' + STRING(10B)
+     maximus.integ_ion_flux_up          =  100 * maximus.integ_ion_flux_up
+     maximus.integ_ion_flux_up[north_i] =   -1 * maximus.integ_ion_flux_up[north_i]
+     PRINTF,lun,'18-INTEG_ION_FLUX_UP       (Flip sign in N Hemi, scale to #/cm-s)'
+     correctStr += '18-INTEG_ION_FLUX_UP       (Flip sign in N Hemi, scale to #/cm-s)' + STRING(10B)
 
      ;;19-CHAR_ION_ENERGY--what to do?
      PRINTF,lun,'19-CHAR_ION_ENERGY         (In AS5, division of two quantities where hemi is not accounted for--how to interpret sign?)'

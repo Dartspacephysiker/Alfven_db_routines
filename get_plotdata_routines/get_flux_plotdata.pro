@@ -16,6 +16,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       NONEGFLUX=noNegFlux, $
                       ABSFLUX=absFlux, $
                       LOGFLUXPLOT=logFluxPlot, $
+                      DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                       DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                       THISTDENOMINATOR=tHistDenominator, $
                       H2DSTR=h2dStr, $
@@ -174,6 +175,17 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ENDELSE
         ENDELSE
      ENDELSE
+
+     IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+        scale_width_for_these_plots = [STRUPCASE("Integ"),STRUPCASE("Max"),STRUPCASE("Max_Up"),STRUPCASE("Integ_Up")]
+        scale_to_cm = WHERE(STRUPCASE(fluxPlotType) EQ scale_width_for_these_plots)
+        IF scale_to_cm[0] EQ -1 THEN BEGIN
+           factor = 1.D
+        ENDIF ELSE BEGIN 
+           factor = .01D 
+           PRINT,'...Scaling WIDTH_X to centimeters for '+fluxPlotType+' plots...'
+        ENDELSE
+     ENDIF
   ENDIF
 
   IF KEYWORD_SET(get_ChareE) THEN BEGIN
@@ -241,6 +253,21 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   dataName                  = STRTRIM(absnegslogStr,2)+dataName + $
                               (KEYWORD_SET(fluxPlotType) ? '_' + STRUPCASE(fluxplottype) : '')
   h2dStr.title              = absnegslogStr + h2dStr.title
+
+
+  IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+     PRINT,'Dividing by WIDTH_X!'
+
+     dataName               = 'spatialAvg_' + dataName
+
+     ;; inds_to_scale_to_cm       = [15,16,17,18,26,28,30]
+     ;; scale_to_cm               = WHERE(maxInd EQ inds_to_scale_to_cm) 
+     ;;If the ion plots didn't pick this up, set it to 1
+     ;;NOTE, oxy also needs to be scaled!!!
+     IF N_ELEMENTS(factor) EQ 0 THEN factor = 1.0D
+
+     inData                 = inData*factor/maximus.width_x[tmp_i]
+  ENDIF
 
   ;;Is this going to be a time-averaged plot?
   IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN

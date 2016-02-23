@@ -119,6 +119,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
                           LOGTIMEAVGD_EFLUXMAX=logTimeAvgd_EFluxMax, $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MEDIANPLOT=medianPlot, $
                           MEDHISTOUTDATA=medHistOutData, $
                           MEDHISTOUTTXT=medHistOutTxt, $
@@ -247,6 +248,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logEfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -293,6 +295,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logENumFlPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -339,6 +342,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -385,6 +389,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logIfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -431,6 +436,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logOxyfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -477,6 +483,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logCharEPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -522,6 +529,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logChariEPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -811,44 +819,6 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
         ENDIF 
      ENDIF
-
-     ;;Loop over each quantity in h2dStrArr and see if they want to be time averaged
-     ;; IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
-     ;;    FOR i=0,N_ELEMENTS(h2dStrArr)-1 DO BEGIN
-     ;;       IF KEYWORD_SET(h2dStrArr[i].do_timeAvg) THEN BEGIN
-     ;;          GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
-     ;;                                       /DO_TIMEAVGD_EFLUXMAX, $
-     ;;                                       LOGTIMEAVGD_EFLUXMAX=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logTimeAvgd_EFluxMax)), $
-     ;;                                       TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
-     ;;                                       MINM=minM, $
-     ;;                                       MAXM=maxM, $
-     ;;                                       BINM=binM, $
-     ;;                                       SHIFTM=shiftM, $
-     ;;                                       MINI=minI, $
-     ;;                                       MAXI=maxI, $
-     ;;                                       BINI=binI, $
-     ;;                                       DO_LSHELL=do_lshell, $
-     ;;                                       MINL=minL, $
-     ;;                                       MAXL=maxL, $
-     ;;                                       BINL=binL, $
-     ;;                                       OUTH2DBINSMLT=outH2DBinsMLT, $
-     ;;                                       OUTH2DBINSILAT=outH2DBinsILAT, $
-     ;;                                       OUTH2DBINSLSHELL=outH2DBinsLShell, $
-     ;;                                       H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-     ;;                                       H2DFLUXN=h2dFluxN, $
-     ;;                                       H2DSTR=h2dStr, $
-     ;;                                       TMPLT_H2DSTR=tmplt_h2dStr, $
-     ;;                                       DATANAME=dataName, $
-     ;;                                       DATARAWPTR=dataRawPtr
-
-     ;;          h2dStrArr=[h2dStrArr,h2dStr] 
-     ;;          IF keepMe THEN BEGIN 
-     ;;             dataNameArr=[dataNameArr,dataName] 
-     ;;             dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
-     ;;          ENDIF 
-     ;;       ENDIF
-     ;;    ENDFOR
-     ;; ENDIF
 
      ;;********************************************************
      ;;If something screwy goes on, better take stock of it and alert user

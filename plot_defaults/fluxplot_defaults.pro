@@ -36,7 +36,8 @@ charEUnitString              = 'eV'
 ;; intEnergyFluxStr             = 'ergs/cm-s' ;;not true, I don't think
 intEnergyFluxStr             = 'mW/m' 
 ;; integNumFluxStr              = '#/cm-s'
-integNumFluxStr              = '100/cm-s'
+;; integNumFluxStr              = '100/cm-s'
+integNumFluxStr              = '#/cm-s'
 
 ionosphString                = ', at ionos.'
 ionosphString_pub            = ', mapped to the ionosphere'
