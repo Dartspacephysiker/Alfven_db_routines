@@ -1,23 +1,26 @@
 ;; fluxPlotColorBarLabelFormat  = '(I0)'
-fluxPlotColorBarLabelFormat  = '(D0.1)'
-fluxPlotPPlotCBLabelFormat   = '(D0.1)'
-fluxPlotEPlotCBLabelFormat   = '(D0.1)'
+fluxPlotColorBarLabelFormat  = '(D0.2)'
+fluxPlotPPlotCBLabelFormat   = '(D0.2)'
+fluxPlotEPlotCBLabelFormat   = '(G0.2)'
 fluxPlotChareCBLabelFormat   = '(D0.1)'
 fluxPlotChariCBLabelFormat   = '(D0.2)'
 
 logeFluxLabels               = 1
+logeNumFluxLabels            = 0
 logPFluxLabels               = 1
 logiFluxLabels               = 0
 logChareLabels               = 1
 logChariLabels               = 1
 
 eFlux_do_plotIntegral        = 0
+eNumFlux_do_plotIntegral     = 0
 PFlux_do_plotIntegral        = 0
 iFlux_do_plotIntegral        = 0
 Charee_do_plotIntegral       = 0
 Charie_do_plotIntegral       = 0
 
 eFlux_do_midCBLabel          = 1
+eNumFlux_do_midCBLabel       = 1
 PFlux_do_midCBLabel          = 1
 iFlux_do_midCBLabel          = 1
 Charee_do_midCBLabel         = 1

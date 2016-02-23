@@ -54,7 +54,7 @@
   defcharSize_grid               = 2.0
 
   ;;lat/lon/lshell grid defaults
-  defGridLats                 = [50,60,70,80]
+  defGridLats                 = [60,70,80]
   defGridLshells              = [2,6,10,14,16,20]
 
   ;;the bold part

@@ -189,6 +189,13 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  NONEGPFLUX=noNegPflux, NOPOSPFLUX=noPosPflux, PPLOTRANGE=PPlotRange, $
                                  IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, LOGIFPLOT=logIfPlot, ABSIFLUX=absIflux, $
                                  NONEGIFLUX=noNegIflux, NOPOSIFLUX=noPosIflux, IPLOTRANGE=IPlotRange, $
+                                 OXYPLOTS=oxyPlots, $
+                                 OXYFLUXPLOTTYPE=oxyFluxPlotType, $
+                                 LOGOXYFPLOT=logOxyfPlot, $
+                                 ABSOXYFLUX=absOxyFlux, $
+                                 NONEGOXYFLUX=noNegOxyFlux, $
+                                 NOPOSOXYFLUX=noPosOxyFlux, $
+                                 OXYPLOTRANGE=oxyPlotRange, $
                                  CHAREPLOTS=charEPlots, CHARETYPE=charEType, LOGCHAREPLOT=logCharEPlot, ABSCHARE=absCharE, $
                                  NONEGCHARE=noNegCharE, NOPOSCHARE=noPosCharE, CHAREPLOTRANGE=CharEPlotRange, $
                                  CHARIEPLOTS=chariePlots, LOGCHARIEPLOT=logChariePlot, ABSCHARIE=absCharie, $
@@ -207,6 +214,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  TIMEAVGD_EFLUXMAXPLOT=timeAvgd_eFluxMaxPlot, $
                                  TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
                                  LOGTIMEAVGD_EFLUXMAX=logtimeAvgd_eFluxMax, $
+                                 DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                  MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, $
                                  ALL_LOGPLOTS=all_logPlots, $
                                  SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
@@ -351,6 +359,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                    MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
                                    MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI), $
                                    SHIFT1=shiftM,SHIFT2=shiftI, $
+                                   DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                    CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                    CB_FORCE_OOBLOW=cb_force_oobLow)
 
@@ -382,6 +391,13 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         NONEGPFLUX=noNegPflux, NOPOSPFLUX=noPosPflux, PPLOTRANGE=PPlotRange, $
                         IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, LOGIFPLOT=logIfPlot, ABSIFLUX=absIflux, $
                         NONEGIFLUX=noNegIflux, NOPOSIFLUX=noPosIflux, IPLOTRANGE=IPlotRange, $
+                        OXYPLOTS=oxyPlots, $
+                        OXYFLUXPLOTTYPE=oxyFluxPlotType, $
+                        LOGOXYFPLOT=logOxyfPlot, $
+                        ABSOXYFLUX=absOxyFlux, $
+                        NONEGOXYFLUX=noNegOxyFlux, $
+                        NOPOSOXYFLUX=noPosOxyFlux, $
+                        OXYPLOTRANGE=oxyPlotRange, $
                         CHAREPLOTS=charEPlots, CHARETYPE=charEType, LOGCHAREPLOT=logCharEPlot, ABSCHARE=absCharE, $
                         NONEGCHARE=noNegCharE, NOPOSCHARE=noPosCharE, CHAREPLOTRANGE=CharEPlotRange, $
                         CHARIEPLOTS=chariePlots, LOGCHARIEPLOT=logChariePlot, ABSCHARIE=absCharie, $
@@ -400,6 +416,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         TIMEAVGD_EFLUXMAXPLOT=timeAvgd_eFluxMaxPlot, $
                         TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
                         LOGTIMEAVGD_EFLUXMAX=logtimeAvgd_eFluxMax, $
+                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                         MEDIANPLOT=medianPlot, MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                         LOGAVGPLOT=logAvgPlot, $
                         ALL_LOGPLOTS=all_logPlots, $

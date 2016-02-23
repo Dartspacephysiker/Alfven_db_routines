@@ -12,14 +12,27 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                       OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
                       FLUXPLOTTYPE=fluxPlotType,PLOTRANGE=plotRange, $
-                      NOPOSFLUX=noPosFlux,NONEGFLUX=noNegFlux,ABSFLUX=absFlux,LOGFLUXPLOT=logFluxPlot, $
-                      H2DSTR=h2dStr,TMPLT_H2DSTR=tmplt_h2dStr,H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, H2DFLUXN=h2dFluxN, $
+                      NOPOSFLUX=noPosFlux, $
+                      NONEGFLUX=noNegFlux, $
+                      ABSFLUX=absFlux, $
+                      LOGFLUXPLOT=logFluxPlot, $
+                      DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                      THISTDENOMINATOR=tHistDenominator, $
+                      H2DSTR=h2dStr, $
+                      TMPLT_H2DSTR=tmplt_h2dStr, $
+                      H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                      H2DFLUXN=h2dFluxN, $
                       DATANAME=dataName,DATARAWPTR=dataRawPtr, $
                       MEDIANPLOT=medianplot,MEDHISTOUTDATA=medHistOutData,MEDHISTOUTTXT=medHistOutTxt,MEDHISTDATADIR=medHistDataDir, $
                       LOGAVGPLOT=logAvgPlot, $
                       WRITEHDF5=writeHDF5,WRITEASCII=writeASCII,SQUAREPLOT=squarePlot,SAVERAW=saveRaw, $
-                      GET_EFLUX=get_eflux,GET_ENUMFLUX=get_eNumFlux,GET_PFLUX=get_pFlux,GET_IFLUX=get_iFlux, $
-                      GET_CHAREE=get_ChareE,GET_CHARIE=get_chariE, $
+                      GET_EFLUX=get_eflux, $
+                      GET_ENUMFLUX=get_eNumFlux, $
+                      GET_PFLUX=get_pFlux, $
+                      GET_IFLUX=get_iFlux, $
+                      GET_OXYFLUX=get_oxyFlux, $
+                      GET_CHAREE=get_ChareE, $
+                      GET_CHARIE=get_chariE, $
                       PRINT_MAX_AND_MIN=print_mandm, $
                       FANCY_PLOTNAMES=fancy_plotNames, $
                       LUN=lun
@@ -46,6 +59,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      STOP
   ENDIF
 
+  ;;Don't mod everyone's plot indices
+  tmp_i = plot_i
+
   ;; Flux plot safety
   IF KEYWORD_SET(logFluxPlot) AND NOT KEYWORD_SET(absFlux) AND NOT KEYWORD_SET(noNegFlux) AND NOT KEYWORD_SET(noPosFlux) THEN BEGIN 
      PRINTF,lun,"Warning!: You're trying to do logplots of flux but you don't have 'absFlux', 'noNegFlux', or 'noPosFlux' set!"
@@ -61,6 +77,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                        MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                                        MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
                                        SHIFT1=shiftM,SHIFT2=shiftI, $
+                                       DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                        CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                        CB_FORCE_OOBLOW=cb_force_oobLow)
   ENDIF
@@ -79,15 +96,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      ;;If not allowing negative fluxes
      IF STRUPCASE(fluxplottype) EQ STRUPCASE("Integ") THEN BEGIN
         h2dStr.title        = title__alfDB_ind_09
-        ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.integ_elec_energy_flux),NCOMPLEMENT=lost),plot_i) ;;NaN check
-        ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
-        inData              = maximus.integ_elec_energy_flux[plot_i] 
+        inData              = maximus.integ_elec_energy_flux[tmp_i] 
      ENDIF ELSE BEGIN
         IF STRUPCASE(fluxplottype) EQ STRUPCASE("Max") THEN BEGIN
            h2dStr.title     = title__alfDB_ind_08
-           ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.elec_energy_flux),NCOMPLEMENT=lost),plot_i) ;;NaN check
-           ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
-           inData           = maximus.elec_energy_flux[plot_i]
+           inData           = maximus.elec_energy_flux[tmp_i]
         ENDIF
      ENDELSE
   ENDIF
@@ -95,30 +108,23 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   IF KEYWORD_SET(get_eNumFlux) THEN BEGIN
      dataName               = "eNumFl"
      h2dStr.labelFormat     = fluxPlotColorBarLabelFormat
-     h2dStr.logLabels       = logeFluxLabels
-     h2dStr.do_plotIntegral = eFlux_do_plotIntegral
-     h2dStr.do_midCBLabel   = eFlux_do_midCBLabel
+     h2dStr.logLabels       = logeNumFluxLabels
+     h2dStr.do_plotIntegral = eNumFlux_do_plotIntegral
+     h2dStr.do_midCBLabel   = eNumFlux_do_midCBLabel
 
      IF STRUPCASE(fluxPlotType) EQ STRUPCASE("Total_Eflux_Integ") THEN BEGIN
         h2dStr.title        = title__alfDB_ind_11
-
-        ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.total_eflux_integ),NCOMPLEMENT=lost),plot_i) ;;NaN check
-        ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
-        inData              = maximus.total_eflux_integ[plot_i] 
+        inData              = maximus.total_eflux_integ[tmp_i] 
      ENDIF ELSE BEGIN
         IF STRUPCASE(fluxPlotType) EQ STRUPCASE("Eflux_Losscone_Integ") THEN BEGIN
            h2dStr.title     = title__alfDB_ind_10
-           ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.eflux_losscone_integ),NCOMPLEMENT=lost),plot_i) ;;NaN check
-           ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
-           inData           = maximus.eflux_losscone_integ[plot_i]
+           inData           = maximus.eflux_losscone_integ[tmp_i]
         ENDIF ELSE BEGIN
            IF STRUPCASE(fluxPlotType) EQ STRUPCASE("ESA_Number_flux") THEN BEGIN
               h2dStr.title  = title__alfDB_esa_nFlux
-              ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.esa_current),NCOMPLEMENT=lost),plot_i) ;;NaN check
-              ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
            ENDIF
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           inData           = maximus.esa_current[plot_i] * 1. / 1.6e-9
+           inData           = maximus.esa_current[tmp_i] * 1. / 1.6e-9
         ENDELSE
      ENDELSE
   ENDIF
@@ -132,7 +138,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.do_plotIntegral = PFlux_do_plotIntegral
      h2dStr.do_midCBLabel   = PFlux_do_midCBLabel
 
-     inData                 = maximus.pFluxEst[plot_i]
+     inData                 = maximus.pFluxEst[tmp_i]
 
   ENDIF
 
@@ -146,33 +152,23 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
      IF STRUPCASE(fluxplottype) EQ STRUPCASE("Integ") THEN BEGIN
         h2dStr.title        = title__alfDB_ind_17
-        ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.integ_ion_flux),NCOMPLEMENT=lost),plot_i) ;;NaN check
-        ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
-     inData                 = maximus.integ_ion_flux[plot_i]
+     inData                 = maximus.integ_ion_flux[tmp_i]
      ENDIF ELSE BEGIN
         IF STRUPCASE(fluxplottype) EQ STRUPCASE("Max") THEN BEGIN
            h2dStr.title     = title__alfDB_ind_15
-           ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.ion_flux),NCOMPLEMENT=lost),plot_i) ;;NaN check
-           ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."pp
-           inData           = maximus.ion_flux[plot_i]
+           inData           = maximus.ion_flux[tmp_i]
         ENDIF ELSE BEGIN
            IF STRUPCASE(fluxplottype) EQ STRUPCASE("Max_Up") THEN BEGIN
               h2dStr.title  = title__alfDB_ind_16
-              ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.ion_flux_up),NCOMPLEMENT=lost),plot_i) ;;NaN check
-              ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
-              inData        = maximus.ion_flux_up[plot_i]
+              inData        = maximus.ion_flux_up[tmp_i]
            ENDIF ELSE BEGIN
               IF STRUPCASE(fluxplottype) EQ STRUPCASE("Integ_Up") THEN BEGIN
                  h2dStr.title= title__alfDB_ind_18
-                 ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.integ_ion_flux_up),NCOMPLEMENT=lost),plot_i) ;;NaN check
-                 ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
-                 inData     = maximus.integ_ion_flux_up[plot_i]
+                 inData     = maximus.integ_ion_flux_up[tmp_i]
               ENDIF ELSE BEGIN
                  IF STRUPCASE(fluxplottype) EQ STRUPCASE("Energy") THEN BEGIN
                     h2dStr.title= title__alfDB_ind_14
-                    ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.ion_energy_flux),NCOMPLEMENT=lost),plot_i) ;;NaN check
-                    ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
-                    inData  = maximus.ion_energy_flux[plot_i]
+                    inData  = maximus.ion_energy_flux[tmp_i]
                  ENDIF
               ENDELSE
            ENDELSE
@@ -189,15 +185,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
      IF STRUPCASE(fluxplottype) EQ STRUPCASE("lossCone") THEN BEGIN
         h2dStr.title        = title__alfDB_ind_12
-        ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.max_chare_losscone),NCOMPLEMENT=lost),plot_i) ;;NaN check
-        ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
-        inData              = maximus.max_chare_losscone[plot_i] 
+        inData              = maximus.max_chare_losscone[tmp_i] 
      ENDIF ELSE BEGIN
         IF STRUPCASE(fluxplottype) EQ STRUPCASE("Total") THEN BEGIN
            h2dStr.title     = title__alfDB_ind_13
-           ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.max_chare_total),NCOMPLEMENT=lost),plot_i) ;;NaN check
-           ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + STRUPCASE(fluxplottype) + " " + dataName + " data..."
-           inData           = maximus.max_chare_total[plot_i]
+           inData           = maximus.max_chare_total[tmp_i]
         ENDIF
      ENDELSE
   ENDIF
@@ -209,9 +201,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.logLabels       = logChariLabels
      h2dStr.do_plotIntegral = Charie_do_plotIntegral
      h2dStr.do_midCBLabel   = Charie_do_midCBLabel
-     ;;plot_i=cgsetintersection(WHERE(FINITE(maximus.char_ion_energy),NCOMPLEMENT=lost),plot_i) ;;NaN check
-     ;;PRINTF,lun,"Lost " + strcompress(lost,/remove_all) + " events to NaNs in " + dataName + " data..."
-     inData                 = maximus.char_ion_energy[plot_i] 
+     inData                 = maximus.char_ion_energy[tmp_i] 
   ENDIF
 
   ;;Handle name of data
@@ -231,7 +221,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      PRINTF,lun,"N elements in " + dataName + " before junking neg vals: ",N_ELEMENTS(inData)
      gt_i                   =  WHERE(inData GT 0.)
      inData                 = inData[gt_i]
-     plot_i                 = plot_i[gt_i]
+     tmp_i                 = tmp_i[gt_i]
      PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",N_ELEMENTS(inData)
   ENDIF
   IF KEYWORD_SET(noPosFlux) THEN BEGIN
@@ -239,7 +229,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(inData)
      lt_i                   =  WHERE(inData LT 0.)
      inData                 = inData[lt_i]
-     plot_i                 = plot_i[lt_i]
+     tmp_i                 = tmp_i[lt_i]
      PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(inData)
      inData                 = ABS(inData)
   ENDIF
@@ -252,41 +242,64 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                               (KEYWORD_SET(fluxPlotType) ? '_' + STRUPCASE(fluxplottype) : '')
   h2dStr.title              = absnegslogStr + h2dStr.title
 
+  ;;Is this going to be a time-averaged plot?
+  IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
+     inData                 = inData * maximus.width_time[tmp_i]
+     h2dStr.title           = 'Time-averaged ' + h2dStr.title
+     dataName               = 'timeAvgd_' + dataName
+  ENDIF
+
   ;;fix MLTs
-  mlts                           = maximus.mlt[plot_i]-shiftM        ;shift MLTs backwards, because we want to shift the binning FORWARD
-  mlts[WHERE(mlts LT 0.)]        = mlts[WHERE(mlts LT 0.)] + 24.
+  mlts                      = maximus.mlt[tmp_i]-shiftM        ;shift MLTs backwards, because we want to shift the binning FORWARD
+  mlts[WHERE(mlts LT 0.)]   = mlts[WHERE(mlts LT 0.)] + 24.
 
-  IF KEYWORD_SET(medianplot) THEN BEGIN 
+  CASE 1 OF
+     KEYWORD_SET(medianplot): BEGIN 
 
-     IF KEYWORD_SET(medHistOutData) THEN BEGIN
-        medHistDatFile      = medHistDataDir + dataName+"medhist_data.sav"
-     ENDIF
+        IF KEYWORD_SET(medHistOutData) THEN BEGIN
+           medHistDatFile      = medHistDataDir + dataName+"medhist_data.sav"
+        ENDIF
+        
+        h2dStr.data=median_hist(mlts, $
+                                (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[tmp_i],$
+                                inData,$
+                                MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
+                                MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
+                                BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                                OBIN1=outH2DBinsMLT,OBIN2=(KEYWORD_SET(do_lshell) ? outH2DBinsLShell : outH2DBinsILAT),$
+                                ABSMED=absFlux,OUTFILE=medHistDatFile,PLOT_I=tmp_i) 
+        
+        IF KEYWORD_SET(medHistOutTxt) THEN MEDHISTANALYZER,INFILE=medHistDatFile,outFile=medHistDataDir + dataName + "medhist.txt"
+     END
+     KEYWORD_SET(do_timeAvg_fluxQuantities): BEGIN
 
-     h2dStr.data=median_hist(mlts, $
-                             (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[plot_i],$
-                             inData,$
-                             MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                             MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
-                             BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
-                             OBIN1=outH2DBinsMLT,OBIN2=(KEYWORD_SET(do_lshell) ? outH2DBinsLShell : outH2DBinsILAT),$
-                             ABSMED=absFlux,OUTFILE=medHistDatFile,PLOT_I=plot_i) 
+        h2dStr.data=hist2d(mlts, $
+                           (KEYWORD_SET(do_lshell) ? maximus.lshell : maximus.ilat)[tmp_i],$
+                           inData,$
+                           MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
+                           MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
+                           BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                           OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
 
-     IF KEYWORD_SET(medHistOutTxt) THEN MEDHISTANALYZER,INFILE=medHistDatFile,outFile=medHistDataDir + dataName + "medhist.txt"
+        PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,tHistDenominator,outH2DBinsMLT,outH2DBinsILAT,H2DFluxN,dataName
 
-  ENDIF ELSE BEGIN 
+        h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/tHistDenominator[WHERE(h2dstr.data GT 0)]
 
-     h2dStr.data=hist2d(mlts, $
-                        (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[plot_i],$
-                        (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
-                        MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                        MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
-                        BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
-                        OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
-     h2dStr.data[h2d_nonzero_nEv_i]=h2dStr.data[h2d_nonzero_nEv_i]/h2dFluxN[h2d_nonzero_nEv_i] 
-
-     IF KEYWORD_SET(logAvgPlot) THEN h2dStr.data[where(h2dFluxN NE 0,/null)] = 10^(h2dStr.data[where(h2dFluxN NE 0,/null)])
-
-  ENDELSE
+     END
+     ELSE: BEGIN
+        h2dStr.data=hist2d(mlts, $
+                           (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[tmp_i],$
+                           (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
+                           MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
+                           MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
+                           BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                           OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+        h2dStr.data[h2d_nonzero_nEv_i]=h2dStr.data[h2d_nonzero_nEv_i]/h2dFluxN[h2d_nonzero_nEv_i] 
+        
+        IF KEYWORD_SET(logAvgPlot) THEN h2dStr.data[where(h2dFluxN NE 0,/null)] = 10^(h2dStr.data[where(h2dFluxN NE 0,/null)])
+        
+     END
+  ENDCASE
 
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN

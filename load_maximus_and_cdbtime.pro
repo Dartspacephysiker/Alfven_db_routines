@@ -8,6 +8,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              DO_NOT_MAP_PFLUX=do_not_map_pflux, $
                              DO_NOT_MAP_IONFLUX=do_not_map_ionflux, $
                              DO_NOT_MAP_HEAVIES=do_not_map_heavies, $
+                             DO_NOT_MAP_WIDTH_X=do_not_map_width_x, $
                              DO_CHASTDB=chastDB, $
                              DO_DESPUNDB=despunDB, $
                              USING_HEAVIES=using_heavies, $
@@ -98,6 +99,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux), $
                              MAP_IONFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_ionflux), $
                              MAP_HEAVIES_TO_IONOS=~KEYWORD_SET(do_not_map_heavies), $
+                             MAP_WIDTH_X_TO_IONOS=~KEYWORD_SET(do_not_map_width_x), $
                              DO_DESPUNDB=do_despunDB, $
                              USING_HEAVIES=using_heavies
 
