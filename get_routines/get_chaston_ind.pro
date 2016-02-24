@@ -378,24 +378,23 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                                                   IS_CHASTDB=chastDB, $
                                                   DO_LSHELL=DO_lshell, $
                                                   USING_HEAVIES=using_heavies)
-           IF MAXIMUS__cleaned_i NE !NULL THEN BEGIN
-              good_i=CGSETINTERSECTION(good_i,MAXIMUS__cleaned_i) 
-           ENDIF ELSE BEGIN
+           IF MAXIMUS__cleaned_i EQ !NULL THEN BEGIN
               PRINTF,lun,"Couldn't clean Alfvén DB! Sup with that?"
               STOP
+           ENDIF ELSE BEGIN
            ENDELSE
-
         ENDIF
+        good_i=CGSETINTERSECTION(good_i,MAXIMUS__cleaned_i) 
      ENDIF ELSE BEGIN
         IF N_ELEMENTS(FASTLOC__cleaned_i) EQ 0 THEN BEGIN
            FASTLOC__cleaned_i = fastloc_cleaner(dbStruct,LUN=lun)
-           IF FASTLOC__cleaned_i NE !NULL THEN BEGIN
-              good_i=CGSETINTERSECTION(good_i,FASTLOC__cleaned_i) 
-           ENDIF ELSE BEGIN
+           IF FASTLOC__cleaned_i EQ !NULL THEN BEGIN
               PRINTF,lun,"Couldn't clean fastloc DB! Sup with that?"
               STOP
+           ENDIF ELSE BEGIN
            ENDELSE
         ENDIF
+        good_i=CGSETINTERSECTION(good_i,FASTLOC__cleaned_i) 
      ENDELSE
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

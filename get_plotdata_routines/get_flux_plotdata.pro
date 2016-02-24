@@ -272,7 +272,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ;;Is this going to be a time-averaged plot?
   IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
      inData                 = inData * maximus.width_time[tmp_i]
-     h2dStr.title           = 'Time-averaged ' + h2dStr.title
+     ;; h2dStr.title           = 'Time-averaged ' + h2dStr.title
+     h2dStr.title           = 'Average ' + h2dStr.title
      dataName               = 'timeAvgd_' + dataName
   ENDIF
 
