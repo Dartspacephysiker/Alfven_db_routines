@@ -1,9 +1,13 @@
 ;2015/10/16
 ;Just generalize, my man
 ;
+;2016/02/25
+;Added DIVIDE_BY_WIDTH_X and can_do_width_x to make sure only quantities for which it makes sense can be divided by width_x
+;
 ;TO DO:
 ;2015/12/03 Fix e- number flux; most of those aren't actually number fluxes
 ; I've added this information to CORRECT_ALFVENDB_FLUXES
+
 
 PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       BINM=binM, $
@@ -104,6 +108,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            inData           = maximus.elec_energy_flux[tmp_i]
         ENDIF
      ENDELSE
+
+     can_do_width_x         = 0
   ENDIF
 
   IF KEYWORD_SET(get_eNumFlux) THEN BEGIN
@@ -116,16 +122,20 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      IF STRUPCASE(fluxPlotType) EQ STRUPCASE("Total_Eflux_Integ") THEN BEGIN
         h2dStr.title        = title__alfDB_ind_11
         inData              = maximus.total_eflux_integ[tmp_i] 
+        can_do_width_x      = 1
+
      ENDIF ELSE BEGIN
         IF STRUPCASE(fluxPlotType) EQ STRUPCASE("Eflux_Losscone_Integ") THEN BEGIN
            h2dStr.title     = title__alfDB_ind_10
            inData           = maximus.eflux_losscone_integ[tmp_i]
+           can_do_width_x   = 1
         ENDIF ELSE BEGIN
            IF STRUPCASE(fluxPlotType) EQ STRUPCASE("ESA_Number_flux") THEN BEGIN
               h2dStr.title  = title__alfDB_esa_nFlux
            ENDIF
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            inData           = maximus.esa_current[tmp_i] * 1. / 1.6e-9
+           can_do_width_x   = 0
         ENDELSE
      ENDELSE
   ENDIF
@@ -139,7 +149,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.do_plotIntegral = PFlux_do_plotIntegral
      h2dStr.do_midCBLabel   = PFlux_do_midCBLabel
 
+     ;; h2dStr.force_oobHigh   = 0
+
      inData                 = maximus.pFluxEst[tmp_i]
+
+     can_do_width_x         = 0
 
   ENDIF
 
@@ -154,29 +168,34 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      IF STRUPCASE(fluxplottype) EQ STRUPCASE("Integ") THEN BEGIN
         h2dStr.title        = title__alfDB_ind_17
      inData                 = maximus.integ_ion_flux[tmp_i]
+     can_do_width_x         = 1
      ENDIF ELSE BEGIN
         IF STRUPCASE(fluxplottype) EQ STRUPCASE("Max") THEN BEGIN
            h2dStr.title     = title__alfDB_ind_15
            inData           = maximus.ion_flux[tmp_i]
+           can_do_width_x   = 0
         ENDIF ELSE BEGIN
            IF STRUPCASE(fluxplottype) EQ STRUPCASE("Max_Up") THEN BEGIN
               h2dStr.title  = title__alfDB_ind_16
               inData        = maximus.ion_flux_up[tmp_i]
+              can_do_width_x = 0
            ENDIF ELSE BEGIN
               IF STRUPCASE(fluxplottype) EQ STRUPCASE("Integ_Up") THEN BEGIN
                  h2dStr.title= title__alfDB_ind_18
                  inData     = maximus.integ_ion_flux_up[tmp_i]
+                 can_do_width_x = 1
               ENDIF ELSE BEGIN
                  IF STRUPCASE(fluxplottype) EQ STRUPCASE("Energy") THEN BEGIN
                     h2dStr.title= title__alfDB_ind_14
                     inData  = maximus.ion_energy_flux[tmp_i]
+                    can_do_width_x = 0
                  ENDIF
               ENDELSE
            ENDELSE
         ENDELSE
      ENDELSE
 
-     IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+     IF KEYWORD_SET(divide_by_width_x) AND can_do_width_x THEN BEGIN
         scale_width_for_these_plots = [STRUPCASE("Integ"),STRUPCASE("Max"),STRUPCASE("Max_Up"),STRUPCASE("Integ_Up")]
         scale_to_cm = WHERE(STRUPCASE(fluxPlotType) EQ scale_width_for_these_plots)
         IF scale_to_cm[0] EQ -1 THEN BEGIN
@@ -204,6 +223,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            inData           = maximus.max_chare_total[tmp_i]
         ENDIF
      ENDELSE
+
+     can_do_width_x         = 0
   ENDIF
 
   IF KEYWORD_SET(get_ChariE) THEN BEGIN
@@ -214,6 +235,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.do_plotIntegral = Charie_do_plotIntegral
      h2dStr.do_midCBLabel   = Charie_do_midCBLabel
      inData                 = maximus.char_ion_energy[tmp_i] 
+
+     can_do_width_x         = 0
   ENDIF
 
   ;;Handle name of data
@@ -254,19 +277,22 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                               (KEYWORD_SET(fluxPlotType) ? '_' + STRUPCASE(fluxplottype) : '')
   h2dStr.title              = absnegslogStr + h2dStr.title
 
-
   IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
-     PRINT,'Dividing by WIDTH_X!'
-
-     dataName               = 'spatialAvg_' + dataName
-
-     ;; inds_to_scale_to_cm       = [15,16,17,18,26,28,30]
-     ;; scale_to_cm               = WHERE(maxInd EQ inds_to_scale_to_cm) 
-     ;;If the ion plots didn't pick this up, set it to 1
-     ;;NOTE, oxy also needs to be scaled!!!
-     IF N_ELEMENTS(factor) EQ 0 THEN factor = 1.0D
-
-     inData                 = inData*factor/maximus.width_x[tmp_i]
+     IF can_do_width_x THEN BEGIN
+        PRINT,'Dividing by WIDTH_X!'
+        
+        dataName               = 'spatialAvg_' + dataName
+        
+        ;; inds_to_scale_to_cm       = [15,16,17,18,26,28,30]
+        ;; scale_to_cm               = WHERE(maxInd EQ inds_to_scale_to_cm) 
+        ;;If the ion plots didn't pick this up, set it to 1
+        ;;NOTE, oxy also needs to be scaled!!!
+        IF N_ELEMENTS(factor) EQ 0 THEN factor = 1.0D
+        
+        inData                 = inData*factor/maximus.width_x[tmp_i]
+     ENDIF ELSE BEGIN
+        PRINTF,lun,"Can't divide " + dataName + " by width_x! Not in the cards."
+     ENDELSE
   ENDIF
 
   ;;Is this going to be a time-averaged plot?

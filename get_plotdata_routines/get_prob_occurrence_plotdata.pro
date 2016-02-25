@@ -94,6 +94,9 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
         
         h2dStr.do_plotIntegral     = defProbOccurrence_doPlotIntegral
         h2dStr.do_midCBLabel       = defProbOccurrence_do_midCBLabel
+
+        ;;Temporary
+        h2dStr.force_oobHigh       = 0
      END
      KEYWORD_SET(in_fluxStruct): BEGIN
         widthData                  = in_fluxQuantity[plot_i]
