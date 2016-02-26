@@ -177,7 +177,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  SOUTH=south, $
                                  HEMI=hemi, $
                                  HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                                 MIN_NEVENTS=min_nEvents, MASKMIN=maskMin, $
+                                 ;; MIN_NEVENTS=min_nEvents, $
+                                 MASKMIN=maskMin, $
                                  DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                  NPLOTS=nPlots, $
                                  EPLOTS=ePlots, EPLOTRANGE=ePlotRange, EFLUXPLOTTYPE=eFluxPlotType, LOGEFPLOT=logEfPlot, $
@@ -188,6 +189,13 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  NONEGPFLUX=noNegPflux, NOPOSPFLUX=noPosPflux, PPLOTRANGE=PPlotRange, $
                                  IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, LOGIFPLOT=logIfPlot, ABSIFLUX=absIflux, $
                                  NONEGIFLUX=noNegIflux, NOPOSIFLUX=noPosIflux, IPLOTRANGE=IPlotRange, $
+                                 OXYPLOTS=oxyPlots, $
+                                 OXYFLUXPLOTTYPE=oxyFluxPlotType, $
+                                 LOGOXYFPLOT=logOxyfPlot, $
+                                 ABSOXYFLUX=absOxyFlux, $
+                                 NONEGOXYFLUX=noNegOxyFlux, $
+                                 NOPOSOXYFLUX=noPosOxyFlux, $
+                                 OXYPLOTRANGE=oxyPlotRange, $
                                  CHAREPLOTS=charEPlots, CHARETYPE=charEType, LOGCHAREPLOT=logCharEPlot, ABSCHARE=absCharE, $
                                  NONEGCHARE=noNegCharE, NOPOSCHARE=noPosCharE, CHAREPLOTRANGE=CharEPlotRange, $
                                  CHARIEPLOTS=chariePlots, LOGCHARIEPLOT=logChariePlot, ABSCHARIE=absCharie, $
@@ -206,10 +214,14 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  TIMEAVGD_EFLUXMAXPLOT=timeAvgd_eFluxMaxPlot, $
                                  TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
                                  LOGTIMEAVGD_EFLUXMAX=logtimeAvgd_eFluxMax, $
+                                 DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                                 DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                                  MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, $
                                  ALL_LOGPLOTS=all_logPlots, $
                                  SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
-                                 DBFILE=dbfile, NO_BURSTDATA=no_burstData, DATADIR=dataDir, DO_CHASTDB=do_chastDB, $
+                                 DBFILE=dbfile, NO_BURSTDATA=no_burstData, DATADIR=dataDir, $
+                                 DO_CHASTDB=do_chastDB, $
+                                 DO_DESPUNDB=do_despunDB, $
                                  NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
                                  WRITEASCII=writeASCII, WRITEHDF5=writeHDF5, WRITEPROCESSEDH2D=writeProcessedH2d, $
                                  SAVERAW=saveRaw, RAWDIR=rawDir, $
@@ -248,7 +260,9 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                              MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                              HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                             MIN_NEVENTS=min_nEvents, MASKMIN=maskMin, $
+                             ;; MIN_NEVENTS=min_nEvents, $
+                             MASKMIN=maskMin, $
+                             DO_DESPUNDB=do_despunDB, $
                              HEMI=hemi, $
                              NORTH=north, $
                              SOUTH=south, $
@@ -293,7 +307,9 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                            NORTH=north, $
                            SOUTH=south, $
                            HEMI=hemi, $
-                           DBTIMES=cdbTime,dbfile=dbfile,CHASTDB=do_chastdb, $
+                           DBTIMES=cdbTime,dbfile=dbfile, $
+                           CHASTDB=do_chastdb, $
+                           DESPUNDB=do_despunDB, $
                            ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange,POYNTRANGE=poyntRange, $
                            MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                            MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
@@ -344,6 +360,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                    MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
                                    MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI), $
                                    SHIFT1=shiftM,SHIFT2=shiftI, $
+                                   DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                    CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                    CB_FORCE_OOBLOW=cb_force_oobLow)
 
@@ -375,6 +392,13 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         NONEGPFLUX=noNegPflux, NOPOSPFLUX=noPosPflux, PPLOTRANGE=PPlotRange, $
                         IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, LOGIFPLOT=logIfPlot, ABSIFLUX=absIflux, $
                         NONEGIFLUX=noNegIflux, NOPOSIFLUX=noPosIflux, IPLOTRANGE=IPlotRange, $
+                        OXYPLOTS=oxyPlots, $
+                        OXYFLUXPLOTTYPE=oxyFluxPlotType, $
+                        LOGOXYFPLOT=logOxyfPlot, $
+                        ABSOXYFLUX=absOxyFlux, $
+                        NONEGOXYFLUX=noNegOxyFlux, $
+                        NOPOSOXYFLUX=noPosOxyFlux, $
+                        OXYPLOTRANGE=oxyPlotRange, $
                         CHAREPLOTS=charEPlots, CHARETYPE=charEType, LOGCHAREPLOT=logCharEPlot, ABSCHARE=absCharE, $
                         NONEGCHARE=noNegCharE, NOPOSCHARE=noPosCharE, CHAREPLOTRANGE=CharEPlotRange, $
                         CHARIEPLOTS=chariePlots, LOGCHARIEPLOT=logChariePlot, ABSCHARIE=absCharie, $
@@ -393,6 +417,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         TIMEAVGD_EFLUXMAXPLOT=timeAvgd_eFluxMaxPlot, $
                         TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
                         LOGTIMEAVGD_EFLUXMAX=logtimeAvgd_eFluxMax, $
+                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                         MEDIANPLOT=medianPlot, MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                         LOGAVGPLOT=logAvgPlot, $
                         ALL_LOGPLOTS=all_logPlots, $

@@ -6,7 +6,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
                                DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                               MIN_NEVENTS=min_nEvents, MASKMIN=maskMin, $
+                               MIN_NEVENTS=min_nEvents, $
+                               MASKMIN=maskMin, $
+                               DO_DESPUNDB=do_despunDB, $
                                HEMI=hemi, $
                                NORTH=north, $
                                SOUTH=south, $
@@ -134,6 +136,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
   lShellStr=''
   IF KEYWORD_SET(do_lShell) THEN lShellStr='--lShell'
 
+  IF KEYWORD_SET(do_despundb) THEN despunStr     = '--despun' ELSE despunStr = ''
+
   ;;********************************************
   ;;A few other strings to tack on
   ;;tap DBs, and setup output
@@ -159,7 +163,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
   ENDIF
 
   paramString=hoyDia+'--'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
-              hemi+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
+              hemi+despunStr+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
   
   ;;Shouldn't be leftover, unused params from batch call
   IF ISA(e) THEN BEGIN
@@ -183,10 +187,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, C
   
   ;;Check on ILAT stuff; if I don't do this, all kinds of plots get boogered up
   IF ( (maxILAT-minILAT) MOD binILAT ) NE 0 THEN BEGIN
-     IF STRLOWCASE(hemi) EQ "north" THEN BEGIN
-        minI += CEIL(maxILAT-minILAT) MOD binILAT
+     IF STRUPCASE(hemi) EQ "NORTH" THEN BEGIN
+        minILAT += CEIL(maxILAT-minILAT) MOD binILAT
      ENDIF ELSE BEGIN
-        maxI -= CEIL(maxILAT-minILAT) MOD binILAT
+        maxILAT -= CEIL(maxILAT-minILAT) MOD binILAT
      ENDELSE
   ENDIF
 

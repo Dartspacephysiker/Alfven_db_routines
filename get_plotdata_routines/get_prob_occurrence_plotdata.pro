@@ -50,12 +50,12 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
      KEYWORD_SET(do_width_x): BEGIN
         widthData                  = maximus.width_x[plot_i]
         dataName                   = "probOccurrence_width_x"
-        h2dStr.title               = "Event width/Time in bin (km/s)"  ;;but what even is this quantity, bro?
+        h2dStr.title               = "Event width/Time in bin (m/s)"  ;;but what even is this quantity, bro?
      END                           
      KEYWORD_SET(do_timeavgd_pflux): BEGIN
         widthData                  = maximus.width_time[plot_i]*maximus.pFluxEst[plot_i]
-        dataName                   = "timeAvgd_pFlux"
-        h2dStr.title               = "Time-averaged Poynting flux"
+        dataName                   = name__timeAvgd_pFlux
+        h2dStr.title               = title__timeAvgd_pFlux
         h2dStr.lim                 = timeAvgd_pFluxRange
         
         h2dStr.labelFormat         = defTimeAvgd_PFluxCBLabelFormat
@@ -68,8 +68,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
      END                           
      KEYWORD_SET(do_timeAvgd_eFluxMax): BEGIN
         widthData                  = maximus.width_time[plot_i]*maximus.elec_energy_flux[plot_i]
-        dataName                   = "timeAvgd_eFluxMax"
-        h2dStr.title               = "Time-averaged electron energy flux"
+        dataName                   = name__timeAvgd_eFluxMax
+        h2dStr.title               = title__timeAvgd_eFluxMax
         h2dStr.lim                 = timeAvgd_eFluxMaxRange
         
         h2dStr.labelFormat         = defTimeAvgd_EFluxMaxCBLabelFormat
@@ -82,8 +82,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
      END
      ELSE: BEGIN                   
         widthData                  = maximus.width_time[plot_i]
-        dataName                   = "probOccurrence"
-        h2dStr.title               = "Probability of occurrence"
+        dataName                   = name__probOccurrence
+        h2dStr.title               = title__probOccurrence
 
         h2dStr.lim                 = probOccurrenceRange
         
@@ -94,6 +94,26 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
         
         h2dStr.do_plotIntegral     = defProbOccurrence_doPlotIntegral
         h2dStr.do_midCBLabel       = defProbOccurrence_do_midCBLabel
+
+        ;;Temporary
+        h2dStr.force_oobHigh       = 0
+     END
+     KEYWORD_SET(in_fluxStruct): BEGIN
+        widthData                  = in_fluxQuantity[plot_i]
+        
+        ;;All of these other variables should have been handled in GET_FLUX_PLOTDATA
+        ;; dataName                   = name__probOccurrence
+        ;; h2dStr.title               = title__probOccurrence
+
+        ;; h2dStr.lim                 = probOccurrenceRange
+        
+        ;; h2dStr.labelFormat         = defProbOccurrenceCBLabelFormat
+
+        ;; h2dStr.logLabels           = defProbOccurrenceLogLabels
+        ;; logged                     = KEYWORD_SET(logProbOccurrence)
+        
+        ;; h2dStr.do_plotIntegral     = defProbOccurrence_doPlotIntegral
+        ;; h2dStr.do_midCBLabel       = defProbOccurrence_do_midCBLabel
      END
   ENDCASE
 
@@ -109,47 +129,17 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                       BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
                       OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
   
-  ;;make sure this makes any sense
-  this   = WHERE( h2dstr.data EQ 0 )
-  that   = WHERE( thistdenominator EQ 0 )
-  nBad   = 0
-  iBad   = !NULL
-  FOR i=0,N_ELEMENTS(that)-1 DO BEGIN
-     test                             = WHERE( that[i] EQ this )
-     IF test[0] EQ -1 THEN BEGIN
-        iBad                          = [iBad,that[i]]
-        nBad++
-     ENDIF
-  ENDFOR
-  IF nBad GT 0 THEN BEGIN
-     nMLTs                            = N_ELEMENTS(outH2DBinsMLT)
-     PRINTF,lun,STRCOMPRESS(nBad,/REMOVE_ALL) + " instances in the widthData histo where there are supposedly events, but the ephemeris data reports fast was never there!"
-     PRINTF,lun,"Absurdity"
-     threshold                       = 0.15           ;seconds
-     PRINTF,lun,FORMAT='("Index",T10,"MLT",T20,"ILAT",T30,"Width_tval",T45,"N contr. events")'
-     FOR i=0,nBad-1 DO BEGIN
-        ind                           = iBad[i]
-        PRINTF,lun,FORMAT='(I0,T10,F0.2,T20,F0.2,T30,F0.3,T45,I0)',ind,outH2DBinsMLT[ind MOD nMLTs],outH2DBinsILAT[ind / nMLTs],h2dStr.data[ind],h2dFluxN[ind]
-        ;; IF h2dstr.data[ind] LT threshold THEN BEGIN
-        ;;    PRINTF,lun,,'-->Below threshold (' + STRCOMPRESS(threshold,/REMOVE_ALL) + '); setting this width_time to zero ...'
-        ;;    h2dstr.data[ind]           = 0
-        ;; ENDIF
-        PRINTF,lun,'Setting this width_time to zero ...'
-        h2dstr.data[ind]              = 0
-        tHistDenominator[ind]         = 999999.
-     ENDFOR
-     PRINTF,lun,""
-     ;; STOP
-  ENDIF
+
+  PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,tHistDenominator,outH2DBinsMLT,outH2DBinsILAT,H2DFluxN,dataName
 
   h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/tHistDenominator[WHERE(h2dstr.data GT 0)]
 
   IF KEYWORD_SET(logged) THEN BEGIN 
-     h2dStr.is_logged = 1
-     h2dStr.data[where(h2dStr.data GT 0,/NULL)]=ALOG10(h2dStr.data[WHERE(h2dStr.data GT 0,/null)]) 
-     widthData[where(widthData GT 0,/NULL)]=ALOG10(widthData[WHERE(widthData GT 0,/null)]) 
+     h2dStr.data[where(h2dStr.data GT 0,/NULL)]=ALOG10(h2dStr.data[WHERE(h2dStr.data GT 0,/NULL)]) 
+     widthData[where(widthData GT 0,/NULL)]=ALOG10(widthData[WHERE(widthData GT 0,/NULL)]) 
      h2dStr.title =  'Log ' + h2dStr.title
      h2dStr.lim = ALOG10(h2dStr.lim)
+     h2dStr.is_logged = 1
   ENDIF
 
   IF KEYWORD_SET(print_mandm) THEN BEGIN

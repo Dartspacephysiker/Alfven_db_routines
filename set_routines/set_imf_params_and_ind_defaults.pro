@@ -180,10 +180,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      byMaxStr=''
      
      IF KEYWORD_SET(byMin) THEN BEGIN
-        byMinStr='--byMin' + String(byMin,format='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
+        byMinStr='__byMin' + String(byMin,format='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
      ENDIF
      IF KEYWORD_SET(byMax) THEN BEGIN
-        byMaxStr='--byMax' + String(byMax,format='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
+        byMaxStr='__byMax' + String(byMax,format='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
      ENDIF
      
      ;;Requirement for IMF Bz magnitude?
@@ -191,10 +191,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      bzMaxStr=''
      
      IF KEYWORD_SET(bzMin) THEN BEGIN
-        bzMinStr='--bzMin' + String(bzMin,format='(D0.1)')
+        bzMinStr='__bzMin' + String(bzMin,format='(D0.1)')
      ENDIF
      IF KEYWORD_SET(bzMax) THEN BEGIN
-        bzMaxStr='--bzMax' + String(bzMax,format='(D0.1)')
+        bzMaxStr='__bzMax' + String(bzMax,format='(D0.1)')
      ENDIF
      
      ;;********************************************
@@ -205,9 +205,9 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      IF satellite EQ "OMNI" then omniStr = "--" + omni_Coords 
      ;;IF delay NE defDelay THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
      ;; IF delay GT 0 THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
-     IF N_ELEMENTS(delay) GT 0 THEN delayStr = STRING(FORMAT='("--",F0.2,"mindelay")',delay/60.) ELSE delayStr = ""
+     IF N_ELEMENTS(delay) GT 0 THEN delayStr = STRING(FORMAT='("__",F0.2,"mindelay")',delay/60.) ELSE delayStr = ""
      
-     IF KEYWORD_SET(smoothWindow) THEN smoothStr = '--' + strtrim(smoothWindow,2)+"min_IMFsmooth" ELSE smoothStr=""
+     IF KEYWORD_SET(smoothWindow) THEN smoothStr = '__' + strtrim(smoothWindow,2)+"min_IMFsmooth" ELSE smoothStr=""
      
      
      
@@ -215,11 +215,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      paramString_list                    = LIST()
      IF KEYWORD_SET(multiple_delays) THEN BEGIN
         FOR iDel=0,N_ELEMENTS(delay)-1 DO BEGIN
-           paramString_list.add,paramString+'--'+clockStr+"--"+strtrim(stableIMF,2)+"stable"+smoothStr+satellite+omniStr+delayStr[iDel]+$
+           paramString_list.add,paramString+'--'+satellite+omniStr+'--'+clockStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
                        byMinStr+byMaxStr+bzMinStr+bzMaxStr
         ENDFOR
         ENDIF ELSE BEGIN
-           paramString=paramString+'--'+clockStr+"--"+strtrim(stableIMF,2)+"stable"+smoothStr+satellite+omniStr+delayStr[0]+$
+           paramString=paramString+'--'+satellite+omniStr+'--'+clockStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
                        byMinStr+byMaxStr+bzMinStr+bzMaxStr
            paramString_list.add,paramString
         ENDELSE

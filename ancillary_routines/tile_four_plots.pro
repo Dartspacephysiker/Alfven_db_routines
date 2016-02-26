@@ -1,8 +1,8 @@
 ;2016/01/01
 ;It's way better to see all plots together, of course
-PRO TILE_THREE_PLOTS,filenames,titles, $
-                     ;; OUT_IMGS=out_imgs, $
-                     ;; OUT_TITLEOBJS=out_titleObjs, $
+PRO TILE_FOUR_PLOTS,filenames,titles, $
+                     OUT_IMGS=out_imgs, $
+                     OUT_TITLEOBJS=out_titleObjs, $
                      COMBINED_TO_BUFFER=combined_to_buffer, $
                      SAVE_COMBINED_WINDOW=save_combined_window, $
                      SAVE_COMBINED_NAME=save_combined_name, $
@@ -12,36 +12,39 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
                           
-  nImages        = N_ELEMENTS(filenames)
+  ;; nImages        = N_ELEMENTS(filenames)
+  nImages        = 4
 
-  imHDim         = 800
-  imVDim         = 640
-  xRange         = [125,675]
-  yRange         = [20,620]
+  imHDim         = 1600
+  imVDim         = 960
+  xRange         = [200,1600]
+  yRange         = [40,960]
 
   IF KEYWORD_SET(combined_to_buffer) THEN BEGIN
-     ;; hDim        = 800
-     ;; vDim        = 640
+     hDim        = 1600
+     vDim        = 960
 
-     scaleFactor = 0.5
+     scaleFactor = 0.2
   ENDIF ELSE BEGIN
      hDim        = 400
      vDim        = 320
      scaleFactor = 0.5
   ENDELSE
 
-  ;; adjHDim     = (hDim-300)*scaleFactor
-  ;; adjVDim     = (vDim-40)*scaleFactor
-  ;; adjHDim     = hDim*scaleFactor
-  ;; adjVDim     = vDim*scaleFactor
+  ;; adjHDim     = hDim-200*scaleFactor
+  ;; adjVDim     = vDim-40*scaleFactor
   adjHDim     = (xRange[1]-xRange[0])*scaleFactor
   adjVDim     = (yRange[1]-yRange[0])*scaleFactor
+  ;; adjHDim     = hDim*scaleFactor
+  ;; adjVDim     = vDim*scaleFactor
   ;; img_loc     = [150*scaleFactor,0]
+  img_loc     = [0,0]
+
   ;; xRange      = [150*scaleFactor,650*scaleFactor]
   ;; yRange      = [0,600*scaleFactor]
 
   imArr       = MAKE_ARRAY(nImages,/OBJ)
-  win         = WINDOW(DIMENSIONS=[adjHDim*nImages,adjVDim], $
+  win         = WINDOW(DIMENSIONS=[adjHDim*2,adjVDim*2], $
                        BUFFER=combined_to_buffer)
   titleObjs   = MAKE_ARRAY(nImages,/OBJ)
   
@@ -63,7 +66,7 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
      ;;                        IMAGE_DIMENSIONS=[hDim,vDim])
      ;; ENDIF ELSE BEGIN
         imArr[i]    = IMAGE(filenames[i], $
-                            LAYOUT=[nImages,1,i+1],$
+                            LAYOUT=[2,2,i+1],$
                             MARGIN=0, $
                             /CURRENT, $
                             ;; DIMENSIONS=[hDim,vDim], $
@@ -71,14 +74,14 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
                             DIMENSIONS=[adjHDim,adjVDim], $
                             IMAGE_DIMENSIONS=[imHDim,imVDim], $
                             ;; IMAGE_LOCATION=img_loc, $
-                            XRANGE=xRange, $
+                            ;; XRANGE=xRange, $
                             YRANGE=yRange)
      ;; ENDELSE
 
      IF KEYWORD_SET(titles) THEN BEGIN
         ;; titleObjs[i] = TEXT(i*hDim + hDim/2., vDim*8./9., titles[i], $
         titleObjs[i] = TEXT(i*adjHDim + adjHDim/2., $
-                            500*scaleFactor, $;adjVDim*8./9., $
+                            500, $;adjVDim*8./9., $
                             titles[i], $
                             ALIGNMENT=0.5, $
                             /DEVICE, $
@@ -90,18 +93,20 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
      IF ~KEYWORD_SET(plotDir) THEN plotDir = './'
      IF ~KEYWORD_SET(save_combined_name) THEN save_combined_name = plotDir + 'combined_stormphases.png'
 
-     ;; IF KEYWORD_SET(combined_to_buffer) THEN BEGIN
-     ;;    imArr[0].save,plotDir+save_combined_name
-     ;;    ENDIF ELSE BEGIN
      win.save,plotDir+save_combined_name
-        ;; ENDELSE
+     PRINT,"Saved " + save_combined_name + "..."
   ENDIF
 
   ;;for memory's sake
   win.close
 
-  ;; out_imgArr    = imArr
-  ;; out_titleObjs = titleObjs
+  ;;This is handled by win.close
+  ;; FOR i = 0,nImages-1 DO BEGIN
+  ;;    imArr[i].close    
+  ;; ENDFOR
+
+  out_imgArr    = imArr
+  out_titleObjs = titleObjs
 
   IF KEYWORD_SET(delete_plots) THEN BEGIN
      PRINTF,lun,"Deleting plots after tiling..."

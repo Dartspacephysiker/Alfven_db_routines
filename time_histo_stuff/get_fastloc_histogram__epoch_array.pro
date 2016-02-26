@@ -31,7 +31,7 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
    
    IF N_ELEMENTS(fastLoc) EQ 0 OR N_ELEMENTS(fastLoc_times) EQ 0 OR N_ELEMENTS(fastLoc_delta_t) EQ 0 THEN BEGIN
-      LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastLoc_times,fastloc_delta_t
+      LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastLoc_times,fastloc_delta_t,DBFILE=fastLoc_dbFile,DB_TFILE=fastLoc_dbTimesFile
    ENDIF
 
    ;; IF KEYWORD_SET(save_or_restore_if_possible) THEN BEGIN
@@ -47,6 +47,8 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
                               FASTLOC_STRUCT=fastLoc, $
                               FASTLOC_TIMES=fastLoc_times, $
                               FASTLOC_DELTA_T=fastLoc_delta_t, $
+                              FASTLOCFILE=fastLoc_dbFile, $
+                              FASTLOCTIMEFILE=fastLoc_dbTimesFile, $
                               HEMI=hemi, $
                               RESTRICT_ALTRANGE=restrict_altRange,RESTRICT_CHARERANGE=restrict_charERange, $
                               MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
