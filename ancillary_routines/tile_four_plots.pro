@@ -16,15 +16,15 @@ PRO TILE_FOUR_PLOTS,filenames,titles, $
   nImages        = 4
 
   imHDim         = 1600
-  imVDim         = 640
+  imVDim         = 960
   xRange         = [200,1600]
-  yRange         = [25,635]
+  yRange         = [40,960]
 
   IF KEYWORD_SET(combined_to_buffer) THEN BEGIN
      hDim        = 1600
-     vDim        = 650
+     vDim        = 960
 
-     scaleFactor = 0.125
+     scaleFactor = 0.2
   ENDIF ELSE BEGIN
      hDim        = 400
      vDim        = 320
@@ -33,8 +33,10 @@ PRO TILE_FOUR_PLOTS,filenames,titles, $
 
   ;; adjHDim     = hDim-200*scaleFactor
   ;; adjVDim     = vDim-40*scaleFactor
-  adjHDim     = hDim*scaleFactor
-  adjVDim     = vDim*scaleFactor
+  adjHDim     = (xRange[1]-xRange[0])*scaleFactor
+  adjVDim     = (yRange[1]-yRange[0])*scaleFactor
+  ;; adjHDim     = hDim*scaleFactor
+  ;; adjVDim     = vDim*scaleFactor
   ;; img_loc     = [150*scaleFactor,0]
   img_loc     = [0,0]
 
@@ -92,7 +94,16 @@ PRO TILE_FOUR_PLOTS,filenames,titles, $
      IF ~KEYWORD_SET(save_combined_name) THEN save_combined_name = plotDir + 'combined_stormphases.png'
 
      win.save,plotDir+save_combined_name
+     PRINT,"Saved " + save_combined_name + "..."
   ENDIF
+
+  ;;for memory's sake
+  win.close
+
+  ;;This is handled by win.close
+  ;; FOR i = 0,nImages-1 DO BEGIN
+  ;;    imArr[i].close    
+  ;; ENDFOR
 
   out_imgArr    = imArr
   out_titleObjs = titleObjs

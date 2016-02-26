@@ -1,8 +1,8 @@
 ;2016/01/01
 ;It's way better to see all plots together, of course
 PRO TILE_THREE_PLOTS,filenames,titles, $
-                     OUT_IMGS=out_imgs, $
-                     OUT_TITLEOBJS=out_titleObjs, $
+                     ;; OUT_IMGS=out_imgs, $
+                     ;; OUT_TITLEOBJS=out_titleObjs, $
                      COMBINED_TO_BUFFER=combined_to_buffer, $
                      SAVE_COMBINED_WINDOW=save_combined_window, $
                      SAVE_COMBINED_NAME=save_combined_name, $
@@ -16,23 +16,27 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
 
   imHDim         = 800
   imVDim         = 640
-  xRange         = [300,800]
+  xRange         = [125,675]
   yRange         = [20,620]
 
   IF KEYWORD_SET(combined_to_buffer) THEN BEGIN
-     hDim        = 800
-     vDim        = 640
+     ;; hDim        = 800
+     ;; vDim        = 640
 
-     scaleFactor = 1
+     scaleFactor = 0.5
   ENDIF ELSE BEGIN
      hDim        = 400
      vDim        = 320
      scaleFactor = 0.5
   ENDELSE
 
-  adjHDim     = hDim-300*scaleFactor
-  adjVDim     = vDim-40*scaleFactor
-  img_loc     = [150*scaleFactor,0]
+  ;; adjHDim     = (hDim-300)*scaleFactor
+  ;; adjVDim     = (vDim-40)*scaleFactor
+  ;; adjHDim     = hDim*scaleFactor
+  ;; adjVDim     = vDim*scaleFactor
+  adjHDim     = (xRange[1]-xRange[0])*scaleFactor
+  adjVDim     = (yRange[1]-yRange[0])*scaleFactor
+  ;; img_loc     = [150*scaleFactor,0]
   ;; xRange      = [150*scaleFactor,650*scaleFactor]
   ;; yRange      = [0,600*scaleFactor]
 
@@ -66,7 +70,7 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
                             ;; IMAGE_DIMENSIONS=[adjHDim,adjVDim], $
                             DIMENSIONS=[adjHDim,adjVDim], $
                             IMAGE_DIMENSIONS=[imHDim,imVDim], $
-                            IMAGE_LOCATION=img_loc, $
+                            ;; IMAGE_LOCATION=img_loc, $
                             XRANGE=xRange, $
                             YRANGE=yRange)
      ;; ENDELSE
@@ -74,7 +78,7 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
      IF KEYWORD_SET(titles) THEN BEGIN
         ;; titleObjs[i] = TEXT(i*hDim + hDim/2., vDim*8./9., titles[i], $
         titleObjs[i] = TEXT(i*adjHDim + adjHDim/2., $
-                            500, $;adjVDim*8./9., $
+                            500*scaleFactor, $;adjVDim*8./9., $
                             titles[i], $
                             ALIGNMENT=0.5, $
                             /DEVICE, $
@@ -93,8 +97,11 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
         ;; ENDELSE
   ENDIF
 
-  out_imgArr    = imArr
-  out_titleObjs = titleObjs
+  ;;for memory's sake
+  win.close
+
+  ;; out_imgArr    = imArr
+  ;; out_titleObjs = titleObjs
 
   IF KEYWORD_SET(delete_plots) THEN BEGIN
      PRINTF,lun,"Deleting plots after tiling..."

@@ -103,8 +103,8 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
      PRINT,"Saving to " + save_combined_name + "..."
      
      TILE_THREE_PLOTS,plotFileArr__list[i],titles, $
-                      OUT_IMGS=out_imgs, $
-                      OUT_TITLEOBJS=out_titleObjs, $
+                      ;; OUT_IMGS=out_imgs, $
+                      ;; OUT_TITLEOBJS=out_titleObjs, $
                       COMBINED_TO_BUFFER=combined_to_buffer, $
                       SAVE_COMBINED_WINDOW=save_combined_window, $
                       SAVE_COMBINED_NAME=save_combined_name, $
