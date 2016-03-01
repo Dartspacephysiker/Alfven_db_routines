@@ -120,6 +120,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOGTIMEAVGD_EFLUXMAX=logTimeAvgd_EFluxMax, $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                           MEDIANPLOT=medianPlot, $
                           MEDHISTOUTDATA=medHistOutData, $
                           MEDHISTOUTTXT=medHistOutTxt, $
@@ -249,6 +250,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -296,6 +298,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -343,6 +346,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -390,6 +394,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -437,6 +442,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -484,6 +490,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -530,6 +537,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -738,11 +746,15 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                      OUTH2DBINSLSHELL=outH2DBinsLShell, $
                                      H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                                      H2DFLUXN=h2dFluxN, $
+                                     H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                                     OUT_H2DMASK=out_h2dMask, $
                                      H2DSTR=h2dStr, $
                                      TMPLT_H2DSTR=tmplt_h2dStr, $
                                      DATANAME=dataName, $
                                      DATARAWPTR=dataRawPtr
         
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
         h2dStrArr=[h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
            dataNameArr=[dataNameArr,dataName] 
@@ -773,11 +785,15 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                      OUTH2DBINSLSHELL=outH2DBinsLShell, $
                                      H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                                      H2DFLUXN=h2dFluxN, $
+                                     H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                                     OUT_H2DMASK=out_h2dMask, $
                                      H2DSTR=h2dStr, $
                                      TMPLT_H2DSTR=tmplt_h2dStr, $
                                      DATANAME=dataName, $
                                      DATARAWPTR=dataRawPtr
         
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
         h2dStrArr=[h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
            dataNameArr=[dataNameArr,dataName] 
@@ -808,11 +824,15 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                      OUTH2DBINSLSHELL=outH2DBinsLShell, $
                                      H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                                      H2DFLUXN=h2dFluxN, $
+                                     H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                                     OUT_H2DMASK=out_h2dMask, $
                                      H2DSTR=h2dStr, $
                                      TMPLT_H2DSTR=tmplt_h2dStr, $
                                      DATANAME=dataName, $
                                      DATARAWPTR=dataRawPtr
         
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
         h2dStrArr=[h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
            dataNameArr=[dataNameArr,dataName] 

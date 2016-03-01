@@ -1,4 +1,4 @@
-PRO PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,h2dTimeDenom,H2DBinsMLT,H2DBinsILAT,H2DFluxN,dataName, $
+PRO PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,h2dTimeDenom,H2DBinsMLT,H2DBinsILAT,H2DFluxN,dataName,h2dMask, $
    LUN=lun
 
   IF ~KEYWORD_SET(lun) THEN lun = -1
@@ -18,7 +18,7 @@ PRO PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,h2dTimeDenom,H2DBinsMLT,H2DBi
   IF nBadTBins GT 0 THEN BEGIN
      nMLTs                            = N_ELEMENTS(H2DBinsMLT)
      PRINTF,lun,STRCOMPRESS(nBadTBins,/REMOVE_ALL) + " instances in " + dataName + " histo where there are supposedly events, but the ephemeris data reports fast was never there!"
-     PRINTF,lun,"Absurdity"
+     PRINTF,lun,"Absurdity; masking these"
      threshold                        = 0.15           ;seconds
      PRINTF,lun,FORMAT='("Index",T10,"MLT",T20,"ILAT",T30,A0,T45,"N contr. events")',dataName
      FOR i=0,nBadTBins-1 DO BEGIN
@@ -31,9 +31,9 @@ PRO PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,h2dTimeDenom,H2DBinsMLT,H2DBi
         PRINTF,lun,'Setting this bin to zero ...'
         h2dstr.data[ind]              = 0
         h2dTimeDenom[ind]             = 999999.
+        h2dMask[ind]                  = 255
      ENDFOR
      PRINTF,lun,""
-     STOP
      ;; STOP
   ENDIF
 

@@ -20,6 +20,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                                  H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                                  H2DSTR=h2dStr, $
                                  H2DFLUXN=h2dFluxN, $
+                                 H2DMASK=h2dMask, $
+                                 OUT_H2DMASK=out_h2DMask, $
                                  TMPLT_H2DSTR=tmplt_h2dStr, $
                                  DATANAME=dataName,DATARAWPTR=dataRawPtr, $
                                  PRINT_MAX_AND_MIN=print_mandm, $
@@ -130,13 +132,14 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                       OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
   
 
-  PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,tHistDenominator,outH2DBinsMLT,outH2DBinsILAT,H2DFluxN,dataName
+  PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,tHistDenominator,outH2DBinsMLT,outH2DBinsILAT,H2DFluxN,dataName,h2dMask
 
-  h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/tHistDenominator[WHERE(h2dstr.data GT 0)]
+  ;; h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/tHistDenominator[WHERE(h2dstr.data GT 0)]
+  h2dStr.data[WHERE(~h2dMask)] = h2dStr.data[WHERE(~h2dMask)]/tHistDenominator[WHERE(~h2dMask)]
 
   IF KEYWORD_SET(logged) THEN BEGIN 
-     h2dStr.data[where(h2dStr.data GT 0,/NULL)]=ALOG10(h2dStr.data[WHERE(h2dStr.data GT 0,/NULL)]) 
-     widthData[where(widthData GT 0,/NULL)]=ALOG10(widthData[WHERE(widthData GT 0,/NULL)]) 
+     h2dStr.data[WHERE(h2dStr.data GT 0,/NULL)]=ALOG10(h2dStr.data[WHERE(h2dStr.data GT 0,/NULL)]) 
+     widthData[WHERE(widthData GT 0,/NULL)]=ALOG10(widthData[WHERE(widthData GT 0,/NULL)]) 
      h2dStr.title =  'Log ' + h2dStr.title
      h2dStr.lim = ALOG10(h2dStr.lim)
      h2dStr.is_logged = 1
@@ -144,11 +147,13 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
 
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      PRINTF,lun,h2dStr.title
-     PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)',MAX(h2dStr.data[h2d_nonzero_nEv_i]),MIN(h2dStr.data[h2d_nonzero_nEv_i])
+     ;; PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)',MAX(h2dStr.data[h2d_nonzero_nEv_i]),MIN(h2dStr.data[h2d_nonzero_nEv_i])
+     PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)',MAX(h2dStr.data[WHERE(~h2dMask)]),MIN(h2dStr.data[WHERE(~h2dMask)])
   ENDIF
 
   dataRawPtr = PTR_NEW(widthData)
   
+  out_h2dMask          = h2dMask
   ;; CLOSE,lun
   ;; FREE_LUN,lun
 

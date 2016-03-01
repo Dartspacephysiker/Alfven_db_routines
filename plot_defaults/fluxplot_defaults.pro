@@ -7,7 +7,7 @@ fluxPlotChariCBLabelFormat   = '(D0.2)'
 
 logeFluxLabels               = 1
 logeNumFluxLabels            = 0
-logPFluxLabels               = 1
+logPFluxLabels               = 0
 logiFluxLabels               = 0
 logChareLabels               = 1
 logChariLabels               = 1
@@ -39,7 +39,8 @@ intEnergyFluxStr             = 'mW/m'
 ;; integNumFluxStr              = '100/cm-s'
 integNumFluxStr              = '#/cm-s'
 
-ionosphString                = ', at ionos.'
+;; ionosphString                = ', at ionos.'
+ionosphString                = ' at 100 km'
 ionosphString_pub            = ', mapped to the ionosphere'
 
 scAltString                  = ', at s/c alt.'
@@ -51,6 +52,7 @@ scAltString_pub              = ', at FAST altitude'
 ;; ENDIF
 
 IF KEYWORD_SET(fancy_plotNames) THEN BEGIN
+title__alfDB_ind_07          = 'ESA Current ( microA/m!U2!N)' + scAltString_pub    ;"ESA_CURRENT"
 title__alfDB_ind_08          = 'Max Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString_pub    ;"Max"     
 title__alfDB_ind_09          = 'Max e!U-!N Flux, whole dist. (' + energyFluxStr + ')' + ionosphString_pub ;"Integ"
 title__alfDB_ind_10          = 'Integrated Loss Cone e!U-!N Energy Flux (' + intEnergyFluxStr + ')' + ionosphString_pub      ;"Eflux_Losscone_Integ"
@@ -92,9 +94,11 @@ title__alfDB_ind_31          = 'He+ Characteristic Energy (' + charEUnitString +
 title__alfDB_ind_49          = 'Max Poynting Flux (' + energyFluxStr + ')' + ionosphString_pub
 
 ENDIF ELSE BEGIN
+
+title__alfDB_ind_07          = 'ESA Current ( microA/m!U2!N)' + scAltString    ;"ESA_CURRENT"     
 title__alfDB_ind_08          = 'Max L.C. e!U-!N Flux (' + energyFluxStr + ')' + ionosphString         ;"Integ"
 title__alfDB_ind_09          = 'Max e!U-!N Flux, whole dist. (' + energyFluxStr + ')' + ionosphString ;"Max"
-;; title__alfDB_ind_10          = 'Integ. L.C. e!U-!N Flux (' + intEnergyFluxStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
+title__alfDB_ind_10          = 'Integ. L.C. e!U-!N Flux (' + intEnergyFluxStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
 title__alfDB_ind_11          = 'Total Integ. e!U-!N Energy Flux (' + intEnergyFluxStr + ')' + ionosphString     ;"Total_Eflux_Integ"
 title__alfDB_ind_12          = 'e!U-!N Losscone Characteristic Energy (' + charEUnitString + ')'                  ;"lossCone"
 title__alfDB_ind_13          = 'e!U-!N Total Characteristic Energy (' + charEUnitString + ')'                     ;"Total"
@@ -103,7 +107,7 @@ title__alfDB_ind_14          = 'Max Ion Energy Flux (' + energyFluxStr + ')' + i
 title__alfDB_ind_15          = 'Max Ion Flux (' + numFluxStr + ')' + ionosphString              ;"Max" 
 title__alfDB_ind_16          = 'Max Upward Ion Flux (' + numFluxStr + ')' + ionosphString       ;"Max_Up"
 title__alfDB_ind_17          = 'Integ. Ion Flux (' + integNumFluxStr + ')' + ionosphString               ;"Integ"
-;; title__alfDB_ind_18          = 'Integ. Upward Ion Flux (' + integNumFluxStr + ')' + ionosphString        ;"Integ_Up"
+title__alfDB_ind_18          = 'Integ. Upward Ion Flux (' + integNumFluxStr + ')' + ionosphString        ;"Integ_Up"
 Title__alfDB_ind_19          = 'Ion Characteristic Energy (' + charEUnitString + ')'
 title__alfDB_ind_26          = 'Max Upward H+ Flux (' + numFluxStr + ')' + ionosphString       ;"Max_Up"
 title__alfDB_ind_27          = 'H+ Characteristic Energy (' + charEUnitString + ')' + scAltString       ;"Max_Up"
@@ -114,15 +118,15 @@ title__alfDB_ind_31          = 'He+ Characteristic Energy (' + charEUnitString +
 
 title__alfDB_ind_49          = 'Max Poynting Flux (' + energyFluxStr + ')' + ionosphString
 
-;;For time-averaged storm plots
-ionosphString                = ' at 100 km'
-title__alfDB_ind_10          = 'Losscone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
-title__alfDB_ind_18          = 'Upward Ion Flux (' + numFluxStr + ')' + ionosphString        ;"Integ_Up"
-title__alfDB_ind_49          = 'Poynting Flux (' + energyFluxStr + ')' + ionosphString
-
-
 ENDELSE
 
+;;For time-averaged storm plots
+title__alfDB_ind_10_tAvg     = 'Losscone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
+title__alfDB_ind_18_tAvg     = 'Upward Ion Flux (' + numFluxStr + ')' + ionosphString        ;"Integ_Up"
+title__alfDB_ind_49_tAvg     = 'Poynting Flux (' + energyFluxStr + ')' + ionosphString
+
+;;Integrated Poynting flux
+title__alfDB_ind_49_integ    = 'Integ. Poynting Flux (' + intEnergyFluxStr + ')' + ionosphString
 
 ;; title__alfDB_ind_10          = 
 
