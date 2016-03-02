@@ -68,6 +68,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      plotTitle = temp.title
   ENDIF
 
+  ;;5 bar things per decade
+  ;; IF KEYWORD_SET(temp.is_logged) THEN BEGIN
+  ;;    nLevels = CEIL(temp.lim[1]-temp.lim[0])*5
+  ;; ENDIF
+
   ;;Select color table
   IF temp.is_fluxData AND ~temp.is_logged THEN BEGIN
      ;;This is the one for doing sweet flux plots that include negative values 
@@ -80,7 +85,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      IF chrisPosScheme THEN BEGIN
         ;;make last color dark red
         TVLCT,r,g,b,/GET   
-        r[nLevels-1]             = 150
+        r[nLevels-1]             = 180
         g[nLevels-1]             = 0
         b[nLevels-1]             = 0
         TVLCT,r,g,b
@@ -459,26 +464,42 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                          0B : !NULL
      cbOOBHighVal      = (MAX(temp.data(notMasked)) GT temp.lim[1] OR temp.force_oobHigh) ? $
                          BYTE(nLevels-1) : !NULL
-     cbRange           = temp.lim
+     cbRange           = (temp.is_logged AND temp.logLabels) ? 10.^(ROUND(temp.lim*100.)/100.) : temp.lim
      cbTitle           = plotTitle
      nCBColors         = nlevels-is_OOBHigh-is_OOBLow
      cbBottom          = BYTE(is_OOBLow)
-     cbTickNames       = [String(lowerLab, Format=temp.labelFormat), $
-                          REPLICATE(" ",cbSpacingStr_Low),$
-                          (temp.DO_midCBLabel ? String(midLab, Format=temp.labelFormat) : " "), $
-                          REPLICATE(" ",cbSpacingStr_High),$
-                          String(upperLab, Format=temp.labelFormat)]
+     ;; cbTickNames       = [String(lowerLab, Format=temp.labelFormat), $
+     ;;                      REPLICATE("",cbSpacingStr_Low),$
+     ;;                      (temp.DO_midCBLabel ? String(midLab, Format=temp.labelFormat) : " "), $
+     ;;                      REPLICATE("",cbSpacingStr_High),$
+     ;;                      String(upperLab, Format=temp.labelFormat)]
      
-     cgColorbar, NCOLORS=nCBColors, DIVISIONS=nCBColors, BOTTOM=cbBottom, $
+     ;; cgColorbar, NCOLORS=nCBColors, DIVISIONS=nCBColors, BOTTOM=cbBottom, $
+     ;;             OOB_Low=cbOOBLowVal, $
+     ;;             OOB_High=cbOOBHighVal, $ 
+     ;;             /Discrete, $
+     ;;             RANGE=cbRange, $
+     ;;             TITLE=cbTitle, $
+     ;;             POSITION=cbPosition, TEXTTHICK=cbTextThick, VERTICAL=cbVertical, $
+     ;;             TLOCATION=cbTLocation, TCHARSIZE=cbTCharSize,$
+     ;;             CHARSIZE=cbTCharSize,$
+     ;;             TICKNAMES=cbTickNames
+     
+     cgColorbar, NCOLORS=nCBColors, $
+                 ;; DIVISIONS=nCBColors, $
+                 XLOG=(temp.is_logged AND temp.logLabels), $
+                 BOTTOM=cbBottom, $
                  OOB_Low=cbOOBLowVal, $
                  OOB_High=cbOOBHighVal, $ 
-                 /Discrete, $
+                 ;; /Discrete, $
                  RANGE=cbRange, $
                  TITLE=cbTitle, $
                  POSITION=cbPosition, TEXTTHICK=cbTextThick, VERTICAL=cbVertical, $
                  TLOCATION=cbTLocation, TCHARSIZE=cbTCharSize,$
                  CHARSIZE=cbTCharSize,$
+                 TICKLEN=0.5, $
+                 ;; TICKINTERVAL=(temp.is_logged AND temp.logLabels) ? 0.25 : !NULL, $
                  TICKNAMES=cbTickNames
-     
+
   ENDIF
 END

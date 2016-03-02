@@ -5,12 +5,12 @@ fluxPlotEPlotCBLabelFormat   = '(G0.2)'
 fluxPlotChareCBLabelFormat   = '(D0.1)'
 fluxPlotChariCBLabelFormat   = '(D0.2)'
 
-logeFluxLabels               = 1
+logeFluxLabels               = 0
 logeNumFluxLabels            = 0
 logPFluxLabels               = 0
 logiFluxLabels               = 0
-logChareLabels               = 1
-logChariLabels               = 1
+logChareLabels               = 0
+logChariLabels               = 0
 
 eFlux_do_plotIntegral        = 0
 eNumFlux_do_plotIntegral     = 0

@@ -148,7 +148,10 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      PRINTF,lun,h2dStr.title
      ;; PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)',MAX(h2dStr.data[h2d_nonzero_nEv_i]),MIN(h2dStr.data[h2d_nonzero_nEv_i])
-     PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)',MAX(h2dStr.data[WHERE(~h2dMask)]),MIN(h2dStr.data[WHERE(~h2dMask)])
+     PRINTF,lun,FORMAT='("Max, min, med:",T20,F10.2,T35,F10.2,T50,F10.2)', $
+            MAX(h2dStr.data[WHERE(~h2dMask)]), $
+            MIN(h2dStr.data[WHERE(~h2dMask)]), $
+            MEDIAN(h2dStr.data[WHERE(~h2dMask)])
   ENDIF
 
   dataRawPtr = PTR_NEW(widthData)
