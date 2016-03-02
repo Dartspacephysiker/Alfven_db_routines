@@ -293,21 +293,31 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   posStr                    = ""
   logStr                    = ""
   IF KEYWORD_SET(absFlux)THEN BEGIN
-     absEStr                = 'Abs--' 
      PRINTF,lun,"N pos elements in " + dataName + " data: ",N_ELEMENTS(where(inData GT 0.))
      PRINTF,lun,"N neg elements in " + dataName + " data: ",N_ELEMENTS(where(inData LT 0.))
+     IF KEYWORD_SET(noPosFlux) THEN BEGIN
+        posStr                = 'NoPos--'
+        PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(inData)
+        lt_i                   =  WHERE(inData LT 0.)
+        inData                 = inData[lt_i]
+        tmp_i                 = tmp_i[lt_i]
+        PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(inData)
+        inData                 = ABS(inData)
+     ENDIF ELSE BEGIN
+        absStr                = 'Abs--' 
+     ENDELSE
      inData = ABS(inData)
   ENDIF
   IF KEYWORD_SET(noNegFlux) THEN BEGIN
-     negEStr                = 'NoNegs--'
+     negStr                = 'NoNegs--'
      PRINTF,lun,"N elements in " + dataName + " before junking neg vals: ",N_ELEMENTS(inData)
      gt_i                   =  WHERE(inData GT 0.)
      inData                 = inData[gt_i]
      tmp_i                 = tmp_i[gt_i]
      PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",N_ELEMENTS(inData)
   ENDIF
-  IF KEYWORD_SET(noPosFlux) THEN BEGIN
-     posEStr                = 'NoPos--'
+  IF KEYWORD_SET(noPosFlux) AND ~KEYWORD_SET(absFlux) THEN BEGIN
+     posStr                = 'NoPos--'
      PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(inData)
      lt_i                   =  WHERE(inData LT 0.)
      inData                 = inData[lt_i]
@@ -322,7 +332,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   absnegslogStr             = absStr + negStr + posStr + logStr
   dataName                  = STRTRIM(absnegslogStr,2)+dataName + $
                               (KEYWORD_SET(fluxPlotType) ? '_' + STRUPCASE(fluxplottype) : '')
-  h2dStr.title              = absnegslogStr + h2dStr.title
+  ;; h2dStr.title              = absnegslogStr + h2dStr.title
 
   IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
      IF can_div_by_w_x THEN BEGIN
