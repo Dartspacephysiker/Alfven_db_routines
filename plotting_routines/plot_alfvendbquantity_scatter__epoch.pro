@@ -9,6 +9,8 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
                                          YTITLE=yTitle, $
                                          YRANGE=yRange, $
                                          LOGYPLOT=logYPlot, $
+                                         DO_TWO_PANELS=do_two_panels, $
+                                         MAKE_SECOND_AXIS=make_second_axis, $
                                          OVERPLOT_ALFVENDBQUANTITY=overplot_alfvendbquantity, $
                                          CURRENT=current, $
                                          MARGIN=margin, $
@@ -27,11 +29,29 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
   ;;    alf_t = alfDBTime[plot_i]-centerTime
   ;; ENDIF
 
-  IF KEYWORD_SET(xHideLabel) THEN BEGIN
+  IF KEYWORD_SET(do_two_panels) THEN BEGIN
+     margin               = !NULL
+     IF KEYWORD_SET(make_second_axis) THEN BEGIN
+        position          = position_secondPan
+     ENDIF ELSE BEGIN
+        position          = position_firstPan
+     ENDELSE
+  ENDIF ELSE BEGIN
+     margin               = KEYWORD_SET(margin) ? margin : defPlotMargin_max
+     position             = !NULL
+  ENDELSE
+
+  IF KEYWORD_SET(xHideLabel) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_axis)) THEN BEGIN
      xShowLabel = 0
   ENDIF ELSE BEGIN
      xShowLabel = 1
   ENDELSE
+
+  ;; IF KEYWORD_SET(xHideLabel) THEN BEGIN
+  ;;    xShowLabel = 0
+  ;; ENDIF ELSE BEGIN
+  ;;    xShowLabel = 1
+  ;; ENDELSE
 
   IF N_ELEMENTS(alf_t) GT 1 THEN BEGIN
      plot=plot(alf_t, $
@@ -50,8 +70,9 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
                XTICKFONT_STYLE=max_xtickfont_style, $
                YTICKFONT_SIZE=max_ytickfont_size, $
                YTICKFONT_STYLE=max_ytickfont_style, $
-               MARGIN=KEYWORD_SET(margin) ? margin : defPlotMargin_max, $
-               CURRENT=KEYWORD_SET(CURRENT) OR KEYWORD_SET(overplot_alfvendbquantity), $ ;current, $
+               MARGIN=margin, $
+               POSITION=position, $
+               CURRENT=KEYWORD_SET(CURRENT) OR KEYWORD_SET(overplot_alfvendbquantity) OR KEYWORD_SET(do_two_panels), $ ;current, $
                ;; OVERPLOT=overplot_alfvendbquantity, $
                LAYOUT=layout, $
                CLIP=clip, $

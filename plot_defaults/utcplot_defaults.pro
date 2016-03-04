@@ -95,3 +95,8 @@
   defHPlot_sp__firstMarg     = [0.20,0.09,0.00,0.09]
   defHPlot_sp__marg          = [0.10,0.09,0.10,0.09]
   defHPlot_sp__lastMarg      = [0.00,0.09,0.20,0.09]
+
+  ;;For double-panel stuff
+  position_firstPan           = [0.15,0.40,0.95,0.95]
+  position_secondPan          = [0.15,0.1,0.95,0.40]
+

@@ -1,33 +1,36 @@
 ;2015/10/22
 PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $ 
-                                 ;; NEVHISTDATA=nEvHistData, $
-                                 TAFTEREPOCH=tafterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
-                                 HISTOBINSIZE=histoBinSize, $
-                                 NONZERO_I=nz_i, $
-                                 SYMCOLOR=symColor, $
-                                 SYMTRANSPARENCY=symTransparency, $
-                                 SYMBOL=symbol, $
-                                 LINESTYLE=lineStyle, $
-                                 LINETHICKNESS=lineThickness, $
-                                 NO_AVG_SYMBOL=no_avg_symbol, $
-                                 PLOTNAME=plotName, $
-                                 PLOTTITLE=plotTitle, $
-                                 ERROR_PLOT=error_plot, $
-                                 ERROR_BARS=error_bars, $
-                                 ERRORBAR_CAPSIZE=eb_capsize, $
-                                 ERRORBAR_COLOR=eb_color, $ 
-                                 ERRORBAR_LINESTYLE=eb_linestyle, $
-                                 ERRORBAR_THICK=eb_thick, $
-                                 XTITLE=xTitle,XRANGE=xRange, $
-                                 XHIDELABEL=xHideLabel, $
-                                 YTITLE=yTitle,YRANGE=yRange,LOGYPLOT=logYPlot, $
-                                 OVERPLOT=overPlot, $
-                                 CURRENT=current, $
-                                 MARGIN=margin, $
-                                 LAYOUT=layout, $
-                                 OUTPLOT=outPlot, $
-                                 ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array, $
-                                 LUN=lun
+   ;; NEVHISTDATA=nEvHistData, $
+   TAFTEREPOCH=tafterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
+   HISTOBINSIZE=histoBinSize, $
+   HISTOGRAM=histogram, $
+   NONZERO_I=nz_i, $
+   SYMCOLOR=symColor, $
+   SYMTRANSPARENCY=symTransparency, $
+   SYMBOL=symbol, $
+   LINESTYLE=lineStyle, $
+   LINETHICKNESS=lineThickness, $
+   NO_AVG_SYMBOL=no_avg_symbol, $
+   PLOTNAME=plotName, $
+   PLOTTITLE=plotTitle, $
+   ERROR_PLOT=error_plot, $
+   ERROR_BARS=error_bars, $
+   ERRORBAR_CAPSIZE=eb_capsize, $
+   ERRORBAR_COLOR=eb_color, $ 
+   ERRORBAR_LINESTYLE=eb_linestyle, $
+   ERRORBAR_THICK=eb_thick, $
+   MAKE_SECOND_AXIS=make_second_axis, $
+   XTITLE=xTitle,XRANGE=xRange, $
+   XHIDELABEL=xHideLabel, $
+   YTITLE=yTitle,YRANGE=yRange,LOGYPLOT=logYPlot, $
+   OVERPLOT=overPlot, $
+   CURRENT=current, $
+   MARGIN=margin, $
+   LAYOUT=layout, $
+   OUTPLOT=outPlot, $
+   ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array, $
+   DO_TWO_PANELS=DO_two_panels, $
+   LUN=lun
   
   COMPILE_OPT idl2
 
@@ -42,8 +45,8 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
   xRange                  = KEYWORD_SET(xRange) ? xRange : !NULL
   yRange                  = KEYWORD_SET(yRange) ? yRange : !NULL
   yLog                    = KEYWORD_SET(logYPlot)
-  axis_style              = N_ELEMENTS(outPlot) GT 0 ? 0 : defAvgSymAxisStyle
-  lineStyle               = KEYWORD_SET(lineStyle) ? lineStyle : defAvgSymLinestyle
+  axis_style              = N_ELEMENTS(outPlot) GT 0 AND ~KEYWORD_SET(make_second_axis) ? 0 : defAvgSymAxisStyle
+  lineStyle               = N_ELEMENTS(lineStyle) GT 0 ? lineStyle : defAvgSymLinestyle
   color                   = KEYWORD_SET(symColor) ? symColor : defAvgSymColor
   thick                   = KEYWORD_SET(lineThickness) ? lineThickness : defAvgLineThick
   symbol                  = KEYWORD_SET(no_avg_symbol) ? !NULL : defAvgSym
@@ -57,7 +60,17 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
   ;; CURRENT=current
   ;; OVERPLOT=overplot
   ;; LAYOUT=layout
-  margin                  = KEYWORD_SET(margin) ? margin : defPlotMargin_max
+  IF KEYWORD_SET(do_two_panels) THEN BEGIN
+     margin               = !NULL
+     IF KEYWORD_SET(make_second_axis) THEN BEGIN
+        position          = position_secondPan
+     ENDIF ELSE BEGIN
+        position          = position_firstPan
+     ENDELSE
+  ENDIF ELSE BEGIN
+     margin               = KEYWORD_SET(margin) ? margin : defPlotMargin_max
+     position             = !NULL
+  ENDELSE
 
   ;;errorbar stuff
   ;; errorBar_capsize=KEYWORD_SET(eb_capsize) ? eb_capsize : defEb_capsize
@@ -69,7 +82,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
   errorBar_thick          = KEYWORD_SET(lineThickness) ? lineThickness : defEb_thick
 
 
-  IF KEYWORD_SET(xHideLabel) THEN BEGIN
+  IF KEYWORD_SET(xHideLabel) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_axis)) THEN BEGIN
      xShowLabel = 0
   ENDIF ELSE BEGIN
      xShowLabel = 1
@@ -119,12 +132,17 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                NAME=name, $
                TITLE=title, $
                XTITLE=xTitle, $
-               YTITLE=yTitle, $
                XRANGE=xRange, $
-               XSHOWTEXT=KEYWORD_SET(overplot) ? !NULL : xShowLabel, $
+               XSHOWTEXT=KEYWORD_SET(overplot) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_axis)) ? 0 : xShowLabel, $
+               ;; YTITLE=yTitle, $
+               ;; AXIS_STYLE=axis_style, $
+               ;; YTITLE=KEYWORD_SET(make_second_axis) ? !NULL : yTitle, $
+               ;; AXIS_STYLE=(KEYWORD_SET(make_second_axis)) ? 0 : axis_style, $
+               YTITLE=KEYWORD_SET(make_second_axis) ? "" : yTitle, $
+               AXIS_STYLE=(KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_axis)) ? !NULL : axis_style, $
+               HISTOGRAM=histogram, $
                YRANGE=yRange, $
                YLOG=yLog, $
-               AXIS_STYLE=axis_style, $
                LINESTYLE=lineStyle, $
                COLOR=color, $
                THICK=thick, $
@@ -136,10 +154,11 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                XTICKFONT_STYLE=xTickFont_style, $
                YTICKFONT_SIZE=yTickFont_size, $
                YTICKFONT_STYLE=yTickFont_style, $
-               CURRENT=current, $
-               OVERPLOT=overplot, $
+               CURRENT=KEYWORD_SET(do_two_panels)? 1 : current, $
+               OVERPLOT=KEYWORD_SET(do_two_panels) ? !NULL : overplot, $
                LAYOUT=layout, $
-               MARGIN=margin)
+               MARGIN=margin, $
+               POSITION=position)
   ENDELSE
   
   IF xShowLabel THEN BEGIN
@@ -149,6 +168,20 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
      ENDIF
   ENDIF
   
+  ;; IF KEYWORD_SET(make_second_axis) THEN BEGIN
+  ;;    yaxis = AXIS('Y', LOCATION='right', TARGET=plot, $
+  ;;                 TITLE=yTitle, $
+  ;;                 ;; MAJOR=nMajorTicks+1, $
+  ;;                 ;; MINOR=nMinorTicks, $
+  ;;                 TICKFONT_SIZE=defHistoYticksize, $
+  ;;                 TICKFONT_STYLE=defHistoYtickfontstyle, $
+  ;;                 ;; TICKFORMAT=KEYWORD_SET(yTickFormat) ? yTickFormat : defHistoTickFormat, $
+  ;;                 TICKFORMAT=!NULL, $
+  ;;                 TEXTPOS=1, $
+  ;;                 ;; COLOR=KEYWORD_SET(color) ? color : defHistoColor)
+  ;;                 COLOR='BLACK')
+  ;; ENDIF
+
   IF KEYWORD_SET(add_plot_to_plot_array) THEN BEGIN
      IF N_ELEMENTS(outPlot) GT 0 THEN outPlot=[outPlot,plot] ELSE outPlot = plot
   ENDIF ELSE BEGIN

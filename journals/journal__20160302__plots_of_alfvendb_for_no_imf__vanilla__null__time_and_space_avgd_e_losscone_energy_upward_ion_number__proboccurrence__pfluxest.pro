@@ -1,4 +1,5 @@
 ;2016/03/02 We need something to just show us NULL results, you know?
+;I also went into GET_MAGC_INDS and reversed the requirements to see what happens when we allow week MAGC events to be part of the mix.
 PRO JOURNAL__20160302__PLOTS_OF_ALFVENDB_FOR_NO_IMF__VANILLA__NULL__TIME_AND_SPACE_AVGD_E_LOSSCONE_ENERGY_UPWARD_ION_NUMBER__PROBOCCURRENCE__PFLUXEST
 
   NONSTORM                       = 0
@@ -10,15 +11,15 @@ PRO JOURNAL__20160302__PLOTS_OF_ALFVENDB_FOR_NO_IMF__VANILLA__NULL__TIME_AND_SPA
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;ILAT stuff
-  ;; hemi                           = 'NORTH'
-  ;; minILAT                        = 61
-  ;; maxILAT                        = 85
-  ;; binILAT                        = 2.0
-
-  hemi                           = 'SOUTH'
-  minILAT                        = -85
-  maxILAT                        = -61
+  hemi                           = 'NORTH'
+  minILAT                        = 61
+  maxILAT                        = 85
   binILAT                        = 2.0
+
+  ;; hemi                           = 'SOUTH'
+  ;; minILAT                        = -85
+  ;; maxILAT                        = -61
+  ;; binILAT                        = 2.0
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;MLT stuff
