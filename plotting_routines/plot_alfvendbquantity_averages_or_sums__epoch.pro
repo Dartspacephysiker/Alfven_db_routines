@@ -19,7 +19,10 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
    ERRORBAR_COLOR=eb_color, $ 
    ERRORBAR_LINESTYLE=eb_linestyle, $
    ERRORBAR_THICK=eb_thick, $
-   MAKE_SECOND_AXIS=make_second_axis, $
+   DO_SECONDARY_AXIS=do_secondary_axis, $
+   DO_TWO_PANELS=do_two_panels, $
+   MAKE_SECOND_PANEL=make_second_panel, $
+   SECOND_PANEL__PREP_FOR_SECONDARY_AXIS=second_panel__prep_for_secondary_axis, $
    XTITLE=xTitle,XRANGE=xRange, $
    XHIDELABEL=xHideLabel, $
    YTITLE=yTitle,YRANGE=yRange,LOGYPLOT=logYPlot, $
@@ -29,7 +32,6 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
    LAYOUT=layout, $
    OUTPLOT=outPlot, $
    ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array, $
-   DO_TWO_PANELS=DO_two_panels, $
    LUN=lun
   
   COMPILE_OPT idl2
@@ -45,7 +47,35 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
   xRange                  = KEYWORD_SET(xRange) ? xRange : !NULL
   yRange                  = KEYWORD_SET(yRange) ? yRange : !NULL
   yLog                    = KEYWORD_SET(logYPlot)
-  axis_style              = N_ELEMENTS(outPlot) GT 0 AND ~KEYWORD_SET(make_second_axis) ? 0 : defAvgSymAxisStyle
+  IF N_ELEMENTS(outPlot) GT 0 THEN BEGIN
+     IF KEYWORD_SET(make_second_panel) THEN BEGIN
+        IF KEYWORD_SET(do_secondary_axis) THEN BEGIN
+           axis_style     = 0
+        ENDIF ELSE BEGIN
+           IF KEYWORD_SET(second_panel__prep_for_secondary_axis) THEN BEGIN
+              axis_style  = 1
+              ytextColor  = KEYWORD_SET(symColor) ? symColor : !NULL
+           ENDIF ELSE BEGIN
+              axis_style  = defAvgSymAxisStyle
+           ENDELSE
+        ENDELSE
+
+        yTickFont_size    = defSecondaryYTickSize
+
+     ENDIF ELSE BEGIN
+        axis_style        = 0
+     yTickFont_size       = max_ytickfont_size
+     ENDELSE
+  ENDIF ELSE BEGIN
+     axis_style           = defAvgSymAxisStyle
+     yTickFont_size       = max_ytickfont_size
+  ENDELSE
+  ;; IF N_ELEMENTS(outPlot) GT 0 AND ~KEYWORD_SET(make_second_panel) THEN BEGIN
+  ;;    axis_style           = 0
+  ;; ENDIF ELSE BEGIN
+  ;;    axis_style           =  KEYWORD_SET(do_secondary_axis) ? 0 : defAvgSymAxisStyle
+  ;; ENDELSE
+  ;; axis_style              = N_ELEMENTS(outPlot) GT 0 AND ~KEYWORD_SET(make_second_panel) ? 0 : defAvgSymAxisStyle
   lineStyle               = N_ELEMENTS(lineStyle) GT 0 ? lineStyle : defAvgSymLinestyle
   color                   = KEYWORD_SET(symColor) ? symColor : defAvgSymColor
   thick                   = KEYWORD_SET(lineThickness) ? lineThickness : defAvgLineThick
@@ -55,14 +85,13 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
   sym_thick               = KEYWORD_SET(no_avg_symbol) ? !NULL : defAvgSymThick
   xTickFont_size          = max_xtickfont_size
   xTickFont_style         = max_xtickfont_style
-  yTickFont_size          = max_ytickfont_size
   yTickFont_style         = max_ytickfont_style
   ;; CURRENT=current
   ;; OVERPLOT=overplot
   ;; LAYOUT=layout
   IF KEYWORD_SET(do_two_panels) THEN BEGIN
      margin               = !NULL
-     IF KEYWORD_SET(make_second_axis) THEN BEGIN
+     IF KEYWORD_SET(make_second_panel) THEN BEGIN
         position          = position_secondPan
      ENDIF ELSE BEGIN
         position          = position_firstPan
@@ -82,7 +111,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
   errorBar_thick          = KEYWORD_SET(lineThickness) ? lineThickness : defEb_thick
 
 
-  IF KEYWORD_SET(xHideLabel) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_axis)) THEN BEGIN
+  IF KEYWORD_SET(xHideLabel) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_panel)) THEN BEGIN
      xShowLabel = 0
   ENDIF ELSE BEGIN
      xShowLabel = 1
@@ -133,13 +162,15 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                TITLE=title, $
                XTITLE=xTitle, $
                XRANGE=xRange, $
-               XSHOWTEXT=KEYWORD_SET(overplot) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_axis)) ? 0 : xShowLabel, $
+               XSHOWTEXT=KEYWORD_SET(overplot) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_panel)) ? 0 : xShowLabel, $
                ;; YTITLE=yTitle, $
                ;; AXIS_STYLE=axis_style, $
-               ;; YTITLE=KEYWORD_SET(make_second_axis) ? !NULL : yTitle, $
-               ;; AXIS_STYLE=(KEYWORD_SET(make_second_axis)) ? 0 : axis_style, $
-               YTITLE=KEYWORD_SET(make_second_axis) ? "" : yTitle, $
-               AXIS_STYLE=(KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_axis)) ? !NULL : axis_style, $
+               ;; YTITLE=KEYWORD_SET(make_second_panel) ? !NULL : yTitle, $
+               ;; AXIS_STYLE=(KEYWORD_SET(make_second_panel)) ? 0 : axis_style, $
+               YTITLE=KEYWORD_SET(make_second_panel) ? "" : yTitle, $
+               AXIS_STYLE=(KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_panel)) ? !NULL : axis_style, $
+               YTEXT_COLOR=yTextColor, $
+               YCOLOR=yTextColor, $
                HISTOGRAM=histogram, $
                YRANGE=yRange, $
                YLOG=yLog, $
@@ -168,7 +199,27 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
      ENDIF
   ENDIF
   
-  ;; IF KEYWORD_SET(make_second_axis) THEN BEGIN
+  IF KEYWORD_SET(second_panel__prep_for_secondary_axis) THEN BEGIN
+     topX  = AXIS('X',LOCATION='top', TARGET=plot, $
+                  SHOWTEXT=0)
+  ENDIF
+
+  IF KEYWORD_SET(do_secondary_axis) THEN BEGIN
+     yaxis = AXIS('Y', LOCATION='right', TARGET=plot, $
+                  ;; TITLE=yTitle, $
+                  ;; MAJOR=nMajorTicks+1, $
+                  ;; MINOR=nMinorTicks, $
+                  TICKFONT_SIZE=yTickFont_size, $
+                  TICKFONT_STYLE=defHistoYtickfontstyle, $
+                  ;; TICKFORMAT=KEYWORD_SET(yTickFormat) ? yTickFormat : defHistoTickFormat, $
+                  TICKFORMAT=!NULL, $
+                  TEXTPOS=1, $
+                  ;; COLOR=KEYWORD_SET(color) ? color : defHistoColor)
+                  COLOR=KEYWORD_SET(make_second_panel) ? color : "BLACK")
+
+  ENDIF
+
+  ;; IF KEYWORD_SET(make_second_panel) THEN BEGIN
   ;;    yaxis = AXIS('Y', LOCATION='right', TARGET=plot, $
   ;;                 TITLE=yTitle, $
   ;;                 ;; MAJOR=nMajorTicks+1, $

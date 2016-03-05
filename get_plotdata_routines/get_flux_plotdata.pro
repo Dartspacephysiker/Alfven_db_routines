@@ -29,6 +29,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       TMPLT_H2DSTR=tmplt_h2dStr, $
                       H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                       H2DFLUXN=h2dFluxN, $
+                      H2DMASK=h2dMask, $
+                      OUT_H2DMASK=out_h2dMask, $
                       DATANAME=dataName,DATARAWPTR=dataRawPtr, $
                       MEDIANPLOT=medianplot,MEDHISTOUTDATA=medHistOutData,MEDHISTOUTTXT=medHistOutTxt,MEDHISTDATADIR=medHistDataDir, $
                       LOGAVGPLOT=logAvgPlot, $
@@ -406,7 +408,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                            BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
                            OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
 
-        PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,tHistDenominator,outH2DBinsMLT,outH2DBinsILAT,H2DFluxN,dataName
+        PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,tHistDenominator,outH2DBinsMLT,outH2DBinsILAT,H2DFluxN,dataName,h2dMask
 
         h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/tHistDenominator[WHERE(h2dstr.data GT 0)]
 
@@ -451,15 +453,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
   ;;Do custom range for flux plot, if requested
   IF  KEYWORD_SET(plotRange) THEN h2dStr.lim=plotRange $
-  ELSE h2dStr.lim = [MIN(h2dStr.data),MAX(h2dStr.data)]
+  ELSE h2dStr.lim       = [MIN(h2dStr.data),MAX(h2dStr.data)]
   
   IF KEYWORD_SET(logFluxPlot) THEN BEGIN 
      h2dStr.data[where(h2dStr.data NE 0,/NULL)]=ALOG10(h2dStr.data[where(h2dStr.data NE 0,/null)]) 
      inData[where(inData NE 0,/null)]=ALOG10(inData[where(inData NE 0,/null)]) 
-     h2dStr.lim = ALOG10(h2dStr.lim)
-     h2dStr.is_logged = 1
+     h2dStr.lim        = ALOG10(h2dStr.lim)
+     h2dStr.is_logged  = 1
   ENDIF
 
-  dataRawPtr = PTR_NEW(inData)
+  dataRawPtr           = PTR_NEW(inData)
+
+  out_h2dMask          = h2dMask
+
 
 END

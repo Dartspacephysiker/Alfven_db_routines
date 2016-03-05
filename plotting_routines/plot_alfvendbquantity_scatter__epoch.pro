@@ -9,8 +9,9 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
                                          YTITLE=yTitle, $
                                          YRANGE=yRange, $
                                          LOGYPLOT=logYPlot, $
+                                         DO_SECONDARY_AXIS=do_secondary_axis, $
                                          DO_TWO_PANELS=do_two_panels, $
-                                         MAKE_SECOND_AXIS=make_second_axis, $
+                                         MAKE_SECOND_PANEL=make_second_panel, $
                                          OVERPLOT_ALFVENDBQUANTITY=overplot_alfvendbquantity, $
                                          CURRENT=current, $
                                          MARGIN=margin, $
@@ -31,7 +32,7 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
 
   IF KEYWORD_SET(do_two_panels) THEN BEGIN
      margin               = !NULL
-     IF KEYWORD_SET(make_second_axis) THEN BEGIN
+     IF KEYWORD_SET(make_second_panel) THEN BEGIN
         position          = position_secondPan
      ENDIF ELSE BEGIN
         position          = position_firstPan
@@ -41,7 +42,7 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
      position             = !NULL
   ENDELSE
 
-  IF KEYWORD_SET(xHideLabel) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_axis)) THEN BEGIN
+  IF KEYWORD_SET(xHideLabel) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_panel)) THEN BEGIN
      xShowLabel = 0
   ENDIF ELSE BEGIN
      xShowLabel = 1

@@ -255,6 +255,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                           H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
                           DATANAME=dataName, $
                           DATARAWPTR=dataRawPtr, $
                           MEDIANPLOT=medianplot, $
@@ -265,6 +267,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           FANCY_PLOTNAMES=fancy_plotNames
 
         
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
         h2dStrArr=[h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN
            dataNameArr=[dataNameArr,dataName] 
@@ -303,6 +307,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                           H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
                           DATANAME=dataName, $
                           DATARAWPTR=dataRawPtr, $
                           MEDIANPLOT=medianplot, $
@@ -311,6 +317,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           MEDHISTDATADIR=medHistDataDir, $
                           LOGAVGPLOT=logAvgPlot, $
                           FANCY_PLOTNAMES=fancy_plotNames
+
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
         h2dStrArr=[h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
@@ -351,6 +359,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                           H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
                           DATANAME=dataName, $
                           DATARAWPTR=dataRawPtr, $
                           MEDIANPLOT=medianplot, $
@@ -360,6 +370,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOGAVGPLOT=logAvgPlot, $
                           FANCY_PLOTNAMES=fancy_plotNames
         
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
         h2dStrArr=[h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
            dataNameArr=[dataNameArr,dataName] 
@@ -399,6 +411,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                           H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
                           DATANAME=dataName, $
                           DATARAWPTR=dataRawPtr, $
                           MEDIANPLOT=medianplot, $
@@ -408,6 +422,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOGAVGPLOT=logAvgPlot, $
                           FANCY_PLOTNAMES=fancy_plotNames
         
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
         h2dStrArr=[h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
            dataNameArr=[dataNameArr,dataName] 
@@ -447,6 +463,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                           H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
                           DATANAME=dataName, $
                           DATARAWPTR=dataRawPtr, $
                           MEDIANPLOT=medianplot, $
@@ -456,6 +474,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOGAVGPLOT=logAvgPlot, $
                           FANCY_PLOTNAMES=fancy_plotNames
         
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
         h2dStrArr=[h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
            dataNameArr=[dataNameArr,dataName] 
@@ -495,6 +515,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                           H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
                           DATANAME=dataName, $
                           DATARAWPTR=dataRawPtr, $
                           MEDIANPLOT=medianplot, $
@@ -503,6 +525,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           MEDHISTDATADIR=medHistDataDir, $
                           LOGAVGPLOT=logAvgPlot, $
                           FANCY_PLOTNAMES=fancy_plotNames
+
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
         h2dStrArr=[h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
@@ -542,6 +566,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                           H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
                           DATANAME=dataName, $
                           DATARAWPTR=dataRawPtr, $
                           MEDIANPLOT=medianplot, $
@@ -551,6 +577,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOGAVGPLOT=logAvgPlot, $
                           FANCY_PLOTNAMES=fancy_plotNames
         
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
         h2dStrArr=[h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
            dataNameArr=[dataNameArr,dataName] 
