@@ -119,8 +119,14 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
                           LOGTIMEAVGD_EFLUXMAX=logTimeAvgd_EFluxMax, $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                          SUM_ELECTRON_AND_POYNTINGFLUX=sum_electron_and_poyntingflux, $
                           MEDIANPLOT=medianPlot, $
                           MEDHISTOUTDATA=medHistOutData, $
                           MEDHISTOUTTXT=medHistOutTxt, $
@@ -248,6 +254,11 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ABSFLUX=abseflux, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logEfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -300,6 +311,11 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ABSFLUX=absENumFl, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logENumFlPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -352,6 +368,11 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ABSFLUX=absPflux, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -404,6 +425,11 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ABSFLUX=absIflux, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logIfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -456,6 +482,11 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ABSFLUX=absOxyFlux, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logOxyfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -508,6 +539,11 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ABSFLUX=absCharE, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logCharEPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -559,6 +595,11 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ABSFLUX=absChariE, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logChariEPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -867,6 +908,33 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
         ENDIF 
      ENDIF
+
+     IF KEYWORD_SET(sum_electron_and_poyntingflux) THEN BEGIN
+        
+        IF KEYWORD_SET(eNumFlPlots) AND KEYWORD_SET(pplots) THEN BEGIN
+           ePlotInd            = WHERE(STRMATCH(dataNameArr, '*enumfl*', /FOLD_CASE) EQ 1)
+           pPlotInd            = WHERE(STRMATCH(dataNameArr, '*pflux*', /FOLD_CASE) EQ 1)
+
+           IF ePlotInd[0] NE -1 AND pPlotInd[0] NE -1 THEN BEGIN
+              h2dStrEP         = tmplt_h2dStr
+              EPdataName       = 'summed_e_and_p'
+              h2dStrEP.title   = "Summed e- and Poynting flux (mW/m!U2!N)"
+              h2dStrEP.lim     = [0.00,0.35]
+              h2dStrEP.logLabels = 0
+              h2dStrEP.data       = h2dStrArr[ePlotInd].data+h2dStrArr[pPlotInd].data
+
+              ;;Add this curiosity to the mix
+              dataNameArr        = [dataNameArr,EPdataName]
+              h2dStrArr          = [h2dStrArr,h2dStrEP]
+           ENDIF ELSE BEGIN
+              PRINT,"Couldn't locate eplot and pplot for summing!"
+              STOP
+           ENDELSE
+        ENDIF ELSE BEGIN
+           PRINT,'Have to set eplots and pplots keywords to make this work'
+        ENDELSE
+     ENDIF
+
 
      ;;********************************************************
      ;;If something screwy goes on, better take stock of it and alert user

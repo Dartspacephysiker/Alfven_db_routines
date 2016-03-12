@@ -30,6 +30,9 @@ Charie_do_midCBLabel         = 1
 energyFluxStr                = 'mW/m!U2!N'
 numFluxStr                   = '#/cm!U2!N-s'
 
+energyGrossStr                = 'W'
+numGrossStr                   = '#/s'
+
 charEUnitString              = 'eV'
 
 ;;See JOURNAL__20151225__UNITS_OF_INTEGRATED_FLUXES.pro in Alfvendb_routines
@@ -127,6 +130,11 @@ title__alfDB_ind_49_tAvg     = 'Poynting Flux (' + energyFluxStr + ')' + ionosph
 
 ;;Integrated Poynting flux
 title__alfDB_ind_49_integ    = 'Integ. Poynting Flux (' + intEnergyFluxStr + ')' + ionosphString
+
+title__alfDB_ind_10_grossRate = 'Losscone e!U-!N Flux (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
+title__alfDB_ind_18_grossRate = 'Upward Ion Flux (' + numGrossStr + ')' + ionosphString        ;"Integ_Up"
+title__alfDB_ind_49_grossRate = 'Poynting Flux (' + energyGrossStr + ')' + ionosphString
+
 
 ;; title__alfDB_ind_10          = 
 

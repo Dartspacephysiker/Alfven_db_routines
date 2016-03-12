@@ -5,6 +5,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                            BIN1=b1in,BIN2=b2in, $
                            SHIFT1=s1in,SHIFT2=s2in, $
                            DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                           DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                            CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                            CB_FORCE_OOBLOW=cb_force_oobLow
 
@@ -39,6 +40,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                   logLabels       : 0, $
                   do_plotIntegral : 0, $
                   do_timeAvg      : KEYWORD_SET(do_timeAvg_fluxQuantities), $
+                  do_grossRate    : KEYWORD_SET(do_grossRate_fluxQuantities), $
                   force_oobHigh   : KEYWORD_SET(cb_force_oobHigh), $
                   force_oobLow    : KEYWORD_SET(cb_force_oobLow)}
 

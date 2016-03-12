@@ -215,6 +215,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
                                  LOGTIMEAVGD_EFLUXMAX=logtimeAvgd_eFluxMax, $
                                  DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                                 DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                                 DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                                  DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                                  MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                                  MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, $
@@ -365,6 +367,15 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                    CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                    CB_FORCE_OOBLOW=cb_force_oobLow)
 
+  IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+     GET_H2D_BIN_AREAS,h2dAreas, $
+                       CENTERS1=centersMLT,CENTERS2=centersILAT, $
+                       BINSIZE1=binM*15., BINSIZE2=binI, $
+                       MAX1=maxM*15., MAX2=maxI, $
+                       MIN1=minM*15., MIN2=minI, $
+                       SHIFT1=shiftM*15., SHIFT2=shiftI
+  END
+
   GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
                         KEEPME=keepMe, DATARAWPTRARR=dataRawPtrArr,DATANAMEARR=dataNameArr, $
                         MINMLT=minM,MAXMLT=maxM, $
@@ -419,6 +430,11 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
                         LOGTIMEAVGD_EFLUXMAX=logtimeAvgd_eFluxMax, $
                         DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                        DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                        DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                        GROSSRATE__H2D_AREAS=h2dAreas, $
+                        GROSSRATE__CENTERS_MLT=centersMLT, $
+                        GROSSRATE__CENTERS_ILAT=centersILAT, $
                         DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                         MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                         MEDIANPLOT=medianPlot, MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
