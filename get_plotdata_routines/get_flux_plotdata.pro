@@ -457,8 +457,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
            h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dAreas[WHERE(h2dstr.data GT 0)]*grossConvFactor
 
-           dayInds                           = WHERE(centersMLT GT 6*15 AND centersMLT LE 18*15 AND ~h2dMask)
-           nightInds                         = WHERE((centersMLT GT 18*15 OR centersMLT LE 6*15) AND ~h2dMask)
+           dayInds                           = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
+           nightInds                         = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
 
            IF dayInds[0] NE -1 THEN BEGIN
               grossDay                       = TOTAL(h2dStr.data[dayInds])

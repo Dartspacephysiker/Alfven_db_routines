@@ -90,7 +90,8 @@
   ;;Cutoff for width_time (FAST spin period is 4.946 s)
   ;;Is it valid to cut it off at half a spin period? Perhaps not ...
   ;; width_t_cutoff = 4.946*0.5
-  width_t_cutoff = 20
+  width_t_cutoff = 2.5
+  ;; width_t_cutoff = 20
 
 
   ;;just to be safe
