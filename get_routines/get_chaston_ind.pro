@@ -250,7 +250,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      ;;Handle longitudes
      MIMC__minMLT = minM
      MIMC__maxMLT = maxM
-     MIMC__binMLT = maxM
+     MIMC__binMLT = binM
      MIMC__dayside = KEYWORD_SET(dayside)
      MIMC__nightside = KEYWORD_SET(nightside)
      mlt_i = GET_MLT_INDS(dbStruct,MIMC__minMLT,MIMC__maxMLT, $
@@ -266,14 +266,14 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      IF KEYWORD_SET(do_lShell) THEN BEGIN
         MIMC__minLshell = minL
         MIMC__maxLshell = maxL
-        MIMC__binLshell = maxL
+        MIMC__binLshell = binL
         lshell_i = GET_LSHELL_INDS(dbStruct,MIMC__minLshell,MIMC__maxLshell,MIMC__hemi, $
                                    N_LSHELL=n_lshell,N_NOT_LSHELL=n_not_lshell,LUN=lun)
         region_i = CGSETINTERSECTION(lshell_i,mlt_i)
      ENDIF ELSE BEGIN
         MIMC__minILAT = minI
         MIMC__maxILAT = maxI
-        MIMC__binILAT = maxI
+        MIMC__binILAT = binI
         ilat_i   = GET_ILAT_INDS(dbStruct,MIMC__minILAT,MIMC__maxILAT,MIMC__hemi, $
                                  N_ILAT=n_ilat,N_NOT_ILAT=n_not_ilat,LUN=lun)
         region_i = CGSETINTERSECTION(ilat_i,mlt_i)

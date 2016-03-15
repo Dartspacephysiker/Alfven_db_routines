@@ -85,6 +85,7 @@
 ;2016/01/27 Added MAP_IONFLUX keyword
 ;2016/02/23 Added MAP_WIDTH_X keyword so we can use it with the integrated data
 ;2016/02/23 Added correctStr so I can see at any time what's been corrected
+;2016/03/15 Having misgivings about mapping width_x, so I've commented it out for now.
 ;-
 PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             MAP_PFLUX_TO_IONOS=map_pflux, $
@@ -92,7 +93,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             USING_HEAVIES=using_heavies, $
                             MAP_HEAVIES_TO_IONOS=map_heavies, $
                             MAP_IONFLUX_TO_IONOS=map_ionflux, $
-                            MAP_WIDTH_X_TO_IONOS=map_width_x, $
+                            ;; MAP_WIDTH_X_TO_IONOS=map_width_x, $
                             LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
@@ -279,11 +280,11 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         correctStr += '-->16-ION_FLUX_UP' + STRING(10B)
      ENDIF
 
-     IF KEYWORD_SET(map_width_x) THEN BEGIN
-        maximus.width_x           = maximus.width_x * mapRatio.ratio
-        PRINTF,lun,'-->21-WIDTH_X'
-        correctStr += '-->21-WIDTH_X' + STRING(10B)
-     ENDIF
+     ;; IF KEYWORD_SET(map_width_x) THEN BEGIN
+     ;;    maximus.width_x           = maximus.width_x * mapRatio.ratio
+     ;;    PRINTF,lun,'-->21-WIDTH_X'
+     ;;    correctStr += '-->21-WIDTH_X' + STRING(10B)
+     ;; ENDIF
 
      ;;Now add the CORRECTED_FLUXES tag to maximus
      ;; maximus=CREATE_STRUCT(NAME='maximus',maximus,'CORRECTED_FLUXES',1)     

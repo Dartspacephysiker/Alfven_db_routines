@@ -188,6 +188,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      CASE 1 OF
         KEYWORD_SET(multiply_by_width_x): BEGIN
            h2dStr.title     = title__alfDB_ind_49_integ
+           LOAD_MAPPING_RATIO_DB,mapRatio, $
+                                 DO_DESPUNDB=maximus.despun
+           IF maximus.corrected_fluxes THEN BEGIN ;Assume that pFlux has been multiplied by mapRatio
+              PRINT,'Undoing a square-root factor of multiplication by magField ratio for Poynting flux ...'
+              magFieldFactor        = 1.D/SQRT(mapRatio.ratio[tmp_i]) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
+           ENDIF ELSE BEGIN
+              magFieldFactor        = SQRT(mapRatio.ratio[tmp_i])
+           ENDELSE
         END
         KEYWORD_SET(do_timeAvg_fluxQuantities): BEGIN
            CASE 1 OF
@@ -374,8 +382,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         ;;If the ion plots or one of the select electron plots didn't pick this up, set it to 1
         ;;NOTE, oxy also needs to be scaled!!!
         IF N_ELEMENTS(factor) EQ 0 THEN factor = 1.0D
-        
-        inData                 = inData*factor/maximus.width_x[tmp_i]
+        IF N_ELEMENTS(magFieldFactor) EQ 0 THEN magFieldFactor = 1.0D
+
+        inData                 = inData*factor*magFieldFactor/maximus.width_x[tmp_i]
      ENDIF ELSE BEGIN
         PRINTF,lun,"Can't divide " + dataName + " by width_x! Not in the cards."
      ENDELSE
@@ -390,8 +399,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         ;;If the ion plots or one of the select electron plots didn't pick this up, set it to 1
         ;;NOTE, oxy also needs to be scaled!!!
         IF N_ELEMENTS(factor) EQ 0 THEN factor = 1.0D
+        IF N_ELEMENTS(magFieldFactor) EQ 0 THEN magFieldFactor = 1.0D
         
-        inData                 = inData*factor*maximus.width_x[tmp_i]
+        inData                 = inData*factor*magFieldFactor*maximus.width_x[tmp_i]
      ENDIF ELSE BEGIN
         PRINTF,lun,"Can't multiply " + dataName + " by width_x! Not in the cards."
      ENDELSE

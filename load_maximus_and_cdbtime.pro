@@ -66,7 +66,10 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      IF KEYWORD_SET(force_load_maximus) THEN BEGIN
         PRINTF,lun,"Forcing load, whether or not we already have maximus..."
      ENDIF
-     IF FILE_TEST(DBDir+DBFile) THEN RESTORE,DBDir+DBFile
+     IF FILE_TEST(DBDir+DBFile) THEN BEGIN
+        RESTORE,DBDir+DBFile
+        maximus = CREATE_STRUCT(maximus,'DESPUN',KEYWORD_SET(despunDB))     
+     ENDIF
      IF maximus EQ !NULL THEN BEGIN
         PRINT,"Couldn't load maximus!"
         STOP
@@ -99,10 +102,9 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux), $
                              MAP_IONFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_ionflux), $
                              MAP_HEAVIES_TO_IONOS=~KEYWORD_SET(do_not_map_heavies), $
-                             MAP_WIDTH_X_TO_IONOS=~KEYWORD_SET(do_not_map_width_x), $
-                             DO_DESPUNDB=do_despunDB, $
+                             ;; MAP_WIDTH_X_TO_IONOS=~KEYWORD_SET(do_not_map_width_x), $
+                             DO_DESPUNDB=despunDB, $
                              USING_HEAVIES=using_heavies
-
   ENDIF
 
 
