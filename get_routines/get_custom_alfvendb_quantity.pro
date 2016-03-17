@@ -60,6 +60,8 @@
 ;-
 
 FUNCTION GET_CUSTOM_ALFVENDB_QUANTITY,comingRightUp,MAXIMUS=maximus,OBS_INDS=obs_inds, $
+                                      GET_OBS_INDS__STRING=get_obs_inds__string, $
+                                      OUT_OBS_INDS=out_obs_inds, $
                                       VERBOSE=verbose, $
                                       PRINT_OPERATIONS=print_operations
 
@@ -85,8 +87,26 @@ FUNCTION GET_CUSTOM_ALFVENDB_QUANTITY,comingRightUp,MAXIMUS=maximus,OBS_INDS=obs
 
   IF KEYWORD_SET(verbose) THEN PRINT,'Getting this quantity: ' + comingRightUp
 
-  custom_quantity          = EXECUTE(comingRightUp)
+  IF KEYWORD_SET(get_obs_inds__string) THEN BEGIN
+     IF KEYWORD_SET(verbose) THEN PRINT, '... but getting these inds first: ' + get_obs_inds__string
+     OK = EXECUTE("obs_inds = " + get_obs_inds__string)
+     IF ~OK THEN BEGIN
+        PRINT,"Houghff! Couldn't get obs_inds with that juvenile, malformed string you provided!"
+        RETURN,-1
+     ENDIF ELSE BEGIN
+        out_obs_inds       = obs_inds
+     ENDELSE
+  ENDIF
 
-  RETURN,custom_quantity
+  ;; custom_quantity          = EXECUTE(comingRightUp)
+  OK = EXECUTE("custom_quantity = " + comingRightUp)
+
+  IF OK THEN BEGIN
+     RETURN,custom_quantity
+  ENDIF ELSE BEGIN
+     PRINT,"Couldn't get inds!!!"
+     STOP
+     RETURN,-1
+  ENDELSE
 
 END
