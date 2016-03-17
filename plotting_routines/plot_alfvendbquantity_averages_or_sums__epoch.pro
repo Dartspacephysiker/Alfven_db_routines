@@ -43,7 +43,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
   name                    = KEYWORD_SET(plotName) ? plotName : defAvgPlotName
   title                   = plotTitle
   xTitle                  = KEYWORD_SET(xTitle) ? xTitle : defXTitle
-  yTitle                  = yTitle
+  yString                 = KEYWORD_SET(do_two_panels) ? !NULL : yTitle
   xRange                  = KEYWORD_SET(xRange) ? xRange : !NULL
   yRange                  = KEYWORD_SET(yRange) ? yRange : !NULL
   yLog                    = KEYWORD_SET(logYPlot)
@@ -55,6 +55,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
            IF KEYWORD_SET(second_panel__prep_for_secondary_axis) THEN BEGIN
               axis_style  = 1
               ytextColor  = KEYWORD_SET(symColor) ? symColor : !NULL
+              yString      = !NULL
            ENDIF ELSE BEGIN
               axis_style  = defAvgSymAxisStyle
            ENDELSE
@@ -111,7 +112,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
   errorBar_thick          = KEYWORD_SET(lineThickness) ? lineThickness : defEb_thick
 
 
-  IF KEYWORD_SET(xHideLabel) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_panel)) THEN BEGIN
+  IF KEYWORD_SET(xHideLabel) OR (KEYWORD_SET(do_two_panels) AND KEYWORD_SET(make_second_panel)) THEN BEGIN
      xShowLabel = 0
   ENDIF ELSE BEGIN
      xShowLabel = 1
@@ -129,7 +130,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                NAME=name, $
                TITLE=title, $
                XTITLE=xTitle, $
-               YTITLE=yTitle, $
+               YTITLE=yString, $
                XRANGE=xRange, $
                XSHOWTEXT=KEYWORD_SET(overplot) ? !NULL : xShowLabel, $
                YRANGE=yRange, $
@@ -163,11 +164,11 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                XTITLE=xTitle, $
                XRANGE=xRange, $
                XSHOWTEXT=KEYWORD_SET(overplot) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_panel)) ? 0 : xShowLabel, $
-               ;; YTITLE=yTitle, $
+               ;; YTITLE=yString, $
                ;; AXIS_STYLE=axis_style, $
-               ;; YTITLE=KEYWORD_SET(make_second_panel) ? !NULL : yTitle, $
+               ;; YTITLE=KEYWORD_SET(make_second_panel) ? !NULL : yString, $
                ;; AXIS_STYLE=(KEYWORD_SET(make_second_panel)) ? 0 : axis_style, $
-               YTITLE=KEYWORD_SET(make_second_panel) ? "" : yTitle, $
+               YTITLE=KEYWORD_SET(make_second_panel) ? "" : yString, $
                AXIS_STYLE=(KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_panel)) ? !NULL : axis_style, $
                YTEXT_COLOR=yTextColor, $
                YCOLOR=yTextColor, $
@@ -202,6 +203,13 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
   IF KEYWORD_SET(second_panel__prep_for_secondary_axis) THEN BEGIN
      topX  = AXIS('X',LOCATION='top', TARGET=plot, $
                   SHOWTEXT=0)
+
+     yText = TEXT(0.03,0.5,yTitle, $
+                  /NORMAL, $
+                  ALIGNMENT=0.5, $
+                  ORIENTATION=90, $
+                  FONT_SIZE=max_ytickfont_size, $
+                  FONT_STYLE=defHistoYtickfontstyle)
   ENDIF
 
   IF KEYWORD_SET(do_secondary_axis) THEN BEGIN

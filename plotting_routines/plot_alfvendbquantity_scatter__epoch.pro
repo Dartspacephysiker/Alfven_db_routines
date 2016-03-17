@@ -42,7 +42,8 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
      position             = !NULL
   ENDELSE
 
-  IF KEYWORD_SET(xHideLabel) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_panel)) THEN BEGIN
+  ;; IF KEYWORD_SET(xHideLabel) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_panel)) THEN BEGIN
+  IF KEYWORD_SET(xHideLabel) OR (KEYWORD_SET(do_two_panels) AND KEYWORD_SET(make_second_panel)) THEN BEGIN
      xShowLabel = 0
   ENDIF ELSE BEGIN
      xShowLabel = 1
@@ -58,7 +59,7 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
      plot=plot(alf_t, $
                alf_y, $
                XTITLE=KEYWORD_SET(xTitle) ? xTitle : defXTitle, $
-               YTITLE=KEYWORD_SET(overplot_alfvendbquantity) ? !NULL : yTitle, $
+               YTITLE=KEYWORD_SET(overplot_alfvendbquantity) ? !NULL : (KEYWORD_SET(DO_two_panels) ? !NULL: yTitle), $
                XRANGE=KEYWORD_SET(xRange) ? xRange : [MIN(alf_t),MAX(alf_t)], $
                XSHOWTEXT=KEYWORD_SET(overplot_alfvendbquantity) ? !NULL : xShowLabel, $
                YRANGE=KEYWORD_SET(yRange) ? yRange : [MIN(alf_y),MAX(alf_y)], $

@@ -97,9 +97,11 @@
   defHPlot_sp__lastMarg      = [0.00,0.09,0.20,0.09]
 
   ;;For double-panel stuff
-  position_firstPan           = [0.11,0.40,0.91,0.95]
-  position_secondPan          = [0.11,0.1,0.91,0.40]
+  ;; position_firstPan           = [0.11,0.40,0.91,0.95]
+  ;; position_secondPan          = [0.11,0.10,0.91,0.40]
+  position_firstPan           = [0.14,0.10,0.90,0.60]   ;;Try a new thang
+  position_secondPan          = [0.14,0.60,0.90,0.95]
 
   ;;for secondary axis
-  defSecondaryYTickSize       = 15
+  defSecondaryYTickSize       = 18
   
