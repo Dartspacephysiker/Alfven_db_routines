@@ -15,6 +15,7 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
                                          OVERPLOT_ALFVENDBQUANTITY=overplot_alfvendbquantity, $
                                          CURRENT=current, $
                                          MARGIN=margin, $
+                                         YMINOR=yMinor, $
                                          LAYOUT=layout, $
                                          CLIP=clip, $
                                          OUTPLOT=outPlot,ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array
@@ -72,6 +73,7 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
                XTICKFONT_STYLE=max_xtickfont_style, $
                YTICKFONT_SIZE=max_ytickfont_size, $
                YTICKFONT_STYLE=max_ytickfont_style, $
+               YMINOR=yMinor, $
                MARGIN=margin, $
                POSITION=position, $
                CURRENT=KEYWORD_SET(CURRENT) OR KEYWORD_SET(overplot_alfvendbquantity) OR KEYWORD_SET(do_two_panels), $ ;current, $
@@ -84,7 +86,7 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
         yaxis = AXIS('Y', LOCATION='right', TARGET=plot, $
                      TITLE=yTitle, $
                      MAJOR=nMajorTicks, $
-                     MINOR=nMinorTicks, $
+                     MINOR=KEYWORD_SET(yMinor) ? yMinor : nMinorTicks, $
                      ;; TICKNAME=['60','70','80'], $  ;;temp for journal__20160104__stormthing
                      ;; TICKVALUES=[60,70,80], $
                      TICKFONT_SIZE=max_ytickfont_size, $

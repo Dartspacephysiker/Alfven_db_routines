@@ -1,4 +1,7 @@
-PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, POYNTRANGE=poyntRange, $
+PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
+                               ALTITUDERANGE=altitudeRange, $
+                               CHARERANGE=charERange, $
+                               POYNTRANGE=poyntRange, $
                                MINMLT=minMLT,MAXMLT=maxMLT, $
                                BINMLT=binMLT, $
                                SHIFTMLT=shiftMLT, $

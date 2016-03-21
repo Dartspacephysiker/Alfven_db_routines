@@ -41,7 +41,9 @@ FUNCTION MAKE_EPOCHSLICE_STRUCT, $
                                                             MAXVAL=hMax, $
                                                             BINSIZE=hBinsize, $
                                                             DO_REVERSE_INDS=hDoRI)
-     ENDIF
+     ENDIF ELSE BEGIN
+        eSlice_tmplt.has_hist = 0
+     ENDELSE
   ENDIF
   IF KEYWORD_SET(tData) THEN eSlice_tmplt.tList.add,tData
   IF KEYWORD_SET(momentStruct) THEN eSlice_tmplt.moments = momentStruct

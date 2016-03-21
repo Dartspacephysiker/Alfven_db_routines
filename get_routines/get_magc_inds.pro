@@ -4,14 +4,14 @@ FUNCTION GET_MAGC_INDS,maximus,minMC,maxNegMC,N_OUTSIDE_MAGC=n_magc_outside_rang
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
-  magc_i_ge_minMC=where(maximus.mag_current GE minMC)
-  magc_i_le_NegMC=where(maximus.mag_current LE maxNegMC)
-  magc_i=where(maximus.mag_current LE maxNegMC OR maximus.mag_current GE minMC,NCOMPLEMENT=n_magc_outside_range)
+  magc_i_ge_minMC=WHERE(maximus.mag_current GE minMC)
+  magc_i_le_NegMC=WHERE(maximus.mag_current LE maxNegMC)
+  magc_i=WHERE(maximus.mag_current LE maxNegMC OR maximus.mag_current GE minMC,NCOMPLEMENT=n_magc_outside_range)
 
   ;;LOOK OUT! Flipping the situation
-  ;; magc_i_ge_minMC=where(maximus.mag_current LE minMC)
-  ;; magc_i_le_NegMC=where(maximus.mag_current GE maxNegMC)
-  ;; magc_i=where(maximus.mag_current GE maxNegMC AND maximus.mag_current LE minMC,NCOMPLEMENT=n_magc_outside_range)
+  ;; magc_i_ge_minMC=WHERE(maximus.mag_current LE minMC)
+  ;; magc_i_le_NegMC=WHERE(maximus.mag_current GE maxNegMC)
+  ;; magc_i=WHERE(maximus.mag_current GE maxNegMC AND maximus.mag_current LE minMC,NCOMPLEMENT=n_magc_outside_range)
 
   PRINTF,lun,FORMAT='("N lost to current thresh      :",T35,I0)',n_magc_outside_range
   PRINTF,lun,''
