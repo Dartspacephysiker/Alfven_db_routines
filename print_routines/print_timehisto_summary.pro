@@ -25,7 +25,16 @@ PRO PRINT_TIMEHISTO_SUMMARY,fastLoc,good_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim
   
   PRINTF,lun,""
   PRINTF,lun,"**********FASTLOC TIMEHISTO SUMMARY**********"
-  IF KEYWORD_SET(delay)     THEN PRINTF,lun,FORMAT='(A4, " satellite delay",T30,":",T35,I8,T45," seconds")',satellite,delay
+  IF KEYWORD_SET(delay)     THEN BEGIN
+     IF KEYWORD_SET(multiple_delays) THEN BEGIN
+        ;; FOR i=0,N_ELEMENTS(delay) DO BEGIN
+        ;; ENDFOR
+        PRINTF,lun,FORMAT='("N delays",T30,":",T35,I8,)',N_ELEMENTS(delay)
+        PRINTF,lun,FORMAT='(A4, " satellite delay",T30,":",T35,I8,T45," seconds")',satellite,delay[0]
+     ENDIF ELSE BEGIN
+        PRINTF,lun,FORMAT='(A4, " satellite delay",T30,":",T35,I8,T45," seconds")',satellite,delay
+     ENDELSE
+  ENDIF
   IF KEYWORD_SET(stableIMF) THEN PRINTF,lun,FORMAT='("IMF stability requirement",T30,":",T35,I8,T45," minutes")',stableIMF
   PRINTF,lun,FORMAT='("")'
   PRINTF,lun,"************"

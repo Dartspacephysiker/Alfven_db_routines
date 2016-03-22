@@ -10,7 +10,9 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
                                   DO_ABS_BZMIN=abs_bzMin, $
                                   DO_ABS_BZMAX=abs_bzMax, $
                                   SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                                  DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
+                                  DELAY=delay, $
+                                  MULTIPLE_DELAYS=multiple_delays, $
+                                  STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                   DO_UTC_RANGE=DO_UTC_range, $
                                   STORMSTRING=stormString, $
                                   DSTCUTOFF=dstCutoff, $
@@ -102,7 +104,10 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
                                    DO_ABS_BZMIN=abs_bzMin, $
                                    DO_ABS_BZMAX=abs_bzMax, $
                                    SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                                   HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
+                                   HEMI=hemi, $
+                                   DELAY=delay, $
+                                   MULTIPLE_DELAYS=multiple_delays, $
+                                   STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                    HWMAUROVAL=0,HWMKPIND=!NULL, $
                                    ;; MAKE_OUTINDSFILE=1, $
                                    OUTINDSPREFIX=indsFilePrefix,OUTINDSSUFFIX=indsFileSuffix,OUTINDSFILEBASENAME=outIndsBasename, $
@@ -208,7 +213,10 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
                           DO_UTC_RANGE=DO_UTC_range,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                           DO_IMF_CONDS=do_IMF_conds, $
                           SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                          HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
+                          HEMI=hemi, $
+                          DELAY=delay, $
+                          MULTIPLE_DELAYS=multiple_delays, $
+                          STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
                           HOYDIA=hoyDia,MASKMIN=maskMin,LUN=lun
 
 

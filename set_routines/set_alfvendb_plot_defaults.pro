@@ -38,7 +38,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
                                KEEPME=keepMe, $
                                PARAMSTRING=paramString,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
-                               HOYDIA=hoyDia,LUN=lun, _EXTRA = e
+                               HOYDIA=hoyDia,LUN=lun, $
+                               DONT_CORRECT_ILATS=dont_correct_ilats, $
+                               _EXTRA = e
 
   COMPILE_OPT idl2
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
@@ -189,7 +191,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ENDIF
   
   ;;Check on ILAT stuff; if I don't do this, all kinds of plots get boogered up
-  IF ( (maxILAT-minILAT) MOD binILAT ) NE 0 THEN BEGIN
+  IF ( (maxILAT-minILAT) MOD binILAT ) NE 0 AND ~KEYWORD_SET(dont_correct_ilats) THEN BEGIN
      IF STRUPCASE(hemi) EQ "NORTH" THEN BEGIN
         minILAT += CEIL(maxILAT-minILAT) MOD binILAT
      ENDIF ELSE BEGIN
