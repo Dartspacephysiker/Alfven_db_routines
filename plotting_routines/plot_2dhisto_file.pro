@@ -2,6 +2,7 @@
 PRO PLOT_2DHISTO_FILE,file, $
                       QUANTS_TO_PLOT=quants_to_plot, $
                       PLOTDIR=plotDir, $
+                      PLOTNAMEPREF=plotNamePref, $
                       OUT_PLOTNAMES=out_plotNames, $
                       DEL_PS=del_ps, $
                       MIDNIGHT=midnight, $
@@ -48,6 +49,8 @@ PRO PLOT_2DHISTO_FILE,file, $
      PRINTF,lun,'This file contains no paramStr variable! Out.'
      RETURN
   ENDIF
+  IF ~KEYWORD_SET(plotNamePref) THEN plotNamePref = paramStr
+
 
   ;;Make sure we have plot bounds set up
   IF N_ELEMENTS(binM) EQ 0 OR N_ELEMENTS(minM) EQ 0 OR N_ELEMENTS(maxM) EQ 0 THEN BEGIN
@@ -108,7 +111,7 @@ PRO PLOT_2DHISTO_FILE,file, $
   FOR i=0,nPlots-1 DO BEGIN
      quant_i                                         = quants_to_plot[i]
 
-     CGPS_Open, plotDir + paramStr+dataNames[quant_i]+'.ps',ENCAPSULATED=eps_output
+     CGPS_Open, plotDir +plotNamePref+dataNames[quant_i]+'.ps',ENCAPSULATED=eps_output
 
      PLOTH2D_STEREOGRAPHIC,h2dStrArr[quant_i],file, $
                            NO_COLORBAR=no_colorbar, $
@@ -119,7 +122,7 @@ PRO PLOT_2DHISTO_FILE,file, $
                            _EXTRA=e 
      CGPS_Close 
      ;;Create a PNG file with a width of 800 pixels.
-     CGPS2RASTER, plotDir + paramStr+dataNames[quant_i]+'.ps', $
+     CGPS2RASTER, plotDir + plotNamePref+dataNames[quant_i]+'.ps', $
                   /PNG, $
                   WIDTH=800, $
                   DELETE_PS=del_PS

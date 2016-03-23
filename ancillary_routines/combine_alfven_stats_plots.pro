@@ -35,6 +35,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
                                COMBINED_TO_BUFFER=combined_to_buffer, $
                                SAVE_COMBINED_WINDOW=save_combined_window, $
                                SAVE_COMBINED_NAME=save_combined_name, $
+                               PLOTNAMEPREFARR=plotNamePrefArr, $
                                PLOTSUFFIX=plotSuffix, $
                                PLOTDIR=plotDir, $
                                DELETE_PLOTS_WHEN_FINISHED=delete_plots_when_finished
@@ -49,6 +50,8 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
 
   RESTORE,tempFiles[0]
   
+  IF ~KEYWORD_SET(plotNamePrefArr) THEN plotNamePrefArr = paramStr 
+
   ;;just clean up data names while we're here
   IF ~KEYWORD_SET(dataNames) THEN BEGIN
      dataNames                        = dataNameArr
@@ -80,7 +83,8 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
   plotFileArr                      = !NULL
   FOR j=0,nFiles-1 DO BEGIN
      RESTORE,tempFiles[j]
-     plotFileArr                   = [plotFileArr,plotDir+paramStr+ '--' + dataNames[plots_to_combine[0]]+'.png']
+     IF KEYWORD_SET(plotNamePrefArr) THEN plotNamePref = plotNamePrefArr[j] ELSE plotNamePref = paramStr
+     plotFileArr                   = [plotFileArr,plotDir+plotNamePref + dataNames[plots_to_combine[0]]+'.png']
   ENDFOR
   plotFileArr__list                = LIST(plotFileArr)
   
@@ -89,7 +93,8 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
      plotFileArr                   = !NULL
      FOR j=0,nFiles-1 DO BEGIN
         RESTORE,tempFiles[j]
-        plotFileArr                = [plotFileArr,plotDir+paramStr+'--' + dataNames[plots_to_combine[i]]+'.png']
+        IF KEYWORD_SET(plotNamePrefArr) THEN plotNamePref = plotNamePrefArr[j] ELSE plotNamePref = paramStr
+        plotFileArr                = [plotFileArr,plotDir+plotNamePref + dataNames[plots_to_combine[i]]+'.png']
      ENDFOR
      plotFileArr__list.add,plotFileArr
   ENDFOR
@@ -98,7 +103,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
   out_titleObjs_arr                = !NULL
   FOR i=0,nPlots-1 DO BEGIN
      
-     save_combined_name         = paramStr + '--' + dataNames[plots_to_combine[i]] + $
+     save_combined_name         = plotNamePref + '--' + dataNames[plots_to_combine[i]] + $
                                   (KEYWORD_SET(plotSuffix) ? plotSuffix : '') + '--combined.png'
      PRINT,"Saving to " + save_combined_name + "..."
      

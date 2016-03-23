@@ -74,22 +74,32 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ;; ENDIF
 
   ;;Select color table
-  IF temp.is_fluxData AND ~temp.is_logged THEN BEGIN
-     ;;This is the one for doing sweet flux plots that include negative values 
-     cgLoadCT, ctIndex, BREWER=ctBrewer, REVERSE=ctReverse, NCOLORS=nLevels
+  ;; IF temp.is_fluxData AND ~temp.is_logged THEN BEGIN
+  IF ~temp.is_logged THEN BEGIN
+
+     IF N_ELEMENTS(WHERE(temp.data) LT 0) GT 0 THEN BEGIN
+        RAINBOW_COLORS,N_COLORS=nLevels
+
+        ;;This is the one for doing sweet flux plots that include negative values 
+        ;; cgLoadCT, ctIndex, BREWER=ctBrewer, REVERSE=ctReverse, NCOLORS=nLevels
+     ENDIF ELSE BEGIN
+        SUNSET_COLORS,N_COLORS=nLevels
+     ENDELSE
 
   ENDIF ELSE BEGIN
-     ;;This one is the one we use for nEvent- and orbit-type plots (plots w/ all positive values)
-     cgLoadCT, ctIndex_allPosData, BREWER=ctBrewer_allPosData, REVERSE=ctReverse_allPosData, NCOLORS=nLevels
+     ;; This one is the one we use for nEvent- and orbit-type plots (plots w/ all positive values)
+     RAINBOW_COLORS,N_COLORS=nLevels
+     ;; cgLoadCT, ctIndex_allPosData, BREWER=ctBrewer_allPosData, REVERSE=ctReverse_allPosData, NCOLORS=nLevels
 
-     IF chrisPosScheme THEN BEGIN
-        ;;make last color dark red
-        TVLCT,r,g,b,/GET   
-        r[nLevels-1]             = 180
-        g[nLevels-1]             = 0
-        b[nLevels-1]             = 0
-        TVLCT,r,g,b
-     ENDIF
+     ;; IF chrisPosScheme THEN BEGIN
+     ;;    ;;make last color dark red
+     ;;    TVLCT,r,g,b,/GET   
+     ;;    r[nLevels-1]             = 180
+     ;;    g[nLevels-1]             = 0
+     ;;    b[nLevels-1]             = 0
+     ;;    TVLCT,r,g,b
+     ;; ENDIF
+
   ENDELSE
 
   ; Set up the contour levels.

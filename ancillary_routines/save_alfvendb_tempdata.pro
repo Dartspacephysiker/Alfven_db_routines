@@ -7,13 +7,14 @@ PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile,H2DSTRARR=h2dStrArr,DATANAMEARR=dat
                            MINL=minL,MAXL=maxL,BINL=binL,$
                            RAWDIR=rawDir,PARAMSTR=paramStr,$
                            CLOCKSTR=clockStr,PLOTMEDORAVG=plotMedOrAvg,STABLEIMF=stableIMF,HOYDIA=hoyDia,HEMI=hemi, $
+                           QUIET=quiet, $
                            LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
   defTempDir='/SPENCEdata/Research/Cusp/ACE_FAST/temp/'
 
-  tempFile = defTempDir + 'polarplots_'+paramStr+".dat"
+  IF ~KEYWORD_SET(tempFile) THEN tempFile = defTempDir + 'polarplots_'+paramStr+".dat"
 
   saveStr = 'save'
   IF N_ELEMENTS(h2dStrArr)      GT 0 THEN saveStr += ',h2dStrArr'
@@ -40,7 +41,7 @@ PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile,H2DSTRARR=h2dStrArr,DATANAMEARR=dat
   
   saveStr += ',FILENAME=tempFile'
 
-  PRINTF,lun,'Savestring: ' + saveStr
+  IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'Savestring: ' + saveStr
   void = EXECUTE(saveStr)
 
   ;; save,h2dStrArr,dataNameArr,maxM,minM,maxI,minI,binM,binI,do_lShell,reverse_lShell,minL,maxL,binL,$

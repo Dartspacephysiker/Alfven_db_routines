@@ -20,7 +20,10 @@ PRO PRINT_TIMEHISTO_SUMMARY,fastLoc,good_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim
                             DO_UTC_RANGE=DO_UTC_range,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                             DO_IMF_CONDS=do_IMF_conds, $
                             SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                            HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
+                            HEMI=hemi, $
+                            MULTIPLE_DELAYS=multiple_delays, $
+                            DELAY=delay, $
+                            STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
                             HOYDIA=hoyDia,MASKMIN=maskMin,LUN=lun
   
   PRINTF,lun,""
