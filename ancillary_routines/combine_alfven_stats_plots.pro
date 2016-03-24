@@ -83,7 +83,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
   plotFileArr                      = !NULL
   FOR j=0,nFiles-1 DO BEGIN
      RESTORE,tempFiles[j]
-     IF KEYWORD_SET(plotNamePrefArr) THEN plotNamePref = plotNamePrefArr[j] ELSE plotNamePref = paramStr
+  IF KEYWORD_SET(plotNamePrefArr) THEN BEGIN & IF N_ELEMENTS(plotNamePrefArr) GT 1 THEN plotNamePref = plotNamePrefArr[j] ELSE plotNamePref = plotNamePrefArr & ENDIF ELSE plotNamePref = paramStr
      plotFileArr                   = [plotFileArr,plotDir+plotNamePref + dataNames[plots_to_combine[0]]+'.png']
   ENDFOR
   plotFileArr__list                = LIST(plotFileArr)
@@ -93,7 +93,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
      plotFileArr                   = !NULL
      FOR j=0,nFiles-1 DO BEGIN
         RESTORE,tempFiles[j]
-        IF KEYWORD_SET(plotNamePrefArr) THEN plotNamePref = plotNamePrefArr[j] ELSE plotNamePref = paramStr
+  IF KEYWORD_SET(plotNamePrefArr) THEN BEGIN & IF N_ELEMENTS(plotNamePrefArr) GT 1 THEN plotNamePref = plotNamePrefArr[j] ELSE plotNamePref = plotNamePrefArr & ENDIF ELSE plotNamePref = paramStr
         plotFileArr                = [plotFileArr,plotDir+plotNamePref + dataNames[plots_to_combine[i]]+'.png']
      ENDFOR
      plotFileArr__list.add,plotFileArr
