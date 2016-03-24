@@ -6,8 +6,10 @@ PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile,H2DSTRARR=h2dStrArr,DATANAMEARR=dat
                            DO_LSHELL=do_lShell,REVERSE_LSHELL=reverse_lShell, $
                            MINL=minL,MAXL=maxL,BINL=binL,$
                            RAWDIR=rawDir,PARAMSTR=paramStr,$
-                           CLOCKSTR=clockStr,PLOTMEDORAVG=plotMedOrAvg,STABLEIMF=stableIMF,HOYDIA=hoyDia,HEMI=hemi, $
+                           CLOCKSTR=clockStr,PLOTMEDORAVG=plotMedOrAvg, $
+                           STABLEIMF=stableIMF,HOYDIA=hoyDia,HEMI=hemi, $
                            QUIET=quiet, $
+                           OUT_TEMPFILE=out_tempfile, $
                            LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
@@ -43,6 +45,8 @@ PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile,H2DSTRARR=h2dStrArr,DATANAMEARR=dat
 
   IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'Savestring: ' + saveStr
   void = EXECUTE(saveStr)
+
+  out_tempFile                 = tempFile
 
   ;; save,h2dStrArr,dataNameArr,maxM,minM,maxI,minI,binM,binI,do_lShell,reverse_lShell,minL,maxL,binL,$
   ;;      rawDir,clockStr,plotMedOrAvg,stableIMF,hoyDia,hemi,paramStr$

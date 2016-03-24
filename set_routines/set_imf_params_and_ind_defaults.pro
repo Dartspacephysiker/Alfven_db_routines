@@ -180,10 +180,12 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      byMaxStr=''
      
      IF KEYWORD_SET(byMin) THEN BEGIN
-        byMinStr='__byMin' + String(byMin,format='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
+        byMinStr = '__' + (KEYWORD_SET(abs_byMin) ? 'ABS_' : '') $
+                   + 'byMin' + String(byMin,format='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
      ENDIF
      IF KEYWORD_SET(byMax) THEN BEGIN
-        byMaxStr='__byMax' + String(byMax,format='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
+        byMaxStr = '__' + (KEYWORD_SET(abs_byMax) ? 'ABS_' : '') $
+                  + 'byMax' + String(byMax,format='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
      ENDIF
      
      ;;Requirement for IMF Bz magnitude?
@@ -191,10 +193,12 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      bzMaxStr=''
      
      IF KEYWORD_SET(bzMin) THEN BEGIN
-        bzMinStr='__bzMin' + String(bzMin,format='(D0.1)')
+        bzMinStr = '__' + (KEYWORD_SET(abs_bzMin) ? 'ABS_' : '') $
+                   + 'bzMin' + String(bzMin,format='(D0.1)')
      ENDIF
      IF KEYWORD_SET(bzMax) THEN BEGIN
-        bzMaxStr='__bzMax' + String(bzMax,format='(D0.1)')
+        bzMaxStr = '__' + (KEYWORD_SET(abs_bzMax) ? 'ABS_' : '') $
+                   + 'bzMax' + String(bzMax,format='(D0.1)')
      ENDIF
      
      ;;********************************************

@@ -456,17 +456,19 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
   ENDIF
 
   IF N_ELEMENTS(squarePlot) EQ 0 THEN BEGIN
-     SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,$
+     SAVE_ALFVENDB_TEMPDATA,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,$
                             MAXM=maxM,MINM=minM,MAXI=maxI,MINI=minI,BINM=binM,BINI=binI, $
                             DO_LSHELL=do_lShell,REVERSE_LSHELL=reverse_lShell, $
                             MINL=minL,MAXL=maxL,BINL=binL,$
                             RAWDIR=rawDir,PARAMSTR=paramString,$
-                            CLOCKSTR=clockStr,PLOTMEDORAVG=plotMedOrAvg,STABLEIMF=stableIMF,HOYDIA=hoyDia,HEMI=hemi, $
+                            CLOCKSTR=clockStr,PLOTMEDORAVG=plotMedOrAvg, $
+                            STABLEIMF=stableIMF,HOYDIA=hoyDia,HEMI=hemi, $
+                            OUT_TEMPFILE=out_tempFile, $
                             LUN=lun
   ENDIF
 
   ;;Now plots
-  PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=tempFile, $
+  PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=out_tempFile, $
                          SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ 
                          JUSTDATA=justData, SHOWPLOTSNOSAVE=showPlotsNoSave, $
                          PLOTDIR=plotDir, PLOTMEDORAVG=plotMedOrAvg, $
@@ -498,7 +500,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
 
   ENDIF
 
-  out_tempFile=tempFile
+  ;; out_tempFile=tempFile
 
   WRITE_ALFVENDB_2DHISTOS,MAXIMUS=maximus,PLOT_I=plot_i, $
                           WRITEHDF5=writeHDF5,WRITEPROCESSEDH2D=WRITEPROCESSEDH2D,WRITEASCII=writeASCII, $
