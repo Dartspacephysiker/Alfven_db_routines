@@ -167,11 +167,16 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                               DATARAWPTR=dataRawPtr
      
      IF keepMe THEN BEGIN 
-        dataRawPtrArr=dataRawPtr
-        dataNameArr=[dataName,"histoMask"] 
-        dataRawPtrArr=[dataRawPtrArr,PTR_NEW(h2dMaskStr.data)] 
+        IF KEYWORD_SET(nPlots) THEN BEGIN
+           h2dStrArr     = [h2dStr,h2dMaskStr] 
+           dataNameArr   = [dataName,"histoMask"] 
+           dataRawPtrArr = [dataRawPtr,PTR_NEW(h2dMaskStr.data)] 
+        ENDIF ELSE BEGIN
+           h2dStrArr     = h2dMaskStr
+           dataNameArr   = "histoMask"
+           dataRawPtrArr = PTR_NEW(h2dMaskStr.data)
+        ENDELSE
      ENDIF
-     IF KEYWORD_SET(nPlots) THEN h2dStrArr=[h2dStr,h2dMaskStr] ELSE h2dStrArr = h2dMaskStr
      
      ;;Get tHist denominator here so other routines can use it as they please
      IF KEYWORD_SET(nEventPerMinPlot) OR KEYWORD_SET(probOccurrencePlot) $

@@ -34,6 +34,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                   shift1          : s1, $
                   shift2          : s2, $
                   is_logged       : 0, $
+                  avgType         : '', $
                   is_fluxdata     : 0, $
                   labelFormat     : '', $
                   do_midCBLabel   : 0, $
