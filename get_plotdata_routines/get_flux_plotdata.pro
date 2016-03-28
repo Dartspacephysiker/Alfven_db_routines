@@ -548,8 +548,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ELSE h2dStr.lim       = [MIN(h2dStr.data),MAX(h2dStr.data)]
   
   IF KEYWORD_SET(logFluxPlot) THEN BEGIN 
-     h2dStr.data[where(h2dStr.data NE 0,/NULL)]=ALOG10(h2dStr.data[where(h2dStr.data NE 0,/null)]) 
-     inData[where(inData NE 0,/null)]=ALOG10(inData[where(inData NE 0,/null)]) 
+     h2dStr.data[where(h2dStr.data NE 0,/NULL)]=ALOG10(h2dStr.data[where(h2dStr.data NE 0,/NULL)]) 
+     inData[where(inData NE 0,/NULL)]=ALOG10(inData[where(inData NE 0,/NULL)]) 
      h2dStr.lim        = ALOG10(h2dStr.lim)
      h2dStr.is_logged  = 1
   ENDIF

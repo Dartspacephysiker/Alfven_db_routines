@@ -449,10 +449,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
   ;;Handle Plots all at once
 
   ;;!!Make sure mask and FluxN are ultimate and penultimate arrays, respectively
-  h2dStrArr=SHIFT(h2dStrArr,-1-(nPlots))
+  h2dStrArr=SHIFT(h2dStrArr,-1-nPlots)
   IF keepMe THEN BEGIN 
-     dataNameArr=SHIFT(dataNameArr,-2) 
-     dataRawPtrArr=SHIFT(dataRawPtrArr,-2) 
+     dataNameArr=SHIFT(dataNameArr,-1-nPlots) 
+     dataRawPtrArr=SHIFT(dataRawPtrArr,-1-nPlots) 
   ENDIF
 
   IF N_ELEMENTS(squarePlot) EQ 0 THEN BEGIN
