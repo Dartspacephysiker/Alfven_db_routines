@@ -179,11 +179,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      byMinStr=''
      byMaxStr=''
      
-     IF KEYWORD_SET(byMin) THEN BEGIN
+     IF N_ELEMENTS(byMin) GT 0 THEN BEGIN
         byMinStr = '__' + (KEYWORD_SET(abs_byMin) ? 'ABS_' : '') $
                    + 'byMin' + String(byMin,format='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
      ENDIF
-     IF KEYWORD_SET(byMax) THEN BEGIN
+     IF N_ELEMENTS(byMax) GT 0 THEN BEGIN
         byMaxStr = '__' + (KEYWORD_SET(abs_byMax) ? 'ABS_' : '') $
                   + 'byMax' + String(byMax,format='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
      ENDIF
@@ -192,11 +192,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      bzMinStr=''
      bzMaxStr=''
      
-     IF KEYWORD_SET(bzMin) THEN BEGIN
+     IF N_ELEMENTS(bzMin) GT 0 THEN BEGIN
         bzMinStr = '__' + (KEYWORD_SET(abs_bzMin) ? 'ABS_' : '') $
                    + 'bzMin' + String(bzMin,format='(D0.1)')
      ENDIF
-     IF KEYWORD_SET(bzMax) THEN BEGIN
+     IF N_ELEMENTS(bzMax) GT 0 THEN BEGIN
         bzMaxStr = '__' + (KEYWORD_SET(abs_bzMax) ? 'ABS_' : '') $
                    + 'bzMax' + String(bzMax,format='(D0.1)')
      ENDIF
