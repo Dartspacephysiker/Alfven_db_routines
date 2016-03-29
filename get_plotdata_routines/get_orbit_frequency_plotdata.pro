@@ -1,11 +1,17 @@
+;;2016/03/29
+;;In this case, we're getting the number of orbits passing through a given bin per MINUTE
 PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM, $
                                  SHIFTM=shiftM, $
                                  BINM=binM, $
                                  MINI=minI,MAXI=maxI,BINI=binI, $
                                  ORBFREQRANGE=orbFreqRange, $
                                  H2DSTR=h2dStr,TMPLT_H2DSTR=tmplt_h2dStr, $
-                                 H2DCONTRIBORBSTR=h2dContribOrbStr,H2DTOTORBSTR=h2dTotOrbStr, $
-                                 H2D_NONZERO_ALLORB_I=h2d_nonZero_allOrb_i,H2D_NONZERO_CONTRIBORBS_I=h2d_nonzero_contribOrbs_i, $
+                                 H2DCONTRIBORBSTR=h2dContribOrbStr, $
+                                 THISTDENOMINATOR=tHistDenominator, $
+                                 H2DTOTORBSTR=h2dTotOrbStr, $
+                                 H2D_NONZERO_ALLORB_I=h2d_nonZero_allOrb_i, $
+                                 H2D_NONZERO_CONTRIBORBS_I=h2d_nonzero_contribOrbs_i, $
+                                 DIV_ORBCONTRIB_BY_ORBTOT=div_orbContrib_by_orbTot, $
                                  DATANAME=dataName
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN $
@@ -18,23 +24,22 @@ PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM, $
 
   ;; h2dStr={tmplt_h2dStr}
   h2dStr          = tmplt_h2dStr
-  h2dStr.title    = "Orbit Frequency"
-  dataName        = "orbFreq_"
   
   h2dStr.data     = h2dContribOrbStr.data
-  h2dStr.data[h2d_nonZero_allOrb_i]=DOUBLE(h2dContribOrbStr.data[h2d_nonZero_allOrb_i])/h2dTotOrbStr.data[h2d_nonZero_allOrb_i]
+  IF KEYWORD_SET(div_orbContrib_by_orbTot) THEN BEGIN
+     h2dStr.title    = "N Orbits per Total N Orbits"
+     dataName        = "orbContrib_per_orbTot_"
+     h2dStr.data[h2d_nonZero_allOrb_i]=DOUBLE(h2dContribOrbStr.data[h2d_nonZero_allOrb_i])/h2dTotOrbStr.data[h2d_nonZero_allOrb_i]
+  ENDIF ELSE BEGIN
+     h2dStr.title    = "Orbit Frequency"
+     dataName        = "orbFreq_"
+     H2D_OK_i        = WHERE(tHistDenominator GT 0)
+     h2dStr.data[H2D_OK_i]=DOUBLE(h2dContribOrbStr.data[H2D_OK_i])/h2dTotOrbStr.data[H2D_OK_i]
+  ENDELSE
   
   IF N_ELEMENTS(orbFreqRange) EQ 0 OR N_ELEMENTS(orbFreqRange) NE 2 THEN $
      h2dStr.lim   = [MIN(h2dStr.data),MAX(h2dStr.data)] $
   ELSE $
      h2dStr.lim   = orbFreqRange
   
-  ;;The following snippet is meant to compare nonzero totorb data with nonzero contriborb data
-  ;;What if I use indices where neither tot orbits nor contributing orbits is zero?
-  ;; orbfreq_histo_i=cgsetintersection(h2d_nonzero_contribOrbs_i,h2d_nonZero_allOrb_i)
-  ;; h2dnewdata=h2dContribOrbStr.data
-  ;; h2dnewdata[orbfreq_histo_i]=h2dContribOrbStr.data[orbfreq_histo_i]/h2dTotOrbStr.data[orbfreq_histo_i]
-  ;; diff=where(h2dStr.data NE h2dnewdata)
-  ;;     wait, 2
-
 END

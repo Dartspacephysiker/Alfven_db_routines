@@ -26,17 +26,8 @@ PRO GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
   h2dStr.data     = h2dFluxN
   h2dNonzeroNEv_i = WHERE(h2dFluxN NE 0,/NULL)
   
-                                ;output from get_timehist_denominator is in seconds, but we'll do minutes
-  tHistDenominator = tHistDenominator[h2dNonzeroNEv_i]/60.0 ;Only divide by number of minutes that FAST spent in bin for given IMF conditions
-  h2dStr.data[h2dNonzeroNEv_i]=h2dStr.data[h2dNonzeroNEv_i]/tHistDenominator
-  
-                                ;2015/04/09 TEMPORARILY skip the lines above because our fastLoc file currently only includes orbits 500-11000.
-                                ; This means that, according to fastLoc and maximus, there are events where FAST has never been!
-                                ; So we have to do some trickery
-  ;; tHistDenominator_nonZero_i = WHERE(tHistDenominator GT 0.0)
-  ;; h2dNonzeroNEv_i = cgsetintersection(tHistDenominator_nonZero_i,h2dNonzeroNEv_i)
-  ;; tHistDenominator = tHistDenominator(h2dNonzeroNEv_i)/60.0 ;Only divide by number of minutes that FAST spent in bin for given IMF conditions
-  ;; h2dStr.data(h2dNonzeroNEv_i)=h2dStr.data(h2dNonzeroNEv_i)/tHistDenominator
+  ;;output from get_timehist_denominator is in seconds, but we'll do minutes
+  h2dStr.data[h2dNonzeroNEv_i] = h2dStr.data[h2dNonzeroNEv_i]/tHistDenominator*60.
   
   IF KEYWORD_SET(logNEventPerMin) THEN BEGIN
      h2dStr.is_logged = 1

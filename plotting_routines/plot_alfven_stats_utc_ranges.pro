@@ -101,7 +101,7 @@
 ;                    NEVENTPERORBPLOT  :  Plot of number of events per orbit.
 ;                    NEVENTPERORBRANGE :  Range for Neventperorbplot.
 ;                    LOGNEVENTPERORB   :  Log of Neventperorbplot (for comparison with Chaston et al. [2003])
-;                    DIVNEVBYAPPLICABLE:  Divide number of events in given bin by the number of orbits occurring 
+;                    DIVNEVBYTOTAL     :  Divide number of events in given bin by the number of orbits occurring 
 ;                                            during specified IMF conditions. (Default is to divide by total number of orbits 
 ;                                            pass through given bin for ANY IMF condition.)
 ;
@@ -111,7 +111,7 @@
 ;                    LOGNEVENTPERMIN   :  Log of Neventpermin plot 
 ;                    MAKESMALLESTBINMIN:  Find the smallest bin, make that 
 ;
-;                *ASSORTED PLOT OPTIONS--APPLICABLE TO ALL PLOTS
+;                *ASSORTED PLOT OPTIONS--TOTAL TO ALL PLOTS
 ;		     MEDIANPLOT        :  Do median plots instead of averages.
 ;                    LOGAVGPLOT        :  Do log averaging instead of straight averages
 ;		     ALL_LOGPLOT       :  All plots logged
@@ -203,7 +203,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
                                  ORBCONTRIBRANGE=orbContribRange, ORBTOTRANGE=orbTotRange, ORBFREQRANGE=orbFreqRange, $
                                  NEVENTPERORBPLOT=nEventPerOrbPlot, LOGNEVENTPERORB=logNEventPerOrb, NEVENTPERORBRANGE=nEventPerOrbRange, $
-                                 DIVNEVBYAPPLICABLE=divNEvByApplicable, $
+                                 DIVNEVBYTOTAL=divNEvByTotal, $
                                  NEVENTPERMINPLOT=nEventPerMinPlot, NEVENTPERMINRANGE=nEventPerMinRange, LOGNEVENTPERMIN=logNEventPerMin, $
                                  PROBOCCURRENCEPLOT=probOccurrencePlot, $
                                  PROBOCCURRENCERANGE=probOccurrenceRange, $
@@ -418,7 +418,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
                         ORBCONTRIBRANGE=orbContribRange, ORBTOTRANGE=orbTotRange, ORBFREQRANGE=orbFreqRange, $
                         NEVENTPERORBPLOT=nEventPerOrbPlot, LOGNEVENTPERORB=logNEventPerOrb, NEVENTPERORBRANGE=nEventPerOrbRange, $
-                        DIVNEVBYAPPLICABLE=divNEvByApplicable, $
+                        DIVNEVBYTOTAL=divNEvByTotal, $
                         NEVENTPERMINPLOT=nEventPerMinPlot, NEVENTPERMINRANGE=nEventPerMinRange, LOGNEVENTPERMIN=logNEventPerMin, $
                         PROBOCCURRENCEPLOT=probOccurrencePlot, $
                         PROBOCCURRENCERANGE=probOccurrenceRange, $

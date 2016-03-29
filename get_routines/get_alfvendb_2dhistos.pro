@@ -105,7 +105,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NEVENTPERORBPLOT=nEventPerOrbPlot, $
                           LOGNEVENTPERORB=logNEventPerOrb, $
                           NEVENTPERORBRANGE=nEventPerOrbRange, $
-                          DIVNEVBYAPPLICABLE=divNEvByApplicable, $
+                          DIVNEVBYTOTAL=divNEvByTotal, $
                           NEVENTPERMINPLOT=nEventPerMinPlot, $
                           NEVENTPERMINRANGE=nEventPerMinRange, $
                           LOGNEVENTPERMIN=logNEventPerMin, $
@@ -180,8 +180,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      
      ;;Get tHist denominator here so other routines can use it as they please
      IF KEYWORD_SET(nEventPerMinPlot) OR KEYWORD_SET(probOccurrencePlot) $
-        OR KEYWORD_SET(timeAvgd_pfluxPlot) OR KEYWORD_SET(timeAvgd_eFluxMaxPlot) $
-        OR KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN 
+        ;; OR KEYWORD_SET(timeAvgd_pfluxPlot) OR KEYWORD_SET(timeAvgd_eFluxMaxPlot) $
+        OR KEYWORD_SET(do_timeAvg_fluxQuantities) $
+        OR KEYWORD_SET(nEventPerOrbPlot) THEN BEGIN 
         tHistDenominator = GET_TIMEHIST_DENOMINATOR(CLOCKSTR=clockStr, $
                                                     ANGLELIM1=angleLim1, $
                                                     ANGLELIM2=angleLim2, $
@@ -220,12 +221,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                     MAXL=maxL, $
                                                     BINL=binL, $
                                                     HEMI=hemi, $
-                                                    ;; FASTLOC_STRUCT=fastLoc, $
+                                                    OUT_FASTLOC_STRUCT=fastLoc, $
                                                     ;; FASTLOC_TIMES=fastLoc_Times, $
                                                     ;; FASTLOC_DELTA_T=fastLoc_delta_t, $
                                                     ;; FASTLOCFILE=fastLocFile, $
                                                     ;; FASTLOCTIMEFILE=fastLocTimeFile, $
                                                     FASTLOCOUTPUTDIR=fastLocOutputDir, $
+                                                    OUT_FASTLOCINTERPED_I=fastLoc_interped_i, $
                                                     INDSFILEPREFIX=ParamStrPrefix, $
                                                     INDSFILESUFFIX=paramStrSuffix, $
                                                     BURSTDATA_EXCLUDED=burstData_excluded, $
@@ -647,9 +649,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      uniqueOrbs_i=plot_i[uniqueOrbs_ii]
      nOrbs=N_ELEMENTS(uniqueOrbs_i)
      
-     IF KEYWORD_SET(orbContribPlot) OR KEYWORD_SET(orbfreqplot) OR KEYWORD_SET(neventperorbplot) OR KEYWORD_SET(numOrbLim) THEN BEGIN
+     IF KEYWORD_SET(orbContribPlot) OR KEYWORD_SET(orbfreqplot) OR KEYWORD_SET(nEventPerOrbPlot) OR KEYWORD_SET(numOrbLim) THEN BEGIN
         
-        GET_CONTRIBUTING_ORBITS_PLOTDATA,maximus,plot_i, $
+        GET_CONTRIBUTING_ORBITS_PLOTDATA,fastLoc,fastLoc_interped_i, $
                                          MINM=minM, $
                                          MAXM=maxM, $
                                          BINM=binM, $
@@ -687,7 +689,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      ENDIF
 
      ;;########TOTAL Orbits########
-     IF KEYWORD_SET(orbtotplot) OR KEYWORD_SET(orbfreqplot) OR KEYWORD_SET(neventperorbplot) THEN BEGIN
+     IF KEYWORD_SET(orbtotplot) OR KEYWORD_SET(orbfreqplot) OR KEYWORD_SET(nEventPerOrbPlot) THEN BEGIN
         GET_TOTAL_ORBITS_PLOTDATA,maximus, $
                                   MINM=minM, $
                                   MAXM=maxM, $
@@ -755,7 +757,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                        MAXL=maxL, $
                                        BINL=binL, $
                                        ORBFREQRANGE=orbFreqRange, $
-                                       DIVNEVBYAPPLICABLE=divNEvByApplicable, $
+                                       DIVNEVBYTOTAL=divNEvByTotal, $
                                        H2DSTR=h2dStr, $
                                        TMPLT_H2DSTR=tmplt_h2dStr, $
                                        H2DFLUXN=h2dFluxN, $
@@ -837,82 +839,82 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      ENDIF
 
      ;;########Time-averaged Poynting flux########
-     IF KEYWORD_SET(timeAvgd_pfluxPlot) THEN BEGIN
-        GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
-                                     ;; DO_WIDTH_X=do_width_x, $
-                                     /DO_TIMEAVGD_PFLUX, $
-                                     LOGTIMEAVGD_PFLUX=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logTimeAvgd_PFlux)), $
-                                     TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
-                                     MINM=minM, $
-                                     MAXM=maxM, $
-                                     BINM=binM, $
-                                     SHIFTM=shiftM, $
-                                     MINI=minI, $
-                                     MAXI=maxI, $
-                                     BINI=binI, $
-                                     DO_LSHELL=do_lshell, $
-                                     MINL=minL, $
-                                     MAXL=maxL, $
-                                     BINL=binL, $
-                                     OUTH2DBINSMLT=outH2DBinsMLT, $
-                                     OUTH2DBINSILAT=outH2DBinsILAT, $
-                                     OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                                     H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                                     H2DFLUXN=h2dFluxN, $
-                                     H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
-                                     OUT_H2DMASK=out_h2dMask, $
-                                     H2DSTR=h2dStr, $
-                                     TMPLT_H2DSTR=tmplt_h2dStr, $
-                                     DATANAME=dataName, $
-                                     DATARAWPTR=dataRawPtr
+     ;; IF KEYWORD_SET(timeAvgd_pfluxPlot) THEN BEGIN
+     ;;    GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
+     ;;                                 ;; DO_WIDTH_X=do_width_x, $
+     ;;                                 /DO_TIMEAVGD_PFLUX, $
+     ;;                                 LOGTIMEAVGD_PFLUX=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logTimeAvgd_PFlux)), $
+     ;;                                 TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
+     ;;                                 MINM=minM, $
+     ;;                                 MAXM=maxM, $
+     ;;                                 BINM=binM, $
+     ;;                                 SHIFTM=shiftM, $
+     ;;                                 MINI=minI, $
+     ;;                                 MAXI=maxI, $
+     ;;                                 BINI=binI, $
+     ;;                                 DO_LSHELL=do_lshell, $
+     ;;                                 MINL=minL, $
+     ;;                                 MAXL=maxL, $
+     ;;                                 BINL=binL, $
+     ;;                                 OUTH2DBINSMLT=outH2DBinsMLT, $
+     ;;                                 OUTH2DBINSILAT=outH2DBinsILAT, $
+     ;;                                 OUTH2DBINSLSHELL=outH2DBinsLShell, $
+     ;;                                 H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+     ;;                                 H2DFLUXN=h2dFluxN, $
+     ;;                                 H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+     ;;                                 OUT_H2DMASK=out_h2dMask, $
+     ;;                                 H2DSTR=h2dStr, $
+     ;;                                 TMPLT_H2DSTR=tmplt_h2dStr, $
+     ;;                                 DATANAME=dataName, $
+     ;;                                 DATARAWPTR=dataRawPtr
         
-        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+     ;;    h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
-        h2dStrArr=[h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
-           dataNameArr=[dataNameArr,dataName] 
-           dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
-        ENDIF 
-     ENDIF
+     ;;    h2dStrArr=[h2dStrArr,h2dStr] 
+     ;;    IF keepMe THEN BEGIN 
+     ;;       dataNameArr=[dataNameArr,dataName] 
+     ;;       dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+     ;;    ENDIF 
+     ;; ENDIF
 
      ;;########Time-averaged e- flux########
-     IF KEYWORD_SET(timeAvgd_eFluxMaxPlot) THEN BEGIN
-        GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
-                                     ;; DO_WIDTH_X=do_width_x, $
-                                     /DO_TIMEAVGD_EFLUXMAX, $
-                                     LOGTIMEAVGD_EFLUXMAX=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logTimeAvgd_EFluxMax)), $
-                                     TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
-                                     MINM=minM, $
-                                     MAXM=maxM, $
-                                     BINM=binM, $
-                                     SHIFTM=shiftM, $
-                                     MINI=minI, $
-                                     MAXI=maxI, $
-                                     BINI=binI, $
-                                     DO_LSHELL=do_lshell, $
-                                     MINL=minL, $
-                                     MAXL=maxL, $
-                                     BINL=binL, $
-                                     OUTH2DBINSMLT=outH2DBinsMLT, $
-                                     OUTH2DBINSILAT=outH2DBinsILAT, $
-                                     OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                                     H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                                     H2DFLUXN=h2dFluxN, $
-                                     H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
-                                     OUT_H2DMASK=out_h2dMask, $
-                                     H2DSTR=h2dStr, $
-                                     TMPLT_H2DSTR=tmplt_h2dStr, $
-                                     DATANAME=dataName, $
-                                     DATARAWPTR=dataRawPtr
+     ;; IF KEYWORD_SET(timeAvgd_eFluxMaxPlot) THEN BEGIN
+     ;;    GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
+     ;;                                 ;; DO_WIDTH_X=do_width_x, $
+     ;;                                 /DO_TIMEAVGD_EFLUXMAX, $
+     ;;                                 LOGTIMEAVGD_EFLUXMAX=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logTimeAvgd_EFluxMax)), $
+     ;;                                 TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
+     ;;                                 MINM=minM, $
+     ;;                                 MAXM=maxM, $
+     ;;                                 BINM=binM, $
+     ;;                                 SHIFTM=shiftM, $
+     ;;                                 MINI=minI, $
+     ;;                                 MAXI=maxI, $
+     ;;                                 BINI=binI, $
+     ;;                                 DO_LSHELL=do_lshell, $
+     ;;                                 MINL=minL, $
+     ;;                                 MAXL=maxL, $
+     ;;                                 BINL=binL, $
+     ;;                                 OUTH2DBINSMLT=outH2DBinsMLT, $
+     ;;                                 OUTH2DBINSILAT=outH2DBinsILAT, $
+     ;;                                 OUTH2DBINSLSHELL=outH2DBinsLShell, $
+     ;;                                 H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+     ;;                                 H2DFLUXN=h2dFluxN, $
+     ;;                                 H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+     ;;                                 OUT_H2DMASK=out_h2dMask, $
+     ;;                                 H2DSTR=h2dStr, $
+     ;;                                 TMPLT_H2DSTR=tmplt_h2dStr, $
+     ;;                                 DATANAME=dataName, $
+     ;;                                 DATARAWPTR=dataRawPtr
         
-        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+     ;;    h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
-        h2dStrArr=[h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
-           dataNameArr=[dataNameArr,dataName] 
-           dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
-        ENDIF 
-     ENDIF
+     ;;    h2dStrArr=[h2dStrArr,h2dStr] 
+     ;;    IF keepMe THEN BEGIN 
+     ;;       dataNameArr=[dataNameArr,dataName] 
+     ;;       dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+     ;;    ENDIF 
+     ;; ENDIF
 
      IF KEYWORD_SET(sum_electron_and_poyntingflux) THEN BEGIN
         

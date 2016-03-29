@@ -6,7 +6,7 @@ PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                    MINI=minI,MAXI=maxI,BINI=binI, $
                                    DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                    ORBFREQRANGE=orbFreqRange, $
-                                   DIVNEVBYAPPLICABLE=divNEvByApplicable,H2D_NONZERO_NEV_I=h2d_Nonzero_nEv_i, $
+                                   DIVNEVBYTOTAL=divNEvByTotal,H2D_NONZERO_NEV_I=h2d_Nonzero_nEv_i, $
                                    H2DSTR=h2dStr,TMPLT_H2DSTR=tmplt_h2dStr,H2DFLUXN=h2dFluxN, $
                                    H2DCONTRIBORBSTR=h2dContribOrbStr, H2D_NONZERO_CONTRIBORBS_I=h2d_nonzero_contribOrbs_i,$
                                    H2DTOTORBSTR=h2dTotOrbStr, H2D_NONZERO_ALLORB_I=h2d_nonZero_allOrb_i, $
@@ -31,18 +31,18 @@ PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   h2dStr.lim        = nEventPerOrbRange
   
   nEvByAppStr       = ""
-  IF KEYWORD_SET(divNEvByApplicable) THEN nEvByAppStr="Applicable_"
-  h2dStr.title= 'Number of Events per ' + nEvByAppStr + 'Orbit'
-  dataName = "nEventPerOrb_" +nEvByAppStr
+  IF KEYWORD_SET(divNEvByTotal) THEN nEvByAppStr="Total_"
+  h2dStr.title      = 'Number of Events per ' + nEvByAppStr + 'Orbit'
+  dataName          = "nEventPerOrb_" +nEvByAppStr
 
   h2d_nonzero_nEv_i=WHERE(h2dFluxN GT 0,/NULL)
-  IF KEYWORD_SET(divNEvByApplicable) THEN BEGIN
-     div_i = CGSETINTERSECTION(h2d_nonzero_contriborbs_i,h2d_nonzero_nEv_i)
-     divisor = h2dContribOrbStr.data[div_i] ;Only divide by number of orbits that occurred during specified IMF conditions
+  IF KEYWORD_SET(divNEvByTotal) THEN BEGIN
+     div_i          = CGSETINTERSECTION(h2d_nonZero_allOrb_i,h2d_nonzero_nEv_i)
+     divisor        = h2dTotOrbStr.data[div_i] ;Divide by all orbits passing through relevant bin
   ENDIF ELSE BEGIN
-     div_i = CGSETINTERSECTION(h2d_nonZero_allOrb_i,h2d_nonzero_nEv_i)
-     divisor = h2dTotOrbStr.data[div_i] ;Divide by all orbits passing through relevant bin
-     ENDELSE
+     div_i          = CGSETINTERSECTION(h2d_nonzero_contriborbs_i,h2d_nonzero_nEv_i)
+     divisor        = h2dContribOrbStr.data[div_i] ;Only divide by number of orbits that occurred during specified IMF conditions
+  ENDELSE
   h2dStr.data[div_i] = h2dFluxN[div_i]/divisor
   
   IF KEYWORD_SET(logNEventPerOrb) THEN BEGIN
