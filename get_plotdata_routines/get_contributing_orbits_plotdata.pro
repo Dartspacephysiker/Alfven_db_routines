@@ -5,7 +5,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
                                      DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                                      ORBCONTRIBRANGE=orbContribRange, $
                                      UNIQUEORBS_I=uniqueOrbs_i, $
-                                     H2D_NONZERO_CONTRIBORBS_I=h2d_nonzero_contribOrbs_i, $
+                                     H2D_NONZERO_CONTRIBORBS_I=h2d_nonZero_contribOrbs_i, $
                                      H2DSTR=h2dStr, $
                                      TMPLT_H2DSTR=tmplt_h2dStr, $ ;H2DFLUXN=h2dFluxN, $
                                      DATANAME=dataName
@@ -59,5 +59,5 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
   ELSE $
      h2dStr.lim                               = orbContribRange
 
-  h2d_nonzero_contribOrbs_i                   = WHERE(h2dStr.data GT 0,/NULL)
+  h2d_nonZero_contribOrbs_i                   = WHERE(h2dStr.data GT 0,/NULL)
 END

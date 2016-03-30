@@ -227,7 +227,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                     ;; FASTLOCFILE=fastLocFile, $
                                                     ;; FASTLOCTIMEFILE=fastLocTimeFile, $
                                                     FASTLOCOUTPUTDIR=fastLocOutputDir, $
-                                                    OUT_FASTLOCINTERPED_I=fastLoc_interped_i, $
+                                                    OUT_FASTLOCINTERPED_I=fastLocInterped_i, $
                                                     INDSFILEPREFIX=ParamStrPrefix, $
                                                     INDSFILESUFFIX=paramStrSuffix, $
                                                     BURSTDATA_EXCLUDED=burstData_excluded, $
@@ -645,13 +645,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      ;;the 3D array are of the format [UniqueOrbs_ii index,MLT,ILAT]
      
      ;;The following two lines shouldn't be necessary; the data are being corrupted somewhere when I run this with clockstr="dawnward"
-     uniqueOrbs_ii=UNIQ(maximus.orbit[plot_i],SORT(maximus.orbit[plot_i]))
-     uniqueOrbs_i=plot_i[uniqueOrbs_ii]
-     nOrbs=N_ELEMENTS(uniqueOrbs_i)
+     ;; uniqueOrbs_ii=UNIQ(maximus.orbit[plot_i],SORT(maximus.orbit[plot_i]))
+     ;; uniqueOrbs_i=plot_i[uniqueOrbs_ii]
+     ;; nOrbs=N_ELEMENTS(uniqueOrbs_i)
      
      IF KEYWORD_SET(orbContribPlot) OR KEYWORD_SET(orbfreqplot) OR KEYWORD_SET(nEventPerOrbPlot) OR KEYWORD_SET(numOrbLim) THEN BEGIN
         
-        GET_CONTRIBUTING_ORBITS_PLOTDATA,fastLoc,fastLoc_interped_i, $
+        GET_CONTRIBUTING_ORBITS_PLOTDATA,fastLoc,fastLocInterped_i, $
                                          MINM=minM, $
                                          MAXM=maxM, $
                                          BINM=binM, $
@@ -689,7 +689,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      ENDIF
 
      ;;########TOTAL Orbits########
-     IF KEYWORD_SET(orbtotplot) OR KEYWORD_SET(orbfreqplot) OR KEYWORD_SET(nEventPerOrbPlot) THEN BEGIN
+     IF KEYWORD_SET(orbtotplot) OR KEYWORD_SET(orbfreqplot) $
+        OR (KEYWORD_SET(nEventPerOrbPlot) AND KEYWORD_SET(divNEvByTotal)) THEN BEGIN
         GET_TOTAL_ORBITS_PLOTDATA,maximus, $
                                   MINM=minM, $
                                   MAXM=maxM, $
@@ -756,12 +757,14 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                        MINL=minL, $
                                        MAXL=maxL, $
                                        BINL=binL, $
-                                       ORBFREQRANGE=orbFreqRange, $
+                                       NEVENTPERORBRANGE=nEventPerOrbRange, $
+                                       LOGNEVENTPERORB=logNEventPerOrb, $
                                        DIVNEVBYTOTAL=divNEvByTotal, $
                                        H2DSTR=h2dStr, $
                                        TMPLT_H2DSTR=tmplt_h2dStr, $
                                        H2DFLUXN=h2dFluxN, $
                                        H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                       H2D_NONZERO_CONTRIBORBS_I=h2d_nonZero_contribOrbs_i, $
                                        H2DCONTRIBORBSTR=h2dContribOrbStr, $
                                        H2DTOTORBSTR=h2dTotOrbStr, $
                                        DATANAME=dataName, $
