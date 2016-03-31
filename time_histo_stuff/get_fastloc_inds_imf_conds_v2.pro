@@ -25,12 +25,16 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1
                                   HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                   MAKE_OUTINDSFILE=make_outIndsFile, $
                                   OUTINDSPREFIX=outIndsPrefix,OUTINDSSUFFIX=outIndsSuffix,OUTINDSFILEBASENAME=outIndsFileBasename, $
-                                  ;; FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
+                                  ;; FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastLoc_delta_t, $
                                   ;; FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, $
                                   FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                   BURSTDATA_EXCLUDED=burstData_excluded, $
-                                  GET_FASTLOC_STRUCT=get_fastloc_struct, $
-                                  OUT_FASTLOC_STRUCT=out_fastloc_struct
+                                  GET_FASTLOC_STRUCT=get_fastLoc_struct, $
+                                  GET_FASTLOC_DELTA_T=get_fastLoc_delta_t, $
+                                  GET_FASTLOC_TIMES=get_fastLoc_times, $
+                                  OUT_FASTLOC_STRUCT=out_fastLoc_struct, $
+                                  OUT_FASTLOC_DELTA_T=out_fastLoc_delta_t, $
+                                  OUT_FASTLOC_TIMES=out_fastLoc_times
 
   COMPILE_OPT idl2
 
@@ -93,7 +97,7 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1
                                   LUN=lun
   
   fastLocInterped_i_list = GET_RESTRICTED_AND_INTERPED_DB_INDICES(FL_fastLoc,satellite,delay,LUN=lun, $
-                                                                  DBTIMES=fastLoc__times,dbfile=fastloc__dbfile, HEMI=hemi, $
+                                                                  DBTIMES=fastLoc__times,dbfile=fastLoc__dbfile, HEMI=hemi, $
                                                                   ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                                                   MINMLT=minM,MAXMLT=maxM,BINM=binM,SHIFTM=shiftM, $
                                                                   MINILAT=minI,MAXILAT=maxI,BINI=binI, $;SHIFTI=shiftI, $ $
@@ -119,8 +123,16 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1
                                                                   GET_TIME_I_NOT_ALFVENDB_I=1)
   
   
-  IF KEYWORD_SET(get_fastloc_struct) THEN BEGIN
-     out_fastloc_struct = FL_fastLoc
+  IF KEYWORD_SET(get_fastLoc_struct) THEN BEGIN
+     out_fastLoc_struct = FL_fastLoc
+  ENDIF
+
+  IF KEYWORD_SET(get_fastLoc_delta_t) THEN BEGIN
+     out_fastLoc_delta_t   = FASTLOC__delta_t
+  ENDIF
+
+  IF KEYWORD_SET(get_fastLoc_times) THEN BEGIN
+     out_fastLoc_times   = FASTLOC__times
   ENDIF
 
   IF KEYWORD_SET(multiple_delays) THEN BEGIN

@@ -38,7 +38,9 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
                                PLOTNAMEPREFARR=plotNamePrefArr, $
                                PLOTSUFFIX=plotSuffix, $
                                PLOTDIR=plotDir, $
-                               DELETE_PLOTS_WHEN_FINISHED=delete_plots_when_finished
+                               DELETE_PLOTS_WHEN_FINISHED=delete_plots_when_finished, $
+                               DONT_OVERWRITE_EXISTING=dont_overwrite_existing
+
    
 
      ;;Number of files
@@ -83,7 +85,16 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
   plotFileArr                      = !NULL
   FOR j=0,nFiles-1 DO BEGIN
      RESTORE,tempFiles[j]
-  IF KEYWORD_SET(plotNamePrefArr) THEN BEGIN & IF N_ELEMENTS(plotNamePrefArr) GT 1 THEN plotNamePref = plotNamePrefArr[j] ELSE plotNamePref = plotNamePrefArr & ENDIF ELSE plotNamePref = paramStr
+     IF KEYWORD_SET(plotNamePrefArr) THEN BEGIN
+        IF N_ELEMENTS(plotNamePrefArr) GT 1 THEN BEGIN
+           plotNamePref = plotNamePrefArr[j]
+        ENDIF ELSE BEGIN
+           plotNamePref = plotNamePrefArr 
+        ENDELSE
+     ENDIF ELSE BEGIN
+        plotNamePref = paramStr
+     ENDELSE
+
      plotFileArr                   = [plotFileArr,plotDir+plotNamePref + dataNames[plots_to_combine[0]]+'.png']
   ENDFOR
   plotFileArr__list                = LIST(plotFileArr)
@@ -93,7 +104,17 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
      plotFileArr                   = !NULL
      FOR j=0,nFiles-1 DO BEGIN
         RESTORE,tempFiles[j]
-  IF KEYWORD_SET(plotNamePrefArr) THEN BEGIN & IF N_ELEMENTS(plotNamePrefArr) GT 1 THEN plotNamePref = plotNamePrefArr[j] ELSE plotNamePref = plotNamePrefArr & ENDIF ELSE plotNamePref = paramStr
+
+        IF KEYWORD_SET(plotNamePrefArr) THEN BEGIN
+           IF N_ELEMENTS(plotNamePrefArr) GT 1 THEN BEGIN
+              plotNamePref = plotNamePrefArr[j]
+           ENDIF ELSE BEGIN
+              plotNamePref = plotNamePrefArr
+           ENDELSE
+        ENDIF ELSE BEGIN
+           plotNamePref = paramStr
+        ENDELSE
+
         plotFileArr                = [plotFileArr,plotDir+plotNamePref + dataNames[plots_to_combine[i]]+'.png']
      ENDFOR
      plotFileArr__list.add,plotFileArr
@@ -107,22 +128,37 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
                                   (KEYWORD_SET(plotSuffix) ? plotSuffix : '') + '--combined.png'
      PRINT,"Saving to " + save_combined_name + "..."
      
-     TILE_THREE_PLOTS,plotFileArr__list[i],titles, $
-                      ;; OUT_IMGS=out_imgs, $
-                      ;; OUT_TITLEOBJS=out_titleObjs, $
-                      COMBINED_TO_BUFFER=combined_to_buffer, $
-                      SAVE_COMBINED_WINDOW=save_combined_window, $
-                      SAVE_COMBINED_NAME=save_combined_name, $
-                      PLOTDIR=plotDir, $
-                      DELETE_PLOTS_WHEN_FINISHED=delete_plots_when_finished
-     
-     IF N_ELEMENTS(out_imgs) GT 0 THEN BEGIN
-        out_imgs_arr              = [out_imgs_arr,out_imgs]
+     IF KEYWORD_SET(dont_overwrite_existing) THEN BEGIN
+        IF FILE_TEST(plotDir+save_combined_name) THEN BEGIN
+           PRINT,'FILE EXISTS: ' + save_combined_name
+           PRINT,'Not overwriting...'
+           skip                 = 1
+        ENDIF ELSE BEGIN
+           skip                 = 0
+        ENDELSE
+     ENDIF ELSE BEGIN
+        skip                    = 0
+     ENDELSE
+     IF ~skip THEN BEGIN
+        TILE_THREE_PLOTS,plotFileArr__list[i],titles, $
+                         ;; OUT_IMGS=out_imgs, $
+                         ;; OUT_TITLEOBJS=out_titleObjs, $
+                         COMBINED_TO_BUFFER=combined_to_buffer, $
+                         SAVE_COMBINED_WINDOW=save_combined_window, $
+                         SAVE_COMBINED_NAME=save_combined_name, $
+                         PLOTDIR=plotDir, $
+                         DELETE_PLOTS_WHEN_FINISHED=delete_plots_when_finished;, $
+                         ;; DONT_OVERWRITE_EXISTING=dont_overwrite_existing
+
+        IF N_ELEMENTS(out_imgs) GT 0 THEN BEGIN
+           out_imgs_arr              = [out_imgs_arr,out_imgs]
+        ENDIF
+        
+        IF N_ELEMENTS(out_titleObjs) GT 0 THEN BEGIN
+           out_titleObjs_arr         = [out_titleObjs_arr,out_titleObjs]
+        ENDIF
      ENDIF
-     
-     IF N_ELEMENTS(out_titleObjs) GT 0 THEN BEGIN
-        out_titleObjs_arr         = [out_titleObjs_arr,out_titleObjs]
-     ENDIF
+
   ENDFOR
   
 END

@@ -8,6 +8,7 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
                      SAVE_COMBINED_NAME=save_combined_name, $
                      PLOTDIR=plotDir, $
                      DELETE_PLOTS_WHEN_FINISHED=delete_plots, $
+                     DONT_OVERWRITE_EXISTING=dont_overwrite_existing, $
                      LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
