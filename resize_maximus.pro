@@ -1,6 +1,6 @@
 ; The purpose of this file is just what you'd expect--we want to resize maximus based on some stuff
 ;;2016/01/07 changed the pflux line and added lshell to the mix
-FUNCTION resize_maximus,maximus,MAXIMUS_IND=maximus_ind,MIN_FOR_IND=min_for_ind,MAX_FOR_IND=max_for_ind,ONLY_ABSVALS=only_absVals,INDS=inds,CDBTIME=cdbTime
+FUNCTION RESIZE_MAXIMUS,maximus,MAXIMUS_IND=maximus_ind,MIN_FOR_IND=min_for_ind,MAX_FOR_IND=max_for_ind,ONLY_ABSVALS=only_absVals,INDS=inds,CDBTIME=cdbTime
 
   IF KEYWORD_SET(inds) THEN allowed_i = inds ELSE BEGIN
      IF KEYWORD_SET(only_absVals) THEN BEGIN
@@ -11,15 +11,15 @@ FUNCTION resize_maximus,maximus,MAXIMUS_IND=maximus_ind,MIN_FOR_IND=min_for_ind,
   ENDELSE
 
   maxTags = tag_names(maximus)
-  print,''
-  print,"**********from resize_maximus.pro**********"
-  IF KEYWORD_SET(inds) THEN print,"Resizing based on indices" ELSE BEGIN
-     print,"Resizing based on " +  (KEYWORD_SET(only_absVals) ? 'ABS(' + maxTags(maximus_ind)  + ')' : maxTags(maximus_ind) )
-     print,"Upper limit: " + strcompress(max_for_ind,/remove_all)
-     print,"Lower limit: " + strcompress(min_for_ind,/remove_all)
-     print,''
+  PRINT,''
+  PRINT,"**********from resize_maximus.pro**********"
+  IF KEYWORD_SET(inds) THEN PRINT,"Resizing based on indices" ELSE BEGIN
+     PRINT,"Resizing based on " +  (KEYWORD_SET(only_absVals) ? 'ABS(' + maxTags(maximus_ind)  + ')' : maxTags(maximus_ind) )
+     PRINT,"Upper limit: " + strcompress(max_for_ind,/remove_all)
+     PRINT,"Lower limit: " + strcompress(min_for_ind,/remove_all)
+     PRINT,''
   ENDELSE
-  print,"N_elements before: " + strcompress(n_elements(maximus.orbit),/remove_all)
+  PRINT,"N_elements before: " + strcompress(n_elements(maximus.orbit),/remove_all)
 
   resize_maximus={orbit:maximus.orbit[allowed_i],$
                   alfvenic:maximus.alfvenic[allowed_i],$
@@ -72,21 +72,27 @@ FUNCTION resize_maximus,maximus,MAXIMUS_IND=maximus_ind,MIN_FOR_IND=min_for_ind,
                   BURST:maximus.burst[allowed_i], $
                   ;; PFLUXEST:maximus.delta_b[allowed_i]*maximus.delta_e[allowed_i]*4.0e-7*!PI, $
                   PFLUXEST:maximus.PFLUXEST[allowed_i], $
-                  LSHELL:maximus.LSHELL[allowed_i]}
+                  LSHELL:maximus.LSHELL[allowed_i], $
+                  DESPUN:maximus.despun, $
+                  CORRECTED_FLUXES:maximus.corrected_fluxes, $
+                  CORRECTED_STRING:maximus.corrected_string}
 
   
   IF KEYWORD_SET(cdbTime) THEN BEGIN
-     print,''    
-     print,"Also doing cdbTime!"
-     print,"N cdbTime before: " + strcompress(n_elements(cdbTime),/remove_all)
+     PRINT,''    
+     PRINT,"Also doing cdbTime!"
+     PRINT,"N cdbTime before: " + strcompress(n_elements(cdbTime),/remove_all)
      cdbTime=cdbTime[allowed_i]
-     print,"N cdbTime after: " + strcompress(n_elements(cdbTime),/remove_all)
-     print,''
-  ENDIF
+     PRINT,"N cdbTime after: " + strcompress(n_elements(cdbTime),/remove_all)
+     PRINT,''
+  ENDIF ELSE BEGIN
+     PRINT,"WARNING! You've resized maximus but not cdbTime! Look out!"
+     STOP
+  ENDELSE
 
-  print,"N_elements after: " + strcompress(n_elements(resize_maximus.orbit),/remove_all)
-  print,"***********end resize_maximus.pro**********"
-  print,''
+  PRINT,"N_elements after: " + strcompress(n_elements(resize_maximus.orbit),/remove_all)
+  PRINT,"***********end resize_maximus.pro**********"
+  PRINT,''
 
   RETURN, resize_maximus
 

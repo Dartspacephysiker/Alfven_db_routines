@@ -1,7 +1,7 @@
 ;2016/04/01 Need something to compare with IMF By plots
-PRO JOURNAL__20160401__PLOTS_OF_ALFVENDB_FOR_NO_IMF__TIME_AND_SPACE_AVGD_E_LOSSCONE_ENERGY_UPWARD_ION_NUMBER__PROBOCCURRENCE__PFLUXEST__LINEAR_SCALE
+PRO JOURNAL__20160401__PLOTS_OF_ALFVENDB_FOR_NO_IMF__TIME_AND_SPACE_AVGD_E_LOSSCONE_ENERGY_UPWARD_ION_NUMBER__PROBOCCURRENCE__PFLUXEST__LOG_SCALE
 
-  nonstorm                       = 1
+  nonstorm                       = 0
   altitudeRange                  = [1000,4175]
   
   ;; plotSuff                       = 'high-energy_e'
@@ -37,34 +37,37 @@ PRO JOURNAL__20160401__PLOTS_OF_ALFVENDB_FOR_NO_IMF__TIME_AND_SPACE_AVGD_E_LOSSC
   ;;Plot stuff
 
   ;; ;;PROBOCCURRENCE
-  ;; probOccurrenceRange            = [1e-3,1e-1]
+  probOccurrenceRange            = [1e-3,1e-1]
   logProbOccurrence              = 1
-  probOccurrenceRange            = [0,0.05]
-  logProbOccurrence              = 0
+  ;; probOccurrenceRange            = [0,0.05]
+  ;; logProbOccurrence              = 0
 
   ;;49--pFluxEst
   ;; pPlotRange                     = [1e-2,1e0] ;for time-averaged
-  ;; pPlotRange                     = [1e-3,5e-1] ;for time-averaged
-  ;; logPFPlot                      = 1
+  ;; pPlotRange                     = [1e-2,5e-1] ;for time-averaged
+  pPlotRange                     = [1e-2,5e-1] ;for time-averaged
+  logPFPlot                      = 1
   ;; pPlotRange                     = [0,5e-1] ;for time-averaged
-  pPlotRange                     = [0,2.5e-1] ;for time-averaged
-  logPFPlot                      = 0
+  ;; pPlotRange                     = [0,2.5e-1] ;for time-averaged
+  ;; logPFPlot                      = 0
 
   ;; 10-EFLUX_LOSSCONE_INTEG
   eNumFlPlotType                = 'Eflux_Losscone_Integ'
   ;; eNumFlRange                   = [10.^(-3.0),10.^(-1.0)] ;for time-, space-averaged
-  ;; logENumFlPlot                 = 1
-  eNumFlRange                   = [0,2.5e-1] ;for time-, space-averaged
-  logENumFlPlot                 = 0
+  ;; eNumFlRange                   = [10.^(-2.0),10.^(0.0)] ;for time-, space-averaged
+  eNumFlRange                   = [10.^(-2.0),5e-1] ;for time-, space-averaged
+  logENumFlPlot                 = 1
+  ;; eNumFlRange                   = [0,2.5e-1] ;for time-, space-averaged
+  ;; logENumFlPlot                 = 0
   noNegeNumFl                   = 1
 
   ;;18--INTEG_ION_FLUX_UP
   iFluxPlotType                  = 'Integ_Up'
   ;; iPlotRange                     = [10^(3.5),10^(7.5)]  ;for time-averaged plot
-  ;; iPlotRange                     = [10.^(5.0),10.^(7.0)] ;for time-averaged plot
-  ;; logIFPlot                      = 1
-  iPlotRange                     = [0,2.5e7] ;for time-averaged plot
-  logIFPlot                      = 0
+  iPlotRange                     = [10.^(6.0),10.^(8.0)] ;for time-averaged plot
+  logIFPlot                      = 1
+  ;; iPlotRange                     = [0,2.5e7] ;for time-averaged plot
+  ;; logIFPlot                      = 0
 
   PLOT_ALFVEN_STATS_IMF_SCREENING, $
      ALTITUDERANGE=altitudeRange, $
@@ -101,7 +104,7 @@ PRO JOURNAL__20160401__PLOTS_OF_ALFVENDB_FOR_NO_IMF__TIME_AND_SPACE_AVGD_E_LOSSC
      LOGIFPLOT=logIFPlot, $
      PLOTSUFFIX=plotSuff, $
      /CB_FORCE_OOBHIGH, $
-     ;; /CB_FORCE_OOBLOW, $
+     /CB_FORCE_OOBLOW, $
      /COMBINE_PLOTS, $
      /SAVE_COMBINED_WINDOW, $
      /COMBINED_TO_BUFFER

@@ -5,6 +5,7 @@ PRO SET_PLOT_DIR,plotDir, $
                  FOR_ALFVENDB=for_alfvendb, $
                  ADD_TODAY=add_today, $
                  ADD_SUFF=add_suff, $
+                 ADD_DIR=add_dir, $
                  VERBOSE=verbose, $
                  LUN=lun
   
@@ -131,17 +132,16 @@ PRO SET_PLOT_DIR,plotDir, $
 
   IF KEYWORD_SET(verbose) THEN PRINTF,lun,"plotDir set to " + plotDir
 
-  IF KEYWORD_SET(add_today) AND KEYWORD_SET(add_suff) THEN BEGIN
-     plotDir = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '--' + add_suff + '/'
-  ENDIF ELSE BEGIN
-     IF KEYWORD_SET(add_today) THEN BEGIN
-        plotDir = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '/'
-     ENDIF ELSE BEGIN
-        IF KEYWORD_SET(add_suff) THEN BEGIN
-           plotDir = plotDir + add_suff + '/'
-        ENDIF
-     ENDELSE
-  ENDELSE 
+  ;; IF KEYWORD_SET(add_today) AND KEYWORD_SET(add_suff) THEN BEGIN
+  ;;    plotDir = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '--' + add_suff + '/'
+  ;; ENDIF ELSE BEGIN
+  IF KEYWORD_SET(add_today) THEN BEGIN
+     plotDir    = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '/'
+  ENDIF 
+  IF KEYWORD_SET(add_suff) THEN BEGIN
+     plotDir = plotDir + add_suff + '/'
+  ENDIF
+  ;; ENDELSE 
 
   ;;check if this dir exists
   IF KEYWORD_SET(add_today) OR KEYWORD_SET(add_suff) OR KEYWORD_SET(customDir) THEN BEGIN

@@ -137,6 +137,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+              h2dStr.title  = title__alfDB_ind_11__div_by_width_x
+              ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
                                     DO_DESPUNDB=maximus.despun
               magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
@@ -160,6 +162,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+              h2dStr.title  = title__alfDB_ind_10__div_by_width_x
+              ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
                                     DO_DESPUNDB=maximus.despun
               magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
@@ -251,6 +255,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+              h2dStr.title  = title__alfDB_ind_17__div_by_width_x
+              ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
                                     DO_DESPUNDB=maximus.despun
               magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
@@ -286,6 +292,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+              h2dStr.title  = title__alfDB_ind_18__div_by_width_x
+              ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
                                     DO_DESPUNDB=maximus.despun
               magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
