@@ -40,6 +40,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           MULTIPLE_DELAYS=multiple_delays, $
                           STABLEIMF=stableIMF, $
                           SMOOTHWINDOW=smoothWindow, $
+                          HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
                           INCLUDENOCONSECDATA=includeNoConsecData, $
                           DO_UTC_RANGE=DO_UTC_range, $
                           STORMSTRING=stormString, $
@@ -207,6 +208,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                     DO_UTC_RANGE=do_UTC_range, $
                                                     STORMSTRING=stormString, $
                                                     DSTCUTOFF=dstCutoff, $
+                                                    HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
                                                     T1_ARR=t1_arr, $
                                                     T2_ARR=t2_arr, $
                                                     MINM=minM, $

@@ -16,6 +16,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
                                   DO_UTC_RANGE=DO_UTC_range, $
                                   STORMSTRING=stormString, $
                                   DSTCUTOFF=dstCutoff, $
+                                  HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
                                   T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                   MINM=minM,MAXM=maxM, $
                                   BINM=binM, $
@@ -68,6 +69,12 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
 
   PRINTF,lun,"Getting time histogram denominator ..."
+
+  ;;Make sure no conflicting stuff
+  IF KEYWORD_SET(fastLoc_inds) AND (KEYWORD_SET(do_IMF_conds) OR KEYWORD_SET(do_UTC_range)) THEN BEGIN
+     PRINTF,lun,"Just so you know, I'm not set up to simultaneously take user-provided inds and also go looking for more. Figure it out."
+     STOP
+  ENDIF
 
   ;;Get the appropriate divisor for IMF conditions
   IF KEYWORD_SET(do_IMF_conds) THEN BEGIN
@@ -137,23 +144,28 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
      ENDIF ELSE BEGIN
         ;;No restrictions whatsoever, eh?
         ;; LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t,DBDir=DBDir,DBFile=FastLocFile,DB_tFile=FastLocTimeFile,LUN=lun
-        fastLocInterped_i_list = GET_RESTRICTED_AND_INTERPED_DB_INDICES(FL_fastLoc,satellite,delay,LUN=lun, $
-                                                                        DBTIMES=fastLoc__times,dbfile=FASTLOC__dbfile, HEMI=hemi, $
-                                                                        ORBRANGE=orbRange, $
-                                                                        ALTITUDERANGE=altitudeRange, $
-                                                                        CHARERANGE=charERange, $
-                                                                        MINMLT=minM, $
-                                                                        MAXMLT=maxM, $
-                                                                        BINM=binM, $
-                                                                        MINILAT=minI, $
-                                                                        MAXILAT=maxI, $
-                                                                        BINI=binI, $
-                                                                        DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
-                                                                        CLOCKSTR=clockStr, $
-                                                                        /DO_NOT_CONSIDER_IMF, $
-                                                                        HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd, $
-                                                                        NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=1)
-        fastLocInterped_i = fastLocInterped_i_list[0]
+        IF KEYWORD_SET(fastLoc_inds) THEN BEGIN
+           PRINT,'Using user-provided fastLoc inds ...'
+           fastLocInterped_i_list = fastLoc_inds
+        ENDIF ELSE BEGIN
+           fastLocInterped_i_list = GET_RESTRICTED_AND_INTERPED_DB_INDICES(FL_fastLoc,satellite,delay,LUN=lun, $
+                                                                           DBTIMES=fastLoc__times,dbfile=FASTLOC__dbfile, HEMI=hemi, $
+                                                                           ORBRANGE=orbRange, $
+                                                                           ALTITUDERANGE=altitudeRange, $
+                                                                           CHARERANGE=charERange, $
+                                                                           MINMLT=minM, $
+                                                                           MAXMLT=maxM, $
+                                                                           BINM=binM, $
+                                                                           MINILAT=minI, $
+                                                                           MAXILAT=maxI, $
+                                                                           BINI=binI, $
+                                                                           DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                                                                           CLOCKSTR=clockStr, $
+                                                                           /DO_NOT_CONSIDER_IMF, $
+                                                                           HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd, $
+                                                                           NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=1)
+           fastLocInterped_i = fastLocInterped_i_list[0]
+        ENDELSE
      ENDELSE
   ENDELSE
 
