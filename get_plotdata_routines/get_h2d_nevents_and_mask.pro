@@ -1,4 +1,7 @@
+;;2016/04/05 Added IN_{MLTS,ILATS} to make it possible to circumvent maximus and plot_i
 PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
+                             IN_MLTS=in_mlts, $
+                             IN_ILATS=in_ilats, $
                              MINM=minM,MAXM=maxM, $
                              BINM=binM, $
                              SHIFTM=shiftM, $
@@ -43,12 +46,13 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
   ;; h2dFluxN                      = HIST_2D(maximus.mlt[plot_i],$
-  mlts                          = maximus.mlt[plot_i]-shiftM      ;shift MLTs backwards, because we want to shift the binning FORWARD
+  mlts                          = KEYWORD_SET(in_MLTS) ? in_MLTs : maximus.mlt[plot_i]-shiftM ;shift MLTs backwards, because we want to shift the binning FORWARD
   mlts[WHERE(mlts LT 0)]        = mlts[WHERE(mlts LT 0)] + 24
 
+  horiz                         = KEYWORD_SET(in_ILATs) ? in_ILATs : ( (KEYWORD_SET(do_lShell) ? maximus.lshell : maximus.ilat)[plot_i] )
+
   h2dFluxN                      = HIST_2D(mlts,$
-                                          (KEYWORD_SET(do_lShell) ? $
-                                           maximus.lshell : maximus.ilat)[plot_i],$
+                                          horiz,$
                                           BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                           MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
                                           MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))

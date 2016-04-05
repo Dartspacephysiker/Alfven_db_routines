@@ -94,7 +94,9 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
      ;; IF KEYWORD_SET(combined_to_buffer) THEN BEGIN
      ;;    imArr[0].save,plotDir+save_combined_name
      ;;    ENDIF ELSE BEGIN
-     win.save,plotDir+save_combined_name
+     ;; win.save,plotDir+save_combined_name
+     win.save,'temp.png'
+     SPAWN,'mv temp.png ' + plotDir+save_combined_name
         ;; ENDELSE
   ENDIF
 

@@ -131,7 +131,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.do_midCBLabel   = eNumFlux_do_midCBLabel
 
      CASE 1 OF
-        STRUPCASE(fluxPlotType) EQ STRUPCASE("Total_Eflux_Integ"): BEGIN
+        STRUPCASE(fluxPlotType) EQ STRUPCASE("total_eflux_integ"): BEGIN
            h2dStr.title     = title__alfDB_ind_11
            inData           = maximus.total_eflux_integ[tmp_i] 
            can_div_by_w_x   = 1

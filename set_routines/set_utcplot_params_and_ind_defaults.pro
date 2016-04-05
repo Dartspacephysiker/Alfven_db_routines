@@ -52,8 +52,8 @@ PRO SET_UTCPLOT_PARAMS_AND_IND_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitud
   ;;You know
   
   defOrbRange            = [0,16361]
-  defCharERange          = [4.0,8000]
-  defAltRange            = [500.0, 5000.0]
+  defCharERange          = [4.0,3e4]
+  defAltRange            = [000.0, 5000.0]
 
   defParamString         = "user-specified_UTCRange"
 

@@ -38,6 +38,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           DO_ABS_BZMAX=abs_bzMax, $
                           DELAY=delay, $
                           MULTIPLE_DELAYS=multiple_delays, $
+                          RESOLUTION_DELAY=delay_res, $
+                          BINOFFSET_DELAY=binOffset_delay, $
                           STABLEIMF=stableIMF, $
                           SMOOTHWINDOW=smoothWindow, $
                           HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
@@ -202,6 +204,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                     SATELLITE=satellite, $
                                                     OMNI_COORDS=omni_Coords, $
                                                     DELAY=delay, $
+                                                    RESOLUTION_DELAY=delay_res, $
+                                                    BINOFFSET_DELAY=binOffset_delay, $
                                                     STABLEIMF=stableIMF, $
                                                     SMOOTHWINDOW=smoothWindow, $
                                                     INCLUDENOCONSECDATA=includeNoConsecData, $

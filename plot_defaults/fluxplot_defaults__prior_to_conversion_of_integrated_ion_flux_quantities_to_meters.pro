@@ -5,12 +5,12 @@ fluxPlotEPlotCBLabelFormat   = '(G0.2)'
 fluxPlotChareCBLabelFormat   = '(D0.1)'
 fluxPlotChariCBLabelFormat   = '(D0.2)'
 
-logeFluxLabels               = 0
+logeFluxLabels               = 1
 logeNumFluxLabels            = 0
-logPFluxLabels               = 0
+logPFluxLabels               = 1
 logiFluxLabels               = 0
-logChareLabels               = 0
-logChariLabels               = 0
+logChareLabels               = 1
+logChariLabels               = 1
 
 eFlux_do_plotIntegral        = 0
 eNumFlux_do_plotIntegral     = 0
@@ -27,23 +27,18 @@ Charee_do_midCBLabel         = 1
 Charie_do_midCBLabel         = 1
 
 ;; energyFluxStr                = 'ergs/cm!U2!N-s'
-energyFluxStr                = 'mW m!U-2!N'
-numFluxStr                   = '# cm!U-2!Ns!U-1!N'
-
-energyGrossStr                = 'W'
-numGrossStr                   = '#/s'
+energyFluxStr                = 'mW/m!U2!N'
+numFluxStr                   = '#/cm!U2!N-s'
 
 charEUnitString              = 'eV'
 
 ;;See JOURNAL__20151225__UNITS_OF_INTEGRATED_FLUXES.pro in Alfvendb_routines
 ;; intEnergyFluxStr             = 'ergs/cm-s' ;;not true, I don't think
-intEnergyFluxStr             = 'mW m!U-1!N' 
+intEnergyFluxStr             = 'mW/m' 
 ;; integNumFluxStr              = '#/cm-s'
-;; integNumFluxStr              = '100/cm-s'
-integNumFluxStr              = '# cm!U-1!Ns!U-1!N'
+integNumFluxStr              = '100/cm-s'
 
-;; ionosphString                = ', at ionos.'
-ionosphString                = ' at 100 km'
+ionosphString                = ', at ionos.'
 ionosphString_pub            = ', mapped to the ionosphere'
 
 scAltString                  = ', at s/c alt.'
@@ -55,7 +50,6 @@ scAltString_pub              = ', at FAST altitude'
 ;; ENDIF
 
 IF KEYWORD_SET(fancy_plotNames) THEN BEGIN
-title__alfDB_ind_07          = 'ESA Current ( microA/m!U2!N)' + scAltString_pub    ;"ESA_CURRENT"
 title__alfDB_ind_08          = 'Max Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString_pub    ;"Max"     
 title__alfDB_ind_09          = 'Max e!U-!N Flux, whole dist. (' + energyFluxStr + ')' + ionosphString_pub ;"Integ"
 title__alfDB_ind_10          = 'Integrated Loss Cone e!U-!N Energy Flux (' + intEnergyFluxStr + ')' + ionosphString_pub      ;"Eflux_Losscone_Integ"
@@ -94,12 +88,9 @@ title__alfDB_ind_29          = 'O+ Characteristic Energy (' + charEUnitString + 
 title__alfDB_ind_30          = 'Max Upward He+ Flux (' + numFluxStr + ')' + ionosphString_pub       ;"Max_Up"
 title__alfDB_ind_31          = 'He+ Characteristic Energy (' + charEUnitString + ')' + scAltString_pub       ;"Max_Up"
 
-;; title__alfDB_ind_49          = 'Max Poynting Flux (' + energyFluxStr + ')' + ionosphString_pub
-title__alfDB_ind_49          = 'Poynting Flux (' + energyFluxStr + ')' + ionosphString_pub
+title__alfDB_ind_49          = 'Max Poynting Flux (' + energyFluxStr + ')' + ionosphString_pub
 
 ENDIF ELSE BEGIN
-
-title__alfDB_ind_07          = 'ESA Current ( microA/m!U2!N)' + scAltString    ;"ESA_CURRENT"     
 title__alfDB_ind_08          = 'Max L.C. e!U-!N Flux (' + energyFluxStr + ')' + ionosphString         ;"Integ"
 title__alfDB_ind_09          = 'Max e!U-!N Flux, whole dist. (' + energyFluxStr + ')' + ionosphString ;"Max"
 title__alfDB_ind_10          = 'Integ. L.C. e!U-!N Flux (' + intEnergyFluxStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
@@ -112,7 +103,7 @@ title__alfDB_ind_15          = 'Max Ion Flux (' + numFluxStr + ')' + ionosphStri
 title__alfDB_ind_16          = 'Max Upward Ion Flux (' + numFluxStr + ')' + ionosphString       ;"Max_Up"
 title__alfDB_ind_17          = 'Integ. Ion Flux (' + integNumFluxStr + ')' + ionosphString               ;"Integ"
 title__alfDB_ind_18          = 'Integ. Upward Ion Flux (' + integNumFluxStr + ')' + ionosphString        ;"Integ_Up"
-Title__alfDB_ind_19          = 'Ion Characteristic Energy (' + charEUnitString + ')'
+title__alfDB_ind_19          = 'Ion Characteristic Energy (' + charEUnitString + ')'
 title__alfDB_ind_26          = 'Max Upward H+ Flux (' + numFluxStr + ')' + ionosphString       ;"Max_Up"
 title__alfDB_ind_27          = 'H+ Characteristic Energy (' + charEUnitString + ')' + scAltString       ;"Max_Up"
 title__alfDB_ind_28          = 'Max Upward O+ Flux (' + numFluxStr + ')' + ionosphString       ;"Max_Up"
@@ -120,28 +111,11 @@ title__alfDB_ind_29          = 'O+ Characteristic Energy (' + charEUnitString + 
 title__alfDB_ind_30          = 'Max Upward He+ Flux (' + numFluxStr + ')' + ionosphString       ;"Max_Up"
 title__alfDB_ind_31          = 'He+ Characteristic Energy (' + charEUnitString + ')' + scAltString       ;"Max_Up"
 
-title__alfDB_ind_49          = 'Poynting Flux (' + energyFluxStr + ')' + ionosphString
+title__alfDB_ind_49          = 'Max Poynting Flux (' + energyFluxStr + ')' + ionosphString
+
 
 ENDELSE
 
-;;For time-averaged storm plots
-title__alfDB_ind_10_tAvg     = 'Losscone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
-title__alfDB_ind_18_tAvg     = 'Upward Ion Flux (' + numFluxStr + ')' + ionosphString        ;"Integ_Up"
-title__alfDB_ind_49_tAvg     = 'Poynting Flux (' + energyFluxStr + ')' + ionosphString
-
-;;Integrated Poynting flux
-title__alfDB_ind_49_integ    = 'Integ. Poynting Flux (' + intEnergyFluxStr + ')' + ionosphString
-
-;;Gross rates
-title__alfDB_ind_10_grossRate = 'Losscone e!U-!N Flux (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
-title__alfDB_ind_18_grossRate = 'Upward Ion Flux (' + numGrossStr + ')' + ionosphString        ;"Integ_Up"
-title__alfDB_ind_49_grossRate = 'Poynting Flux (' + energyGrossStr + ')' + ionosphString
-
-;;Divided by width_x
-title__alfDB_ind_10__div_by_width_x  = 'Losscone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
-title__alfDB_ind_11__div_by_width_x  = 'Total e!U-!N Energy Flux (' + energyFluxStr + ')' + ionosphString     ;"Total_Eflux_Integ"
-title__alfDB_ind_17__div_by_width_x  = 'Ion Flux (' + numFluxStr + ')' + ionosphString               ;"Integ"
-title__alfDB_ind_18__div_by_width_x  = 'Upward Ion Flux (' + numFluxStr + ')' + ionosphString        ;"Integ_Up"
 
 ;; title__alfDB_ind_10          = 
 

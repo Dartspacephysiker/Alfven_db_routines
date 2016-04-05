@@ -45,7 +45,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      MIMC__HwMAurOval, $
      MIMC__HwMKpInd
 
-  COMMON M_VARS,MAXIMUS,MAXIMUS__HAVE_GOOD_I,MAXIMUS__times, $
+  COMMON M_VARS,MAXIMUS__maximus,MAXIMUS__HAVE_GOOD_I,MAXIMUS__times, $
      MAXIMUS__good_i,MAXIMUS__cleaned_i, $
      MAXIMUS__dbFile,MAXIMUS__dbTimesFile, $
      MAXIMUS__RECALCULATE
@@ -103,8 +103,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
 
   ;;Get the databases if they're already in mem
   IF is_maximus THEN BEGIN
-     IF N_ELEMENTS(maximus) NE 0 AND N_ELEMENTS(MAXIMUS__times) NE 0 THEN BEGIN
-        dbStruct                 = maximus
+     IF N_ELEMENTS(MAXIMUS__maximus) NE 0 AND N_ELEMENTS(MAXIMUS__times) NE 0 THEN BEGIN
+        dbStruct                 = MAXIMUS__maximus
         dbTimes                  = MAXIMUS__times
         dbFile                   = MAXIMUS__dbFile
         dbTimesFile              = MAXIMUS__dbTimesFile
@@ -121,7 +121,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                                  DO_CHASTDB=chastDB, $
                                  DO_DESPUNDB=despunDB, $
                                  CORRECT_FLUXES=correct_fluxes
-        maximus                  = dbStruct
+        MAXIMUS__maximus         = dbStruct
         MAXIMUS__times           = dbTimes
         MAXIMUS__dbFile          = dbFile
         MAXIMUS__dbTimesFile     = dbTimesFile
@@ -374,7 +374,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      ;; IF KEYWORD_SET(chastDB) THEN cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun,/IS_CHASTDB) ELSE cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun)
      IF is_maximus THEN BEGIN
         IF N_ELEMENTS(MAXIMUS__cleaned_i) EQ 0 THEN BEGIN
-           MAXIMUS__cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun, $
+           MAXIMUS__cleaned_i = ALFVEN_DB_CLEANER(dbStruct,LUN=lun, $
                                                   IS_CHASTDB=chastDB, $
                                                   DO_LSHELL=DO_lshell, $
                                                   USING_HEAVIES=using_heavies)

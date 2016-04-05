@@ -12,6 +12,8 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
                                   SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                   DELAY=delay, $
                                   MULTIPLE_DELAYS=multiple_delays, $
+                                  RESOLUTION_DELAY=delay_res, $
+                                  BINOFFSET_DELAY=binOffset_delay, $
                                   STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                   DO_UTC_RANGE=DO_UTC_range, $
                                   STORMSTRING=stormString, $
@@ -92,6 +94,8 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
                                    HEMI=hemi, $
                                    DELAY=delay, $
                                    MULTIPLE_DELAYS=multiple_delays, $
+                                   RESOLUTION_DELAY=delay_res, $
+                                   BINOFFSET_DELAY=binOffset_delay, $
                                    STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                    HWMAUROVAL=0,HWMKPIND=!NULL, $
                                    ;; MAKE_OUTINDSFILE=1, $

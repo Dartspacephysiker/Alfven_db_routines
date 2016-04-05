@@ -20,6 +20,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
    ERRORBAR_LINESTYLE=eb_linestyle, $
    ERRORBAR_THICK=eb_thick, $
    DO_SECONDARY_AXIS=do_secondary_axis, $
+   DIFFCOLOR_SECONDARY_AXIS=diffColor_secondary_axis, $
    DO_TWO_PANELS=do_two_panels, $
    MAKE_SECOND_PANEL=make_second_panel, $
    SECOND_PANEL__PREP_FOR_SECONDARY_AXIS=second_panel__prep_for_secondary_axis, $
@@ -54,7 +55,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
         ENDIF ELSE BEGIN
            IF KEYWORD_SET(second_panel__prep_for_secondary_axis) THEN BEGIN
               axis_style  = 1
-              ytextColor  = KEYWORD_SET(symColor) ? symColor : !NULL
+              ytextColor  = KEYWORD_SET(symColor) AND KEYWORD_SET(diffColor_secondary_axis) ? symColor : !NULL
               yString      = !NULL
            ENDIF ELSE BEGIN
               axis_style  = defAvgSymAxisStyle

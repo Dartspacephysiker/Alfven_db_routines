@@ -33,15 +33,15 @@
                                 ;1e3 ergs corresponds to ~6x10^14 eV, and Nakajima et al. [2008]
                                 ;  call FAST observations of eflux > 10^12 eV-cm^(-2)-s^(-1)
                                 ;  "remarkable"; in short this cutoff gives plenty of room for good data.
-  elec_ef_lcutoff = 0.0         ;because less than zero is garbage, right?
+  elec_ef_lcutoff = 0.0         ;because less than zero is garbage, right? Junks 34 events or something like that
   
   ;; max characteristic electron energy cutoffs
-  max_chare_hcutoff = 2.0e4
+  max_chare_hcutoff = 3.0e4
   max_chare_lcutoff = 0.0  
   
   ;; ion flux cutoffs
-  iflux_hcutoff = 8.0e11
-  iflux_lcutoff = -8.0e11
+  iflux_hcutoff = 8.0e11        ;Junks 8 events in despun DB (N_ELEMENTS(ABS(maximus.ion_flux[WHERE(maximus.ion_flux GT 8e11)])))
+  iflux_lcutoff = -8.0e11       ;Junks 6 events in despun DB (N_ELEMENTS(ABS(maximus.ion_flux[WHERE(maximus.ion_flux LT -8e11)])))
   
   ;; ion energy flux cutoffs
   ieflux_hcutoff = 5.0e1

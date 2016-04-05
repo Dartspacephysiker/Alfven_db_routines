@@ -22,6 +22,8 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1
                                   SOUTH=south, $
                                   DELAY=delay, $
                                   MULTIPLE_DELAYS=multiple_delays, $
+                                  RESOLUTION_DELAY=delay_res, $
+                                  BINOFFSET_DELAY=binOffset_delay, $
                                   STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                   HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                   MAKE_OUTINDSFILE=make_outIndsFile, $
@@ -95,6 +97,8 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1
                                   SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                                   DELAY=delay, $
                                   MULTIPLE_DELAYS=multiple_delays, $
+                                  RESOLUTION_DELAY=delay_res, $
+                                  BINOFFSET_DELAY=binOffset_delay, $
                                   STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
                                   LUN=lun
   
@@ -117,6 +121,8 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1
                                                                   BX_OVER_BYBZ=Bx_over_ByBz_Lim, $
                                                                   STABLEIMF=stableIMF, $
                                                                   MULTIPLE_DELAYS=multiple_delays, $
+                                                                  RESOLUTION_DELAY=delay_res, $
+                                                                  BINOFFSET_DELAY=binOffset_delay, $
                                                                   OMNI_COORDS=omni_Coords, $
                                                                   ANGLELIM1=angleLim1, $
                                                                   ANGLELIM2=angleLim2, $

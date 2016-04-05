@@ -21,9 +21,9 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
   defShiftM   = 0.0
 
   defHemi     = 'North'
-  defMinI     = 61
-  defMaxI     = 86
-  defBinI     = 2.5
+  defMinI     = 60
+  defMaxI     = 84
+  defBinI     = 2.0
 
   ;; defMinL     = (cos(defMinI*!PI/180.))^(-2)
   ;; defMaxL     = (cos(defMaxI*!PI/180.))^(-2)

@@ -1,6 +1,7 @@
 ;2015/12/22 Added DO_NOT_MAP_PFLUX_keyword and FORCE_LOAD keywords
 ;2016/01/07 Added DO_DESPUNDB keyword
-PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
+PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
+                             GOOD_I=good_i, $
                              DBDir=DBDir, $
                              DBFile=DBFile, $
                              DB_TFILE=DB_tFile, $
@@ -11,15 +12,17 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              DO_NOT_MAP_WIDTH_X=do_not_map_width_x, $
                              DO_CHASTDB=chastDB, $
                              DO_DESPUNDB=despunDB, $
+                             GET_GOOD_I=get_good_i, $
                              USING_HEAVIES=using_heavies, $
                              FORCE_LOAD_MAXIMUS=force_load_maximus, $
                              FORCE_LOAD_CDBTIME=force_load_cdbTime, $
                              FORCE_LOAD_BOTH=force_load_BOTH, $
                              LUN=lun
 
-  ;; COMMON M_VARS,MAXIMUS,MAXIMUS__HAVE_GOOD_I,MAXIMUS__times, $
-  ;;    MAXIMUS__good_i,MAXIMUS__cleaned_i, $
-  ;;    MAXIMUS__dbFile,MAXIMUS__dbTimesFile
+  COMMON M_VARS,MAXIMUS__maximus,MAXIMUS__HAVE_GOOD_I,MAXIMUS__times, $
+     MAXIMUS__good_i,MAXIMUS__cleaned_i, $
+     MAXIMUS__dbFile,MAXIMUS__dbTimesFile, $
+     MAXIMUS__RECALCULATE
 
   COMPILE_OPT idl2
 
@@ -62,13 +65,14 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      ENDELSE
   ENDELSE
   
-  IF N_ELEMENTS(maximus) EQ 0 OR KEYWORD_SET(force_load_maximus) THEN BEGIN
+  IF N_ELEMENTS(MAXIMUS__maximus) EQ 0 OR KEYWORD_SET(force_load_maximus) THEN BEGIN
      IF KEYWORD_SET(force_load_maximus) THEN BEGIN
         PRINTF,lun,"Forcing load, whether or not we already have maximus..."
      ENDIF
      IF FILE_TEST(DBDir+DBFile) THEN BEGIN
         RESTORE,DBDir+DBFile
-        maximus = CREATE_STRUCT(maximus,'DESPUN',KEYWORD_SET(despunDB))     
+        MAXIMUS__maximus = maximus
+        MAXIMUS__maximus = CREATE_STRUCT(MAXIMUS__maximus,'DESPUN',KEYWORD_SET(despunDB))     
      ENDIF
      IF maximus EQ !NULL THEN BEGIN
         PRINT,"Couldn't load maximus!"
@@ -98,7 +102,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      ;;    PRINTF,lun,'Not mapping to the ionosphere because we have no mapping database for the new despun data set!'
      ;; ENDIF
      ;; CORRECT_ALFVENDB_FLUXES,maximus,MAP_PFLUX_TO_IONOS=~(KEYWORD_SET(do_not_map_pflux) OR KEYWORD_SET(despunDB))
-     CORRECT_ALFVENDB_FLUXES,maximus, $
+     CORRECT_ALFVENDB_FLUXES,MAXIMUS__maximus, $
                              MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux), $
                              MAP_IONFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_ionflux), $
                              MAP_HEAVIES_TO_IONOS=~KEYWORD_SET(do_not_map_heavies), $
@@ -107,5 +111,9 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              USING_HEAVIES=using_heavies
   ENDIF
 
+
+  IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI='BOTH')
+
+  out_maximus = MAXIMUS__maximus
 
 END

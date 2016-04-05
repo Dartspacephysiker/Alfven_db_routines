@@ -71,7 +71,7 @@
 ;                       2016/02/10 : Added DO_NOT_CONSIDER_IMF keyword
 ;-
 PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-                                    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                   ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                     BYMIN=byMin, $
                                     BZMIN=bzMin, $
                                     BYMAX=byMax, $
@@ -88,6 +88,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     OMNI_COORDS=omni_Coords, $
                                     DELAY=delay, $
                                     MULTIPLE_DELAYS=multiple_delays, $
+                                    RESOLUTION_DELAY=delay_res, $
+                                    BINOFFSET_DELAY=binOffset_delay, $
                                     STABLEIMF=stableIMF, $
                                     SMOOTHWINDOW=smoothWindow, $
                                     INCLUDENOCONSECDATA=includeNoConsecData, $
@@ -120,39 +122,43 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   
   defClockStr            = 'dawnward'
   
-  defAngleLim1           = 60.0
-  defAngleLim2           = 120.0
+  ;; defAngleLim1           = 60.0
+  ;; defAngleLim2           = 120.0
 
   ;; defAngleLim1           = 30.0
   ;; defAngleLim2           = 150.0
 
-  ;; defAngleLim1           = 45.0
-  ;; defAngleLim2           = 135.0
+  defAngleLim1           = 45.0
+  defAngleLim2           = 135.0
 
   ;;***********************************************
   ;;RESTRICTIONS ON DATA, SOME VARIABLES
-  IF N_ELEMENTS(orbRange) EQ 0 THEN orbRange = defOrbRange         ; 4,~300 eV in Strangeway
+  IF N_ELEMENTS(orbRange)            EQ 0 THEN orbRange               = defOrbRange         ; 4,~300 eV in Strangeway
 
-  IF N_ELEMENTS(charERange) EQ 0 THEN charERange = defCharERange         ; 4,~300 eV in Strangeway
+  IF N_ELEMENTS(charERange)          EQ 0 THEN charERange             = defCharERange       ; 4,~300 eV in Strangeway
 
-  IF N_ELEMENTS(altitudeRange) EQ 0 THEN altitudeRange = defAltRange ;Rob Pfaff says no lower than 1000m
+  IF N_ELEMENTS(altitudeRange)       EQ 0 THEN altitudeRange          = defAltRange         ;Rob Pfaff says no lower than 1000m
   
   ;;********************************************
   ;;satellite data options
   
-  IF N_ELEMENTS(satellite) EQ 0 THEN satellite = defSatellite          ;either "ACE", "wind", "wind_ACE", or "OMNI" (default, you see)
-  IF N_ELEMENTS(omni_Coords) EQ 0 THEN omni_Coords = defOmni_Coords    ; either "GSE" or "GSM"
+  IF N_ELEMENTS(satellite)           EQ 0 THEN satellite              = defSatellite        ;either "ACE", "wind", "wind_ACE", or "OMNI" (default, you see)
+  IF N_ELEMENTS(omni_Coords)         EQ 0 THEN omni_Coords            = defOmni_Coords      ; either "GSE" or "GSM"
 
-  IF N_ELEMENTS(delay) EQ 0 THEN delay = defDelay                      ;Delay between ACE propagated data and ChastonDB data
-                                                                       ;Bin recommends something like 11min
+  IF N_ELEMENTS(delay)               EQ 0 THEN delay                  = defDelay            ;Delay between ACE propagated data and ChastonDB data
+                                                                                            ;Bin recommends something like 11min
   
-  IF N_ELEMENTS(stableIMF) EQ 0 THEN stableIMF = defStableIMF                    ;Set to a time (in minutes) over which IMF stability is required
-  IF N_ELEMENTS(includeNoConsecData) EQ 0 THEN defIncludeNoConsecData = 0 ;Setting this to 1 includes Chaston data for which  
-                                                                       ;there's no way to calculate IMF stability
-                                                                       ;Only valid for stableIMF GE 1
-  IF N_ELEMENTS(checkBothWays) EQ 0 THEN checkBothWays = defCheckBothWays       ;
+  IF ~KEYWORD_SET(delay_res)              THEN delay_res              = 120
+  IF N_ELEMENTS(binOffset_delay)     EQ 0 THEN binOffset_delay        = 0 
+
+
+  IF N_ELEMENTS(stableIMF)           EQ 0 THEN stableIMF              = defStableIMF        ;Set to a time (in minutes) over which IMF stability is required
+  IF N_ELEMENTS(includeNoConsecData) EQ 0 THEN defIncludeNoConsecData = 0                   ;Setting this to 1 includes Chaston data for which  
+                                                                                            ;there's no way to calculate IMF stability
+                                                                                            ;Only valid for stableIMF GE 1
+  IF N_ELEMENTS(checkBothWays)       EQ 0 THEN checkBothWays          = defCheckBothWays    ;
   
-  IF N_ELEMENTS(Bx_over_ByBz_Lim) EQ 0 THEN Bx_over_ByBz_Lim = defBx_over_ByBz_Lim       ;Set this to the max ratio of Bx / SQRT(By*By + Bz*Bz)
+  IF N_ELEMENTS(Bx_over_ByBz_Lim)    EQ 0 THEN Bx_over_ByBz_Lim       = defBx_over_ByBz_Lim ;Set this to the max ratio of Bx / SQRT(By*By + Bz*Bz)
   
   ;;Which IMF clock angle are we doing?
   ;;options are 'duskward', 'dawnward', 'bzNorth', 'bzSouth', and 'all_IMF'
@@ -212,7 +218,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      ;;IF delay NE defDelay THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
      ;; IF delay GT 0 THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
      IF N_ELEMENTS(delay) GT 0 THEN delayStr = STRING(FORMAT='("__",F0.2,"mindelay")',delay/60.) ELSE delayStr = ""
+     IF N_ELEMENTS(delay_res) GT 0 THEN delayResStr = STRING(FORMAT='("__",F0.2,"Res")',delay_res/60.) ELSE delayResStr = ""
+     IF N_ELEMENTS(binOffset_delay) GT 0 THEN delBinOffStr = STRING(FORMAT='("__",F0.2,"binOffset")',binOffset_delay/60.) ELSE delBinOffStr = ""
      
+     delayStr = delayStr + delayResStr + delBinOffStr
+
      IF KEYWORD_SET(smoothWindow) THEN smoothStr = '__' + strtrim(smoothWindow,2)+"min_IMFsmooth" ELSE smoothStr=""
      
      

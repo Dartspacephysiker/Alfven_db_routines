@@ -21,7 +21,7 @@
      ctReverse_allPosData     = 0
      maskColor                = "black"
      defGridColor             = "white"
-     defGridTextColor         = "gray"
+     defGridTextColor         = "dark gray"
 
   ENDIF ELSE BEGIN
      ctIndex_allPosData       = 16 ;This is the one I usually use
@@ -45,10 +45,10 @@
   ;;********************
   ;;GRID DEFAULTS
   ;;********************
-  defGridLineThick               = 1.7
+  defGridLineThick               = 1.0
   defGridLineThick_PS            = 1.7
 
-  defGridBoldLineThick           = 6
+  defGridBoldLineThick           = 2.0
   defGridBoldLineThick_PS        = 7
 
   defcharSize_grid               = 2.0

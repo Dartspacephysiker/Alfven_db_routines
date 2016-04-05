@@ -49,9 +49,19 @@ PRO TILE_FOUR_PLOTS,filenames,titles, $
   titleObjs   = MAKE_ARRAY(nImages,/OBJ)
   
   
+  tempNameArr = !NULL
   FOR i = 0,nImages-1 DO BEGIN
-     IF ~FILE_TEST(filenames[i]) THEN BEGIN
-        PRINTF,lun,"Couldn't find " + filenames[i] + "! Not tiling these guys..."
+
+     tempName = 'temp' + STRCOMPRESS(i,/REMOVE_ALL) + '.png'
+     SPAWN,'mv ' + filenames[i] + ' ' + tempName
+     tempNameArr = [tempNameArr,tempName]
+
+     ;; IF ~FILE_TEST(filenames[i]) THEN BEGIN
+     ;;    PRINTF,lun,"Couldn't find " + filenames[i] + "! Not tiling these guys..."
+     ;;    RETURN
+     ;; ENDIF
+     IF ~FILE_TEST(tempNameArr[i]) THEN BEGIN
+        PRINTF,lun,"Couldn't find " + tempNameArr[i] + "! Not tiling these guys..."
         RETURN
      ENDIF
   ENDFOR
@@ -65,7 +75,7 @@ PRO TILE_FOUR_PLOTS,filenames,titles, $
      ;;                        /BUFFER, $
      ;;                        IMAGE_DIMENSIONS=[hDim,vDim])
      ;; ENDIF ELSE BEGIN
-        imArr[i]    = IMAGE(filenames[i], $
+        imArr[i]    = IMAGE(tempNameArr[i], $
                             LAYOUT=[2,2,i+1],$
                             MARGIN=0, $
                             /CURRENT, $
@@ -93,8 +103,10 @@ PRO TILE_FOUR_PLOTS,filenames,titles, $
      IF ~KEYWORD_SET(plotDir) THEN plotDir = './'
      IF ~KEYWORD_SET(save_combined_name) THEN save_combined_name = plotDir + 'combined_stormphases.png'
 
-     win.save,plotDir+save_combined_name
+     CD,plotDir,CURRENT=oldDir
+     win.save,save_combined_name
      PRINT,"Saved " + save_combined_name + "..."
+     CD,oldDir
   ENDIF
 
   ;;for memory's sake
@@ -111,8 +123,8 @@ PRO TILE_FOUR_PLOTS,filenames,titles, $
   IF KEYWORD_SET(delete_plots) THEN BEGIN
      PRINTF,lun,"Deleting plots after tiling..."
      FOR i = 0,nImages-1 DO BEGIN
-        PRINTF,lun,'Removing ' + filenames[i] + '...'
-        SPAWN,'rm ' + filenames[i]
+        PRINTF,lun,'Removing ' + tempNameArr[i] + '...'
+        SPAWN,'rm ' + tempNameArr[i]
      ENDFOR
   ENDIF
 
