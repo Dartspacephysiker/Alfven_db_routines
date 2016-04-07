@@ -49,21 +49,21 @@ PRO TILE_FOUR_PLOTS,filenames,titles, $
   titleObjs   = MAKE_ARRAY(nImages,/OBJ)
   
   
-  tempNameArr = !NULL
+  ;; tempNameArr = !NULL
   FOR i = 0,nImages-1 DO BEGIN
 
-     tempName = 'temp' + STRCOMPRESS(i,/REMOVE_ALL) + '.png'
-     SPAWN,'mv ' + filenames[i] + ' ' + tempName
-     tempNameArr = [tempNameArr,tempName]
+     ;; tempName = 'temp' + STRCOMPRESS(i,/REMOVE_ALL) + '.png'
+     ;; SPAWN,'mv ' + filenames[i] + ' ' + tempName
+     ;; tempNameArr = [tempNameArr,tempName]
 
-     ;; IF ~FILE_TEST(filenames[i]) THEN BEGIN
-     ;;    PRINTF,lun,"Couldn't find " + filenames[i] + "! Not tiling these guys..."
-     ;;    RETURN
-     ;; ENDIF
-     IF ~FILE_TEST(tempNameArr[i]) THEN BEGIN
-        PRINTF,lun,"Couldn't find " + tempNameArr[i] + "! Not tiling these guys..."
+     IF ~FILE_TEST(filenames[i]) THEN BEGIN
+        PRINTF,lun,"Couldn't find " + filenames[i] + "! Not tiling these guys..."
         RETURN
      ENDIF
+     ;; IF ~FILE_TEST(tempNameArr[i]) THEN BEGIN
+     ;;    PRINTF,lun,"Couldn't find " + tempNameArr[i] + "! Not tiling these guys..."
+     ;;    RETURN
+     ;; ENDIF
   ENDFOR
 
  ;; FOR i = 0, N_ELEMENTS(fileNames) - 1 DO BEGIN
@@ -75,7 +75,8 @@ PRO TILE_FOUR_PLOTS,filenames,titles, $
      ;;                        /BUFFER, $
      ;;                        IMAGE_DIMENSIONS=[hDim,vDim])
      ;; ENDIF ELSE BEGIN
-        imArr[i]    = IMAGE(tempNameArr[i], $
+        ;; imArr[i]    = IMAGE(tempNameArr[i], $
+        imArr[i]    = IMAGE(filenames[i], $
                             LAYOUT=[2,2,i+1],$
                             MARGIN=0, $
                             /CURRENT, $

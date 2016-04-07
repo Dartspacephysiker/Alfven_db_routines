@@ -5,6 +5,8 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                            BIN1=b1in,BIN2=b2in, $
                            SHIFT1=s1in,SHIFT2=s2in, $
                            DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                           DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i, $
+                           ;; PLOT_I=plot_i, $
                            DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                            CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                            CB_FORCE_OOBLOW=cb_force_oobLow
@@ -28,7 +30,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
 
 
     h2dStr_tmplt={tmplt_h2dStr, $
-                  data            : DBLARR(im1bins,im2bins), $
+                  data            : KEYWORD_SET(do_plot_i) ? LIST() : DBLARR(im1bins,im2bins), $
                   title           : "Template for 2D hist structure", $
                   lim             : DBLARR(2), $
                   shift1          : s1, $

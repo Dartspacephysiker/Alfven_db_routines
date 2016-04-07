@@ -41,8 +41,8 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
   IF N_ELEMENTS(maxM) EQ 0 THEN maxM=defMaxM
   IF N_ELEMENTS(binM) EQ 0 THEN binM=defBinM
   IF N_ELEMENTS(shiftM) EQ 0 THEN shiftM=defShiftM
-  minM=FLOOR(minM*4.0)/4.0  ;to 1/4 precision
-  maxM=FLOOR(maxM*4.0)/4.0 
+  minM=FLOOR(minM*20.0)*0.05  ;to 1/20 precision
+  maxM=FLOOR(maxM*20.0)*0.05
 
   ;;Handle ILATs
   IF N_ELEMENTS(hemi) EQ 0 THEN BEGIN
@@ -89,8 +89,8 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
   ENDELSE
   IF N_ELEMENTS(binI) EQ 0 THEN binI = defBinI
 
-  minI=FLOOR(minI*4.0)/4.0 
-  maxI=FLOOR(maxI*4.0)/4.0 
+  minI=FLOOR(minI*4.0)*0.25
+  maxI=FLOOR(maxI*4.0)*0.25
 
   ;;Handle L-shells
   IF N_ELEMENTS(minL) EQ 0 THEN minL=defMinL
