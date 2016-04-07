@@ -71,6 +71,7 @@
 ;                       2016/02/10 : Added DO_NOT_CONSIDER_IMF keyword
 ;-
 PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+                                    DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
                                    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                     BYMIN=byMin, $
                                     BZMIN=bzMin, $
@@ -167,22 +168,27 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      paramString                   = paramString + clockStr
      paramString_list              = LIST(paramString)
   ENDIF ELSE BEGIN
-     IF N_ELEMENTS(clockStr) EQ 0 THEN BEGIN
-        clockStr = defClockStr
-     ENDIF
+
+     IF ~KEYWORD_SET(dont_consider_clockAngles) THEN BEGIN
+        IF N_ELEMENTS(clockStr) EQ 0 THEN BEGIN
+           clockStr = defClockStr
+        ENDIF
      
-     ;;How to set angles? Note, clock angle is measured with
-     ;;Bz North at zero deg, ranging from -180<clock_angle<180
-     ;;Setting angle limits 45 and 135, for example, gives a 90-deg
-     ;;window for dawnward and duskward plots
-     IF clockStr NE "all_IMF" THEN BEGIN
-        angleLim1=defAngleLim1    ;in degrees
-        angleLim2=defAngleLim2    ;in degrees
-     ENDIF ELSE BEGIN 
-        angleLim1=180.0         ;for doing all IMF
-        angleLim2=180.0 
+        ;;How to set angles? Note, clock angle is measured with
+        ;;Bz North at zero deg, ranging from -180<clock_angle<180
+        ;;Setting angle limits 45 and 135, for example, gives a 90-deg
+        ;;window for dawnward and duskward plots
+        IF clockStr NE "all_IMF" THEN BEGIN
+           angleLim1=defAngleLim1 ;in degrees
+           angleLim2=defAngleLim2 ;in degrees
+        ENDIF ELSE BEGIN 
+           angleLim1=180.0      ;for doing all IMF
+           angleLim2=180.0 
+        ENDELSE
+     ENDIF ELSE BEGIN
+        clockStr  = ''
      ENDELSE
-     
+
      ;;Requirement for IMF By magnitude?
      byMinStr=''
      byMaxStr=''
@@ -230,6 +236,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      
      ;;parameter string
      paramString_list                    = LIST()
+     IF N_ELEMENTS(paramString) EQ 0 THEN paramString = ''
      IF KEYWORD_SET(multiple_delays) THEN BEGIN
         FOR iDel=0,N_ELEMENTS(delay)-1 DO BEGIN
            paramString_list.add,paramString+'--'+satellite+omniStr+'--'+clockStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
