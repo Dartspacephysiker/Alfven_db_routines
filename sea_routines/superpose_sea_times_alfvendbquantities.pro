@@ -57,6 +57,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
    OMNI_QUANTITIES_TO_PLOT=OMNI_quantities_to_plot, $
    OMNI_QUANTITY_RANGES=OMNI_quantity_ranges, $
    LOG_OMNI_QUANTITIES=log_omni_quantities, $
+   SMOOTHWINDOW=smoothWindow, $
    NEVENTHISTS=nEventHists, $
    HISTOBINSIZE=histoBinSize, HISTORANGE=histoRange, $
    TITLE__HISTO_PLOT=title__histo_plot, $
@@ -318,6 +319,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
      GENERATE_GEOMAG_QUANTITIES,DATSTARTSTOP=datStartStop,NEPOCHS=nEpochs,SW_DATA=sw_data, $
                                 USE_SYMH=use_SYMH,USE_AE=use_AE,DST=dst, $
                                 OMNI_QUANTITY=omni_quantity,LOG_OMNI_QUANTITY=log_omni_quantity, $
+                                SMOOTHWINDOW=smoothWindow, $
                                 GEOMAG_PLOT_I_LIST=geomag_plot_i_list, $
                                 GEOMAG_DAT_LIST=geomag_dat_list, $
                                 GEOMAG_TIME_LIST=geomag_time_list, $

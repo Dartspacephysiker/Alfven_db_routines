@@ -7,7 +7,9 @@ PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile,H2DSTRARR=h2dStrArr,DATANAMEARR=dat
                            MINL=minL,MAXL=maxL,BINL=binL,$
                            RAWDIR=rawDir,PARAMSTR=paramStr,$
                            CLOCKSTR=clockStr,PLOTMEDORAVG=plotMedOrAvg, $
-                           STABLEIMF=stableIMF,HOYDIA=hoyDia,HEMI=hemi, $
+                           STABLEIMF=stableIMF, $
+                           SMOOTH_IMF=smooth_IMF, $
+                           HOYDIA=hoyDia,HEMI=hemi, $
                            QUIET=quiet, $
                            OUT_TEMPFILE=out_tempfile, $
                            LUN=lun
@@ -39,6 +41,7 @@ PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile,H2DSTRARR=h2dStrArr,DATANAMEARR=dat
   IF N_ELEMENTS(clockStr)       GT 0 THEN saveStr += ',clockStr'
   IF N_ELEMENTS(plotMedOrAvg)   GT 0 THEN saveStr += ',plotMedOrAvg'
   IF N_ELEMENTS(stableIMF)      GT 0 THEN saveStr += ',stableIMF'
+  IF N_ELEMENTS(smooth_IMF)     GT 0 THEN saveStr += ',smooth_IMF'
   IF N_ELEMENTS(hoyDia)         GT 0 THEN saveStr += ',hoyDia'
   
   saveStr += ',FILENAME=tempFile'
