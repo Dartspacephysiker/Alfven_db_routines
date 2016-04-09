@@ -133,9 +133,9 @@ title__alfDB_ind_49_tAvg     = 'Poynting Flux (' + energyFluxStr + ')' + ionosph
 title__alfDB_ind_49_integ    = 'Integ. Poynting Flux (' + intEnergyFluxStr + ')' + ionosphString
 
 ;;Gross rates
-title__alfDB_ind_10_grossRate = 'Losscone e!U-!N Flux (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
-title__alfDB_ind_18_grossRate = 'Upward Ion Flux (' + numGrossStr + ')' + ionosphString        ;"Integ_Up"
-title__alfDB_ind_49_grossRate = 'Poynting Flux (' + energyGrossStr + ')' + ionosphString
+title__alfDB_ind_10_grossRate = 'e!U-!N Energy Deposition (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
+title__alfDB_ind_18_grossRate = 'Upflowing Ions (' + numGrossStr + ')' + ionosphString        ;"Integ_Up"
+title__alfDB_ind_49_grossRate = 'Wave Energy Deposition  (' + energyGrossStr + ')' + ionosphString
 
 ;;Divided by width_x
 title__alfDB_ind_10__div_by_width_x  = 'Losscone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"

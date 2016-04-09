@@ -6,7 +6,7 @@
   charSize                    = cgDefCharSize()*1.3
 
   ;;Default map position
-  defH2DMapPosition           = [0.125, 0.05, 0.875, 0.8]
+  defH2DMapPosition           = [0.15, 0.05, 0.85, 0.75]
 
   def_H2D_xSize               = 5
   def_H2D_ySize               = 5
@@ -52,7 +52,7 @@
   ;;GRID DEFAULTS
   ;;********************
   defGridLineThick               = 1.0
-  defGridLineThick_PS            = 1.7
+  defGridLineThick_PS            = 2.5
 
   defGridBoldLineThick           = 2.0
   defGridBoldLineThick_PS        = 7

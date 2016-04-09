@@ -35,11 +35,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ; Open a graphics window.
   IF ~KEYWORD_SET(no_display) THEN BEGIN
      CGDISPLAY,COLOR="black", $
-               ;; XSIZE=KEYWORD_SET(xSize) ? xSize : def_H2D_xSize, $
-               ;; YSIZE=KEYWORD_SET(ySize) ? ySize : def_H2D_ySize, $
-               /MATCH, $
-               XPOS=xPos, $
-               YPOS=yPos, $
+               XSIZE=KEYWORD_SET(xSize) ? xSize : def_H2D_xSize, $
+               YSIZE=KEYWORD_SET(ySize) ? ySize : def_H2D_ySize, $
+               ;; /MATCH, $
+               ;; XPOS=xPos, $
+               ;; YPOS=yPos, $
                /LANDSCAPE_FORCE
   ENDIF
 
@@ -71,9 +71,17 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   charScale           = (xScale*yScale)^(1./3.)
 
   IF mirror THEN BEGIN
-     IF minI GT 0 THEN centerLat = -90 ELSE centerLat = 90
+     IF minI GT 0 THEN BEGIN
+        centerLat = -90
+     ENDIF ELSE BEGIN
+        centerLat = 90
+     ENDELSE
   ENDIF ELSE BEGIN
-     IF minI GT 0 THEN centerLat = 90 ELSE centerLat = -90
+     IF minI GT 0 THEN BEGIN
+        centerLat = 90
+     ENDIF ELSE BEGIN
+        centerLat = -90
+     ENDELSE
   ENDELSE
 
   IF minI LT 0 AND NOT mirror THEN BEGIN
@@ -158,20 +166,29 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
         gridLatNames        = REVERSE(gridLatNames)
      ENDIF
   ENDIF ELSE BEGIN
-     nYlines                = (maxI-minI)/binI + 1
-     ilats                  = indgen(nYlines)*binI + minI
+
+     IF maxI LT 0 THEN BEGIN
+        tempMinI            = ABS(maxI)
+        tempMaxI            = ABS(minI)
+     ENDIF ELSE BEGIN
+        tempMinI            = minI
+        tempMaxI            = maxI
+     ENDELSE
+
+     nYlines                = (tempMaxI-tempMinI)/binI + 1
+     ilats                  = indgen(nYlines)*binI + tempMinI
 
      CASE 1 OF
-        (maxI-minI) LE 12: BEGIN
+        (tempmaxI-tempminI) LE 12: BEGIN
            minISpacing      = 6
         END
-        (maxI-minI) LE 20: BEGIN
+        (tempmaxI-tempminI) LE 20: BEGIN
            minISpacing      = 8
         END
-        (maxI-minI) LE 30: BEGIN
+        (tempmaxI-tempminI) LE 30: BEGIN
            minISpacing      = 10
         END
-        (maxI-minI) GT 30: BEGIN
+        (tempmaxI-tempminI) GT 30: BEGIN
            minISpacing      = 10
         END
      ENDCASE
@@ -187,25 +204,32 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
         ENDELSE
      ENDWHILE
 
-     gridLats               = INDGEN(10)*gridISpacing + minI
-     calcILines             = (maxI-minI)/minISpacing 
+
+     gridLats               = INDGEN(10)*gridISpacing + tempMinI
+     calcILines             = (tempMaxI-tempMinI)/minISpacing 
      CASE 1 OF 
         calcILines LE 3: BEGIN
-           gridLats               = gridLats[WHERE(gridLats GE minI AND gridLats LE maxI)]
+           gridLats               = gridLats[WHERE(gridLats GE tempMinI AND gridLats LE tempMaxI)]
         END
         calcILines LE 4: BEGIN
-           gridMinIDist           = MIN(ABS(gridLats-minI))
-           gridMaxIDist           = MIN(ABS(gridLats-maxI))
+           gridMinIDist           = MIN(ABS(gridLats-tempMinI))
+           gridMaxIDist           = MIN(ABS(gridLats-tempMaxI))
            IF gridMinIDist LT gridMaxIDist THEN BEGIN
-              gridLats               = gridLats[WHERE(gridLats GT minI AND gridLats LE maxI)]
+              gridLats               = gridLats[WHERE(gridLats GT tempMinI AND gridLats LE tempMaxI)]
            ENDIF ELSE BEGIN
-              gridLats               = gridLats[WHERE(gridLats GE minI AND gridLats LT maxI)]
+              gridLats               = gridLats[WHERE(gridLats GE tempMinI AND gridLats LT tempMaxI)]
            ENDELSE
         END
         calcILines GT 4: BEGIN
-           gridLats               = gridLats[WHERE(gridLats GT minI AND gridLats LT maxI)]
+           gridLats               = gridLats[WHERE(gridLats GT tempMinI AND gridLats LT tempMaxI)]
         END
      ENDCASE
+
+     IF maxI LT 0 THEN BEGIN
+        ilats    = -1.0*REVERSE(ilats)
+        gridLats = -1.0*REVERSE(gridLats)
+     ENDIF
+
      gridLats               = FIX(gridLats)
      gridLatNames           = gridLats
 
@@ -216,7 +240,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
 
   IF mirror THEN BEGIN
      ilats                        = -1.0 * ilats 
-     gridLats                     = -1.0 * gridLats
+     gridLats                     = -1   * FIX(gridLats)
      ;; gridLatNames                 = -1.0 * gridLatNames
   ENDIF
 
@@ -275,6 +299,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                                                                       SHIFT_LON=temp.shift1, $
                                                                       BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
                                                                       /CONVERT_MLT_TO_LON, $
+                                                                      /MOREPOINTS, $
                                                                       COUNTERCLOCKWISE=KEYWORD_SET(reverse_lShell))
 
   ;;Fill up dat plot
@@ -393,7 +418,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
 
      ;;ILATs
      FOR ilat_i=0,N_ELEMENTS(gridLats)-1 DO BEGIN
-        cgText, 45, gridLats[ilat_i], STRCOMPRESS(gridLats[ilat_i],/REMOVE_ALL), $
+        cgText, 45, gridLats[ilat_i], gridLatNames[ilat_i], $;STRCOMPRESS((maxI LT 0? -1.0 : 1.0)*gridLats[ilat_i],/REMOVE_ALL), $
                 ALIGNMENT=0.5,ORIENTATION=0,COLOR=defGridTextColor,CHARSIZE=defCharSize_grid*charScale
      ENDFOR
 

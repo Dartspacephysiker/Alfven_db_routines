@@ -12,6 +12,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            N_TILE_ROWS=n_tile_rows, $
                            N_TILE_COLUMNS=n_tile_columns, $
                            TILEPLOTSUFF=tilePlotSuff, $
+                           TILING_ORDER=tiling_order, $
                            LUN=lun, $
                            EPS_OUTPUT=eps_output, $
                            _EXTRA = e
@@ -140,6 +141,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                         /LANDSCAPE_FORCE
 
               FOR i = 0, nPlots-1 DO BEGIN  
+                 IF KEYWORD_SET(tiling_order) THEN j = tiling_order[i] ELSE j = i
+
                  position         = CALC_PLOT_POSITION(i+1,n_tile_columns,n_tile_rows)
 
                  ;;handle map position
@@ -157,7 +160,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  cb_position[3]   = (position[3]-position[1])*defCBPosition[3]+position[1]
 
 
-                 PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
+                 PLOTH2D_STEREOGRAPHIC,h2dStrArr[j],tempFile, $
                                        NO_COLORBAR=no_colorbar, $
                                        WINDOW_XSIZE=xSize, $
                                        WINDOW_YSIZE=ySize, $
@@ -173,7 +176,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
               IF ~KEYWORD_SET(eps_output) THEN BEGIN
                  CGPS2RASTER, plotDir + paramStr+tPSuff+'.ps', $
                               /PNG, $
-                              WIDTH=400*n_tile_columns, $
+                              WIDTH=800*n_tile_columns, $
                               DELETE_PS=del_PS
               ENDIF
                  
@@ -193,7 +196,10 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
                                        NO_COLORBAR=no_colorbar, $
-                                       POSITION=position, $
+                                       WINDOW_XSIZE=xSize, $
+                                       WINDOW_YSIZE=ySize, $
+                                       MAP_POSITION=map_position, $
+                                       CB_POSITION=cb_position, $
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
                                        _EXTRA=e 
                  CGPS_Close 
@@ -201,7 +207,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  IF ~KEYWORD_SET(eps_output) THEN BEGIN
                     CGPS2RASTER, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
                                  /PNG, $
-                                 WIDTH=400, $
+                                 WIDTH=800, $
                                  DELETE_PS=del_PS
                  ENDIF
               ENDFOR

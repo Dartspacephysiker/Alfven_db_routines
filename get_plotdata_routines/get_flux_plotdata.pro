@@ -148,6 +148,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Eflux_Losscone_Integ"): BEGIN
+           IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+              h2dStr.title  = title__alfDB_ind_10__div_by_width_x
+              ;; dataName     += '__div_by_width_x'
+              LOAD_MAPPING_RATIO_DB,mapRatio, $
+                                    DO_DESPUNDB=maximus.despun
+              magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
+           ENDIF
            IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
               CASE 1 OF
                  KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
@@ -164,13 +171,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            inData           = maximus.eflux_losscone_integ[tmp_i]
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
-           IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
-              h2dStr.title  = title__alfDB_ind_10__div_by_width_x
-              ;; dataName     += '__div_by_width_x'
-              LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.despun
-              magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
-           ENDIF
+
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("ESA_Number_flux"): BEGIN
            h2dStr.title  = title__alfDB_esa_nFlux
@@ -278,6 +279,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_mlt_by_w_x   = 1
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ_Up"): BEGIN
+           IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+              h2dStr.title  = title__alfDB_ind_18__div_by_width_x
+              ;; dataName     += '__div_by_width_x'
+              LOAD_MAPPING_RATIO_DB,mapRatio, $
+                                    DO_DESPUNDB=maximus.despun
+              magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
+           ENDIF
            IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
               CASE 1 OF
                  KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
@@ -294,13 +302,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            inData           = maximus.integ_ion_flux_up[tmp_i]
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
-           IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
-              h2dStr.title  = title__alfDB_ind_18__div_by_width_x
-              ;; dataName     += '__div_by_width_x'
-              LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.despun
-              magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
-           ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Energy"): BEGIN
            h2dStr.title     = title__alfDB_ind_14
@@ -444,7 +445,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      ;; h2dStr.title           = 'Time-averaged ' + h2dStr.title
      CASE 1 OF
         KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
-           h2dStr.title     = 'Gross ' + h2dStr.title
+           ;; h2dStr.title     = 'Gross ' + h2dStr.title
            dataName         = 'grossRate_' + dataName
         END
         ELSE: BEGIN
