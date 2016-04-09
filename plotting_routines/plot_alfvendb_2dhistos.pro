@@ -8,6 +8,9 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            HEMI=hemi, $
                            CLOCKSTR=clockStr, $
                            NO_COLORBAR=no_colorbar, $
+                           TILE_IMAGES=tile_images, $
+                           N_TILE_ROWS=n_tile_rows, $
+                           N_TILE_COLUMNS=n_tile_columns, $
                            LUN=lun, $
                            EPS_OUTPUT=eps_output, $
                            _EXTRA = e
@@ -90,9 +93,17 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
               SET_PLOT, mydevice
            ENDIF ELSE BEGIN
               ;;Create a PostScript file.
-              CGPS_Open, plotDir + paramStr+'--'+dataNameArr[i]+'.ps',ENCAPSULATED=eps_output
+              CGPS_Open, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
+                         /NOMATCH, $
+                         XSIZE=5, $
+                         YSIZE=5, $
+                         LANDSCAPE=0, $
+                         ENCAPSULATED=eps_output
+
+
               PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
                                     NO_COLORBAR=no_colorbar, $
+                                    POSITION=position, $
                                     MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
                                     _EXTRA=e 
               CGPS_Close 
@@ -100,7 +111,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
               IF ~KEYWORD_SET(eps_output) THEN BEGIN
                  CGPS2RASTER, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
                               /PNG, $
-                              WIDTH=800, $
+                              WIDTH=400, $
                               DELETE_PS=del_PS
               ENDIF
            ENDELSE

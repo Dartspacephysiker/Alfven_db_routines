@@ -69,7 +69,7 @@
   ;;**********************************
   ;; IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
   ;; IF ~KEYWORD_SET(wholeCap) THEN BEGIN
-     cbPosition       = [0.25, 0.89, 0.75, 0.91]
+     cbPosition       = [0.10, 0.90, 0.90, 0.92]
      cbTLocation      = "TOP"
      cbVertical       = 0
      cbTCharsize      = cgDefCharsize()*1.0

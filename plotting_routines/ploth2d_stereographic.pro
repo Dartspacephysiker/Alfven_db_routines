@@ -14,6 +14,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                           PLOTTITLE=plotTitle, MIRROR=mirror, $
                           DEBUG=debug, $
                           NO_COLORBAR=no_colorbar, $
+                          POSITION=position, $
                           CB_FORCE_OOBLOW=cb_force_ooblow, $
                           CB_FORCE_OOBHIGH=cb_force_oobhigh, $
                           _EXTRA=e
@@ -26,7 +27,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   @ploth2d_stereographic_defaults.pro
 
   ; Open a graphics window.
-  cgDisplay,color="black"
+  cgDisplay,color="black",XSIZE=5,YSIZE=5,/LANDSCAPE_FORCE
 
   IF KEYWORD_SET(mirror) THEN BEGIN
      IF mirror NE 0 THEN mirror = 1 ELSE mirror = 0
@@ -41,7 +42,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   
   ;; IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
   ;; IF ~KEYWORD_SET(wholeCap) THEN BEGIN
-     position = [0.1, 0.075, 0.9, 0.75] 
+     ;; position = [0.1, 0.075, 0.9, 0.75] 
+  IF ~KEYWORD_SET(position) THEN position = [0.125, 0.05, 0.875, 0.8] 
      lim=[(mirror) ? -maxI : minI,minM*15,(mirror) ? -minI : maxI,maxM*15]
   ;; ENDIF ELSE BEGIN
   ;;    position = [0.05, 0.05, 0.85, 0.85] 
@@ -275,7 +277,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ;; Add map grid. Set the Clip_Text keyword to enable the NO_CLIP graphics keyword. 
   IF KEYWORD_SET(temp.shift1) THEN BEGIN
      ;; shiftedMLTs                     = ((maxM-minM)/binM+temp.shift1) * 15.
-     shiftedMLTs                     = (indgen((maxm-minm)/binm)*binm+temp.shift1)*15.
+     shiftedMLTs                     = (indgen((maxM-minM)/binM+1)*binM+temp.shift1)*15.
      ;; gridLons                        = gridLons + temp.shift1*15
   ENDIF ELSE BEGIN
      shiftedMLTs                     = !NULL
@@ -332,24 +334,49 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      gridLatNames[mirror ? -1 : 0]   = gridLatNames[mirror ? -1 : 0] + $
                                        ( KEYWORD_SET(DO_lShell) ? " L-shell" : " ILAT" )
 
-     cgMap_Grid, Clip_Text=1, $
-                 /NoClip, $
-                 /LABEL, $
-                 /NO_GRID, $
-                 LINESTYLE=0, $
-                 THICK=3, $
-                 COLOR=defGridTextColor, $
-                 LATS=gridLats, $
-                 LATNAMES=gridLatNames, $
-                 ;; LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI )*4,$
-                 ;; LATLABEL=(mean([minM,maxM]))*15+15, $
-                 ;; LATLABEL=((maxM-minM)/2.0+minM)*15-binM*7.5,
-                 ;;LONNAMES=[strtrim(minM,2)+" MLT",STRTRIM(INDGEN((maxM-minM)/1.0)+(minM+1),2)]
-                 LATLABEL=45, $
-                 LONS=mltSites*15, $
-                 LONNAMES=lonNames, $
-                 LONLABEL=lonLabel, $
-                 CHARSIZE=defCharSize_grid
+     ;; cgMap_Grid, Clip_Text=1, $
+     ;;             /NoClip, $
+     ;;             ;; /LABEL, $
+     ;;             /NO_GRID, $
+     ;;             LINESTYLE=0, $
+     ;;             THICK=3, $
+     ;;             COLOR=defGridTextColor, $
+     ;;             LATS=gridLats, $
+     ;;             LATNAMES=gridLatNames, $
+     ;;             ;; LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI )*4,$
+     ;;             ;; LATLABEL=(mean([minM,maxM]))*15+15, $
+     ;;             ;; LATLABEL=((maxM-minM)/2.0+minM)*15-binM*7.5,
+     ;;             ;;LONNAMES=[strtrim(minM,2)+" MLT",STRTRIM(INDGEN((maxM-minM)/1.0)+(minM+1),2)]
+     ;;             LATLABEL=45, $
+     ;;             ;; LONS=mltSites*15, $
+     ;;             ;; LONNAMES=lonNames, $
+     ;;             LONLABEL=lonLabel, $
+     ;;             CHARSIZE=defCharSize_grid
+
+
+  ;; cgText, 0, minI-1, '0 MLT',ALIGNMENT=0.5, ORIENTATION=0, CHARSIZE=defCharSize      
+  ;; cgText, 180, minI, '12',ALIGNMENT=0.5, ORIENTATION=0.00, CHARSIZE=defCharSize   
+  ;; cgText, 90, minI-1, '6',ALIGNMENT=0.5,CHARSIZE=defCharSize
+  ;; cgText, -90, minI-1, '18',ALIGNMENT=0.5,CHARSIZE=defCharSize
+
+;; [0.125, 0.05, 0.875, 0.8] 
+
+     ;;MLTs
+     cgText,MEAN([position[2],position[0]]), position[1]-0.035,'0 MLT',/NORMAL, $
+            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid      
+     cgText,MEAN([position[2],position[0]]), position[3]+0.005,'12',/NORMAL, $
+            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid   
+     cgText,position[2]+0.02, MEAN([position[3],position[1]])-0.015,'6',/NORMAL, $
+            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid
+     cgText,position[0]-0.03, MEAN([position[3],position[1]])-0.015,'18',/NORMAL, $
+            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid
+
+     ;;ILATs
+     FOR ilat_i=0,N_ELEMENTS(gridLats)-1 DO BEGIN
+        cgText, 45, gridLats[ilat_i], STRCOMPRESS(gridLats[ilat_i],/REMOVE_ALL), $
+                ALIGNMENT=0.5,ORIENTATION=0,COLOR=defGridTextColor,CHARSIZE=defCharSize_grid      
+     ENDFOR
+
   ENDIF ELSE BEGIN
 
      ;;Longitudes
