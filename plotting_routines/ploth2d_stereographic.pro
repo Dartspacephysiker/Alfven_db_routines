@@ -14,7 +14,13 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                           PLOTTITLE=plotTitle, MIRROR=mirror, $
                           DEBUG=debug, $
                           NO_COLORBAR=no_colorbar, $
-                          POSITION=position, $
+                          MAP_POSITION=map_position, $
+                          CB_POSITION=cb_position, $
+                          WINDOW_XPOS=xPos, $
+                          WINDOW_YPOS=yPos, $
+                          WINDOW_XSIZE=xSize, $
+                          WINDOW_YSIZE=ySize, $
+                          NO_DISPLAY=no_display, $
                           CB_FORCE_OOBLOW=cb_force_ooblow, $
                           CB_FORCE_OOBHIGH=cb_force_oobhigh, $
                           _EXTRA=e
@@ -27,7 +33,15 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   @ploth2d_stereographic_defaults.pro
 
   ; Open a graphics window.
-  cgDisplay,color="black",XSIZE=5,YSIZE=5,/LANDSCAPE_FORCE
+  IF ~KEYWORD_SET(no_display) THEN BEGIN
+     CGDISPLAY,COLOR="black", $
+               ;; XSIZE=KEYWORD_SET(xSize) ? xSize : def_H2D_xSize, $
+               ;; YSIZE=KEYWORD_SET(ySize) ? ySize : def_H2D_ySize, $
+               /MATCH, $
+               XPOS=xPos, $
+               YPOS=yPos, $
+               /LANDSCAPE_FORCE
+  ENDIF
 
   IF KEYWORD_SET(mirror) THEN BEGIN
      IF mirror NE 0 THEN mirror = 1 ELSE mirror = 0
@@ -42,13 +56,19 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   
   ;; IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
   ;; IF ~KEYWORD_SET(wholeCap) THEN BEGIN
-     ;; position = [0.1, 0.075, 0.9, 0.75] 
-  IF ~KEYWORD_SET(position) THEN position = [0.125, 0.05, 0.875, 0.8] 
+     ;; map_position = [0.1, 0.075, 0.9, 0.75] 
+  IF ~KEYWORD_SET(map_position) THEN map_position = defH2DMapPosition
      lim=[(mirror) ? -maxI : minI,minM*15,(mirror) ? -minI : maxI,maxM*15]
   ;; ENDIF ELSE BEGIN
-  ;;    position = [0.05, 0.05, 0.85, 0.85] 
+  ;;    map_position = [0.05, 0.05, 0.85, 0.85] 
   ;;    lim=[(mirror) ? -maxI : minI, 0 ,(mirror) ? -minI : maxI,360] ; lim = [minimum lat, minimum long, maximum lat, maximum long]
   ;; ENDELSE
+
+  ;; xScale              = (defH2DMapPosition[2]-defH2DMapPosition[0])/(map_position[2]-map_position[0])
+  ;; yScale              = (defH2DMapPosition[3]-defH2DMapPosition[1])/(map_position[3]-map_position[1])
+  xScale              = (map_position[2]-map_position[0])/(defH2DMapPosition[2]-defH2DMapPosition[0])
+  yScale              = (map_position[3]-map_position[1])/(defH2DMapPosition[3]-defH2DMapPosition[1])
+  charScale           = (xScale*yScale)^(1./3.)
 
   IF mirror THEN BEGIN
      IF minI GT 0 THEN centerLat = -90 ELSE centerLat = 90
@@ -63,7 +83,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ENDELSE
 
   cgMap_Set, centerLat, centerLon,/STEREOGRAPHIC, /HORIZON, $
-             /ISOTROPIC, /NOERASE, /NOBORDER, POSITION=position,LIMIT=lim
+             /ISOTROPIC, /NOERASE, /NOBORDER, POSITION=map_position,LIMIT=lim
                 ;;Limit=[minI-5,maxM*15-360,maxI+5,minM*15],
                 
   IF N_ELEMENTS(plotTitle) EQ 0 THEN BEGIN
@@ -362,19 +382,19 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
 ;; [0.125, 0.05, 0.875, 0.8] 
 
      ;;MLTs
-     cgText,MEAN([position[2],position[0]]), position[1]-0.035,'0 MLT',/NORMAL, $
-            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid      
-     cgText,MEAN([position[2],position[0]]), position[3]+0.005,'12',/NORMAL, $
-            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid   
-     cgText,position[2]+0.02, MEAN([position[3],position[1]])-0.015,'6',/NORMAL, $
-            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid
-     cgText,position[0]-0.03, MEAN([position[3],position[1]])-0.015,'18',/NORMAL, $
-            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid
+     cgText,MEAN([map_position[2],map_position[0]]), map_position[1]-0.035*yScale,'0 MLT',/NORMAL, $
+            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+     cgText,MEAN([map_position[2],map_position[0]]), map_position[3]+0.005*yScale,'12',/NORMAL, $
+            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+     cgText,map_position[2]+0.02*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'6',/NORMAL, $
+            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+     cgText,map_position[0]-0.03*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'18',/NORMAL, $
+            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
 
      ;;ILATs
      FOR ilat_i=0,N_ELEMENTS(gridLats)-1 DO BEGIN
         cgText, 45, gridLats[ilat_i], STRCOMPRESS(gridLats[ilat_i],/REMOVE_ALL), $
-                ALIGNMENT=0.5,ORIENTATION=0,COLOR=defGridTextColor,CHARSIZE=defCharSize_grid      
+                ALIGNMENT=0.5,ORIENTATION=0,COLOR=defGridTextColor,CHARSIZE=defCharSize_grid*charScale
      ENDFOR
 
   ENDIF ELSE BEGIN
@@ -422,7 +442,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                  ;; LONS=(1*INDGEN(12)*30),$
                  LONS=(1*INDGEN(nLons)*360/nLons),$
                  LONNAMES=lonNames, $
-                 CHARSIZE=defCharSize_grid
+                 CHARSIZE=defCharSize_grid*charScale
   ENDELSE
 
   ;defCharSize = cgDefCharSize()*0.75
@@ -451,22 +471,22 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                 bTexPos2, $
                 '|Integral|: ' + string(absIntegral,FORMAT=integralLabelFormat), $
                 /NORMAL, $
-                CHARSIZE=defCharSize
+                CHARSIZE=defCharSize*charScale
         cgText,lTexPos1, $
                bTexPos1, $
                'Integral: ' + string(integral,Format=integralLabelFormat), $
                /NORMAL, $
-               CHARSIZE=defCharSize 
+               CHARSIZE=defCharSize*charScale
         cgText,lTexPos2, $
                bTexPos1, $
                'Dawnward: ' + string(dawnIntegral,Format=integralLabelFormat), $
                /NORMAL, $
-               CHARSIZE=defCharSize 
+               CHARSIZE=defCharSize*charScale
         cgText,lTexPos2, $
                bTexPos2, $
                'Duskward: ' + string(duskIntegral,Format=integralLabelFormat), $
                /NORMAL, $
-               CHARSIZE=defCharSize 
+               CHARSIZE=defCharSize*charScale
      ;; ENDIF
 
   ENDIF
@@ -531,9 +551,10 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                  ;; /Discrete, $
                  RANGE=cbRange, $
                  TITLE=cbTitle, $
-                 POSITION=cbPosition, TEXTTHICK=cbTextThick, VERTICAL=cbVertical, $
-                 TLOCATION=cbTLocation, TCHARSIZE=cbTCharSize,$
-                 CHARSIZE=cbTCharSize,$
+                 POSITION=KEYWORD_SET(cb_position) ? cb_position : cbPosition, $
+                 TEXTTHICK=cbTextThick, VERTICAL=cbVertical, $
+                 TLOCATION=cbTLocation, TCHARSIZE=cbTCharSize*charScale,$
+                 CHARSIZE=cbTCharSize*charScale,$
                  TICKLEN=0.5, $
                  ;; TICKINTERVAL=(temp.is_logged AND temp.logLabels) ? 0.25 : !NULL, $
                  TICKNAMES=cbTickNames

@@ -23,6 +23,8 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
                                     MEDIANPLOT=medianPlot, $
                                     CURRENT=current, $
                                     POSITION=position, $
+                                    WINDOW_XPOS=xPos, $
+                                    WINDOW_YPOS=yPos, $
                                     NO_COLORBAR=no_colorbar, $
                                     CB_LIMITS=cb_limits, $
                                     CB_FORCE_OOBLOW=cb_force_ooblow, $
@@ -143,7 +145,10 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
   ENDIF
 
   ; Open a graphics window.
-  IF N_ELEMENTS(current) GT 1 THEN current.set_current ELSE cgDisplay,color="white"
+  IF N_ELEMENTS(current) GT 1 THEN current.set_current ELSE CGDISPLAY,COLOR="white",XSIZE=5,YSIZE=5, $
+            XPOS=xPos, $
+            YPOS=yPos, $
+            /LANDSCAPE_FORCE
 
   IF KEYWORD_SET(mirror) THEN BEGIN
      IF mirror NE 0 THEN mirror = 1 ELSE mirror = 0
@@ -153,7 +158,7 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
      IF midnight EQ 0 THEN midnight=!NULL
   ENDIF
   
-  position = KEYWORD_SET(position) ? position : [0.1, 0.075, 0.9, 0.75] 
+  position = KEYWORD_SET(position) ? position : defH2DMapPosition
   lim      = [(mirror) ? -maxI : minI,minM*15,(mirror) ? -minI : maxI,maxM*15]
   
   IF mirror THEN BEGIN
@@ -383,7 +388,7 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
   ;;******************************
   ;; Add map grid. Set the Clip_Text keyword to enable the NO_CLIP graphics keyword. 
   IF KEYWORD_SET(shiftM) THEN BEGIN
-     shiftedMLTs                     = (indgen((maxM-minm)/binM)*binM+shiftM)*15.
+     shiftedMLTs                     = (indgen((maxM-minm)/binM+1)*binM+shiftM)*15.
   ENDIF ELSE BEGIN
      shiftedMLTs                     = !NULL
   ENDELSE
@@ -428,20 +433,37 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
      gridLatNames[mirror ? -1 : 0]   = gridLatNames[mirror ? -1 : 0] + $
                                        ( KEYWORD_SET(DO_lShell) ? " L-shell" : " ILAT" )
 
-     cgMap_Grid, Clip_Text=1, $
-                 /NoClip, $
-                 /LABEL, $
-                 /NO_GRID, $
-                 LINESTYLE=0, $
-                 THICK=3, $
-                 COLOR=defGridTextColor, $
-                 LATS=gridLats, $
-                 LATNAMES=gridLatNames, $
-                 LATLABEL=45, $
-                 LONS=mltSites*15, $
-                 LONNAMES=lonNames, $
-                 LONLABEL=lonLabel, $
-                 CHARSIZE=defCharSize_grid
+     ;; cgMap_Grid, Clip_Text=1, $
+     ;;             /NoClip, $
+     ;;             /LABEL, $
+     ;;             /NO_GRID, $
+     ;;             LINESTYLE=0, $
+     ;;             THICK=3, $
+     ;;             COLOR=defGridTextColor, $
+     ;;             LATS=gridLats, $
+     ;;             LATNAMES=gridLatNames, $
+     ;;             LATLABEL=45, $
+     ;;             LONS=mltSites*15, $
+     ;;             LONNAMES=lonNames, $
+     ;;             LONLABEL=lonLabel, $
+     ;;             CHARSIZE=defCharSize_grid
+
+     ;;MLTs
+     cgText,MEAN([position[2],position[0]]), position[1]-0.035,'0 MLT',/NORMAL, $
+            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid      
+     cgText,MEAN([position[2],position[0]]), position[3]+0.005,'12',/NORMAL, $
+            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid   
+     cgText,position[2]+0.02, MEAN([position[3],position[1]])-0.015,'6',/NORMAL, $
+            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid
+     cgText,position[0]-0.03, MEAN([position[3],position[1]])-0.015,'18',/NORMAL, $
+            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid
+
+     ;;ILATs
+     FOR ilat_i=0,N_ELEMENTS(gridLats)-1 DO BEGIN
+        cgText, 45, gridLats[ilat_i], STRCOMPRESS(gridLats[ilat_i],/REMOVE_ALL), $
+                ALIGNMENT=0.5,ORIENTATION=0,COLOR=defGridTextColor,CHARSIZE=defCharSize_grid      
+     ENDFOR
+
   ENDIF ELSE BEGIN
 
      ;;Longitudes

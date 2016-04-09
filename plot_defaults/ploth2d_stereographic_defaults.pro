@@ -5,6 +5,12 @@
   ;; charSize = cgDefCharSize()*((N_ELEMENTS(wholeCap) EQ 0) ? 1.3 : 0.7 )
   charSize                    = cgDefCharSize()*1.3
 
+  ;;Default map position
+  defH2DMapPosition           = [0.125, 0.05, 0.875, 0.8]
+
+  def_H2D_xSize               = 5
+  def_H2D_ySize               = 5
+
   ;;******************************
   ;;Color tables
   ;;******************************

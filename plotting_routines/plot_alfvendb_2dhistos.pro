@@ -11,6 +11,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            TILE_IMAGES=tile_images, $
                            N_TILE_ROWS=n_tile_rows, $
                            N_TILE_COLUMNS=n_tile_columns, $
+                           TILEPLOTSUFF=tilePlotSuff, $
                            LUN=lun, $
                            EPS_OUTPUT=eps_output, $
                            _EXTRA = e
@@ -65,15 +66,15 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
         CD, CURRENT=c & PRINTF,LUN, "Current directory is " + c + "/" + plotDir 
         PRINTF,LUN, "Creating output files..." 
         
-        FOR i = 0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN  
+        IF KEYWORD_SET(polarContour) THEN BEGIN
+           ;; The NAME field of the !D system variable contains the name of the
+           ;; current plotting device.
+           mydevice = !D.NAME
            
-           IF KEYWORD_SET(polarContour) THEN BEGIN
-              ;; The NAME field of the !D system variable contains the name of the
-              ;; current plotting device.
-              mydevice = !D.NAME
-              
-              ;; Set plotting to PostScript:
-              SET_PLOT, 'PS'
+           ;; Set plotting to PostScript:
+           SET_PLOT, 'PS'
+           
+           FOR i = 0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN  
               
               ;; Use DEVICE to set some PostScript device options:
               DEVICE, FILENAME='myfile.ps', $
@@ -88,36 +89,127 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
               
               ;; Close the PostScript file:
               DEVICE, /CLOSE
-              
-              ;; Return plotting to the original device:
-              SET_PLOT, mydevice
-           ENDIF ELSE BEGIN
-              ;;Create a PostScript file.
-              CGPS_Open, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
+           ENDFOR
+           ;; Return plotting to the original device:
+           SET_PLOT, mydevice
+        ENDIF ELSE BEGIN
+           ;;Create a PostScript file.
+
+           defXSize  = 5
+           defYSize  = 5
+           IF KEYWORD_SET(tile_images) THEN BEGIN
+              nPlots            = N_ELEMENTS(h2dStrArr) - 1
+              IF ~KEYWORD_SET(n_tile_rows)    THEN n_tile_rows    = CEIL(nPlots/2.)
+              IF ~KEYWORD_SET(n_tile_columns) THEN n_tile_columns = CEIL(nPlots/2.)
+              xSize = defXSize*n_tile_rows 
+              ySize = defYSize*n_tile_columns 
+
+
+              defMapPosition      = [0.125, 0.05, 0.875, 0.8]
+              defCBPosition       = [0.10, 0.90, 0.90, 0.92]
+
+              ;; normMapWidth        = defMapPosition[2]-defMapPosition[0]
+              ;; normMapHeight       = defMapPosition[3]-defMapPosition[1]
+
+
+              IF ~KEYWORD_SET(tilePlotSuff) THEN BEGIN
+                 tPSuff = ''
+                 ;; FOR k=0,N_ELEMENTS(h2dStrArr)-2 DO BEGIN
+                 ;;    tPSuff += '--' + dataNameArr[k]
+                 ;; ENDFOR
+                 tPSuff = '--' + STRCOMPRESS(nPlots,/REMOVE_ALL) + '_tiled_plots'
+              ENDIF ELSE BEGIN
+                 tPSuff = tilePlotSuff
+              ENDELSE
+
+              CGPS_Open, plotDir + paramStr+tPSuff+'.ps', $
                          /NOMATCH, $
-                         XSIZE=5, $
-                         YSIZE=5, $
-                         LANDSCAPE=0, $
+                         XSIZE=xSize, $
+                         YSIZE=ySize, $
+                         LANDSCAPE=1, $
                          ENCAPSULATED=eps_output
 
+              ;; !P.MULTI = [0, n_tile_rows, n_tile_columns]
 
-              PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
-                                    NO_COLORBAR=no_colorbar, $
-                                    POSITION=position, $
-                                    MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
-                                    _EXTRA=e 
+              CGDISPLAY,xSize*100,ySize*100,COLOR="black", $
+                        ;; XSIZE=KEYWORD_SET(xSize) ? xSize : def_H2D_xSize, $
+                        ;; YSIZE=KEYWORD_SET(ySize) ? ySize : def_H2D_ySize, $
+                        ;; XSIZE=xSize, $
+                        ;; YSIZE=ySize, $
+                        ;; /MATCH, $
+                        /LANDSCAPE_FORCE
+
+              FOR i = 0, nPlots-1 DO BEGIN  
+                 position         = CALC_PLOT_POSITION(i+1,n_tile_columns,n_tile_rows)
+
+                 ;;handle map position
+                 map_position     = position
+                 map_position[0]  = (position[2]-position[0])*defMapPosition[0]+position[0]
+                 map_position[1]  = (position[3]-position[1])*defMapPosition[1]+position[1]
+                 map_position[2]  = (position[2]-position[0])*defMapPosition[2]+position[0]
+                 map_position[3]  = (position[3]-position[1])*defMapPosition[3]+position[1]
+
+                 ;;handle map position
+                 cb_position      = position
+                 cb_position[0]   = (position[2]-position[0])*defCBPosition[0]+position[0]
+                 cb_position[1]   = (position[3]-position[1])*defCBPosition[1]+position[1]
+                 cb_position[2]   = (position[2]-position[0])*defCBPosition[2]+position[0]
+                 cb_position[3]   = (position[3]-position[1])*defCBPosition[3]+position[1]
+
+
+                 PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
+                                       NO_COLORBAR=no_colorbar, $
+                                       WINDOW_XSIZE=xSize, $
+                                       WINDOW_YSIZE=ySize, $
+                                       MAP_POSITION=map_position, $
+                                       CB_POSITION=cb_position, $
+                                       /NO_DISPLAY, $
+                                       MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
+                                       _EXTRA=e 
+              ENDFOR
+
               CGPS_Close 
               ;;Create a PNG file with a width of 800 pixels.
               IF ~KEYWORD_SET(eps_output) THEN BEGIN
-                 CGPS2RASTER, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
+                 CGPS2RASTER, plotDir + paramStr+tPSuff+'.ps', $
                               /PNG, $
-                              WIDTH=400, $
+                              WIDTH=400*n_tile_columns, $
                               DELETE_PS=del_PS
               ENDIF
-           ENDELSE
-           
-        ENDFOR    
+                 
+              !P.MULTI = 0
 
+           ENDIF ELSE BEGIN
+
+              FOR i = 0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN  
+                 
+                 CGPS_Open, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
+                            /NOMATCH, $
+                            XSIZE=5, $
+                            YSIZE=5, $
+                            LANDSCAPE=0, $
+                            ENCAPSULATED=eps_output
+                 
+                 
+                 PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
+                                       NO_COLORBAR=no_colorbar, $
+                                       POSITION=position, $
+                                       MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
+                                       _EXTRA=e 
+                 CGPS_Close 
+                 ;;Create a PNG file with a width of 800 pixels.
+                 IF ~KEYWORD_SET(eps_output) THEN BEGIN
+                    CGPS2RASTER, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
+                                 /PNG, $
+                                 WIDTH=400, $
+                                 DELETE_PS=del_PS
+                 ENDIF
+              ENDFOR
+
+           ENDELSE
+
+        ENDELSE
+           
      ENDELSE
   ENDELSE
 

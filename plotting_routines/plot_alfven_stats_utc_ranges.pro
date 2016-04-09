@@ -236,6 +236,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  EPS_OUTPUT=eps_output, $
                                  PRINT_ALFVENDB_2DHISTOS=print_alfvendb_2dhistos, $
                                  OUT_TEMPFILE=out_tempFile, $
+                                 TILE_IMAGES=tile_images, $
+                                 N_TILE_ROWS=n_tile_rows, $
+                                 N_TILE_COLUMNS=n_tile_columns, $
+                                 TILEPLOTSUFF=tilePlotSuff, $
                                  NO_COLORBAR=no_colorbar, $
                                  CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                  CB_FORCE_OOBLOW=cb_force_oobLow, $
@@ -474,6 +478,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                          PLOTDIR=plotDir, PLOTMEDORAVG=plotMedOrAvg, $
                          PARAMSTR=paramString, DEL_PS=del_PS, $
                          HEMI=hemi, $
+                         TILE_IMAGES=tile_images, $
+                         N_TILE_ROWS=n_tile_rows, $
+                         N_TILE_COLUMNS=n_tile_columns, $
+                         TILEPLOTSUFF=tilePlotSuff, $
                          NO_COLORBAR=no_colorbar, $
                          ;; CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                          ;; CB_FORCE_OOBLOW=cb_force_oobLow, $
