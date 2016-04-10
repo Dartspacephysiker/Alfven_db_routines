@@ -15,19 +15,29 @@ PRO TILE_FOUR_PLOTS,filenames,titles, $
   ;; nImages        = N_ELEMENTS(filenames)
   nImages        = 4
 
+  ;; imHDim         = 1600
+  ;; imVDim         = 960
+  ;; xRange         = [200,1600]
+  ;; yRange         = [40,960]
+
   imHDim         = 1600
-  imVDim         = 960
-  xRange         = [200,1600]
-  yRange         = [40,960]
+  imVDim         = 800
+  xRange         = [000,1600]
+  yRange         = [000,800]
 
   IF KEYWORD_SET(combined_to_buffer) THEN BEGIN
+     ;; hDim        = 1600
+     ;; vDim        = 960
+
      hDim        = 1600
-     vDim        = 960
+     vDim        = 800
 
      scaleFactor = 0.2
   ENDIF ELSE BEGIN
-     hDim        = 400
-     vDim        = 320
+     ;; hDim        = 400
+     ;; vDim        = 320
+     hDim        = 800
+     vDim        = 400
      scaleFactor = 0.5
   ENDELSE
 

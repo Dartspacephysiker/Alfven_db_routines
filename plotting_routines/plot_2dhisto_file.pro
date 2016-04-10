@@ -111,7 +111,13 @@ PRO PLOT_2DHISTO_FILE,file, $
   FOR i=0,nPlots-1 DO BEGIN
      quant_i                                         = quants_to_plot[i]
 
-     CGPS_Open, plotDir +plotNamePref+dataNames[quant_i]+'.ps',ENCAPSULATED=eps_output
+     CGPS_Open, plotDir +plotNamePref+dataNames[quant_i]+'.ps', $
+                /NOMATCH, $
+                XSIZE=5, $
+                YSIZE=5, $
+                LANDSCAPE=0, $
+                ENCAPSULATED=eps_output, $
+                /QUIET
 
      PLOTH2D_STEREOGRAPHIC,h2dStrArr[quant_i],file, $
                            NO_COLORBAR=no_colorbar, $

@@ -15,10 +15,15 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
                           
   nImages        = N_ELEMENTS(filenames)
 
+  ;; imHDim         = 800
+  ;; imVDim         = 640
+  ;; xRange         = [125,675]
+  ;; yRange         = [20,620]
+
   imHDim         = 800
-  imVDim         = 640
-  xRange         = [125,675]
-  yRange         = [20,620]
+  imVDim         = 800
+  xRange         = [5,795]
+  yRange         = [5,795]
 
   IF KEYWORD_SET(combined_to_buffer) THEN BEGIN
      ;; hDim        = 800
@@ -27,7 +32,8 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
      scaleFactor = 0.5
   ENDIF ELSE BEGIN
      hDim        = 400
-     vDim        = 320
+     ;; vDim        = 320
+     vDim        = 400
      scaleFactor = 0.5
   ENDELSE
 
@@ -79,11 +85,11 @@ PRO TILE_THREE_PLOTS,filenames,titles, $
      IF KEYWORD_SET(titles) THEN BEGIN
         ;; titleObjs[i] = TEXT(i*hDim + hDim/2., vDim*8./9., titles[i], $
         titleObjs[i] = TEXT(i*adjHDim + adjHDim/2., $
-                            500*scaleFactor, $;adjVDim*8./9., $
+                            650*scaleFactor, $;adjVDim*8./9., $
                             titles[i], $
                             ALIGNMENT=0.5, $
                             /DEVICE, $
-                            FONT_SIZE=20.*scaleFactor)
+                            FONT_SIZE=30.*scaleFactor)
      ENDIF
   ENDFOR
   
