@@ -72,7 +72,7 @@
 ;-
 PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                     DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
-                                   ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                     BYMIN=byMin, $
                                     BZMIN=bzMin, $
                                     BYMAX=byMax, $
@@ -179,11 +179,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
         ;;Setting angle limits 45 and 135, for example, gives a 90-deg
         ;;window for dawnward and duskward plots
         IF clockStr NE "all_IMF" THEN BEGIN
-           angleLim1=defAngleLim1 ;in degrees
-           angleLim2=defAngleLim2 ;in degrees
+           angleLim1 = KEYWORD_SET(angleLim1) ? angleLim1 : defAngleLim1 ;in degrees
+           angleLim2 = KEYWORD_SET(angleLim2) ? angleLim2 : defAngleLim2 ;in degrees
         ENDIF ELSE BEGIN 
-           angleLim1=180.0      ;for doing all IMF
-           angleLim2=180.0 
+           angleLim1 = KEYWORD_SET(angleLim1) ? angleLim1 : 180 ;for doing all IMF
+           angleLim2 = KEYWORD_SET(angleLim2) ? angleLim2 : 180
         ENDELSE
      ENDIF ELSE BEGIN
         clockStr  = ''
@@ -236,14 +236,15 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      
      ;;parameter string
      paramString_list                    = LIST()
+     IF clockStr EQ '' THEN clockOutStr  = '' ELSE clockOutStr = '--' + clockStr
      IF N_ELEMENTS(paramString) EQ 0 THEN paramString = ''
      IF KEYWORD_SET(multiple_delays) THEN BEGIN
         FOR iDel=0,N_ELEMENTS(delay)-1 DO BEGIN
-           paramString_list.add,paramString+'--'+satellite+omniStr+'--'+clockStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
+           paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
                        byMinStr+byMaxStr+bzMinStr+bzMaxStr
         ENDFOR
         ENDIF ELSE BEGIN
-           paramString=paramString+'--'+satellite+omniStr+'--'+clockStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
+           paramString=paramString+'--'+satellite+omniStr+clockOutStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
                        byMinStr+byMaxStr+bzMinStr+bzMaxStr
            paramString_list.add,paramString
         ENDELSE

@@ -28,6 +28,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           CLOCKSTR=clockStr, $
                           ANGLELIM1=angleLim1, $
                           ANGLELIM2=angleLim2, $
+                          DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
                           BYMIN=byMin, $
                           BZMIN=bzMin, $
                           BYMAX=byMax, $
@@ -189,6 +190,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         tHistDenominator = GET_TIMEHIST_DENOMINATOR(CLOCKSTR=clockStr, $
                                                     ANGLELIM1=angleLim1, $
                                                     ANGLELIM2=angleLim2, $
+                                                    DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
                                                     ORBRANGE=orbRange, $
                                                     ALTITUDERANGE=altitudeRange, $
                                                     CHARERANGE=charERange, $

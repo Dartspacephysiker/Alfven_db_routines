@@ -1,9 +1,13 @@
 ;+
 ;2016/02/19 Completely redone.
 ;-
-PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
                                   ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                   DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
+                                  CLOCKSTR=clockStr, $
+                                  DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
+                                  ANGLELIM1=angleLim1, $
+                                  ANGLELIM2=angleLim2, $
                                   BYMIN=byMin, $
                                   BYMAX=byMax, $
                                   BZMIN=bzMin, $
@@ -81,26 +85,29 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1
                              PARAMSTRING=paramString,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
                              HOYDIA=hoyDia,LUN=lun,_EXTRA=e
   
-  SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-                                  ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                                  BYMIN=byMin, $
-                                  BZMIN=bzMin, $
-                                  BYMAX=byMax, $
-                                  BZMAX=bzMax, $
-                                  DO_ABS_BYMIN=abs_byMin, $
-                                  DO_ABS_BYMAX=abs_byMax, $
-                                  DO_ABS_BZMIN=abs_bzMin, $
-                                  DO_ABS_BZMAX=abs_bzMax, $
-                                  BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
-                                  DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
-                                  PARAMSTRING=paramString, $
-                                  SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                                  DELAY=delay, $
-                                  MULTIPLE_DELAYS=multiple_delays, $
-                                  RESOLUTION_DELAY=delay_res, $
-                                  BINOFFSET_DELAY=binOffset_delay, $
-                                  STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
-                                  LUN=lun
+  SET_IMF_PARAMS_AND_IND_DEFAULTS,$
+     DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
+     ANGLELIM1=angleLim1, $
+     ANGLELIM2=angleLim2, $
+     ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+     BYMIN=byMin, $
+     BZMIN=bzMin, $
+     BYMAX=byMax, $
+     BZMAX=bzMax, $
+     DO_ABS_BYMIN=abs_byMin, $
+     DO_ABS_BYMAX=abs_byMax, $
+     DO_ABS_BZMIN=abs_bzMin, $
+     DO_ABS_BZMAX=abs_bzMax, $
+     BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+     DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
+     PARAMSTRING=paramString, $
+     SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
+     DELAY=delay, $
+     MULTIPLE_DELAYS=multiple_delays, $
+     RESOLUTION_DELAY=delay_res, $
+     BINOFFSET_DELAY=binOffset_delay, $
+     STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
+     LUN=lun
   
   fastLocInterped_i_list = GET_RESTRICTED_AND_INTERPED_DB_INDICES(FL_fastLoc,satellite,delay,LUN=lun, $
                                                                   DBTIMES=fastLoc__times,dbfile=fastLoc__dbfile, HEMI=hemi, $
@@ -117,6 +124,9 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1
                                                                   DO_ABS_BZMIN=abs_bzMin, $
                                                                   DO_ABS_BZMAX=abs_bzMax, $
                                                                   CLOCKSTR=clockStr, $
+                                                                  DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
+                                                                  ANGLELIM1=angleLim1, $
+                                                                  ANGLELIM2=angleLim2, $
                                                                   DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
                                                                   BX_OVER_BYBZ=Bx_over_ByBz_Lim, $
                                                                   STABLEIMF=stableIMF, $
@@ -124,8 +134,6 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1
                                                                   RESOLUTION_DELAY=delay_res, $
                                                                   BINOFFSET_DELAY=binOffset_delay, $
                                                                   OMNI_COORDS=omni_Coords, $
-                                                                  ANGLELIM1=angleLim1, $
-                                                                  ANGLELIM2=angleLim2, $
                                                                   HWMAUROVAL=HwMAurOval, $
                                                                   HWMKPIND=HwMKpInd, $
                                                                   NO_BURSTDATA=no_burstData, $

@@ -41,6 +41,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                   labelFormat     : '', $
                   do_midCBLabel   : 0, $
                   logLabels       : 0, $
+                  do_posNeg_cb    : 0, $
                   do_plotIntegral : 0, $
                   do_timeAvg      : KEYWORD_SET(do_timeAvg_fluxQuantities), $
                   do_grossRate    : KEYWORD_SET(do_grossRate_fluxQuantities), $

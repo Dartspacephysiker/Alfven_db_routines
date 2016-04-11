@@ -1,4 +1,7 @@
-FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
+                                  ANGLELIM1=angleLim1, $
+                                  ANGLELIM2=angleLim2, $
+                                  DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
                                   ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                   DO_IMF_CONDS=do_IMF_conds, $
                                   BYMIN=byMin, $
@@ -80,8 +83,14 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLEL
 
   ;;Get the appropriate divisor for IMF conditions
   IF KEYWORD_SET(do_IMF_conds) THEN BEGIN
-     GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-                                   ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+     GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
+                                   ORBRANGE=orbRange, $
+                                   ALTITUDERANGE=altitudeRange, $
+                                   CHARERANGE=charERange, $
+                                   CLOCKSTR=clockStr, $
+                                   DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
+                                   ANGLELIM1=angleLim1, $
+                                   ANGLELIM2=angleLim2, $
                                    BYMIN=byMin, $
                                    BYMAX=byMax, $
                                    BZMIN=bzMin, $

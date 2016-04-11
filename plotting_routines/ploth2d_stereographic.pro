@@ -98,44 +98,6 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      plotTitle = temp.title
   ENDIF
 
-  ;;5 bar things per decade
-  ;; IF KEYWORD_SET(temp.is_logged) THEN BEGIN
-  ;;    nLevels = CEIL(temp.lim[1]-temp.lim[0])*5
-  ;; ENDIF
-
-  ;;Select color table
-  ;; IF temp.is_fluxData AND ~temp.is_logged THEN BEGIN
-  IF ~temp.is_logged THEN BEGIN
-
-     IF N_ELEMENTS(WHERE(temp.data) LT 0) GT 0 THEN BEGIN
-        RAINBOW_COLORS,N_COLORS=nLevels
-
-        ;;This is the one for doing sweet flux plots that include negative values 
-        ;; cgLoadCT, ctIndex, BREWER=ctBrewer, REVERSE=ctReverse, NCOLORS=nLevels
-     ENDIF ELSE BEGIN
-        SUNSET_COLORS,N_COLORS=nLevels
-     ENDELSE
-
-  ENDIF ELSE BEGIN
-     ;; This one is the one we use for nEvent- and orbit-type plots (plots w/ all positive values)
-     RAINBOW_COLORS,N_COLORS=nLevels
-     ;; cgLoadCT, ctIndex_allPosData, BREWER=ctBrewer_allPosData, REVERSE=ctReverse_allPosData, NCOLORS=nLevels
-
-     ;; IF chrisPosScheme THEN BEGIN
-     ;;    ;;make last color dark red
-     ;;    TVLCT,r,g,b,/GET   
-     ;;    r[nLevels-1]             = 180
-     ;;    g[nLevels-1]             = 0
-     ;;    b[nLevels-1]             = 0
-     ;;    TVLCT,r,g,b
-     ;; ENDIF
-
-  ENDELSE
-
-  ; Set up the contour levels.
-  ;   levels = cgScaleVector(Indgen(nlevels), 0,255)      
-  
-
   ;;Get longitudes for drawing boxes
   nXlines                   = (maxM-minM)/binM + 1
   mlts                      = indgen(nXlines)*binM+minM
@@ -255,6 +217,52 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
 
   h2descl                         = MAKE_ARRAY(SIZE(temp.data,/DIMENSIONS),VALUE=0)
 
+
+  ;;5 bar things per decade
+  ;; IF KEYWORD_SET(temp.is_logged) THEN BEGIN
+  ;;    nLevels = CEIL(temp.lim[1]-temp.lim[0])*5
+  ;; ENDIF
+
+  ;;Select color table
+  ;; IF temp.is_fluxData AND ~temp.is_logged THEN BEGIN
+  IF ~temp.is_logged THEN BEGIN
+
+     IF N_ELEMENTS(WHERE(temp.data[notMasked]) LT 0) EQ 0 AND ~temp.do_posNeg_cb THEN BEGIN
+        RAINBOW_COLORS,N_COLORS=nLevels
+
+        ;;This is the one for doing sweet flux plots that include negative values 
+        ;; cgLoadCT, ctIndex, BREWER=ctBrewer, REVERSE=ctReverse, NCOLORS=nLevels
+     ENDIF ELSE BEGIN
+        SUNSET_COLORS,N_COLORS=nLevels
+     ENDELSE
+
+  ENDIF ELSE BEGIN
+     IF temp.do_posNeg_cb THEN BEGIN
+        SUNSET_COLORS,N_COLORS=nLevels
+
+        ;;This is the one for doing sweet flux plots that include negative values 
+        ;; cgLoadCT, ctIndex, BREWER=ctBrewer, REVERSE=ctReverse, NCOLORS=nLevels
+     ENDIF ELSE BEGIN
+        ;; This one is the one we use for nEvent- and orbit-type plots (plots w/ all positive values)
+        RAINBOW_COLORS,N_COLORS=nLevels
+     ENDELSE
+
+     ;; cgLoadCT, ctIndex_allPosData, BREWER=ctBrewer_allPosData, REVERSE=ctReverse_allPosData, NCOLORS=nLevels
+
+     ;; IF chrisPosScheme THEN BEGIN
+     ;;    ;;make last color dark red
+     ;;    TVLCT,r,g,b,/GET   
+     ;;    r[nLevels-1]             = 180
+     ;;    g[nLevels-1]             = 0
+     ;;    b[nLevels-1]             = 0
+     ;;    TVLCT,r,g,b
+     ;; ENDIF
+
+  ENDELSE
+
+  ; Set up the contour levels.
+  ;   levels = cgScaleVector(Indgen(nlevels), 0,255)      
+
   ;;Scale this stuff
   ;;The reason for all the trickery is that we want to know what values are out of bounds,
   ;; and bytscl doesn't do things quite the way we need them done.
@@ -278,7 +286,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      is_OOBLow              = 1
   ENDIF
   
-  h2descl[notMasked]        = BYTSCL(temp.data(notMasked), $
+  h2descl[notMasked]        = BYTSCL(temp.data[notMasked], $
                                      top=nLevels-1-is_OOBHigh-is_OOBLow, $
                                      MAX=temp.lim[1], $
                                      MIN=temp.lim[0] ) + is_OOBLow
