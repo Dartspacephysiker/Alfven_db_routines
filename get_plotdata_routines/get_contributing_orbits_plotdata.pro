@@ -6,10 +6,16 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
                                      ORBCONTRIBRANGE=orbContribRange, $
                                      UNIQUEORBS_I=uniqueOrbs_i, $
                                      H2D_NONZERO_CONTRIBORBS_I=h2d_nonZero_contribOrbs_i, $
+                                     H2D_NONZERO_I=h2d_nonzero_i, $
                                      H2DSTR=h2dStr, $
                                      TMPLT_H2DSTR=tmplt_h2dStr, $ ;H2DFLUXN=h2dFluxN, $
-                                     DATANAME=dataName
+                                     ORBCONTRIB_H2DSTR_FOR_DIVISION=orbContrib_H2DStr_for_division, $
+                                     DATANAME=dataName, $
+                                     PRINT_MAX_AND_MIN=print_mandm, $
+                                     LUN=lun
+  COMPILE_OPT idl2
 
+  IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
   ;;  @orbplot_defaults.PRO
 
@@ -30,8 +36,14 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
   ;; h2dStr                                            ={tmplt_h2dStr}
   h2dStr                                      = tmplt_h2dStr
   h2dStr.data[*,*]                            = 0
-  h2dStr.title                                = "Num Contributing Orbits"
-  dataName                                    = "orbsContributing_"
+  IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
+  IF is_maximus THEN BEGIN
+     h2dStr.title                                = "Probability of Occurrence (orbit-based)"
+     dataName                                    = "NOrbsWEventsPerContribOrbs_"
+  ENDIF ELSE BEGIN
+     h2dStr.title                                = "Num Contributing Orbits"
+     dataName                                    = "orbsContributing_"
+  ENDELSE
 
   h2dOrbN                                     = INTARR(N_ELEMENTS(tmplt_h2dStr.data[*,0]),N_ELEMENTS(tmplt_h2dStr.data[0,*]))
   orbArr                                      = INTARR(N_ELEMENTS(uniqueOrbs_i),N_ELEMENTS(tmplt_h2dStr.data[*,0]),N_ELEMENTS(tmplt_h2dStr.data[0,*]))
@@ -60,4 +72,21 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
      h2dStr.lim                               = orbContribRange
 
   h2d_nonZero_contribOrbs_i                   = WHERE(h2dStr.data GT 0,/NULL)
+
+  IF is_maximus THEN BEGIN
+     h2dStr.data[h2d_nonzero_i]               = h2dStr.data[h2d_nonzero_i]/orbContrib_H2DStr_for_division.data[h2d_nonzero_i]
+  ENDIF
+
+  IF KEYWORD_SET(print_mandm) THEN BEGIN
+     fmt    = 'F10.2'
+     maxh2d = ALOG10(MAX(h2dStr.data[h2d_nonzero_i]))
+     minh2d = ALOG10(MIN(h2dStr.data[h2d_nonzero_i]))
+     medh2d = ALOG10(MEDIAN(h2dStr.data[h2d_nonzero_i]))
+     PRINTF,lun,h2dStr.title
+     PRINTF,lun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
+            maxh2d, $
+            minh2d, $
+            medh2d            
+
+  ENDIF
 END

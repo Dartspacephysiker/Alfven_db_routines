@@ -5,7 +5,9 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS,EPLOTRANGE=EPlotRange, $
                                CHARIEPLOTRANGE=chariEPlotRange, $
                                NEVENTPERMINRANGE=nEventPerMinRange, $
                                NEVENTPERORBRANGE=nEventPerOrbRange, $
-                               PROBOCCURRENCERANGE=probOccurrenceRange
+                               PROBOCCURRENCERANGE=probOccurrenceRange, $
+                               NOWEPCO_RANGE=nowepco_range
+
 
 ;; PRO SET_ALFVEN_STATS_PLOT_LIMS,EPLOTRANGE=EPlotRange,LOGEFPLOT=logEfPlot, $
 ;;                                ENUMFLPLOTRANGE=ENumFlPlotRange,LOGENUMFLPLOT=logENumFlPlot, $
@@ -39,6 +41,8 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS,EPLOTRANGE=EPlotRange, $
 
   defProbOccurrenceRange    = [1e-4,1.0]
   ;; defLogProbOccurrenceRange = [10e-4,10e0]
+
+  defNOWEPCORange           = [0,1]
 
   IF N_ELEMENTS(ENumFlPlotRange) EQ 0 THEN BEGIN   ;;For linear or log e- number flux plotrange
      ;; IF N_ELEMENTS(logENumFlPlot) EQ 0 THEN ENumFlPlotRange= defENumFlPlotRange ELSE ENumFlPlotRange= defENumFlLogPlotRange
@@ -84,4 +88,8 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS,EPLOTRANGE=EPlotRange, $
      probOccurrenceRange = defProbOccurrenceRange
   ENDIF
      
+  IF N_ELEMENTS(nowepco_range) EQ 0 OR N_ELEMENTS(nowepco_range) NE 2 THEN BEGIN
+     nowepco_range       = defNOWEPCORange
+  ENDIF
+
 END

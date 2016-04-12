@@ -113,9 +113,12 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NEVENTPERMINPLOT=nEventPerMinPlot, $
                           NEVENTPERMINRANGE=nEventPerMinRange, $
                           LOGNEVENTPERMIN=logNEventPerMin, $
+                          NORBSWITHEVENTSPERCONTRIBORBSPLOT=nOrbsWithEventsPerContribOrbsPlot, $
+                          NOWEPCO_RANGE=nowepco_range, $
                           PROBOCCURRENCEPLOT=probOccurrencePlot, $
                           PROBOCCURRENCERANGE=probOccurrenceRange, $
                           LOGPROBOCCURRENCE=logProbOccurrence, $
+                          THISTDENOMINATORPLOT=tHistDenominatorPlot, $
                           TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                           TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                           LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -186,7 +189,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      IF KEYWORD_SET(nEventPerMinPlot) OR KEYWORD_SET(probOccurrencePlot) $
         ;; OR KEYWORD_SET(timeAvgd_pfluxPlot) OR KEYWORD_SET(timeAvgd_eFluxMaxPlot) $
         OR KEYWORD_SET(do_timeAvg_fluxQuantities) $
-        OR KEYWORD_SET(nEventPerOrbPlot) THEN BEGIN 
+        OR KEYWORD_SET(nEventPerOrbPlot) $
+        OR KEYWORD_SET(tHistDenominatorPlot) THEN BEGIN 
         tHistDenominator = GET_TIMEHIST_DENOMINATOR(CLOCKSTR=clockStr, $
                                                     ANGLELIM1=angleLim1, $
                                                     ANGLELIM2=angleLim2, $
@@ -236,12 +240,24 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                     ;; FASTLOCTIMEFILE=fastLocTimeFile, $
                                                     FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                                     OUT_FASTLOCINTERPED_I=fastLocInterped_i, $
+                                                    MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
+                                                    TMPLT_H2DSTR=tmplt_h2dStr, $
+                                                    H2DSTR=h2dStr, $
+                                                    DATANAME=dataName, $
+                                                    DATARAWPTR=dataRawPtr, $
                                                     INDSFILEPREFIX=ParamStrPrefix, $
                                                     INDSFILESUFFIX=paramStrSuffix, $
-                                                    BURSTDATA_EXCLUDED=burstData_excluded, $
-                                                    DATANAMEARR=dataNameArr, $
-                                                    DATARAWPTRARR=dataRawPtrArr, $
-                                                    KEEPME=keepme)
+                                                    BURSTDATA_EXCLUDED=burstData_excluded)
+
+        
+        IF keepMe THEN BEGIN 
+           IF KEYWORD_SET(tHistDenominatorPlot) THEN BEGIN
+              h2dStrArr     = [h2dStrArr,h2dStr] 
+              dataNameArr   = [dataNameArr,dataName] 
+              dataRawPtrArr = [dataRawPtrArr,dataRawPtr] 
+           ENDIF
+        ENDIF
+
      ENDIF
         
      ;;#####FLUX QUANTITIES#########
@@ -657,7 +673,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      ;; uniqueOrbs_i=plot_i[uniqueOrbs_ii]
      ;; nOrbs=N_ELEMENTS(uniqueOrbs_i)
      
-     IF KEYWORD_SET(orbContribPlot) OR KEYWORD_SET(orbfreqplot) OR KEYWORD_SET(nEventPerOrbPlot) OR KEYWORD_SET(numOrbLim) THEN BEGIN
+     IF KEYWORD_SET(orbContribPlot) OR KEYWORD_SET(orbfreqplot) $
+        OR KEYWORD_SET(nEventPerOrbPlot) OR KEYWORD_SET(numOrbLim) $
+        OR KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) THEN BEGIN
         
         GET_CONTRIBUTING_ORBITS_PLOTDATA,fastLoc,fastLocInterped_i, $
                                          MINM=minM, $
@@ -674,6 +692,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                          ORBCONTRIBRANGE=orbContribRange, $
                                          UNIQUEORBS_I=uniqueOrbs_i, $
                                          H2D_NONZERO_CONTRIBORBS_I=h2d_nonzero_contribOrbs_i, $
+                                         H2D_NONZERO_I=h2d_nonzero_nEv_i, $
                                          H2DSTR=h2dContribOrbStr, $
                                          TMPLT_H2DSTR=tmplt_h2dStr, $ ;H2DFLUXN=h2dFluxN, $
                                          DATANAME=dataName
@@ -695,6 +714,37 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         ENDIF
         
      ENDIF
+     
+     ;;########Probability of occurrence à la Chaston et al. [2007]########
+     IF KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) THEN BEGIN
+
+        GET_CONTRIBUTING_ORBITS_PLOTDATA,maximus,plot_i, $
+                                         MINM=minM, $
+                                         MAXM=maxM, $
+                                         BINM=binM, $
+                                         SHIFTM=shiftM, $
+                                         MINI=minI, $
+                                         MAXI=maxI, $
+                                         BINI=binI, $
+                                         DO_LSHELL=do_lShell, $
+                                         MINL=minL, $
+                                         MAXL=maxL, $
+                                         BINL=binL, $
+                                         ORBCONTRIBRANGE=nowepco_range, $
+                                         UNIQUEORBS_I=uniqueOrbs_i, $
+                                         H2D_NONZERO_CONTRIBORBS_I=h2d_nonzero_eventOrbs_i, $
+                                         H2D_NONZERO_I=h2d_nonzero_contribOrbs_i, $
+                                         H2DSTR=h2dNOrbsWEventsStr, $
+                                         TMPLT_H2DSTR=tmplt_h2dStr, $ ;H2DFLUXN=h2dFluxN, $
+                                         DATANAME=dataName
+        
+        h2dNOrbsWEventsStr.data[h2d_nonzero_contribOrbs_i] = h2dNOrbsWEventsStr.data[h2d_nonzero_contribOrbs_i]/h2dContribOrbStr.data[h2d_nonzero_contribOrbs_i]
+
+           h2dStrArr=[h2dStrArr,h2dNOrbsWEventsStr] 
+           IF keepMe THEN dataNameArr=[dataNameArr,dataName] 
+        ENDIF
+
+     END
 
      ;;########TOTAL Orbits########
      IF KEYWORD_SET(orbtotplot) OR KEYWORD_SET(orbfreqplot) $
@@ -956,7 +1006,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
 
      ;;********************************************************
      ;;If something screwy goes on, better take stock of it and alert user
-     n_zero                     = N_ELEMENTS(h2dStrArr[0])-N_ELEMENTS(h2d_nonzero_nEv_i)
+     n_zero                     = N_ELEMENTS(h2dFluxN)-N_ELEMENTS(h2d_nonzero_nEv_i)
      FOR i = 2, N_ELEMENTS(h2dStrArr)-1 DO BEGIN 
         IF n_elements(where(h2dStrArr[i].data EQ 0,/NULL)) LT $
            n_zero THEN BEGIN 

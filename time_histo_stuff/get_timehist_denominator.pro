@@ -34,9 +34,13 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                   ;; FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, $
                                   FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                   OUT_FASTLOCINTERPED_I=out_fastLocInterped_i, $
+                                  MAKE_TIMEHIST_H2DSTR=make_timeHist_h2dStr, $
+                                  TMPLT_H2DSTR=tmplt_h2dStr, $
+                                  H2DSTR=h2dStr, $
+                                  DATANAME=dataName, $
+                                  DATARAWPTR=dataRawPtr, $
                                   INDSFILEPREFIX=indsFilePrefix,INDSFILESUFFIX=indsFileSuffix, $
                                   BURSTDATA_EXCLUDED=burstData_excluded, $
-                                  DATANAMEARR=dataNameArr,DATARAWPTRARR=dataRawPtrArr,KEEPME=keepme, $
                                   LUN=lun
 
   COMPILE_OPT idl2
@@ -185,6 +189,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
 
   MAKE_FASTLOC_HISTO,OUTTIMEHISTO=tHistDenominator, $
                      FASTLOC_INDS=fastLocInterped_i, $
+                     OUT_DELTA_TS=out_delta_ts, $
                      FASTLOC_STRUCT=FL_fastLoc,FASTLOC_TIMES=FASTLOC__Times,FASTLOC_DELTA_T=FASTLOC__delta_t, $
                      MINMLT=minM,MAXMLT=maxM, $
                      BINMLT=binM, $
@@ -226,6 +231,33 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
   ;;Out vars
   out_fastLocInterped_i = fastLocInterped_i
   out_fastLoc           = FL_fastLoc
+
+  IF KEYWORD_SET(make_timeHist_h2dStr) THEN BEGIN
+     IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
+        tmplt_h2dStr  = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
+                                          MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
+                                          MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
+                                          SHIFT1=shiftM,SHIFT2=shiftI, $
+                                          DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i, $
+                                          ;; PLOT_I=plot_i, $
+                                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                                          CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                          CB_FORCE_OOBLOW=cb_force_oobLow)
+     ENDIF
+
+     h2dStr                    = tmplt_h2dStr
+     h2dStr.is_fluxData        = 0
+     
+     dataName                  = "tHistDenom"
+     h2dStr.labelFormat        = fluxPlotEPlotCBLabelFormat
+     h2dStr.logLabels          = 0
+     h2dStr.do_plotIntegral    = 0
+     h2dStr.do_midCBLabel      = 0
+     h2dStr.title              = 'FAST ephemeris histogram (min)'
+     h2dStr.data               = tHistDenominator/60.
+
+     dataRawPtr                = PTR_NEW(out_delta_ts)
+  ENDIF
 
   RETURN,tHistDenominator
 

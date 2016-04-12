@@ -227,7 +227,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ;; IF temp.is_fluxData AND ~temp.is_logged THEN BEGIN
   IF ~temp.is_logged THEN BEGIN
 
-     IF N_ELEMENTS(WHERE(temp.data[notMasked]) LT 0) EQ 0 AND ~temp.do_posNeg_cb THEN BEGIN
+     IF N_ELEMENTS(WHERE(temp.data[notMasked] LT 0,/NULL)) EQ 0 AND ~temp.do_posNeg_cb THEN BEGIN
         RAINBOW_COLORS,N_COLORS=nLevels
 
         ;;This is the one for doing sweet flux plots that include negative values 

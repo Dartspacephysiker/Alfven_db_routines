@@ -16,6 +16,7 @@
 
 PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
                        OUTTIMEHISTO=outTimeHisto, FASTLOC_INDS=fastLoc_inds, $
+                       OUT_DELTA_TS=out_delta_ts, $
                        MINMLT=minMLT,MAXMLT=maxMLT, $
                        BINMLT=binMLT, $
                        SHIFTMLT=shiftM, $
@@ -151,4 +152,5 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      IF KEYWORD_SET(output_textFile) THEN CLOSE,textLun
   ;; ENDELSE
 
+     out_delta_ts              = fastLoc_delta_t[fastLoc_inds]
 END
