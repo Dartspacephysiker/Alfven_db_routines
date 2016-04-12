@@ -731,20 +731,19 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                          MAXL=maxL, $
                                          BINL=binL, $
                                          ORBCONTRIBRANGE=nowepco_range, $
-                                         UNIQUEORBS_I=uniqueOrbs_i, $
+                                         UNIQUEORBS_I=uniqueOrbs_wEvents_i, $
                                          H2D_NONZERO_CONTRIBORBS_I=h2d_nonzero_eventOrbs_i, $
                                          H2D_NONZERO_I=h2d_nonzero_contribOrbs_i, $
                                          H2DSTR=h2dNOrbsWEventsStr, $
                                          TMPLT_H2DSTR=tmplt_h2dStr, $ ;H2DFLUXN=h2dFluxN, $
+                                         ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
                                          DATANAME=dataName
         
-        h2dNOrbsWEventsStr.data[h2d_nonzero_contribOrbs_i] = h2dNOrbsWEventsStr.data[h2d_nonzero_contribOrbs_i]/h2dContribOrbStr.data[h2d_nonzero_contribOrbs_i]
+        ;; h2dNOrbsWEventsStr.data[h2d_nonzero_contribOrbs_i] = h2dNOrbsWEventsStr.data[h2d_nonzero_contribOrbs_i]/h2dContribOrbStr.data[h2d_nonzero_contribOrbs_i]
 
-           h2dStrArr=[h2dStrArr,h2dNOrbsWEventsStr] 
-           IF keepMe THEN dataNameArr=[dataNameArr,dataName] 
-        ENDIF
-
-     END
+        h2dStrArr=[h2dStrArr,h2dNOrbsWEventsStr] 
+        IF keepMe THEN dataNameArr=[dataNameArr,dataName] 
+     ENDIF
 
      ;;########TOTAL Orbits########
      IF KEYWORD_SET(orbtotplot) OR KEYWORD_SET(orbfreqplot) $

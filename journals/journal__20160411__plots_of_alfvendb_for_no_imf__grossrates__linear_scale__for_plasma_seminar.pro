@@ -6,8 +6,8 @@ PRO JOURNAL__20160411__PLOTS_OF_ALFVENDB_FOR_NO_IMF__GROSSRATES__LINEAR_SCALE__F
   
   ;; plotSuff                       = 'high-energy_e'
 
-  tile_images                    = 1
-  tiling_order                   = [3,0,2,1]
+  tile_images                    = 0
+  ;; tiling_order                   = [3,0,2,1]
 
   divide_by_width_x              = 1 ;for ion plot and eflux plot
 
@@ -21,8 +21,8 @@ PRO JOURNAL__20160411__PLOTS_OF_ALFVENDB_FOR_NO_IMF__GROSSRATES__LINEAR_SCALE__F
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;ILAT stuff
   hemi                           = 'NORTH'
-  minILAT                        = 62
-  maxILAT                        = 86
+  minILAT                        = 60
+  maxILAT                        = 84
 
   ;; hemi                           = 'SOUTH'
   ;; minILAT                        = -86
@@ -48,7 +48,7 @@ PRO JOURNAL__20160411__PLOTS_OF_ALFVENDB_FOR_NO_IMF__GROSSRATES__LINEAR_SCALE__F
   ;; ;;PROBOCCURRENCE
   ;; probOccurrenceRange            = [1e-3,1e-1]
   logProbOccurrence              = 1
-  probOccurrenceRange            = [0,0.05]
+  probOccurrenceRange            = [0,0.03]
   logProbOccurrence              = 0
 
   ;;49--pFluxEst
@@ -116,7 +116,7 @@ PRO JOURNAL__20160411__PLOTS_OF_ALFVENDB_FOR_NO_IMF__GROSSRATES__LINEAR_SCALE__F
      N_TILE_COLUMNS=n_tile_columns, $
      TILEPLOTSUFF=tilePlotSuff, $
      TILING_ORDER=tiling_order, $
-     /CB_FORCE_OOBHIGH, $
+     ;; /CB_FORCE_OOBHIGH, $
      ;; /CB_FORCE_OOBLOW, $
      /COMBINE_PLOTS, $
      /SAVE_COMBINED_WINDOW, $

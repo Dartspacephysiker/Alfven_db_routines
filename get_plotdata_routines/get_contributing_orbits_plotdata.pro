@@ -17,6 +17,8 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
+  IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
+
   ;;  @orbplot_defaults.PRO
 
   IF N_ELEMENTS(uniqueOrbs_i) EQ 0 THEN BEGIN
@@ -39,10 +41,10 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
   IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
   IF is_maximus THEN BEGIN
      h2dStr.title                                = "Probability of Occurrence (orbit-based)"
-     dataName                                    = "NOrbsWEventsPerContribOrbs_"
+     dataName                                    = "NOrbsWEventsPerContribOrbs"
   ENDIF ELSE BEGIN
      h2dStr.title                                = "Num Contributing Orbits"
-     dataName                                    = "orbsContributing_"
+     dataName                                    = "orbsContributing"
   ENDELSE
 
   h2dOrbN                                     = INTARR(N_ELEMENTS(tmplt_h2dStr.data[*,0]),N_ELEMENTS(tmplt_h2dStr.data[0,*]))
@@ -79,14 +81,13 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
 
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      fmt    = 'F10.2'
-     maxh2d = ALOG10(MAX(h2dStr.data[h2d_nonzero_i]))
-     minh2d = ALOG10(MIN(h2dStr.data[h2d_nonzero_i]))
-     medh2d = ALOG10(MEDIAN(h2dStr.data[h2d_nonzero_i]))
+     maxh2d = MAX(h2dStr.data[h2d_nonzero_i])
+     minh2d = MIN(h2dStr.data[h2d_nonzero_i])
+     medh2d = MEDIAN(h2dStr.data[h2d_nonzero_i])
      PRINTF,lun,h2dStr.title
      PRINTF,lun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
             maxh2d, $
             minh2d, $
-            medh2d            
-
+            medh2d
   ENDIF
 END

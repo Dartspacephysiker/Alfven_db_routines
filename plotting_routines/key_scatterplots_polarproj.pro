@@ -43,12 +43,13 @@
 
 PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
                                DAYSIDE=dayside,NIGHTSIDE=nightside, $
+                               HEMI=hemi, $
                                NORTH=north,SOUTH=south, $
                                CHARESCR=chareScr,ABSMAGCSCR=absMagcScr, $
                                OVERLAYAURZONE=overlayAurZone, $
                                ADD_ORBIT_LEGEND=add_orbit_legend, $
+                               CENTERLON=centerLon, $
                                OVERPLOT=overplot, $
-                               CURRENT=current, $
                                LAYOUT=layout, $
                                PLOTPOSITION=plotPosition, $
                                OUT_PLOT=out_plot, $
@@ -58,11 +59,15 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
                                PLOT_I_FILE=plot_i_file, PLOT_I_DIR=plot_i_dir, $
                                JUST_PLOT_I=just_plot_i, $
                                PLOT_I_LIST=plot_i_list, COLOR_LIST=color_list, $
+                               SAVEPLOT=savePlot, $
+                               SPNAME=sPName, $
                                STRANS=sTrans, $
                                PLOTTITLE=plotTitle, $
                                _EXTRA = e
 
   COMPILE_OPT idl2
+
+  @utcplot_defaults.pro
 
   ;; Defaults
   defMinI = 50
@@ -83,11 +88,11 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
 
   IF NOT KEYWORD_SET(sTrans) THEN sTrans = defSTrans
 
-  IF ~KEYWORD_SET(outDir) THEN SET_PLOT_DIR,outDir,FOR_ALFVENDB=for_alfvenDB, $
-                                            FOR_STORMS=for_storms, $
-                                            FOR_SW_IMF=for_sw_imf, $
-                                            /ADD_TODAY, $
-                                            /VERBOSE
+  ;; IF ~KEYWORD_SET(outDir) THEN SET_PLOT_DIR,outDir,/FOR_ALFVENDB, $
+  ;;                                           FOR_STORMS=for_storms, $
+  ;;                                           FOR_SW_IMF=for_sw_imf, $
+  ;;                                           /ADD_TODAY, $
+  ;;                                           /VERBOSE
 
   IF NOT KEYWORD_SET(plotSuff) THEN plotSuff = "" ; ELSE plotSuff
   ;; IF SIZE(outFile,/TYPE) NE 0 AND SIZE(outFile,/TYPE) NE 7 AND NOT KEYWORD_SET(plot_i_file) THEN $
@@ -101,9 +106,42 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   ;; minM = 0
   ;; maxM = 24
 
-  IF NOT KEYWORD_SET(north) AND NOT KEYWORD_SET(south) THEN north = 1 ;default to northern hemi
+  IF NOT KEYWORD_SET(north) AND NOT KEYWORD_SET(south) THEN BEGIN
+     IF KEYWORD_SET(hemi) THEN BEGIN
+        CASE 1 OF
+           STRUPCASE(hemi) EQ 'NORTH': BEGIN
+              north = 1
+              south = 0
+           END
+           ;; STRUPCASE(hemi) EQ 'SOUTH': BEGIN
+           ;;    north = 0
+           ;;    south = 1
+           ;; END
+           STRUPCASE(hemi) EQ 'SOUTH': BEGIN
+              north = 1
+              south = 0
+              mirror_south = 1
+           END
+           STRUPCASE(hemi) EQ 'BOTH': BEGIN
+              north = 1
+              south = 0
+              mirror_south = 1
+           END
+           ;; STRUPCASE(hemi) EQ 'SOUTH_MIRROR': BEGIN
+           ;;    north = 1
+           ;;    south = 0
+           ;;    mirror_south = 1
+           ;; END
+        ENDCASE
+     ENDIF ELSE BEGIN
+        PRINT,'No hemisphere provided! Assuming north...'
+        north = 1               ;default to northern hemi
+     ENDELSE
+  ENDIF
 
-  centerLon=KEYWORD_SET(south) ? 0 : 180
+  IF ~KEYWORD_SET(centerLon) THEN BEGIN
+     centerLon=KEYWORD_SET(south) ? 180 : 0
+  ENDIF
 
   lun=-1
 
@@ -201,17 +239,29 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
      IF KEYWORD_SET(plot_i_list) THEN BEGIN
         modPlot_i_list = plot_i_list[*]
         IF KEYWORD_SET(north) THEN BEGIN
-           FOR i=0,N_ELEMENTS(modPlot_i_list)-1 DO BEGIN
-              modPlot_i_list[i]=CGSETINTERSECTION(modPlot_i_list[i], $
-                                                  WHERE(maximus.ILAT GT minI AND maximus.ILAT LT maxI))
-           ENDFOR
+           IF KEYWORD_SET(mirror_south) THEN BEGIN
+              FOR i=0,N_ELEMENTS(modPlot_i_list)-1 DO BEGIN
+                 modPlot_i_list[i]=CGSETINTERSECTION(modPlot_i_list[i], $
+                                                     WHERE(ABS(maximus.ILAT) GT minI AND ABS(maximus.ILAT) LT maxI))
+              ENDFOR
+           ENDIF ELSE BEGIN
+              FOR i=0,N_ELEMENTS(modPlot_i_list)-1 DO BEGIN
+                 modPlot_i_list[i]=CGSETINTERSECTION(modPlot_i_list[i], $
+                                                     WHERE(maximus.ILAT GT minI AND maximus.ILAT LT maxI))
+              ENDFOR
+           ENDELSE
         ENDIF ELSE BEGIN
            IF KEYWORD_SET(SOUTH) THEN BEGIN
               FOR i=0,N_ELEMENTS(modPlot_i_list)-1 DO BEGIN
                  modPlot_i_list[i]=CGSETINTERSECTION(modPlot_i_list[i], $
                                                   WHERE(maximus.ILAT GT minI AND maximus.ILAT LT maxI))
               ENDFOR
-           ENDIF
+           ENDIF ELSE BEGIN
+              FOR i=0,N_ELEMENTS(modPlot_i_list)-1 DO BEGIN
+                 modPlot_i_list[i]=CGSETINTERSECTION(modPlot_i_list[i], $
+                                                     WHERE(ABS(maximus.ILAT) GT minI AND ABS(maximus.ILAT) LT maxI))
+              ENDFOR
+           ENDELSE
         ENDELSE
      ENDIF ELSE BEGIN
         ;; maximus = resize_maximus(maximus,MAXIMUS_IND=5,MIN_FOR_IND=minI,MAX_FOR_IND=maxI)
@@ -239,7 +289,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   ENDIF
      
   IF N_ELEMENTS(window) EQ 0 THEN BEGIN
-     window     = WINDOW(DIMENSIONS=[1250,900])
+     window     = WINDOW(DIMENSIONS=[900,900])
   ENDIF
 
 
@@ -252,7 +302,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
             TRUE_SCALE_LATITUDE=tsLat, $
             LABEL_FORMAT='polar_maplabels', $
             FILL_COLOR="white", $
-            DIMENSIONS=KEYWORD_SET(plotPosition) ? !NULL : [400,400], $
+            DIMENSIONS=KEYWORD_SET(plotPosition) ? !NULL : [100,100], $
             OVERPLOT=overplot, $
             ;; WINDOW=window, $
             CURRENT=window, $
@@ -305,6 +355,8 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
            curPlotArr = !NULL
            FOR j = 0,N_ELEMENTS(modPlot_i_list[i])-1 DO BEGIN
               lats    = maximus.ilat[modPlot_i_list[i,j].plot_i]
+              IF KEYWORD_SET(mirror_south) THEN lats = ABS(lats)
+
               lons    = maximus.mlt[modPlot_i_list[i,j].plot_i]*15
               color   = modPlot_i_list[i,j].color
               name    = STRING(FORMAT='I5,T8,"(",I0,")")',modPlot_i_list[i,j].orbit,modPlot_i_list[i,j].N)
@@ -335,7 +387,10 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
         ENDIF ELSE BEGIN
            
            lats=maximus.ilat[modPlot_i_list[i]]
+           IF KEYWORD_SET(mirror_south) THEN lats = ABS(lats)
+
            lons=maximus.mlt[modPlot_i_list[i]]*15
+
            ;; lats=[65,65,65,65]
            ;; lons=[0,90,180,270]
            
@@ -345,8 +400,8 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
                                  SYM_TRANSPARENCY=sTrans, $ 
                                  SYM_THICK=1.5, $
                                  SYM_COLOR=(N_ELEMENTS(color_list) GT 1) ? color_list[i] : color_list, $
-                                 TITLE=plotTitle, $ ;,$;SYM_SIZE=0.5, $ ;There is such a high density of points that we need tranparency
-                                 OVERPLOT=overplot, $
+                                 ;; TITLE=plotTitle, $ ;,$;SYM_SIZE=0.5, $ ;There is such a high density of points that we need tranparency
+                                 ;; OVERPLOT=overplot, $
                                  ;; WINDOW=out_window, $
                                  CURRENT=window, $
                                  POSITION=plotPosition, $
@@ -360,8 +415,20 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
      WAIT,1
   ENDELSE     
      
-  out_plot = curPlot
-  out_window = out_window
+  IF KEYWORD_SET(plotTitle) THEN BEGIN
+     plotTitleText      = TEXT(0.5,0.9,plotTitle,/NORMAL,FONT_SIZE=18,ALIGNMENT=0.5)
+  ENDIF
+
+  IF KEYWORD_SET(savePlot) THEN BEGIN
+     IF ~KEYWORD_SET(sPName) THEN sPName = 'scatterplot_polarProj.png'
+     SET_PLOT_DIR,plotDir,/FOR_ALFVENDB,/ADD_TODAY
+     outFileName            = plotDir + sPName
+     PRINT,'Saving scatterplot to ' + outFileName + '...'
+     window.save,plotDir + sPName,RESOLUTION=defRes
+  ENDIF
+
+  out_plot   = curPlot
+  out_window = window
 
 
 END

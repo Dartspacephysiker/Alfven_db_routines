@@ -4,24 +4,26 @@ PRO JOURNAL__20160412__PLOTS_CHASTONETAL_2007_STYLE_PROBOCCURRENCE
   nonstorm                       = 0
   altitudeRange                  = [0000,4175]
   
-  ;; plotSuff                       = 'high-energy_e'
-
-  tile_images                    = 1
-  tiling_order                   = [3,0,2,1]
+  ;; tile_images                    = 0
+  ;; tiling_order                   = [0,1,2,3]
 
   divide_by_width_x              = 1 ;for ion plot and eflux plot
+
+  orbRange                       = [1000,10000]
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Which plots?
   probOccurrencePlot             = 1
   norbsWeventsPerOrbContribPlot  = 1
+  nowepco_range                  = [0,0.5]
+
   logAvgPlot                     = 0
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;ILAT stuff
   hemi                           = 'NORTH'
-  minILAT                        = 62
-  maxILAT                        = 86
+  minILAT                        = 60
+  maxILAT                        = 84
 
   ;; hemi                           = 'SOUTH'
   ;; minILAT                        = -86
@@ -78,6 +80,7 @@ PRO JOURNAL__20160412__PLOTS_CHASTONETAL_2007_STYLE_PROBOCCURRENCE
      ALTITUDERANGE=altitudeRange, $
      NONSTORM=nonstorm, $
      CHARERANGE=charERange, $
+     ORBRANGE=orbRange, $
      MASKMIN=maskMin, $
      HEMI=hemi, $
      BINMLT=binMLT, $
