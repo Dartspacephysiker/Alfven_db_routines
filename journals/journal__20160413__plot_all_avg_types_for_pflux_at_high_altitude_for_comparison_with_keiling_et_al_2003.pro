@@ -1,29 +1,61 @@
 ;2016/04/13 Kristina Lynch rightly pointed out that there could have been a dayside sampling bias for FAST, and maybe that's why
 ;we observe strange Poynting flux distributions. I highly doubt it, but let's see.
-
-PRO JOURNAL__20160413__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_20160412__KEILING_ET_AL_2003_PFLUX_JOURNAL
+;;This journal wants to produce a file that is the most comparable to the Keiling et al. [2003] distribution of Poynting flux (i.e.,
+;one at high altitudes)
+PRO JOURNAL__20160413__PLOT_ALL_AVG_TYPES_FOR_PFLUX_AT_HIGH_ALTITUDE_FOR_COMPARISON_WITH_KEILING_ET_AL_2003
 
   hemi                     = 'NORTH'
   ;; hemi                     = 'SOUTH'
   
-  pFluxMin                 = 5
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;2016/04/13b For alt range 4000-4175
+  altRange                  = [[4000,4175]]
 
-  nPlots                   = 1
-  nEventsPlotNormalize     = 1  
+  pPlots                    = 1
 
-  tHistDenominatorPlot     = 1
-  tHistDenomPlotNormalize  = 1
-  tHistDenomPlot_noMask    = 1
+  ;; do_timeAvg_fluxQuantities = 1
+  ;; pPlotRange                = [0,0.9] ;Matches range for Figure 1c in Keiling et al. [2003]!
 
-  nEventPerMinPlot         = 1
-  nEventPerMinRange        = [1e-1,20]
-  logNEventPerMin          = 1
+  ;; logAvgPlot                = 1
+  ;; pPlotRange                = [1e0,10] ;Matches range for Figure 1c in Keiling et al. [2003]!
+  ;; logPFPlot                 = 1
 
-  tile_images              = 1
-  tiling_order             = [2,0,1]
-  n_tile_columns           = 3
-  n_tile_rows              = 1
-  tilePlotSuff             = "--normed_nEvents_tHistos__and_nEvPerMin"
+  ;; medianPlot                = 1
+  ;; pPlotRange                = [1e0,10]
+  ;; logPFPlot                 = 1
+
+  ;;regular avg
+  logAvgPlot                = 0
+  pPlotRange                = [1e0,100]
+  logPFPlot                 = 1
+
+  ;; logPFPlot                 = 1
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;2016/04/13a For alt range 3675-4175
+  ;; altRange                 = [[3675,4175]]
+
+  ;; nPlots                   = 1
+  ;; nEventsPlotRange           = [0,730]
+  ;; nEventsPlotNormalize     = 0  
+
+  ;; tHistDenominatorPlot     = 1
+  ;; tHistDenomPlotRange      = [0,900]
+  ;; ;; tHistDenomPlotNormalize  = 0
+  ;; tHistDenomPlot_noMask    = 1
+
+  ;; nEventPerMinPlot         = 1
+  ;; ;; nEventPerMinRange        = [,20]
+  ;; ;; logNEventPerMin          = 0
+  ;; nEventPerMinRange        = [1e-2,2]
+  ;; logNEventPerMin          = 1
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  tile_images              = 0
+  ;; tiling_order             = [2,0,1]
+  ;; n_tile_columns           = 3
+  ;; n_tile_rows              = 1
+  ;; tilePlotSuff             = "--normed_nEvents_tHistos__and_nEvPerMin"
 
   ;; altRange                 = [[0,4175], $
   ;;                             [340,500], $
@@ -42,7 +74,7 @@ PRO JOURNAL__20160413__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
   ;;                             [2175,3175], $
   ;;                             [3175,4175]]
 
-  altRange                 = [[0,4175]]
+  ;; altRange                 = [[3675,4175]]
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;ILAT stuff
@@ -68,13 +100,9 @@ PRO JOURNAL__20160413__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
   ;;Bonus
   maskMin                        = 1
 
-  LOAD_MAXIMUS_AND_CDBTIME,maximus,DO_DESPUNDB=do_despun
-
-  restrict_with_these_i          = WHERE(maximus.pFluxEst GE pFluxMin)
-
   FOR i=0,N_ELEMENTS(altRange[0,*])-1 DO BEGIN
      altitudeRange = altRange[*,i]
-     altStr        = STRING(FORMAT='("--",I0,"-",I0,"km")',altitudeRange[0],altitudeRange[1]) + '--pFlux_GE_'+STRCOMPRESS(pFluxMin,/REMOVE_ALL)
+     altStr        = STRING(FORMAT='("--",I0,"-",I0,"km")',altitudeRange[0],altitudeRange[1])
      ;; tilePlotTitle = STRING(FORMAT='(I0,"-",I0," km, Poynting flux $\geq$ ",I0," mW m!U-2!N")',altitudeRange[0],altitudeRange[1],pFluxMin)
      tilePlotTitle = STRING(FORMAT='(I0,"-",I0," km")',altitudeRange[0],altitudeRange[1])
      

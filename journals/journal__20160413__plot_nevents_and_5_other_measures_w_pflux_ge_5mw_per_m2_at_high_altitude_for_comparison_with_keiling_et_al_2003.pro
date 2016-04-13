@@ -1,29 +1,71 @@
 ;2016/04/13 Kristina Lynch rightly pointed out that there could have been a dayside sampling bias for FAST, and maybe that's why
 ;we observe strange Poynting flux distributions. I highly doubt it, but let's see.
-
-PRO JOURNAL__20160413__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_20160412__KEILING_ET_AL_2003_PFLUX_JOURNAL
+;;This journal wants to produce a file that is the most comparable to the Keiling et al. [2003] distribution of Poynting flux (i.e.,
+;one at high altitudes)
+PRO JOURNAL__20160413__PLOT_NEVENTS_AND_5_OTHER_MEASURES_W_PFLUX_GE_5MW_PER_M2_AT_HIGH_ALTITUDE_FOR_COMPARISON_WITH_KEILING_ET_AL_2003
 
   hemi                     = 'NORTH'
   ;; hemi                     = 'SOUTH'
   
   pFluxMin                 = 5
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;2016/04/13b For alt range 4000-4175
+  altRange                 = [[4000,4175]]
+
+  probOccurrencePlot       = 1
+  probOccurrenceRange      = [1e-4,1e-2]
+  logProbOccurrence        = 1
+  ;; probOccurrenceRange      = [0,0.05]
+  ;; logProbOccurrence        = 0
+
   nPlots                   = 1
-  nEventsPlotNormalize     = 1  
+  nEventsPlotRange         = [0,500]
+  nEventsPlotNormalize     = 0  
+
+  nOrbsWithEventsPerContribOrbsPlot = 1
+  nowepco_range            = [0,0.25]
+
+  orbContribPlot           = 1
+  orbContribRange          = [20,270]
+  orbContrib_noMask        = 1
 
   tHistDenominatorPlot     = 1
-  tHistDenomPlotNormalize  = 1
+  tHistDenomPlotRange      = [0,470]
+  ;; tHistDenomPlotNormalize  = 0
   tHistDenomPlot_noMask    = 1
 
   nEventPerMinPlot         = 1
-  nEventPerMinRange        = [1e-1,20]
+  ;; nEventPerMinRange        = [,20]
+  ;; logNEventPerMin          = 0
+  nEventPerMinRange        = [1e-2,3]
   logNEventPerMin          = 1
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;2016/04/13a For alt range 3675-4175
+  ;; altRange                 = [[3675,4175]]
+
+  ;; nPlots                   = 1
+  ;; nEventsPlotRange           = [0,730]
+  ;; nEventsPlotNormalize     = 0  
+
+  ;; tHistDenominatorPlot     = 1
+  ;; tHistDenomPlotRange      = [0,900]
+  ;; ;; tHistDenomPlotNormalize  = 0
+  ;; tHistDenomPlot_noMask    = 1
+
+  ;; nEventPerMinPlot         = 1
+  ;; ;; nEventPerMinRange        = [,20]
+  ;; ;; logNEventPerMin          = 0
+  ;; nEventPerMinRange        = [1e-2,2]
+  ;; logNEventPerMin          = 1
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   tile_images              = 1
-  tiling_order             = [2,0,1]
+  tiling_order             = [5,0,3,1,2,4]
   n_tile_columns           = 3
-  n_tile_rows              = 1
-  tilePlotSuff             = "--normed_nEvents_tHistos__and_nEvPerMin"
+  n_tile_rows              = 2
+  tilePlotSuff             = "--normed_nEvents_tHistos__nEvPerMin__bothProbOccurrences__and_contribOrbs"
 
   ;; altRange                 = [[0,4175], $
   ;;                             [340,500], $
@@ -42,7 +84,7 @@ PRO JOURNAL__20160413__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
   ;;                             [2175,3175], $
   ;;                             [3175,4175]]
 
-  altRange                 = [[0,4175]]
+  ;; altRange                 = [[3675,4175]]
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;ILAT stuff
@@ -146,6 +188,7 @@ PRO JOURNAL__20160413__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
         NONEGCHARIE=noNegCharie, NOPOSCHARIE=noPosCharie, CHARIEPLOTRANGE=ChariePlotRange, $
         ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
         ORBCONTRIBRANGE=orbContribRange, ORBTOTRANGE=orbTotRange, ORBFREQRANGE=orbFreqRange, $
+        ORBCONTRIB_NOMASK=orbContrib_noMask, $
         NEVENTPERORBPLOT=nEventPerOrbPlot, LOGNEVENTPERORB=logNEventPerOrb, NEVENTPERORBRANGE=nEventPerOrbRange, $
         DIVNEVBYTOTAL=divNEvByTotal, $
         NEVENTPERMINPLOT=nEventPerMinPlot, $

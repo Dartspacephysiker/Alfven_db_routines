@@ -4,6 +4,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
                                      MINI=minI,MAXI=maxI,BINI=binI, $
                                      DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                                      ORBCONTRIBRANGE=orbContribRange, $
+                                     ORBCONTRIB_NOMASK=orbContrib_noMask, $
                                      UNIQUEORBS_I=uniqueOrbs_i, $
                                      H2D_NONZERO_CONTRIBORBS_I=h2d_nonZero_contribOrbs_i, $
                                      H2D_NONZERO_I=h2d_nonzero_i, $
@@ -90,4 +91,8 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
             minh2d, $
             medh2d
   ENDIF
+
+  IF KEYWORD_SET(orbContrib_noMask) THEN h2dStr.dont_mask_me = 1
+
+
 END

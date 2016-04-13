@@ -16,16 +16,31 @@ PRO JOURNAL__20160412__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT
   do_despun                = 0
   despunStr                = KEYWORD_SET(DO_despun) ? "--despun" : ''
 
-  altRange                 = [340,500]
-  altRange                 = [500,1000]
-  altRange                 = [1000,1500]
-  altRange                 = [1500,2000]
-  altRange                 = [2000,2500]
-  altRange                 = [2500,3000]
-  altRange                 = [3000,3500]
-  altRange                 = [3500,3750]
-  altRange                 = [3750,4000]
+  ;; altRange                 = [340,500]
+  ;; altRange                 = [500,1000]
+  ;; altRange                 = [1000,1500]
+  ;; altRange                 = [1500,2000]
+  ;; altRange                 = [2000,2500]
+  ;; altRange                 = [2500,3000]
+  ;; altRange                 = [3000,3500]
+  ;; altRange                 = [3500,3750]
+  ;; altRange                 = [3750,4000]
+  ;; altRange                 = [4000,4175]
+  ;; altRange                 = [340,500]
+  ;; altRange                 = [500,1000]
+  ;; altRange                 = [1000,1500]
+  ;; altRange                 = [1500,2000]
+  ;; altRange                 = [2000,2500]
+  ;; altRange                 = [2500,3000]
+  ;; altRange                 = [3000,3500]
+  ;; altRange                 = [3500,3750]
+  ;; altRange                 = [3750,4000]
+  ;; altRange                 = [4000,4175]
+
+  ;2016/04/13 For more direct comparison with Keiling et al. [2013]
   altRange                 = [4000,4175]
+  sTrans                   = 90
+
   altStr                   = KEYWORD_SET(altRange) ? STRING(FORMAT='("--",I0,"-",I0,"km")',altRange[0],altRange[1]) : ''
 
   savePlot                 = 1

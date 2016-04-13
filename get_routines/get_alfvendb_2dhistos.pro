@@ -105,6 +105,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ORBTOTPLOT=orbTotPlot, $
                           ORBFREQPLOT=orbFreqPlot, $
                           ORBCONTRIBRANGE=orbContribRange, $
+                          ORBCONTRIB_NOMASK=orbContrib_noMask, $
                           ORBTOTRANGE=orbTotRange, $
                           ORBFREQRANGE=orbFreqRange, $
                           NEVENTPERORBPLOT=nEventPerOrbPlot, $
@@ -698,6 +699,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                          MAXL=maxL, $
                                          BINL=binL, $
                                          ORBCONTRIBRANGE=orbContribRange, $
+                                         ORBCONTRIB_NOMASK=orbContrib_noMask, $
                                          UNIQUEORBS_I=uniqueOrbs_i, $
                                          H2D_NONZERO_CONTRIBORBS_I=h2d_nonzero_contribOrbs_i, $
                                          H2D_NONZERO_I=h2d_nonzero_nEv_i, $
