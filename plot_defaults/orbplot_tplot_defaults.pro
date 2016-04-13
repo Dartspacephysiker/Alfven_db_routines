@@ -5,6 +5,13 @@ defProbOccurrence_do_midCBLabel       = 1
 defProbOccurrence_doPlotIntegral      = 0
 
 
+defTHistDenomPlotTitle                = 'FAST ephemeris histogram (min)'
+defTHistDenomNormedPlotTitle          = 'FAST ephemeris histogram (normalized)'
+defTHistDenomCBLabelFormat            = '(G0.3)'
+defTHistDenomLogLabels                = 1
+defTHistDenom_do_midCBLabel           = 1
+defTHistDenom_doPlotIntegral          = 0
+
 Deftimeavgd_PFluxCBLabelFormat        = '(D0.3)'
 defTimeAvgd_PFluxLogLabels            = 0
 defTimeAvgd_PFlux_do_midCBLabel       = 1

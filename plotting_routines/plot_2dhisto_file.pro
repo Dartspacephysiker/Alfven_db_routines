@@ -6,6 +6,9 @@ PRO PLOT_2DHISTO_FILE,file, $
                       OUT_PLOTNAMES=out_plotNames, $
                       DEL_PS=del_ps, $
                       MIDNIGHT=midnight, $
+                      NEW_LIMITS=new_limits, $
+                      QUANTS_WITH_NEW_LIMITS=quants_with_new_limits, $
+                      NO_COLORBAR=no_colorbar, $
                       CB_FORCE_OOBLOW=cb_force_ooblow, $
                       CB_FORCE_OOBHIGH=cb_force_oobhigh, $
                       LUN=lun
@@ -105,13 +108,28 @@ PRO PLOT_2DHISTO_FILE,file, $
      IF quants_to_plot[0] EQ nH2D   THEN quants_to_plot = INDGEN(nH2D-1)
      IF quants_to_plot[0] EQ nH2D+1 THEN quants_to_plot = INDGEN(nH2D)
   ENDIF ELSE BEGIN
+
   ENDELSE
+
   nPlots                                             = N_ELEMENTS(quants_to_plot)
+
+  ;;Assign new limits, if requested
+  IF KEYWORD_SET(new_limits) THEN BEGIN
+     IF KEYWORD_SET(quants_with_new_limits) THEN nLoop = N_ELEMENTS(quants_with_new_limits)-1 ELSE nLoop = nPlots-1
+
+     FOR i=0,nLoop DO BEGIN
+        IF KEYWORD_SET(quants_with_new_limits) THEN quant_i = quants_with_new_limits[i] ELSE quant_i = i
+        PRINT,STRING(FORMAT='("Setting new limits for ",A0,": ",F0.2,", ",F0.2)',h2dStrArr[quant_i].title,new_limits[0,quant_i],new_limits[1,quant_i])
+
+        h2dStrArr[quant_i].lim = new_limits[*,quant_i]
+     ENDFOR
+  ENDIF
+
 
   FOR i=0,nPlots-1 DO BEGIN
      quant_i                                         = quants_to_plot[i]
 
-     CGPS_Open, plotDir +plotNamePref+dataNames[quant_i]+'.ps', $
+     CGPS_Open, plotDir +plotNamePref+'--'+dataNames[quant_i]+'.ps', $
                 /NOMATCH, $
                 XSIZE=5, $
                 YSIZE=5, $
@@ -128,7 +146,7 @@ PRO PLOT_2DHISTO_FILE,file, $
                            _EXTRA=e 
      CGPS_Close 
      ;;Create a PNG file with a width of 800 pixels.
-     CGPS2RASTER, plotDir + plotNamePref+dataNames[quant_i]+'.ps', $
+     CGPS2RASTER, plotDir + plotNamePref+'--'+dataNames[quant_i]+'.ps', $
                   /PNG, $
                   WIDTH=800, $
                   DELETE_PS=del_PS

@@ -205,9 +205,12 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  NEVENTPERORBPLOT=nEventPerOrbPlot, LOGNEVENTPERORB=logNEventPerOrb, NEVENTPERORBRANGE=nEventPerOrbRange, $
                                  DIVNEVBYTOTAL=divNEvByTotal, $
                                  NEVENTPERMINPLOT=nEventPerMinPlot, NEVENTPERMINRANGE=nEventPerMinRange, LOGNEVENTPERMIN=logNEventPerMin, $
+                                 NORBSWITHEVENTSPERCONTRIBORBSPLOT=nOrbsWithEventsPerContribOrbsPlot, $
+                                 NOWEPCO_RANGE=nowepco_range, $
                                  PROBOCCURRENCEPLOT=probOccurrencePlot, $
                                  PROBOCCURRENCERANGE=probOccurrenceRange, $
                                  LOGPROBOCCURRENCE=logProbOccurrence, $
+                                 THISTDENOMINATORPLOT=tHistDenominatorPlot, $
                                  TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                                  TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                                  LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -340,7 +343,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              CHAREPLOTRANGE=charePlotRange,CHARERANGE=charERange, $
                              CHARIEPLOTRANGE=chariEPlotRange, $
                              NEVENTPERMINRANGE=nEventPerMinRange, $
-                             PROBOCCURRENCERANGE=probOccurrenceRange
+                             PROBOCCURRENCERANGE=probOccurrenceRange, $
+                             NOWEPCO_RANGE=nowepco_range
   
   ;;********************************************
   ;;Now time for data summary
@@ -424,9 +428,12 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         NEVENTPERORBPLOT=nEventPerOrbPlot, LOGNEVENTPERORB=logNEventPerOrb, NEVENTPERORBRANGE=nEventPerOrbRange, $
                         DIVNEVBYTOTAL=divNEvByTotal, $
                         NEVENTPERMINPLOT=nEventPerMinPlot, NEVENTPERMINRANGE=nEventPerMinRange, LOGNEVENTPERMIN=logNEventPerMin, $
+                        NORBSWITHEVENTSPERCONTRIBORBSPLOT=nOrbsWithEventsPerContribOrbsPlot, $
+                        NOWEPCO_RANGE=nowepco_range, $
                         PROBOCCURRENCEPLOT=probOccurrencePlot, $
                         PROBOCCURRENCERANGE=probOccurrenceRange, $
                         LOGPROBOCCURRENCE=logProbOccurrence, $
+                        THISTDENOMINATORPLOT=tHistDenominatorPlot, $
                         TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                         TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                         LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $

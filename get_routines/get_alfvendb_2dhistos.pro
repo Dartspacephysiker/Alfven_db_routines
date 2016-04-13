@@ -53,6 +53,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NPLOTS=nPlots, $
                           NEVENTSPLOTRANGE=nEventsPlotRange, $
                           LOGNEVENTSPLOT=logNEventsPlot, $
+                          NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $
                           EPLOTS=ePlots, $
                           EFLUXPLOTTYPE=eFluxPlotType, $
                           LOGEFPLOT=logEfPlot, $
@@ -119,6 +120,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           PROBOCCURRENCERANGE=probOccurrenceRange, $
                           LOGPROBOCCURRENCE=logProbOccurrence, $
                           THISTDENOMINATORPLOT=tHistDenominatorPlot, $
+                          THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                          THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
+                          THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
                           TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                           TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                           LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -241,10 +245,14 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                     FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                                     OUT_FASTLOCINTERPED_I=fastLocInterped_i, $
                                                     MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
+                                                    THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                                                    THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
+                                                    THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
                                                     TMPLT_H2DSTR=tmplt_h2dStr, $
                                                     H2DSTR=h2dStr, $
                                                     DATANAME=dataName, $
                                                     DATARAWPTR=dataRawPtr, $
+                                                    H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                                                     INDSFILEPREFIX=ParamStrPrefix, $
                                                     INDSFILESUFFIX=paramStrSuffix, $
                                                     BURSTDATA_EXCLUDED=burstData_excluded)
@@ -850,6 +858,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                   H2DSTR=h2dStr, $
                                   TMPLT_H2DSTR=tmplt_h2dStr, $
                                   H2DFLUXN=h2dFluxN, $
+                                  H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                                   DATANAME=dataName, $
                                   DATARAWPTR=dataRawPtr
         
@@ -1014,12 +1023,26 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      ENDFOR
 
      ;;Now that we're done using nplots, let's log it, if requested:
-     IF KEYWORD_SET(nPlots) AND ( KEYWORD_SET(logNEventsPlot) OR KEYWORD_SET(all_logPlots) ) THEN BEGIN
-        dataNameArr[0]         = 'log_' + dataNameArr[0]
-        h2dStrArr[0].data[h2d_nonzero_nEv_i] = ALOG10(h2dStrArr[0].data[h2d_nonzero_nEv_i])
-        h2dStrArr[0].lim       = [(h2dStrArr[0].lim[0] LT 1) ? 0 : ALOG10(h2dStrArr[0].lim[0]),ALOG10(h2dStrArr[0].lim[1])] ;lower bound must be one
-        h2dStrArr[0].title     = 'Log ' + h2dStrArr[0].title
-        h2dStrArr[0].is_logged = 1
+     IF KEYWORD_SET(nPlots) THEN BEGIN
+        IF KEYWORD_SET(logNEventsPlot) OR KEYWORD_SET(all_logPlots) THEN BEGIN
+           IF KEYWORD_SET(nEventsPlotNormalize) THEN BEGIN
+              PRINT,"You realize you're asking me to both log-a-tize and normalize the nEvents plot, right?"
+              WAIT,5
+           ENDIF
+           dataNameArr[0]         = 'log_' + dataNameArr[0]
+           h2dStrArr[0].data[h2d_nonzero_nEv_i] = ALOG10(h2dStrArr[0].data[h2d_nonzero_nEv_i])
+           h2dStrArr[0].lim       = [(h2dStrArr[0].lim[0] LT 1) ? 0 : ALOG10(h2dStrArr[0].lim[0]),ALOG10(h2dStrArr[0].lim[1])] ;lower bound must be one
+           h2dStrArr[0].title     = 'Log ' + h2dStrArr[0].title
+           h2dStrArr[0].is_logged = 1
+        ENDIF
+        IF KEYWORD_SET(nEventsPlotNormalize) THEN BEGIN
+           dataNameArr[0]        += '_normed'
+           h2dStrArr[0].data      = h2dStrArr[0].data/MAX(h2dStrArr[0].data)
+           h2dStrArr[0].lim       = [0.0,1.0]
+           h2dStrArr[0].title    += " (normed)"
+           ;; h2dStrArr[0].dont_mask_me = 1
+        ENDIF
+
      ENDIF
 
 END

@@ -6,6 +6,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS,EPLOTRANGE=EPlotRange, $
                                NEVENTPERMINRANGE=nEventPerMinRange, $
                                NEVENTPERORBRANGE=nEventPerOrbRange, $
                                PROBOCCURRENCERANGE=probOccurrenceRange, $
+                               THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
                                NOWEPCO_RANGE=nowepco_range
 
 
@@ -41,6 +42,8 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS,EPLOTRANGE=EPlotRange, $
 
   defProbOccurrenceRange    = [1e-4,1.0]
   ;; defLogProbOccurrenceRange = [10e-4,10e0]
+
+  defTHistDenomPlotRange    = [0,60.]
 
   defNOWEPCORange           = [0,1]
 
@@ -88,6 +91,11 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS,EPLOTRANGE=EPlotRange, $
      probOccurrenceRange = defProbOccurrenceRange
   ENDIF
      
+  IF N_ELEMENTS(tHistDenomPlotRange) EQ 0 OR N_ELEMENTS(tHistDenomPlotRange) NE 2 THEN BEGIN
+     ;; IF N_ELEMENTS(logProbOccurrence) EQ 0 THEN probOccurrenceRange = defProbOccurrenceRange ELSE probOccurrenceRange = defLogProbOccurrenceRange
+     tHistDenomPlotRange = defTHistDenomPlotRange
+  ENDIF
+
   IF N_ELEMENTS(nowepco_range) EQ 0 OR N_ELEMENTS(nowepco_range) NE 2 THEN BEGIN
      nowepco_range       = defNOWEPCORange
   ENDIF

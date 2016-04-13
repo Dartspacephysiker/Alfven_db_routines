@@ -52,6 +52,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
      DBDir='/SPENCEdata/Research/Cusp/database/processed/'
      DBFile = "maximus.dat"
      DB_tFile = "cdbtime.sav"
+     correct_fluxes = 0
   ENDIF ELSE BEGIN
      IF KEYWORD_SET(despunDB) THEN BEGIN
         DBDir = defDBDir

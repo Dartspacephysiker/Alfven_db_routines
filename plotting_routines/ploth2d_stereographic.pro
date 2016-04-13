@@ -50,9 +50,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ;; IF KEYWORD_SET(wholeCap) THEN BEGIN
   ;;    IF wholeCap EQ 0 THEN wholeCap=!NULL
   ;; ENDIF
-  IF KEYWORD_SET(midnight) THEN BEGIN
-     IF midnight EQ 0 THEN midnight=!NULL
-  ENDIF
+  IF N_ELEMENTS(midnight) EQ 0 THEN midnight = 1
+  ;;    IF midnight EQ 0 THEN midnight=!NULL
+  ;; ENDIF
   
   ;; IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
   ;; IF ~KEYWORD_SET(wholeCap) THEN BEGIN
@@ -208,7 +208,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
 
   ;;binary matrix to tell us where masked values are
   nPlots                          = N_ELEMENTS(h2dStrArr)-1   ;Subtract one since last array is the mask
-  masked                          = (h2dStrArr[nPlots].data GT 250.0)
+  IF temp.dont_mask_me THEN BEGIN
+     masked                       = (h2dStrArr[nPlots].data GT 260.0) ;mask NO ONE!
+  ENDIF ELSE BEGIN
+     masked                       = (h2dStrArr[nPlots].data GT 250.0)
+  ENDELSE
   IF KEYWORD_SET(reverse_lShell) THEN BEGIN
      masked[*,1:-1]               = REVERSE(masked[*,1:-1],2)
      masked                       = SHIFT(masked,0,-1)
@@ -504,22 +508,22 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                 bTexPos2, $
                 '|Integral|: ' + string(absIntegral,FORMAT=integralLabelFormat), $
                 /NORMAL, $
-                CHARSIZE=defCharSize*charScale
+                CHARSIZE=defCharSize_grid*charScale
         cgText,lTexPos1, $
                bTexPos1, $
                'Integral: ' + string(integral,Format=integralLabelFormat), $
                /NORMAL, $
-               CHARSIZE=defCharSize*charScale
+               CHARSIZE=defCharSize_grid*charScale
         cgText,lTexPos2, $
                bTexPos1, $
                'Dawnward: ' + string(dawnIntegral,Format=integralLabelFormat), $
                /NORMAL, $
-               CHARSIZE=defCharSize*charScale
+               CHARSIZE=defCharSize_grid*charScale
         cgText,lTexPos2, $
                bTexPos2, $
                'Duskward: ' + string(duskIntegral,Format=integralLabelFormat), $
                /NORMAL, $
-               CHARSIZE=defCharSize*charScale
+               CHARSIZE=defCharSize_grid*charScale
      ;; ENDIF
 
   ENDIF

@@ -35,10 +35,15 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                   FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                   OUT_FASTLOCINTERPED_I=out_fastLocInterped_i, $
                                   MAKE_TIMEHIST_H2DSTR=make_timeHist_h2dStr, $
+                                  THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                                  THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
+                                  THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
                                   TMPLT_H2DSTR=tmplt_h2dStr, $
                                   H2DSTR=h2dStr, $
                                   DATANAME=dataName, $
                                   DATARAWPTR=dataRawPtr, $
+                                  H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                  PRINT_MAXANDMIN=print_mandm, $
                                   INDSFILEPREFIX=indsFilePrefix,INDSFILESUFFIX=indsFileSuffix, $
                                   BURSTDATA_EXCLUDED=burstData_excluded, $
                                   LUN=lun
@@ -49,6 +54,8 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
      FASTLOC__good_i,FASTLOC__cleaned_i,FASTLOC__HAVE_GOOD_I, $
      FASTLOC__dbFile,FASTLOC__dbTimesFile
 
+  @orbplot_tplot_defaults.pro
+  
   IF N_ELEMENTS(FL_fastloc) NE 0 AND N_ELEMENTS(FASTLOC__times) NE 0 THEN BEGIN
      dbStruct                 = FL_fastloc
      dbTimes                  = FASTLOC__times
@@ -75,7 +82,8 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
   ;;    fastloc_delta_t = fastloc__delta_t
   ;; ENDELSE
 
-  IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
+  IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
+  IF N_ELEMENTS(lun)         EQ 0 THEN lun         = -1 ;stdout
 
   PRINTF,lun,"Getting time histogram denominator ..."
 
@@ -249,15 +257,39 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
      h2dStr.is_fluxData        = 0
      
      dataName                  = "tHistDenom"
-     h2dStr.labelFormat        = fluxPlotEPlotCBLabelFormat
-     h2dStr.logLabels          = 0
-     h2dStr.do_plotIntegral    = 0
-     h2dStr.do_midCBLabel      = 0
-     h2dStr.title              = 'FAST ephemeris histogram (min)'
+
+     h2dStr.labelFormat        = defTHistDenomCBLabelFormat
+     h2dStr.logLabels          = defTHistDenomLogLabels
+     h2dStr.do_plotIntegral    = defTHistDenom_doPlotIntegral
+     h2dStr.do_midCBLabel      = defTHistDenom_do_midCBLabel
+     h2dStr.title              = defTHistDenomPlotTitle
      h2dStr.data               = tHistDenominator/60.
+     h2dStr.lim                = tHistDenomPlotRange
 
      dataRawPtr                = PTR_NEW(out_delta_ts)
+
+     IF KEYWORD_SET(print_mandm) THEN BEGIN
+        fmt    = 'F0.2'
+        maxh2d = MAX(h2dStr.data[h2d_nonzero_nEv_i])
+        minh2d = MIN(h2dStr.data[h2d_nonzero_nEv_i])
+        medh2d = MEDIAN(h2dStr.data[h2d_nonzero_nEv_i])
+
+        PRINTF,lun,h2dStr.title
+        PRINTF,lun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
+               maxh2d, $
+               minh2d, $
+               medh2d
+     ENDIF
+
+     IF KEYWORD_SET(tHistDenomPlotNormalize) THEN BEGIN
+        dataName += "_normed"
+        h2dStr.title            = defTHistDenomNormedPlotTitle
+        h2dStr.lim              = [0.0,1]
+        h2dStr.data             = h2dStr.data/MAX(h2dStr.data)
+     ENDIF
   ENDIF
+
+  IF KEYWORD_SET(tHistDenomPlot_noMask) THEN h2dStr.dont_mask_me = 1
 
   RETURN,tHistDenominator
 

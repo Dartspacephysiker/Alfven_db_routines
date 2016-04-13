@@ -102,13 +102,24 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
   ENDIF
 
   ;; good_i = cgsetintersection(good_i,where(dbStruct.sample_t LE sample_t_hcutoff,/NULL))
-  good_i = cgsetintersection(good_i,where(ABS(dbStruct.sample_t) LE sample_t_hcutoff AND ABS(dbStruct.sample_t) GT 0.,/NULL))
-  nlost      = n_good-n_elements(good_i)
-  tot_nLost += nLost
-  n_good -= nLost
-  IF nLost GT 0 THEN BEGIN
-     PRINTF,lun,FORMAT='("N lost to basic sample freq restr",T40,": ",I0)',nlost
-  ENDIF
+  IF KEYWORD_SET(do_ChastDB) THEN BEGIN
+     good_i = cgsetintersection(good_i,where(ABS(dbStruct.mode) LE sample_t_hcutoff AND ABS(dbStruct.mode) GT 0.,/NULL))
+     nlost      = n_good-n_elements(good_i)
+     tot_nLost += nLost
+     n_good -= nLost
+     IF nLost GT 0 THEN BEGIN
+        PRINTF,lun,FORMAT='("N lost to basic sample freq restr",T40,": ",I0)',nlost
+     ENDIF
+  ENDIF ELSE BEGIN
+     good_i = cgsetintersection(good_i,where(ABS(dbStruct.sample_t) LE sample_t_hcutoff AND ABS(dbStruct.sample_t) GT 0.,/NULL))
+     nlost      = n_good-n_elements(good_i)
+     tot_nLost += nLost
+     n_good -= nLost
+     IF nLost GT 0 THEN BEGIN
+        PRINTF,lun,FORMAT='("N lost to basic sample freq restr",T40,": ",I0)',nlost
+     ENDIF
+
+  ENDELSE
 
   ;; nlost = n_good-n_elements(good_i)
   printf,lun,FORMAT='("N lost to basic cutoffs",T40,": ",I0)',tot_nlost

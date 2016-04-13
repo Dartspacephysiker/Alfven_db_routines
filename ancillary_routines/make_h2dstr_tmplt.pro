@@ -46,7 +46,8 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                   do_timeAvg      : KEYWORD_SET(do_timeAvg_fluxQuantities), $
                   do_grossRate    : KEYWORD_SET(do_grossRate_fluxQuantities), $
                   force_oobHigh   : KEYWORD_SET(cb_force_oobHigh), $
-                  force_oobLow    : KEYWORD_SET(cb_force_oobLow)}
+                  force_oobLow    : KEYWORD_SET(cb_force_oobLow), $
+                  dont_mask_me    : 0}
 
     RETURN,h2dStr_tmplt
 

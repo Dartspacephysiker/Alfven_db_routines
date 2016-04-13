@@ -13,6 +13,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            N_TILE_COLUMNS=n_tile_columns, $
                            TILEPLOTSUFF=tilePlotSuff, $
                            TILING_ORDER=tiling_order, $
+                           TILEPLOTTITLE=tilePlotTitle, $
                            LUN=lun, $
                            EPS_OUTPUT=eps_output, $
                            _EXTRA = e
@@ -96,21 +97,51 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
         ENDIF ELSE BEGIN
            ;;Create a PostScript file.
 
-           defXSize  = 5
-           defYSize  = 5
+           defXSize               = 5
+           defYSize               = 5
+           defMapPos              = [0.125, 0.05, 0.875, 0.8]
+           defCBPos               = [0.10, 0.90, 0.90, 0.92]
+
+           ;;But if you want a title...
+           defXWTitleSize         = 5
+           defYWTitleSize         = 6
+
            IF KEYWORD_SET(tile_images) THEN BEGIN
               nPlots            = N_ELEMENTS(h2dStrArr) - 1
               IF ~KEYWORD_SET(n_tile_rows)    THEN n_tile_rows    = CEIL(nPlots/2.)
               IF ~KEYWORD_SET(n_tile_columns) THEN n_tile_columns = CEIL(nPlots/2.)
-              xSize = defXSize*n_tile_rows 
-              ySize = defYSize*n_tile_columns 
 
+              IF KEYWORD_SET(tilePlotTitle) THEN BEGIN
+                 xSize              = defXWTitleSize*n_tile_columns
+                 ySize              = defYWTitleSize*n_tile_rows
 
-              defMapPosition      = [0.125, 0.05, 0.875, 0.8]
-              defCBPosition       = [0.10, 0.90, 0.90, 0.92]
+                 xRatio             = FLOAT(defXSize)/FLOAT(defXWTitleSize)
+                 yRatio             = FLOAT(defYSize)/FLOAT(defYWTitleSize)
+                 
+                 ;; defMapWTitlePos  = [0.125, 0.05, 0.875, 0.8]
+                 ;; defCBWTitlePos   = [0.10, 0.90, 0.90, 0.92]
 
-              ;; normMapWidth        = defMapPosition[2]-defMapPosition[0]
-              ;; normMapHeight       = defMapPosition[3]-defMapPosition[1]
+                 defMapPos[0]       = defMapPos[0]*xRatio + (1.-xRatio)/2.
+                 defMapPos[2]       = defMapPos[2]*xRatio + (1.-xRatio)/2.
+                 defCBPos[0]        = defCBPos[0]*xRatio + (1.-xRatio)/2.
+                 defCBPos[2]        = defCBPos[2]*xRatio + (1.-xRatio)/2.
+
+                 ;; defMapPos[1] = defMapPos[1]*yRatio + (1.-yRatio)/2.
+                 ;; defMapPos[3] = defMapPos[3]*yRatio + (1.-yRatio)/2.
+                 ;; defCBPos[1]  = defCBPos[1]*yRatio + (1.-yRatio)/2.
+                 ;; defCBPos[3]  = defCBPos[3]*yRatio + (1.-yRatio)/2.
+                 defMapPos[1]       = defMapPos[1]*yRatio
+                 defMapPos[3]       = defMapPos[3]*yRatio
+                 defCBPos[1]        = defCBPos[1]*yRatio
+                 defCBPos[3]        = defCBPos[3]*yRatio
+
+              ENDIF ELSE BEGIN
+                 xSize              = defXSize*n_tile_columns
+                 ySize              = defYSize*n_tile_rows
+              
+              ENDELSE
+              ;; normMapWidth        = defMapPos[2]-defMapPos[0]
+              ;; normMapHeight       = defMapPos[3]-defMapPos[1]
 
 
               IF ~KEYWORD_SET(tilePlotSuff) THEN BEGIN
@@ -147,17 +178,17 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
 
                  ;;handle map position
                  map_position     = position
-                 map_position[0]  = (position[2]-position[0])*defMapPosition[0]+position[0]
-                 map_position[1]  = (position[3]-position[1])*defMapPosition[1]+position[1]
-                 map_position[2]  = (position[2]-position[0])*defMapPosition[2]+position[0]
-                 map_position[3]  = (position[3]-position[1])*defMapPosition[3]+position[1]
+                 map_position[0]  = (position[2]-position[0])*defMapPos[0]+position[0]
+                 map_position[1]  = (position[3]-position[1])*defMapPos[1]+position[1]
+                 map_position[2]  = (position[2]-position[0])*defMapPos[2]+position[0]
+                 map_position[3]  = (position[3]-position[1])*defMapPos[3]+position[1]
 
                  ;;handle map position
                  cb_position      = position
-                 cb_position[0]   = (position[2]-position[0])*defCBPosition[0]+position[0]
-                 cb_position[1]   = (position[3]-position[1])*defCBPosition[1]+position[1]
-                 cb_position[2]   = (position[2]-position[0])*defCBPosition[2]+position[0]
-                 cb_position[3]   = (position[3]-position[1])*defCBPosition[3]+position[1]
+                 cb_position[0]   = (position[2]-position[0])*defCBPos[0]+position[0]
+                 cb_position[1]   = (position[3]-position[1])*defCBPos[1]+position[1]
+                 cb_position[2]   = (position[2]-position[0])*defCBPos[2]+position[0]
+                 cb_position[3]   = (position[3]-position[1])*defCBPos[3]+position[1]
 
 
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[j],tempFile, $
@@ -170,6 +201,21 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
                                        _EXTRA=e 
               ENDFOR
+
+              IF KEYWORD_SET(tilePlotTitle) THEN BEGIN
+                 ;; tilePlotText = TEXT(0.5, $
+                 ;;                     yRatio + (1.-yRatio)/2., $
+                 ;;                     tilePlotTitle, $
+                 ;;                     /NORMAL, $
+                 ;;                     ALIGNMENT=0.5, $
+                 ;;                     FONT_SIZE=18)
+                 CGTEXT,0.5, $
+                        yRatio + (1.-yRatio)/2., $
+                        tilePlotTitle, $
+                        /NORMAL, $
+                        ALIGNMENT=0.5, $
+                        CHARSIZE=2
+              ENDIF
 
               CGPS_Close 
               ;;Create a PNG file with a width of 800 pixels.

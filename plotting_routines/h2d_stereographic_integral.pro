@@ -1,4 +1,4 @@
-PRO  H2D_STEREOGRAPHIC_INTEGRAL,data,lonsLats, $
+PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
                                 H2D_MASKED=h2d_masked, $
                                 INTEGRAL=integral,ABSINTEGRAL=absIntegral, $
                                 DAWNINTEGRAL=dawnIntegral,DUSKINTEGRAL=duskIntegral
@@ -7,8 +7,8 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,data,lonsLats, $
   nLons = N_ELEMENTS(lonsLats[*,0,0,0])+1
   
   ;Initialize integrals for each hemi
-  dawnIntegral=(data.is_fluxData) ? DOUBLE(0.0) : 0L
-  duskIntegral=(data.is_fluxData) ? DOUBLE(0.0) : 0L
+  dawnIntegral=(h2dStr.is_fluxData) ? DOUBLE(0.0) : 0L
+  duskIntegral=(h2dStr.is_fluxData) ? DOUBLE(0.0) : 0L
   FOR j=0, nLats-2 DO BEGIN 
      FOR i=0, nLons-2 DO BEGIN 
         tempLons = lonsLats[i,j,0,*]
