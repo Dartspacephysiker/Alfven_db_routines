@@ -21,6 +21,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                           WINDOW_XSIZE=xSize, $
                           WINDOW_YSIZE=ySize, $
                           NO_DISPLAY=no_display, $
+                          SUPPRESS_GRIDLABELS=suppress_gridLabels, $
+                          LABELS_FOR_PRESENTATION=labels_for_presentation, $
                           CB_FORCE_OOBLOW=cb_force_ooblow, $
                           CB_FORCE_OOBHIGH=cb_force_oobhigh, $
                           _EXTRA=e
@@ -374,113 +376,115 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
      IF mirror THEN lonLabel = -1.0 * lonLabel ;mirror dat
   ENDELSE 
 
-  IF KEYWORD_SET(wholeCap) THEN BEGIN
-     factor                          = 6.0
-     mltSites                        = (INDGEN((maxM-minM)/factor)*factor+minM)
-     lonNames                        = [string(minM,format=lonLabelFormat) + " MLT", $
-                                        STRING(mltSites[1:-1], $
-                                               format=lonLabelFormat)]
+  IF ~KEYWORD_SET(suppress_gridLabels) THEN BEGIN
 
-     ;; IF mirror THEN BEGIN
-     ;;    ;;    ;;IF N_ELEMENTS(wholeCap) NE 0 THEN lonNames = [lonNames[0],REVERSE(lonNames[1:*])]
-     ;;    gridLats                     = -1.0 * gridLats
-     ;;    gridLatNames                 = -1.0 * gridLatNames
-     ;; ENDIF 
-     
-     gridLatNames                    = STRING(gridLatNames,format=latLabelFormat)
-     gridLatNames[mirror ? -1 : 0]   = gridLatNames[mirror ? -1 : 0] + $
-                                       ( KEYWORD_SET(DO_lShell) ? " L-shell" : " ILAT" )
+     IF KEYWORD_SET(wholeCap) THEN BEGIN
+        factor                          = 6.0
+        mltSites                        = (INDGEN((maxM-minM)/factor)*factor+minM)
+        lonNames                        = [string(minM,format=lonLabelFormat) + " MLT", $
+                                           STRING(mltSites[1:-1], $
+                                                  format=lonLabelFormat)]
 
-     ;; cgMap_Grid, Clip_Text=1, $
-     ;;             /NoClip, $
-     ;;             ;; /LABEL, $
-     ;;             /NO_GRID, $
-     ;;             LINESTYLE=0, $
-     ;;             THICK=3, $
-     ;;             COLOR=defGridTextColor, $
-     ;;             LATS=gridLats, $
-     ;;             LATNAMES=gridLatNames, $
-     ;;             ;; LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI )*4,$
-     ;;             ;; LATLABEL=(mean([minM,maxM]))*15+15, $
-     ;;             ;; LATLABEL=((maxM-minM)/2.0+minM)*15-binM*7.5,
-     ;;             ;;LONNAMES=[strtrim(minM,2)+" MLT",STRTRIM(INDGEN((maxM-minM)/1.0)+(minM+1),2)]
-     ;;             LATLABEL=45, $
-     ;;             ;; LONS=mltSites*15, $
-     ;;             ;; LONNAMES=lonNames, $
-     ;;             LONLABEL=lonLabel, $
-     ;;             CHARSIZE=defCharSize_grid
+        ;; IF mirror THEN BEGIN
+        ;;    ;;    ;;IF N_ELEMENTS(wholeCap) NE 0 THEN lonNames = [lonNames[0],REVERSE(lonNames[1:*])]
+        ;;    gridLats                     = -1.0 * gridLats
+        ;;    gridLatNames                 = -1.0 * gridLatNames
+        ;; ENDIF 
+        
+        gridLatNames                    = STRING(gridLatNames,format=latLabelFormat)
+        gridLatNames[mirror ? -1 : 0]   = gridLatNames[mirror ? -1 : 0] + $
+                                          ( KEYWORD_SET(DO_lShell) ? " L-shell" : " ILAT" )
+
+        ;; cgMap_Grid, Clip_Text=1, $
+        ;;             /NoClip, $
+        ;;             ;; /LABEL, $
+        ;;             /NO_GRID, $
+        ;;             LINESTYLE=0, $
+        ;;             THICK=3, $
+        ;;             COLOR=defGridTextColor, $
+        ;;             LATS=gridLats, $
+        ;;             LATNAMES=gridLatNames, $
+        ;;             ;; LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI )*4,$
+        ;;             ;; LATLABEL=(mean([minM,maxM]))*15+15, $
+        ;;             ;; LATLABEL=((maxM-minM)/2.0+minM)*15-binM*7.5,
+        ;;             ;;LONNAMES=[strtrim(minM,2)+" MLT",STRTRIM(INDGEN((maxM-minM)/1.0)+(minM+1),2)]
+        ;;             LATLABEL=45, $
+        ;;             ;; LONS=mltSites*15, $
+        ;;             ;; LONNAMES=lonNames, $
+        ;;             LONLABEL=lonLabel, $
+        ;;             CHARSIZE=defCharSize_grid
 
 
-  ;; cgText, 0, minI-1, '0 MLT',ALIGNMENT=0.5, ORIENTATION=0, CHARSIZE=defCharSize      
-  ;; cgText, 180, minI, '12',ALIGNMENT=0.5, ORIENTATION=0.00, CHARSIZE=defCharSize   
-  ;; cgText, 90, minI-1, '6',ALIGNMENT=0.5,CHARSIZE=defCharSize
-  ;; cgText, -90, minI-1, '18',ALIGNMENT=0.5,CHARSIZE=defCharSize
+        ;; cgText, 0, minI-1, '0 MLT',ALIGNMENT=0.5, ORIENTATION=0, CHARSIZE=defCharSize      
+        ;; cgText, 180, minI, '12',ALIGNMENT=0.5, ORIENTATION=0.00, CHARSIZE=defCharSize   
+        ;; cgText, 90, minI-1, '6',ALIGNMENT=0.5,CHARSIZE=defCharSize
+        ;; cgText, -90, minI-1, '18',ALIGNMENT=0.5,CHARSIZE=defCharSize
 
 ;; [0.125, 0.05, 0.875, 0.8] 
 
-     ;;MLTs
-     cgText,MEAN([map_position[2],map_position[0]]), map_position[1]-0.035*yScale,'0 MLT',/NORMAL, $
-            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
-     cgText,MEAN([map_position[2],map_position[0]]), map_position[3]+0.005*yScale,'12',/NORMAL, $
-            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
-     cgText,map_position[2]+0.02*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'6',/NORMAL, $
-            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
-     cgText,map_position[0]-0.03*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'18',/NORMAL, $
-            COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+        ;;MLTs
+        cgText,MEAN([map_position[2],map_position[0]]), map_position[1]-0.035*yScale,'0 MLT',/NORMAL, $
+               COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+        cgText,MEAN([map_position[2],map_position[0]]), map_position[3]+0.005*yScale,'12',/NORMAL, $
+               COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+        cgText,map_position[2]+0.02*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'6',/NORMAL, $
+               COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+        cgText,map_position[0]-0.03*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'18',/NORMAL, $
+               COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
 
-     ;;ILATs
-     FOR ilat_i=0,N_ELEMENTS(gridLats)-1 DO BEGIN
-        cgText, 45, gridLats[ilat_i], gridLatNames[ilat_i], $;STRCOMPRESS((maxI LT 0? -1.0 : 1.0)*gridLats[ilat_i],/REMOVE_ALL), $
-                ALIGNMENT=0.5,ORIENTATION=0,COLOR=defGridTextColor,CHARSIZE=defCharSize_grid*charScale
-     ENDFOR
-
-  ENDIF ELSE BEGIN
-
-     ;;Longitudes
-     lonNames                       = STRING(FORMAT='(I2)',(INDGEN(24/(binm*2))*(2*binm)))
-     nLons                          = N_ELEMENTS(lonNames)
-
-     ;; lats                           = INDGEN((maxI-minI)/(binI*2))*(2*binI)+minI
-     ;; latNames                       = STRING(FORMAT='(I2)',lats)
-     ;; nLats                          = N_ELEMENTS(latNames)
-
-     ;;Latitudes
-     IF mirror THEN BEGIN
-        minLatLabel                    = CEIL(-maxI/10.)*10
-        maxLatLabel                    = FLOOR(-minI/10.)*10
+        ;;ILATs
+        FOR ilat_i=0,N_ELEMENTS(gridLats)-1 DO BEGIN
+           cgText, 45, gridLats[ilat_i], gridLatNames[ilat_i], $ ;STRCOMPRESS((maxI LT 0? -1.0 : 1.0)*gridLats[ilat_i],/REMOVE_ALL), $
+                   ALIGNMENT=0.5,ORIENTATION=0,COLOR=defGridTextColor,CHARSIZE=defCharSize_grid*charScale
+        ENDFOR
      ENDIF ELSE BEGIN
-        minLatLabel                    = CEIL(minI/10.)*10
-        maxLatLabel                    = FLOOR(maxI/10.)*10
+
+        ;;Longitudes
+        lonNames                       = STRING(FORMAT='(I2)',(INDGEN(24/(binm*2))*(2*binm)))
+        nLons                          = N_ELEMENTS(lonNames)
+
+        ;; lats                           = INDGEN((maxI-minI)/(binI*2))*(2*binI)+minI
+        ;; latNames                       = STRING(FORMAT='(I2)',lats)
+        ;; nLats                          = N_ELEMENTS(latNames)
+
+        ;;Latitudes
+        IF mirror THEN BEGIN
+           minLatLabel                    = CEIL(-maxI/10.)*10
+           maxLatLabel                    = FLOOR(-minI/10.)*10
+        ENDIF ELSE BEGIN
+           minLatLabel                    = CEIL(minI/10.)*10
+           maxLatLabel                    = FLOOR(maxI/10.)*10
+        ENDELSE
+        nLats                          = (maxLatLabel-minLatLabel)/10+1
+
+        lats                           = !NULL
+        FOR l=0,nLats-1 DO lats        = [lats,minLatLabel+l*10]
+        IF minI GT 0 THEN $
+           latNames                    = STRING(FORMAT='(I2)',lats) $
+        ELSE $
+           latNames                    = STRING(FORMAT='(I3)',KEYWORD_SET(mirror) ? -lats : lats)
+
+        cgMap_Grid, Clip_Text=1, $
+                    /NOCLIP, $
+                    /NO_GRID,$
+                    /LABEL, $
+                    LINESTYLE=0, $
+                    THICK=3, $
+                    COLOR=defGridTextColor, $
+                    ;; LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI*4 ),$
+                    LATDELTA=(KEYWORD_SET(do_lShell) ? binL : !NULL ),$
+                    LATS=(KEYWORD_SET(do_lShell) ? !NULL : lats), $
+                    LATNAMES=latNames, $
+                    LATLABEL=minM*15-10, $
+                    LONLABEL=lonLabel,$ 
+                    ;; lonlabel=(minI GT 0) ? ((mirror) ? -maxI : minI) : ((mirror) ? -minI : maxI),$ 
+                    ;; latlabel=((maxM-minM)/2.0+minM)*15-binM*7.5,
+                    ;; LONS=(1*INDGEN(12)*30),$
+                    LONS=(1*INDGEN(nLons)*360/nLons),$
+                    LONNAMES=lonNames, $
+                    CHARSIZE=defCharSize_grid*charScale
      ENDELSE
-     nLats                          = (maxLatLabel-minLatLabel)/10+1
-
-     lats                           = !NULL
-     FOR l=0,nLats-1 DO lats        = [lats,minLatLabel+l*10]
-     IF minI GT 0 THEN $
-        latNames                    = STRING(FORMAT='(I2)',lats) $
-     ELSE $
-        latNames                    = STRING(FORMAT='(I3)',KEYWORD_SET(mirror) ? -lats : lats)
-
-     cgMap_Grid, Clip_Text=1, $
-                 /NOCLIP, $
-                 /NO_GRID,$
-                 /LABEL, $
-                 LINESTYLE=0, $
-                 THICK=3, $
-                 COLOR=defGridTextColor, $
-                 ;; LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI*4 ),$
-                 LATDELTA=(KEYWORD_SET(do_lShell) ? binL : !NULL ),$
-                 LATS=(KEYWORD_SET(do_lShell) ? !NULL : lats), $
-                 LATNAMES=latNames, $
-                 LATLABEL=minM*15-10, $
-                 LONLABEL=lonLabel,$ 
-                 ;; lonlabel=(minI GT 0) ? ((mirror) ? -maxI : minI) : ((mirror) ? -minI : maxI),$ 
-                 ;; latlabel=((maxM-minM)/2.0+minM)*15-binM*7.5,
-                 ;; LONS=(1*INDGEN(12)*30),$
-                 LONS=(1*INDGEN(nLons)*360/nLons),$
-                 LONNAMES=lonNames, $
-                 CHARSIZE=defCharSize_grid*charScale
-  ENDELSE
+  ENDIF
 
   ;defCharSize = cgDefCharSize()*0.75
   ;cgText, 0, minI-1, '0', Alignment=0.5, Orientation=0, Charsize=defCharSize      
@@ -588,10 +592,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
                  ;; /Discrete, $
                  RANGE=cbRange, $
                  TITLE=cbTitle, $
-                 POSITION=KEYWORD_SET(cb_position) ? cb_position : cbPosition, $
+                 TLOCATION=cbTLocation, $
+                 TCHARSIZE=KEYWORD_SET(labels_for_presentation) ? charSize_plotTitle_pres : cbTCharSize*charScale,$
+                 POSITION=KEYWORD_SET(cb_position) ? cb_position : (KEYWORD_SET(labels_for_presentation) ? cbPosition_pres : cbPosition), $
                  TEXTTHICK=cbTextThick, VERTICAL=cbVertical, $
-                 TLOCATION=cbTLocation, TCHARSIZE=cbTCharSize*charScale,$
-                 CHARSIZE=cbTCharSize*charScale,$
+                 CHARSIZE=KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : cbTCharSize*charScale,$
                  TICKLEN=0.5, $
                  ;; TICKINTERVAL=(temp.is_logged AND temp.logLabels) ? 0.25 : !NULL, $
                  TICKNAMES=cbTickNames

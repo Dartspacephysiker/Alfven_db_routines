@@ -8,6 +8,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            HEMI=hemi, $
                            CLOCKSTR=clockStr, $
                            NO_COLORBAR=no_colorbar, $
+                           SUPPRESS_GRIDLABELS=suppress_gridLabels, $
+                           LABELS_FOR_PRESENTATION=labels_for_presentation, $
                            TILE_IMAGES=tile_images, $
                            N_TILE_ROWS=n_tile_rows, $
                            N_TILE_COLUMNS=n_tile_columns, $
@@ -198,6 +200,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                                        MAP_POSITION=map_position, $
                                        CB_POSITION=cb_position, $
                                        /NO_DISPLAY, $
+                                       SUPPRESS_GRIDLABELS=suppress_gridLabels, $
+                                       LABELS_FOR_PRESENTATION=labels_for_presentation, $
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
                                        _EXTRA=e 
               ENDFOR
@@ -246,6 +250,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                                        WINDOW_YSIZE=ySize, $
                                        MAP_POSITION=map_position, $
                                        CB_POSITION=cb_position, $
+                                       SUPPRESS_GRIDLABELS=suppress_gridLabels, $
+                                       LABELS_FOR_PRESENTATION=labels_for_presentation, $
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
                                        _EXTRA=e 
                  CGPS_Close 

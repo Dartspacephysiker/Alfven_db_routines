@@ -148,6 +148,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Eflux_Losscone_Integ"): BEGIN
+           h2dStr.title     = title__alfDB_ind_10
+           inData           = maximus.eflux_losscone_integ[tmp_i]
+           can_div_by_w_x   = 1
+           can_mlt_by_w_x   = 0
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
               h2dStr.title  = title__alfDB_ind_10__div_by_width_x
               ;; dataName     += '__div_by_width_x'
@@ -165,13 +169,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                     h2dStr.title  = title__alfDB_ind_10_tAvg
                  END
               ENDCASE
-           ENDIF ELSE BEGIN
-              h2dStr.title  = title__alfDB_ind_10
-           ENDELSE
-           inData           = maximus.eflux_losscone_integ[tmp_i]
-           can_div_by_w_x   = 1
-           can_mlt_by_w_x   = 0
-
+           ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("ESA_Number_flux"): BEGIN
            h2dStr.title  = title__alfDB_esa_nFlux
@@ -279,6 +277,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_mlt_by_w_x   = 1
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ_Up"): BEGIN
+           h2dStr.title     = title__alfDB_ind_18
+           inData           = maximus.integ_ion_flux_up[tmp_i]
+           can_div_by_w_x   = 1
+           can_mlt_by_w_x   = 0
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
               h2dStr.title  = title__alfDB_ind_18__div_by_width_x
               ;; dataName     += '__div_by_width_x'
@@ -296,12 +298,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                     h2dStr.title  = title__alfDB_ind_18_tAvg
                  END
               ENDCASE
-           ENDIF ELSE BEGIN
-              h2dStr.title  = title__alfDB_ind_18
-           ENDELSE
-           inData           = maximus.integ_ion_flux_up[tmp_i]
-           can_div_by_w_x   = 1
-           can_mlt_by_w_x   = 0
+           ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Energy"): BEGIN
            h2dStr.title     = title__alfDB_ind_14

@@ -239,6 +239,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  EPS_OUTPUT=eps_output, $
                                  PRINT_ALFVENDB_2DHISTOS=print_alfvendb_2dhistos, $
                                  OUT_TEMPFILE=out_tempFile, $
+                                 SUPPRESS_GRIDLABELS=suppress_gridLabels, $
+                                 LABELS_FOR_PRESENTATION=labels_for_presentation, $
                                  TILE_IMAGES=tile_images, $
                                  N_TILE_ROWS=n_tile_rows, $
                                  N_TILE_COLUMNS=n_tile_columns, $
@@ -485,6 +487,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                          PLOTDIR=plotDir, PLOTMEDORAVG=plotMedOrAvg, $
                          PARAMSTR=paramString, DEL_PS=del_PS, $
                          HEMI=hemi, $
+                         SUPPRESS_GRIDLABELS=suppress_gridLabels, $
+                         LABELS_FOR_PRESENTATION=labels_for_presentation, $
                          TILE_IMAGES=tile_images, $
                          N_TILE_ROWS=n_tile_rows, $
                          N_TILE_COLUMNS=n_tile_columns, $

@@ -12,6 +12,13 @@
   def_H2D_ySize               = 5
 
   ;;******************************
+  ;;For presentations
+  ;;******************************
+  charSize_plotTitle_pres     = 2.5
+  charSize_cbLabel_pres       = 2.7
+  cbPosition_pres             = [0.05, 0.86, 0.95, 0.88]
+  
+  ;;******************************
   ;;Color tables
   ;;******************************
 
