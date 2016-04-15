@@ -72,7 +72,7 @@ PRO GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
      h2dStr.lim = ALOG10(h2dStr.lim)
   ENDIF
 
-  dataRawPtr = PTR_NEW(h2dStr.data)
+  ;; dataRawPtr = PTR_NEW(h2dStr.data)
 
 END
 

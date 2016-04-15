@@ -138,6 +138,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           GROSSRATE__CENTERS_ILAT=centersILAT, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                          ADD_VARIANCE_PLOTS=add_variance_plots, $
+                          ONLY_VARIANCE_PLOTS=only_variance_plots, $
                           SUM_ELECTRON_AND_POYNTINGFLUX=sum_electron_and_poyntingflux, $
                           MEDIANPLOT=medianPlot, $
                           MEDHISTOUTDATA=medHistOutData, $
@@ -151,6 +153,10 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LUN=lun
   
   COMPILE_OPT idl2
+
+  ;;set up variance plot inds
+  varPlotRawInds         = !NULL
+  varPlotH2DInds         = !NULL
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
@@ -292,6 +298,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPoseflux, $
                           NONEGFLUX=noNegeflux, $
                           ABSFLUX=abseflux, $
+                          OUT_REMOVED_I=out_removed_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logEfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -320,10 +327,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         
         h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
-        h2dStrArr=[h2dStrArr,h2dStr] 
+        h2dStrArr            = [h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN
-           dataNameArr=[dataNameArr,dataName] 
-           dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     =[dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
         ENDIF 
      ENDIF
      
@@ -349,6 +359,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosENumFl, $
                           NONEGFLUX=noNegENumFl, $
                           ABSFLUX=absENumFl, $
+                          OUT_REMOVED_I=out_removed_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logENumFlPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -376,10 +387,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
 
         h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
-        h2dStrArr=[h2dStrArr,h2dStr] 
+        h2dStrArr            = [h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
-           dataNameArr=[dataNameArr,dataName] 
-           dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
         ENDIF 
         
      ENDIF
@@ -406,6 +420,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosPflux, $
                           NONEGFLUX=noNegPflux, $
                           ABSFLUX=absPflux, $
+                          OUT_REMOVED_I=out_removed_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -433,10 +448,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         
         h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
-        h2dStrArr=[h2dStrArr,h2dStr] 
+        h2dStrArr            = [h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
-           dataNameArr=[dataNameArr,dataName] 
-           dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
         ENDIF  
         
      ENDIF
@@ -463,6 +481,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosIflux, $
                           NONEGFLUX=noNegIflux, $
                           ABSFLUX=absIflux, $
+                          OUT_REMOVED_I=out_removed_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logIfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -490,10 +509,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         
         h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
-        h2dStrArr=[h2dStrArr,h2dStr] 
+        h2dStrArr            = [h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
-           dataNameArr=[dataNameArr,dataName] 
-           dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
         ENDIF  
         
      ENDIF
@@ -520,6 +542,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosOxyFlux, $
                           NONEGFLUX=noNegOxyflux, $
                           ABSFLUX=absOxyFlux, $
+                          OUT_REMOVED_I=out_removed_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logOxyfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -547,10 +570,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         
         h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
-        h2dStrArr=[h2dStrArr,h2dStr] 
+        h2dStrArr            = [h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
-           dataNameArr=[dataNameArr,dataName] 
-           dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
         ENDIF  
         
      ENDIF
@@ -577,6 +603,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosCharE, $
                           NONEGFLUX=noNegCharE, $
                           ABSFLUX=absCharE, $
+                          OUT_REMOVED_I=out_removed_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logCharEPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -604,10 +631,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
 
         h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
-        h2dStrArr=[h2dStrArr,h2dStr] 
+        h2dStrArr            = [h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
-           dataNameArr=[dataNameArr,dataName] 
-           dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
         ENDIF  
         
      ENDIF
@@ -633,6 +663,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosChariE, $
                           NONEGFLUX=noNegChariE, $
                           ABSFLUX=absChariE, $
+                          OUT_REMOVED_I=out_removed_i, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logChariEPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -660,10 +691,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         
         h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
-        h2dStrArr=[h2dStrArr,h2dStr] 
+        h2dStrArr            = [h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
-           dataNameArr=[dataNameArr,dataName] 
-           dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
         ENDIF  
         
      ENDIF
@@ -861,13 +895,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                   TMPLT_H2DSTR=tmplt_h2dStr, $
                                   H2DFLUXN=h2dFluxN, $
                                   H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                                  DATANAME=dataName, $
-                                  DATARAWPTR=dataRawPtr
+                                  DATANAME=dataName; , $
+                                  ;; DATARAWPTR=dataRawPtr
         
         h2dStrArr=[h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
            dataNameArr=[dataNameArr,dataName] 
-           dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+           ;; dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
         ENDIF 
      ENDIF
      
@@ -1016,13 +1050,94 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
 
      ;;********************************************************
      ;;If something screwy goes on, better take stock of it and alert user
-     n_zero                     = N_ELEMENTS(h2dFluxN)-N_ELEMENTS(h2d_nonzero_nEv_i)
-     FOR i = 2, N_ELEMENTS(h2dStrArr)-1 DO BEGIN 
-        IF n_elements(where(h2dStrArr[i].data EQ 0,/NULL)) LT $
-           n_zero THEN BEGIN 
-           printf,lun,"h2dStrArr."+h2dStrArr[i].title + " has ", strtrim(n_elements(where(h2dStrArr[i].data EQ 0)),2)," elements that are zero, whereas FluxN has ", strtrim(n_zero,2),"." 
-        printf,lun,"Sorry, can't plot anything meaningful." & ENDIF
-     ENDFOR
+     ;; n_zero                     = N_ELEMENTS(h2dFluxN)-N_ELEMENTS(h2d_nonzero_nEv_i)
+     ;; FOR i = 2, N_ELEMENTS(h2dStrArr)-1 DO BEGIN 
+     ;;    IF n_elements(where(h2dStrArr[i].data EQ 0,/NULL)) LT $
+     ;;       n_zero THEN BEGIN 
+     ;;       printf,lun,"h2dStrArr."+h2dStrArr[i].title + " has ", strtrim(n_elements(where(h2dStrArr[i].data EQ 0)),2)," elements that are zero, whereas FluxN has ", strtrim(n_zero,2),"." 
+     ;;    printf,lun,"Sorry, can't plot anything meaningful." & ENDIF
+     ;; ENDFOR
+
+     IF KEYWORD_SET(add_variance_plots) OR KEYWORD_SET(only_variance_plots) THEN BEGIN
+        PRINTF,lun,"Getting variance plot data ..."
+
+        ;;some temp vars
+        var_h2dStrArr                  = !NULL
+        var_dataNameArr                = !NULL
+
+        MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
+           OUTH2D_LISTS_WITH_INDS=outH2D_lists_with_inds,$
+           MINMLT=minMLT, $
+           MAXMLT=maxMLT, $
+           BINMLT=binMLT, $
+           SHIFTMLT=shiftM, $
+           MINILAT=minILAT, $
+           MAXILAT=maxILAT, $
+           BINILAT=binILAT, $
+           DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
+           MINALT=minAlt, $
+           MAXALT=maxAlt, $
+           BINALT=binAlt, $
+           OUTFILEPREFIX=outFilePrefix, $
+           OUTFILESUFFIX=outFileSuffix, $
+           OUTDIR=outDir, $
+           OUTPUT_TEXTFILE=output_textFile, $
+           RESET_H2D_LISTS_WITH_INDS=reset_h2d_lists_with_inds, $
+           LUN=lun
+
+        FOR i=0,N_ELEMENTS(varPlotRawInds)-1 DO BEGIN
+           
+           dbStruct_obsArr               = dataRawPtrArr[varPlotRawInds[i]]
+           IF N_ELEMENTS(removed_i_listArr[i]) GT 0 THEN BEGIN
+              dont_use_these_inds           = removed_i_listArr[i]
+           ENDIF
+
+           MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
+              DONT_USE_THESE_INDS=dont_use_these_inds, $
+              /DO_LISTS_WITH_STATS, $
+              OUTH2D_LISTS_WITH_OBS=outH2D_lists_with_obs,$
+              OUTH2D_STATS=outH2D_stats, $
+              OUTFILEPREFIX=outFilePrefix, $
+              OUTFILESUFFIX=outFileSuffix, $
+              OUTDIR=outDir, $
+              OUTPUT_TEXTFILE=output_textFile, $
+              LUN=lun
+
+           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+           ;;Now get it all set up
+           h2dStrTemp                     = h2dStrArr[varPlotH2DInds[i]]
+           h2dStrTemp.title              += " (Var.)"
+           dataNameTemp                   = dataNameArr[varPlotH2DInds[i]] + '_var'
+           h2dStrTemp.data                = outH2D_stats[1,*,*]
+
+           ;;;;;;;;;;;;;;;;;;;;
+           ;;set up lims--2 std devs on either side
+           ;; tempMed                        = MEDIAN(h2dStrTemp.data)
+           tempStats                      = MOMENT(h2dStrTemp.data)
+           h2dStrTemp.lim                 = [tempStats[0]-2.*SQRT(tempStats[1]), $
+                                             tempStats[0]+2.*SQRT(tempStats[1])]
+           h2dStr.do_posNeg_cb            = 1
+           ;; h2dStrTemp.lim                 = [MIN(h2dStrTemp.data],MAX(h2dStrTemp.data)]
+           
+           var_h2dStrArr                  = [var_h2dStrArr,h2dStrTemp]
+           var_dataNameArr                = [var_dataNameArr,dataNameTemp]
+        ENDFOR
+
+        ;;Now update dat!!!
+        CASE 1 OF
+           KEYWORD_SET(only_variance_plots): BEGIN
+              dataNameArr                 = [dataNameArr[KEYWORD_SET(nPlots)],var_dataNameArr]
+              h2dStrArr                   = [h2dStrArr[KEYWORD_SET(nPlots)],var_h2dStrArr]
+              nPlots                      = 0
+           END
+           KEYWORD_SET(add_variance_plots): BEGIN
+              dataNameArr                 = [dataNameArr,var_dataNameArr]
+              h2dStrArr                   = [h2dStrArr,var_h2dStrArr]
+           END
+        ENDCASE
+
+     ENDIF
+
 
      ;;Now that we're done using nplots, let's log it, if requested:
      IF KEYWORD_SET(nPlots) THEN BEGIN

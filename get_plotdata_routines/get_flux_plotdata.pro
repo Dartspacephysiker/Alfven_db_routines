@@ -20,6 +20,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       NOPOSFLUX=noPosFlux, $
                       NONEGFLUX=noNegFlux, $
                       ABSFLUX=absFlux, $
+                      OUT_REMOVED_I=out_removed_i, $
                       LOGFLUXPLOT=logFluxPlot, $
                       DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                       MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -366,7 +367,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      IF KEYWORD_SET(noPosFlux) THEN BEGIN
         posStr                = 'NoPos--'
         PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(inData)
-        lt_i                   =  WHERE(inData LT 0.)
+        lt_i                   =  WHERE(inData LT 0.,COMPLEMENT=removed_i)
         inData                 = inData[lt_i]
         tmp_i                 = tmp_i[lt_i]
         PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(inData)
@@ -379,7 +380,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   IF KEYWORD_SET(noNegFlux) THEN BEGIN
      negStr                = 'NoNegs--'
      PRINTF,lun,"N elements in " + dataName + " before junking neg vals: ",N_ELEMENTS(inData)
-     gt_i                   =  WHERE(inData GT 0.)
+     gt_i                   =  WHERE(inData GT 0.,COMPLEMENT=removed_i)
      inData                 = inData[gt_i]
      tmp_i                 = tmp_i[gt_i]
      PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",N_ELEMENTS(inData)
@@ -387,7 +388,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   IF KEYWORD_SET(noPosFlux) AND ~KEYWORD_SET(absFlux) THEN BEGIN
      posStr                = 'NoPos--'
      PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(inData)
-     lt_i                   =  WHERE(inData LT 0.)
+     lt_i                   =  WHERE(inData LT 0.,COMPLEMENT=removed_i)
      inData                 = inData[lt_i]
      tmp_i                 = tmp_i[lt_i]
      PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(inData)
@@ -576,5 +577,5 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
   out_h2dMask          = h2dMask
 
-
+  IF N_ELEMENTS(removed_i) GT 0 THEN out_removed_i = removed_i ELSE out_removed_i = !NULL
 END

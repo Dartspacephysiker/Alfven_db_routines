@@ -198,7 +198,9 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
   MAKE_FASTLOC_HISTO,OUTTIMEHISTO=tHistDenominator, $
                      FASTLOC_INDS=fastLocInterped_i, $
                      OUT_DELTA_TS=out_delta_ts, $
-                     FASTLOC_STRUCT=FL_fastLoc,FASTLOC_TIMES=FASTLOC__Times,FASTLOC_DELTA_T=FASTLOC__delta_t, $
+                     FASTLOC_STRUCT=FL_fastLoc, $
+                     FASTLOC_TIMES=FASTLOC__Times, $
+                     FASTLOC_DELTA_T=FASTLOC__delta_t, $
                      MINMLT=minM,MAXMLT=maxM, $
                      BINMLT=binM, $
                      SHIFTMLT=shiftM, $

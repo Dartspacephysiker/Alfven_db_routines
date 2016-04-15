@@ -222,6 +222,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                                  DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                                  MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                                 ADD_VARIANCE_PLOTS=add_variance_plots, $
+                                 ONLY_VARIANCE_PLOTS=only_variance_plots, $
                                  MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, $
                                  ALL_LOGPLOTS=all_logPlots, $
                                  SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
@@ -450,6 +452,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         GROSSRATE__CENTERS_ILAT=centersILAT, $
                         DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                         MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                        ADD_VARIANCE_PLOTS=add_variance_plots, $
+                        ONLY_VARIANCE_PLOTS=only_variance_plots, $
                         MEDIANPLOT=medianPlot, MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                         LOGAVGPLOT=logAvgPlot, $
                         ALL_LOGPLOTS=all_logPlots, $

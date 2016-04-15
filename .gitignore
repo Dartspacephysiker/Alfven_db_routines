@@ -1,0 +1,5 @@
+#No temp files
+*~
+
+#No text output
+txtoutput/
