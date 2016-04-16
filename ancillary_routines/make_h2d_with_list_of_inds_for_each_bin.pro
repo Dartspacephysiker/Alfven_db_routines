@@ -10,9 +10,6 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
    MAXILAT=maxILAT, $
    BINILAT=binILAT, $
    DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
-   MINALT=minAlt, $
-   MAXALT=maxAlt, $
-   BINALT=binAlt, $
    OUTFILEPREFIX=outFilePrefix, $
    OUTFILESUFFIX=outFileSuffix, $
    OUTDIR=outDir, $
@@ -21,6 +18,8 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
    LUN=lun
 
   COMPILE_OPT idl2
+
+  DEBUG = 0
 
   ;;Because MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS wants to use 'em too
   COMMON H2D_LIST_OF_INDS,HLOI__H2D_lists_with_inds,HLOI__nInds,HLOI__nMLT,HLOI__nILAT
@@ -91,37 +90,45 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;fix MLTs, if need be
-  IF shiftM GT 0. THEN PRINT,'Shifting dbStruct MLTs by ' + STRCOMPRESS(shiftM,/REMOVE_ALL) + '...'
-  dbStructMLTs                             = dbStruct.mlt[dbStruct_inds]-shiftM
-  dbStructMLTs[WHERE(dbStructMLTs LT 0.)]  = dbStructMLTs[WHERE(dbStructMLTs LT 0.)] + 24.
-
+  dbStructMLTS                             = SHIFT_MLTS_FOR_H2D(dbStruct,dbStruct_inds,shiftM)
   dbStructILATS                            = (KEYWORD_SET(do_lShell) ? dbStruct.lShell : dbStruct.ILAT)[dbStruct_inds]
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;loop over MLTs and ILATs
   outH2D_lists_with_inds                   = !NULL
   ;; outH2D_lists_with_obs                 = !NULL
+  IF DEBUG THEN finalInds                  = !NULL
   FOR j=0, nILAT-2 DO BEGIN
      FOR i=0, nMLT-2 DO BEGIN
-        tempIndsList                       = LIST(WHERE(dbStructMLTs GE mlts[i] AND $
+        inds                               = dbStruct_inds[WHERE(dbStructMLTs GE mlts[i] AND $
                                                         dbStructMLTs LT mlts[i+1] AND $
                                                         dbStructILATS GE ilats[j] AND $
-                                                        dbStructILATS LT ilats[j+1],nTemp,/NULL))
+                                                        dbStructILATS LT ilats[j+1],nTemp,/NULL)]
+        tempIndsList                       = LIST(inds)
+
+
+        ;; tempIndsList                       = LIST(WHERE(dbStructMLTs GE mlts[i] AND $
+        ;;                                                 dbStructMLTs LT mlts[i+1] AND $
+        ;;                                                 dbStructILATS GE ilats[j] AND $
+        ;;                                                 dbStructILATS LT ilats[j+1],nTemp,/NULL))
+
         ;;Whether empty or not, add to the array of lists
         outH2D_lists_with_inds             = [outH2D_lists_with_inds,tempIndsList]
         nInds                             += nTemp
 
-        ;; IF KEYWORD_SET(do_lists_with_obs) THEN BEGIN
-        ;;    outH2D_lists_with_obs        = [outH2D_lists_with_obs,dbStruct_obsArr[tempIndsList[0]]]
-        ;; ENDIF
+        IF DEBUG THEN finalInds            = [finalInds,inds] ;;debug
+
      ENDFOR
   ENDFOR
 
   ;Now reform the sucker
-  outH2D_lists_with_inds                   = REFORM(outH2D_lists_with_inds,nMLT,nILAT)
-  ;; outH2D_lists_with_obs                 = REFORM(outH2D_lists_with_obs,nMLT,nILAT)
-  STOP ;cause we're new
+  outH2D_lists_with_inds                   = REFORM(outH2D_lists_with_inds,nMLT-1,nILAT-1)
   
+  IF DEBUG THEN BEGIN
+     PRINTF,lun,"Check to make sure you've got 'em all."
+     STOP
+  ENDIF
+
   HLOI__H2D_lists_with_inds                = outH2D_lists_with_inds
   HLOI__nInds                              = nInds
   HLOI__nMLT                               = nMLT

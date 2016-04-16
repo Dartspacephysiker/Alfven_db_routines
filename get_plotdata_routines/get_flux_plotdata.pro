@@ -48,7 +48,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       GET_OXYFLUX=get_oxyFlux, $
                       GET_CHAREE=get_ChareE, $
                       GET_CHARIE=get_chariE, $
-                      DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i, $
+                      DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                       PRINT_MAX_AND_MIN=print_mandm, $
                       FANCY_PLOTNAMES=fancy_plotNames, $
                       LUN=lun
@@ -93,7 +93,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                        MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                                        MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
                                        SHIFT1=shiftM,SHIFT2=shiftI, $
-                                       DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i, $
+                                       DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                                        ;; PLOT_I=plot_i, $
                                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                        CB_FORCE_OOBHIGH=cb_force_oobHigh, $
@@ -454,10 +454,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ENDIF
 
   ;;fix MLTs
-  mlts                      = maximus.mlt[tmp_i]-shiftM        ;shift MLTs backwards, because we want to shift the binning FORWARD
-  mlts[WHERE(mlts LT 0.)]   = mlts[WHERE(mlts LT 0.)] + 24.
+  mlts                      = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,shiftM)
+  ilats                     = (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[tmp_i]
 
-  IF KEYWORD_SET(do_plot_i) THEN BEGIN
+  IF KEYWORD_SET(do_plot_i_instead_of_histos) THEN BEGIN
      h2dStr.data.add,inData
      h2d_nonzero_nEv_i      = INDGEN(N_ELEMENTS(inData))
   ENDIF ELSE BEGIN
@@ -469,7 +469,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ENDIF
            
            h2dStr.data=median_hist(mlts, $
-                                   (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[tmp_i],$
+                                   ilats,$
                                    inData,$
                                    MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                                    MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
@@ -482,7 +482,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         KEYWORD_SET(do_timeAvg_fluxQuantities): BEGIN
 
            h2dStr.data=hist2d(mlts, $
-                              (KEYWORD_SET(do_lshell) ? maximus.lshell : maximus.ilat)[tmp_i],$
+                              ilats,$
                               (KEYWORD_SET(do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
                               MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
                               MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
@@ -515,7 +515,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         END
         ELSE: BEGIN
            h2dStr.data=hist2d(mlts, $
-                              (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[tmp_i],$
+                              ilats,$
                               (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
                               MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                               MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
@@ -563,7 +563,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ELSE h2dStr.lim       = [MIN(h2dStr.data),MAX(h2dStr.data)]
   
   IF KEYWORD_SET(logFluxPlot) THEN BEGIN 
-     IF KEYWORD_SET(do_plot_i) THEN BEGIN
+     IF KEYWORD_SET(do_plot_i_instead_of_histos) THEN BEGIN
         h2dStr.data[0,WHERE(h2dStr.data[0] NE 0,/NULL)] = ALOG10(h2dStr.data[WHERE(h2dStr.data[0] NE 0,/NULL)])
      ENDIF ELSE BEGIN
         h2dStr.data[where(h2dStr.data NE 0,/NULL)]=ALOG10(h2dStr.data[where(h2dStr.data NE 0,/NULL)]) 
@@ -577,5 +577,5 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
   out_h2dMask          = h2dMask
 
-  IF N_ELEMENTS(removed_i) GT 0 THEN out_removed_i = removed_i ELSE out_removed_i = !NULL
+  IF removed_i[0] NE -1 THEN out_removed_i = removed_i ELSE out_removed_i = !NULL
 END

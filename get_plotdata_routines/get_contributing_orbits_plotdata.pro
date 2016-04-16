@@ -1,4 +1,4 @@
-PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
+PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
                                      BINM=binM, $
                                      SHIFTM=shiftM, $
                                      MINI=minI,MAXI=maxI,BINI=binI, $
@@ -23,8 +23,8 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
   ;;  @orbplot_defaults.PRO
 
   IF N_ELEMENTS(uniqueOrbs_i) EQ 0 THEN BEGIN
-     uniqueOrbs_ii = UNIQ(dbStruct.orbit[inds],SORT(dbStruct.orbit[inds]))
-     uniqueOrbs_i  = inds[uniqueOrbs_ii]
+     uniqueOrbs_ii = UNIQ(dbStruct.orbit[plot_i],SORT(dbStruct.orbit[plot_i]))
+     uniqueOrbs_i  = plot_i[uniqueOrbs_ii]
   ENDIF
   nOrbs            = N_ELEMENTS(uniqueOrbs_i)
 
@@ -53,14 +53,14 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,inds,MINM=minM,MAXM=maxM, $
   ;; orbArr                                   = INTARR(N_ELEMENTS(uniqueOrbs_i),N_ELEMENTS(h2dFluxN[*,0]),N_ELEMENTS(h2dFluxN[0,*]))
   
   ;;fix MLTs
-  mlts                                        = dbStruct.mlt[inds]-shiftM 
-  mlts[WHERE(mlts LT 0.)]                     = mlts[WHERE(mlts LT 0.)] + 24.
+  mlts                      = SHIFT_MLTS_FOR_H2D(maximus,plot_i,shiftM)
+  ilats                     = (KEYWORD_SET(do_lShell) ? dbStruct.lshell : dbStruct.ilat)[plot_i]
 
   FOR j=0, N_ELEMENTS(uniqueOrbs_i)-1 DO BEGIN 
      tempOrb                                  = dbStruct.orbit[uniqueOrbs_i[j]] 
-     temp_ii                                  = WHERE(dbStruct.orbit[inds] EQ tempOrb,/NULL) 
+     temp_ii                                  = WHERE(dbStruct.orbit[plot_i] EQ tempOrb,/NULL) 
      h2dOrbTemp                               = HIST_2D(mlts[temp_ii],$
-                                                        (KEYWORD_SET(do_lShell) ? dbStruct.lshell : dbStruct.ilat)[inds[temp_ii]],$
+                                                        ilats[temp_ii],$
                                                         BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                                         MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? MINL : MINI),$
                                                         MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? MAXL : MAXI)) 

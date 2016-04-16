@@ -120,11 +120,11 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   ENDCASE
 
   ;;fix MLTs
-  mlts                           = maximus.mlt[plot_i]-shiftM 
-  mlts[WHERE(mlts LT 0.)]        = mlts[WHERE(mlts LT 0.)] + 24.
+  mlts                      = SHIFT_MLTS_FOR_H2D(maximus,plot_i,shiftM)
+  ilats                     = (KEYWORD_SET(do_lshell) ? maximus.lshell : maximus.ilat)[plot_i]
 
   h2dStr.data=hist2d(mlts, $
-                     (KEYWORD_SET(do_lshell) ? maximus.lshell : maximus.ilat)[plot_i],$
+                     ilats,$
                       widthData,$
                       MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
                       MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$

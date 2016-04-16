@@ -51,14 +51,14 @@ PRO GET_TOTAL_ORBITS_PLOTDATA,dbStruct,MINM=minM,MAXM=maxM, $
   ;;ENDFOR
   
   ;;fix MLTs
-  mlts                          = dbStruct.mlt-shiftM 
-  mlts[WHERE(mlts LT 0.)]       = mlts[WHERE(mlts LT 0.)] + 24.
+  mlts                      = SHIFT_MLTS_FOR_H2D(maximus,INDGEN(N_ELEMENTS(maximus.mlt)),shiftM)
+  ilats                     = KEYWORD_SET(do_lShell) ? dbStruct.lshell : dbStruct.ilat
 
   FOR j=0, N_ELEMENTS(uniqueOrbs_i)-1 DO BEGIN 
      tempOrb=dbStruct.orbit[uniqueOrbs_i[j]]
      temp_i=WHERE(dbStruct.orbit EQ tempOrb,/NULL) 
      h2dOrbTemp=hist_2d(mlts[temp_i],$
-                        (KEYWORD_SET(do_lShell) ? dbStruct.lShell : dbStruct.ilat )[temp_i],$
+                        ilats[temp_i],$
                         BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                         MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
                         MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI)) 

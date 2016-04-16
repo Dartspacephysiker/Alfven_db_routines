@@ -111,14 +111,12 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      nMLT                           = N_ELEMENTS(mlts)
      nILAT                          = N_ELEMENTS(ilats)
      
-     outTimeHisto                          = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
+     outTimeHisto                   = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
      
      ;;fix MLTs
-     IF shiftM GT 0. THEN PRINT,'Shifting fastLoc MLTs by ' + STRCOMPRESS(shiftM,/REMOVE_ALL) + '...'
-     fastLocMLTs                           = fastLoc.mlt[fastLoc_inds]-shiftM 
-     fastLocMLTs[WHERE(fastLocMLTs LT 0.)] = fastLocMLTs[WHERE(fastLocMLTs LT 0.)] + 24.
+     fastLocMLTs                    = SHIFT_MLTS_FOR_H2D(fastLoc,fastLoc_inds,shiftM)
 
-     fastLocILATS                          = (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT)[fastLoc_inds]
+     fastLocILATS                   = (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT)[fastLoc_inds]
                                 ;loop over MLTs and ILATs
      FOR j=0, nILAT-2 DO BEGIN 
         FOR i=0, nMLT-2 DO BEGIN 
