@@ -140,6 +140,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                           ADD_VARIANCE_PLOTS=add_variance_plots, $
                           ONLY_VARIANCE_PLOTS=only_variance_plots, $
+                          VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
                           SUM_ELECTRON_AND_POYNTINGFLUX=sum_electron_and_poyntingflux, $
                           MEDIANPLOT=medianPlot, $
                           MEDHISTOUTDATA=medHistOutData, $
@@ -1027,9 +1028,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
            ;;Now get it all set up
            h2dStrTemp                     = h2dStrArr[varPlotH2DInds[i]]
-           h2dStrTemp.title              += " (Var.)"
            dataNameTemp                   = dataNameArr[varPlotH2DInds[i]] + '_var'
-           h2dStrTemp.data                = outH2D_stats[1,*,*]
+           h2dStrTemp.data                = REFORM(outH2D_stats[1,*,*])
 
            ;;;;;;;;;;;;;;;;;;;; 
            ;;set up lims--2 std devs on either side
@@ -1041,6 +1041,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            h2dStr.do_posNeg_cb            = 1
            ;; h2dStrTemp.lim                 = [MIN(h2dStrTemp.data],MAX(h2dStrTemp.data)]
            
+           IF KEYWORD_SET(var__rel_to_mean_variance) THEN BEGIN
+              h2dStr.data                 = h2dStr.data - tempStats[0]
+              h2dStrTemp.lim              = h2dStrTemp.lim - tempStats[0]
+              h2dStrTemp.title           += " (Var. rel.to meanVar)"
+           ENDIF ELSE BEGIN
+              h2dStrTemp.title           += " (Var.)"
+           ENDELSE
            var_h2dStrArr                  = [var_h2dStrArr,h2dStrTemp]
            var_dataNameArr                = [var_dataNameArr,dataNameTemp]
         ENDFOR

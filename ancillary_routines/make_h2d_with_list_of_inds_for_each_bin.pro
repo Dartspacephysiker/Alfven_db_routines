@@ -95,7 +95,7 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;loop over MLTs and ILATs
-  outH2D_lists_with_inds                   = !NULL
+  outH2D_lists_with_inds                   = MAKE_ARRAY(nMLT,nILAT,/OBJ)
   ;; outH2D_lists_with_obs                 = !NULL
   IF DEBUG THEN finalInds                  = !NULL
   FOR j=0, nILAT-2 DO BEGIN
@@ -113,7 +113,8 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
         ;;                                                 dbStructILATS LT ilats[j+1],nTemp,/NULL))
 
         ;;Whether empty or not, add to the array of lists
-        outH2D_lists_with_inds             = [outH2D_lists_with_inds,tempIndsList]
+        ;; outH2D_lists_with_inds             = [outH2D_lists_with_inds,tempIndsList]
+        outH2D_lists_with_inds[i,j]        = tempIndsList
         nInds                             += nTemp
 
         IF DEBUG THEN finalInds            = [finalInds,inds] ;;debug
@@ -122,7 +123,7 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   ENDFOR
 
   ;Now reform the sucker
-  outH2D_lists_with_inds                   = REFORM(outH2D_lists_with_inds,nMLT-1,nILAT-1)
+  ;; outH2D_lists_with_inds                   = REFORM(outH2D_lists_with_inds,nMLT,nILAT)
   
   IF DEBUG THEN BEGIN
      PRINTF,lun,"Check to make sure you've got 'em all."

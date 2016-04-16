@@ -77,7 +77,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
      FOR j=0,N_ELEMENTS(tempH2D_lists_with_inds)-1 DO BEGIN
         tempInds                   = (tempH2D_lists_with_inds[j])[0]
         nTemps                     = N_ELEMENTS(tempInds)
-        IF nTemps GT 0 THEN BEGIN
+        IF ISA((tempH2D_lists_with_inds[j])[0]) AND nTemps GT 0 THEN BEGIN
            tempInds                = CGSETDIFFERENCE(tempInds,dont_use_these_inds,COUNT=tempCount,SUCCESS=remove_bad_inds)
            tempNRemoved            = nTemps-tempCount
            IF tempNRemoved GT 0 THEN BEGIN
@@ -93,31 +93,58 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;loop over MLTs and ILATs
-  outH2D_stats                             = !NULL
-  outH2D_lists_with_obs                    = !NULL
-  FOR j=0, N_ELEMENTS(HLOI__H2D_lists_with_inds)-1 DO BEGIN
-
-     tempObsList                           = LIST(dbStruct_obsArr[(tempH2D_lists_with_inds[j])[0]])
-     outH2D_lists_with_obs                 = [outH2D_lists_with_obs,tempObsList]
-
-     ;;handle stats, if requested
-     IF KEYWORD_SET(do_lists_with_stats) THEN BEGIN
-        IF N_ELEMENTS(tempObsList[0]) GT 0 THEN BEGIN
-           tempStats                       = MOMENT(tempObsList[0])
+  ;; outH2D_stats                             = !NULL
+  ;; outH2D_lists_with_obs                    = !NULL
+  outH2D_stats                             = MAKE_ARRAY(4,HLOI__nMLT,HLOI__nILAT,/DOUBLE)
+  outH2D_lists_with_obs                    = MAKE_ARRAY(HLOI__nMLT,HLOI__nILAT,/OBJ)
+  FOR j=0,HLOI__nILAT-1 DO BEGIN
+     FOR i=0,HLOI__nMLT-1 DO BEGIN
+        ;;check if valid
+        valid = ISA(tempH2D_lists_with_inds[i,j])
+        IF valid THEN BEGIN
+           tempObsList                     = LIST(dbStruct_obsArr[(tempH2D_lists_with_inds[i,j])[0]])
+           outH2D_lists_with_obs[i,j]      = tempObsList
         ENDIF ELSE BEGIN
-           tempStats                       = MAKE_ARRAY(4,VALUE=0)
-        ENDELSE
-        outH2D_stats                       = [outH2D_stats,tempStats]
-     ENDIF
 
+        ENDELSE
+
+        ;;handle stats, if requested
+        IF KEYWORD_SET(do_lists_with_stats) AND valid THEN BEGIN
+           IF N_ELEMENTS(tempObsList[0]) GT 0 THEN BEGIN
+              tempStats                       = MOMENT(tempObsList[0])
+           ENDIF ELSE BEGIN
+              tempStats                       = MAKE_ARRAY(4,VALUE=0)
+           ENDELSE
+           outH2D_stats[*,i,j]                = tempStats
+        ENDIF
+
+        
+     ENDFOR
   ENDFOR
 
+  ;; FOR j=0, N_ELEMENTS(HLOI__H2D_lists_with_inds)-1 DO BEGIN
+
+  ;;    tempObsList                           = LIST(dbStruct_obsArr[(tempH2D_lists_with_inds[j])[0]])
+  ;;    outH2D_lists_with_obs                 = [outH2D_lists_with_obs,tempObsList]
+
+  ;;    ;;handle stats, if requested
+  ;;    IF KEYWORD_SET(do_lists_with_stats) THEN BEGIN
+  ;;       IF N_ELEMENTS(tempObsList[0]) GT 0 THEN BEGIN
+  ;;          tempStats                       = MOMENT(tempObsList[0])
+  ;;       ENDIF ELSE BEGIN
+  ;;          tempStats                       = MAKE_ARRAY(4,VALUE=0)
+  ;;       ENDELSE
+  ;;       outH2D_stats                       = [outH2D_stats,tempStats]
+  ;;    ENDIF
+
+  ;; ENDFOR
+
   ;Now reform the sucker
-  outH2D_lists_with_obs                    = REFORM(outH2D_lists_with_obs,HLOI__nMLT-1,HLOI__nILAT-1)
+  outH2D_lists_with_obs                    = REFORM(outH2D_lists_with_obs,HLOI__nMLT,HLOI__nILAT)
 
   ;;… and these'ns, if requested
   IF KEYWORD_SET(do_lists_with_stats) THEN BEGIN
-     outH2D_stats                          = REFORM(outH2D_stats,4,HLOI__nMLT-1,HLOI__nILAT-1)
+     outH2D_stats                          = REFORM(outH2D_stats,4,HLOI__nMLT,HLOI__nILAT)
   ENDIF
   
 END
