@@ -225,6 +225,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  ADD_VARIANCE_PLOTS=add_variance_plots, $
                                  ONLY_VARIANCE_PLOTS=only_variance_plots, $
                                  VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
+                                 VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
                                  MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, $
                                  ALL_LOGPLOTS=all_logPlots, $
                                  SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
@@ -459,6 +460,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         ADD_VARIANCE_PLOTS=add_variance_plots, $
                         ONLY_VARIANCE_PLOTS=only_variance_plots, $
                         VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
+                        VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
                         MEDIANPLOT=medianPlot, MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                         LOGAVGPLOT=logAvgPlot, $
                         ALL_LOGPLOTS=all_logPlots, $

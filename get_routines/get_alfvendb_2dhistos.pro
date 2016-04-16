@@ -141,6 +141,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ADD_VARIANCE_PLOTS=add_variance_plots, $
                           ONLY_VARIANCE_PLOTS=only_variance_plots, $
                           VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
+                          VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
                           SUM_ELECTRON_AND_POYNTINGFLUX=sum_electron_and_poyntingflux, $
                           MEDIANPLOT=medianPlot, $
                           MEDHISTOUTDATA=medHistOutData, $
@@ -1028,7 +1029,11 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
            ;;Now get it all set up
            h2dStrTemp                     = h2dStrArr[varPlotH2DInds[i]]
-           dataNameTemp                   = dataNameArr[varPlotH2DInds[i]] + '_var'
+           IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
+              dataNameTemp                   = dataNameArr[varPlotH2DInds[i]] + '_stddev'
+           ENDIF ELSE BEGIN
+              dataNameTemp                   = dataNameArr[varPlotH2DInds[i]] + '_var'
+           ENDELSE
            h2dStrTemp.data                = REFORM(outH2D_stats[1,*,*])
 
            ;;;;;;;;;;;;;;;;;;;; 
@@ -1036,8 +1041,6 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            ;; tempMed                        = MEDIAN(h2dStrTemp.data)
            notMasked                      = WHERE(h2dStrArr[KEYWORD_SET(nPlots)].data LT 250.)
            tempStats                      = MOMENT(h2dStrTemp.data[notMasked])
-           h2dStrTemp.lim                 = [tempStats[0]-2.*SQRT(tempStats[1]), $
-                                             tempStats[0]+2.*SQRT(tempStats[1])]
            h2dStr.do_posNeg_cb            = 1
            h2dStr.force_oobLow            = 0
            h2dStr.force_oobHigh           = 0
@@ -1045,11 +1048,29 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            ;; h2dStrTemp.lim                 = [MIN(h2dStrTemp.data],MAX(h2dStrTemp.data)]
            
            IF KEYWORD_SET(var__rel_to_mean_variance) THEN BEGIN
-              h2dStrTemp.data             = h2dStrTemp.data - tempStats[0]
-              h2dStrTemp.lim              = h2dStrTemp.lim - tempStats[0]
-              h2dStrTemp.title           += " (Var. rel.to meanVar)"
+              IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
+                 h2dStrTemp.data          = SQRT(h2dStrTemp.data) - SQRT(tempStats[0])
+                 h2dStrTemp.lim                 = [-2.*SQRT(tempStats[1]), $
+                                                   2.*SQRT(tempStats[1])]
+                 h2dStrTemp.title        += " (Stddev. rel.to mean stddev.)"
+              ENDIF ELSE BEGIN
+                 h2dStrTemp.data          = h2dStrTemp.data - tempStats[0]
+                 h2dStrTemp.lim                 = [-2.*tempStats[1], $
+                                                   2.*tempStats[1]]
+                 ;; h2dStrTemp.lim           = h2dStrTemp.lim - tempStats[0]
+                 h2dStrTemp.title        += " (Var. rel.to meanVar)"
+              ENDELSE
            ENDIF ELSE BEGIN
-              h2dStrTemp.title           += " (Var.)"
+              IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
+                 h2dStrTemp.data          = SQRT(h2dStrTemp.data)
+                 h2dStrTemp.lim                 = [SQRT(tempStats[0])-2.*SQRT(tempStats[1]), $
+                                                   SQRT(tempStats[0])+2.*SQRT(tempStats[1])]
+                 h2dStrTemp.title        += " (Stddev.)"
+              ENDIF ELSE BEGIN
+                 h2dStrTemp.lim                 = [tempStats[0]-2.*tempStats[1], $
+                                                   tempStats[0]+2.*tempStats[1]]
+                 h2dStrTemp.title        += " (Var.)"
+              ENDELSE
            ENDELSE
            var_h2dStrArr                  = [var_h2dStrArr,h2dStrTemp]
            var_dataNameArr                = [var_dataNameArr,dataNameTemp]
@@ -1069,7 +1090,6 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         ENDCASE
 
      ENDIF
-
 
      ;;Now that we're done using nplots, let's log it, if requested:
      IF KEYWORD_SET(nPlots) THEN BEGIN

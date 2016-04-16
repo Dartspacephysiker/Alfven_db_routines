@@ -80,6 +80,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
         IF ISA((tempH2D_lists_with_inds[j])[0]) AND nTemps GT 0 THEN BEGIN
            tempInds                = CGSETDIFFERENCE(tempInds,dont_use_these_inds,COUNT=tempCount,SUCCESS=remove_bad_inds)
            tempNRemoved            = nTemps-tempCount
+           PRINTF,lun,"TempNRemoved: " + STRCOMPRESS(tempNRemoved,/REMOVE_ALL)
            IF tempNRemoved GT 0 THEN BEGIN
               tempH2D_lists_with_inds[j] = LIST(tempInds)
               nRemoved            += tempNRemoved
