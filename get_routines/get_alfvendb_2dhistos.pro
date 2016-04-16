@@ -1039,10 +1039,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            h2dStrTemp.lim                 = [tempStats[0]-2.*SQRT(tempStats[1]), $
                                              tempStats[0]+2.*SQRT(tempStats[1])]
            h2dStr.do_posNeg_cb            = 1
+           h2dStr.force_oobLow            = 0
+           h2dStr.force_oobHigh           = 0
+
            ;; h2dStrTemp.lim                 = [MIN(h2dStrTemp.data],MAX(h2dStrTemp.data)]
            
            IF KEYWORD_SET(var__rel_to_mean_variance) THEN BEGIN
-              h2dStr.data                 = h2dStr.data - tempStats[0]
+              h2dStrTemp.data             = h2dStrTemp.data - tempStats[0]
               h2dStrTemp.lim              = h2dStrTemp.lim - tempStats[0]
               h2dStrTemp.title           += " (Var. rel.to meanVar)"
            ENDIF ELSE BEGIN

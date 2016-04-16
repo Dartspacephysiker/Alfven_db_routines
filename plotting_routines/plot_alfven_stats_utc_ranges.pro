@@ -224,6 +224,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                                  ADD_VARIANCE_PLOTS=add_variance_plots, $
                                  ONLY_VARIANCE_PLOTS=only_variance_plots, $
+                                 VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
                                  MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, $
                                  ALL_LOGPLOTS=all_logPlots, $
                                  SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
@@ -246,7 +247,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  TILE_IMAGES=tile_images, $
                                  N_TILE_ROWS=n_tile_rows, $
                                  N_TILE_COLUMNS=n_tile_columns, $
+                                 TILING_ORDER=tiling_order, $
                                  TILEPLOTSUFF=tilePlotSuff, $
+                                 TILEPLOTTITLE=tilePlotTitle, $
+                                 TILE__FAVOR_ROWS=tile__favor_rows, $
                                  NO_COLORBAR=no_colorbar, $
                                  CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                  CB_FORCE_OOBLOW=cb_force_oobLow, $
@@ -454,6 +458,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                         ADD_VARIANCE_PLOTS=add_variance_plots, $
                         ONLY_VARIANCE_PLOTS=only_variance_plots, $
+                        VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
                         MEDIANPLOT=medianPlot, MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                         LOGAVGPLOT=logAvgPlot, $
                         ALL_LOGPLOTS=all_logPlots, $
@@ -496,7 +501,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                          TILE_IMAGES=tile_images, $
                          N_TILE_ROWS=n_tile_rows, $
                          N_TILE_COLUMNS=n_tile_columns, $
+                         TILING_ORDER=tiling_order, $
                          TILEPLOTSUFF=tilePlotSuff, $
+                         TILEPLOTTITLE=tilePlotTitle, $
+                         TILE__FAVOR_ROWS=tile__favor_rows, $
                          NO_COLORBAR=no_colorbar, $
                          ;; CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                          ;; CB_FORCE_OOBLOW=cb_force_oobLow, $

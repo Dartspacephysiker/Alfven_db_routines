@@ -13,12 +13,16 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            TILE_IMAGES=tile_images, $
                            N_TILE_ROWS=n_tile_rows, $
                            N_TILE_COLUMNS=n_tile_columns, $
-                           TILEPLOTSUFF=tilePlotSuff, $
                            TILING_ORDER=tiling_order, $
+                           TILEPLOTSUFF=tilePlotSuff, $
                            TILEPLOTTITLE=tilePlotTitle, $
+                           TILE__FAVOR_ROWS=tile__favor_rows, $
                            LUN=lun, $
                            EPS_OUTPUT=eps_output, $
                            _EXTRA = e
+  
+  defXSize                        = 5
+  defYSize                        = 5
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
@@ -99,8 +103,6 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
         ENDIF ELSE BEGIN
            ;;Create a PostScript file.
 
-           defXSize               = 5
-           defYSize               = 5
            defMapPos              = [0.125, 0.05, 0.875, 0.8]
            defCBPos               = [0.10, 0.90, 0.90, 0.92]
 
@@ -110,8 +112,37 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
 
            IF KEYWORD_SET(tile_images) THEN BEGIN
               nPlots            = N_ELEMENTS(h2dStrArr) - 1
-              IF ~KEYWORD_SET(n_tile_rows)    THEN n_tile_rows    = CEIL(nPlots/2.)
-              IF ~KEYWORD_SET(n_tile_columns) THEN n_tile_columns = CEIL(nPlots/2.)
+              IF ~KEYWORD_SET(n_tile_columns) THEN n_tile_columns = FLOOR(SQRT(nPlots))
+              ;; IF ~KEYWORD_SET(n_tile_rows)    THEN n_tile_rows    = CEIL(nPlots/2.)
+              IF ~KEYWORD_SET(n_tile_rows)    THEN n_tile_rows    = ROUND(DOUBLE(nPlots)/n_tile_columns)
+
+              WHILE (n_tile_columns*n_tile_rows) LT nPlots DO BEGIN
+                 IF KEYWORD_SET(tile__favor_rows) THEN BEGIN
+                    IF n_tile_rows LE n_tile_columns THEN BEGIN
+                       n_tile_rows++
+                       IF (n_tile_columns*n_tile_rows) GE nPlots THEN BREAK ELSE BEGIN
+                          IF n_tile_columns GE n_tile_rows THEN n_tile_rows++ ELSE n_tile_columns++
+                       ENDELSE
+                    ENDIF ELSE BEGIN
+                       n_tile_columns++
+                       IF (n_tile_columns*n_tile_rows) GE nPlots THEN BREAK ELSE BEGIN
+                          IF n_tile_columns GE n_tile_rows THEN n_tile_rows++ ELSE n_tile_columns++
+                       ENDELSE
+                    ENDELSE
+                 ENDIF ELSE BEGIN
+                    IF n_tile_columns LE n_tile_rows THEN BEGIN
+                       n_tile_columns++
+                       IF (n_tile_columns*n_tile_rows) GE nPlots THEN BREAK ELSE BEGIN
+                          IF n_tile_rows GE n_tile_columns THEN n_tile_columns++ ELSE n_tile_rows++
+                       ENDELSE
+                    ENDIF ELSE BEGIN
+                       n_tile_rows++
+                       IF (n_tile_columns*n_tile_rows) GE nPlots THEN BREAK ELSE BEGIN
+                          IF n_tile_rows GE n_tile_columns THEN n_tile_columns++ ELSE n_tile_rows++
+                       ENDELSE
+                    ENDELSE
+                 ENDELSE
+              ENDWHILE
 
               IF KEYWORD_SET(tilePlotTitle) THEN BEGIN
                  xSize              = defXWTitleSize*n_tile_columns
@@ -234,21 +265,32 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
 
            ENDIF ELSE BEGIN
 
+              xSize    = 5
+              ySize    = 5
+
               FOR i = 0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN  
                  
                  CGPS_Open, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
                             /NOMATCH, $
                             XSIZE=5, $
                             YSIZE=5, $
-                            LANDSCAPE=0, $
+                            LANDSCAPE=1, $
                             ENCAPSULATED=eps_output
                  
+                 
+                 CGDISPLAY,xSize*100,ySize*100,COLOR="black", $
+                           ;; YSIZE=KEYWORD_SET(ySize) ? ySize : def_H2D_ySize, $
+                           ;; XSIZE=xSize, $
+                           ;; YSIZE=ySize, $
+                           ;; /MATCH, $
+                           /LANDSCAPE_FORCE
                  
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
                                        NO_COLORBAR=no_colorbar, $
                                        WINDOW_XSIZE=xSize, $
                                        WINDOW_YSIZE=ySize, $
                                        MAP_POSITION=map_position, $
+                                       /NO_DISPLAY, $
                                        CB_POSITION=cb_position, $
                                        SUPPRESS_GRIDLABELS=suppress_gridLabels, $
                                        LABELS_FOR_PRESENTATION=labels_for_presentation, $

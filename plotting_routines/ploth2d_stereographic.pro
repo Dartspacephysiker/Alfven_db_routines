@@ -70,7 +70,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ;; yScale              = (defH2DMapPosition[3]-defH2DMapPosition[1])/(map_position[3]-map_position[1])
   xScale              = (map_position[2]-map_position[0])/(defH2DMapPosition[2]-defH2DMapPosition[0])
   yScale              = (map_position[3]-map_position[1])/(defH2DMapPosition[3]-defH2DMapPosition[1])
-  charScale           = (xScale*yScale)^(1./3.)
+  charScale           = (xScale*yScale)^(1./2.)
+  gridScale           = (xScale*yScale)^(1./1.)
 
   IF mirror THEN BEGIN
      IF minI GT 0 THEN BEGIN
@@ -344,7 +345,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   cgMap_Grid, CLIP_TEXT=1, $
               /NOCLIP, $
               LINESTYLE=0, $
-              THICK=(!D.Name EQ 'PS') ? defGridLineThick_PS : defGridLineThick_PS,$
+              THICK=((!D.Name EQ 'PS') ? defGridLineThick_PS : defGridLineThick_PS)*gridScale,$
               COLOR=defGridColor, $
               LONDELTA=binM*15, $
               ;; LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : binI ), $  
@@ -357,7 +358,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ;;add thicker grid to a few latitude lines
   cgMap_Grid, Clip_Text=1, $
               /NoClip, $
-              thick=(!D.Name EQ 'PS') ? defGridBoldLineThick_PS : defGridBoldLineThick,$
+              THICK=((!D.Name EQ 'PS') ? defGridBoldLineThick_PS : defGridBoldLineThick)*gridScale,$
               LINESTYLE=defBoldGridLineStyle, $
               COLOR=defGridColor, $
               ;; LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : defBoldLatDelta), $
