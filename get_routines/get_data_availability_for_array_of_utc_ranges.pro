@@ -26,8 +26,9 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
   IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
+  IF is_maximus THEN dbString = 'maximus' ELSE dbString = 'fastLoc'
 
-  PRINTF,lun,'GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES'
+  PRINTF,lun,'GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES: for ' + dbString
 
   IF KEYWORD_SET(restrict) THEN BEGIN
      IF KEYWORD_SET(verbose) THEN BEGIN
@@ -43,7 +44,74 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
      restrict = INDGEN(N_ELEMENTS(dbStruct),/L64)
   ENDELSE
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;Data integrity checks
+  PRINTF,lun,"Making sure t1_arr and t2_arr are sane ..."
+
+  IF N_ELEMENTS(t1_arr) NE N_ELEMENTS(t2_arr) THEN BEGIN
+     PRINTF,lun,"Unequal numbers of elements in t1_arr and t2_arr! Stopping ..."
+     STOP
+  ENDIF
+
+  ;;Find out whether any ranges are bogus, report
+  bogus_range_i = WHERE((t2_arr-t1_arr) LE 0,nBogus)
+  IF bogus_range_i[0] NE -1 THEN BEGIN
+     PRINTF,lun,"Bogus ranges! t2 comes before t1 in " + STRCOMPRESS(nBogus,/REMOVE_ALL) + " instances!"
+     STOP
+  ENDIF
+
+  bogus_range_i = WHERE(((SHIFT(t1_arr,-1))[0:-2]-t1_arr[0:-2]) LE 0,nBogus)
+  IF bogus_range_i[0] NE -1 THEN BEGIN
+     PRINTF,lun,"Bogus ranges! t1[later] comes before t1[earlier] in " + STRCOMPRESS(nBogus,/REMOVE_ALL) + " instances!"
+     STOP
+  ENDIF
   
+  bogus_range_i = WHERE(((SHIFT(t2_arr,-1))[0:-2]-t2_arr[0:-2]) LE 0,nBogus)
+  IF bogus_range_i[0] NE -1 THEN BEGIN
+     PRINTF,lun,"Bogus ranges! t2[later] comes before t2[earlier] in " + STRCOMPRESS(nBogus,/REMOVE_ALL) + " instances!"
+     STOP
+  ENDIF
+
+  ;;Check for duplicates
+  check_dupes,t1_arr,HAS_DUPES=t1_has_dupes,OUT_DUPE_I=t1_dupe_i,/PRINT_SAMPLE
+  check_dupes,t2_arr,HAS_DUPES=t2_has_dupes,OUT_DUPE_I=t2_dupe_i,/PRINT_SAMPLE
+
+  ;;If duplicates, report
+  IF t1_has_dupes OR t2_has_dupes THEN BEGIN
+     PRINTF,lun,"One of these input arrays has duplicate entries! Take a look:"
+     STOP
+  ENDIF
+
+  ;;Check to see if there are overlaps
+  PRINTF,lun,"Making sure there are no overlaps..."
+  overlap_t1_arr_i       = !NULL
+  overlap_t2_arr_i       = !NULL
+  n_overlap_t1           = 0
+  n_overlap_t2           = 0
+  FOR i=0,N_ELEMENTS(t1_arr)-2 DO BEGIN
+     test_1              = t1_arr[i+1] LT t2_arr[i]
+     test_2              = t2_arr[i]   GT t1_arr[i+1]
+
+     IF test_1 THEN BEGIN
+        overlap_t1_arr_i = [overlap_t1_arr_i,i+1]
+        n_overlap_t1++
+     ENDIF
+
+     IF test_2 THEN BEGIN
+        overlap_t2_arr_i = [overlap_t2_arr_i,i]
+        n_overlap_t2++
+     ENDIF
+  ENDFOR
+
+  IF n_overlap_t1 GT 0 OR n_overlap_t2 GT 0 THEN BEGIN
+     PRINTF,lun,"Overlaps exist!"
+     STOP
+  ENDIF
+
+  PRINTF,lun,"t{1,2}_arr appear sane!"
+  ;;END checks
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
   ;;Now find out where we have data in this restricted interval
   ;; inds_ii = WHERE(dbTimes(restrict) GE t1_arr[0] AND dbTimes(restrict) LE t2_arr[0],nInds)
   ;; FOR i=1,N_ELEMENTS(t1_arr)-1 DO BEGIN
@@ -75,7 +143,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
                                          VERBOSE=verbose, DEBUG=debug
 
      IF inds[0] NE -1 THEN BEGIN
-        nGood             += 1
+        nGood             ++
         out_good_tArr_i    = [out_good_tArr_i,iFirst]
         inds_list          = LIST(inds)
         uniq_orbs_list     = LIST(uniq_orbs)
@@ -141,7 +209,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
      tranges_orbs_arr     = tranges_orbs_list[0]
      tspans_orbs_arr      = tspans_orbs_list[0]
      
-     FOR i=0,nGood-1 DO BEGIN
+     FOR i=1,nGood-1 DO BEGIN
         inds_arr          = [ inds_arr, inds_list[i] ]
         uniq_orbs_arr     = [ uniq_orbs_arr, uniq_orbs_list[i] ]
         uniq_orb_inds_arr = [ uniq_orb_inds_arr, uniq_orb_inds_list[i] ]
