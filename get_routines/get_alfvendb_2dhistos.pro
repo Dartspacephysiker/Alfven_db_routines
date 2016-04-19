@@ -140,6 +140,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                           ADD_VARIANCE_PLOTS=add_variance_plots, $
                           ONLY_VARIANCE_PLOTS=only_variance_plots, $
+                          VAR__PLOTRANGE=var__plotRange, $
                           VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
                           VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
                           SUM_ELECTRON_AND_POYNTINGFLUX=sum_electron_and_poyntingflux, $
@@ -158,9 +159,12 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
 
   ;;set up variance plot inds
   varPlotRawInds         = !NULL
-  varPlotH2DInds         = !NULL & removed_i_listarr = !NULL
+  varPlotH2DInds         = !NULL
+  removed_ii_listarr     = !NULL
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
+
+  IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
 
      ;;########Flux_N and Mask########
      ;;First, histo to show where events are
@@ -300,7 +304,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPoseflux, $
                           NONEGFLUX=noNegeflux, $
                           ABSFLUX=abseflux, $
-                          OUT_REMOVED_I=out_removed_i, $
+                          OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logEfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -335,7 +339,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            dataRawPtrArr     =[dataRawPtrArr,dataRawPtr] 
            varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
            varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
         ENDIF 
      ENDIF
      
@@ -361,7 +365,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosENumFl, $
                           NONEGFLUX=noNegENumFl, $
                           ABSFLUX=absENumFl, $
-                          OUT_REMOVED_I=out_removed_i, $
+                          OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logENumFlPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -395,7 +399,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
            varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
            varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
         ENDIF 
         
      ENDIF
@@ -422,7 +426,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosPflux, $
                           NONEGFLUX=noNegPflux, $
                           ABSFLUX=absPflux, $
-                          OUT_REMOVED_I=out_removed_i, $
+                          OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -456,7 +460,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
            varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
            varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
         ENDIF  
         
      ENDIF
@@ -483,7 +487,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosIflux, $
                           NONEGFLUX=noNegIflux, $
                           ABSFLUX=absIflux, $
-                          OUT_REMOVED_I=out_removed_i, $
+                          OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logIfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -517,7 +521,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
            varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
            varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
         ENDIF  
         
      ENDIF
@@ -544,7 +548,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosOxyFlux, $
                           NONEGFLUX=noNegOxyflux, $
                           ABSFLUX=absOxyFlux, $
-                          OUT_REMOVED_I=out_removed_i, $
+                          OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logOxyfPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -578,7 +582,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
            varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
            varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
         ENDIF  
         
      ENDIF
@@ -605,7 +609,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosCharE, $
                           NONEGFLUX=noNegCharE, $
                           ABSFLUX=absCharE, $
-                          OUT_REMOVED_I=out_removed_i, $
+                          OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logCharEPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -639,7 +643,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
            varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
            varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
         ENDIF  
         
      ENDIF
@@ -665,7 +669,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosChariE, $
                           NONEGFLUX=noNegChariE, $
                           ABSFLUX=absChariE, $
-                          OUT_REMOVED_I=out_removed_i, $
+                          OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logChariEPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
@@ -699,7 +703,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
            varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
            varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_i_listArr = [removed_i_listArr,LIST(out_removed_i)]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
         ENDIF  
         
      ENDIF
@@ -1003,14 +1007,16 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            OUTFILESUFFIX=outFileSuffix, $
            OUTDIR=outDir, $
            OUTPUT_TEXTFILE=output_textFile, $
-           RESET_H2D_LISTS_WITH_INDS=reset_h2d_lists_with_inds, $
+           /FILL_WITH_INDICES_INTO_PLOT_I, $
+           ;; RESET_H2D_LISTS_WITH_INDS=reset_h2d_lists_with_inds, $
+           /RESET_H2D_LISTS_WITH_INDS, $
            LUN=lun
 
         FOR i=0,N_ELEMENTS(varPlotRawInds)-1 DO BEGIN
            
            dbStruct_obsArr               = *dataRawPtrArr[varPlotRawInds[i]]
-           IF N_ELEMENTS((removed_i_listArr[i])[0]) GT 0 THEN BEGIN
-              dont_use_these_inds           = (removed_i_listArr[i])[0]
+           IF N_ELEMENTS((removed_ii_listArr[i])[0]) GT 0 THEN BEGIN
+              dont_use_these_inds           = (removed_ii_listArr[i])[0]
            ENDIF ELSE BEGIN 
               dont_use_these_inds   = !NULL
            ENDELSE
@@ -1030,9 +1036,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            ;;Now get it all set up
            h2dStrTemp                     = h2dStrArr[varPlotH2DInds[i]]
            IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
-              dataNameTemp                   = dataNameArr[varPlotH2DInds[i]] + '_stddev'
+              dataNameTemp                = dataNameArr[varPlotH2DInds[i]] + '_stddev'
            ENDIF ELSE BEGIN
-              dataNameTemp                   = dataNameArr[varPlotH2DInds[i]] + '_var'
+              dataNameTemp                = dataNameArr[varPlotH2DInds[i]] + '_var'
            ENDELSE
            h2dStrTemp.data                = REFORM(outH2D_stats[1,*,*])
 
@@ -1041,37 +1047,73 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            ;; tempMed                        = MEDIAN(h2dStrTemp.data)
            notMasked                      = WHERE(h2dStrArr[KEYWORD_SET(nPlots)].data LT 250.)
            tempStats                      = MOMENT(h2dStrTemp.data[notMasked])
-           h2dStr.do_posNeg_cb            = 1
-           h2dStr.force_oobLow            = 0
-           h2dStr.force_oobHigh           = 0
-
-           ;; h2dStrTemp.lim                 = [MIN(h2dStrTemp.data],MAX(h2dStrTemp.data)]
+           h2dStrTemp.do_posNeg_cb        = 1
+           h2dStrTemp.force_oobLow        = 0
+           h2dStrTemp.force_oobHigh       = 0
+           IF KEYWORD_SET(var__plotRange) THEN BEGIN
+              IF N_ELEMENTS(SIZE(var__plotRange,/DIMENSIONS)) GT 1 THEN BEGIN
+                 h2dStrTemp.lim           = var__plotRange[*,i]
+              ENDIF ELSE BEGIN
+                 h2dStrTemp.lim           = var__plotRange
+              ENDELSE
+           ENDIF
            
            IF KEYWORD_SET(var__rel_to_mean_variance) THEN BEGIN
-              IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
-                 h2dStrTemp.data          = SQRT(h2dStrTemp.data) - SQRT(tempStats[0])
-                 h2dStrTemp.lim                 = [-2.*SQRT(tempStats[1]), $
-                                                   2.*SQRT(tempStats[1])]
-                 h2dStrTemp.title        += " (Stddev. rel.to mean stddev.)"
-              ENDIF ELSE BEGIN
-                 h2dStrTemp.data          = h2dStrTemp.data - tempStats[0]
+              ;; IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
+              ;;    h2dStrTemp.data          = SQRT(h2dStrTemp.data) - SQRT(tempStats[0])
+              ;;    h2dStrTemp.lim           = [-2.*SQRT(tempStats[1]), $
+              ;;                                2.*SQRT(tempStats[1])]
+              ;;    h2dStrTemp.title        += " (Stddev. rel.to mean stddev.)"
+              ;; ENDIF ELSE BEGIN
+              h2dStrTemp.data             = h2dStrTemp.data - tempStats[0]
+              IF ~KEYWORD_SET(var__plotRange) THEN BEGIN
                  h2dStrTemp.lim                 = [-2.*tempStats[1], $
-                                                   2.*tempStats[1]]
+                                                2.*tempStats[1]]
+              ENDIF
                  ;; h2dStrTemp.lim           = h2dStrTemp.lim - tempStats[0]
                  h2dStrTemp.title        += " (Var. rel.to meanVar)"
-              ENDELSE
+              ;; ENDELSE
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
                  h2dStrTemp.data          = SQRT(h2dStrTemp.data)
-                 h2dStrTemp.lim                 = [SQRT(tempStats[0])-2.*SQRT(tempStats[1]), $
-                                                   SQRT(tempStats[0])+2.*SQRT(tempStats[1])]
+                 IF ~KEYWORD_SET(var__plotRange) THEN BEGIN
+                    h2dStrTemp.lim        = [SQRT(tempStats[0])-2.*SQRT(tempStats[1]), $
+                                                      SQRT(tempStats[0])+2.*SQRT(tempStats[1])]
+                 ENDIF
                  h2dStrTemp.title        += " (Stddev.)"
               ENDIF ELSE BEGIN
-                 h2dStrTemp.lim                 = [tempStats[0]-2.*tempStats[1], $
-                                                   tempStats[0]+2.*tempStats[1]]
+                 ;; h2dStrTemp.lim                 = [tempStats[0]-2.*tempStats[1], $
+                 ;;                                   tempStats[0]+2.*tempStats[1]]
+                 IF ~KEYWORD_SET(var__plotRange) THEN BEGIN
+                    h2dStrTemp.lim        = [MIN(h2dStrTemp.data[notMasked]),MAX(h2dStrTemp.data[notMasked])]
+                 ENDIF
                  h2dStrTemp.title        += " (Var.)"
               ENDELSE
            ENDELSE
+
+           ;;Show us
+           IF KEYWORD_SET(print_mandm) THEN BEGIN
+              IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
+                 fmt    = 'G10.4' 
+                 maxh2d = MAX(h2dStrTemp.data[h2d_nonzero_nEv_i])
+                 minh2d = MIN(h2dStrTemp.data[h2d_nonzero_nEv_i])
+                 medh2d = MEDIAN(h2dStrTemp.data[h2d_nonzero_nEv_i])
+              ENDIF ELSE BEGIN
+                 fmt    = 'F10.2'
+                 maxh2d = ALOG10(MAX(h2dStrTemp.data[h2d_nonzero_nEv_i]))
+                 minh2d = ALOG10(MIN(h2dStrTemp.data[h2d_nonzero_nEv_i]))
+                 medh2d = ALOG10(MEDIAN(h2dStrTemp.data[h2d_nonzero_nEv_i]))
+              ENDELSE
+              PRINTF,lun,h2dStrTemp.title
+              ;; PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)', $
+              ;;        MAX(h2dStrTemp.data[h2d_nonzero_nEv_i]), $
+              ;;        MIN(h2dStrTemp.data[h2d_nonzero_nEv_i])
+              PRINTF,lun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
+                     maxh2d, $
+                     minh2d, $
+                     medh2d            
+           ENDIF
+
            var_h2dStrArr                  = [var_h2dStrArr,h2dStrTemp]
            var_dataNameArr                = [var_dataNameArr,dataNameTemp]
         ENDFOR

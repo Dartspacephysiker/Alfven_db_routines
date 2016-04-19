@@ -1,3 +1,4 @@
+;2016/04/19 Added FILL_WITH_INDICES_INTO_PLOT_I so that I can index into dataRawPtr output from GET_FLUX_PLOTDATA
 ;;2016/04/15 En route to Vienna from Istanbul. (Turkey rules, by the way, or at least Turkish Airlines does.)
 ;;Ripped off MAKE_TIMEHIST_DENOMINATOR for this action
 PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
@@ -14,6 +15,7 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
    OUTFILESUFFIX=outFileSuffix, $
    OUTDIR=outDir, $
    OUTPUT_TEXTFILE=output_textFile, $
+   FILL_WITH_INDICES_INTO_PLOT_I=fill_with_indices_into_plot_i, $
    RESET_H2D_LISTS_WITH_INDS=reset_H2D_lists_with_inds, $
    LUN=lun
 
@@ -97,13 +99,19 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   ;;loop over MLTs and ILATs
   outH2D_lists_with_inds                   = MAKE_ARRAY(nMLT,nILAT,/OBJ)
   ;; outH2D_lists_with_obs                 = !NULL
+  IF KEYWORD_SET(fill_with_indices_into_plot_i) THEN BEGIN
+     loopInds                              = INDGEN(N_ELEMENTS(dbStruct_inds),/LONG)
+  ENDIF ELSE BEGIN
+     loopInds                              = dbStruct_inds
+  ENDELSE
   IF DEBUG THEN finalInds                  = !NULL
   FOR j=0, nILAT-2 DO BEGIN
      FOR i=0, nMLT-2 DO BEGIN
-        inds                               = dbStruct_inds[WHERE(dbStructMLTs GE mlts[i] AND $
-                                                        dbStructMLTs LT mlts[i+1] AND $
-                                                        dbStructILATS GE ilats[j] AND $
-                                                        dbStructILATS LT ilats[j+1],nTemp,/NULL)]
+        ;; inds                               = dbStruct_inds[WHERE(dbStructMLTs GE mlts[i] AND $
+        inds                               = loopInds[WHERE(dbStructMLTs GE mlts[i] AND $
+                                                            dbStructMLTs LT mlts[i+1] AND $
+                                                            dbStructILATS GE ilats[j] AND $
+                                                            dbStructILATS LT ilats[j+1],nTemp,/NULL)]
         tempIndsList                       = LIST(inds)
 
 

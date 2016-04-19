@@ -10,7 +10,8 @@ PRO JOURNAL__20160416__TEST_VARIANCE_PLOTS__GROSSRATES__LOG_SCALE
   ;; tiling_order                   = [3,1,2,0]
 
   add_variance_plots             = 1
-  var__rel_to_mean_variance      = 1
+  var__rel_to_mean_variance      = 0
+  ;; var__plotRange                 = [0,0.5]
 
   divide_by_width_x              = 1 ;for ion plot and eflux plot
 
@@ -96,6 +97,7 @@ PRO JOURNAL__20160416__TEST_VARIANCE_PLOTS__GROSSRATES__LOG_SCALE
      LOGAVGPLOT=logAvgPlot, $
      DIVIDE_BY_WIDTH_X=divide_by_width_x, $
      ADD_VARIANCE_PLOTS=add_variance_plots, $
+     VAR__PLOTRANGE=var__plotRange, $
      VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
      DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg, $
      PROBOCCURRENCEPLOT=probOccurrencePlot, $

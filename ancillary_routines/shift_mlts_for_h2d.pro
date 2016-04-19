@@ -11,8 +11,8 @@ FUNCTION SHIFT_MLTS_FOR_H2D,dbStruct,dbStruct_inds,shiftM
      ENDELSE
   ENDIF
 
-  dbStructMLTs                           = dbStruct.mlt[dbStruct_inds]-shiftM 
-  fixMe                     = WHERE(dbStructMLTs LT 0.)
+  dbStructMLTs               = dbStruct.mlt[dbStruct_inds]-shiftM 
+  fixMe                      = WHERE(dbStructMLTs LT 0.)
   IF fixMe[0] NE -1 THEN BEGIN
      dbStructMLTs[fixMe]     = dbStructMLTs[fixMe] + 24.
   ENDIF
