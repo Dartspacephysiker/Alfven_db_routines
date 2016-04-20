@@ -23,6 +23,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, $
                                CHAREPLOTS=charEPlots, CHARETYPE=charEType, $
                                CHARIEPLOTS=chariEPlots, $
+                               AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
                                ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
                                NEVENTPERORBPLOT=nEventPerOrbPlot, $
                                NEVENTPERMINPLOT=nEventPerMinPlot, $
@@ -105,6 +106,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   IF N_ELEMENTS(nEventPerOrbPlot) EQ 0 THEN nEventPerOrbPlot =  0         ;N Events/orbit plot?
   IF N_ELEMENTS(nEventPerMinPlot) EQ 0 THEN nEventPerMinPlot =  0         ;N Events/min plot?
   
+  IF KEYWORD_SET(autoscale_fluxPlots) THEN PRINT,"Autoscaling flux plots..."
+
+
   IF (KEYWORD_SET(nEventPerOrbPlot) OR KEYWORD_SET(nEventPerMinPlot) ) AND NOT KEYWORD_SET(nPlots) THEN BEGIN
      print,"Can't do nEventPerOrbPlot without nPlots!!"
      print,"Enabling nPlots..."

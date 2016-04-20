@@ -4,6 +4,8 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
                                      MINI=minI,MAXI=maxI,BINI=binI, $
                                      DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                                      ORBCONTRIBRANGE=orbContribRange, $
+                                     ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
+                                     LOGORBCONTRIBPLOT=logOrbContribPlot, $
                                      ORBCONTRIB_NOMASK=orbContrib_noMask, $
                                      UNIQUEORBS_I=uniqueOrbs_i, $
                                      H2D_NONZERO_CONTRIBORBS_I=h2d_nonZero_contribOrbs_i, $
@@ -39,8 +41,8 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
   ;; h2dStr                                            ={tmplt_h2dStr}
   h2dStr                                      = tmplt_h2dStr
   h2dStr.data[*,*]                            = 0
-  IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
-  IF is_maximus THEN BEGIN
+  IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_orb_probOcc
+  IF is_orb_probOcc THEN BEGIN
      h2dStr.title                                = "Probability of Occurrence (orbit-based)"
      dataName                                    = "NOrbsWEventsPerContribOrbs"
   ENDIF ELSE BEGIN
@@ -76,15 +78,23 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
 
   h2d_nonZero_contribOrbs_i                   = WHERE(h2dStr.data GT 0,/NULL)
 
-  IF is_maximus THEN BEGIN
+  IF is_orb_probOcc THEN BEGIN
      h2dStr.data[h2d_nonzero_i]               = h2dStr.data[h2d_nonzero_i]/orbContrib_H2DStr_for_division.data[h2d_nonzero_i]
   ENDIF
 
+  ;;temp this, just in case we're not masking
+  IF KEYWORD_SET(orbContrib_noMask) THEN BEGIN
+     h2d_include_i          = INDGEN(N_ELEMENTS(h2dStr.data))
+     h2dStr.dont_mask_me    = 1
+  ENDIF ELSE BEGIN
+     h2d_include_i          = h2d_nonzero_i
+  ENDELSE
+  
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      fmt    = 'F10.2'
-     maxh2d = MAX(h2dStr.data[h2d_nonzero_i])
-     minh2d = MIN(h2dStr.data[h2d_nonzero_i])
-     medh2d = MEDIAN(h2dStr.data[h2d_nonzero_i])
+     maxh2d = MAX(h2dStr.data[h2d_include_i])
+     minh2d = MIN(h2dStr.data[h2d_include_i])
+     medh2d = MEDIAN(h2dStr.data[h2d_include_i])
      PRINTF,lun,h2dStr.title
      PRINTF,lun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
             maxh2d, $
@@ -92,7 +102,17 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
             medh2d
   ENDIF
 
-  IF KEYWORD_SET(orbContrib_noMask) THEN h2dStr.dont_mask_me = 1
+  IF KEYWORD_SET(logOrbContribPlot) THEN BEGIN 
+     h2dStr.data[where(h2dStr.data NE 0,/NULL)]=ALOG10(h2dStr.data[where(h2dStr.data NE 0,/NULL)]) 
+     h2dStr.lim        = ALOG10(h2dStr.lim)
+     h2dStr.is_logged  = 1
+  ENDIF
 
+  IF KEYWORD_SET(orbContribAutoscale) THEN BEGIN
+     PRINTF,lun,'Autoscaling orbContrib...'
+     h2dStr.lim       = [MIN(h2dStr.data[h2d_include_i]), $
+                         MAX(h2dStr.data[h2d_include_i])]
+
+  ENDIF
 
 END

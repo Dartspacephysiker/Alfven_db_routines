@@ -4,6 +4,7 @@
 PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                                  LOGPROBOCCURRENCE=logProbOccurrence, $
                                  PROBOCCURRENCERANGE=probOccurrenceRange, $
+                                 PROBOCCURRENCEAUTOSCALE=probOccurrenceAutoscale, $
                                  DO_WIDTH_X=do_width_x, $
                                  DO_TIMEAVGD_PFLUX=do_timeAvgd_pflux, $
                                  LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -143,6 +144,12 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
      ;; h2dStr.title =  'Log ' + h2dStr.title
      h2dStr.lim = ALOG10(h2dStr.lim)
      h2dStr.is_logged = 1
+  ENDIF
+
+  IF KEYWORD_SET(probOccurrenceAutoscale) THEN BEGIN
+     PRINTF,lun,'Autoscaling probOccurrence...'
+     h2dStr.lim       = [MIN(h2dStr.data[WHERE(~h2dMask)]), $
+                         MAX(h2dStr.data[WHERE(~h2dMask)])]
   ENDIF
 
   IF KEYWORD_SET(print_mandm) THEN BEGIN

@@ -36,6 +36,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                   OUT_FASTLOCINTERPED_I=out_fastLocInterped_i, $
                                   MAKE_TIMEHIST_H2DSTR=make_timeHist_h2dStr, $
                                   THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                                  THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
                                   THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
                                   THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
                                   TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -270,11 +271,19 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
 
      dataRawPtr                = PTR_NEW(out_delta_ts)
 
+     ;;temp this, just in case we're not masking
+     IF KEYWORD_SET(tHistDenomPlot_noMask) THEN BEGIN
+        h2d_include_i          = INDGEN(N_ELEMENTS(h2dStr.data))
+        h2dStr.dont_mask_me    = 1
+     ENDIF ELSE BEGIN
+        h2d_include_i          = h2d_nonzero_nEv_i
+     ENDELSE
+
      IF KEYWORD_SET(print_mandm) THEN BEGIN
         fmt    = 'F0.2'
-        maxh2d = MAX(h2dStr.data[h2d_nonzero_nEv_i])
-        minh2d = MIN(h2dStr.data[h2d_nonzero_nEv_i])
-        medh2d = MEDIAN(h2dStr.data[h2d_nonzero_nEv_i])
+        maxh2d = MAX(h2dStr.data[h2d_include_i])
+        minh2d = MIN(h2dStr.data[h2d_include_i])
+        medh2d = MEDIAN(h2dStr.data[h2d_include_i])
 
         PRINTF,lun,h2dStr.title
         PRINTF,lun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
@@ -283,15 +292,26 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                medh2d
      ENDIF
 
+     IF KEYWORD_SET(tHistDenomPlotNormalize) AND KEYWORD_SET(tHistDenomPlotAutoscale) THEN BEGIN
+        PRINTF,lun,"You're asking me to both autoscale and normalize tHistDenom! What does it mean?"
+        STOP
+     ENDIF
+
      IF KEYWORD_SET(tHistDenomPlotNormalize) THEN BEGIN
         dataName += "_normed"
-        h2dStr.title            = defTHistDenomNormedPlotTitle
+        maxTHist                = MAX(h2dStr.data[h2d_include_i])
+        h2dStr.title            = defTHistDenomNormedPlotTitle + $
+                                  STRING(FORMAT='(" (norm: ",G0.2,"min)")',maxTHist)
         h2dStr.lim              = [0.0,1]
-        h2dStr.data             = h2dStr.data/MAX(h2dStr.data)
+        h2dStr.data             = h2dStr.data/maxTHist
+     ENDIF
+
+     IF KEYWORD_SET(tHistDenomPlotAutoscale) THEN BEGIN
+        PRINTF,lun,"Autoscaling tHistDenom plot..."
+        h2dStr.lim              = [MIN(h2dStr.data[h2d_include_i]), $
+                                   MAX(h2dStr.data[h2d_include_i])]
      ENDIF
   ENDIF
-
-  IF KEYWORD_SET(tHistDenomPlot_noMask) THEN h2dStr.dont_mask_me = 1
 
   RETURN,tHistDenominator
 

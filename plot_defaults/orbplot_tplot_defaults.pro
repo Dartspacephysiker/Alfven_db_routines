@@ -6,7 +6,7 @@ defProbOccurrence_doPlotIntegral      = 0
 
 
 defTHistDenomPlotTitle                = 'FAST ephemeris histogram (min)'
-defTHistDenomNormedPlotTitle          = 'FAST ephemeris histogram (normalized)'
+defTHistDenomNormedPlotTitle          = 'FAST ephemeris histogram' ;rest added by GET_TIMEHIST routine
 defTHistDenomCBLabelFormat            = '(G0.3)'
 defTHistDenomLogLabels                = 1
 defTHistDenom_do_midCBLabel           = 1

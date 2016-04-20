@@ -16,7 +16,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       MINI=minI,MAXI=maxI,BINI=binI, $
                       DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                       OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                      FLUXPLOTTYPE=fluxPlotType,PLOTRANGE=plotRange, $
+                      FLUXPLOTTYPE=fluxPlotType, $
+                      PLOTRANGE=plotRange, $
+                      PLOTAUTOSCALE=plotAutoscale, $
                       NOPOSFLUX=noPosFlux, $
                       NONEGFLUX=noNegFlux, $
                       ABSFLUX=absFlux, $
@@ -38,9 +40,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       H2DMASK=h2dMask, $
                       OUT_H2DMASK=out_h2dMask, $
                       DATANAME=dataName,DATARAWPTR=dataRawPtr, $
-                      MEDIANPLOT=medianplot,MEDHISTOUTDATA=medHistOutData,MEDHISTOUTTXT=medHistOutTxt,MEDHISTDATADIR=medHistDataDir, $
+                      MEDIANPLOT=medianplot, $
+                      MEDHISTOUTDATA=medHistOutData, $
+                      MEDHISTOUTTXT=medHistOutTxt, $
+                      MEDHISTDATADIR=medHistDataDir, $
                       LOGAVGPLOT=logAvgPlot, $
-                      WRITEHDF5=writeHDF5,WRITEASCII=writeASCII,SQUAREPLOT=squarePlot,SAVERAW=saveRaw, $
                       GET_EFLUX=get_eflux, $
                       GET_ENUMFLUX=get_eNumFlux, $
                       GET_PFLUX=get_pFlux, $
@@ -559,8 +563,22 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
 
   ;;Do custom range for flux plot, if requested
-  IF  KEYWORD_SET(plotRange) THEN h2dStr.lim=plotRange $
-  ELSE h2dStr.lim       = [MIN(h2dStr.data),MAX(h2dStr.data)]
+  IF  KEYWORD_SET(plotRange) OR KEYWORD_SET(plotAutoscale) THEN BEGIN
+     IF KEYWORD_SET(plotRange) AND KEYWORD_SET(plotAutoscale) THEN BEGIN
+        PRINTF,lun,"Both plotRange and plotAutoscale are set! Assuming you'd rather have me autoscale..."
+     ENDIF
+     CASE 1 OF
+        KEYWORD_SET(plotAutoscale): BEGIN
+           h2dStr.lim   = [MIN(h2dStr.data[h2d_nonzero_nEv_i]), $
+                           MAX(h2dStr.data[h2d_nonzero_nEv_i])]
+        END
+        KEYWORD_SET(plotRange): BEGIN
+           h2dStr.lim   = plotRange
+        END
+     ENDCASE
+  ENDIF ELSE BEGIN
+     h2dStr.lim         = [MIN(h2dStr.data),MAX(h2dStr.data)]
+  ENDELSE
   
   IF KEYWORD_SET(logFluxPlot) THEN BEGIN 
      IF KEYWORD_SET(do_plot_i_instead_of_histos) THEN BEGIN

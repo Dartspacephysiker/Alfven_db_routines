@@ -53,6 +53,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NPLOTS=nPlots, $
                           NEVENTSPLOTRANGE=nEventsPlotRange, $
                           LOGNEVENTSPLOT=logNEventsPlot, $
+                          NEVENTSPLOTAUTOSCALE=nEventsPlotAutoscale, $
                           NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $
                           EPLOTS=ePlots, $
                           EFLUXPLOTTYPE=eFluxPlotType, $
@@ -101,11 +102,14 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NONEGCHARIE=noNegCharie, $
                           NOPOSCHARIE=noPosCharie, $
                           CHARIEPLOTRANGE=ChariePlotRange, $
+                          AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
                           ORBCONTRIBPLOT=orbContribPlot, $
                           ORBTOTPLOT=orbTotPlot, $
                           ORBFREQPLOT=orbFreqPlot, $
                           ORBCONTRIBRANGE=orbContribRange, $
+                          ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
                           ORBCONTRIB_NOMASK=orbContrib_noMask, $
+                          LOGORBCONTRIBPLOT=logOrbContribPlot, $
                           ORBTOTRANGE=orbTotRange, $
                           ORBFREQRANGE=orbFreqRange, $
                           NEVENTPERORBPLOT=nEventPerOrbPlot, $
@@ -116,12 +120,16 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NEVENTPERMINRANGE=nEventPerMinRange, $
                           LOGNEVENTPERMIN=logNEventPerMin, $
                           NORBSWITHEVENTSPERCONTRIBORBSPLOT=nOrbsWithEventsPerContribOrbsPlot, $
+                          LOG_NOWEPCOPLOT=log_nowepcoPlot, $
                           NOWEPCO_RANGE=nowepco_range, $
+                          NOWEPCO_AUTOSCALE=nowepco_autoscale, $
                           PROBOCCURRENCEPLOT=probOccurrencePlot, $
                           PROBOCCURRENCERANGE=probOccurrenceRange, $
+                          PROBOCCURRENCEAUTOSCALE=probOccurrenceAutoscale, $
                           LOGPROBOCCURRENCE=logProbOccurrence, $
                           THISTDENOMINATORPLOT=tHistDenominatorPlot, $
                           THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                          THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
                           THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
                           THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
                           TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
@@ -141,8 +149,16 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ADD_VARIANCE_PLOTS=add_variance_plots, $
                           ONLY_VARIANCE_PLOTS=only_variance_plots, $
                           VAR__PLOTRANGE=var__plotRange, $
+                          VAR__AUTOSCALE=var__autoscale, $
                           VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
                           VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
+                          PLOT_CUSTOM_MAXIND=plot_custom_maxInd, $
+                          CUSTOM_MAXINDS=custom_maxInds, $
+                          CUSTOM_MAXIND_RANGE=custom_maxInd_range, $
+                          CUSTOM_MAXIND_AUTOSCALE=custom_maxInd_autoscale, $
+                          CUSTOM_MAXIND_DATANAME=custom_maxInd_dataname, $
+                          CUSTOM_MAXIND_TITLE=custom_maxInd_title, $
+                          LOG_CUSTOM_MAXIND=log_custom_maxInd, $
                           SUM_ELECTRON_AND_POYNTINGFLUX=sum_electron_and_poyntingflux, $
                           MEDIANPLOT=medianPlot, $
                           MEDHISTOUTDATA=medHistOutData, $
@@ -259,6 +275,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                     OUT_FASTLOCINTERPED_I=fastLocInterped_i, $
                                                     MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
                                                     THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                                                    THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
                                                     THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
                                                     THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
                                                     TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -301,6 +318,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           OUTH2DBINSLSHELL=outH2DBinsLShell, $
                           FLUXPLOTTYPE=eFluxPlotType, $
                           PLOTRANGE=ePlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
                           NOPOSFLUX=noPoseflux, $
                           NONEGFLUX=noNegeflux, $
                           ABSFLUX=abseflux, $
@@ -362,6 +380,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           OUTH2DBINSLSHELL=outH2DBinsLShell, $
                           FLUXPLOTTYPE=eNumFlPlotType, $
                           PLOTRANGE=ENumFlPlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
                           NOPOSFLUX=noPosENumFl, $
                           NONEGFLUX=noNegENumFl, $
                           ABSFLUX=absENumFl, $
@@ -423,6 +442,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           OUTH2DBINSILAT=outH2DBinsILAT, $
                           OUTH2DBINSLSHELL=outH2DBinsLShell, $
                           PLOTRANGE=PPlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_pPlots), $
                           NOPOSFLUX=noPosPflux, $
                           NONEGFLUX=noNegPflux, $
                           ABSFLUX=absPflux, $
@@ -484,6 +504,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           OUTH2DBINSLSHELL=outH2DBinsLShell, $
                           FLUXPLOTTYPE=iFluxPlotType, $
                           PLOTRANGE=iPlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ionPlots), $
                           NOPOSFLUX=noPosIflux, $
                           NONEGFLUX=noNegIflux, $
                           ABSFLUX=absIflux, $
@@ -545,6 +566,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           OUTH2DBINSLSHELL=outH2DBinsLShell, $
                           FLUXPLOTTYPE=oxyFluxPlotType, $
                           PLOTRANGE=oxyPlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_oxyPlots), $
                           NOPOSFLUX=noPosOxyFlux, $
                           NONEGFLUX=noNegOxyflux, $
                           ABSFLUX=absOxyFlux, $
@@ -606,6 +628,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           OUTH2DBINSLSHELL=outH2DBinsLShell, $
                           FLUXPLOTTYPE=charEType, $
                           PLOTRANGE=charEPlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_charEPlots), $
                           NOPOSFLUX=noPosCharE, $
                           NONEGFLUX=noNegCharE, $
                           ABSFLUX=absCharE, $
@@ -666,6 +689,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           OUTH2DBINSILAT=outH2DBinsILAT, $
                           OUTH2DBINSLSHELL=outH2DBinsLShell, $
                           PLOTRANGE=chariEPlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_chariEPlots), $
                           NOPOSFLUX=noPosChariE, $
                           NONEGFLUX=noNegChariE, $
                           ABSFLUX=absChariE, $
@@ -738,7 +762,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                          MINL=minL, $
                                          MAXL=maxL, $
                                          BINL=binL, $
+                                         LOGORBCONTRIBPLOT=logOrbContribPlot, $
                                          ORBCONTRIBRANGE=orbContribRange, $
+                                         ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
                                          ORBCONTRIB_NOMASK=orbContrib_noMask, $
                                          UNIQUEORBS_I=uniqueOrbs_i, $
                                          H2D_NONZERO_CONTRIBORBS_I=h2d_nonzero_contribOrbs_i, $
@@ -780,7 +806,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                          MINL=minL, $
                                          MAXL=maxL, $
                                          BINL=binL, $
+                                         LOGORBCONTRIBPLOT=log_nowepcoPlot, $
                                          ORBCONTRIBRANGE=nowepco_range, $
+                                         ORBCONTRIBAUTOSCALE=nowepco_autoscale, $
                                          UNIQUEORBS_I=uniqueOrbs_wEvents_i, $
                                          H2D_NONZERO_CONTRIBORBS_I=h2d_nonzero_eventOrbs_i, $
                                          H2D_NONZERO_I=h2d_nonzero_contribOrbs_i, $
@@ -916,6 +944,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                                      LOGPROBOCCURRENCE=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logProbOccurrence)), $
                                      PROBOCCURRENCERANGE=probOccurrenceRange, $
+                                     PROBOCCURRENCEAUTOSCALE=probOccurrenceAutoscale, $
                                      DO_WIDTH_X=do_width_x, $
                                      MINM=minM, $
                                      MAXM=maxM, $
@@ -973,6 +1002,111 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         ENDIF ELSE BEGIN
            PRINT,'Have to set eplots and pplots keywords to make this work'
         ENDELSE
+     ENDIF
+
+
+     ;#####Custom maxInd--the best!!##########
+     IF KEYWORD_SET(custom_maxInds) THEN BEGIN
+        nameless_customData_count    = 0
+        nameless_customTitle_count   = 0
+        FOR i=0,N_ELEMENTS(custom_maxInds)-1 DO BEGIN
+           
+           IF N_ELEMENTS(custom_maxInd_range) NE 0 THEN BEGIN
+              IF N_ELEMENTS(custom_maxInd_range[0,*]) GT 1 THEN BEGIN
+                 custom_range = custom_maxInd_range[*,i]
+              ENDIF ELSE BEGIN
+                 custom_range = custom_maxInd_range
+              ENDELSE
+           ENDIF ELSE BEGIN
+              custom_range    = !NULL
+           ENDELSE
+
+           IF N_ELEMENTS(custom_maxInd_autoscale) NE 0 THEN BEGIN
+              IF N_ELEMENTS(custom_maxInd_autoscale) GT 1 THEN BEGIN
+                 custom_autoscale = custom_maxInd_autoscale[i]
+              ENDIF ELSE BEGIN
+                 custom_autoscale = custom_maxInd_autoscale
+              ENDELSE
+           ENDIF
+
+           IF N_ELEMENTS(log_custom_maxInd) NE 0 THEN BEGIN
+              IF N_ELEMENTS(log_custom_maxInd) GT 1 THEN BEGIN
+                 log_custom = log_custom_maxInd[i]
+              ENDIF ELSE BEGIN
+                 log_custom = log_custom_maxInd
+              ENDELSE
+           ENDIF
+
+           IF N_ELEMENTS(log_custom_maxInd) NE 0 THEN BEGIN
+              IF N_ELEMENTS(log_custom_maxInd) GT 1 THEN BEGIN
+                 log_custom = log_custom_maxInd[i]
+              ENDIF ELSE BEGIN
+                 log_custom = log_custom_maxInd
+              ENDELSE
+           ENDIF
+
+           IF N_ELEMENTS(custom_maxInd_dataname) NE 0 THEN BEGIN
+              IF N_ELEMENTS(custom_maxInd_dataname) GT 1 THEN BEGIN
+                 custom_dataname = custom_maxInd_dataname[i]
+              ENDIF ELSE BEGIN
+                 custom_dataname = 'custom_maxind_'+STRCOMPRESS(nameless_custom_count,/REMOVE_ALL)
+                 nameless_customData_count++
+              ENDELSE
+           ENDIF
+
+           IF N_ELEMENTS(custom_maxInd_title) NE 0 THEN BEGIN
+              IF N_ELEMENTS(custom_maxInd_title) GT 1 THEN BEGIN
+                 custom_title = custom_maxInd_title[i]
+              ENDIF ELSE BEGIN
+                 custom_title = 'Custom MaxInd #'+STRCOMPRESS(nameless_custom_count,/REMOVE_ALL)
+                 nameless_customTitle_count++
+              ENDELSE
+           ENDIF
+
+           GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInds[i], $
+                                      CUSTOM_DATANAME=custom_dataname, $
+                                      CUSTOM_TITLE=custom_title, $
+                                      MINM=minM,MAXM=maxM, $
+                                      BINM=binM, $
+                                      SHIFTM=shiftM, $
+                                      MINI=minI,MAXI=maxI,BINI=binI, $
+                                      DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
+                                      OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                                      PLOTRANGE=custom_range, $
+                                      PLOTAUTOSCALE=custom_autoscale, $
+                                      NOPOSFLUX=noPosFlux, $
+                                      NONEGFLUX=noNegFlux, $
+                                      ABSFLUX=absFlux, $
+                                      OUT_REMOVED_II=out_removed_ii, $
+                                      LOGPLOT=log_custom, $
+                                      DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                                      MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                                      DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                                      DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                                      DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                                      GROSSRATE__H2D_AREAS=h2dAreas, $
+                                      GROSSRATE__CENTERS_MLT=centersMLT, $
+                                      GROSSRATE__CENTERS_ILAT=centersILAT, $
+                                      THISTDENOMINATOR=tHistDenominator, $
+                                      H2DSTR=h2dStr, $
+                                      TMPLT_H2DSTR=tmplt_h2dStr, $
+                                      H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                      H2DFLUXN=h2dFluxN, $
+                                      H2DMASK=h2dMask, $
+                                      OUT_H2DMASK=out_h2dMask, $
+                                      DATANAME=dataName,DATARAWPTR=dataRawPtr, $
+                                      MEDIANPLOT=medianplot, $
+                                      MEDHISTOUTDATA=medHistOutData, $
+                                      MEDHISTOUTTXT=medHistOutTxt, $
+                                      MEDHISTDATADIR=medHistDataDir, $
+                                      LOGAVGPLOT=logAvgPlot, $
+                                      DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
+                                      PRINT_MAX_AND_MIN=print_mandm, $
+                                      FANCY_PLOTNAMES=fancy_plotNames, $
+                                      LUN=lun
+           
+
+        ENDFOR
      ENDIF
 
 
@@ -1050,12 +1184,25 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            h2dStrTemp.do_posNeg_cb        = 1
            h2dStrTemp.force_oobLow        = 0
            h2dStrTemp.force_oobHigh       = 0
-           IF KEYWORD_SET(var__plotRange) THEN BEGIN
-              IF N_ELEMENTS(SIZE(var__plotRange,/DIMENSIONS)) GT 1 THEN BEGIN
-                 h2dStrTemp.lim           = var__plotRange[*,i]
-              ENDIF ELSE BEGIN
-                 h2dStrTemp.lim           = var__plotRange
-              ENDELSE
+
+           ;;handle ranges
+           IF KEYWORD_SET(var__plotRange) OR KEYWORD_SET(var__autoscale) THEN BEGIN
+              IF KEYWORD_SET(var__plotRange) AND KEYWORD_SET(var__autoscale) THEN BEGIN
+                 PRINTF,lun,"Both var__plotRange and var__autoscale are set! Assuming you'd rather have me autoscale..."
+              ENDIF
+              CASE 1 OF
+                 KEYWORD_SET(var__autoscale): BEGIN
+                    h2dStrTemp.lim        = [MIN(h2dStrTemp.data[h2d_nonzero_nEv_i]), $
+                                              MAX(h2dStrTemp.data[h2d_nonzero_nEv_i])]
+                 END
+                 KEYWORD_SET(var__plotRange): BEGIN
+                    IF N_ELEMENTS(SIZE(var__plotRange,/DIMENSIONS)) GT 1 THEN BEGIN
+                       h2dStrTemp.lim     = var__plotRange[*,i]
+                    ENDIF ELSE BEGIN
+                       h2dStrTemp.lim     = var__plotRange
+                    ENDELSE
+                 END
+              ENDCASE
            ENDIF
            
            IF KEYWORD_SET(var__rel_to_mean_variance) THEN BEGIN
@@ -1148,12 +1295,17 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         ENDIF
         IF KEYWORD_SET(nEventsPlotNormalize) THEN BEGIN
            dataNameArr[0]        += '_normed'
-           h2dStrArr[0].data      = h2dStrArr[0].data/MAX(h2dStrArr[0].data)
+           maxNEv                 = MAX(h2dStrArr[0].data[h2d_nonzero_nEv_i])
+           h2dStrArr[0].data      = h2dStrArr[0].data/maxNEv
            h2dStrArr[0].lim       = [0.0,1.0]
-           h2dStrArr[0].title    += " (normed)"
+           h2dStrArr[0].title    += STRING(FORMAT='(" (norm: ",G0.3,")")',maxNEv)
            ;; h2dStrArr[0].dont_mask_me = 1
         ENDIF
-
+        IF KEYWORD_SET(nEventsPlotAutoscale) THEN BEGIN
+           PRINT,"Autoscaling nEvents plot..."
+           h2dStrArr[0].lim       = [MIN(h2dStrArr[0].data[h2d_nonzero_nEv_i]), $
+                                     MAX(h2dStrArr[0].data[h2d_nonzero_nEv_i])]
+        ENDIF
      ENDIF
 
 END

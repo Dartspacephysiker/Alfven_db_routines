@@ -1,33 +1,30 @@
 ;2016/04/13 Kristina Lynch rightly pointed out that there could have been a dayside sampling bias for FAST, and maybe that's why
 ;we observe strange Poynting flux distributions. I highly doubt it, but let's see.
 
-PRO JOURNAL__20160413__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_20160412__KEILING_ET_AL_2003_PFLUX_JOURNAL
+PRO JOURNAL__20160420__PLOT_WIDTH_TIME_PROBOCCURRENCE_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_20160412__KEILING_ET_AL_2003_PFLUX_JOURNAL
 
   hemi                     = 'NORTH'
   ;; hemi                     = 'SOUTH'
   
   pFluxMin                 = 5
 
-  nPlots                   = 1
-  ;; nEventsPlotNormalize     = 1  
-  nEventsPlotAutoscale     = 1
+  probOccurrencePlot       = 1
+  probOccurrenceAutoscale  = 1
+  logProbOccurrence        = 1
 
-  tHistDenominatorPlot     = 1
-  ;; tHistDenomPlotNormalize  = 1
-  tHistDenomPlotAutoscale  = 1
-  tHistDenomPlot_noMask    = 1
+  nOrbsWithEventsPerContribOrbsPlot = 1
+  log_nowepcoPlot          = 1
+  nowepco_autoscale        = 1
 
-  nEventPerMinPlot         = 1
-  ;; nEventPerMinRange        = [1e-1,10]
-  ;; logNEventPerMin          = 1
-  nEventPerMinRange        = [0,5]
-  logNEventPerMin          = 0
+  orbContribPlot           = 1
+  logOrbContribPlot        = 1
+  orbContribAutoscale      = 1
 
   tile_images              = 1
   tiling_order             = [2,0,1]
-  n_tile_columns           = 3
-  n_tile_rows              = 1
-  tilePlotSuff             = "--normed_nEvents_tHistos__and_nEvPerMin"
+  n_tile_columns           = 2
+  n_tile_rows              = 2
+  tilePlotSuff             = "--two_styles_probOccurrence_orbContribplot_and_width_time"
 
   altRange                 = [[0,4175], $
                               [340,500], $
@@ -147,16 +144,29 @@ PRO JOURNAL__20160413__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
         CHAREPLOTS=charEPlots, CHARETYPE=charEType, LOGCHAREPLOT=logCharEPlot, ABSCHARE=absCharE, $
         NONEGCHARE=noNegCharE, NOPOSCHARE=noPosCharE, CHAREPLOTRANGE=CharEPlotRange, $
         CHARIEPLOTS=chariePlots, LOGCHARIEPLOT=logChariePlot, ABSCHARIE=absCharie, $
-        NONEGCHARIE=noNegCharie, NOPOSCHARIE=noPosCharie, CHARIEPLOTRANGE=ChariePlotRange, $
-        ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
-        ORBCONTRIBRANGE=orbContribRange, ORBTOTRANGE=orbTotRange, ORBFREQRANGE=orbFreqRange, $
-        NEVENTPERORBPLOT=nEventPerOrbPlot, LOGNEVENTPERORB=logNEventPerOrb, NEVENTPERORBRANGE=nEventPerOrbRange, $
+        NONEGCHARIE=noNegCharie, $
+        NOPOSCHARIE=noPosCharie, CHARIEPLOTRANGE=ChariePlotRange, $
+        AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
+        ORBCONTRIBPLOT=orbContribPlot, $
+        LOGORBCONTRIBPLOT=logOrbContribPlot, $
+        ORBTOTPLOT=orbTotPlot, $
+        ORBFREQPLOT=orbFreqPlot, $
+        ORBCONTRIBRANGE=orbContribRange, $
+        ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
+        ORBTOTRANGE=orbTotRange, $
+        ORBFREQRANGE=orbFreqRange, $
+        NEVENTPERORBPLOT=nEventPerOrbPlot, $
+        LOGNEVENTPERORB=logNEventPerOrb, $
+        NEVENTPERORBRANGE=nEventPerOrbRange, $
         DIVNEVBYTOTAL=divNEvByTotal, $
         NEVENTPERMINPLOT=nEventPerMinPlot, $
         NEVENTPERMINRANGE=nEventPerMinRange, LOGNEVENTPERMIN=logNEventPerMin, $
         NORBSWITHEVENTSPERCONTRIBORBSPLOT=nOrbsWithEventsPerContribOrbsPlot, $
         NOWEPCO_RANGE=nowepco_range, $
+        NOWEPCO_AUTOSCALE=nowepco_autoscale, $
+        LOG_NOWEPCOPLOT=log_nowepcoPlot, $
         PROBOCCURRENCEPLOT=probOccurrencePlot, $
+        PROBOCCURRENCEAUTOSCALE=probOccurrenceAutoscale, $
         PROBOCCURRENCERANGE=probOccurrenceRange, $
         LOGPROBOCCURRENCE=logProbOccurrence, $
         THISTDENOMINATORPLOT=tHistDenominatorPlot, $
@@ -174,6 +184,18 @@ PRO JOURNAL__20160413__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
         DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
         DIVIDE_BY_WIDTH_X=divide_by_width_x, $
         MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+        ADD_VARIANCE_PLOTS=add_variance_plots, $
+        ONLY_VARIANCE_PLOTS=only_variance_plots, $
+        VAR__PLOTRANGE=var__plotRange, $
+        VAR__AUTOSCALE=var__autoscale, $
+        VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
+        VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
+        PLOT_CUSTOM_MAXIND=plot_custom_maxInd, $
+        CUSTOM_MAXINDS=custom_maxInds, $
+        CUSTOM_MAXIND_RANGE=custom_maxInd_range, $
+        CUSTOM_MAXIND_AUTOSCALE=custom_maxInd_autoscale, $
+        CUSTOM_MAXIND_DATANAME=custom_maxInd_dataname, $
+        CUSTOM_MAXIND_TITLE=custom_maxInd_title, $
         SUM_ELECTRON_AND_POYNTINGFLUX=sum_electron_and_poyntingflux, $
         MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, $
         ALL_LOGPLOTS=all_logPlots, $
