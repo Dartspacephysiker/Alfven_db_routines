@@ -20,7 +20,7 @@ PRO JOURNAL__20160420__PLOT_WIDTH_TIME_PROBOCCURRENCE_W_PFLUX_GE_5MW_PER_M2_FOR_
   probOccurrenceAutoscale  = 1
   logProbOccurrence        = 1
 
-  nOrbsWithEventsPerContribOrbsPlot = 0
+  nOrbsWithEventsPerContribOrbsPlot = 1
   log_nowepcoPlot          = 1
   nowepco_autoscale        = 1
 
@@ -34,7 +34,7 @@ PRO JOURNAL__20160420__PLOT_WIDTH_TIME_PROBOCCURRENCE_W_PFLUX_GE_5MW_PER_M2_FOR_
   n_tile_rows              = 2
   tilePlotSuff             = "--two_styles_probOccurrence_orbContribplot_and_width_time"
 
-  altRange                 = [[0,4175], $
+  altRange                 = [ $ ;[0,4175], $
                               [340,500], $
                               [500,1000], $
                               [1000,1500], $

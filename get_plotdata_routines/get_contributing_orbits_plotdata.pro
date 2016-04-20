@@ -58,14 +58,20 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
   mlts                      = SHIFT_MLTS_FOR_H2D(dbStruct,plot_i,shiftM)
   ilats                     = (KEYWORD_SET(do_lShell) ? dbStruct.lshell : dbStruct.ilat)[plot_i]
 
+  h2dOrbTemp                                  = INTARR(N_ELEMENTS(tmplt_h2dStr.data[*,0]),N_ELEMENTS(tmplt_h2dStr.data[0,*]))
+  h2dOrbTemp[*,*]                             = 0
   FOR j=0, N_ELEMENTS(uniqueOrbs_i)-1 DO BEGIN 
      tempOrb                                  = dbStruct.orbit[uniqueOrbs_i[j]] 
-     temp_ii                                  = WHERE(dbStruct.orbit[plot_i] EQ tempOrb,/NULL) 
-     h2dOrbTemp                               = HIST_2D(mlts[temp_ii],$
+     temp_ii                                  = WHERE(dbStruct.orbit[plot_i] EQ tempOrb) 
+     IF temp_ii[0] NE -1 THEN BEGIN
+        h2dOrbTemp                            = HIST_2D(mlts[temp_ii],$
                                                         ilats[temp_ii],$
                                                         BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                                         MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? MINL : MINI),$
                                                         MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? MAXL : MAXI)) 
+     ENDIF ELSE BEGIN
+        h2dOrbTemp[*,*]                       = 0
+     ENDELSE
      orbArr[j,*,*]                            = h2dOrbTemp 
      h2dOrbTemp[WHERE(h2dOrbTemp GT 0,/NULL)] = 1 
      h2dStr.data                             += h2dOrbTemp 
@@ -76,11 +82,15 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
   ELSE $
      h2dStr.lim                               = orbContribRange
 
-  h2d_nonZero_contribOrbs_i                   = WHERE(h2dStr.data GT 0,/NULL)
-
   IF is_orb_probOcc THEN BEGIN
-     h2dStr.data[h2d_nonzero_i]               = h2dStr.data[h2d_nonzero_i]/orbContrib_H2DStr_for_division.data[h2d_nonzero_i]
-  ENDIF
+     tempDenom                                = orbContrib_H2DStr_for_division.data
+     IF orbContrib_H2DStr_FOR_division.is_logged THEN BEGIN
+        tempDenom[h2d_nonzero_i]              = 10.^(tempDenom[h2d_nonzero_i])
+     ENDIF
+     h2dStr.data[h2d_nonzero_i]               = h2dStr.data[h2d_nonzero_i]/tempDenom[h2d_nonzero_i]
+  ENDIF ELSE BEGIN
+     h2d_nonZero_contribOrbs_i                = WHERE(h2dStr.data GT 0,/NULL)
+  ENDELSE
 
   ;;temp this, just in case we're not masking
   IF KEYWORD_SET(orbContrib_noMask) THEN BEGIN
