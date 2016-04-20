@@ -83,13 +83,14 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
 
   dataName                  = N_ELEMENTS(custom_dataName) GT 0 ? custom_dataName : "custom_maxInd"
   h2dStr.labelFormat        = fluxPlotEPlotCBLabelFormat
-  h2dStr.logLabels          = 1
+  h2dStr.logLabels          = 0
   h2dStr.do_plotIntegral    = 0
   h2dStr.do_midCBLabel      = 0
   h2dStr.title              = N_ELEMENTS(custom_title) GT 0 ? custom_title : "custom_maxInd"
 
   inData                    = GET_CUSTOM_ALFVENDB_QUANTITY(custom_maxInd,MAXIMUS=maximus,/VERBOSE)
-  
+  inData                    = inData[tmp_i]
+
   can_div_by_w_x            = 1
   can_mlt_by_w_x            = 1
 

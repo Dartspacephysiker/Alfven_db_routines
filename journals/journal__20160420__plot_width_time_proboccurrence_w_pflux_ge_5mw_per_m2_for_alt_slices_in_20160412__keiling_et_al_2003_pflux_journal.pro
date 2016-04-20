@@ -8,11 +8,19 @@ PRO JOURNAL__20160420__PLOT_WIDTH_TIME_PROBOCCURRENCE_W_PFLUX_GE_5MW_PER_M2_FOR_
   
   pFluxMin                 = 5
 
+  plot_custom_maxInd       = 1
+  custom_maxInds           = ['maximus.(20)']
+  ;; custom_maxInd_range      =
+  custom_maxInd_autoscale  = [1]
+  custom_maxInd_dataname   = ['width_time']
+  custom_maxInd_title      = ['Filament Width (s)']
+  log_custom_maxInd        = [1]
+
   probOccurrencePlot       = 1
   probOccurrenceAutoscale  = 1
   logProbOccurrence        = 1
 
-  nOrbsWithEventsPerContribOrbsPlot = 1
+  nOrbsWithEventsPerContribOrbsPlot = 0
   log_nowepcoPlot          = 1
   nowepco_autoscale        = 1
 
@@ -21,7 +29,7 @@ PRO JOURNAL__20160420__PLOT_WIDTH_TIME_PROBOCCURRENCE_W_PFLUX_GE_5MW_PER_M2_FOR_
   orbContribAutoscale      = 1
 
   tile_images              = 1
-  tiling_order             = [2,0,1]
+  ;; tiling_order             = [2,0,1]
   n_tile_columns           = 2
   n_tile_rows              = 2
   tilePlotSuff             = "--two_styles_probOccurrence_orbContribplot_and_width_time"
@@ -43,7 +51,7 @@ PRO JOURNAL__20160420__PLOT_WIDTH_TIME_PROBOCCURRENCE_W_PFLUX_GE_5MW_PER_M2_FOR_
   ;;                             [2175,3175], $
   ;;                             [3175,4175]]
 
-  ;; altRange                 = [[0,4175]]
+  altRange                 = [[0,4175]]
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;ILAT stuff
@@ -196,6 +204,7 @@ PRO JOURNAL__20160420__PLOT_WIDTH_TIME_PROBOCCURRENCE_W_PFLUX_GE_5MW_PER_M2_FOR_
         CUSTOM_MAXIND_AUTOSCALE=custom_maxInd_autoscale, $
         CUSTOM_MAXIND_DATANAME=custom_maxInd_dataname, $
         CUSTOM_MAXIND_TITLE=custom_maxInd_title, $
+        LOG_CUSTOM_MAXIND=log_custom_maxInd, $
         SUM_ELECTRON_AND_POYNTINGFLUX=sum_electron_and_poyntingflux, $
         MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, $
         ALL_LOGPLOTS=all_logPlots, $

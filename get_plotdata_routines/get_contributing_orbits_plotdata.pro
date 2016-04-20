@@ -55,7 +55,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
   ;; orbArr                                   = INTARR(N_ELEMENTS(uniqueOrbs_i),N_ELEMENTS(h2dFluxN[*,0]),N_ELEMENTS(h2dFluxN[0,*]))
   
   ;;fix MLTs
-  mlts                      = SHIFT_MLTS_FOR_H2D(maximus,plot_i,shiftM)
+  mlts                      = SHIFT_MLTS_FOR_H2D(dbStruct,plot_i,shiftM)
   ilats                     = (KEYWORD_SET(do_lShell) ? dbStruct.lshell : dbStruct.ilat)[plot_i]
 
   FOR j=0, N_ELEMENTS(uniqueOrbs_i)-1 DO BEGIN 
@@ -106,6 +106,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.data[where(h2dStr.data NE 0,/NULL)]=ALOG10(h2dStr.data[where(h2dStr.data NE 0,/NULL)]) 
      h2dStr.lim        = ALOG10(h2dStr.lim)
      h2dStr.is_logged  = 1
+     h2dStr.title      = "Log " + h2dStr.title
   ENDIF
 
   IF KEYWORD_SET(orbContribAutoscale) THEN BEGIN

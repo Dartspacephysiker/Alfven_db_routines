@@ -1049,19 +1049,23 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
               IF N_ELEMENTS(custom_maxInd_dataname) GT 1 THEN BEGIN
                  custom_dataname = custom_maxInd_dataname[i]
               ENDIF ELSE BEGIN
-                 custom_dataname = 'custom_maxind_'+STRCOMPRESS(nameless_custom_count,/REMOVE_ALL)
+                 custom_dataname = custom_maxInd_dataname 
                  nameless_customData_count++
               ENDELSE
-           ENDIF
+           ENDIF ELSE BEGIN
+              custom_dataname = 'custom_maxind_'+STRCOMPRESS(nameless_customData_count,/REMOVE_ALL)
+           ENDELSE
 
            IF N_ELEMENTS(custom_maxInd_title) NE 0 THEN BEGIN
               IF N_ELEMENTS(custom_maxInd_title) GT 1 THEN BEGIN
                  custom_title = custom_maxInd_title[i]
               ENDIF ELSE BEGIN
-                 custom_title = 'Custom MaxInd #'+STRCOMPRESS(nameless_custom_count,/REMOVE_ALL)
+                 custom_title    = custom_maxInd_title
                  nameless_customTitle_count++
               ENDELSE
-           ENDIF
+           ENDIF ELSE BEGIN
+              custom_title = 'Custom MaxInd #'+STRCOMPRESS(nameless_customTitle_count,/REMOVE_ALL)
+           ENDELSE
 
            GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInds[i], $
                                       CUSTOM_DATANAME=custom_dataname, $
@@ -1071,7 +1075,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                       SHIFTM=shiftM, $
                                       MINI=minI,MAXI=maxI,BINI=binI, $
                                       DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
-                                      OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                                      OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT, $
+                                      OUTH2DBINSLSHELL=outH2DBinsLShell, $
                                       PLOTRANGE=custom_range, $
                                       PLOTAUTOSCALE=custom_autoscale, $
                                       NOPOSFLUX=noPosFlux, $
@@ -1092,7 +1097,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                       TMPLT_H2DSTR=tmplt_h2dStr, $
                                       H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                                       H2DFLUXN=h2dFluxN, $
-                                      H2DMASK=h2dMask, $
+                                      H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
                                       OUT_H2DMASK=out_h2dMask, $
                                       DATANAME=dataName,DATARAWPTR=dataRawPtr, $
                                       MEDIANPLOT=medianplot, $
@@ -1106,6 +1111,12 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                       LUN=lun
            
 
+           h2dStrArr=[h2dStrArr,h2dStr] 
+           IF keepMe THEN BEGIN 
+              dataNameArr=[dataNameArr,dataName] 
+              dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+           ENDIF
+           
         ENDFOR
      ENDIF
 
