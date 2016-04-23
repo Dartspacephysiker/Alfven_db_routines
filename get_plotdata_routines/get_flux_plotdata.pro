@@ -34,6 +34,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
                       GROSSRATE__CENTERS_MLT=centersMLT, $
                       GROSSRATE__CENTERS_ILAT=centersILAT, $
+                      GROSSCONVFACTOR=grossConvFactor, $
+                      WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
+                      GROSSLUN=grossLun, $
                       THISTDENOMINATOR=tHistDenominator, $
                       H2DSTR=h2dStr, $
                       TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -173,7 +176,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.title  = title__alfDB_ind_10 + '(time-averaged)'
            ENDIF
 
-           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_with) THEN BEGIN
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
               CASE 1 OF
                  KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
                     h2dStr.title = title__alfDB_ind_10_grossRate
@@ -192,11 +195,53 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            h2dStr.title  = title__alfDB_esa_nFlux
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            inData           = maximus.esa_current[tmp_i] * 1. / 1.6e-9
+
+           IF KEYWORD_SET(multiply_by_width_x) THEN BEGIN
+              PRINTF,lun,"you realize you should probably just divide energy flux by chare, right?"
+              STOP
+
+              h2dStr.title     = title__alfDB_esa_nFlux_integ
+              LOAD_MAPPING_RATIO_DB,mapRatio, $
+                                    DO_DESPUNDB=maximus.despun
+              IF maximus.corrected_fluxes THEN BEGIN ;Assume that ESA current has been multiplied by mapRatio
+                 PRINT,'Undoing a square-root factor of multiplication by magField ratio for ESA number flux...'
+                 magFieldFactor        = 1.D/SQRT(mapRatio.ratio[tmp_i]) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
+              ENDIF ELSE BEGIN
+                 magFieldFactor        = SQRT(mapRatio.ratio[tmp_i])
+              ENDELSE
+           ENDIF
+
+           CASE 1 OF 
+              KEYWORD_SET(do_timeAvg_fluxQuantities): BEGIN
+                 h2dStr.title          = title__alfDB_esa_nFlux + '(time-averaged)'
+              END
+              ELSE: BEGIN
+                 h2dStr.title          = title__alfDB_esa_nFlux + '(time-averaged)'
+              END
+           ENDCASE
+
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
+
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR $
+              KEYWORD_SET(do_grossRate_with_long_width) $
+           THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+                    h2dStr.title = title__alfDB_esa_nFlux_grossRate
+                    grossConvFactor = 1e10 ;Areas are given in km^2, but we need them in cm^2
+                 END
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    h2dStr.title = title__alfDB_esa_nFlux_grossRate + '(long. wid.)'
+                    grossConvFactor = 1e5 ;Lengths given in km, but we need them in cm.
+                 END
+                 ELSE: BEGIN
+                 END
+              ENDCASE
+           ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("ESA_Current"): BEGIN
-           h2dStr.title  = title__alfDB_ind_
+           h2dStr.title  = title__alfDB_ind_07
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            inData           = maximus.esa_current[tmp_i]
            can_div_by_w_x   = 0
@@ -219,17 +264,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   IF KEYWORD_SET(get_pFlux) THEN BEGIN
 
      CASE 1 OF
-        KEYWORD_SET(multiply_by_width_x): BEGIN
-           h2dStr.title     = title__alfDB_ind_49_integ
-           LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                 DO_DESPUNDB=maximus.despun
-           IF maximus.corrected_fluxes THEN BEGIN ;Assume that pFlux has been multiplied by mapRatio
-              PRINT,'Undoing a square-root factor of multiplication by magField ratio for Poynting flux ...'
-              magFieldFactor        = 1.D/SQRT(mapRatio.ratio[tmp_i]) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
-           ENDIF ELSE BEGIN
-              magFieldFactor        = SQRT(mapRatio.ratio[tmp_i])
-           ENDELSE
-        END
         KEYWORD_SET(do_timeAvg_fluxQuantities): BEGIN
            ;; CASE 1 OF
            ;;    KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
@@ -251,7 +285,19 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         END
      ENDCASE
 
-     IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_with) THEN BEGIN
+     IF KEYWORD_SET(multiply_by_width_x) THEN BEGIN
+        h2dStr.title     = title__alfDB_ind_49_integ
+        LOAD_MAPPING_RATIO_DB,mapRatio, $
+                              DO_DESPUNDB=maximus.despun
+        IF maximus.corrected_fluxes THEN BEGIN ;Assume that pFlux has been multiplied by mapRatio
+           PRINT,'Undoing a square-root factor of multiplication by magField ratio for Poynting flux ...'
+           magFieldFactor        = 1.D/SQRT(mapRatio.ratio[tmp_i]) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
+        ENDIF ELSE BEGIN
+           magFieldFactor        = SQRT(mapRatio.ratio[tmp_i])
+        ENDELSE
+     ENDIF
+
+     IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
         CASE 1 OF
            KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
               h2dStr.title = title__alfDB_ind_49_grossRate
@@ -342,7 +388,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               ;; ENDCASE
            ENDIF
 
-           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_with) THEN BEGIN
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
               CASE 1 OF
                  KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
                     h2dStr.title    = title__alfDB_ind_18_grossRate
@@ -500,7 +546,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
   ;;gross rates?
   IF KEYWORD_SET(do_grossRate_fluxQuantities) $
-     OR KEYWORD_SET(do_grossRate_with_long_with) THEN BEGIN
+     OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
      CASE 1 OF
         KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
            dataName         = 'grossRate_' + dataName
@@ -646,6 +692,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         grossFmt      = 'G18.6'
         PRINTF,lun,FORMAT='("Gross dayside, nightside:",T30,'+ grossFmt + ',T50,' + grossFmt + ')', $
                grossDay,grossNight
+
+        IF KEYWORD_SET(grossRate_info_file) THEN BEGIN
+           PRINTF,grossLun,h2dStr.title
+           PRINTF,grossLun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
+                  maxh2d, $
+                  minh2d, $
+                  medh2d
+           PRINTF,grossLun,FORMAT='("Gross dayside, nightside:",T30,'+ $
+                  grossFmt + ',T50,' + grossFmt + ')', $
+                  grossDay,grossNight
+           PRINTF,grossLun,''
+        ENDIF
      ENDIF
   ENDIF
 

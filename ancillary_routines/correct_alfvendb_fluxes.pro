@@ -73,6 +73,9 @@
 ;>accounted for
 ;
 ;
+;2016/04/23
+;Adding MAP_ESA_CURRENT keyword since I'd like to look at e- number fluxes
+;
 ;2015/12/22
 ;Added MAP_PFLUX_TO_IONOS keyword, based on my recent work to collect mapping ratios.
 ;This is represented in pros such as LOAD_MAPPING_RATIO, and the SDT batch job in the folder
@@ -88,6 +91,7 @@
 ;2016/03/15 Having misgivings about mapping width_x, so I've commented it out for now.
 ;-
 PRO CORRECT_ALFVENDB_FLUXES,maximus, $
+                            MAP_ESA_CURRENT_TO_IONOS=map_esa_current, $
                             MAP_PFLUX_TO_IONOS=map_pflux, $
                             DO_DESPUNDB=do_despunDB, $
                             USING_HEAVIES=using_heavies, $
@@ -261,6 +265,13 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
            correctStr += '-->28-OXY_FLUX_UP' + STRING(10B)
            correctStr += '-->30-HELIUM_FLUX_UP' + STRING(10B)
         ENDIF
+     ENDIF
+
+     ;;Added 2016/04/23
+     IF KEYWORD_SET(map_esa_current) THEN BEGIN
+        maximus.pFluxEst          = maximus.esa_current * mapRatio.ratio
+        PRINTF,lun,'-->07-ESA_CURRENT'
+        correctStr += '-->07-ESA_CURRENT' + STRING(10B)
      ENDIF
 
      ;;Added 2015/12/22

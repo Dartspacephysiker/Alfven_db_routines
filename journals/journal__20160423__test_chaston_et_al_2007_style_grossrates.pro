@@ -1,8 +1,8 @@
-;2016/04/16 Time to test these variance plots
-PRO JOURNAL__20160416__TEST_VARIANCE_PLOTS__GROSSRATES__LOG_SCALE
+;2016/04/23 I've added a bunch of keywords with the specific goal of testing just how on earth they compare to what I've been doing
+PRO JOURNAL__20160423__TEST_CHASTON_ET_AL_2007_STYLE_GROSSRATES
 
   nonstorm                       = 0
-  altitudeRange                  = [2000,4175]
+  altitudeRange                  = [0000,4175]
   
   ;; plotSuff                       = 'high-energy_e'
 
@@ -13,20 +13,25 @@ PRO JOURNAL__20160416__TEST_VARIANCE_PLOTS__GROSSRATES__LOG_SCALE
   var__rel_to_mean_variance      = 0
   ;; var__plotRange                 = [0,0.5]
 
-  divide_by_width_x              = 1 ;for ion plot and eflux plot
+  divide_by_width_x              = 0 ;for ion plot and eflux plot
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Which plots?
-  do_timeAvg                     = 1
-  do_grossRate_fluxQuantities    = 1
+  do_timeAvg                     = 0
+  do_grossRate_fluxQuantities    = 0
+  do_grossRate_with_long_width   = 1
+  div_fluxPlots_by_applicable_orbs = 1
   probOccurrencePlot             = 1
+
   logAvgPlot                     = 0
+
+  autoscale_fluxPlots            = 1
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;ILAT stuff
   hemi                           = 'NORTH'
-  minILAT                        = 62
-  maxILAT                        = 86
+  minILAT                        = 60
+  maxILAT                        = 84
 
   ;; hemi                           = 'SOUTH'
   ;; minILAT                        = -86
@@ -103,7 +108,10 @@ PRO JOURNAL__20160416__TEST_VARIANCE_PLOTS__GROSSRATES__LOG_SCALE
      PROBOCCURRENCEPLOT=probOccurrencePlot, $
      LOGPROBOCCURRENCE=logProbOccurrence, $
      PROBOCCURRENCERANGE=probOccurrenceRange, $
+     AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
+     DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
      DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+     DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
      /PPLOTS, $
      LOGPFPLOT=logPFPlot, $
      PPLOTRANGE=pPlotRange, $
@@ -128,5 +136,7 @@ PRO JOURNAL__20160416__TEST_VARIANCE_PLOTS__GROSSRATES__LOG_SCALE
      /COMBINE_PLOTS, $
      /SAVE_COMBINED_WINDOW, $
      /COMBINED_TO_BUFFER
-  
+
+
+
 END

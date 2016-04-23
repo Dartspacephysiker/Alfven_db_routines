@@ -261,16 +261,6 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
      
      dataName                  = "tHistDenom"
 
-     h2dStr.labelFormat        = defTHistDenomCBLabelFormat
-     h2dStr.logLabels          = defTHistDenomLogLabels
-     h2dStr.do_plotIntegral    = defTHistDenom_doPlotIntegral
-     h2dStr.do_midCBLabel      = defTHistDenom_do_midCBLabel
-     h2dStr.title              = defTHistDenomPlotTitle
-     h2dStr.data               = tHistDenominator/60.
-     h2dStr.lim                = tHistDenomPlotRange
-
-     dataRawPtr                = PTR_NEW(out_delta_ts)
-
      ;;temp this, just in case we're not masking
      IF KEYWORD_SET(tHistDenomPlot_noMask) THEN BEGIN
         h2d_include_i          = INDGEN(N_ELEMENTS(h2dStr.data))
@@ -278,6 +268,22 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
      ENDIF ELSE BEGIN
         h2d_include_i          = h2d_nonzero_nEv_i
      ENDELSE
+
+     h2dStr.labelFormat        = defTHistDenomCBLabelFormat
+     h2dStr.logLabels          = defTHistDenomLogLabels
+     h2dStr.do_plotIntegral    = defTHistDenom_doPlotIntegral
+     h2dStr.do_midCBLabel      = defTHistDenom_do_midCBLabel
+     h2dStr.title              = defTHistDenomPlotTitle
+     h2dStr.data               = tHistDenominator/60.
+     IF KEYWORD_SET(tHistDenomPlotAutoscale) THEN BEGIN
+        PRINTF,lun,"Autoscaling tHistDenom plot..."
+        h2dStr.lim             = [MIN(h2dStr.data[h2d_include_i]), $
+                                   MAX(h2dStr.data[h2d_include_i])]
+     ENDIF ELSE BEGIN
+        h2dStr.lim             = KEYWORD_SET(tHistDenomPlotRange) ? tHistDenomPlotRange : [0,500]
+     ENDELSE
+
+     dataRawPtr                = PTR_NEW(out_delta_ts)
 
      IF KEYWORD_SET(print_mandm) THEN BEGIN
         fmt    = 'F0.2'
@@ -306,11 +312,6 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
         h2dStr.data             = h2dStr.data/maxTHist
      ENDIF
 
-     IF KEYWORD_SET(tHistDenomPlotAutoscale) THEN BEGIN
-        PRINTF,lun,"Autoscaling tHistDenom plot..."
-        h2dStr.lim              = [MIN(h2dStr.data[h2d_include_i]), $
-                                   MAX(h2dStr.data[h2d_include_i])]
-     ENDIF
   ENDIF
 
   RETURN,tHistDenominator

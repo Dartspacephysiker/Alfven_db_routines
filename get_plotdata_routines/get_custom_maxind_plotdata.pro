@@ -29,6 +29,9 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
                                GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
                                GROSSRATE__CENTERS_MLT=centersMLT, $
                                GROSSRATE__CENTERS_ILAT=centersILAT, $
+                               GROSSCONVFACTOR=grossConvFactor, $
+                               WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
+                               GROSSLUN=grossLun, $
                                THISTDENOMINATOR=tHistDenominator, $
                                H2DSTR=h2dStr, $
                                TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -350,8 +353,21 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
      IF KEYWORD_SET(do_grossRate_fluxQuantities) $
         OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
         grossFmt      = 'G18.6'
-        PRINTF,lun,FORMAT='("Gross dayside, nightside:",T30,'+ grossFmt + ',T50,' + grossFmt + ')', $
+        PRINTF,lun,FORMAT='("Gross dayside, nightside:",T30,'+ $
+               grossFmt + ',T50,' + grossFmt + ')', $
                grossDay,grossNight
+
+        IF KEYWORD_SET(grossRate_info_file) THEN BEGIN
+           PRINTF,grossLun,h2dStr.title
+           PRINTF,lun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
+                  maxh2d, $
+                  minh2d, $
+                  medh2d
+           PRINTF,grossLun,FORMAT='("Gross dayside, nightside:",T30,'+ $
+                  grossFmt + ',T50,' + grossFmt + ')', $
+                  grossDay,grossNight
+           PRINTF,grossLun,''
+        ENDIF
      ENDIF
   ENDIF
 

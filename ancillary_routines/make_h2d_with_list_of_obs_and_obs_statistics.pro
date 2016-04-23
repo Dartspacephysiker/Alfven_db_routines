@@ -3,6 +3,11 @@
 PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
    DONT_USE_THESE_INDS=dont_use_these_inds, $
    DO_LISTS_WITH_STATS=do_lists_with_stats, $
+   DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+   GROSSRATE__H2D_AREAS=h2dAreas, $
+   DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+   GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+   GROSSCONVFACTOR=grossConvFactor, $
    OUTH2D_LISTS_WITH_OBS=outH2D_lists_with_obs,$
    OUTH2D_STATS=outH2D_stats, $
    OUTFILEPREFIX=outFilePrefix, $
@@ -65,6 +70,21 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
      ENDIF
   ENDELSE
 
+  ;;Doing any gross rate stuff?
+  IF KEYWORD_SET(do_grossRate_fluxQuantities) $
+     OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+     do_grossRates                        = 1
+     CASE 1 OF
+        KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+           grossH2DSpatialFactor          = h2dAreas*grossConvFactor
+        END
+        KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+           grossH2DSpatialFactor          = h2dLongWidths*grossConvFactor
+        END
+     ENDCASE
+  ENDIF ELSE BEGIN
+     do_grossRates                        = 0
+  ENDELSE
 
   
   ;;Make a copy of HLOI__H2D_lists_with_inds in case we're modding
@@ -101,9 +121,13 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   FOR j=0,HLOI__nILAT-1 DO BEGIN
      FOR i=0,HLOI__nMLT-1 DO BEGIN
         ;;check if valid
-        valid = ISA(tempH2D_lists_with_inds[i,j])
+        valid = ISA((tempH2D_lists_with_inds[i,j])[0])
         IF valid THEN BEGIN
-           tempObsList                     = LIST(dbStruct_obsArr[(tempH2D_lists_with_inds[i,j])[0]])
+           tempObs                         = dbStruct_obsArr[(tempH2D_lists_with_inds[i,j])[0]]
+
+           IF do_grossRates THEN tempObs   = tempObs*grossH2DSpatialFactor[i,j]
+
+           tempObsList                     = LIST(tempObs)
            outH2D_lists_with_obs[i,j]      = tempObsList
         ENDIF ELSE BEGIN
 

@@ -55,7 +55,7 @@ scAltString_pub              = ', at FAST altitude'
 ;; ENDIF
 
 IF KEYWORD_SET(fancy_plotNames) THEN BEGIN
-title__alfDB_ind_07          = 'ESA Current ( microA/m!U2!N)' + scAltString_pub    ;"ESA_CURRENT"
+title__alfDB_ind_07          = 'ESA Current ( microA/m!U2!N)' + ionosphString_pub    ;"ESA_CURRENT"
 title__alfDB_ind_08          = 'Max Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString_pub    ;"Max"     
 title__alfDB_ind_09          = 'Max e!U-!N Flux, whole dist. (' + energyFluxStr + ')' + ionosphString_pub ;"Integ"
 title__alfDB_ind_10          = 'Integrated Loss Cone e!U-!N Energy Flux (' + intEnergyFluxStr + ')' + ionosphString_pub      ;"Eflux_Losscone_Integ"
@@ -63,7 +63,7 @@ title__alfDB_ind_10          = 'Integrated Loss Cone e!U-!N Energy Flux (' + int
 title__alfDB_ind_11          = 'Total Integrated e!U-!N Energy Flux (' + intEnergyFluxStr + ')' + ionosphString_pub     ;"Total_Eflux_Integ"
 title__alfDB_ind_12          = 'e!U-!N Losscone Characteristic Energy (' + charEUnitString + ')'                  ;"lossCone"
 title__alfDB_ind_13          = 'e!U-!N Total Characteristic Energy (' + charEUnitString + ')'                     ;"Total"
-title__alfDB_esa_nFlux       = 'e!U-!N Flux (' + numFluxStr + ')' + scAltString_pub                      ;"ESA_Number_flux"
+title__alfDB_esa_nFlux       = 'e!U-!N Flux (' + numFluxStr + ')' + ionsphString_pub                      ;"ESA_Number_flux"
 
 
 ;; title__alfDB_ind_14          = 'Max Ion Energy Flux (' + energyFluxStr + ')' + scAltString_pub       ;"Energy"
@@ -99,14 +99,14 @@ title__alfDB_ind_49          = 'Poynting Flux (' + energyFluxStr + ')' + ionosph
 
 ENDIF ELSE BEGIN
 
-title__alfDB_ind_07          = 'ESA Current ( microA/m!U2!N)' + scAltString    ;"ESA_CURRENT"     
+title__alfDB_ind_07          = 'ESA Current ( microA/m!U2!N)' + ionosphString    ;"ESA_CURRENT"     
 title__alfDB_ind_08          = 'Max L.C. e!U-!N Flux (' + energyFluxStr + ')' + ionosphString         ;"Integ"
 title__alfDB_ind_09          = 'Max e!U-!N Flux, whole dist. (' + energyFluxStr + ')' + ionosphString ;"Max"
 title__alfDB_ind_10          = 'Integ. L.C. e!U-!N Flux (' + intEnergyFluxStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
 title__alfDB_ind_11          = 'Total Integ. e!U-!N Energy Flux (' + intEnergyFluxStr + ')' + ionosphString     ;"Total_Eflux_Integ"
 title__alfDB_ind_12          = 'e!U-!N Losscone Characteristic Energy (' + charEUnitString + ')'                  ;"lossCone"
 title__alfDB_ind_13          = 'e!U-!N Total Characteristic Energy (' + charEUnitString + ')'                     ;"Total"
-title__alfDB_esa_nFlux       = 'e!U-!N Flux (' + numFluxStr + ')' + scAltString                      ;"ESA_Number_flux"
+title__alfDB_esa_nFlux       = 'e!U-!N Flux (' + numFluxStr + ')' + ionosphString                      ;"ESA_Number_flux"
 title__alfDB_ind_14          = 'Max Ion Energy Flux (' + energyFluxStr + ')' + ionosphString       ;"Energy"
 title__alfDB_ind_15          = 'Max Ion Flux (' + numFluxStr + ')' + ionosphString              ;"Max" 
 title__alfDB_ind_16          = 'Max Upward Ion Flux (' + numFluxStr + ')' + ionosphString       ;"Max_Up"
@@ -132,7 +132,11 @@ title__alfDB_ind_49_tAvg     = 'Poynting Flux (' + energyFluxStr + ')' + ionosph
 ;;Integrated Poynting flux
 title__alfDB_ind_49_integ    = 'Integ. Poynting Flux (' + intEnergyFluxStr + ')' + ionosphString
 
+;;Integrated e- number flux
+title__alfDB_esa_nFlux_integ = 'Integ. e!U-!N Flux (' + intEnergyFluxStr + ')' + ionosphString
+
 ;;Gross rates
+title__alfDB_esa_nFlux_grossRate = 'e!U-!N Number Deposition (' + numGrossStr + ')' + ionosphString                      ;"ESA_Number_flux"
 title__alfDB_ind_10_grossRate = 'e!U-!N Energy Deposition (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
 title__alfDB_ind_18_grossRate = 'Upflowing Ions (' + numGrossStr + ')' + ionosphString        ;"Integ_Up"
 title__alfDB_ind_49_grossRate = 'Wave Energy Deposition  (' + energyGrossStr + ')' + ionosphString

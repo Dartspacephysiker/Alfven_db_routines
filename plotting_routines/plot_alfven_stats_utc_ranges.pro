@@ -183,8 +183,14 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  NPLOTS=nPlots, $
                                  EPLOTS=ePlots, EPLOTRANGE=ePlotRange, EFLUXPLOTTYPE=eFluxPlotType, LOGEFPLOT=logEfPlot, $
                                  ABSEFLUX=abseflux, NOPOSEFLUX=noPosEFlux, NONEGEFLUX=noNegEflux, $
-                                 ENUMFLPLOTS=eNumFlPlots, ENUMFLPLOTTYPE=eNumFlPlotType, LOGENUMFLPLOT=logENumFlPlot, ABSENUMFL=absENumFl, $
-                                 NONEGENUMFL=noNegENumFl, NOPOSENUMFL=noPosENumFl, ENUMFLPLOTRANGE=ENumFlPlotRange, $
+                                 ENUMFLPLOTS=eNumFlPlots, $
+                                 ENUMFLPLOTTYPE=eNumFlPlotType, $
+                                 LOGENUMFLPLOT=logENumFlPlot, $
+                                 ABSENUMFL=absENumFl, $
+                                 NONEGENUMFL=noNegENumFl, $
+                                 NOPOSENUMFL=noPosENumFl, $
+                                 ENUMFLPLOTRANGE=ENumFlPlotRange, $
+                                 AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
                                  PPLOTS=pPlots, LOGPFPLOT=logPfPlot, ABSPFLUX=absPflux, $
                                  NONEGPFLUX=noNegPflux, NOPOSPFLUX=noPosPflux, PPLOTRANGE=PPlotRange, $
                                  IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, LOGIFPLOT=logIfPlot, ABSIFLUX=absIflux, $
@@ -204,10 +210,12 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  DIV_FLUXPLOTS_BY_ORBTOT=div_fluxPlots_by_orbTot, $
                                  DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                                  ORBCONTRIBPLOT=orbContribPlot, $
+                                 ORBCONTRIBRANGE=orbContribRange, $
+                                 ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
+                                 ORBCONTRIB_NOMASK=orbContrib_noMask, $
                                  LOGORBCONTRIBPLOT=logOrbContribPlot, $
                                  ORBTOTPLOT=orbTotPlot, $
                                  ORBFREQPLOT=orbFreqPlot, $
-                                 ORBCONTRIBRANGE=orbContribRange, $
                                  ORBTOTRANGE=orbTotRange, $
                                  ORBFREQRANGE=orbFreqRange, $
                                  NEVENTPERORBPLOT=nEventPerOrbPlot, $
@@ -226,6 +234,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  PROBOCCURRENCEAUTOSCALE=probOccurrenceAutoscale, $
                                  LOGPROBOCCURRENCE=logProbOccurrence, $
                                  THISTDENOMINATORPLOT=tHistDenominatorPlot, $
+                                 THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                                 THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
+                                 THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
+                                 THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
                                  TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                                  TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                                  LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -235,6 +247,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                  DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                                  DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                                 WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                                  DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                                  DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                                  MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -243,6 +256,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  VAR__PLOTRANGE=var__plotRange, $
                                  VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
                                  VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
+                                 VAR__AUTOSCALE=var__autoscale, $
                                  PLOT_CUSTOM_MAXIND=plot_custom_maxInd, $
                                  CUSTOM_MAXINDS=custom_maxInds, $
                                  CUSTOM_MAXIND_RANGE=custom_maxInd_range, $
@@ -258,7 +272,9 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  DO_CHASTDB=do_chastDB, $
                                  DO_DESPUNDB=do_despunDB, $
                                  NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
-                                 WRITEASCII=writeASCII, WRITEHDF5=writeHDF5, WRITEPROCESSEDH2D=writeProcessedH2d, $
+                                 WRITEASCII=writeASCII, $
+                                 WRITEHDF5=writeHDF5, $
+                                 WRITEPROCESSEDH2D=writeProcessedH2d, $
                                  SAVERAW=saveRaw, RAWDIR=rawDir, $
                                  JUSTDATA=justData, SHOWPLOTSNOSAVE=showPlotsNoSave, $
                                  PLOTDIR=plotDir, PLOTPREFIX=plotPrefix, PLOTSUFFIX=plotSuffix, $
@@ -313,12 +329,16 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              BOTH_HEMIS=both_hemis, $
                              NPLOTS=nPlots, $
                              EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, $
-                             ENUMFLPLOTS=eNumFlPlots, ENUMFLPLOTTYPE=eNumFlPlotType, $
+                             ENUMFLPLOTS=eNumFlPlots, $
+                             ENUMFLPLOTTYPE=eNumFlPlotType, $
                              PPLOTS=pPlots, $
                              IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, $
                              CHAREPLOTS=charEPlots, CHARETYPE=charEType, $
                              CHARIEPLOTS=chariEPlots, $
-                             ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
+                             ORBCONTRIBPLOT=orbContribPlot, $
+                             ORBCONTRIBRANGE=orbContribRange, $
+                             ORBTOTPLOT=orbTotPlot, $
+                             ORBFREQPLOT=orbFreqPlot, $
                              NEVENTPERORBPLOT=nEventPerOrbPlot, $
                              NEVENTPERMINPLOT=nEventPerMinPlot, $
                              PROBOCCURRENCEPLOT=probOccurrencePlot, $
@@ -410,8 +430,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                    CB_FORCE_OOBLOW=cb_force_oobLow)
 
   ;;Need area or length of each bin for gross rates
-  IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_with) THEN BEGIN
-     IF KEYWORD_SET(do_grossRate_fluxQuantities) AND KEYWORD_SET(do_grossRate_with_long_with) THEN BEGIN
+  IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+     IF KEYWORD_SET(do_grossRate_fluxQuantities) AND KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
         PRINTF,lun,"Can't do both types of gross rates simultaneously!!!"
         STOP
      ENDIF
@@ -427,12 +447,19 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
 
      IF KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
         GET_H2D_BIN_LENGTHS,h2dLongWidths, $
+                            /LONGITUDINAL, $
                             CENTERS1=centersMLT,CENTERS2=centersILAT, $
                             BINSIZE1=binM*15., BINSIZE2=binI, $
                             MAX1=maxM*15., MAX2=maxI, $
                             MIN1=minM*15., MIN2=minI, $
                             SHIFT1=shiftM*15., SHIFT2=shiftI
      ENDIF
+  ENDIF
+
+  IF KEYWORD_SET(grossRate_info_file) THEN BEGIN
+     SETUP_GROSSRATE_INFO_FILE,grossRate_info_file, $
+                               GROSSLUN=grossLun, $
+                               PARAMSTRING=paramString
   ENDIF
 
   GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
@@ -457,8 +484,14 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         NPLOTS=nPlots, NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
                         EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, LOGEFPLOT=logEfPlot, $
                         ABSEFLUX=abseflux, NOPOSEFLUX=noPosEFlux, NONEGEFLUX=noNegEflux, EPLOTRANGE=EPlotRange, $
-                        ENUMFLPLOTS=eNumFlPlots, ENUMFLPLOTTYPE=eNumFlPlotType, LOGENUMFLPLOT=logENumFlPlot, ABSENUMFL=absENumFl, $
-                        NONEGENUMFL=noNegENumFl, NOPOSENUMFL=noPosENumFl, ENUMFLPLOTRANGE=ENumFlPlotRange, $
+                        ENUMFLPLOTS=eNumFlPlots, $
+                        ENUMFLPLOTTYPE=eNumFlPlotType, $
+                        LOGENUMFLPLOT=logENumFlPlot, $
+                        ABSENUMFL=absENumFl, $
+                        NONEGENUMFL=noNegENumFl, $
+                        NOPOSENUMFL=noPosENumFl, $
+                        ENUMFLPLOTRANGE=ENumFlPlotRange, $
+                        AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
                         PPLOTS=pPlots, LOGPFPLOT=logPfPlot, ABSPFLUX=absPflux, $
                         NONEGPFLUX=noNegPflux, NOPOSPFLUX=noPosPflux, PPLOTRANGE=PPlotRange, $
                         IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, LOGIFPLOT=logIfPlot, ABSIFLUX=absIflux, $
@@ -478,13 +511,21 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         DIV_FLUXPLOTS_BY_ORBTOT=div_fluxPlots_by_orbTot, $
                         DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                         ORBCONTRIBPLOT=orbContribPlot, $
+                        ORBCONTRIBRANGE=orbContribRange, $
+                        ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
+                        ORBCONTRIB_NOMASK=orbContrib_noMask, $
                         LOGORBCONTRIBPLOT=logOrbContribPlot, $
                         ORBTOTPLOT=orbTotPlot, $
                         ORBFREQPLOT=orbFreqPlot, $
-                        ORBCONTRIBRANGE=orbContribRange, ORBTOTRANGE=orbTotRange, ORBFREQRANGE=orbFreqRange, $
-                        NEVENTPERORBPLOT=nEventPerOrbPlot, LOGNEVENTPERORB=logNEventPerOrb, NEVENTPERORBRANGE=nEventPerOrbRange, $
+                        ORBTOTRANGE=orbTotRange, $
+                        ORBFREQRANGE=orbFreqRange, $
+                        NEVENTPERORBPLOT=nEventPerOrbPlot, $
+                        LOGNEVENTPERORB=logNEventPerOrb, $
+                        NEVENTPERORBRANGE=nEventPerOrbRange, $
                         DIVNEVBYTOTAL=divNEvByTotal, $
-                        NEVENTPERMINPLOT=nEventPerMinPlot, NEVENTPERMINRANGE=nEventPerMinRange, LOGNEVENTPERMIN=logNEventPerMin, $
+                        NEVENTPERMINPLOT=nEventPerMinPlot, $
+                        NEVENTPERMINRANGE=nEventPerMinRange, $
+                        LOGNEVENTPERMIN=logNEventPerMin, $
                         NORBSWITHEVENTSPERCONTRIBORBSPLOT=nOrbsWithEventsPerContribOrbsPlot, $
                         LOG_NOWEPCOPLOT=log_nowepcoPlot, $
                         NOWEPCO_RANGE=nowepco_range, $
@@ -494,6 +535,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         PROBOCCURRENCEAUTOSCALE=probOccurrenceAutoscale, $
                         LOGPROBOCCURRENCE=logProbOccurrence, $
                         THISTDENOMINATORPLOT=tHistDenominatorPlot, $
+                        THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                        THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
+                        THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
+                        THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
                         TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                         TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                         LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -508,6 +553,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
                         GROSSRATE__CENTERS_MLT=centersMLT, $
                         GROSSRATE__CENTERS_ILAT=centersILAT, $
+                        WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
+                        GROSSLUN=grossLun, $
                         DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                         MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                         ADD_VARIANCE_PLOTS=add_variance_plots, $
@@ -515,6 +562,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         VAR__PLOTRANGE=var__plotRange, $
                         VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
                         VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
+                        VAR__AUTOSCALE=var__autoscale, $
                         PLOT_CUSTOM_MAXIND=plot_custom_maxInd, $
                         CUSTOM_MAXINDS=custom_maxInds, $
                         CUSTOM_MAXIND_RANGE=custom_maxInd_range, $
@@ -530,6 +578,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         TMPLT_H2DSTR=tmplt_h2dStr, $
                         FANCY_PLOTNAMES=fancy_plotNames, $
                         LUN=lun
+
+    IF KEYWORD_SET(grossRate_info_file) THEN BEGIN
+       CLOSE_GROSSRATE_INFO_FILE,grossRate_info_file,grossLun,LUN=lun
+    ENDIF
 
   ;;********************************************************
   ;;Handle Plots all at once
@@ -598,8 +650,13 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
   ;; out_tempFile=tempFile
 
   WRITE_ALFVENDB_2DHISTOS,MAXIMUS=maximus,PLOT_I=plot_i, $
-                          WRITEHDF5=writeHDF5,WRITEPROCESSEDH2D=WRITEPROCESSEDH2D,WRITEASCII=writeASCII, $
-                          H2DSTRARR=h2dStrArr,DATARAWPTRARR=dataRawPtrArr,DATANAMEARR=dataNameArr, $
-                          PARAMSTR=paramString,PLOTDIR=plotDir
+                          WRITEHDF5=writeHDF5, $
+                          WRITEPROCESSEDH2D=WRITEPROCESSEDH2D, $
+                          WRITEASCII=writeASCII, $
+                          H2DSTRARR=h2dStrArr, $
+                          DATARAWPTRARR=dataRawPtrArr, $
+                          DATANAMEARR=dataNameArr, $
+                          PARAMSTR=paramString, $
+                          PLOTDIR=plotDir
 
 END

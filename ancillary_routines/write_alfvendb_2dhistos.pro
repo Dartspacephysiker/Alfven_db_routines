@@ -1,8 +1,13 @@
 ;;2015/10/21 maximus and plot_i are only needed for ascii
 PRO WRITE_ALFVENDB_2DHISTOS,MAXIMUS=maximus,PLOT_I=plot_i, $
-                            WRITEHDF5=writeHDF5,WRITEPROCESSEDH2D=WRITEPROCESSEDH2D,WRITEASCII=writeASCII, $
-                            H2DSTRARR=h2dStrArr,DATARAWPTRARR=dataRawPtrArr,DATANAMEARR=dataNameArr, $
-                            PARAMSTRING=paramString,PLOTDIR=plotDir
+                            WRITEHDF5=writeHDF5, $
+                            WRITEPROCESSEDH2D=WRITEPROCESSEDH2D, $
+                            WRITEASCII=writeASCII, $
+                            H2DSTRARR=h2dStrArr, $
+                            DATARAWPTRARR=dataRawPtrArr, $
+                            DATANAMEARR=dataNameArr, $
+                            PARAMSTRING=paramString, $
+                            PLOTDIR=plotDir
 
    ;;********************************************************
    ;;Thanks, IDL Coyote--time to write out lots of data
@@ -50,10 +55,10 @@ PRO WRITE_ALFVENDB_2DHISTOS,MAXIMUS=maximus,PLOT_I=plot_i, $
 
    IF KEYWORD_SET(writeASCII) THEN BEGIN 
       ;;These are the "raw" data, just as we got them from Chris
-      FOR j = 0, n_elements(dataRawPtrArr)-3 DO BEGIN 
+      FOR j = 0,N_ELEMENTS(dataNameArr)-3 DO BEGIN 
          fname=plotDir + dataNameArr[j]+paramString+'.ascii' 
          PRINT,"Writing ASCII file: " + fname 
-         OPENW,lun2, fname, /get_lun 
+         OPENW,lun2, fname, /GET_LUN 
 
          FOR i = 0, N_ELEMENTS(plot_i) - 1 DO BEGIN 
             PRINTF,lun2,(maximus.ILAT[plot_i])[i],(maximus.MLT[plot_i])[i],$
@@ -69,7 +74,7 @@ PRO WRITE_ALFVENDB_2DHISTOS,MAXIMUS=maximus,PLOT_I=plot_i, $
          FOR i = 0, n_elements(h2dStrArr)-1 DO BEGIN 
             fname=plotDir + "h2d_"+dataNameArr[i]+paramString+'.ascii' 
             PRINT,"Writing ASCII file: " + fname 
-            OPENW,lun2, fname, /get_lun 
+            OPENW,lun2, fname, /GET_LUN 
             FOR j = 0, N_ELEMENTS(outH2DBinsMLT) - 1 DO BEGIN 
                FOR k = 0, N_ELEMENTS(outH2DBinsILAT) -1 DO BEGIN 
                   PRINTF,lun2,outH2DBinsILAT[k],$
