@@ -1,12 +1,12 @@
 ;2016/04/21 Now let's take a look at LOW pFlux events. How do they work?
 ;we observe strange Poynting flux distributions. I highly doubt it, but let's see.
 
-PRO JOURNAL__20160421__PLOT_NEVENTS_W_PFLUX_LT_5MW_PER_M2_FOR_ALT_SLICES
+PRO JOURNAL__20160421__PLOT_NEVENTS_W_NO_PFLUX_RESTRICTIONS_FOR_ALT_SLICES
 
   hemi                     = 'NORTH'
   ;; hemi                     = 'SOUTH'
   
-  pFluxMax                 = 5
+  ;; pFluxMax                 = 5
 
   nPlots                   = 1
   ;; nEventsPlotNormalize     = 1  
@@ -72,18 +72,14 @@ PRO JOURNAL__20160421__PLOT_NEVENTS_W_PFLUX_LT_5MW_PER_M2_FOR_ALT_SLICES
   ;;Bonus
   maskMin                        = 1
 
-  LOAD_MAXIMUS_AND_CDBTIME,maximus,DO_DESPUNDB=do_despun
-
-  restrict_with_these_i          = WHERE(maximus.pFluxEst LT pFluxMax)
-
   FOR i=0,N_ELEMENTS(altRange[0,*])-1 DO BEGIN
      altitudeRange = altRange[*,i]
-     altStr        = STRING(FORMAT='("--",I0,"-",I0,"km")',altitudeRange[0],altitudeRange[1]) + '--pFlux_LT_'+STRCOMPRESS(pFluxMax,/REMOVE_ALL)
+     altStr        = STRING(FORMAT='("--",I0,"-",I0,"km")',altitudeRange[0],altitudeRange[1])+'--vanilla'
      ;; tilePlotTitle = STRING(FORMAT='(I0,"-",I0," km, Poynting flux $\geq$ ",I0," mW m!U-2!N")',altitudeRange[0],altitudeRange[1],pFluxMin)
      tilePlotTitle = STRING(FORMAT='(I0,"-",I0," km")',altitudeRange[0],altitudeRange[1])
      
      PLOT_ALFVEN_STATS_IMF_SCREENING, $
-        RESTRICT_WITH_THESE_I=restrict_with_these_i, $
+        ;; RESTRICT_WITH_THESE_I=restrict_with_these_i, $
         ORBRANGE=orbRange, $
         ALTITUDERANGE=altitudeRange, $
         CHARERANGE=charERange, $

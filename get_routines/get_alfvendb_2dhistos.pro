@@ -103,6 +103,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSCHARIE=noPosCharie, $
                           CHARIEPLOTRANGE=ChariePlotRange, $
                           AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
+                          DIV_FLUXPLOTS_BY_ORBTOT=div_fluxPlots_by_orbTot, $
+                          DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                           ORBCONTRIBPLOT=orbContribPlot, $
                           ORBTOTPLOT=orbTotPlot, $
                           ORBFREQPLOT=orbFreqPlot, $
@@ -142,6 +144,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                           DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                           GROSSRATE__H2D_AREAS=h2dAreas, $
+                          DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                          GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
                           GROSSRATE__CENTERS_MLT=centersMLT, $
                           GROSSRATE__CENTERS_ILAT=centersILAT, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
@@ -158,6 +162,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           CUSTOM_MAXIND_AUTOSCALE=custom_maxInd_autoscale, $
                           CUSTOM_MAXIND_DATANAME=custom_maxInd_dataname, $
                           CUSTOM_MAXIND_TITLE=custom_maxInd_title, $
+                          CUSTOM_GROSSRATE_CONVFACTOR=custom_grossRate_convFactor, $
                           LOG_CUSTOM_MAXIND=log_custom_maxInd, $
                           SUM_ELECTRON_AND_POYNTINGFLUX=sum_electron_and_poyntingflux, $
                           MEDIANPLOT=medianPlot, $
@@ -298,441 +303,6 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
 
      ENDIF
         
-     ;;#####FLUX QUANTITIES#########
-     ;;########ELECTRON FLUX########
-     IF KEYWORD_SET(eplots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_EFLUX, $
-                          MINM=minM, $
-                          MAXM=maxM, $
-                          BINM=binM, $
-                          SHIFTM=shiftM, $
-                          MINI=minI, $
-                          MAXI=maxI, $
-                          BINI=binI, $
-                          DO_LSHELL=do_lshell, $
-                          MINL=minL, $
-                          MAXL=maxL, $
-                          BINL=binL, $
-                          OUTH2DBINSMLT=outH2DBinsMLT, $
-                          OUTH2DBINSILAT=outH2DBinsILAT, $
-                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                          FLUXPLOTTYPE=eFluxPlotType, $
-                          PLOTRANGE=ePlotRange, $
-                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
-                          NOPOSFLUX=noPoseflux, $
-                          NONEGFLUX=noNegeflux, $
-                          ABSFLUX=abseflux, $
-                          OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logEfPlot)), $
-                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
-                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
-                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
-                          GROSSRATE__H2D_AREAS=h2dAreas, $
-                          GROSSRATE__CENTERS_MLT=centersMLT, $
-                          GROSSRATE__CENTERS_ILAT=centersILAT, $
-                          THISTDENOMINATOR=tHistDenominator, $
-                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
-                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
-                          H2DSTR=h2dStr, $
-                          TMPLT_H2DSTR=tmplt_h2dStr, $
-                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                          H2DFLUXN=h2dFluxN, $
-                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
-                          OUT_H2DMASK=out_h2dMask, $
-                          DATANAME=dataName, $
-                          DATARAWPTR=dataRawPtr, $
-                          MEDIANPLOT=medianplot, $
-                          MEDHISTOUTDATA=medHistOutData, $
-                          MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=medHistDataDir, $
-                          LOGAVGPLOT=logAvgPlot, $
-                          FANCY_PLOTNAMES=fancy_plotNames
-
-        
-        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
-
-        h2dStrArr            = [h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN
-           dataNameArr       = [dataNameArr,dataName] 
-           dataRawPtrArr     =[dataRawPtrArr,dataRawPtr] 
-           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
-           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
-        ENDIF 
-     ENDIF
-     
-     ;;########ELECTRON NUMBER FLUX########
-     IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
-                          MINM=minM, $
-                          MAXM=maxM, $
-                          BINM=binM, $
-                          SHIFTM=shiftM, $
-                          MINI=minI, $
-                          MAXI=maxI, $
-                          BINI=binI, $
-                          DO_LSHELL=do_lshell, $
-                          MINL=minL, $
-                          MAXL=maxL, $
-                          BINL=binL, $
-                          OUTH2DBINSMLT=outH2DBinsMLT, $
-                          OUTH2DBINSILAT=outH2DBinsILAT, $
-                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                          FLUXPLOTTYPE=eNumFlPlotType, $
-                          PLOTRANGE=ENumFlPlotRange, $
-                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
-                          NOPOSFLUX=noPosENumFl, $
-                          NONEGFLUX=noNegENumFl, $
-                          ABSFLUX=absENumFl, $
-                          OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logENumFlPlot)), $
-                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
-                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
-                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
-                          GROSSRATE__H2D_AREAS=h2dAreas, $
-                          GROSSRATE__CENTERS_MLT=centersMLT, $
-                          GROSSRATE__CENTERS_ILAT=centersILAT, $
-                          THISTDENOMINATOR=tHistDenominator, $
-                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
-                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
-                          H2DSTR=h2dStr, $
-                          TMPLT_H2DSTR=tmplt_h2dStr, $
-                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                          H2DFLUXN=h2dFluxN, $
-                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
-                          OUT_H2DMASK=out_h2dMask, $
-                          DATANAME=dataName, $
-                          DATARAWPTR=dataRawPtr, $
-                          MEDIANPLOT=medianplot, $
-                          MEDHISTOUTDATA=medHistOutData, $
-                          MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=medHistDataDir, $
-                          LOGAVGPLOT=logAvgPlot, $
-                          FANCY_PLOTNAMES=fancy_plotNames
-
-        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
-
-        h2dStrArr            = [h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
-           dataNameArr       = [dataNameArr,dataName] 
-           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
-           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
-           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
-        ENDIF 
-        
-     ENDIF
-     
-     ;;########Poynting Flux########
-     IF KEYWORD_SET(pplots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i,$
-                          /GET_PFLUX, $
-                          MINM=minM, $
-                          MAXM=maxM, $
-                          BINM=binM, $
-                          SHIFTM=shiftM, $
-                          MINI=minI, $
-                          MAXI=maxI, $
-                          BINI=binI, $
-                          DO_LSHELL=do_lshell, $
-                          MINL=minL, $
-                          MAXL=maxL, $
-                          BINL=binL, $
-                          OUTH2DBINSMLT=outH2DBinsMLT, $
-                          OUTH2DBINSILAT=outH2DBinsILAT, $
-                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                          PLOTRANGE=PPlotRange, $
-                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_pPlots), $
-                          NOPOSFLUX=noPosPflux, $
-                          NONEGFLUX=noNegPflux, $
-                          ABSFLUX=absPflux, $
-                          OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPfPlot)), $
-                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
-                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
-                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
-                          GROSSRATE__H2D_AREAS=h2dAreas, $
-                          GROSSRATE__CENTERS_MLT=centersMLT, $
-                          GROSSRATE__CENTERS_ILAT=centersILAT, $
-                          THISTDENOMINATOR=tHistDenominator, $
-                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
-                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
-                          H2DSTR=h2dStr, $
-                          TMPLT_H2DSTR=tmplt_h2dStr, $
-                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                          H2DFLUXN=h2dFluxN, $
-                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
-                          OUT_H2DMASK=out_h2dMask, $
-                          DATANAME=dataName, $
-                          DATARAWPTR=dataRawPtr, $
-                          MEDIANPLOT=medianplot, $
-                          MEDHISTOUTDATA=medHistOutData, $
-                          MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=medHistDataDir, $
-                          LOGAVGPLOT=logAvgPlot, $
-                          FANCY_PLOTNAMES=fancy_plotNames
-        
-        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
-
-        h2dStrArr            = [h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
-           dataNameArr       = [dataNameArr,dataName] 
-           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
-           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
-           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
-        ENDIF  
-        
-     ENDIF
-     
-     ;;########ION FLUX########
-     IF KEYWORD_SET(ionPlots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_IFLUX, $
-                          MINM=minM, $
-                          MAXM=maxM, $
-                          BINM=binM, $
-                          SHIFTM=shiftM, $
-                          MINI=minI, $
-                          MAXI=maxI, $
-                          BINI=binI, $
-                          DO_LSHELL=do_lshell, $
-                          MINL=minL, $
-                          MAXL=maxL, $
-                          BINL=binL, $
-                          OUTH2DBINSMLT=outH2DBinsMLT, $
-                          OUTH2DBINSILAT=outH2DBinsILAT, $
-                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                          FLUXPLOTTYPE=iFluxPlotType, $
-                          PLOTRANGE=iPlotRange, $
-                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ionPlots), $
-                          NOPOSFLUX=noPosIflux, $
-                          NONEGFLUX=noNegIflux, $
-                          ABSFLUX=absIflux, $
-                          OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logIfPlot)), $
-                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
-                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
-                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
-                          GROSSRATE__H2D_AREAS=h2dAreas, $
-                          GROSSRATE__CENTERS_MLT=centersMLT, $
-                          GROSSRATE__CENTERS_ILAT=centersILAT, $
-                          THISTDENOMINATOR=tHistDenominator, $
-                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
-                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
-                          H2DSTR=h2dStr, $
-                          TMPLT_H2DSTR=tmplt_h2dStr, $
-                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                          H2DFLUXN=h2dFluxN, $
-                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
-                          OUT_H2DMASK=out_h2dMask, $
-                          DATANAME=dataName, $
-                          DATARAWPTR=dataRawPtr, $
-                          MEDIANPLOT=medianplot, $
-                          MEDHISTOUTDATA=medHistOutData, $
-                          MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=medHistDataDir, $
-                          LOGAVGPLOT=logAvgPlot, $
-                          FANCY_PLOTNAMES=fancy_plotNames
-        
-        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
-
-        h2dStrArr            = [h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
-           dataNameArr       = [dataNameArr,dataName] 
-           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
-           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
-           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
-        ENDIF  
-        
-     ENDIF
-
-     ;;########OXY FLUX########
-     IF KEYWORD_SET(oxyPlots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_OXYFLUX, $
-                          MINM=minM, $
-                          MAXM=maxM, $
-                          BINM=binM, $
-                          SHIFTM=shiftM, $
-                          MINI=minI, $
-                          MAXI=maxI, $
-                          BINI=binI, $
-                          DO_LSHELL=do_lshell, $
-                          MINL=minL, $
-                          MAXL=maxL, $
-                          BINL=binL, $
-                          OUTH2DBINSMLT=outH2DBinsMLT, $
-                          OUTH2DBINSILAT=outH2DBinsILAT, $
-                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                          FLUXPLOTTYPE=oxyFluxPlotType, $
-                          PLOTRANGE=oxyPlotRange, $
-                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_oxyPlots), $
-                          NOPOSFLUX=noPosOxyFlux, $
-                          NONEGFLUX=noNegOxyflux, $
-                          ABSFLUX=absOxyFlux, $
-                          OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logOxyfPlot)), $
-                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
-                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
-                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
-                          GROSSRATE__H2D_AREAS=h2dAreas, $
-                          GROSSRATE__CENTERS_MLT=centersMLT, $
-                          GROSSRATE__CENTERS_ILAT=centersILAT, $
-                          THISTDENOMINATOR=tHistDenominator, $
-                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
-                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
-                          H2DSTR=h2dStr, $
-                          TMPLT_H2DSTR=tmplt_h2dStr, $
-                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                          H2DFLUXN=h2dFluxN, $
-                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
-                          OUT_H2DMASK=out_h2dMask, $
-                          DATANAME=dataName, $
-                          DATARAWPTR=dataRawPtr, $
-                          MEDIANPLOT=medianplot, $
-                          MEDHISTOUTDATA=medHistOutData, $
-                          MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=medHistDataDir, $
-                          LOGAVGPLOT=logAvgPlot, $
-                          FANCY_PLOTNAMES=fancy_plotNames
-        
-        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
-
-        h2dStrArr            = [h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
-           dataNameArr       = [dataNameArr,dataName] 
-           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
-           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
-           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
-        ENDIF  
-        
-     ENDIF
-
-     ;;########CHARACTERISTIC ELECTRON ENERGY########
-     IF KEYWORD_SET(charEPlots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_CHAREE, $
-                          MINM=minM, $
-                          MAXM=maxM, $
-                          BINM=binM, $
-                          SHIFTM=shiftM, $
-                          MINI=minI, $
-                          MAXI=maxI, $
-                          BINI=binI, $
-                          DO_LSHELL=do_lshell, $
-                          MINL=minL, $
-                          MAXL=maxL, $
-                          BINL=binL, $
-                          OUTH2DBINSMLT=outH2DBinsMLT, $
-                          OUTH2DBINSILAT=outH2DBinsILAT, $
-                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                          FLUXPLOTTYPE=charEType, $
-                          PLOTRANGE=charEPlotRange, $
-                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_charEPlots), $
-                          NOPOSFLUX=noPosCharE, $
-                          NONEGFLUX=noNegCharE, $
-                          ABSFLUX=absCharE, $
-                          OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logCharEPlot)), $
-                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
-                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
-                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
-                          GROSSRATE__H2D_AREAS=h2dAreas, $
-                          GROSSRATE__CENTERS_MLT=centersMLT, $
-                          GROSSRATE__CENTERS_ILAT=centersILAT, $
-                          THISTDENOMINATOR=tHistDenominator, $
-                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
-                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
-                          H2DSTR=h2dStr, $
-                          TMPLT_H2DSTR=tmplt_h2dStr, $
-                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                          H2DFLUXN=h2dFluxN, $
-                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
-                          OUT_H2DMASK=out_h2dMask, $
-                          DATANAME=dataName, $
-                          DATARAWPTR=dataRawPtr, $
-                          MEDIANPLOT=medianplot, $
-                          MEDHISTOUTDATA=medHistOutData, $
-                          MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=medHistDataDir, $
-                          LOGAVGPLOT=logAvgPlot, $
-                          FANCY_PLOTNAMES=fancy_plotNames
-
-        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
-
-        h2dStrArr            = [h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
-           dataNameArr       = [dataNameArr,dataName] 
-           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
-           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
-           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
-        ENDIF  
-        
-     ENDIF
-     
-     ;;########CHARACTERISTIC ION ENERGY########
-     IF KEYWORD_SET(chariEPlots) THEN BEGIN
-        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_CHARIE, $
-                          MINM=minM, $
-                          MAXM=maxM, $
-                          BINM=binM, $
-                          SHIFTM=shiftM, $
-                          MINI=minI, $
-                          MAXI=maxI, $
-                          BINI=binI, $
-                          DO_LSHELL=do_lshell, $
-                          MINL=minL, $
-                          MAXL=maxL, $
-                          BINL=binL, $
-                          OUTH2DBINSMLT=outH2DBinsMLT, $
-                          OUTH2DBINSILAT=outH2DBinsILAT, $
-                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                          PLOTRANGE=chariEPlotRange, $
-                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_chariEPlots), $
-                          NOPOSFLUX=noPosChariE, $
-                          NONEGFLUX=noNegChariE, $
-                          ABSFLUX=absChariE, $
-                          OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logChariEPlot)), $
-                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
-                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
-                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
-                          GROSSRATE__H2D_AREAS=h2dAreas, $
-                          GROSSRATE__CENTERS_MLT=centersMLT, $
-                          GROSSRATE__CENTERS_ILAT=centersILAT, $
-                          THISTDENOMINATOR=tHistDenominator, $
-                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
-                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
-                          H2DSTR=h2dStr, $
-                          TMPLT_H2DSTR=tmplt_h2dStr, $
-                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                          H2DFLUXN=h2dFluxN, $
-                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
-                          OUT_H2DMASK=out_h2dMask, $
-                          DATANAME=dataName, $
-                          DATARAWPTR=dataRawPtr, $
-                          MEDIANPLOT=medianplot, $
-                          MEDHISTOUTDATA=medHistOutData, $
-                          MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=medHistDataDir, $
-                          LOGAVGPLOT=logAvgPlot, $
-                          FANCY_PLOTNAMES=fancy_plotNames
-        
-        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
-
-        h2dStrArr            = [h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
-           dataNameArr       = [dataNameArr,dataName] 
-           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
-           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
-           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
-        ENDIF  
-        
-     ENDIF
-
-
      ;;########Orbits########
      ;;Now do orbit data to show how many orbits contributed to each thingy.
      ;;A little extra tomfoolery is in order to get this right
@@ -741,14 +311,11 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      ;;2D array pointed to is indexed by MLTbin and ILATbin. The contents of
      ;;the 3D array are of the format [UniqueOrbs_ii index,MLT,ILAT]
      
-     ;;The following two lines shouldn't be necessary; the data are being corrupted somewhere when I run this with clockstr="dawnward"
-     ;; uniqueOrbs_ii=UNIQ(maximus.orbit[plot_i],SORT(maximus.orbit[plot_i]))
-     ;; uniqueOrbs_i=plot_i[uniqueOrbs_ii]
-     ;; nOrbs=N_ELEMENTS(uniqueOrbs_i)
-     
+     ;;Get orbs Contrib in case other routines want it
      IF KEYWORD_SET(orbContribPlot) OR KEYWORD_SET(orbfreqplot) $
         OR KEYWORD_SET(nEventPerOrbPlot) OR KEYWORD_SET(numOrbLim) $
-        OR KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) THEN BEGIN
+        OR KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) $
+        OR KEYWORD_SET(div_fluxPlots_by_applicable_orbs) THEN BEGIN
         
         GET_CONTRIBUTING_ORBITS_PLOTDATA,fastLoc,fastLocInterped_i, $
                                          MINM=minM, $
@@ -978,6 +545,471 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         ENDIF 
      ENDIF
 
+
+     ;;#####FLUX QUANTITIES#########
+     ;;########ELECTRON FLUX########
+     IF KEYWORD_SET(eplots) THEN BEGIN
+        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_EFLUX, $
+                          MINM=minM, $
+                          MAXM=maxM, $
+                          BINM=binM, $
+                          SHIFTM=shiftM, $
+                          MINI=minI, $
+                          MAXI=maxI, $
+                          BINI=binI, $
+                          DO_LSHELL=do_lshell, $
+                          MINL=minL, $
+                          MAXL=maxL, $
+                          BINL=binL, $
+                          OUTH2DBINSMLT=outH2DBinsMLT, $
+                          OUTH2DBINSILAT=outH2DBinsILAT, $
+                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                          FLUXPLOTTYPE=eFluxPlotType, $
+                          PLOTRANGE=ePlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
+                          NOPOSFLUX=noPoseflux, $
+                          NONEGFLUX=noNegeflux, $
+                          ABSFLUX=abseflux, $
+                          OUT_REMOVED_II=out_removed_ii, $
+                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logEfPlot)), $
+                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                          GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
+                          THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                          H2DSTR=h2dStr, $
+                          TMPLT_H2DSTR=tmplt_h2dStr, $
+                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                          H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
+                          DATANAME=dataName, $
+                          DATARAWPTR=dataRawPtr, $
+                          MEDIANPLOT=medianplot, $
+                          MEDHISTOUTDATA=medHistOutData, $
+                          MEDHISTOUTTXT=medHistOutTxt, $
+                          MEDHISTDATADIR=medHistDataDir, $
+                          LOGAVGPLOT=logAvgPlot, $
+                          DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                          ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                          FANCY_PLOTNAMES=fancy_plotNames
+
+        
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
+        h2dStrArr            = [h2dStrArr,h2dStr] 
+        IF keepMe THEN BEGIN
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     =[dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
+        ENDIF 
+     ENDIF
+     
+     ;;########ELECTRON NUMBER FLUX########
+     IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
+        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
+                          MINM=minM, $
+                          MAXM=maxM, $
+                          BINM=binM, $
+                          SHIFTM=shiftM, $
+                          MINI=minI, $
+                          MAXI=maxI, $
+                          BINI=binI, $
+                          DO_LSHELL=do_lshell, $
+                          MINL=minL, $
+                          MAXL=maxL, $
+                          BINL=binL, $
+                          OUTH2DBINSMLT=outH2DBinsMLT, $
+                          OUTH2DBINSILAT=outH2DBinsILAT, $
+                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                          FLUXPLOTTYPE=eNumFlPlotType, $
+                          PLOTRANGE=ENumFlPlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
+                          NOPOSFLUX=noPosENumFl, $
+                          NONEGFLUX=noNegENumFl, $
+                          ABSFLUX=absENumFl, $
+                          OUT_REMOVED_II=out_removed_ii, $
+                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logENumFlPlot)), $
+                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                          GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
+                          THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                          H2DSTR=h2dStr, $
+                          TMPLT_H2DSTR=tmplt_h2dStr, $
+                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                          H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
+                          DATANAME=dataName, $
+                          DATARAWPTR=dataRawPtr, $
+                          MEDIANPLOT=medianplot, $
+                          MEDHISTOUTDATA=medHistOutData, $
+                          MEDHISTOUTTXT=medHistOutTxt, $
+                          MEDHISTDATADIR=medHistDataDir, $
+                          LOGAVGPLOT=logAvgPlot, $
+                          DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                          ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                          FANCY_PLOTNAMES=fancy_plotNames
+
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
+        h2dStrArr            = [h2dStrArr,h2dStr] 
+        IF keepMe THEN BEGIN 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
+        ENDIF 
+        
+     ENDIF
+     
+     ;;########Poynting Flux########
+     IF KEYWORD_SET(pplots) THEN BEGIN
+        GET_FLUX_PLOTDATA,maximus,plot_i,$
+                          /GET_PFLUX, $
+                          MINM=minM, $
+                          MAXM=maxM, $
+                          BINM=binM, $
+                          SHIFTM=shiftM, $
+                          MINI=minI, $
+                          MAXI=maxI, $
+                          BINI=binI, $
+                          DO_LSHELL=do_lshell, $
+                          MINL=minL, $
+                          MAXL=maxL, $
+                          BINL=binL, $
+                          OUTH2DBINSMLT=outH2DBinsMLT, $
+                          OUTH2DBINSILAT=outH2DBinsILAT, $
+                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                          PLOTRANGE=PPlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_pPlots), $
+                          NOPOSFLUX=noPosPflux, $
+                          NONEGFLUX=noNegPflux, $
+                          ABSFLUX=absPflux, $
+                          OUT_REMOVED_II=out_removed_ii, $
+                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPfPlot)), $
+                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                          GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
+                          THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                          H2DSTR=h2dStr, $
+                          TMPLT_H2DSTR=tmplt_h2dStr, $
+                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                          H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
+                          DATANAME=dataName, $
+                          DATARAWPTR=dataRawPtr, $
+                          MEDIANPLOT=medianplot, $
+                          MEDHISTOUTDATA=medHistOutData, $
+                          MEDHISTOUTTXT=medHistOutTxt, $
+                          MEDHISTDATADIR=medHistDataDir, $
+                          LOGAVGPLOT=logAvgPlot, $
+                          DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                          ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                          FANCY_PLOTNAMES=fancy_plotNames
+        
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
+        h2dStrArr            = [h2dStrArr,h2dStr] 
+        IF keepMe THEN BEGIN 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
+        ENDIF  
+        
+     ENDIF
+     
+     ;;########ION FLUX########
+     IF KEYWORD_SET(ionPlots) THEN BEGIN
+        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_IFLUX, $
+                          MINM=minM, $
+                          MAXM=maxM, $
+                          BINM=binM, $
+                          SHIFTM=shiftM, $
+                          MINI=minI, $
+                          MAXI=maxI, $
+                          BINI=binI, $
+                          DO_LSHELL=do_lshell, $
+                          MINL=minL, $
+                          MAXL=maxL, $
+                          BINL=binL, $
+                          OUTH2DBINSMLT=outH2DBinsMLT, $
+                          OUTH2DBINSILAT=outH2DBinsILAT, $
+                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                          FLUXPLOTTYPE=iFluxPlotType, $
+                          PLOTRANGE=iPlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ionPlots), $
+                          NOPOSFLUX=noPosIflux, $
+                          NONEGFLUX=noNegIflux, $
+                          ABSFLUX=absIflux, $
+                          OUT_REMOVED_II=out_removed_ii, $
+                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logIfPlot)), $
+                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                          GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
+                          THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                          H2DSTR=h2dStr, $
+                          TMPLT_H2DSTR=tmplt_h2dStr, $
+                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                          H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
+                          DATANAME=dataName, $
+                          DATARAWPTR=dataRawPtr, $
+                          MEDIANPLOT=medianplot, $
+                          MEDHISTOUTDATA=medHistOutData, $
+                          MEDHISTOUTTXT=medHistOutTxt, $
+                          MEDHISTDATADIR=medHistDataDir, $
+                          LOGAVGPLOT=logAvgPlot, $
+                          DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                          ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                          FANCY_PLOTNAMES=fancy_plotNames
+        
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
+        h2dStrArr            = [h2dStrArr,h2dStr] 
+        IF keepMe THEN BEGIN 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
+        ENDIF  
+        
+     ENDIF
+
+     ;;########OXY FLUX########
+     IF KEYWORD_SET(oxyPlots) THEN BEGIN
+        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_OXYFLUX, $
+                          MINM=minM, $
+                          MAXM=maxM, $
+                          BINM=binM, $
+                          SHIFTM=shiftM, $
+                          MINI=minI, $
+                          MAXI=maxI, $
+                          BINI=binI, $
+                          DO_LSHELL=do_lshell, $
+                          MINL=minL, $
+                          MAXL=maxL, $
+                          BINL=binL, $
+                          OUTH2DBINSMLT=outH2DBinsMLT, $
+                          OUTH2DBINSILAT=outH2DBinsILAT, $
+                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                          FLUXPLOTTYPE=oxyFluxPlotType, $
+                          PLOTRANGE=oxyPlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_oxyPlots), $
+                          NOPOSFLUX=noPosOxyFlux, $
+                          NONEGFLUX=noNegOxyflux, $
+                          ABSFLUX=absOxyFlux, $
+                          OUT_REMOVED_II=out_removed_ii, $
+                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logOxyfPlot)), $
+                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                          GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
+                          THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                          H2DSTR=h2dStr, $
+                          TMPLT_H2DSTR=tmplt_h2dStr, $
+                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                          H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
+                          DATANAME=dataName, $
+                          DATARAWPTR=dataRawPtr, $
+                          MEDIANPLOT=medianplot, $
+                          MEDHISTOUTDATA=medHistOutData, $
+                          MEDHISTOUTTXT=medHistOutTxt, $
+                          MEDHISTDATADIR=medHistDataDir, $
+                          LOGAVGPLOT=logAvgPlot, $
+                          DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                          ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                          FANCY_PLOTNAMES=fancy_plotNames
+        
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
+        h2dStrArr            = [h2dStrArr,h2dStr] 
+        IF keepMe THEN BEGIN 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
+        ENDIF  
+        
+     ENDIF
+
+     ;;########CHARACTERISTIC ELECTRON ENERGY########
+     IF KEYWORD_SET(charEPlots) THEN BEGIN
+        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_CHAREE, $
+                          MINM=minM, $
+                          MAXM=maxM, $
+                          BINM=binM, $
+                          SHIFTM=shiftM, $
+                          MINI=minI, $
+                          MAXI=maxI, $
+                          BINI=binI, $
+                          DO_LSHELL=do_lshell, $
+                          MINL=minL, $
+                          MAXL=maxL, $
+                          BINL=binL, $
+                          OUTH2DBINSMLT=outH2DBinsMLT, $
+                          OUTH2DBINSILAT=outH2DBinsILAT, $
+                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                          FLUXPLOTTYPE=charEType, $
+                          PLOTRANGE=charEPlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_charEPlots), $
+                          NOPOSFLUX=noPosCharE, $
+                          NONEGFLUX=noNegCharE, $
+                          ABSFLUX=absCharE, $
+                          OUT_REMOVED_II=out_removed_ii, $
+                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logCharEPlot)), $
+                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                          GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
+                          THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                          H2DSTR=h2dStr, $
+                          TMPLT_H2DSTR=tmplt_h2dStr, $
+                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                          H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
+                          DATANAME=dataName, $
+                          DATARAWPTR=dataRawPtr, $
+                          MEDIANPLOT=medianplot, $
+                          MEDHISTOUTDATA=medHistOutData, $
+                          MEDHISTOUTTXT=medHistOutTxt, $
+                          MEDHISTDATADIR=medHistDataDir, $
+                          LOGAVGPLOT=logAvgPlot, $
+                          DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                          ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                          FANCY_PLOTNAMES=fancy_plotNames
+
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
+        h2dStrArr            = [h2dStrArr,h2dStr] 
+        IF keepMe THEN BEGIN 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
+        ENDIF  
+        
+     ENDIF
+     
+     ;;########CHARACTERISTIC ION ENERGY########
+     IF KEYWORD_SET(chariEPlots) THEN BEGIN
+        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_CHARIE, $
+                          MINM=minM, $
+                          MAXM=maxM, $
+                          BINM=binM, $
+                          SHIFTM=shiftM, $
+                          MINI=minI, $
+                          MAXI=maxI, $
+                          BINI=binI, $
+                          DO_LSHELL=do_lshell, $
+                          MINL=minL, $
+                          MAXL=maxL, $
+                          BINL=binL, $
+                          OUTH2DBINSMLT=outH2DBinsMLT, $
+                          OUTH2DBINSILAT=outH2DBinsILAT, $
+                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                          PLOTRANGE=chariEPlotRange, $
+                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_chariEPlots), $
+                          NOPOSFLUX=noPosChariE, $
+                          NONEGFLUX=noNegChariE, $
+                          ABSFLUX=absChariE, $
+                          OUT_REMOVED_II=out_removed_ii, $
+                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logChariEPlot)), $
+                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                          GROSSRATE__H2D_AREAS=h2dAreas, $
+                          DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                          GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+                          GROSSRATE__CENTERS_MLT=centersMLT, $
+                          GROSSRATE__CENTERS_ILAT=centersILAT, $
+                          THISTDENOMINATOR=tHistDenominator, $
+                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                          H2DSTR=h2dStr, $
+                          TMPLT_H2DSTR=tmplt_h2dStr, $
+                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                          H2DFLUXN=h2dFluxN, $
+                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          OUT_H2DMASK=out_h2dMask, $
+                          DATANAME=dataName, $
+                          DATARAWPTR=dataRawPtr, $
+                          MEDIANPLOT=medianplot, $
+                          MEDHISTOUTDATA=medHistOutData, $
+                          MEDHISTOUTTXT=medHistOutTxt, $
+                          MEDHISTDATADIR=medHistDataDir, $
+                          LOGAVGPLOT=logAvgPlot, $
+                          DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                          ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                          FANCY_PLOTNAMES=fancy_plotNames
+        
+        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
+        h2dStrArr            = [h2dStrArr,h2dStr] 
+        IF keepMe THEN BEGIN 
+           dataNameArr       = [dataNameArr,dataName] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+           varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+           varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+           removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
+        ENDIF  
+        
+     ENDIF
+
+
+     ;;########BONUS########
      IF KEYWORD_SET(sum_electron_and_poyntingflux) THEN BEGIN
         
         IF KEYWORD_SET(eNumFlPlots) AND KEYWORD_SET(pplots) THEN BEGIN
@@ -1050,10 +1082,10 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                  custom_dataname = custom_maxInd_dataname[i]
               ENDIF ELSE BEGIN
                  custom_dataname = custom_maxInd_dataname 
-                 nameless_customData_count++
               ENDELSE
            ENDIF ELSE BEGIN
               custom_dataname = 'custom_maxind_'+STRCOMPRESS(nameless_customData_count,/REMOVE_ALL)
+              nameless_customData_count++
            ENDELSE
 
            IF N_ELEMENTS(custom_maxInd_title) NE 0 THEN BEGIN
@@ -1061,11 +1093,26 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                  custom_title = custom_maxInd_title[i]
               ENDIF ELSE BEGIN
                  custom_title    = custom_maxInd_title
-                 nameless_customTitle_count++
               ENDELSE
            ENDIF ELSE BEGIN
               custom_title = 'Custom MaxInd #'+STRCOMPRESS(nameless_customTitle_count,/REMOVE_ALL)
+              nameless_customTitle_count++
            ENDELSE
+           
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) $
+              OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+
+              IF N_ELEMENTS(custom_grossRate_convFactor) NE 0 THEN BEGIN
+                 IF N_ELEMENTS(custom_grossRate_convFactor) GT 1 THEN BEGIN
+                    grossRate_convFactor = custom_grossRate_convFactor[i]
+                 ENDIF ELSE BEGIN
+                    grossRate_convFactor    = custom_grossRate_convFactor
+                 ENDELSE
+              ENDIF ELSE BEGIN
+                 PRINTF,lun,"Have to provide a grossRate conv Factor to get your units right!!"
+                 STOP
+              ENDELSE
+           ENDIF
 
            GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInds[i], $
                                       CUSTOM_DATANAME=custom_dataname, $
@@ -1089,7 +1136,10 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                       DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                       DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                                       DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                                      CUSTOM_GROSSRATE_CONVFACTOR=grossRate_convFactor, $
                                       GROSSRATE__H2D_AREAS=h2dAreas, $
+                                      DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                                      GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
                                       GROSSRATE__CENTERS_MLT=centersMLT, $
                                       GROSSRATE__CENTERS_ILAT=centersILAT, $
                                       THISTDENOMINATOR=tHistDenominator, $
@@ -1105,6 +1155,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                       MEDHISTOUTTXT=medHistOutTxt, $
                                       MEDHISTDATADIR=medHistDataDir, $
                                       LOGAVGPLOT=logAvgPlot, $
+                                      DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                                      ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
                                       DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                                       PRINT_MAX_AND_MIN=print_mandm, $
                                       FANCY_PLOTNAMES=fancy_plotNames, $

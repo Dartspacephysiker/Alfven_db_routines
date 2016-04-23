@@ -12,7 +12,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
                                      H2D_NONZERO_I=h2d_nonzero_i, $
                                      H2DSTR=h2dStr, $
                                      TMPLT_H2DSTR=tmplt_h2dStr, $ ;H2DFLUXN=h2dFluxN, $
-                                     ORBCONTRIB_H2DSTR_FOR_DIVISION=orbContrib_H2DStr_for_division, $
+                                     ORBCONTRIB_H2DSTR_FOR_DIVISION=orbContrib_h2dStr_for_division, $
                                      DATANAME=dataName, $
                                      PRINT_MAX_AND_MIN=print_mandm, $
                                      LUN=lun
@@ -83,7 +83,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.lim                               = orbContribRange
 
   IF is_orb_probOcc THEN BEGIN
-     tempDenom                                = orbContrib_H2DStr_for_division.data
+     tempDenom                                = orbContrib_h2dStr_for_division.data
      IF orbContrib_H2DStr_FOR_division.is_logged THEN BEGIN
         tempDenom[h2d_nonzero_i]              = 10.^(tempDenom[h2d_nonzero_i])
      ENDIF

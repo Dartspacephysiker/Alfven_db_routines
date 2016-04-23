@@ -30,6 +30,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                       DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                       GROSSRATE__H2D_AREAS=h2dAreas, $
+                      DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                      GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
                       GROSSRATE__CENTERS_MLT=centersMLT, $
                       GROSSRATE__CENTERS_ILAT=centersILAT, $
                       THISTDENOMINATOR=tHistDenominator, $
@@ -45,6 +47,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       MEDHISTOUTTXT=medHistOutTxt, $
                       MEDHISTDATADIR=medHistDataDir, $
                       LOGAVGPLOT=logAvgPlot, $
+                      DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                      ORBCONTRIB_H2DSTR_FOR_DIVISION=orbContrib_h2dStr_for_division, $
                       GET_EFLUX=get_eflux, $
                       GET_ENUMFLUX=get_eNumFlux, $
                       GET_PFLUX=get_pFlux, $
@@ -164,14 +168,22 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                     DO_DESPUNDB=maximus.despun
               magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
            ENDIF
+
            IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
+              h2dStr.title  = title__alfDB_ind_10 + '(time-averaged)'
+           ENDIF
+
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_with) THEN BEGIN
               CASE 1 OF
                  KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
                     h2dStr.title = title__alfDB_ind_10_grossRate
-                    grossConvFactor =   1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                    grossConvFactor = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 END
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    h2dStr.title = title__alfDB_ind_10_grossRate + '(long. wid.)'
+                    grossConvFactor = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
                  END
                  ELSE: BEGIN
-                    h2dStr.title  = title__alfDB_ind_10_tAvg
                  END
               ENDCASE
            ENDIF
@@ -219,21 +231,41 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ENDELSE
         END
         KEYWORD_SET(do_timeAvg_fluxQuantities): BEGIN
-           CASE 1 OF
-              KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
-                 h2dStr.title= title__alfDB_ind_49_grossRate
-                 grossConvFactor =   1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
-              END
-              ELSE: BEGIN
-                 h2dStr.title= title__alfDB_ind_49_tAvg
-              END
-           ENDCASE
+           ;; CASE 1 OF
+           ;;    KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+           ;;       h2dStr.title= title__alfDB_ind_49_grossRate
+           ;;       grossConvFactor =   1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+           ;;    END
+           ;;    KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+           ;;       h2dStr.title    = title__alfDB_ind_49_grossRate + '(long. wid.)'
+           ;;       grossConvFactor = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+           ;;    END              
+           ;;    ELSE: BEGIN
+                 ;; h2dStr.title    = title__alfDB_ind_49_tAvg
+           h2dStr.title          = title__alfDB_ind_49 + '(time-averaged)'
+           ;;    END
+           ;; ENDCASE
         END
         ELSE: BEGIN
-           h2dStr.title     = title__alfDB_ind_49
+           h2dStr.title          = title__alfDB_ind_49
         END
      ENDCASE
 
+     IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_with) THEN BEGIN
+        CASE 1 OF
+           KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+              h2dStr.title = title__alfDB_ind_49_grossRate
+              grossConvFactor = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+           END
+           KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+              h2dStr.title = title__alfDB_ind_49_grossRate + '(long. wid.)'
+              grossConvFactor = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+           END
+           ELSE: BEGIN
+           END
+        ENDCASE
+     ENDIF
+     
      dataName               = "pFlux"
      h2dStr.labelFormat     = fluxPlotPPlotCBLabelFormat
      h2dStr.logLabels       = logPFluxLabels
@@ -294,13 +326,31 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
            ENDIF
            IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
+              ;; CASE 1 OF
+              ;;    KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+              ;;       h2dStr.title    = title__alfDB_ind_18_grossRate
+              ;;       grossConvFactor = 1e10 ;Areas are given in km^2, but we need them in cm^2
+              ;;    END
+              ;;    KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+              ;;       h2dStr.title    = title__alfDB_ind_18_grossRate + '(long. wid.)'
+              ;;       grossConvFactor = 1e5 ;Lengths given in km, but we need them in cm.
+              ;;    END
+              ;;    ELSE: BEGIN
+              ;; h2dStr.title       = title__alfDB_ind_18_tAvg + '(time-averaged)'
+              h2dStr.title       = title__alfDB_ind_18 + '(time-averaged)'
+              ;;    END
+              ;; ENDCASE
+           ENDIF
+
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_with) THEN BEGIN
               CASE 1 OF
                  KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
-                    h2dStr.title  = title__alfDB_ind_18_grossRate
-                    grossConvFactor =   1e10 ;Areas are given in km^2, but we need them in cm^2
+                    h2dStr.title    = title__alfDB_ind_18_grossRate
+                    grossConvFactor = 1e10 ;Areas are given in km^2, but we need them in cm^2
                  END
-                 ELSE: BEGIN
-                    h2dStr.title  = title__alfDB_ind_18_tAvg
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    h2dStr.title    = title__alfDB_ind_18_grossRate + '(long. wid.)'
+                    grossConvFactor = 1e5 ;Lengths given in km, but we need them in cm.
                  END
               ENDCASE
            ENDIF
@@ -445,16 +495,26 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
      inData                 = inData * maximus.width_time[tmp_i]
      ;; h2dStr.title           = 'Time-averaged ' + h2dStr.title
+     dataName               = 'timeAvgd_' + dataName
+  ENDIF
+
+  ;;gross rates?
+  IF KEYWORD_SET(do_grossRate_fluxQuantities) $
+     OR KEYWORD_SET(do_grossRate_with_long_with) THEN BEGIN
      CASE 1 OF
         KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
-           ;; h2dStr.title     = 'Gross ' + h2dStr.title
            dataName         = 'grossRate_' + dataName
         END
-        ELSE: BEGIN
-           h2dStr.title     = 'Average ' + h2dStr.title
-           dataName         = 'timeAvgd_' + dataName
+        KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+           dataName         = 'grossRate_longWid_' + dataName
         END
      ENDCASE
+  ENDIF
+
+  ;;Averaging based on number of orbits passing through instead of nEvents, perhaps?
+  IF KEYWORD_SET(div_fluxPlots_by_applicable_orbs) THEN BEGIN
+     h2dStr.title           = 'Orbit-averaged ' + h2dStr.title
+     dataName               = 'orbAvgd_' + dataName
   ENDIF
 
   ;;fix MLTs
@@ -500,37 +560,64 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
            PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,tHistDenominator,outH2DBinsMLT,outH2DBinsILAT,H2DFluxN,dataName,h2dMask
 
-           h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/tHistDenominator[WHERE(h2dstr.data GT 0)]
+           ;;junked all those WHERE(h2dstr.data GT 0) as of 2016/04/23
+           ;; h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/tHistDenominator[WHERE(h2dstr.data GT 0)]
+           h2dStr.data[h2d_nonzero_nEv_i] = h2dStr.data[h2d_nonzero_nEv_i]/tHistDenominator[h2d_nonzero_nEv_i]
 
-           IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
-              h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dAreas[WHERE(h2dstr.data GT 0)]*grossConvFactor
-
-              dayInds                           = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
-              nightInds                         = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
-
-              IF dayInds[0] NE -1 THEN BEGIN
-                 grossDay                       = TOTAL(h2dStr.data[dayInds])
-              ENDIF ELSE grossDay               = 0
-
-              IF nightInds[0] NE -1 THEN BEGIN
-                 grossNight                     = TOTAL(h2dStr.data[nightInds])
-              ENDIF ELSE grossNight             = 0
-           ENDIF
         END
         ELSE: BEGIN
-           h2dStr.data=hist2d(mlts, $
-                              ilats,$
-                              (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
-                              MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                              MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
-                              BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
-                              OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
-           h2dStr.data[h2d_nonzero_nEv_i]=h2dStr.data[h2d_nonzero_nEv_i]/h2dFluxN[h2d_nonzero_nEv_i] 
+           h2dStr.data                          = HIST2D(mlts, $
+                                                         ilats,$
+                                                         (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
+                                                         MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
+                                                         MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
+                                                         BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                                                         OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
            
-           IF KEYWORD_SET(logAvgPlot) THEN h2dStr.data[where(h2dFluxN NE 0,/NULL)] = 10^(h2dStr.data[where(h2dFluxN NE 0,/NULL)])
+           IF KEYWORD_SET(div_fluxPlots_by_applicable_orbs) THEN BEGIN
+              
+              tempDenom                                = orbContrib_h2dStr_for_division.data
+              IF orbContrib_H2DStr_FOR_division.is_logged THEN BEGIN
+                 tempDenom[h2d_nonzero_nEv_i]          = 10.^(tempDenom[h2d_nonzero_nEv_i])
+              ENDIF
+
+              h2dStr.data[h2d_nonzero_nEv_i]           = h2dStr.data[h2d_nonzero_nEv_i]/tempDenom[h2d_nonzero_nEv_i]
+
+           ENDIF ELSE BEGIN
+              h2dStr.data[h2d_nonzero_nEv_i]           = h2dStr.data[h2d_nonzero_nEv_i]/h2dFluxN[h2d_nonzero_nEv_i] 
+           ENDELSE
+           
+           IF KEYWORD_SET(logAvgPlot) THEN BEGIN
+              h2dStr.data[where(h2dFluxN NE 0,/NULL)]  = 10^(h2dStr.data[where(h2dFluxN NE 0,/NULL)])
+           ENDIF
            
         END
      ENDCASE
+
+     IF KEYWORD_SET(do_grossRate_fluxQuantities) $
+        OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+        CASE 1 OF
+           KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+              ;; h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dAreas[WHERE(h2dstr.data GT 0)]*grossConvFactor
+              h2dStr.data[h2d_nonzero_nEv_i] = h2dStr.data[h2d_nonzero_nEv_i]*h2dAreas[h2d_nonzero_nEv_i]*grossConvFactor
+           END
+           KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+              ;; h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dLongWidths[WHERE(h2dstr.data GT 0)]*grossConvFactor
+              h2dStr.data[h2d_nonzero_nEv_i] = h2dStr.data[h2d_nonzero_nEv_i]*h2dLongWidths[h2d_nonzero_nEv_i]*grossConvFactor
+           END
+        ENDCASE
+
+        dayInds                           = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
+        nightInds                         = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
+
+        IF dayInds[0] NE -1 THEN BEGIN
+           grossDay                       = TOTAL(h2dStr.data[dayInds])
+        ENDIF ELSE grossDay               = 0
+
+        IF nightInds[0] NE -1 THEN BEGIN
+           grossNight                     = TOTAL(h2dStr.data[nightInds])
+        ENDIF ELSE grossNight             = 0
+     ENDIF
   ENDELSE
 
   IF KEYWORD_SET(print_mandm) THEN BEGIN
@@ -554,7 +641,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
             minh2d, $
             medh2d            
 
-     IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+     IF KEYWORD_SET(do_grossRate_fluxQuantities) $
+        OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
         grossFmt      = 'G18.6'
         PRINTF,lun,FORMAT='("Gross dayside, nightside:",T30,'+ grossFmt + ',T50,' + grossFmt + ')', $
                grossDay,grossNight

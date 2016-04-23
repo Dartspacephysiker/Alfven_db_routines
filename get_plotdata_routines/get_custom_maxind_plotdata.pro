@@ -23,7 +23,10 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
                                DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                                DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                               CUSTOM_GROSSRATE_CONVFACTOR=custom_grossRate_convFactor, $
                                GROSSRATE__H2D_AREAS=h2dAreas, $
+                               DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                               GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
                                GROSSRATE__CENTERS_MLT=centersMLT, $
                                GROSSRATE__CENTERS_ILAT=centersILAT, $
                                THISTDENOMINATOR=tHistDenominator, $
@@ -39,6 +42,8 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
                                MEDHISTOUTTXT=medHistOutTxt, $
                                MEDHISTDATADIR=medHistDataDir, $
                                LOGAVGPLOT=logAvgPlot, $
+                               DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                               ORBCONTRIB_H2DSTR_FOR_DIVISION=orbContrib_h2dStr_for_division, $
                                DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                                PRINT_MAX_AND_MIN=print_mandm, $
                                FANCY_PLOTNAMES=fancy_plotNames, $
@@ -178,17 +183,34 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
   ;;Is this going to be a time-averaged plot?
   IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
      inData                 = inData * maximus.width_time[tmp_i]
-     ;; h2dStr.title           = 'Time-averaged ' + h2dStr.title
+     dataName               = 'timeAvgd_' + dataName
+  ENDIF
+
+  ;;gross rates?
+  IF KEYWORD_SET(do_grossRate_fluxQuantities) $
+     OR KEYWORD_SET(do_grossRate_with_long_with) THEN BEGIN
+
+     IF ~KEYWORD_SET(custom_grossRate_convFactor) THEN BEGIN
+        PRINTF,lun,'Must provide a conversion factor for custome maxInd! Out...'
+        STOP
+     ENDIF ELSE BEGIN
+        grossConvFactor     = custom_grossRate_convFactor
+     ENDELSE
+
      CASE 1 OF
         KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
-           ;; h2dStr.title     = 'Gross ' + h2dStr.title
            dataName         = 'grossRate_' + dataName
         END
-        ELSE: BEGIN
-           h2dStr.title     = 'Average ' + h2dStr.title
-           dataName         = 'timeAvgd_' + dataName
+        KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+           dataName         = 'grossRate_longWid_' + dataName
         END
      ENDCASE
+  ENDIF
+
+  ;;Averaging based on number of orbits passing through instead of nEvents, perhaps?
+  IF KEYWORD_SET(div_fluxPlots_by_applicable_orbs) THEN BEGIN
+     h2dStr.title           = 'Orbit-averaged ' + h2dStr.title
+     dataName               = 'orbAvgd_' + dataName
   ENDIF
 
   ;;fix MLTs
@@ -236,20 +258,20 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
 
            h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/tHistDenominator[WHERE(h2dstr.data GT 0)]
 
-           IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
-              h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dAreas[WHERE(h2dstr.data GT 0)]*grossConvFactor
+           ;; IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+           ;;    h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dAreas[WHERE(h2dstr.data GT 0)]*grossConvFactor
 
-              dayInds                           = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
-              nightInds                         = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
+           ;;    dayInds                           = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
+           ;;    nightInds                         = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
 
-              IF dayInds[0] NE -1 THEN BEGIN
-                 grossDay                       = TOTAL(h2dStr.data[dayInds])
-              ENDIF ELSE grossDay               = 0
+           ;;    IF dayInds[0] NE -1 THEN BEGIN
+           ;;       grossDay                       = TOTAL(h2dStr.data[dayInds])
+           ;;    ENDIF ELSE grossDay               = 0
 
-              IF nightInds[0] NE -1 THEN BEGIN
-                 grossNight                     = TOTAL(h2dStr.data[nightInds])
-              ENDIF ELSE grossNight             = 0
-           ENDIF
+           ;;    IF nightInds[0] NE -1 THEN BEGIN
+           ;;       grossNight                     = TOTAL(h2dStr.data[nightInds])
+           ;;    ENDIF ELSE grossNight             = 0
+           ;; ENDIF
         END
         ELSE: BEGIN
            h2dStr.data=hist2d(mlts, $
@@ -259,12 +281,49 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
                               MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
                               BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
                               OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
-           h2dStr.data[h2d_nonzero_nEv_i]=h2dStr.data[h2d_nonzero_nEv_i]/h2dFluxN[h2d_nonzero_nEv_i] 
+
+           IF KEYWORD_SET(div_fluxPlots_by_applicable_orbs) THEN BEGIN
+              
+              tempDenom                                = orbContrib_h2dStr_for_division.data
+              IF orbContrib_H2DStr_FOR_division.is_logged THEN BEGIN
+                 tempDenom[h2d_nonzero_nEv_i]          = 10.^(tempDenom[h2d_nonzero_nEv_i])
+              ENDIF
+
+              h2dStr.data[h2d_nonzero_nEv_i]           = h2dStr.data[h2d_nonzero_nEv_i]/tempDenom[h2d_nonzero_nEv_i]
+
+           ENDIF ELSE BEGIN
+              h2dStr.data[h2d_nonzero_nEv_i]           = h2dStr.data[h2d_nonzero_nEv_i]/h2dFluxN[h2d_nonzero_nEv_i] 
+           ENDELSE
            
            IF KEYWORD_SET(logAvgPlot) THEN h2dStr.data[where(h2dFluxN NE 0,/NULL)] = 10^(h2dStr.data[where(h2dFluxN NE 0,/NULL)])
            
         END
      ENDCASE
+
+     IF KEYWORD_SET(do_grossRate_fluxQuantities) $
+        OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+        CASE 1 OF
+           KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+              ;; h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dAreas[WHERE(h2dstr.data GT 0)]*grossConvFactor
+              h2dStr.data[h2d_nonzero_nEv_i] = h2dStr.data[h2d_nonzero_nEv_i]*h2dAreas[h2d_nonzero_nEv_i]*grossConvFactor
+           END
+           KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+              ;; h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dLongWidths[WHERE(h2dstr.data GT 0)]*grossConvFactor
+              h2dStr.data[h2d_nonzero_nEv_i] = h2dStr.data[h2d_nonzero_nEv_i]*h2dLongWidths[h2d_nonzero_nEv_i]*grossConvFactor
+           END
+        ENDCASE
+
+        dayInds                           = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
+        nightInds                         = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
+
+        IF dayInds[0] NE -1 THEN BEGIN
+           grossDay                       = TOTAL(h2dStr.data[dayInds])
+        ENDIF ELSE grossDay               = 0
+
+        IF nightInds[0] NE -1 THEN BEGIN
+           grossNight                     = TOTAL(h2dStr.data[nightInds])
+        ENDIF ELSE grossNight             = 0
+     ENDIF
   ENDELSE
 
   IF KEYWORD_SET(print_mandm) THEN BEGIN
@@ -288,7 +347,8 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
             minh2d, $
             medh2d            
 
-     IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+     IF KEYWORD_SET(do_grossRate_fluxQuantities) $
+        OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
         grossFmt      = 'G18.6'
         PRINTF,lun,FORMAT='("Gross dayside, nightside:",T30,'+ grossFmt + ',T50,' + grossFmt + ')', $
                grossDay,grossNight
