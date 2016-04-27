@@ -1142,61 +1142,18 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      nameless_customTitle_count   = 0
      FOR i=0,N_ELEMENTS(custom_maxInds)-1 DO BEGIN
         
-        IF N_ELEMENTS(custom_maxInd_range) NE 0 THEN BEGIN
-           IF N_ELEMENTS(custom_maxInd_range[0,*]) GT 1 THEN BEGIN
-              custom_range = custom_maxInd_range[*,i]
-           ENDIF ELSE BEGIN
-              custom_range = custom_maxInd_range
-           ENDELSE
-        ENDIF ELSE BEGIN
-           custom_range    = !NULL
-        ENDELSE
-
-        IF N_ELEMENTS(custom_maxInd_autoscale) NE 0 THEN BEGIN
-           IF N_ELEMENTS(custom_maxInd_autoscale) GT 1 THEN BEGIN
-              custom_autoscale = custom_maxInd_autoscale[i]
-           ENDIF ELSE BEGIN
-              custom_autoscale = custom_maxInd_autoscale
-           ENDELSE
-        ENDIF
-
-        IF N_ELEMENTS(log_custom_maxInd) NE 0 THEN BEGIN
-           IF N_ELEMENTS(log_custom_maxInd) GT 1 THEN BEGIN
-              log_custom = log_custom_maxInd[i]
-           ENDIF ELSE BEGIN
-              log_custom = log_custom_maxInd
-           ENDELSE
-        ENDIF
-
-        IF N_ELEMENTS(log_custom_maxInd) NE 0 THEN BEGIN
-           IF N_ELEMENTS(log_custom_maxInd) GT 1 THEN BEGIN
-              log_custom = log_custom_maxInd[i]
-           ENDIF ELSE BEGIN
-              log_custom = log_custom_maxInd
-           ENDELSE
-        ENDIF
-
-        IF N_ELEMENTS(custom_maxInd_dataname) NE 0 THEN BEGIN
-           IF N_ELEMENTS(custom_maxInd_dataname) GT 1 THEN BEGIN
-              custom_dataname = custom_maxInd_dataname[i]
-           ENDIF ELSE BEGIN
-              custom_dataname = custom_maxInd_dataname 
-           ENDELSE
-        ENDIF ELSE BEGIN
-           custom_dataname = 'custom_maxind_'+STRCOMPRESS(nameless_customData_count,/REMOVE_ALL)
-           nameless_customData_count++
-        ENDELSE
-
-        IF N_ELEMENTS(custom_maxInd_title) NE 0 THEN BEGIN
-           IF N_ELEMENTS(custom_maxInd_title) GT 1 THEN BEGIN
-              custom_title = custom_maxInd_title[i]
-           ENDIF ELSE BEGIN
-              custom_title    = custom_maxInd_title
-           ENDELSE
-        ENDIF ELSE BEGIN
-           custom_title = 'Custom MaxInd #'+STRCOMPRESS(nameless_customTitle_count,/REMOVE_ALL)
-           nameless_customTitle_count++
-        ENDELSE
+        
+        GET_CUSTOM_MAXIND_ANCILLARIES,custom_range,log_custom,custom_title,custom_dataname,custom_autoscale, $
+                                  INDEX=index, $
+                                  CUSTOM_MAXINDS=custom_maxInds, $
+                                  CUSTOM_MAXIND_RANGE=custom_maxInd_range, $
+                                  CUSTOM_MAXIND_AUTOSCALE=custom_maxInd_autoscale, $
+                                  CUSTOM_MAXIND_DATANAME=custom_maxInd_dataname, $
+                                  CUSTOM_MAXIND_TITLE=custom_maxInd_title, $
+                                  LOG_CUSTOM_MAXIND=log_custom_maxInd, $
+                                  DO_OUTPUT_CUSTOM_MAXIND=do_output_custom_maxInd, $
+                                  OUTPUT_CUSTOM_MAXIND=output_custom_maxInd, $
+                                  RESET_COUNTERS=reset_counters
         
         IF KEYWORD_SET(do_grossRate_fluxQuantities) $
            OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
