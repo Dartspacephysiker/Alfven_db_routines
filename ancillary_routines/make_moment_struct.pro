@@ -42,7 +42,8 @@ FUNCTION MAKE_MOMENT_STRUCT,inputData, $
         END
      ENDCASE
 
-     bs_median         = BOOTSTRAP_MEDIAN(inputData,NBOOT=nBoot)
+     ;; bs_median         = BOOTSTRAP_MEDIAN(inputData,NBOOT=nBoot)
+     bs_median         = MEDIAN(inputData)
      tmplt.mean        = moments[0]
      tmplt.variance    = moments[1]
      tmplt.skewness    = moments[2]

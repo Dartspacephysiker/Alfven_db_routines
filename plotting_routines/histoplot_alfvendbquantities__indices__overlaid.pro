@@ -58,15 +58,20 @@ PRO HISTOPLOT_ALFVENDBQUANTITIES__INDICES__OVERLAID, $
    SAVEDIR=saveDir, $
    PLOTTITLE=plotTitle, $
    SAVEPLOT=savePlot, $
+   CLOSE_AFTER_SAVE=close_after_save, $
    ;; SAVEPNAME=savePName, $
    RANDOMTIMES=randomTimes, $
    MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+   DISREGARD_MLT_FOR_GOOD_I_SELECTION=disregard_mlt_for_good_i_selection, $
+   DISREGARD_ILAT_FOR_GOOD_I_SELECTION=disregard_ilat_for_good_i_selection, $
+   DISREGARD_REGION_FOR_GOOD_I_SELECTION=disregard_region_for_good_i_selection, $
    DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
    SUFF_DATANAME=suff_dataname, $
    NAMES_FOR_SETS_OF_INDS=names_for_sets_of_inds, $
    FANCYNAMES_FOR_SETS_OF_INDS=fancyNames_For_sets_of_inds, $
    PLOTSUFFIX=plotSuffix, $
    PLOTCOLOR=plotColor, $
+   PLOTLINESTYLE=lineStyle, $
    OUTPLOTARR=outPlotArr, $
    HISTOPLOT_PARAM_STRUCT=pHP, $
    NO_STATISTICS_TEXT=no_statistics_text, $
@@ -127,7 +132,12 @@ EPOCHPLOT_COLORNAMES=epochPlot_colorNames,SCATTEROUTPREFIX=scatterOutPrefix, $
                            ALTITUDERANGE=N_ELEMENTS(restrict_altRange) EQ 1 ? [0000,5000] : (N_ELEMENTS(restrict_altRange) GT 1 ? restrict_altRange : !NULL), $
                            CHARERANGE=N_ELEMENTS(restrict_charERange) EQ 1 ? [4e0,4e4] : (N_ELEMENTS(restrict_charERange) GT 1 ? restrict_charERange : !NULL), $
                            POYNTRANGE=poyntRange, $
-                           MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                           MINMLT=KEYWORD_SET(disregard_region_for_good_i_selection) OR KEYWORD_SET(disregard_mlt_for_good_i_selection) ? !NULL : minM, $
+                           MAXMLT=KEYWORD_SET(disregard_region_for_good_i_selection) OR KEYWORD_SET(disregard_mlt_for_good_i_selection) ? !NULL : maxM, $
+                           BINM=binM, $
+                           MINILAT=KEYWORD_SET(disregard_region_for_good_i_selection) OR KEYWORD_SET(disregard_ilat_for_good_i_selection) ? !NULL : minI, $
+                           MAXILAT=KEYWORD_SET(disregard_region_for_good_i_selection) OR KEYWORD_SET(disregard_ilat_for_good_i_selection) ? !NULL :maxI, $
+                           BINI=binI, $
                            DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
                            HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd, $
                            DAYSIDE=dayside,NIGHTSIDE=nightside)
@@ -182,7 +192,7 @@ EPOCHPLOT_COLORNAMES=epochPlot_colorNames,SCATTEROUTPREFIX=scatterOutPrefix, $
 
   ;;declare the slice structure array, null lists
   ssa            = !NULL
-  integralArr    = MAKE_ARRAY(3,/INTEGER)
+  integralArr    = MAKE_ARRAY(nHistos,/INTEGER)
 
   nFinite        = !NULL
   nTotal         = !NULL
@@ -385,7 +395,7 @@ EPOCHPLOT_COLORNAMES=epochPlot_colorNames,SCATTEROUTPREFIX=scatterOutPrefix, $
 
   ;;plot array/window setup
   plotLayout = KEYWORD_SET(layout) ? layout : [1,1,1]
-  nPPerWind  = plotLayout[0]*plotLayout[1]*3
+  nPPerWind  = plotLayout[0]*plotLayout[1]*nHistos
   plotArr    = N_ELEMENTS(outPlotArr) EQ 0 ? MAKE_ARRAY(nPPerWind,/OBJ) : outPlotArr
   ;; firstmarg  = [0.1,0.1,0.1,0.1]
   ;; firstmarg  = [0.18,0.09,0.08,0.09]
@@ -402,14 +412,24 @@ EPOCHPLOT_COLORNAMES=epochPlot_colorNames,SCATTEROUTPREFIX=scatterOutPrefix, $
   ;;plot settings and colors for each storm phase
   stormColors          = KEYWORD_SET(plotColor) ? plotColor : ["blue","red","black",'green','orange'] ;nonstorm, main phase, recovery phase
   ;; stormFill            = [1,1,1]
-  stormFill            = [0,0,0]
-  stormTransp          = KEYWORD_SET(normalize_maxInd_hist) ? $ 
-                         [80,80,85] : $
-                         [80,80,80]
+  stormFill            = REPLICATE(0,nHistos)
+  stormTransp          = REPLICATE(85,nHistos)
   stormLineThick       = KEYWORD_SET(normalize_maxInd_hist) ? $
-                         [4.2,4.2,4.2] : $
-                         [5.0,5.0,5.0]
-  stormLinestyle       = [0,0,2] ;solid, solid, dash
+                         REPLICATE(4.2,nHistos) : $
+                         REPLICATE(5.0,nHistos)
+  ;; stormLinestyle       = [0,0,2] ;solid, solid, dash
+  IF KEYWORD_SET(lineStyle) THEN BEGIN
+     CASE N_ELEMENTS(lineStyle) OF
+        1:       stormLineStyle = REPLICATE(lineStyle,nHistos)
+        nHistos: stormLineStyle = lineStyle
+        ELSE: BEGIN
+           PRINT,"Bogus number of linestyles; doesn't match number of histos. Just using first..."
+           stormLineStyle       = REPLICATE(lineStyle[0],nHistos)
+        END
+     ENDCASE
+  ENDIF ELSE BEGIN
+     stormLinestyle       = [0,0,2] ;solid, solid, dash
+  ENDELSE
                          
 
   FOR i=0,nHistos-1 DO BEGIN
@@ -453,7 +473,7 @@ EPOCHPLOT_COLORNAMES=epochPlot_colorNames,SCATTEROUTPREFIX=scatterOutPrefix, $
         END
      ENDCASE
 
-     plot_i            = i+3*(plotLayout[2]-1)
+     plot_i            = i+nHistos*(plotLayout[2]-1)
 
      plotArr[plot_i]   = plot(x,y, $
                               TITLE=(i EQ 0 AND KEYWORD_SET(plotTitle)) ? plotTitle : !NULL, $
@@ -558,9 +578,9 @@ EPOCHPLOT_COLORNAMES=epochPlot_colorNames,SCATTEROUTPREFIX=scatterOutPrefix, $
         
   ENDFOR
 
-  IF plot_i EQ 2 AND ~KEYWORD_SET(no_legend) THEN BEGIN
-     legend         = LEGEND(TARGET=plotArr[3*(plotLayout[2]-1):3*(plotLayout[2]-1)+2], $
-                             POSITION=[0.58/plotLayout[0]+(plotLayout[0] GT 1 ? 0.1 : 0.0),0.875], $
+  IF plot_i EQ nHistos-1 AND ~KEYWORD_SET(no_legend) THEN BEGIN
+     legend         = LEGEND(TARGET=plotArr[*], $
+                             POSITION=[0.8,0.8], $
                              ;; POSITION=[0.87/plotLayout[0],0.87], $
                              HORIZONTAL_ALIGNMENT=0.5, $
                              VERTICAL_SPACING=defHPlot_legend__vSpace, $
@@ -592,6 +612,10 @@ EPOCHPLOT_COLORNAMES=epochPlot_colorNames,SCATTEROUTPREFIX=scatterOutPrefix, $
   IF KEYWORD_SET(savePlot) THEN BEGIN
      PRINT,'Saving plot to ' + saveName + '...'
      window.save,saveName,RESOLUTION=300
+
+     IF KEYWORD_SET(close_after_save) THEN BEGIN
+        window.close
+     ENDIF
   ENDIF
 
   outPlotArr = plotArr
