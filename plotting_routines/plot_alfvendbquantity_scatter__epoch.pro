@@ -18,6 +18,7 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
                                          YMINOR=yMinor, $
                                          LAYOUT=layout, $
                                          CLIP=clip, $
+                                         YEAR_AND_SEASON_MODE=year_and_season_mode, $
                                          OUTPLOT=outPlot,ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array
   
   @utcplot_defaults.pro
@@ -30,6 +31,16 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
   ;;    AND N_ELEMENTS(alf_t) EQ 0 THEN BEGIN
   ;;    alf_t = alfDBTime[plot_i]-centerTime
   ;; ENDIF
+
+    IF KEYWORD_SET(year_and_season_mode) THEN BEGIN
+     SETUP_YEAR_AND_SEASON_SEA_PLOT, $
+        XTITLE=xTitle, $
+        YTITLE=yTitle, $
+        XSTYLE=xStyle, $
+        PLOTTITLE=plotTitle, $
+        XTICKVALUES=xTickValues,$
+        XTICKNAME=xTickName
+  ENDIF
 
   IF KEYWORD_SET(do_two_panels) THEN BEGIN
      margin               = !NULL
@@ -69,6 +80,9 @@ PRO PLOT_ALFVENDBQUANTITY_SCATTER__EPOCH,maxInd,mTags,NAME=name,AXIS_STYLE=axis_
                LINESTYLE=' ', $
                SYMBOL=KEYWORD_SET(symbol) ? symbol : max_scatter_symbol, $
                SYM_COLOR=KEYWORD_SET(symColor) ? symColor : max_scatter_color, $
+               XTICKVALUES=xTickValues,$
+               XTICKNAME=xTickName, $
+               XSTYLE=xStyle, $
                XTICKFONT_SIZE=max_xtickfont_size, $
                XTICKFONT_STYLE=max_xtickfont_style, $
                YTICKFONT_SIZE=max_ytickfont_size, $

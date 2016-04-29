@@ -43,7 +43,7 @@
 ;
 ; MODIFICATION HISTORY:   2016/04/07 Forked from SUPERPOSE_STORMS_ALFVENDBQUANTITIES
 ;-
-PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
+PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
    TBEFOREEPOCH=tBeforeEpoch,TAFTEREPOCH=tAfterEpoch, $
    STARTDATE=startDate, STOPDATE=stopDate, $
    DAYSIDE=dayside,NIGHTSIDE=nightside, $
@@ -78,7 +78,6 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
    ;; LOG_TIMEAVGD_EFLUXMAX=log_timeAvgd_eFluxMax, $
    DIVIDE_BY_WIDTH_X=divide_by_width_x, $
    MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
-   RETURNED_NEV_TBINS_and_HIST=returned_nEv_tbins_and_Hist, $
    ONLY_POS=only_pos, $
    ONLY_NEG=only_neg, $
    NEG_AND_POS_SEPAR=neg_and_pos_separ, $
@@ -160,6 +159,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
    NORTH=north, $
    SOUTH=south, $
    HEMI=hemi, $
+   RESET_GOOD_INDS=reset_good_inds, $
    OUT_BKGRND_HIST=out_bkgrnd_hist, $
    OUT_BKGRND_MAXIND=out_bkgrnd_maxind, $
    OUT_TBINS=out_tBins, $
@@ -168,9 +168,12 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
    OUT_HISTO_PLOT=out_histo_plot, $
    OUT_AVG_PLOT=out_avg_plot, $
    EPS_OUTPUT=eps_output, $
+   YEAR_AND_SEASON_MODE=year_and_season_mode, $
    PDF_OUTPUT=pdf_output
   
   
+  COMPILE_OPT idl2
+
   dataDir='/SPENCEdata/Research/Cusp/database/'
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -224,8 +227,9 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
      LOAD_DST_AE_DBS,dst,ae,DST_AE_DIR=DST_AEDir,DST_AE_FILE=DST_AEFile
      do_DST = 1 
   ENDIF ELSE BEGIN
-     IF use_SYMH THEN omni_quantity = 'sym_h'
-     IF use_AE THEN omni_quantity = 'ae_index'
+     IF N_ELEMENTS(omni_quantities_to_plot) EQ 0 THEN omni_quantities_to_plot = !NULL
+     IF use_SYMH THEN omni_quantities_to_plot = [omni_quantities_to_plot,'sym_h']
+     IF use_AE   THEN omni_quantities_to_plot = [omni_quantities_to_plot,'ae_index']
      do_DST = 0                 ;Use DST for plots, not SYM-H
      PRINT,'OMNI Quantity: ' + omni_quantity
   ENDELSE
@@ -274,8 +278,13 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
   ;**************************************************
   ;generate geomag and stuff
 
-  quantitiesToPlot                 = STRSPLIT(OMNI_quantities_to_plot,',',/EXTRACT)
-  nQuantitiesToPlot                = N_ELEMENTS(quantitiesToPlot)
+  IF do_DST THEN BEGIN
+     quantitiesToPlot              = !NULL
+     nQuantitiesToPlot             = 1
+  ENDIF ELSE BEGIN
+     quantitiesToPlot              = KEYWORD_SET(OMNI_quantities_to_plot) ? STRSPLIT(OMNI_quantities_to_plot,',',/EXTRACT) : !NULL
+     nQuantitiesToPlot             = N_ELEMENTS(quantitiesToPlot)
+  ENDELSE
                                    
   geomag_dat_list_of_lists         = LIST()
   geomag_time_list_of_lists        = LIST()
@@ -285,11 +294,18 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
   geomag_title_list                = LIST()
   FOR iQuant=0,nQuantitiesToPlot-1 DO BEGIN
 
-     omni_quantity                 = quantitiesToPlot[iQuant]
+     IF KEYWORD_SET(OMNI_quantities_to_plot) THEN BEGIN
+        omni_quantity              = quantitiesToPlot[iQuant]
+     ENDIF
+
      IF KEYWORD_SET(log_omni_quantities) THEN BEGIN
         CASE N_ELEMENTS(log_omni_quantities) OF
-           1: log_omni_quantity = log_omni_quantities
-           nQuantitiesToPlot: log_omni_quantity = log_omni_quantities[iQuant]
+           1: BEGIN
+              log_omni_quantity    = log_omni_quantities
+           END
+           nQuantitiesToPlot: BEGIN
+              log_omni_quantity    = log_omni_quantities[iQuant]
+           END
            ELSE: BEGIN
               PRINT,"Bad number of log_omni_quantities provided! Either give scalar, or vector that is size of n OMNI quantities being plotted."
               STOP
@@ -358,6 +374,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                                        NORTH=north, $
                                        SOUTH=south, $
                                        HEMI=hemi, $
+                                       RESET_GOOD_INDS=reset_good_inds, $
                                        DAYSIDE=dayside,NIGHTSIDE=nightside, $
                                        SAVEFILE=saveFile,SAVESTR=saveStr
      
@@ -416,9 +433,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                                              NEVTOT=nEvTot
         ENDIF
      ENDIF ELSE BEGIN
-        IF KEYWORD_SET(probOccurrence_sea) OR KEYWORD_SET(nEventHists) $
-           ;; OR KEYWORD_SET(timeAvgd_pFlux_sea) OR KEYWORD_SET(timeAvgd_eFluxMax_sea) $
-        THEN BEGIN
+        IF KEYWORD_SET(probOccurrence_sea) OR KEYWORD_SET(nEventHists) THEN BEGIN
            ;;use maxInd = 20 here to get current width
            GET_DATA_FOR_ALFVENDB_EPOCH_PLOTS,MAXIMUS=maximus, $
                                              CDBTIME=cdbTime, $
@@ -444,60 +459,9 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                                              NEVTOT=nEvTot
         ENDIF
 
-        ;;Take it to the next level
-        ;; IF KEYWORD_SET(timeAvgd_pFlux_sea) THEN BEGIN
-        ;;    GET_DATA_FOR_ALFVENDB_EPOCH_PLOTS,MAXIMUS=maximus, $
-        ;;                                      CDBTIME=cdbTime, $
-        ;;                                      MAXIND=49, $
-        ;;                                      DIVIDE_BY_WIDTH_X=divide_by_width_x, $
-        ;;                                      GOOD_I=good_i, $
-        ;;                                      ALF_EPOCH_I=alf_epoch_i,ALF_IND_LIST=alf_ind_list, $
-        ;;                                      MINMAXDAT=minMaxDat, NALFEPOCHS=nAlfEpochs,NEPOCHS=nEpochs, $
-        ;;                                      LOG_DBQUANTITY=log_DBQuantity, $
-        ;;                                      CENTERTIME=alf_centerTime,TSTAMPS=alf_tStamps, $
-        ;;                                      TAFTEREPOCH=tAfterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
-        ;;                                      NEG_AND_POS_SEPAR=neg_and_pos_separ, $
-        ;;                                      TOT_PLOT_I_POS_LIST=tot_plot_i_pos_list, $
-        ;;                                      TOT_ALF_T_POS_LIST=tot_pFlux_t_pos_list, $
-        ;;                                      TOT_ALF_Y_POS_LIST=tot_pFlux_y_pos_list, $
-        ;;                                      TOT_PLOT_I_NEG_LIST=tot_plot_i_neg_list, $
-        ;;                                      TOT_ALF_T_NEG_LIST=tot_pFlux_t_neg_list, $
-        ;;                                      TOT_ALF_Y_NEG_LIST=tot_pFlux_y_neg_list, $
-        ;;                                      TOT_PLOT_I_LIST=tot_plot_i_list, $
-        ;;                                      TOT_ALF_T_LIST=tot_pFlux_t_list, $
-        ;;                                      TOT_ALF_Y_LIST=tot_pFlux_y_list, $
-        ;;                                      NEVTOT=nEvTot
-
-        ;; ENDIF
-
-        ;; ;;Take it to the next level AGAIN
-        ;; IF KEYWORD_SET(timeAvgd_eFluxMax_sea) THEN BEGIN
-        ;;    GET_DATA_FOR_ALFVENDB_EPOCH_PLOTS,MAXIMUS=maximus, $
-        ;;                                      CDBTIME=cdbTime, $
-        ;;                                      MAXIND=8, $
-        ;;                                      DIVIDE_BY_WIDTH_X=divide_by_width_x, $
-        ;;                                      GOOD_I=good_i, $
-        ;;                                      ALF_EPOCH_I=alf_epoch_i,ALF_IND_LIST=alf_ind_list, $
-        ;;                                      MINMAXDAT=minMaxDat, NALFEPOCHS=nAlfEpochs,NEPOCHS=nEpochs, $
-        ;;                                      LOG_DBQUANTITY=log_DBQuantity, $
-        ;;                                      CENTERTIME=alf_centerTime,TSTAMPS=alf_tStamps, $
-        ;;                                      TAFTEREPOCH=tAfterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
-        ;;                                      NEG_AND_POS_SEPAR=neg_and_pos_separ, $
-        ;;                                      TOT_PLOT_I_POS_LIST=tot_plot_i_pos_list, $
-        ;;                                      TOT_ALF_T_POS_LIST=tot_eFluxMax_t_pos_list, $
-        ;;                                      TOT_ALF_Y_POS_LIST=tot_eFluxMax_y_pos_list, $
-        ;;                                      TOT_PLOT_I_NEG_LIST=tot_plot_i_neg_list, $
-        ;;                                      TOT_ALF_T_NEG_LIST=tot_eFluxMax_t_neg_list, $
-        ;;                                      TOT_ALF_Y_NEG_LIST=tot_eFluxMax_y_neg_list, $
-        ;;                                      TOT_PLOT_I_LIST=tot_plot_i_list, $
-        ;;                                      TOT_ALF_T_LIST=tot_eFluxMax_t_list, $
-        ;;                                      TOT_ALF_Y_LIST=tot_eFluxMax_y_list, $
-        ;;                                      NEVTOT=nEvTot
-
-        ;; ENDIF
      ENDELSE
      
-     IF KEYWORD_SET(neg_AND_pos_separ) THEN BEGIN
+     IF KEYWORD_SET(neg_and_pos_separ) THEN BEGIN
         ;;First pos
         tot_alf_t_pos = LIST_TO_1DARRAY(tot_alf_t_pos_list,/WARN,/SKIP_NEG1_ELEMENTS)
         tot_alf_y_pos = LIST_TO_1DARRAY(tot_alf_y_pos_list,/WARN,/SKIP_NEG1_ELEMENTS)
@@ -552,6 +516,11 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
               tot_alf_t = LIST_TO_1DARRAY(tot_widthT_t_list,/WARN,/SKIP_NEG1_ELEMENTS)
               tot_alf_y = LIST_TO_1DARRAY(tot_widthT_y_list,/WARN,/SKIP_NEG1_ELEMENTS)
            END
+           KEYWORD_SET(nEventHists): BEGIN
+              PRINT,'N Events SEA ...'
+              tot_alf_t = LIST_TO_1DARRAY(tot_widthT_t_list,/WARN,/SKIP_NEG1_ELEMENTS)
+              tot_alf_y = LIST_TO_1DARRAY(tot_widthT_y_list,/WARN,/SKIP_NEG1_ELEMENTS)
+           END
            KEYWORD_SET(timeAvgd_maxInd_sea): BEGIN
               PRINT,'Doing time-averaged maxInd SEA ...'
               tot_alf_t = LIST_TO_1DARRAY(tot_alf_t_list,/WARN,/SKIP_NEG1_ELEMENTS)
@@ -567,30 +536,6 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                  STOP
               ENDELSE
            END
-           ;; KEYWORD_SET(timeAvgd_pFlux_sea): BEGIN
-           ;;    PRINT,'Doing time-averaged Poynting flux SEA ...'
-           ;;    tot_pFlux_t = LIST_TO_1DARRAY(tot_pFlux_t_list,/WARN,/SKIP_NEG1_ELEMENTS)
-           ;;    tot_pFlux_y = LIST_TO_1DARRAY(tot_pFlux_y_list,/WARN,/SKIP_NEG1_ELEMENTS)
-              
-           ;;    IF ARRAY_EQUAL(tot_widthT_t,tot_pFlux_t) THEN BEGIN
-           ;;       tot_alf_y = tot_widthT_y*tot_pFlux_y
-           ;;    ENDIF ELSE BEGIN
-           ;;       PRINT,"pFlux time array isn't the same as width_data array! Better check it out..."
-           ;;       STOP
-           ;;    ENDELSE
-           ;; END
-           ;; KEYWORD_SET(timeAvgd_eFluxMax_sea): BEGIN
-           ;;    PRINT,'Doing time-averaged e- energy flux SEA ...'
-           ;;    tot_eFluxMax_t = LIST_TO_1DARRAY(tot_eFluxMax_t_list,/WARN,/SKIP_NEG1_ELEMENTS)
-           ;;    tot_eFluxMax_y = LIST_TO_1DARRAY(tot_eFluxMax_y_list,/WARN,/SKIP_NEG1_ELEMENTS)
-              
-           ;;    IF ARRAY_EQUAL(tot_widthT_t,tot_eFluxMax_t) THEN BEGIN
-           ;;       tot_alf_y = tot_widthT_y*tot_eFluxMax_y
-           ;;    ENDIF ELSE BEGIN
-           ;;       PRINT,"eFluxMax time array isn't the same as width_data array! Better check it out..."
-           ;;       STOP
-           ;;    ENDELSE
-           ;; END
            ELSE: BEGIN
               tot_alf_t = LIST_TO_1DARRAY(tot_alf_t_list,/WARN,/SKIP_NEG1_ELEMENTS)
               tot_alf_y = LIST_TO_1DARRAY(tot_alf_y_list,/WARN,/SKIP_NEG1_ELEMENTS)
@@ -653,6 +598,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
               ;; NORTH=north, $
               ;; SOUTH=south, $
               HEMI=hemi, $      ;'BOTH', $
+              RESET_GOOD_INDS=reset_good_inds, $
               NEPOCHS=nEpochs, $
               OUTINDSPREFIX=savePlotMaxName, $
               HISTDATA=fastLocHistData, $
@@ -697,6 +643,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
               ;; NORTH=north, $
               ;; SOUTH=south, $
               HEMI=hemi, $;'BOTH', $
+              RESET_GOOD_INDS=reset_good_inds, $
               NEPOCHS=nEpochs, $
               OUTINDSPREFIX=savePlotMaxName, $
               HISTDATA=fastLocHistData, $
@@ -748,6 +695,16 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
      ;; OR KEYWORD_SET(timeAvgd_pFlux_sea) OR KEYWORD_SET(timeAvgd_eFluxMax_sea) $
      AND ~KEYWORD_SET(noPlots) AND ~KEYWORD_SET(noGeomagPlots) THEN BEGIN
      IF N_ELEMENTS(geomagWindow) EQ 0 THEN BEGIN
+        makeGeomag          = 1
+     ENDIF ELSE BEGIN
+        IF ISA(geomagWindow) THEN BEGIN
+           makeGeomag       = 0
+        ENDIF ELSE BEGIN
+           makeGeomag       = 1
+        ENDELSE
+     ENDELSE
+
+     IF makeGeomag THEN BEGIN
         IF KEYWORD_SET(only_OMNI_plots) THEN BEGIN
            WINDOW_CUSTOM_SETUP,NPLOTCOLUMNS=1, $
                                NPLOTROWS=nQuantitiesToPlot, $
@@ -765,7 +722,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
         ENDIF ELSE BEGIN
            geomagWindow=WINDOW(WINDOW_TITLE="SEA plots for " + STRCOMPRESS(nEpochs,/REMOVE_ALL) + " seas: "+ $
                                tStamps[0] + " - " + $
-                               tStamps(-1), $
+                               tStamps[-1], $
                                DIMENSIONS=[1200,800])
            window_custom        = 0
         ENDELSE
@@ -808,6 +765,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                                                      MARGIN=margin, $
                                                      POSITION=nextPos, $
                                                      ;; CLIP=0, $
+                                                     YEAR_AND_SEASON_MODE=year_and_season_mode, $
                                                      OUTPLOT=geomagPlot, $
                                                      ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array
               
@@ -818,8 +776,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
         axes=geomagPlot.axes
         axes[1].MINOR=nMinorTicks+1
      ENDFOR
-  ENDIF                         ;end noplots 
-  ;; ENDELSE
+  ENDIF
   
   IF ~noPlots AND ~KEYWORD_SET(only_OMNI_plots) THEN BEGIN
      IF KEYWORD_SET(nEventHists) THEN BEGIN
@@ -844,6 +801,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                                                   BKGRND_HIST=bkgrnd_hist, $
                                                   BKGRNDHISTOPLOT=bkgrndHistoPlot, $
                                                   OUTPLOT=out_histo_plot, $
+                                                  YEAR_AND_SEASON_MODE=year_and_season_mode, $
                                                   OUTBKGRNDPLOT=outBkgrndPlot, $
                                                   ADD_PLOT_TO_PLOT_ARRAY=KEYWORD_SET(accumulate__histo_plots)
         ENDELSE
@@ -875,6 +833,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                                                      BKGRND_HIST=bkgrnd_hist, $
                                                      BKGRNDHISTOPLOT=bkgrndHistoPlot, $
                                                      OUTPLOT=out_histo_plot, $
+                                                     YEAR_AND_SEASON_MODE=year_and_season_mode, $
                                                      OUTBKGRNDPLOT=outBkgrndPlot, $
                                                      ADD_PLOT_TO_PLOT_ARRAY=KEYWORD_SET(accumulate__histo_plots)
 
@@ -910,6 +869,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                                                      BKGRNDHISTOPLOT=bkgrndHistoPlot, $
                                                      OUTPLOT=out_histo_plot, $
                                                      OUTBKGRNDPLOT=outBkgrndPlot, $
+                                                     YEAR_AND_SEASON_MODE=year_and_season_mode, $
                                                      ADD_PLOT_TO_PLOT_ARRAY=KEYWORD_SET(accumulate__histo_plots)
 
            END
@@ -944,63 +904,10 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                                                      BKGRNDHISTOPLOT=bkgrndHistoPlot, $
                                                      OUTPLOT=out_histo_plot, $
                                                      OUTBKGRNDPLOT=outBkgrndPlot, $
+                                                     YEAR_AND_SEASON_MODE=year_and_season_mode, $
                                                      ADD_PLOT_TO_PLOT_ARRAY=KEYWORD_SET(accumulate__histo_plots)
 
            END
-           ;; KEYWORD_SET(timeAvgd_pFlux_sea): BEGIN
-           ;;    PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins- $
-           ;;                                           (KEYWORD_SET(window_sum) ? window_sum/2. : 0), $
-           ;;                                           histData, $
-           ;;                                           NAME=name__histo_plot, $
-           ;;                                           XRANGE=xRange, $
-           ;;                                           HISTORANGE=histoRange, $
-           ;;                                           YTITLE=KEYWORD_SET(yTitle_maxInd) ? yTitle_maxInd : yTitle, $
-           ;;                                           LOGYPLOT=log_timeAvgd_pFlux, $
-           ;;                                           ;; YTICKFORMAT=, $
-           ;;                                           ;; MARGIN=plotMargin, $
-           ;;                                           ;; MARGIN=margin__max_plot, $
-           ;;                                           HISTOGRAM=1, $
-           ;;                                           MARGIN=margin__avg_plot, $
-           ;;                                           PLOTTITLE=title__histo_plot, $
-           ;;                                           OVERPLOT_HIST=KEYWORD_SET(overplot_hist) OR N_ELEMENTS(out_histo_plot) GT 0, $
-           ;;                                           COLOR=symColor__histo_plot, $
-           ;;                                           CURRENT=1, $
-           ;;                                           LAYOUT=layout, $
-           ;;                                           HISTOPLOT=histoPlot, $
-           ;;                                           BKGRND_HIST=bkgrnd_hist, $
-           ;;                                           BKGRNDHISTOPLOT=bkgrndHistoPlot, $
-           ;;                                           OUTPLOT=out_histo_plot, $
-           ;;                                           OUTBKGRNDPLOT=outBkgrndPlot, $
-           ;;                                           ADD_PLOT_TO_PLOT_ARRAY=KEYWORD_SET(accumulate__histo_plots)
-
-           ;; END
-           ;; KEYWORD_SET(timeAvgd_eFluxMax_sea): BEGIN
-           ;;    PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins- $
-           ;;                                           (KEYWORD_SET(window_sum) ? window_sum/2. : 0), $
-           ;;                                           histData, $
-           ;;                                           NAME=name__histo_plot, $
-           ;;                                           XRANGE=xRange, $
-           ;;                                           HISTORANGE=histoRange, $
-           ;;                                           YTITLE=KEYWORD_SET(yTitle_maxInd) ? yTitle_maxInd : yTitle, $
-           ;;                                           LOGYPLOT=log_timeAvgd_eFluxMax, $
-           ;;                                           ;; YTICKFORMAT=, $
-           ;;                                           ;; MARGIN=plotMargin, $
-           ;;                                           ;; MARGIN=margin__max_plot, $
-           ;;                                           HISTOGRAM=1, $
-           ;;                                           MARGIN=margin__avg_plot, $
-           ;;                                           PLOTTITLE=title__histo_plot, $
-           ;;                                           OVERPLOT_HIST=KEYWORD_SET(overplot_hist) OR N_ELEMENTS(out_histo_plot) GT 0, $
-           ;;                                           COLOR=symColor__histo_plot, $
-           ;;                                           CURRENT=1, $
-           ;;                                           LAYOUT=layout, $
-           ;;                                           HISTOPLOT=histoPlot, $
-           ;;                                           BKGRND_HIST=bkgrnd_hist, $
-           ;;                                           BKGRNDHISTOPLOT=bkgrndHistoPlot, $
-           ;;                                           OUTPLOT=out_histo_plot, $
-           ;;                                           OUTBKGRNDPLOT=outBkgrndPlot, $
-           ;;                                           ADD_PLOT_TO_PLOT_ARRAY=KEYWORD_SET(accumulate__histo_plots)
-
-           ;; END
            ELSE: PRINT,""
         ENDCASE
      ENDELSE
@@ -1095,6 +1002,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                                                       YMINOR=yMinor_maxInd, $
                                                       LAYOUT=pn_layout[*,j], $
                                                       CLIP=0, $
+                                                      YEAR_AND_SEASON_MODE=year_and_season_mode, $
                                                       OUTPLOT=(j EQ 0) ? out_maxPlotPos : out_maxPlotNeg, $
                                                       ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array ;; Add the legend, if neg_and_pos_separ
               ENDIF
@@ -1128,6 +1036,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                                                    LAYOUT=layout, $
                                                    ;; CLIP=0, $
                                                    OUTPLOT=out_maxPlotAll, $
+                                                   YEAR_AND_SEASON_MODE=year_and_season_mode, $
                                                    ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array ;; Add the legend, if neg_and_pos_separ
            ENDIF
         ENDELSE
@@ -1201,6 +1110,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                     ;; MARGIN=margin__max_plot, $
                     LAYOUT=layout, $
                     OUTPLOT=out_avg_plot, $
+                    YEAR_AND_SEASON_MODE=year_and_season_mode, $
                     ADD_PLOT_TO_PLOT_ARRAY=KEYWORD_SET(accumulate__avg_plots)
                  
               ENDIF ELSE BEGIN
@@ -1242,6 +1152,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                     ;; MARGIN=margin__max_plot, $
                     LAYOUT=layout, $
                     OUTPLOT=out_avg_plot, $
+                    YEAR_AND_SEASON_MODE=year_and_season_mode, $
                     ADD_PLOT_TO_PLOT_ARRAY=KEYWORD_SET(accumulate__avg_plots)
               ENDELSE
            ENDIF
@@ -1288,6 +1199,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES,seaTimeArray_utc, $
                     ;; MARGIN=margin__max_plot, $
                     LAYOUT=layout, $
                     OUTPLOT=out_avg_plot, $
+                    YEAR_AND_SEASON_MODE=year_and_season_mode, $
                     ADD_PLOT_TO_PLOT_ARRAY=KEYWORD_SET(accumulate__avg_plots)
 
                  PRINT,FORMAT='("epochvar [max,min]: ",G13.4,TR8,G13.4)',MAX(total_epoch_histData),MIN(total_epoch_histData)

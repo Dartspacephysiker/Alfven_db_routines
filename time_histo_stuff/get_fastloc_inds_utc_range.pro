@@ -1,8 +1,8 @@
 ;+
 ;;Note, MINMLT,MAXILAT, etc., keywords got added 2015/10/27, and they may screw up other stuff. Just so
 ;;you know!
-;2016/02/05 Nowe we have fastloc4, which isn't full of lies.
-;2015/10/21 Now using output from fastloc_intervals3, which includes magnetometer sampling rates
+;2016/02/05 Nowe we have fastLoc4, which isn't full of lies.
+;2015/10/21 Now using output from fastLoc_intervals3, which includes magnetometer sampling rates
 ;2015/04/09
 ;this can be used as a standalone routine or else called by plot_alfven_stats_imf_screening when
 ;making a plot of n events per minute
@@ -25,7 +25,10 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                                OUTINDSFILEBASENAME=outIndsFileBasename, $
                                FASTLOC_STRUCT=fastLoc_in, $
                                FASTLOC_TIMES=fastLoc_Times_in, $
-                               FASTLOC_DELTA_T=fastloc_delta_t_in, $
+                               FASTLOC_DELTA_T=fastLoc_delta_t_in, $
+                               OUT_FASTLOC_STRUCT=fastLoc_out, $
+                               OUT_FASTLOC_TIMES=fastLoc_times_out, $
+                               OUT_FASTLOC_DELTA_T=fastLoc_delta_t_out, $
                                FASTLOCFILE=fastLocFile_in, $
                                FASTLOCTIMEFILE=fastLocTimeFile_in, $
                                FASTLOCOUTPUTDIR=fastLocOutputDir, $
@@ -41,7 +44,9 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                                DO_LSHELL=do_lshell, $
                                MINLSHELL=minL, $
                                MAXLSHELL=maxL, $
-                               BINL=binL
+                               BINL=binL, $
+                               RESET_GOOD_INDS=reset_good_inds
+
 
   COMPILE_OPT idl2
 
@@ -58,11 +63,11 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ENDIF
 
   IF KEYWORD_SET(fastLoc_times_in) AND ~KEYWORD_SET(FASTLOC__times) THEN BEGIN
-     FASTLOC__times = fastloc_times_in
+     FASTLOC__times = fastLoc_times_in
   ENDIF
 
   IF KEYWORD_SET(fastLoc_delta_t_in) AND ~KEYWORD_SET(FASTLOC__delta_t) THEN BEGIN
-     FASTLOC__delta_t = fastloc_delta_t_in
+     FASTLOC__delta_t = fastLoc_delta_t_in
   ENDIF
 
   IF KEYWORD_SET(fastLocFile_in) AND ~KEYWORD_SET(FASTLOC__dbFile) THEN BEGIN
@@ -86,11 +91,15 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
      IF KEYWORD_SET(DstCutoff) THEN BEGIN
         stormFile = TODAYS_NONSTORM_MAINPHASE_AND_RECOVERYPHASE_FASTLOC_INDICES(STORMSTRING=stormString,DSTCUTOFF=DstCutoff)
         IF FILE_TEST(stormFile) THEN BEGIN
-           PRINTF,lun,"Already have " + stormString + "inds! Restoring today's file..."
-           RESTORE,stormFile
-           IF N_ELEMENTS(fastLocInterped_i) GT 0 THEN RETURN ELSE BEGIN
-              PRINTF,lun,"stormFile was a blank! It didn't contain fastLocInterped_i..."
-              STOP
+           IF KEYWORD_SET(reset_good_inds) THEN BEGIN
+              PRINTF,lun,"Already have " + stormString + "inds, but resetting..."
+           ENDIF ELSE BEGIN
+              PRINTF,lun,"Already have " + stormString + "inds! Restoring today's file..."
+              RESTORE,stormFile
+              IF N_ELEMENTS(fastLocInterped_i) GT 0 THEN RETURN ELSE BEGIN
+                 PRINTF,lun,"stormFile was a blank! It didn't contain fastLocInterped_i..."
+                 STOP
+                 ENDELSE
            ENDELSE
         ENDIF 
      ENDIF ELSE BEGIN
@@ -99,8 +108,8 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
      ENDELSE
   ENDIF
 
-  ;;Load FASTLoc & Co.
-  ;; LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t,DBDir=DBDir,DBFile=FastLocFile,DB_tFile=FastLocTimeFile,LUN=lun
+  ;;Load FastLoc & Co.
+  ;; LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastLoc_times,fastLoc_delta_t,DBDir=DBDir,DBFile=FastLocFile,DB_tFile=FastLocTimeFile,LUN=lun
   
   SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, POYNTRANGE=poyntRange, $
                              MINMLT=minM,MAXMLT=maxM,BINMLT=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
@@ -150,9 +159,9 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
      outIndsFileBasename = STRING(FORMAT=basenameFormat,outIndsPrefix,hemi, $
                                   charerange[0],charerange[1],altitudeRange[0],altitudeRange[1],orbRange[0],orbRange[1],outIndsSuffix)
      outIndsFilename = fastLocOutputDir+outIndsFileBasename+'.sav' 
-     ENDIF ELSE BEGIN
-        outIndsFilename = stormFile
-     ENDELSE
+  ENDIF ELSE BEGIN
+     outIndsFilename = stormFile
+  ENDELSE
   ;;********************************************
   ;;If this file already exists, see if it will work for us!
 
@@ -161,36 +170,41 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ;;    RESTORE,outIndsFilename
   ;;    ;; WAIT,1
   ;; ENDIF ELSE BEGIN
-     good_i = get_chaston_ind(fl_fastLoc,satellite,lun,GET_TIME_I_NOT_ALFVENDB_I=1, $
-                              DBTIMES=FASTLOC__times,DBFILE=FASTLOC__dbFile, $
-                              HEMI=hemi, $
-                              ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange,POYNTRANGE=poyntRange, $
-                              MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
-                              DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
-                              HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd)
-     
-     GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
-                                                   DBSTRUCT=fl_fastLoc, $
-                                                   OUT_GOOD_TARR_I=out_good_tArr_i, $
-                                                   DBTIMES=fastLoc__times, $
-                                                   RESTRICT_W_THESEINDS=good_i, $
-                                                   OUT_INDS_LIST=fastLocInterped_i, $
-                                                   LIST_TO_ARR=list_to_arr, $
-                                                   UNIQ_ORBS_LIST=uniq_orbs_list, $
-                                                   UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
-                                                   INDS_ORBS_LIST=inds_orbs_list, $
-                                                   TRANGES_ORBS_LIST=tranges_orbs_list, $
-                                                   TSPANS_ORBS_LIST=tspans_orbs_list, $
-                                                   /PRINT_DATA_AVAILABILITY, $
-                                                   /SUMMARY
-                                                  
-     IF KEYWORD_SET(make_outIndsFile) THEN BEGIN
-        PRINT,'Saving outindsfile ' + outIndsFilename + '...'
-        save,fastLocInterped_i,minm,maxm,binm,mini,maxi,bini,minl,maxl,binl, $
-             altituderange,charerange,orbrange, $
-             fastLocOutputDir,fastLoc__dbFile,fastLoc__dbTimesFile, $
-             filename=outIndsFilename
-     ENDIF
+  good_i = get_chaston_ind(fl_fastLoc,satellite,lun,GET_TIME_I_NOT_ALFVENDB_I=1, $
+                           DBTIMES=FASTLOC__times,DBFILE=FASTLOC__dbFile, $
+                           HEMI=hemi, $
+                           ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange,POYNTRANGE=poyntRange, $
+                           MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                           DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                           HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd)
+  
+  GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
+     DBSTRUCT=fl_fastLoc, $
+     OUT_GOOD_TARR_I=out_good_tArr_i, $
+     DBTIMES=fastLoc__times, $
+     RESTRICT_W_THESEINDS=good_i, $
+     OUT_INDS_LIST=fastLocInterped_i, $
+     LIST_TO_ARR=list_to_arr, $
+     UNIQ_ORBS_LIST=uniq_orbs_list, $
+     UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
+     INDS_ORBS_LIST=inds_orbs_list, $
+     TRANGES_ORBS_LIST=tranges_orbs_list, $
+     TSPANS_ORBS_LIST=tspans_orbs_list, $
+     /PRINT_DATA_AVAILABILITY, $
+     /SUMMARY
+  
+  IF KEYWORD_SET(make_outIndsFile) THEN BEGIN
+     PRINT,'Saving outindsfile ' + outIndsFilename + '...'
+     save,fastLocInterped_i,minm,maxm,binm,mini,maxi,bini,minl,maxl,binl, $
+          altituderange,charerange,orbrange, $
+          fastLocOutputDir,fastLoc__dbFile,fastLoc__dbTimesFile, $
+          FILENAME=outIndsFilename
+  ENDIF
   ;; ENDELSE
+
+  ;;Send back structs, if requested
+  IF ARG_PRESENT(fastLoc_out)          THEN fastLoc_out         = FL_fastLoc
+  IF ARG_PRESENT(fastLoc_times_out)    THEN fastLoc_times_out   = FASTLOC__times
+  IF ARG_PRESENT(fastLoc_delta_t_out)  THEN fastLoc_delta_t_out = FASTLOC__delta_t
 
 END

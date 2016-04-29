@@ -115,7 +115,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
            plotNamePref = paramStr
         ENDELSE
 
-        plotFileArr                = [plotFileArr,plotDir+plotNamePref + dataNames[plots_to_combine[i]]+'.png']
+        plotFileArr                = [plotFileArr,plotDir+plotNamePref + '--' + dataNames[plots_to_combine[i]]+'.png']
      ENDFOR
      plotFileArr__list.add,plotFileArr
   ENDFOR

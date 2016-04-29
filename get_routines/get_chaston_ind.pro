@@ -29,6 +29,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                          NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i, $
                          GET_ALFVENDB_I=get_alfvendb_i, $
                          CORRECT_FLUXES=correct_fluxes, $
+                         RESET_GOOD_INDS=reset_good_inds, $
                          PRINT_PARAM_SUMMARY=print_param_summary, $
                          FASTLOC_DELTA_T=fastloc_delta_t
   COMPILE_OPT idl2
@@ -147,7 +148,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
 
   ;;Now check to see whether we have the appropriate vars for each guy
   IF ~is_maximus THEN BEGIN
-     IF ~KEYWORD_SET(FASTLOC__HAVE_GOOD_I) THEN BEGIN
+     IF ~KEYWORD_SET(FASTLOC__HAVE_GOOD_I) OR KEYWORD_SET(reset_good_inds) THEN BEGIN
+        IF KEYWORD_SET(reset_good_inds) THEN BEGIN
+           PRINT,'Resetting good fastLoc inds...'
+        ENDIF
         calculate        = 1
      ENDIF ELSE BEGIN
         IF N_ELEMENTS(FASTLOC__good_i) NE 0 THEN BEGIN
@@ -189,7 +193,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
         ENDELSE
      ENDELSE
   ENDIF ELSE BEGIN
-     IF ~KEYWORD_SET(MAXIMUS__HAVE_GOOD_I) THEN BEGIN
+     IF ~KEYWORD_SET(MAXIMUS__HAVE_GOOD_I) OR KEYWORD_SET(reset_good_inds) THEN BEGIN
+        IF KEYWORD_SET(reset_good_inds) THEN BEGIN
+           PRINT,'Resetting good maximus inds...'
+        ENDIF
         calculate        = 1
      ENDIF ELSE BEGIN
         IF N_ELEMENTS(MAXIMUS__good_i) NE 0 THEN BEGIN

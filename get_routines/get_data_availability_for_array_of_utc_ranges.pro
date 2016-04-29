@@ -48,7 +48,9 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   ;;Data integrity checks
   PRINTF,lun,"Making sure t1_arr and t2_arr are sane ..."
 
-  IF N_ELEMENTS(t1_arr) NE N_ELEMENTS(t2_arr) THEN BEGIN
+  n_t1     = N_ELEMENTS(t1_arr)
+  n_t2     = N_ELEMENTS(t2_arr)
+  IF n_t1 NE n_t2 THEN BEGIN
      PRINTF,lun,"Unequal numbers of elements in t1_arr and t2_arr! Stopping ..."
      STOP
   ENDIF
@@ -60,52 +62,64 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
      STOP
   ENDIF
 
-  bogus_range_i = WHERE(((SHIFT(t1_arr,-1))[0:-2]-t1_arr[0:-2]) LE 0,nBogus)
-  IF bogus_range_i[0] NE -1 THEN BEGIN
-     PRINTF,lun,"Bogus ranges! t1[later] comes before t1[earlier] in " + STRCOMPRESS(nBogus,/REMOVE_ALL) + " instances!"
-     STOP
+  IF n_t1 GT 1 THEN BEGIN
+     bogus_range_i = WHERE(((SHIFT(t1_arr,-1))[0:-2]-t1_arr[0:-2]) LE 0,nBogus)
+     IF bogus_range_i[0] NE -1 THEN BEGIN
+        PRINTF,lun,"Bogus ranges! t1[later] comes before t1[earlier] in " + STRCOMPRESS(nBogus,/REMOVE_ALL) + " instances!"
+        STOP
+     ENDIF
   ENDIF
   
-  bogus_range_i = WHERE(((SHIFT(t2_arr,-1))[0:-2]-t2_arr[0:-2]) LE 0,nBogus)
-  IF bogus_range_i[0] NE -1 THEN BEGIN
-     PRINTF,lun,"Bogus ranges! t2[later] comes before t2[earlier] in " + STRCOMPRESS(nBogus,/REMOVE_ALL) + " instances!"
-     STOP
+  IF n_t2 GT 1 THEN BEGIN
+     bogus_range_i = WHERE(((SHIFT(t2_arr,-1))[0:-2]-t2_arr[0:-2]) LE 0,nBogus)
+     IF bogus_range_i[0] NE -1 THEN BEGIN
+        PRINTF,lun,"Bogus ranges! t2[later] comes before t2[earlier] in " + STRCOMPRESS(nBogus,/REMOVE_ALL) + " instances!"
+        STOP
+     ENDIF
   ENDIF
 
-  ;;Check for duplicates
-  check_dupes,t1_arr,HAS_DUPES=t1_has_dupes,OUT_DUPE_I=t1_dupe_i,/PRINT_SAMPLE
-  check_dupes,t2_arr,HAS_DUPES=t2_has_dupes,OUT_DUPE_I=t2_dupe_i,/PRINT_SAMPLE
-
-  ;;If duplicates, report
-  IF t1_has_dupes OR t2_has_dupes THEN BEGIN
-     PRINTF,lun,"One of these input arrays has duplicate entries! Take a look:"
-     STOP
+  ;;Check for duplicates, report
+  IF n_t1 GT 1 THEN BEGIN
+     check_dupes,t1_arr,HAS_DUPES=t1_has_dupes,OUT_DUPE_I=t1_dupe_i,/PRINT_SAMPLE
+     IF t1_has_dupes THEN BEGIN
+        PRINTF,lun,"t1_arr has duplicate entries! Take a look:"
+        STOP
+     ENDIF
+  ENDIF
+  IF n_t2 GT 1 THEN BEGIN
+     check_dupes,t2_arr,HAS_DUPES=t2_has_dupes,OUT_DUPE_I=t2_dupe_i,/PRINT_SAMPLE
+     IF t2_has_dupes THEN BEGIN
+        PRINTF,lun,"t2_arr has duplicate entries! Take a look:"
+        STOP
+     ENDIF  
   ENDIF
 
   ;;Check to see if there are overlaps
   PRINTF,lun,"Making sure there are no overlaps..."
-  overlap_t1_arr_i       = !NULL
-  overlap_t2_arr_i       = !NULL
-  n_overlap_t1           = 0
-  n_overlap_t2           = 0
-  FOR i=0,N_ELEMENTS(t1_arr)-2 DO BEGIN
-     test_1              = t1_arr[i+1] LT t2_arr[i]
-     test_2              = t2_arr[i]   GT t1_arr[i+1]
+  overlap_t1_arr_i          = !NULL
+  overlap_t2_arr_i          = !NULL
+  n_overlap_t1              = 0
+  n_overlap_t2              = 0
+  IF n_t1 GT 1 THEN BEGIN 
+     FOR i=0,n_t1-2 DO BEGIN
+        test_1              = t1_arr[i+1] LT t2_arr[i]
+        test_2              = t2_arr[i]   GT t1_arr[i+1]
 
-     IF test_1 THEN BEGIN
-        overlap_t1_arr_i = [overlap_t1_arr_i,i+1]
-        n_overlap_t1++
+        IF test_1 THEN BEGIN
+           overlap_t1_arr_i = [overlap_t1_arr_i,i+1]
+           n_overlap_t1++
+        ENDIF
+
+        IF test_2 THEN BEGIN
+           overlap_t2_arr_i = [overlap_t2_arr_i,i]
+           n_overlap_t2++
+        ENDIF
+     ENDFOR
+
+     IF n_overlap_t1 GT 0 OR n_overlap_t2 GT 0 THEN BEGIN
+        PRINTF,lun,"Overlaps exist!"
+        STOP
      ENDIF
-
-     IF test_2 THEN BEGIN
-        overlap_t2_arr_i = [overlap_t2_arr_i,i]
-        n_overlap_t2++
-     ENDIF
-  ENDFOR
-
-  IF n_overlap_t1 GT 0 OR n_overlap_t2 GT 0 THEN BEGIN
-     PRINTF,lun,"Overlaps exist!"
-     STOP
   ENDIF
 
   PRINTF,lun,"t{1,2}_arr appear sane!"
@@ -114,7 +128,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
 
   ;;Now find out where we have data in this restricted interval
   ;; inds_ii = WHERE(dbTimes(restrict) GE t1_arr[0] AND dbTimes(restrict) LE t2_arr[0],nInds)
-  ;; FOR i=1,N_ELEMENTS(t1_arr)-1 DO BEGIN
+  ;; FOR i=1,n_t1-1 DO BEGIN
   ;;    temp_ii = WHERE(dbTimes(restrict) GE t1_arr[i] AND dbTimes(restrict) LE t2_arr[i],nTemp)
      
   ;;    IF temp_ii[0] NE -1 THEN BEGIN
@@ -156,7 +170,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
      iFirst++
   ENDWHILE
 
-  FOR i = iFirst,N_ELEMENTS(t1_arr)-1 DO BEGIN
+  FOR i = iFirst,n_t1-1 DO BEGIN
 
      GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1_arr[i],T2=t2_arr[i], $
                                          DBSTRUCT=dbStruct,DBTIMES=dbTimes, RESTRICT_W_THESEINDS=restrict, $

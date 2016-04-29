@@ -26,14 +26,15 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
    NONZERO_I=nz_i, $
    PRINT_MAXIND_SEA_STATS=print_maxInd_sea_stats, $
    FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_times,FASTLOC_DELTA_T=fastLoc_delta_t, $
+   RESET_GOOD_INDS=reset_good_inds, $
    SAVE_OR_RESTORE_IF_POSSIBLE=save_or_restore_if_possible, $
    LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
    
-   IF N_ELEMENTS(fastLoc) EQ 0 OR N_ELEMENTS(fastLoc_times) EQ 0 OR N_ELEMENTS(fastLoc_delta_t) EQ 0 THEN BEGIN
-      LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastLoc_times,fastloc_delta_t,DBFILE=fastLoc_dbFile,DB_TFILE=fastLoc_dbTimesFile
-   ENDIF
+   ;; IF N_ELEMENTS(fastLoc) EQ 0 OR N_ELEMENTS(fastLoc_times) EQ 0 OR N_ELEMENTS(fastLoc_delta_t) EQ 0 THEN BEGIN
+   ;;    LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastLoc_times,fastloc_delta_t,DBFILE=fastLoc_dbFile,DB_TFILE=fastLoc_dbTimesFile
+   ;; ENDIF
 
    ;; IF KEYWORD_SET(save_or_restore_if_possible) THEN BEGIN
    ;;    saveStr = STRING(FORMAT='()'
@@ -45,12 +46,15 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
                               T2_ARR=t2_arr, $
                               OUT_GOOD_TARR_I=out_good_tArr_i, $
                               OUTINDSPREFIX=savePlotMaxName, $
-                              FASTLOC_STRUCT=fastLoc, $
-                              FASTLOC_TIMES=fastLoc_times, $
-                              FASTLOC_DELTA_T=fastLoc_delta_t, $
+                              ;; FASTLOC_STRUCT=fastLoc, $
+                              ;; FASTLOC_TIMES=fastLoc_times, $
+                              ;; FASTLOC_DELTA_T=fastLoc_delta_t, $
+                              OUT_FASTLOC_TIMES=fastLoc_times, $
+                              OUT_FASTLOC_DELTA_T=fastLoc_delta_t, $
                               FASTLOCFILE=fastLoc_dbFile, $
                               FASTLOCTIMEFILE=fastLoc_dbTimesFile, $
                               HEMI=hemi, $
+                              RESET_GOOD_INDS=reset_good_inds, $
                               RESTRICT_ALTRANGE=restrict_altRange,RESTRICT_CHARERANGE=restrict_charERange, $
                               MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
                               DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL

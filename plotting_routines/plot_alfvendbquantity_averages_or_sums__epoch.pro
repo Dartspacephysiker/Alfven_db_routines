@@ -32,6 +32,7 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
    MARGIN=margin, $
    LAYOUT=layout, $
    OUTPLOT=outPlot, $
+   YEAR_AND_SEASON_MODE=year_and_season_mode, $
    ADD_PLOT_TO_PLOT_ARRAY=add_plot_to_plot_array, $
    LUN=lun
   
@@ -48,6 +49,17 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
   xRange                  = KEYWORD_SET(xRange) ? xRange : !NULL
   yRange                  = KEYWORD_SET(yRange) ? yRange : !NULL
   yLog                    = KEYWORD_SET(logYPlot)
+
+  IF KEYWORD_SET(year_and_season_mode) THEN BEGIN
+     SETUP_YEAR_AND_SEASON_SEA_PLOT, $
+        XTITLE=xTitle, $
+        YTITLE=yTitle, $
+        XSTYLE=xStyle, $
+        PLOTTITLE=plotTitle, $
+        XTICKVALUES=xTickValues,$
+        XTICKNAME=xTickName
+  ENDIF
+
   IF N_ELEMENTS(outPlot) GT 0 THEN BEGIN
      IF KEYWORD_SET(make_second_panel) THEN BEGIN
         IF KEYWORD_SET(do_secondary_axis) THEN BEGIN
@@ -164,6 +176,9 @@ PRO PLOT_ALFVENDBQUANTITY_AVERAGES_OR_SUMS__EPOCH, histData, histTBins, $
                TITLE=title, $
                XTITLE=xTitle, $
                XRANGE=xRange, $
+               XTICKVALUES=xTickValues,$
+               XTICKNAME=xTickName, $
+               XSTYLE=xStyle, $
                XSHOWTEXT=KEYWORD_SET(overplot) OR (KEYWORD_SET(do_two_panels) AND ~KEYWORD_SET(make_second_panel)) ? 0 : xShowLabel, $
                ;; YTITLE=yString, $
                ;; AXIS_STYLE=axis_style, $
