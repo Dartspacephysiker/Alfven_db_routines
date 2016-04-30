@@ -236,8 +236,6 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;Get all seas occuring within specified date range, if an array of times hasn't been provided
-  
-
   SETUP_SEA_TIMEARRAY_UTC,sea_timeArray_UTC,TBEFOREEPOCH=tBeforeEpoch,TAFTEREPOCH=tAfterEpoch, $
                           NEPOCHS=nEpochs, $
                           EPOCHINDS=epochInds, $
@@ -292,6 +290,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
   geomag_min_list                  = LIST()
   geomag_max_list                  = LIST()
   geomag_title_list                = LIST()
+  geomag_yRange_list               = LIST()
   FOR iQuant=0,nQuantitiesToPlot-1 DO BEGIN
 
      IF KEYWORD_SET(OMNI_quantities_to_plot) THEN BEGIN
@@ -352,6 +351,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
      geomag_min_list.add,geomag_min
      geomag_max_list.add,geomag_max
      geomag_title_list.add,geomagTitle
+     geomag_yRange_list.add,yRange
   ENDFOR
 
 
@@ -712,6 +712,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
                                SPACE_VERT_BETWEEN_ROWS=0.08, $
                                SPACE_FOR_ROW_NAMES=0.08, $
                                SPACE__XTITLE=0.09, $
+                               SPACE__YTITLE=0.07, $
                                ;; SPACE_FOR_COLUMN_NAMES=0.1, $
                                WINDOW_TITLE=winTitle, $
                                ;; XTITLE='Delay (min)', $
@@ -736,6 +737,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
      FOR iQuant=0,nQuantitiesToPlot-1 DO BEGIN
         geomag_time_list         = geomag_time_list_of_lists[iQuant]
         geomag_dat_list          = geomag_dat_list_of_lists[iQuant]
+        yRange                   = geomag_yRange_list[iQuant]
         FOR i=0,nEpochs-1 DO BEGIN
            IF N_ELEMENTS(geomag_time_list[i]) GT 1 AND ~noPlots AND ~noGeomagPlots THEN BEGIN
               geomagEpochSeconds = geomag_time_list[i]-centerTime[i]
