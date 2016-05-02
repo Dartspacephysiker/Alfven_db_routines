@@ -66,6 +66,8 @@
   defShowSymSize             = 2.0
   defRes                     = 200
 
+  defShowSymSize_YSEASMODE   = 1.0
+
   ;;For error plots
   ;; defEb_capsize              = 0.5 
   ;; defEb_color                = 'MAROON'

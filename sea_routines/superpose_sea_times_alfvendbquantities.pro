@@ -69,6 +69,9 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
    ACCUMULATE__HISTO_PLOTS=accumulate__histo_plots, $
    PROBOCCURRENCE_SEA=probOccurrence_sea, $
    LOG_PROBOCCURRENCE=log_probOccurrence, $
+   THIST_SEA=tHist_sea, $
+   THIST_NORMALIZE=tHist_normalize, $
+   THIST_AUTOSCALE=tHist_autoScale, $
    HIST_MAXIND_SEA=hist_maxInd_sea, $
    TIMEAVGD_MAXIND_SEA=timeAvgd_maxInd_sea, $
    LOG_TIMEAVGD_MAXIND=log_timeAvgd_maxInd, $
@@ -193,6 +196,9 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
                              OMNI_QUANTITY=omni_quantity,LOG_OMNI_QUANTITY=log_omni_quantities,USE_DATA_MINMAX=use_data_minMax, $
                              HISTOBINSIZE=histoBinSize, HISTORANGE=histoRange, $
                              PROBOCCURRENCE_SEA=probOccurrence_sea, $
+                             THIST_SEA=tHist_sea, $
+                             THIST_NORMALIZE=tHist_normalize, $
+                             THIST_AUTOSCALE=tHist_autoScale, $
                              TIMEAVGD_MAXIND_SEA=timeAvgd_maxInd_sea, $
                              ;; TIMEAVGD_PFLUX_SEA=timeAvgd_pFlux_sea, $
                              ;; TIMEAVGD_EFLUXMAX_SEA=timeAvgd_eFluxMax_sea, $
@@ -231,7 +237,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
      IF use_SYMH THEN omni_quantities_to_plot = [omni_quantities_to_plot,'sym_h']
      IF use_AE   THEN omni_quantities_to_plot = [omni_quantities_to_plot,'ae_index']
      do_DST = 0                 ;Use DST for plots, not SYM-H
-     PRINT,'OMNI Quantity: ' + omni_quantity
+     PRINT,'OMNI Quantity: ' + STRCOMPRESS(omni_quantity,/REMOVE_ALL)
   ENDELSE
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -358,6 +364,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
   ;; Get ranges for plots
   IF    KEYWORD_SET(nEventHists) OR (avg_type_maxInd GT 0) $
      OR KEYWORD_SET(maxInd)      OR KEYWORD_SET(probOccurrence_sea) $
+     OR KEYWORD_SET(tHist_sea) $
      OR KEYWORD_SET(timeAvgd_maxInd_sea) $
      ;; OR KEYWORD_SET(timeAvgd_pFlux_sea) OR KEYWORD_SET(timeAvgd_eFluxMax_sea) $
   THEN BEGIN                    ;Histos of Alfvén events relative to sea epoch
@@ -510,7 +517,80 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
            HISTOBINSIZE=histoBinSize,NEVTOT=nEvTot_neg, $
            NONZERO_I=nz_i_neg
      ENDIF ELSE BEGIN
+
+        IF KEYWORD_SET(probOccurrence_sea) OR KEYWORD_SET(timeAvgd_maxInd_sea) $
+        OR KEYWORD_SET(tHist_sea) THEN BEGIN
+
+           GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
+              T1_ARR=datStartStop[*,0], $
+              T2_ARR=datStartStop[*,1], $
+              CENTERTIME=centerTime, $
+              RESTRICT_ALTRANGE=restrict_altRange,RESTRICT_CHARERANGE=restrict_charERange, $
+              MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+              DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+              ;; BOTH_HEMIS=both_hemis, $
+              ;; NORTH=north, $
+              ;; SOUTH=south, $
+              HEMI=hemi, $      ;'BOTH', $
+              RESET_GOOD_INDS=reset_good_inds, $
+              NEPOCHS=nEpochs, $
+              OUTINDSPREFIX=savePlotMaxName, $
+              HISTDATA=fastLocHistData, $
+              HISTTBINS=fastLocBins, $
+              NEVHISTDATA=fastLoc_nEvHistData, $
+              TAFTEREPOCH=tAfterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
+              HISTOBINSIZE=histoBinSize,NEVTOT=nEvTot_fastLocHist, $
+              WINDOW_SUM=window_sum, $
+              RUNNING_BIN_SPACING=running_bin_spacing, $
+              RUNNING_BIN_OFFSET=bin_offset, $
+              ;; RUNNING_BIN_L_OFFSET=bin_l_offset, $
+              ;; RUNNING_BIN_R_OFFSET=bin_r_offset, $
+              FASTLOC_I_LIST=fastLoc_i_list,FASTLOC_T_LIST=fastLoc_t_list,FASTLOC_DT_LIST=fastLoc_dt_list, $
+              NONZERO_I=nz_i_fastLoc, $
+              PRINT_MAXIND_SEA_STATS=print_maxInd_sea_stats, $
+              LUN=lun
+           ;; FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_times,FASTLOC_DELTA_T=fastLoc_delta_t
+           
+           IF KEYWORD_SET(probOccurrence_sea) OR KEYWORD_SET(timeAvgd_maxInd_sea) THEN BEGIN
+              IF N_ELEMENTS(nz_i_fastLoc) LT N_ELEMENTS(nz_i) THEN BEGIN
+                 PRINT,"How does the ephemeris have fewer histo bins than actual data?"
+                 STOP
+              ENDIF
+              nz_i_po           = CGSETINTERSECTION(nz_i,nz_i_fastLoc)
+              histData[nz_i_po] = histData[nz_i_po]/fastLocHistData[nz_i_po]
+              IF KEYWORD_SET(running_smooth_nPoints) AND KEYWORD_SET(window_sum) THEN BEGIN
+                 histData       = SMOOTH(histData,running_smooth_nPoints,/EDGpE_TRUNCATE)
+                 
+              ENDIF 
+           ENDIF
+        ENDIF
+
         CASE 1 OF
+           KEYWORD_SET(tHist_sea): BEGIN
+              PRINT,'Ephemeris SEA ...'
+              ;; tot_alf_t = LIST_TO_1DARRAY(tot_widthT_t_list,/WARN,/SKIP_NEG1_ELEMENTS)
+              ;; tot_alf_y = LIST_TO_1DARRAY(tot_widthT_y_list,/WARN,/SKIP_NEG1_ELEMENTS)
+              ;; tot_alf_t = LIST_TO_1DARRAY(fastLoc_t_list,/WARN,/SKIP_NEG1_ELEMENTS)
+              ;; tot_alf_y = LIST_TO_1DARRAY(fastLoc_dt_list,/WARN,/SKIP_NEG1_ELEMENTS)
+              histData  = fastLocHistData/60. ;in minutes, 'course
+              histTBins = fastLocBins
+              IF KEYWORD_SET(tHist_normalize) THEN BEGIN
+                 PRINT,"Normalizing ephemeris hist..."
+                 sum    = TOTAL(histData)
+                 histData = histData/sum
+                 histoRange = [MIN(histData),MAX(histData)]
+              ENDIF
+              IF KEYWORD_SET(tHist_autoscale) THEN BEGIN
+                 PRINT,"Autoscaling ephemeris hist..."
+                 ;; histData = histData/MAX(histData)
+                 histoRange = [0.0,MAX(histData)]
+              ENDIF
+           END
+           KEYWORD_SET(probOccurrence_sea): BEGIN
+              PRINT,'Prob Occurrence SEA ...'
+              tot_alf_t = LIST_TO_1DARRAY(tot_widthT_t_list,/WARN,/SKIP_NEG1_ELEMENTS)
+              tot_alf_y = LIST_TO_1DARRAY(tot_widthT_y_list,/WARN,/SKIP_NEG1_ELEMENTS)
+           END
            KEYWORD_SET(probOccurrence_sea): BEGIN
               PRINT,'Prob Occurrence SEA ...'
               tot_alf_t = LIST_TO_1DARRAY(tot_widthT_t_list,/WARN,/SKIP_NEG1_ELEMENTS)
@@ -550,86 +630,41 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
            ENDELSE
         ENDIF
 
-        GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,tot_alf_t,tot_alf_y, $
-           HISTOTYPE=histoType, $
-           HISTDATA=histData, $
-           HISTTBINS=histTBins, $
-           RUNNING_AVERAGE=running_average, $
-           RA_T=ra_t, $
-           RA_Y=ra_y, $
-           RA_NONZERO_I=ra_nz_i, $
-           RA_ZERO_I=ra_z_i, $
-           RUNNING_MEDIAN=running_median, $
-           RM_T=rm_t, $
-           RM_Y=rm_y, $
-           RM_NONZERO_I=rm_nz_i, $
-           RM_ZERO_I=rm_z_i, $
-           RUNNING_BIN_SPACING=running_bin_spacing, $
-           RUNNING_SMOOTH_NPOINTS=running_smooth_nPoints, $
-           RUNNING_BIN_OFFSET=bin_offset, $
-           ;; RUNNING_BIN_L_OFFSET=bin_l_offset, $
-           ;; RUNNING_BIN_R_OFFSET=bin_r_offset, $
-           RUNNING_BIN_L_EDGES=bin_l_edges, $
-           RUNNING_BIN_R_EDGES=bin_r_edges, $
-           WINDOW_SUM=window_sum, $
-           MAKE_ERROR_BARS=make_error_bars__avg_plot, $
-           ERROR_BAR_NBOOT=error_bar_nBoot, $
-           ERROR_BAR_CONFLIMIT=error_bar_confLimit, $
-           OUT_ERROR_BARS=out_error_bars, $
-           NEVHISTDATA=nEvHistData, $
-           TAFTEREPOCH=tafterepoch,TBEFOREEPOCH=tBeforeEpoch, $
-           HISTOBINSIZE=histoBinSize,NEVTOT=nEvTot, $
-           NONZERO_I=nz_i, $
-           PRINT_MAXIND_SEA_STATS=print_maxInd_sea_stats, $
-           LUN=lun
-
-        IF KEYWORD_SET(probOccurrence_sea) OR KEYWORD_SET(timeAvgd_maxInd_sea) $
-           ;; OR KEYWORD_SET(timeAvgd_pFlux_sea) OR KEYWORD_SET(timeAvgd_eFluxMax_sea)  $
-        THEN BEGIN
-
-           GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
-              T1_ARR=datStartStop[*,0], $
-              T2_ARR=datStartStop[*,1], $
-              CENTERTIME=centerTime, $
-              RESTRICT_ALTRANGE=restrict_altRange,RESTRICT_CHARERANGE=restrict_charERange, $
-              MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
-              DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
-              ;; BOTH_HEMIS=both_hemis, $
-              ;; NORTH=north, $
-              ;; SOUTH=south, $
-              HEMI=hemi, $      ;'BOTH', $
-              RESET_GOOD_INDS=reset_good_inds, $
-              NEPOCHS=nEpochs, $
-              OUTINDSPREFIX=savePlotMaxName, $
-              HISTDATA=fastLocHistData, $
-              HISTTBINS=fastLocBins, $
-              NEVHISTDATA=fastLoc_nEvHistData, $
-              TAFTEREPOCH=tAfterEpoch,TBEFOREEPOCH=tBeforeEpoch, $
-              HISTOBINSIZE=histoBinSize,NEVTOT=nEvTot_fastLocHist, $
-              WINDOW_SUM=window_sum, $
+        IF ~KEYWORD_SET(tHist_sea) THEN BEGIN 
+           GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,tot_alf_t,tot_alf_y, $
+              HISTOTYPE=histoType, $
+              HISTDATA=histData, $
+              HISTTBINS=histTBins, $
+              RUNNING_AVERAGE=running_average, $
+              RA_T=ra_t, $
+              RA_Y=ra_y, $
+              RA_NONZERO_I=ra_nz_i, $
+              RA_ZERO_I=ra_z_i, $
+              RUNNING_MEDIAN=running_median, $
+              RM_T=rm_t, $
+              RM_Y=rm_y, $
+              RM_NONZERO_I=rm_nz_i, $
+              RM_ZERO_I=rm_z_i, $
               RUNNING_BIN_SPACING=running_bin_spacing, $
+              RUNNING_SMOOTH_NPOINTS=running_smooth_nPoints, $
               RUNNING_BIN_OFFSET=bin_offset, $
               ;; RUNNING_BIN_L_OFFSET=bin_l_offset, $
               ;; RUNNING_BIN_R_OFFSET=bin_r_offset, $
-              FASTLOC_I_LIST=fastLoc_i_list,FASTLOC_T_LIST=fastLoc_t_list,FASTLOC_DT_LIST=fastLoc_dt_list, $
-              NONZERO_I=nz_i_fastLoc, $
+              RUNNING_BIN_L_EDGES=bin_l_edges, $
+              RUNNING_BIN_R_EDGES=bin_r_edges, $
+              WINDOW_SUM=window_sum, $
+              MAKE_ERROR_BARS=make_error_bars__avg_plot, $
+              ERROR_BAR_NBOOT=error_bar_nBoot, $
+              ERROR_BAR_CONFLIMIT=error_bar_confLimit, $
+              OUT_ERROR_BARS=out_error_bars, $
+              NEVHISTDATA=nEvHistData, $
+              TAFTEREPOCH=tafterepoch,TBEFOREEPOCH=tBeforeEpoch, $
+              HISTOBINSIZE=histoBinSize,NEVTOT=nEvTot, $
+              NONZERO_I=nz_i, $
               PRINT_MAXIND_SEA_STATS=print_maxInd_sea_stats, $
               LUN=lun
-           ;; FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_times,FASTLOC_DELTA_T=fastLoc_delta_t
-           
-           IF N_ELEMENTS(nz_i_fastLoc) LT N_ELEMENTS(nz_i) THEN BEGIN
-              PRINT,"How does the ephemeris have fewer histo bins than actual data?"
-              STOP
-           ENDIF
-           nz_i_po = CGSETINTERSECTION(nz_i,nz_i_fastLoc)
-           histData[nz_i_po] = histData[nz_i_po]/fastLocHistData[nz_i_po]
-           IF KEYWORD_SET(running_smooth_nPoints) AND KEYWORD_SET(window_sum) THEN BEGIN
-              histData       = SMOOTH(histData,running_smooth_nPoints,/EDGpE_TRUNCATE)
-              
-           ENDIF 
-        ENDIF
-
-
+        ENDIF 
+        
         IF KEYWORD_SET(overplot_total_epoch_variation) THEN BEGIN
 
            GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
@@ -690,7 +725,8 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
 
   ;; Need a window?
   IF KEYWORD_SET(savePlot) OR KEYWORD_SET(nEventHists) OR KEYWORD_SET(only_OMNI_plots) $
-     OR KEYWORD_SET(probOccurrence_sea) OR KEYWORD_SET(timeAvgd_maxInd_sea) $
+     OR KEYWORD_SET(probOccurrence_sea) OR KEYWORD_SET(tHist_sea) $
+     OR KEYWORD_SET(timeAvgd_maxInd_sea) $
      OR KEYWORD_SET(hist_maxInd_sea) $
      ;; OR KEYWORD_SET(timeAvgd_pFlux_sea) OR KEYWORD_SET(timeAvgd_eFluxMax_sea) $
      AND ~KEYWORD_SET(noPlots) AND ~KEYWORD_SET(noGeomagPlots) THEN BEGIN
@@ -812,6 +848,34 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
 
         ;;Doing one of the time plot things
         CASE 1 OF 
+           KEYWORD_SET(tHist_sea): BEGIN
+              PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins- $
+                                                     (KEYWORD_SET(window_sum) ? window_sum/2. : 0), $
+                                                     histData, $
+                                                     NAME=KEYWORD_SET(name__histo_plot) ? name__histo_plot : "tHist", $
+                                                     XRANGE=xRange, $
+                                                     HISTORANGE=histoRange, $
+                                                     YTITLE=KEYWORD_SET(yTitle_maxInd) ? yTitle_maxInd : yTitle, $
+                                                     LOGYPLOT=log_tHist, $
+                                                     ;; YTICKFORMAT=, $
+                                                     ;; MARGIN=plotMargin, $
+                                                     ;; MARGIN=margin__max_plot, $
+                                                     HISTOGRAM=1, $
+                                                     MARGIN=margin__avg_plot, $
+                                                     PLOTTITLE=title__histo_plot, $
+                                                     OVERPLOT_HIST=KEYWORD_SET(overplot_hist) OR N_ELEMENTS(out_histo_plot) GT 0, $
+                                                     COLOR=symColor__histo_plot, $
+                                                     CURRENT=1, $
+                                                     LAYOUT=layout, $
+                                                     HISTOPLOT=histoPlot, $
+                                                     BKGRND_HIST=bkgrnd_hist, $
+                                                     BKGRNDHISTOPLOT=bkgrndHistoPlot, $
+                                                     OUTPLOT=out_histo_plot, $
+                                                     YEAR_AND_SEASON_MODE=year_and_season_mode, $
+                                                     OUTBKGRNDPLOT=outBkgrndPlot, $
+                                                     ADD_PLOT_TO_PLOT_ARRAY=KEYWORD_SET(accumulate__histo_plots)
+
+           END
            KEYWORD_SET(probOccurrence_sea): BEGIN
               PLOT_ALFVENDBQUANTITY_HISTOGRAM__EPOCH,histTBins- $
                                                      (KEYWORD_SET(window_sum) ? window_sum/2. : 0), $

@@ -70,6 +70,9 @@ PRO SUPERPOSE_SEASONS_ALFVENDBQUANTITIES, $
    ACCUMULATE__HISTO_PLOTS=accumulate__histo_plots, $
    PROBOCCURRENCE_SEA=probOccurrence_sea, $
    LOG_PROBOCCURRENCE=log_probOccurrence, $
+   THIST_SEA=tHist_sea, $
+   THIST_NORMALIZE=tHist_normalize, $
+   THIST_AUTOSCALE=tHist_autoScale, $
    HIST_MAXIND_SEA=hist_maxInd_sea, $
    TIMEAVGD_MAXIND_SEA=timeAvgd_maxInd_sea, $
    LOG_TIMEAVGD_MAXIND=log_timeAvgd_maxInd, $
@@ -202,6 +205,9 @@ PRO SUPERPOSE_SEASONS_ALFVENDBQUANTITIES, $
      ACCUMULATE__HISTO_PLOTS=accumulate__histo_plots, $
      PROBOCCURRENCE_SEA=probOccurrence_sea, $
      LOG_PROBOCCURRENCE=log_probOccurrence, $
+     THIST_SEA=tHist_sea, $
+     THIST_NORMALIZE=tHist_normalize, $
+     THIST_AUTOSCALE=tHist_autoScale, $
      HIST_MAXIND_SEA=hist_maxInd_sea, $
      TIMEAVGD_MAXIND_SEA=timeAvgd_maxInd_sea, $
      LOG_TIMEAVGD_MAXIND=log_timeAvgd_maxInd, $

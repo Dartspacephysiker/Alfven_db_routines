@@ -5,16 +5,10 @@ PRO PLOT_ALFVENDB_DATA_AVAILABILITY__EPOCH,tRanges_orbs,centerTime, $
    CURRENT=current, $
    MARGIN=margin, $
    SYM_COLOR=sym_color, $
-   DATAAVAILPLOT=dataAvailPlot
-  
-;; IF show_data_availability THEN BEGIN ;we want to show where we had data to begin with
-;;                  ;;First, find out where we had data
-;;                  GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=datStartStop[i,0],T2=datStartStop[i,1], $
-;;                                                      CDBTIME=cdbTime,MAXIMUS=maximus, $
-;;                                                      RESTRICT_W_THESEINDS=avail_i, $
-;;                                                      TRANGES_ORBS=tRanges_orbs,TSPANS_ORBS=tSpans_orbs, $
-;;                                                      /PRINT_DATA_AVAILABILITY
+   DATAAVAILPLOT=dataAvailPlot, $
+   YEAR_AND_SEASON_MODE=year_and_season_mode
 
+  
   @utcplot_defaults.pro
 
   IF NOT KEYWORD_SET(bottom_yRange) THEN BEGIN
@@ -46,7 +40,8 @@ PRO PLOT_ALFVENDB_DATA_AVAILABILITY__EPOCH,tRanges_orbs,centerTime, $
                      AXIS_STYLE=0, $
                      LINESTYLE=' ', $
                      SYMBOL=defShowSymbol, $
-                     SYM_SIZE=defShowSymSize, $
+                     ;; SYM_SIZE=defShowSymSize, $
+                     SYM_SIZE=KEYWORD_SET(year_and_season_mode) ? defShowSymSize_YSEASMODE : defShowSymSize, $
                      XTICKFONT_SIZE=max_xtickfont_size, $
                      XTICKFONT_STYLE=max_xtickfont_style, $
                      YTICKFONT_SIZE=max_ytickfont_size, $
@@ -57,7 +52,8 @@ PRO PLOT_ALFVENDB_DATA_AVAILABILITY__EPOCH,tRanges_orbs,centerTime, $
                      CLIP=0, $
                      SYM_COLOR=N_ELEMENTS(sym_color) GT 0 ? sym_color :  !NULL, $
                      ;; SYM_TRANSPARENCY=(i EQ 2) ? 60 : defSymTransp) ;this line is for making events on plot #3 stand out
-                     SYM_TRANSPARENCY=0)
+                     ;; SYM_TRANSPARENCY=0)
+                     SYM_TRANSPARENCY=KEYWORD_SET(year_and_season_mode) ? 95 : 50)
 
   dataAvailPlot.SYM_FILLED = 1
   

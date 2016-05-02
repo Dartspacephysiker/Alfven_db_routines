@@ -79,13 +79,25 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,plot_i_list,CLOCKSTR=clockStr, ANGLELIM1
         PRINTF,lun,FORMAT='("Parameter string",T30,":",T35,A0)',paramString_list[iDel]
      ENDFOR
   ENDIF ELSE BEGIN
-     nEv                        = N_ELEMENTS(plot_i_list[0])
-     PRINTF,lun,FORMAT='("Number of orbits used",T30,":",T35,I8)', $
-            N_ELEMENTS(UNIQ(dbStruct.orbit[plot_i_list[0]],SORT(dbStruct.orbit[plot_i_list[0]])))
-     PRINTF,lun,FORMAT='("Total N events",T30,":",T35,I8)',nEv
-     PRINTF,lun,FORMAT='("Percentage of DB used",T30,":",T35,G8.4,"%")',(FLOAT(nEv)/FLOAT(nEvTot)*100.0)
-     PRINTF,lun,''
-     IF KEYWORD_SET(paramString) THEN PRINTF,lun,FORMAT='("Parameter string",T30,":",T35,A0)',paramString
+     CASE SIZE(plot_i_list,/TYPE) OF
+        11: BEGIN
+           nEv                        = N_ELEMENTS(plot_i_list[0])
+           PRINTF,lun,FORMAT='("Number of orbits used",T30,":",T35,I8)', $
+                  N_ELEMENTS(UNIQ(dbStruct.orbit[plot_i_list[0]],SORT(dbStruct.orbit[plot_i_list[0]])))
+           PRINTF,lun,FORMAT='("Total N events",T30,":",T35,I8)',nEv
+           PRINTF,lun,FORMAT='("Percentage of DB used",T30,":",T35,G8.4,"%")',(FLOAT(nEv)/FLOAT(nEvTot)*100.0)
+           PRINTF,lun,''
+        END
+        ELSE: BEGIN
+           nEv                        = N_ELEMENTS(plot_i_list)
+           PRINTF,lun,FORMAT='("Number of orbits used",T30,":",T35,I8)', $
+                  N_ELEMENTS(UNIQ(dbStruct.orbit[plot_i_list],SORT(dbStruct.orbit[plot_i_list])))
+           PRINTF,lun,FORMAT='("Total N events",T30,":",T35,I8)',nEv
+           PRINTF,lun,FORMAT='("Percentage of DB used",T30,":",T35,G8.4,"%")',(FLOAT(nEv)/FLOAT(nEvTot)*100.0)
+           PRINTF,lun,''
+           IF KEYWORD_SET(paramString) THEN PRINTF,lun,FORMAT='("Parameter string",T30,":",T35,A0)',paramString
+        END
+     ENDCASE
   ENDELSE
 
 

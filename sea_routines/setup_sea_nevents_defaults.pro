@@ -17,6 +17,9 @@ PRO SETUP_SEA_NEVENTS_DEFAULTS,TBEFOREEPOCH=tBeforeEpoch,TAFTEREPOCH=tAfterEpoch
                                 OMNI_QUANTITY=omni_quantity,LOG_OMNI_QUANTITY=log_omni_quantity,USE_DATA_MINMAX=use_data_minMax, $
                                 HISTOBINSIZE=histoBinSize, HISTORANGE=histoRange, $
                                 PROBOCCURRENCE_SEA=probOccurrence_sea, $
+                               THIST_SEA=tHist_sea, $
+                               THIST_NORMALIZE=tHist_normalize, $
+                               THIST_AUTOSCALE=tHist_autoScale, $
                                 TIMEAVGD_MAXIND_SEA=timeAvgd_maxInd_sea, $
                                 TIMEAVGD_PFLUX_SEA=timeAvgd_pFlux_sea, $
                                 TIMEAVGD_EFLUXMAX_SEA=timeAvgd_eFluxMax_sea, $
@@ -68,6 +71,9 @@ PRO SETUP_SEA_NEVENTS_DEFAULTS,TBEFOREEPOCH=tBeforeEpoch,TAFTEREPOCH=tAfterEpoch
   defNoMaxPlots                 = 0
   defNoAvgPlots                 = 0
                                 
+  defTHistPref                  = 'tHist' 
+  defTHistHistoRange            = [1e0,1e3]
+
   defProbOccurrencePref         = 'probOccurrence' 
   defProbOccurrenceHistoRange   = [1e-4,1e0]
 
@@ -151,6 +157,12 @@ PRO SETUP_SEA_NEVENTS_DEFAULTS,TBEFOREEPOCH=tBeforeEpoch,TAFTEREPOCH=tAfterEpoch
   IF N_ELEMENTS(randomTimes) EQ 0 THEN randomTimes = defRandomTimes
 
   IF N_ELEMENTS(show_data_availability) EQ 0 THEN show_data_availability = defShow_data_availability
+
+  IF KEYWORD_SET(tHist_sea) THEN BEGIN
+     IF ~KEYWORD_SET(yTitle_maxInd) THEN yTitle_maxInd = "FAST ephemeris (min)"
+     IF ~KEYWORD_SET(histoRange) THEN histoRange = defTHistHistoRange
+     IF KEYWORD_SET(tHist_normalize) OR KEYWORD_SET(tHist_autoscale) THEN histoRange = [0.0,1.0]
+  ENDIF
 
   IF KEYWORD_SET(probOccurrence_sea) THEN BEGIN
      ;; IF ~KEYWORD_SET(yTitle_maxInd) THEN yTitle_maxInd = "Probability of Occurrence"
