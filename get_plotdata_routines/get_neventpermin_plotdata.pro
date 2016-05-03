@@ -4,7 +4,9 @@ PRO GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
                               SHIFTM=shiftM, $
                               MINI=minI,MAXI=maxI,BINI=binI, $
                               DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
-                              LOGNEVENTPERMIN=logNEventPerMin,NEVENTPERMINRANGE=nEventPerMinRange, $
+                              LOGNEVENTPERMIN=logNEventPerMin, $
+                              NEVENTPERMINRANGE=nEventPerMinRange, $
+                              NEVENTPERMINAUTOSCALE=nEventPerMinAutoscale, $
                               H2DSTR=h2dStr, $
                               TMPLT_H2DSTR=tmplt_h2dStr, $
                               H2DFLUXN=h2dFluxN, $
@@ -70,6 +72,10 @@ PRO GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
      h2dStr.data(where(h2dStr.data GT 0,/NULL))=ALOG10(h2dStr.data(where(h2dStr.data GT 0,/null))) 
      h2dStr.title = "Log " + h2dStr.title
      h2dStr.lim = ALOG10(h2dStr.lim)
+  ENDIF
+
+  IF KEYWORD_SET(nEventPerMinAutoscale) THEN BEGIN
+     h2dStr.lim = [MIN(h2dStr.data[h2d_nonzero_nEv_i]),MAX(h2dStr.data[h2d_nonzero_nEv_i])]
   ENDIF
 
   ;; dataRawPtr = PTR_NEW(h2dStr.data)

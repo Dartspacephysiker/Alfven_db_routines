@@ -269,13 +269,16 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
 
      ;;Added 2016/04/23
      IF KEYWORD_SET(map_esa_current) THEN BEGIN
-        maximus.pFluxEst          = maximus.esa_current * mapRatio.ratio
+        maximus.esa_current          = maximus.esa_current * mapRatio.ratio
         PRINTF,lun,'-->07-ESA_CURRENT'
         correctStr += '-->07-ESA_CURRENT' + STRING(10B)
      ENDIF
 
      ;;Added 2015/12/22
      IF KEYWORD_SET(map_pflux) THEN BEGIN
+        mu_0 = DOUBLE(4.0D*!PI*1e-7)
+        maximus.pfluxest=DOUBLE((maximus.delta_e*1e-9)*(maximus.delta_b*1e-3))/mu_0
+
         maximus.pFluxEst          = maximus.pFluxEst * mapRatio.ratio
         PRINTF,lun,'-->49-PFLUXEST'
         correctStr += '-->49-PFLUXEST' + STRING(10B)

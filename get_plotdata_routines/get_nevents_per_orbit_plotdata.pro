@@ -38,9 +38,15 @@ PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   h2dStr.data[*,*]  = 0
   
   nEvByAppStr       = ""
-  IF KEYWORD_SET(divNEvByTotal) THEN nEvByAppStr="Total_"
-  h2dStr.title      = 'Number of Events per ' + nEvByAppStr + 'Orbit'
-  dataName          = "nEventPerOrb_" +nEvByAppStr
+  IF KEYWORD_SET(divNEvByTotal) THEN BEGIN
+     nEvByAppStr     = "_divbytotal"
+     nEvByAppNiceStr = "Total Number of Orbits"
+  ENDIF ELSE BEGIN
+     nEvByAppStr     = ""
+     nEvByAppNiceStr = "Orbit"
+  ENDELSE
+  h2dStr.title      = 'Number of Events per ' + nEvByAppNiceStr
+  dataName          = "nEventPerOrb" + nEvByAppStr
 
   IF KEYWORD_SET(divNEvByTotal) THEN BEGIN
      div_i          = CGSETINTERSECTION(h2d_nonZero_allOrb_i,h2d_nonzero_nEv_i)

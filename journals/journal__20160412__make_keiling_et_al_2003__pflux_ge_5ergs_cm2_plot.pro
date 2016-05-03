@@ -3,6 +3,8 @@
 ; is it going to happen?" And then I get to writing some IDL code. Duh!
 PRO JOURNAL__20160412__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT
 
+  pFluxMin                 = 0.1
+
   hemi                     = 'NORTH'
   ;; hemi                     = 'SOUTH'
   overlayAurZone           = 1
@@ -11,7 +13,7 @@ PRO JOURNAL__20160412__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT
   mainPhase                = 0
 
   centerLon                = 270
-  sTrans                   = 96
+  sTrans                   = 20
 
   do_despun                = 0
   despunStr                = KEYWORD_SET(DO_despun) ? "--despun" : ''
@@ -38,15 +40,25 @@ PRO JOURNAL__20160412__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT
   ;; altRange                 = [4000,4175]
 
   ;2016/04/13 For more direct comparison with Keiling et al. [2013]
-  altRange                 = [4000,4175]
-  sTrans                   = 90
+  ;; altRange                 = [4000,4175]
+  altRange                 = [[3680,4180], $
+                              [3180,3680], $
+                              [2680,3180], $
+                              [2180,2680], $
+                              [1680,2180], $
+                              [1180,1680], $
+                              [340,1180]]
 
-  altStr                   = KEYWORD_SET(altRange) ? STRING(FORMAT='("--",I0,"-",I0,"km")',altRange[0],altRange[1]) : ''
-
+  ;; altRange                 = [[3180,4180], $
+  ;;                             [2180,3180], $
+  ;;                             [1180,2180], $
+  ;;                             [340,1180]]
+                              
   savePlot                 = 1
 
   LOAD_MAXIMUS_AND_CDBTIME,maximus,DO_DESPUNDB=do_despun
-  good_i                   = GET_CHASTON_IND(maximus,HEMI=hemi,ALTITUDERANGE=altRange)
+  good_i                   = GET_CHASTON_IND(maximus,HEMI=hemi)
+  pFlux_i                  = WHERE(ABS(maximus.pFluxEst) GE pFluxMin)
 
   IF KEYWORD_SET(nonStorm) OR KEYWORD_SET(mainPhase) OR KEYWORD_SET(recoveryPhase) THEN BEGIN
      GET_NONSTORM_MAINPHASE_AND_RECOVERYPHASE_FASTDB_INDICES, $
@@ -98,36 +110,44 @@ PRO JOURNAL__20160412__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT
      stormString           = ''
   ENDELSE
 
-  sPName                   = 'journal__20160412--keiling_et_al_2003_comparison--scatterplot' + despunStr + altStr + stormString +'--' + hemi + '.gif'
-  plotTitle                = hemi + 'ERN HEMI: Poynting flux $\geq$ 5 mW/m!U2!N' + $
-                             (KEYWORD_SET(altRange) OR KEYWORD_SET(gotStorms) ? '(' + altStr + stormString + ')' : '')
+  FOR i=0,N_ELEMENTS(altRange[0,*])-1 DO BEGIN
 
-  pFlux_i                  = WHERE(ABS(maximus.pFluxEst) GE 5)
-  
-  good_i                   = CGSETINTERSECTION(good_i,pFlux_i)
+     altitudeRange            = altRange[*,i]
 
+     alt_i                    = WHERE(maximus.alt GE altitudeRange[0] AND maximus.alt LE altitudeRange[1])
+     these_i                  = CGSETINTERSECTION(alt_i,pflux_i)
+     IF these_i[0] EQ -1 THEN STOP
+     these_i                  = CGSETINTERSECTION(these_i,good_i)
+     
+     altStr                   = KEYWORD_SET(altitudeRange) ? STRING(FORMAT='("--",I0,"-",I0,"km")',altitudeRange[0],altitudeRange[1]) : ''
+     sPName                   = 'journal__20160412--keiling_et_al_2003_comparison--pFlux_GE_' + STRING(FORMAT='(G0.2)',pFluxMin) + $
+                                'scatterplot' + despunStr + altStr + stormString +'--' + hemi + '.gif'
+     plotTitle                = hemi + 'ERN HEMI: Poynting flux $\geq$ ' + STRCOMPRESS(pFluxMin,/REMOVE_ALL) + ' mW/m!U2!N' + $
+                                (KEYWORD_SET(altitudeRange) OR KEYWORD_SET(gotStorms) ? '(' + altStr + stormString + ')' : '')
+     
 
+     KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
+                                HEMI=hemi, $
+                                OVERLAYAURZONE=overlayAurZone, $
+                                ADD_ORBIT_LEGEND=add_orbit_legend, $
+                                CENTERLON=centerLon, $
+                                OVERPLOT=overplot, $
+                                LAYOUT=layout, $
+                                PLOTPOSITION=plotPosition, $
+                                OUT_PLOT=out_plot, $
+                                CURRENT_WINDOW=window, $
+                                PLOTSUFF=plotSuff, $
+                                DBFILE=dbFile, $
+                                JUST_PLOT_I=these_i, $
+                                STRANS=sTrans, $
+                                SAVEPLOT=savePlot, $
+                                SPNAME=sPName, $
+                                /CLOSE_AFTER_SAVE, $
+                                PLOTTITLE=plotTitle, $
+                                _EXTRA = e
 
-  
+  ENDFOR
 
-  KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
-                             HEMI=hemi, $
-                             OVERLAYAURZONE=overlayAurZone, $
-                             ADD_ORBIT_LEGEND=add_orbit_legend, $
-                             CENTERLON=centerLon, $
-                             OVERPLOT=overplot, $
-                             LAYOUT=layout, $
-                             PLOTPOSITION=plotPosition, $
-                             OUT_PLOT=out_plot, $
-                             CURRENT_WINDOW=window, $
-                             PLOTSUFF=plotSuff, $
-                             DBFILE=dbFile, $
-                             JUST_PLOT_I=good_i, $
-                             STRANS=sTrans, $
-                             SAVEPLOT=savePlot, $
-                             SPNAME=sPName, $
-                             PLOTTITLE=plotTitle, $
-                             _EXTRA = e
 
 
 END

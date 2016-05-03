@@ -61,6 +61,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
                                PLOT_I_LIST=plot_i_list, COLOR_LIST=color_list, $
                                SAVEPLOT=savePlot, $
                                SPNAME=sPName, $
+                               CLOSE_AFTER_SAVE=close_after_save, $
                                STRANS=sTrans, $
                                PLOTTITLE=plotTitle, $
                                _EXTRA = e
@@ -86,7 +87,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   defSTrans = 98                ;use for plotting entire db
   ;; defSTrans = 95                ;use for very narrowed plot_i
 
-  IF NOT KEYWORD_SET(sTrans) THEN sTrans = defSTrans
+  IF N_ELEMENTS(sTrans) EQ 0 THEN sTrans = defSTrans
 
   ;; IF ~KEYWORD_SET(outDir) THEN SET_PLOT_DIR,outDir,/FOR_ALFVENDB, $
   ;;                                           FOR_STORMS=for_storms, $
@@ -425,6 +426,11 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
      outFileName            = plotDir + sPName
      PRINT,'Saving scatterplot to ' + outFileName + '...'
      window.save,plotDir + sPName,RESOLUTION=defRes
+
+     IF KEYWORD_SET(close_after_save) THEN BEGIN
+        window.close
+        window = !NULL
+     ENDIF
   ENDIF
 
   out_plot   = curPlot

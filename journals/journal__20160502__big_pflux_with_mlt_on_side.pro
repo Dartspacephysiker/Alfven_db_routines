@@ -11,7 +11,7 @@ PRO JOURNAL__20160502__BIG_PFLUX_WITH_MLT_ON_SIDE
   tBeforeEpoch         = 0 
   tAfterEpoch          = LONG64(365)*24
 
-  restrict_poyntRange  = [5,100000]
+  restrict_poyntRange  = [0.05,1000]
 
   dst_yRange           = [-200,50]
   dst_lineTransp       = 60
@@ -41,7 +41,7 @@ PRO JOURNAL__20160502__BIG_PFLUX_WITH_MLT_ON_SIDE
   yRange_maxInd     = [0,24]
   yTitle_maxInd     = 'MLT'
 
-  symTransparency   = 93
+  symTransparency   = 75
   ;; FOR i = 0, N_ELEMENTS(q1_st)-1,nPlotsPerWindow DO BEGIN
   ;; FOR i = 0, N_ELEMENTS(q1_st)-1,nPlotsPerWindow DO BEGIN
 

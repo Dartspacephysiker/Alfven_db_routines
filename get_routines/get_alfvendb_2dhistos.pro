@@ -122,6 +122,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NEVENTPERMINPLOT=nEventPerMinPlot, $
                           NEVENTPERMINRANGE=nEventPerMinRange, $
                           LOGNEVENTPERMIN=logNEventPerMin, $
+                          NEVENTPERMINAUTOSCALE=nEventPerMinAutoscale, $
                           NORBSWITHEVENTSPERCONTRIBORBSPLOT=nOrbsWithEventsPerContribOrbsPlot, $
                           LOG_NOWEPCOPLOT=log_nowepcoPlot, $
                           NOWEPCO_RANGE=nowepco_range, $
@@ -176,6 +177,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           PARAMSTRPREFIX=paramStrPrefix, $
                           PARAMSTRSUFFIX=paramStrSuffix, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
+                          RESET_GOOD_INDS=reset_good_inds, $
                           FANCY_PLOTNAMES=fancy_plotNames, $
                           LUN=lun
   
@@ -264,6 +266,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  STORMSTRING=stormString, $
                                                  DSTCUTOFF=dstCutoff, $
                                                  HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
+                                                 RESET_GOOD_INDS=reset_good_inds, $
                                                  T1_ARR=t1_arr, $
                                                  T2_ARR=t2_arr, $
                                                  MINM=minM, $
@@ -499,6 +502,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                BINL=binL, $
                                LOGNEVENTPERMIN=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logNEventPerMin)), $
                                NEVENTPERMINRANGE=nEventPerMinRange, $
+                               NEVENTPERMINAUTOSCALE=nEventPerMinAutoscale, $
                                H2DSTR=h2dStr, $
                                TMPLT_H2DSTR=tmplt_h2dStr, $
                                H2DFLUXN=h2dFluxN, $

@@ -52,7 +52,8 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
 
   RESTORE,tempFiles[0]
   
-  IF ~KEYWORD_SET(plotNamePrefArr) THEN plotNamePrefArr = paramStr 
+  ;;2016/05/03 Why is this line here? It's such a jerk, and caused so many problems
+  ;; IF ~KEYWORD_SET(plotNamePrefArr) THEN plotNamePrefArr = paramStr 
 
   ;;just clean up data names while we're here
   IF ~KEYWORD_SET(dataNames) THEN BEGIN
@@ -80,7 +81,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
   ENDELSE
   
   PRINT,FORMAT='("Combining these plots: ",10(A0, :,"  "))',dataNames[plots_to_combine]
-
+  FOR k=0,nPlots-1 DO PRINT,FORMAT='(I0,T7,A0)',k,dataNames[k]
   ;;Generate list of file names
   plotFileArr                      = !NULL
   FOR j=0,nFiles-1 DO BEGIN
@@ -95,7 +96,7 @@ PRO COMBINE_ALFVEN_STATS_PLOTS,titles, $
         plotNamePref = paramStr
      ENDELSE
 
-     plotFileArr                   = [plotFileArr,plotDir+plotNamePref + dataNames[plots_to_combine[0]]+'.png']
+     plotFileArr                   = [plotFileArr,plotDir+plotNamePref + '--' + dataNames[plots_to_combine[0]]+'.png']
   ENDFOR
   plotFileArr__list                = LIST(plotFileArr)
   
