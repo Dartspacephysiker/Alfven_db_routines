@@ -3,7 +3,7 @@
 PRO JOURNAL__20160502__BIG_PFLUX_WITH_MLT_ON_SIDE__ALTSLICES
 
   year_and_season_mode = 1
-  n_years = 4
+  n_years = 5
   start_year = 1996
   years                = LINDGEN(n_years)+start_year
   yearStr              = STRING(FORMAT='(I0,"-01-01/00:00:00")',years)
@@ -11,7 +11,8 @@ PRO JOURNAL__20160502__BIG_PFLUX_WITH_MLT_ON_SIDE__ALTSLICES
   tBeforeEpoch         = 0 
   tAfterEpoch          = LONG64(365)*24
 
-  restrict_poyntRange  = [5,100000]
+  ;; restrict_poyntRange  = [5,100000] ;;Before Poynting flux was fixed, pre-2016/05/03 and post-2016/04/23, I think
+  restrict_poyntRange  = [0.05,100000]
 
   dst_yRange           = [-200,50]
   dst_lineTransp       = 60
@@ -25,14 +26,14 @@ PRO JOURNAL__20160502__BIG_PFLUX_WITH_MLT_ON_SIDE__ALTSLICES
 
   ;;************************************************************
   ;;to be outputted
-  savePlotPref      = '20160502--pflux_GE_'+ STRCOMPRESS(restrict_poyntRange[0],/REMOVE_ALL)
+  savePlotPref      = '20160502--pflux_GE_'+ STRING(FORMAT='(G0.2)',restrict_poyntRange[0])
   ;; scOutPref         = '20160104--Largestorms_combinee--scatterplots--'  ;scatter plots, N and S Hemi
 
   rmDupes           = 0
 
-  nPlotsPerWindow   = 4
+  nPlotsPerWindow   = 5
   ;; colors            = ['red','blue','green','orange']
-  colors            = ['red','blue','green','purple']
+  colors            = ['red','blue','green','orange','purple']
 
   ;inds are 
   ;;  0 ORBIT
@@ -49,7 +50,7 @@ PRO JOURNAL__20160502__BIG_PFLUX_WITH_MLT_ON_SIDE__ALTSLICES
   yRange_maxInd     = [0,24]
   yTitle_maxInd     = 'MLT'
 
-  symTransparency   = 93
+  symTransparency   = 30
   ;; FOR i = 0, N_ELEMENTS(q1_st)-1,nPlotsPerWindow DO BEGIN
   ;; FOR i = 0, N_ELEMENTS(q1_st)-1,nPlotsPerWindow DO BEGIN
 

@@ -3,7 +3,7 @@
 PRO JOURNAL__20160502__BIG_PFLUX_WITH_MLT_ON_SIDE
 
   year_and_season_mode = 1
-  n_years = 4
+  n_years = 5
   start_year = 1996
   years                = LINDGEN(n_years)+start_year
   yearStr              = STRING(FORMAT='(I0,"-01-01/00:00:00")',years)
@@ -17,14 +17,12 @@ PRO JOURNAL__20160502__BIG_PFLUX_WITH_MLT_ON_SIDE
   dst_lineTransp       = 60
   ;;************************************************************
   ;;to be outputted
-  savePlotPref      = '20160502--pflux_GE_'+ STRCOMPRESS(restrict_poyntRange[0],/REMOVE_ALL)
-  ;; scOutPref         = '20160104--Largestorms_combinee--scatterplots--'  ;scatter plots, N and S Hemi
+  savePlotPref      = '20160502--pflux_GE_'+ STRING(FORMAT='(G0.2)',restrict_poyntRange[0])
 
   rmDupes           = 0
 
-  nPlotsPerWindow   = 4
-  ;; colors            = ['red','blue','green','orange']
-  colors            = ['red','blue','green','purple']
+  nPlotsPerWindow   = 5
+  colors            = ['red','blue','green','orange','purple']
 
   ;inds are 
   ;;  0 ORBIT
