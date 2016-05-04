@@ -136,12 +136,15 @@ PRO SET_PLOT_DIR,plotDir, $
   ;;    plotDir = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '--' + add_suff + '/'
   ;; ENDIF ELSE BEGIN
   IF KEYWORD_SET(add_today) THEN BEGIN
-     plotDir    = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '/'
+     plotDir    = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
   ENDIF 
   IF KEYWORD_SET(add_suff) THEN BEGIN
-     plotDir = plotDir + add_suff + '/'
+     plotDir = plotDir + add_suff
   ENDIF
   ;; ENDELSE 
+
+  ;;add final slash
+  plotDir  += '/'
 
   ;;check if this dir exists
   IF KEYWORD_SET(add_today) OR KEYWORD_SET(add_suff) OR KEYWORD_SET(customDir) THEN BEGIN

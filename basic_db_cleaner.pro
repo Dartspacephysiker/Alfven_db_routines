@@ -10,7 +10,7 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
                           DO_CHASTDB=do_ChastDB
   
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
-  n_events = n_elements(dbStruct.orbit)
+  n_events = N_ELEMENTS(dbStruct.orbit)
   n_good = n_events
   tot_nLost = 0
   
@@ -43,7 +43,7 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
      FOR i = 0,N_ELEMENTS(clean_these_inds)-1 DO BEGIN
         IF N_ELEMENTS(good_i) EQ 0 THEN BEGIN
            good_i     = WHERE(FINITE(dbStruct.(clean_these_inds[i])),/NULL)
-           nLost      = n_good-n_elements(good_i)
+           nLost      = n_good-N_ELEMENTS(good_i)
            tot_nLost += nLost
            n_good     = n_good - nLost
 
@@ -53,8 +53,8 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
         ENDIF ELSE BEGIN
            test_i = WHERE(FINITE(dbStruct.(clean_these_inds[i])),/NULL)
            IF N_ELEMENTS(test_i) GT 0 THEN BEGIN
-              good_i     = cgsetintersection(test_i,good_i)
-              nLost      = n_good-n_elements(good_i)
+              good_i     = CGSETINTERSECTION(test_i,good_i)
+              nLost      = n_good-N_ELEMENTS(good_i)
               tot_nLost += nLost
               n_good     = n_good - nLost
 
@@ -68,51 +68,51 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
      ENDFOR
   ENDIF
   
-  ;; nLost = n_events-n_elements(good_i)
+  ;; nLost = n_events-N_ELEMENTS(good_i)
   ;; n_good -= nLost
   printf,lun,FORMAT='("NaNs, infinities",T40,": ",I0)',tot_nLost
   
   ;;Now handle the rest
   IF KEYWORD_SET(clean_nans_and_infinities) THEN BEGIN
-     good_i = cgsetintersection(good_i,WHERE(dbStruct.ILAT LE ilat_hcutoff AND dbStruct.ILAT GE ilat_lcutoff)) 
+     good_i = CGSETINTERSECTION(good_i,WHERE(dbStruct.ILAT LE ilat_hcutoff AND dbStruct.ILAT GE ilat_lcutoff)) 
   ENDIF ELSE BEGIN
      good_i = WHERE(dbStruct.ILAT LE ilat_hcutoff AND dbStruct.ILAT GE ilat_lcutoff)
   ENDELSE
-  nlost      = n_good-n_elements(good_i)
+  nlost      = n_good-N_ELEMENTS(good_i)
   tot_nLost += nLost
   n_good -= nLost
   IF nLost GT 0 THEN BEGIN
      PRINTF,lun,FORMAT='("N lost to basic ILAT restr",T40,": ",I0)',nlost
   ENDIF
 
-  good_i = cgsetintersection(good_i,WHERE(dbStruct.MLT LE mlt_hcutoff AND dbStruct.MLT GE 0.0))
-  nlost      = n_good-n_elements(good_i)
+  good_i = CGSETINTERSECTION(good_i,WHERE(dbStruct.MLT LE mlt_hcutoff AND dbStruct.MLT GE 0.0))
+  nlost      = n_good-N_ELEMENTS(good_i)
   tot_nLost += nLost
   n_good -= nLost
   IF nLost GT 0 THEN BEGIN
      PRINTF,lun,FORMAT='("N lost to basic MLT restr",T40,": ",I0)',nlost
   ENDIF
 
-  good_i = cgsetintersection(good_i,WHERE(dbStruct.ORBIT LE orbit_hcutoff AND dbStruct.ORBIT GE orbit_lcutoff))
-  nlost      = n_good-n_elements(good_i)
+  good_i = CGSETINTERSECTION(good_i,WHERE(dbStruct.ORBIT LE orbit_hcutoff AND dbStruct.ORBIT GE orbit_lcutoff))
+  nlost      = n_good-N_ELEMENTS(good_i)
   tot_nLost += nLost
   n_good -= nLost
   IF nLost GT 0 THEN BEGIN
      PRINTF,lun,FORMAT='("N lost to basic ORBIT restr",T40,": ",I0)',nlost
   ENDIF
 
-  ;; good_i = cgsetintersection(good_i,where(dbStruct.sample_t LE sample_t_hcutoff,/NULL))
+  ;; good_i = CGSETINTERSECTION(good_i,WHERE(dbStruct.sample_t LE sample_t_hcutoff,/NULL))
   IF KEYWORD_SET(do_ChastDB) THEN BEGIN
-     good_i = cgsetintersection(good_i,where(ABS(dbStruct.mode) LE sample_t_hcutoff AND ABS(dbStruct.mode) GT 0.,/NULL))
-     nlost      = n_good-n_elements(good_i)
+     good_i = CGSETINTERSECTION(good_i,WHERE(ABS(dbStruct.mode) LE sample_t_hcutoff AND ABS(dbStruct.mode) GT 0.,/NULL))
+     nlost      = n_good-N_ELEMENTS(good_i)
      tot_nLost += nLost
      n_good -= nLost
      IF nLost GT 0 THEN BEGIN
         PRINTF,lun,FORMAT='("N lost to basic sample freq restr",T40,": ",I0)',nlost
      ENDIF
   ENDIF ELSE BEGIN
-     good_i = cgsetintersection(good_i,where(ABS(dbStruct.sample_t) LE sample_t_hcutoff AND ABS(dbStruct.sample_t) GT 0.,/NULL))
-     nlost      = n_good-n_elements(good_i)
+     good_i = CGSETINTERSECTION(good_i,WHERE(ABS(dbStruct.sample_t) LE sample_t_hcutoff AND ABS(dbStruct.sample_t) GT 0.,/NULL))
+     nlost      = n_good-N_ELEMENTS(good_i)
      tot_nLost += nLost
      n_good -= nLost
      IF nLost GT 0 THEN BEGIN
@@ -121,7 +121,7 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
 
   ENDELSE
 
-  ;; nlost = n_good-n_elements(good_i)
+  ;; nlost = n_good-N_ELEMENTS(good_i)
   printf,lun,FORMAT='("N lost to basic cutoffs",T40,": ",I0)',tot_nlost
   printf,lun,FORMAT='("N surviving basic screening",T40,": ",I0)',n_good
   printf,lun,"****END basic_db_cleaner.pro****"

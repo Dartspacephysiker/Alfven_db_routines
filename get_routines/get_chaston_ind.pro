@@ -27,6 +27,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                          MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                          DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                          MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+                         SAMPLE_T_RESTRICTION=sample_t_restriction, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
                          USING_HEAVIES=using_heavies, $
                          NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i, $
@@ -40,10 +41,14 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
   COMMON MLT_ILAT_MAGC_ETC,MIMC__RECALCULATE, $
      MIMC__minMLT,MIMC__maxMLT, $
      MIMC__minILAT,MIMC__maxILAT,MIMC__binILAT, $
-     MIMC__minLSHELL,MIMC__maxLSHELL,MIMC__binLSHELL, $
-     MIMC__minMC,MIMC__maxMC, $
+     MIMC__DO_lShell,MIMC__minLSHELL,MIMC__maxLSHELL,MIMC__binLSHELL, $
+     MIMC__minMC,MIMC__maxNegMC, $
+     MIMC__sample_t_restriction, $
      MIMC__hemi, $
-     MIMC__orbRange,MIMC__altitudeRange,MIMC__charERange,MIMC__poyntRange, $
+     MIMC__orbRange, $
+     MIMC__altitudeRange, $
+     MIMC__charERange, $
+     MIMC__poyntRange, $
      MIMC__despunDB,MIMC__chastDB, $
      MIMC__north,MIMC__south,MIMC__both_hemis, $
      MIMC__HwMAurOval, $
@@ -183,6 +188,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                                    BINLSHELL=binL, $
                                    MIN_MAGCURRENT=minMC, $
                                    MAX_NEGMAGCURRENT=maxNegMC, $
+                                   SAMPLE_T_RESTRICTION=sample_t_restriction, $
                                    DAYSIDE=dayside, $
                                    NIGHTSIDE=nightside, $
                                    HAVE_GOOD_I=have_good_i, $
@@ -398,6 +404,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
         IF N_ELEMENTS(MAXIMUS__cleaned_i) EQ 0 THEN BEGIN
            MAXIMUS__cleaned_i = ALFVEN_DB_CLEANER(dbStruct,LUN=lun, $
                                                   IS_CHASTDB=chastDB, $
+                                                  SAMPLE_T_RESTRICTION=sample_t_restriction, $
                                                   DO_LSHELL=DO_lshell, $
                                                   USING_HEAVIES=using_heavies)
            IF MAXIMUS__cleaned_i EQ !NULL THEN BEGIN

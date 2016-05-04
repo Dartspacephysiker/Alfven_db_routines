@@ -277,7 +277,8 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;;Added 2015/12/22
      IF KEYWORD_SET(map_pflux) THEN BEGIN
         mu_0 = DOUBLE(4.0D*!PI*1e-7)
-        maximus.pfluxest=DOUBLE((maximus.delta_e*1e-9)*(maximus.delta_b*1e-3))/mu_0
+        ;; maximus.pfluxest=DOUBLE((maximus.delta_e*1e-9)*(maximus.delta_b*1e-3))/mu_0
+        maximus.pfluxest=DOUBLE((maximus.delta_e)*(maximus.delta_b*1e-9))/mu_0 ;;take away the factor of 1e-3 from E-field since we want mW/m^2
 
         maximus.pFluxEst          = maximus.pFluxEst * mapRatio.ratio
         PRINTF,lun,'-->49-PFLUXEST'

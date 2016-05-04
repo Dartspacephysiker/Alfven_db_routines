@@ -197,7 +197,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         STRUPCASE(fluxPlotType) EQ STRUPCASE("ESA_Number_flux"): BEGIN
            h2dStr.title  = title__alfDB_esa_nFlux
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           inData           = maximus.esa_current[tmp_i] * 1. / 1.6e-9
+           inData           = maximus.esa_current[tmp_i] * (DOUBLE(1. / 1.6e-9))
 
            IF KEYWORD_SET(multiply_by_width_x) THEN BEGIN
               PRINTF,lun,"you realize you should probably just divide energy flux by chare, right?"

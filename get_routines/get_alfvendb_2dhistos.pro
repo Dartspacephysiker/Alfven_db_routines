@@ -562,6 +562,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   IF KEYWORD_SET(eplots) THEN BEGIN
      FOR i=0,N_ELEMENTS(eFluxPlotType)-1 DO BEGIN
         fluxPlotType = eFluxPlotType[i]
+
+        CASE N_ELEMENTS(logEfPlot) OF
+           0:   logPlot       = !NULL
+           1:   logPlot       = logEfPlot
+           ELSE: logPlot      = logEfPlot[i]
+        ENDCASE
+
         dims                  = SIZE(ePlotRange,/DIMENSIONS)
         CASE N_ELEMENTS(dims) OF 
            0:   plotRange     = !NULL
@@ -590,7 +597,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NONEGFLUX=noNegeflux, $
                           ABSFLUX=abseflux, $
                           OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logEfPlot)), $
+                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                           DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -646,6 +653,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
      FOR i=0,N_ELEMENTS(eNumFlPlotType)-1 DO BEGIN
         fluxPlotType = eNumFlPlotType[i]
+
+        CASE N_ELEMENTS(logENumFlPlot) OF
+           0:   logPlot       = !NULL
+           1:   logPlot       = logENumFlPlot
+           ELSE: logPlot      = logENumFlPlot[i]
+        ENDCASE
+
         dims                  = SIZE(eNumFlPlotRange,/DIMENSIONS)
         CASE N_ELEMENTS(dims) OF 
            0:   plotRange     = !NULL
@@ -674,7 +688,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NONEGFLUX=noNegENumFl, $
                           ABSFLUX=absENumFl, $
                           OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logENumFlPlot)), $
+                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                           DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -803,6 +817,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   IF KEYWORD_SET(ionPlots) THEN BEGIN
      FOR i=0,N_ELEMENTS(iFluxPlotType)-1 DO BEGIN
         fluxPlotType = iFluxPlotType[i]
+
+        CASE N_ELEMENTS(logIfPlot) OF
+           0:   logPlot       = !NULL
+           1:   logPlot       = logIfPlot
+           ELSE: logPlot      = logIfPlot[i]
+        ENDCASE
+
         dims                  = SIZE(iPlotRange,/DIMENSIONS)
         CASE N_ELEMENTS(dims) OF 
            0:   plotRange     = !NULL
@@ -831,7 +852,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NONEGFLUX=noNegIflux, $
                           ABSFLUX=absIflux, $
                           OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logIfPlot)), $
+                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                           DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -960,6 +981,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   IF KEYWORD_SET(charEPlots) THEN BEGIN
      FOR i=0,N_ELEMENTS(charEType)-1 DO BEGIN
         fluxPlotType = charEType[i]
+
+        CASE N_ELEMENTS(logCharEPlot) OF
+           0:   logPlot       = !NULL
+           1:   logPlot       = logCharEPlot
+           ELSE: logPlot      = logCharEPlot[i]
+        ENDCASE
+
         dims                  = SIZE(charEPlotRange,/DIMENSIONS)
         CASE N_ELEMENTS(dims) OF 
            0:   plotRange     = !NULL
@@ -988,7 +1016,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NONEGFLUX=noNegCharE, $
                           ABSFLUX=absCharE, $
                           OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logCharEPlot)), $
+                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                           DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
