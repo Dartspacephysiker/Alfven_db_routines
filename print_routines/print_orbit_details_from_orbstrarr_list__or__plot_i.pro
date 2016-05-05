@@ -6,6 +6,7 @@ PRO PRINT_ORBIT_DETAILS_FROM_ORBSTRARR_LIST__OR__PLOT_I,to_be_examined,maximus, 
    ANCILLARY_DP_FORMAT=ancillary_dp_format, $
    ANCILLARY_DP_TITLE=ancillary_dp_title, $
    OUTDIR=outDir, $
+   OUT_PARSED=out_parsed, $
    QUIET=quiet
 
   COMPILE_OPT idl2
@@ -73,5 +74,7 @@ PRO PRINT_ORBIT_DETAILS_FROM_ORBSTRARR_LIST__OR__PLOT_I,to_be_examined,maximus, 
   IF ~KEYWORD_SET(quiet) THEN PRINT,"Closing " + orbit_details_filename
   CLOSE,lun
   FREE_LUN,lun
+
+  out_parsed          = orbStrArr_list
 
 END

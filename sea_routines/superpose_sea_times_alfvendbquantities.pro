@@ -729,7 +729,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
      OR KEYWORD_SET(timeAvgd_maxInd_sea) $
      OR KEYWORD_SET(hist_maxInd_sea) $
      ;; OR KEYWORD_SET(timeAvgd_pFlux_sea) OR KEYWORD_SET(timeAvgd_eFluxMax_sea) $
-     AND ~KEYWORD_SET(noPlots) AND ~KEYWORD_SET(noGeomagPlots) THEN BEGIN
+     AND ~KEYWORD_SET(noPlots) AND ~KEYWORD_SET(noGeomagPlots) OR KEYWORD_SET(OMNI_quantities_to_plot) THEN BEGIN
      IF N_ELEMENTS(geomagWindow) EQ 0 THEN BEGIN
         makeGeomag          = 1
      ENDIF ELSE BEGIN
@@ -741,7 +741,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
      ENDELSE
 
      IF makeGeomag THEN BEGIN
-        IF KEYWORD_SET(only_OMNI_plots) THEN BEGIN
+        IF KEYWORD_SET(only_OMNI_plots) AND N_ELEMENTS(OMNI_quantities_to_plot) GT 1 THEN BEGIN
            WINDOW_CUSTOM_SETUP,NPLOTCOLUMNS=1, $
                                NPLOTROWS=nQuantitiesToPlot, $
                                ROW_NAMES=LIST_TO_1DARRAY(geomag_title_list), $
@@ -791,7 +791,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
                                                      NAME=omni_quantity, $
                                                      AXIS_STYLE=1, $
                                                      PLOTTITLE=plotTitle, $
-                                                     ;; XTITLE=xTitle, $
+                                                     XTITLE=KEYWORD_SET(window_custom) ? !NULL : xTitle, $
                                                      XRANGE=xRange, $
                                                      YTITLE=yTitle, $
                                                      YRANGE=yRange, $
