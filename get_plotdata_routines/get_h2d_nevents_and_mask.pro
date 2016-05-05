@@ -69,7 +69,11 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
   h2dMaskStr.data[where(h2dStr.data LT maskMin,/NULL)]=255
   h2dMaskStr.data[where(h2dStr.data GE maskMin,/NULL)]=0
 
-  h2d_nonzero_nEv_i             = WHERE(h2dFluxN GT 0,/NULL)
+  h2d_nonzero_nEv_i             = WHERE(h2dFluxN GT 0)
+  IF h2d_nonzero_nEv_i[0] EQ -1 THEN BEGIN
+     PRINT,"Ummm.... There's no data here, according to GET_H2D_NEVENTS_AND_MASK."
+     STOP
+  ENDIF
   
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      ;; IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN

@@ -62,7 +62,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
   ;;*********
   IF KEYWORD_SET(sample_t_restriction) THEN BEGIN
      PRINTF,lun,"Using sample_t restriction specified by user!"
-     PRINTF,lun,STRING(FORMAT='"Sample_t_hcutoff = ",G0.3," s")',sample_t_restriction)
+     PRINTF,lun,STRING(FORMAT='("Sample_t_hcutoff = ",G0.3," s")',sample_t_restriction)
      sample_t_hcutoff=sample_t_restriction
   ENDIF
 

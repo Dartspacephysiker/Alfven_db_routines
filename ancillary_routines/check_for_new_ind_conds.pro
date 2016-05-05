@@ -48,7 +48,7 @@ PRO CHECK_FOR_NEW_IND_CONDS,is_maximus, $
 
      IF N_ELEMENTS(maxNegMC) GT 0 THEN BEGIN
         IF N_ELEMENTS(MIMC__maxNegMC) GT 0 THEN BEGIN
-           IF MIMC__MAX_maxNegMC NE maxNegMC THEN BEGIN
+           IF MIMC__maxNegMC NE maxNegMC THEN BEGIN
               MIMC__RECALCULATE = 1
               have_good_i       = 0
               RETURN

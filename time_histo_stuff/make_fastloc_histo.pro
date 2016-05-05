@@ -125,8 +125,8 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
            ;; tempBinTime = tempNCounts * delta_T
            tempInds = WHERE(fastLocMLTs GE mlts[i] AND fastLocMLTs LT mlts[i+1] AND $
                             fastLocILATS GE ilats[j] AND $
-                            fastLocILATS LT ilats[j+1],/NULL)
-           IF tempInds NE !NULL THEN BEGIN
+                            fastLocILATS LT ilats[j+1])
+           IF tempInds[0] NE -1 THEN BEGIN
               tempBinTime = TOTAL(DOUBLE(fastLoc_delta_t[fastLoc_inds[tempInds]]))
               outTimeHisto[i,j] = tempBinTime
               

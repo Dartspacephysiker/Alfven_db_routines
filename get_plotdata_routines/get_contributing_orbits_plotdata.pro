@@ -73,8 +73,11 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
         h2dOrbTemp[*,*]                       = 0
      ENDELSE
      orbArr[j,*,*]                            = h2dOrbTemp 
-     h2dOrbTemp[WHERE(h2dOrbTemp GT 0,/NULL)] = 1 
-     h2dStr.data                             += h2dOrbTemp 
+     addem_i                                  = WHERE(h2dOrbTemp GT 0)
+     IF addem_i[0] NE -1 THEN BEGIN
+        h2dOrbTemp[addem_i] = 1 
+        h2dStr.data                          += h2dOrbTemp 
+     ENDIF
   ENDFOR
   
   IF N_ELEMENTS(orbContribRange) EQ 0 OR N_ELEMENTS(orbContribRange) NE 2 THEN $
@@ -88,6 +91,13 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
         tempDenom[h2d_nonzero_i]              = 10.^(tempDenom[h2d_nonzero_i])
      ENDIF
      h2dStr.data[h2d_nonzero_i]               = h2dStr.data[h2d_nonzero_i]/tempDenom[h2d_nonzero_i]
+
+     ridiculous_i                             = WHERE(h2dStr.data GT 1,ridicCount)
+     IF ridicCount GT 0 THEN BEGIN
+        PRINT,"What on earth??? I'm being told there are places where FAST has never been, and yet has data."
+        h2dStr.title                          = h2dStr.title + 'P GE 1!!'
+        h2dStr.data[ridiculous_i]             = 1
+     ENDIF
   ENDIF ELSE BEGIN
      h2d_nonZero_contribOrbs_i                = WHERE(h2dStr.data GT 0,/NULL)
   ENDELSE

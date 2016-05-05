@@ -18,6 +18,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
                              FORCE_LOAD_MAXIMUS=force_load_maximus, $
                              FORCE_LOAD_CDBTIME=force_load_cdbTime, $
                              FORCE_LOAD_BOTH=force_load_BOTH, $
+                             QUIET=quiet, $
                              LUN=lun
 
   COMMON M_VARS,MAXIMUS__maximus,MAXIMUS__HAVE_GOOD_I,MAXIMUS__times, $
@@ -111,7 +112,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
                              MAP_HEAVIES_TO_IONOS=~KEYWORD_SET(do_not_map_heavies), $
                              ;; MAP_WIDTH_X_TO_IONOS=~KEYWORD_SET(do_not_map_width_x), $
                              DO_DESPUNDB=despunDB, $
-                             USING_HEAVIES=using_heavies
+                             USING_HEAVIES=using_heavies, $
+                             QUIET=quiet
   ENDIF
 
 

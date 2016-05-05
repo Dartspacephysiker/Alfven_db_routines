@@ -123,14 +123,14 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   
   defClockStr            = 'dawnward'
   
-  defAngleLim1           = 60.0
-  defAngleLim2           = 120.0
+  ;; defAngleLim1           = 60.0
+  ;; defAngleLim2           = 120.0
 
   ;; defAngleLim1           = 30.0
   ;; defAngleLim2           = 150.0
 
-  ;; defAngleLim1           = 45.0
-  ;; defAngleLim2           = 135.0
+  defAngleLim1           = 45.0
+  defAngleLim2           = 135.0
 
   ;;***********************************************
   ;;RESTRICTIONS ON DATA, SOME VARIABLES

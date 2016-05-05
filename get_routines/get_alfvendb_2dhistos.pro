@@ -19,6 +19,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ALTITUDERANGE=altitudeRange, $
                           CHARERANGE=charERange, $
                           POYNTRANGE=poyntRange, $
+                          SAMPLE_T_RESTRICTION=sample_t_restriction, $
                           NUMORBLIM=numOrbLim, $
                           MASKMIN=maskMin, $
                           SATELLITE=satellite, $
@@ -245,6 +246,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  ORBRANGE=orbRange, $
                                                  ALTITUDERANGE=altitudeRange, $
                                                  CHARERANGE=charERange, $
+                                                 SAMPLE_T_RESTRICTION=sample_t_restriction, $
                                                  DO_IMF_CONDS=do_IMF_conds, $
                                                  BYMIN=byMin, $
                                                  BYMAX=byMax, $

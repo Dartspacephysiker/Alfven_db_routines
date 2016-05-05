@@ -47,7 +47,6 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
                                NORTH=north,SOUTH=south, $
                                CHARESCR=chareScr,ABSMAGCSCR=absMagcScr, $
                                OVERLAYAURZONE=overlayAurZone, $
-                               ADD_ORBIT_LEGEND=add_orbit_legend, $
                                CENTERLON=centerLon, $
                                OVERPLOT=overplot, $
                                LAYOUT=layout, $
@@ -61,9 +60,13 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
                                PLOT_I_LIST=plot_i_list, COLOR_LIST=color_list, $
                                SAVEPLOT=savePlot, $
                                SPNAME=sPName, $
+                               PLOTDIR=plotDir, $
                                CLOSE_AFTER_SAVE=close_after_save, $
                                STRANS=sTrans, $
                                PLOTTITLE=plotTitle, $
+                               ADD_ORBIT_LEGEND=add_orbit_legend, $
+                               OUTPUT_ORBIT_DETAILS=output_orbit_details, $
+                               OUT_ORBSTRARR_LIST=out_orbStrArr_list, $
                                _EXTRA = e
 
   COMPILE_OPT idl2
@@ -284,7 +287,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
 
 
   ;;Are we going to go with each orbit, then?
-  IF KEYWORD_SET(add_orbit_legend) THEN BEGIN
+  IF KEYWORD_SET(add_orbit_legend) OR KEYWORD_SET(output_orbit_details) THEN BEGIN
      ;;This will give back a list of arrays of orbit structures (mmhmm)
      modPlot_i_list = SPLIT_IND_LIST_INTO_ORB_STRUCTARR_LIST(modPlot_i_list,maximus)
   ENDIF
@@ -351,19 +354,21 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
 
   IF KEYWORD_SET(modPlot_i_list) THEN BEGIN
      FOR i=0,N_ELEMENTS(modPlot_i_list)-1 DO BEGIN
-        IF KEYWORD_SET(add_orbit_legend) THEN BEGIN
+        IF KEYWORD_SET(add_orbit_legend) OR KEYWORD_SET(output_orbit_details) THEN BEGIN
 
            curPlotArr = !NULL
            FOR j = 0,N_ELEMENTS(modPlot_i_list[i])-1 DO BEGIN
-              lats    = maximus.ilat[modPlot_i_list[i,j].plot_i]
+              tmp_i   = modPlot_i_list[i,j].plot_i_list[0]
+
+              lats    = maximus.ilat[tmp_i]
               IF KEYWORD_SET(mirror_south) THEN lats = ABS(lats)
 
-              lons    = maximus.mlt[modPlot_i_list[i,j].plot_i]*15
+              lons    = maximus.mlt[tmp_i]*15
               color   = modPlot_i_list[i,j].color
-              name    = STRING(FORMAT='I5,T8,"(",I0,")")',modPlot_i_list[i,j].orbit,modPlot_i_list[i,j].N)
+              name    = STRING(FORMAT='(I5,T8,"(",I0,")")',modPlot_i_list[i,j].orbit,modPlot_i_list[i,j].N)
               curPlot = SCATTERPLOT(lons,lats, $
                                     NAME=name, $
-                                    SYM_SIZE=1.0, $
+                                    SYM_SIZE=EY, $
                                     SYMBOL='o', $
                                     /OVERPLOT, $
                                     ;; SYM_TRANSPARENCY=(i EQ 2) ? 60 : sTrans, $ ;this line is for making events on plot #3 stand out
@@ -378,12 +383,13 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
               curPlotArr = [curPlotArr,curPlot]
            ENDFOR
 
-           ephemLegend                    = LEGEND(/NORMAL, $
-                                                   POSITION=[0.95,0.9], $
-                                                   TARGET=curPlotArr, $
-                                                   /AUTO_TEXT_COLOR)
-           curPlot       = curPlotArr
-           
+           IF KEYWORD_SET(add_orbit_legend) THEN BEGIN
+              ephemLegend                    = LEGEND(/NORMAL, $
+                                                      POSITION=[0.95,0.9], $
+                                                      TARGET=curPlotArr, $
+                                                      /AUTO_TEXT_COLOR)
+              curPlot       = curPlotArr
+           ENDIF
 
         ENDIF ELSE BEGIN
            
@@ -422,7 +428,8 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
 
   IF KEYWORD_SET(savePlot) THEN BEGIN
      IF ~KEYWORD_SET(sPName) THEN sPName = 'scatterplot_polarProj.png'
-     SET_PLOT_DIR,plotDir,/FOR_ALFVENDB,/ADD_TODAY
+
+     IF ~KEYWORD_SET(plotDir) THEN SET_PLOT_DIR,plotDir,/FOR_ALFVENDB,/ADD_TODAY
      outFileName            = plotDir + sPName
      PRINT,'Saving scatterplot to ' + outFileName + '...'
      window.save,plotDir + sPName,RESOLUTION=defRes
@@ -431,6 +438,10 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
         window.close
         window = !NULL
      ENDIF
+  ENDIF
+
+  IF KEYWORD_SET(output_orbit_details) THEN BEGIN
+     out_orbStrArr_list    = modPlot_i_list
   ENDIF
 
   out_plot   = curPlot

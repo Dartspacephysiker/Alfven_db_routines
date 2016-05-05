@@ -12,14 +12,14 @@ FUNCTION SPLIT_IND_LIST_INTO_ORB_STRUCTARR_LIST,i_list,maximus
      
      temp_i = i_list[i]
      
-     orbNums  = maximus.orbit[UNIQ(temp_i)]
+     orbNums  = maximus.orbit[temp_i[UNIQ(maximus.orbit[temp_i])]]
      
      orbStrArr = !NULL
      FOR j=0,N_ELEMENTS(orbNums)-1 DO BEGIN
-        plot_i       = WHERE(maximus.orbit[temp_i] EQ orbNums[j])
+        plot_i       = temp_i[WHERE(maximus.orbit[temp_i] EQ orbNums[j])]
         IF plot_i[0] NE -1 THEN BEGIN
            orbStr       = {ORBIT:orbNums[j], $
-                           PLOT_I:plot_i, $
+                           PLOT_I_LIST:LIST(plot_i), $
                            N:N_ELEMENTS(plot_i), $
                            COLOR:FIX(255*RANDOMU(seed,3)) $
                           }

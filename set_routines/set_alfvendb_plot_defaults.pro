@@ -2,6 +2,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                ALTITUDERANGE=altitudeRange, $
                                CHARERANGE=charERange, $
                                POYNTRANGE=poyntRange, $
+                               SAMPLE_T_RESTRICTION=sample_t_restriction, $
                                MINMLT=minMLT,MAXMLT=maxMLT, $
                                BINMLT=binMLT, $
                                SHIFTMLT=shiftMLT, $
@@ -40,8 +41,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                KEEPME=keepMe, $
                                PARAMSTRING=paramString,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
                                HOYDIA=hoyDia,LUN=lun, $
-                               DONT_CORRECT_ILATS=dont_correct_ilats, $
-                               _EXTRA = e
+                               DONT_CORRECT_ILATS=dont_correct_ilats
 
   COMPILE_OPT idl2
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
@@ -147,6 +147,12 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
 
   IF KEYWORD_SET(do_despundb) THEN despunStr     = '--despun' ELSE despunStr = ''
 
+  IF KEYWORD_SET(sample_t_restriction) THEN BEGIN
+     sample_t_string                             = STRING(FORMAT='("--sampT_restr_",F0.2,"s")',sample_t_restriction) 
+  ENDIF ELSE BEGIN
+     sample_t_string                             = ''
+  ENDELSE
+   
   ;;********************************************
   ;;A few other strings to tack on
   ;;tap DBs, and setup output
@@ -172,7 +178,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ENDIF
 
   paramString=hoyDia+'--'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
-              hemi+despunStr+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
+              hemi+despunStr+sample_t_string+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
   
   ;;Shouldn't be leftover, unused params from batch call
   IF ISA(e) THEN BEGIN

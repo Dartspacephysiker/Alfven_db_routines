@@ -2,7 +2,10 @@
 ;2016/02/19 Completely redone.
 ;-
 PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
-                                  ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                  ORBRANGE=orbRange, $
+                                  ALTITUDERANGE=altitudeRange, $
+                                  CHARERANGE=charERange, $
+                                  SAMPLE_T_RESTRICTION=sample_t_restriction, $
                                   DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
                                   CLOCKSTR=clockStr, $
                                   DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
@@ -52,67 +55,14 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
 
   IF NOT KEYWORD_SET(lun) THEN lun = -1 ;stdout
   
-  SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, POYNTRANGE=poyntRange, $
-                             MINMLT=minM,MAXMLT=maxM,BINMLT=binM,SHIFTMLT=shiftM, $
-                             MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $;SHIFTI=shiftI, $
-                             DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-                             MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-                             HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                             MIN_NEVENTS=min_nEvents, MASKMIN=maskMin, $
-                             HEMI=hemi, $
-                             BOTH_HEMIS=both_hemis, $
-                             NORTH=north, $
-                             SOUTH=south, $
-                             NPLOTS=nPlots, $
-                             EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, $
-                             ENUMFLPLOTS=eNumFlPlots, ENUMFLPLOTTYPE=eNumFlPlotType, $
-                             PPLOTS=pPlots, $
-                             IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, $
-                             CHAREPLOTS=charEPlots, CHARETYPE=charEType, $
-                             ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
-                             NEVENTPERORBPLOT=nEventPerOrbPlot, $
-                             NEVENTPERMINPLOT=nEventPerMinPlot, $
-                             PROBOCCURRENCEPLOT=probOccurrencePlot, $
-                             SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
-                             MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, $
-                             DATADIR=dataDir, NO_BURSTDATA=no_burstData, $
-                             WRITEASCII=writeASCII, WRITEHDF5=writeHDF5, WRITEPROCESSEDH2D=writeProcessedH2d, $
-                             SAVERAW=saveRaw, RAWDIR=rawDir, $
-                             SHOWPLOTSNOSAVE=showPlotsNoSave, $
-                             PLOTDIR=plotDir, PLOTPREFIX=plotPrefix, PLOTSUFFIX=plotSuffix, $
-                             MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
-                             OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
-                             KEEPME=keepMe, $
-                             PARAMSTRING=paramString,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
-                             HOYDIA=hoyDia,LUN=lun,_EXTRA=e
-  
-  SET_IMF_PARAMS_AND_IND_DEFAULTS,$
-     DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
-     ANGLELIM1=angleLim1, $
-     ANGLELIM2=angleLim2, $
-     ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-     BYMIN=byMin, $
-     BZMIN=bzMin, $
-     BYMAX=byMax, $
-     BZMAX=bzMax, $
-     DO_ABS_BYMIN=abs_byMin, $
-     DO_ABS_BYMAX=abs_byMax, $
-     DO_ABS_BZMIN=abs_bzMin, $
-     DO_ABS_BZMAX=abs_bzMax, $
-     BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
-     DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
-     PARAMSTRING=paramString, $
-     SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-     DELAY=delay, $
-     MULTIPLE_DELAYS=multiple_delays, $
-     RESOLUTION_DELAY=delay_res, $
-     BINOFFSET_DELAY=binOffset_delay, $
-     STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
-     LUN=lun
-  
   fastLocInterped_i_list = GET_RESTRICTED_AND_INTERPED_DB_INDICES(FL_fastLoc,satellite,delay,LUN=lun, $
-                                                                  DBTIMES=fastLoc__times,dbfile=fastLoc__dbfile, HEMI=hemi, $
-                                                                  ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                                                  DBTIMES=fastLoc__times, $
+                                                                  DBFILE=fastLoc__dbfile, $
+                                                                  HEMI=hemi, $
+                                                                  ORBRANGE=orbRange, $
+                                                                  ALTITUDERANGE=altitudeRange, $
+                                                                  CHARERANGE=charERange, $
+                                                                  SAMPLE_T_RESTRICTION=sample_t_restriction, $
                                                                   MINMLT=minM,MAXMLT=maxM,BINM=binM,SHIFTM=shiftM, $
                                                                   MINILAT=minI,MAXILAT=maxI,BINI=binI, $;SHIFTI=shiftI, $ $
                                                                   DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
@@ -139,7 +89,7 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
                                                                   HWMKPIND=HwMKpInd, $
                                                                   RESET_GOOD_INDS=reset_good_inds, $
                                                                   NO_BURSTDATA=no_burstData, $
-                                                                  GET_TIME_I_NOT_ALFVENDB_I=1)
+                                                                  /GET_TIME_I_NOT_ALFVENDB_I)
   
   
   IF KEYWORD_SET(get_fastLoc_struct) THEN BEGIN
