@@ -37,8 +37,10 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   ;; DefDB_tFile = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--times.sav'
   ;; DefDBFile = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--sample_t_le_0.01.sav'
   ;; DefDB_tFile = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--times--sample_t_le_0.01.sav'
-  DefDBFile   = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--noDupes--sample_freq_le_0.01.sav'
-  DefDB_tFile = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--times--noDupes--sample_freq_le_0.01.sav'
+  ;; DefDBFile   = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--noDupes--sample_freq_le_0.01.sav'
+  ;; DefDB_tFile = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--times--noDupes--sample_freq_le_0.01.sav'
+  DefDBFile   = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05.sav'
+  DefDB_tFile = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--times.sav'
 
   IF N_ELEMENTS(DBDir) EQ 0 THEN DBDir = DefDBDir
   IF N_ELEMENTS(DBFile) EQ 0 THEN DBFile = DefDBFile
