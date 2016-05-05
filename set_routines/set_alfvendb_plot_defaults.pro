@@ -41,7 +41,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                KEEPME=keepMe, $
                                PARAMSTRING=paramString,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
                                HOYDIA=hoyDia,LUN=lun, $
-                               DONT_CORRECT_ILATS=dont_correct_ilats
+                               DONT_CORRECT_ILATS=dont_correct_ilats, $
+                               DO_NOT_SET_DEFAULTS=do_not_set_defaults
+
 
   COMPILE_OPT idl2
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
@@ -54,17 +56,20 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   hoyDia=GET_TODAY_STRING()
 
   ; Handle MLT and ILAT ... and L-shell
-  SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minMLT,MAXMLT=maxMLT, $
-                                BINM=binMLT, $
-                                SHIFTMLT=shiftMLT, $
-                                MINILAT=minILAT,MAXILAT=maxILAT,BINI=binILAT, $
-                                MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
-                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-                                HEMI=hemi, $
-                                NORTH=north, $
-                                SOUTH=south, $
-                                BOTH_HEMIS=both_hemis, $
-                                LUN=lun
+  IF ~KEYWORD_SET(do_not_set_defaults) THEN BEGIN
+     SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minMLT,MAXMLT=maxMLT, $
+                                   BINM=binMLT, $
+                                   SHIFTMLT=shiftMLT, $
+                                   MINILAT=minILAT,MAXILAT=maxILAT,BINI=binILAT, $
+                                   MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
+                                   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+                                   HEMI=hemi, $
+                                   NORTH=north, $
+                                   SOUTH=south, $
+                                   BOTH_HEMIS=both_hemis, $
+                                   LUN=lun
+     
+  ENDIF
 
   ;;***********************************************
   ;;Tons of defaults

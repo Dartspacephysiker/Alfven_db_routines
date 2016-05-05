@@ -40,6 +40,7 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
                                   ;; FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, $
                                   FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                   BURSTDATA_EXCLUDED=burstData_excluded, $
+                                  DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                                   GET_FASTLOC_STRUCT=get_fastLoc_struct, $
                                   GET_FASTLOC_DELTA_T=get_fastLoc_delta_t, $
                                   GET_FASTLOC_TIMES=get_fastLoc_times, $
@@ -77,6 +78,7 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
                                                                   CLOCKSTR=clockStr, $
                                                                   DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
                                                                   ANGLELIM1=angleLim1, $
+                                                                  DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                                                                   ANGLELIM2=angleLim2, $
                                                                   DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
                                                                   BX_OVER_BYBZ=Bx_over_ByBz_Lim, $

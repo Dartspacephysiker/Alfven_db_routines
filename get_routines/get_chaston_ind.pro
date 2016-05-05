@@ -30,10 +30,12 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                          SAMPLE_T_RESTRICTION=sample_t_restriction, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
                          USING_HEAVIES=using_heavies, $
-                         NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i, $
+                         NO_BURSTDATA=no_burstData, $
+                         GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i, $
                          GET_ALFVENDB_I=get_alfvendb_i, $
                          CORRECT_FLUXES=correct_fluxes, $
                          RESET_GOOD_INDS=reset_good_inds, $
+                         DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                          PRINT_PARAM_SUMMARY=print_param_summary, $
                          FASTLOC_DELTA_T=fastloc_delta_t
   COMPILE_OPT idl2
@@ -73,15 +75,17 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
 
   IF ~KEYWORD_SET(lun) THEN lun = defLun ;stdout
 
-  SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
-                                MINILAT=minI,MAXILAT=maxI,BINI=binI, $
-                                MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
-                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-                                HEMI=hemi, $
-                                BOTH_HEMIS=both_hemis, $
-                                NORTH=north, $
-                                SOUTH=south, $
-                                LUN=lun
+  IF ~KEYWORD_SET(do_not_set_defaults) THEN BEGIN
+     SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
+                                   MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                                   MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                                   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+                                   HEMI=hemi, $
+                                   BOTH_HEMIS=both_hemis, $
+                                   NORTH=north, $
+                                   SOUTH=south, $
+                                   LUN=lun
+  ENDIF
 
   ;;;;;;;;;;;;;;;
   ;;Check whether this is a maximus or fastloc struct

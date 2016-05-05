@@ -45,7 +45,8 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                                MINLSHELL=minL, $
                                MAXLSHELL=maxL, $
                                BINL=binL, $
-                               RESET_GOOD_INDS=reset_good_inds
+                               RESET_GOOD_INDS=reset_good_inds, $
+                               DO_NOT_SET_DEFAULTS=do_not_set_defaults
 
 
   COMPILE_OPT idl2
@@ -139,11 +140,14 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                              OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
                              KEEPME=keepMe, $
                              PARAMSTRING=paramString,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
-                             HOYDIA=hoyDia,LUN=lun,_EXTRA=e
+                             HOYDIA=hoyDia,LUN=lun,_EXTRA=e, $
+                             DO_NOT_SET_DEFAULTS=do_not_set_defaults
 
-  SET_UTCPLOT_PARAMS_AND_IND_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                                      PARAMSTRING=paramString, $
-                                      LUN=lun
+  IF ~KEYWORD_SET(do_not_set_defaults) THEN BEGIN
+     SET_UTCPLOT_PARAMS_AND_IND_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                         PARAMSTRING=paramString, $
+                                         LUN=lun
+  ENDIF
 
   ;; defOutIndsPrefix = 'fastLoc_intervals3'
   defOutIndsPrefix = 'fastLoc_intervals4'
@@ -170,13 +174,15 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ;;    RESTORE,outIndsFilename
   ;;    ;; WAIT,1
   ;; ENDIF ELSE BEGIN
-  good_i = get_chaston_ind(fl_fastLoc,satellite,lun,GET_TIME_I_NOT_ALFVENDB_I=1, $
+  good_i = GET_CHASTON_IND(fl_fastLoc,satellite,lun,GET_TIME_I_NOT_ALFVENDB_I=1, $
                            DBTIMES=FASTLOC__times,DBFILE=FASTLOC__dbFile, $
                            HEMI=hemi, $
-                           ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange,POYNTRANGE=poyntRange, $
+                           ORBRANGE=orbRange, $
+                           ALTITUDERANGE=altitudeRange, $
                            MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
                            DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
-                           HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd)
+                           HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd, $
+                           DO_NOT_SET_DEFAULTS=do_not_set_defaults)
   
   GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
      DBSTRUCT=fl_fastLoc, $

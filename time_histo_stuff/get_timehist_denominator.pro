@@ -51,6 +51,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                   PRINT_MAXANDMIN=print_mandm, $
                                   INDSFILEPREFIX=indsFilePrefix,INDSFILESUFFIX=indsFileSuffix, $
                                   BURSTDATA_EXCLUDED=burstData_excluded, $
+                                  DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                                   LUN=lun
 
   COMPILE_OPT idl2
@@ -101,6 +102,12 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
   ;;Get the appropriate divisor for IMF conditions
   IF KEYWORD_SET(do_IMF_conds) THEN BEGIN
      GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
+                                   MINMLT=minM,MAXMLT=maxM, $
+                                   BINM=binM, $
+                                   SHIFTM=shiftM, $
+                                   MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                                   DO_LSHELL=do_lshell, MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                                   HEMI=hemi, $
                                    ORBRANGE=orbRange, $
                                    ALTITUDERANGE=altitudeRange, $
                                    CHARERANGE=charERange, $
@@ -118,7 +125,6 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                    DO_ABS_BZMIN=abs_bzMin, $
                                    DO_ABS_BZMAX=abs_bzMax, $
                                    SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                                   HEMI=hemi, $
                                    DELAY=delay, $
                                    MULTIPLE_DELAYS=multiple_delays, $
                                    RESOLUTION_DELAY=delay_res, $
@@ -131,7 +137,10 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                    ;; FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastLoc_delta_t, $
                                    ;; FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, $
                                    FASTLOCOUTPUTDIR=fastLocOutputDir, $
-                                   BURSTDATA_EXCLUDED=burstData_excluded
+                                   BURSTDATA_EXCLUDED=burstData_excluded, $
+                                   DO_NOT_SET_DEFAULTS=do_not_set_defaults
+
+
 
      PRINTF,lun,FORMAT='("N fastLoc inds from IMF conds",T40,": ",I0)',N_ELEMENTS(fastLocInterped_i)
 
@@ -141,6 +150,17 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
         nStart             = N_ELEMENTS(fastLocInterped_i)
         GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_UTC_i,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                   MINMLT=minM, $
+                                   MAXMLT=maxM, $
+                                   BINM=binM, $
+                                   SHIFTM=shiftM, $
+                                   MINILAT=minI, $
+                                   MAXILAT=maxI, $
+                                   BINI=binI, $
+                                   DO_LSHELL=do_lshell, $
+                                   MINLSHELL=minL, $
+                                   MAXLSHELL=maxL, $
+                                   BINL=binL, $
                                    HEMI=hemi, $
                                    HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                    STORMSTRING=stormString, $
@@ -149,7 +169,9 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                    OUTINDSPREFIX=indsFilePrefix,OUTINDSSUFFIX=indsFileSuffix,OUTINDSFILEBASENAME=outIndsBasename, $
                                    ;; FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
                                    ;; FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, $
-                                   FASTLOCOUTPUTDIR=fastLocOutputDir
+                                   FASTLOCOUTPUTDIR=fastLocOutputDir, $
+                                   DO_NOT_SET_DEFAULTS=do_not_set_defaults
+
 
         PRINTF,lun,FORMAT='("N fastLoc inds from UTC ranges",T40,": ",I0)',N_ELEMENTS(fastLocInterped_UTC_i)
         fastLocInterped_i = CGSETINTERSECTION(fastLocInterped_i,fastLocInterped_UTC_i)
@@ -162,6 +184,17 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
      IF KEYWORD_SET(do_UTC_range) THEN BEGIN
         GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i,T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                   MINMLT=minM, $
+                                   MAXMLT=maxM, $
+                                   BINM=binM, $
+                                   SHIFTM=shiftM, $
+                                   MINILAT=minI, $
+                                   MAXILAT=maxI, $
+                                   BINI=binI, $
+                                   DO_LSHELL=do_lshell, $
+                                   MINLSHELL=minL, $
+                                   MAXLSHELL=maxL, $
+                                   BINL=binL, $
                                    HEMI=hemi, $
                                    HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                    STORMSTRING=stormString, $
@@ -170,7 +203,8 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                    OUTINDSPREFIX=indsFilePrefix,OUTINDSSUFFIX=indsFileSuffix,OUTINDSFILEBASENAME=outIndsBasename, $
                                    ;; FASTLOC_STRUCT=FL_fastLoc,FASTLOC_TIMES=FASTLOC__Times,FASTLOC_DELTA_T=FASTLOC__delta_t, $
                                    ;; FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, $
-                                   FASTLOCOUTPUTDIR=fastLocOutputDir
+                                   FASTLOCOUTPUTDIR=fastLocOutputDir, $
+                                   DO_NOT_SET_DEFAULTS=do_not_set_defaults
 
         PRINTF,lun,FORMAT='("N fastLoc inds from UTC ranges",T40,": ",I0)',N_ELEMENTS(fastLocInterped_UTC_i)
      ENDIF ELSE BEGIN
@@ -195,7 +229,8 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                                                            CLOCKSTR=clockStr, $
                                                                            /DO_NOT_CONSIDER_IMF, $
                                                                            HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd, $
-                                                                           NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=1)
+                                                                           NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=1, $
+                                                                           DO_NOT_SET_DEFAULTS=do_not_set_defaults)
            fastLocInterped_i = fastLocInterped_i_list[0]
         ENDELSE
      ENDELSE

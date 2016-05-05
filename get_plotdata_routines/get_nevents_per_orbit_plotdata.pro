@@ -6,6 +6,7 @@ PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                    MINI=minI,MAXI=maxI,BINI=binI, $
                                    DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                    NEVENTPERORBRANGE=nEventPerOrbRange, $
+                                   NEVENTPERORBAUTOSCALE=nEventPerOrbAutoscale, $
                                    LOGNEVENTPERORB=logNEventPerOrb, $
                                    DIVNEVBYTOTAL=divNEvByTotal, $
                                    H2D_NONZERO_NEV_I=h2d_Nonzero_nEv_i, $
@@ -72,6 +73,11 @@ PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.lim       = [0,ALOG10(h2dStr.lim[1])]
   ENDIF
   
+  IF KEYWORD_SET(nEventPerOrbAutoscale) THEN BEGIN
+     PRINT,'Autoscaling nEventPerOrb plot...'
+     h2dStr.lim       = [MIN(h2dStr.data[div_i]),MAX(h2dStr.data[div_i])]
+  ENDIF
+
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      IF ~KEYWORD_SET(logNEventPerOrb) THEN BEGIN
         fmt    = 'G10.4' 

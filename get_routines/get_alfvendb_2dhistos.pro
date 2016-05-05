@@ -119,6 +119,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NEVENTPERORBPLOT=nEventPerOrbPlot, $
                           LOGNEVENTPERORB=logNEventPerOrb, $
                           NEVENTPERORBRANGE=nEventPerOrbRange, $
+                          NEVENTPERORBAUTOSCALE=nEventPerOrbAutoscale, $
                           DIVNEVBYTOTAL=divNEvByTotal, $
                           NEVENTPERMINPLOT=nEventPerMinPlot, $
                           NEVENTPERMINRANGE=nEventPerMinRange, $
@@ -180,6 +181,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           RESET_GOOD_INDS=reset_good_inds, $
                           FANCY_PLOTNAMES=fancy_plotNames, $
+                          DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                           LUN=lun
   
   COMPILE_OPT idl2
@@ -302,6 +304,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                                                  INDSFILEPREFIX=ParamStrPrefix, $
                                                  INDSFILESUFFIX=paramStrSuffix, $
+                                                 DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                                                  BURSTDATA_EXCLUDED=burstData_excluded)
 
      
@@ -472,6 +475,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     MAXL=maxL, $
                                     BINL=binL, $
                                     NEVENTPERORBRANGE=nEventPerOrbRange, $
+                                    NEVENTPERORBAUTOSCALE=nEventPerOrbAutoscale, $
                                     LOGNEVENTPERORB=logNEventPerOrb, $
                                     DIVNEVBYTOTAL=divNEvByTotal, $
                                     H2DSTR=h2dStr, $

@@ -172,6 +172,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                                  DO_LSHELL=do_lShell,REVERSE_LSHELL=reverse_lShell, $
                                  MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+                                 MIN_MAGCURRENT=minMC, $
+                                 MAX_NEGMAGCURRENT=maxNegMC, $
                                  BOTH_HEMIS=both_hemis, $
                                  NORTH=north, $
                                  SOUTH=south, $
@@ -464,6 +466,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
 
   GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
                         KEEPME=keepMe, DATARAWPTRARR=dataRawPtrArr,DATANAMEARR=dataNameArr, $
+                        /DO_NOT_SET_DEFAULTS, $
                         MINMLT=minM,MAXMLT=maxM, $
                         BINMLT=binM, $
                         SHIFTMLT=shiftM, $

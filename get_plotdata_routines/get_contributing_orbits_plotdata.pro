@@ -96,7 +96,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
      IF ridicCount GT 0 THEN BEGIN
         PRINT,"What on earth??? I'm being told there are places where FAST has never been, and yet has data."
         h2dStr.title                          = h2dStr.title + 'P GE 1!!'
-        h2dStr.data[ridiculous_i]             = 1
+        ;; h2dStr.data[ridiculous_i]             = 1
      ENDIF
   ENDIF ELSE BEGIN
      h2d_nonZero_contribOrbs_i                = WHERE(h2dStr.data GT 0,/NULL)
