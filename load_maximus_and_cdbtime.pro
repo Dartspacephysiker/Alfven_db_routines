@@ -13,7 +13,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
                              DO_NOT_MAP_WIDTH_X=do_not_map_width_x, $
                              DO_CHASTDB=chastDB, $
                              DO_DESPUNDB=despunDB, $
-                             GET_GOOD_I=get_good_i, $
+                             ;; GET_GOOD_I=get_good_i, $
+                             HEMI__GOOD_I=hemi__good_i, $
                              USING_HEAVIES=using_heavies, $
                              FORCE_LOAD_MAXIMUS=force_load_maximus, $
                              FORCE_LOAD_CDBTIME=force_load_cdbTime, $
@@ -117,7 +118,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
   ENDIF
 
 
-  IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI='BOTH')
+  ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI='BOTH')
+  IF ARG_PRESENT(good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH')
 
   out_maximus = MAXIMUS__maximus
 

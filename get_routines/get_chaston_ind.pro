@@ -31,13 +31,16 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
                          USING_HEAVIES=using_heavies, $
                          NO_BURSTDATA=no_burstData, $
-                         GET_TIME_I_NOT_ALFVENDB_I=get_time_i_not_alfvendb_i, $
+                         GET_TIME_I_NOT_ALFVENDB_I=get_time_i, $
                          GET_ALFVENDB_I=get_alfvendb_i, $
                          CORRECT_FLUXES=correct_fluxes, $
                          RESET_GOOD_INDS=reset_good_inds, $
                          DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                          PRINT_PARAM_SUMMARY=print_param_summary, $
-                         FASTLOC_DELTA_T=fastloc_delta_t
+                         FASTLOC_DELTA_T=fastloc_delta_t, $
+                         OUT_MAXIMUS=out_maximus, $
+                         OUT_FASTLOC=out_fastloc
+                         
   COMPILE_OPT idl2
  
   COMMON MLT_ILAT_MAGC_ETC,MIMC__RECALCULATE, $
@@ -61,7 +64,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      MAXIMUS__dbFile,MAXIMUS__dbTimesFile, $
      MAXIMUS__RECALCULATE
 
-  COMMON FL_VARS,FL_fastLoc,FASTLOC__times,FASTLOC__delta_t, $
+  COMMON FL_VARS,FL__fastLoc,FASTLOC__times,FASTLOC__delta_t, $
      FASTLOC__good_i,FASTLOC__cleaned_i,FASTLOC__HAVE_GOOD_I, $
      FASTLOC__dbFile,FASTLOC__dbTimesFile
 
@@ -69,11 +72,11 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
   defHwMAurOval=0
   defHwMKpInd=7
 
-  defLun = -1
+  defLun                                          = -1
 
-  ;; defPrintSummary = 0
+  ;; defPrintSummary                              = 0
 
-  IF ~KEYWORD_SET(lun) THEN lun = defLun ;stdout
+  IF ~KEYWORD_SET(lun) THEN lun                   = defLun ;stdout
 
   IF ~KEYWORD_SET(do_not_set_defaults) THEN BEGIN
      SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
@@ -90,71 +93,71 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
   ;;;;;;;;;;;;;;;
   ;;Check whether this is a maximus or fastloc struct
   IF KEYWORD_SET(dbStruct) THEN BEGIN
-     IF KEYWORD_SET(get_time_i_NOT_alfvendb_i) THEN BEGIN
-        is_maximus = 0
+     IF KEYWORD_SET(get_time_i) THEN BEGIN
+        is_maximus                                = 0
      ENDIF ELSE BEGIN
         IF KEYWORD_SET(get_alfvendb_i) THEN BEGIN
-           is_maximus = 1
+           is_maximus                             = 1
         ENDIF ELSE BEGIN
            IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
         ENDELSE
      ENDELSE
   ENDIF ELSE BEGIN
-     IF KEYWORD_SET(get_time_i_NOT_alfvendb_i) THEN BEGIN
-        is_maximus = 0
+     IF KEYWORD_SET(get_time_i) THEN BEGIN
+        is_maximus                                = 0
      ENDIF ELSE BEGIN
         IF KEYWORD_SET(get_alfvendb_i) THEN BEGIN
-           is_maximus = 1
+           is_maximus                             = 1
         ENDIF
      ENDELSE
   ENDELSE
 
-  IF ~KEYWORD_SET(get_alfven_db_i) AND ~KEYWORD_SET(get_time_i_not_alfvendb_i) AND ~KEYWORD_SET(dbStruct) THEN BEGIN
+  IF ~KEYWORD_SET(get_alfven_db_i) AND ~KEYWORD_SET(get_time_i) AND ~KEYWORD_SET(dbStruct) THEN BEGIN
      PRINTF,lun,"Assuming this is maximus ..."
-     is_maximus = 1             ;We assume this is maximus
+     is_maximus                                   = 1             ;We assume this is maximus
   ENDIF
 
   ;;Get the databases if they're already in mem
   IF is_maximus THEN BEGIN
      IF N_ELEMENTS(MAXIMUS__maximus) NE 0 AND N_ELEMENTS(MAXIMUS__times) NE 0 THEN BEGIN
-        dbStruct                 = MAXIMUS__maximus
-        dbTimes                  = MAXIMUS__times
-        dbFile                   = MAXIMUS__dbFile
-        dbTimesFile              = MAXIMUS__dbTimesFile
+        dbStruct                                  = MAXIMUS__maximus
+        dbTimes                                   = MAXIMUS__times
+        dbFile                                    = MAXIMUS__dbFile
+        dbTimesFile                               = MAXIMUS__dbTimesFile
      ENDIF ELSE BEGIN
         IF N_ELEMENTS(correct_fluxes) EQ 0 THEN BEGIN
            IF N_ELEMENTS(dbStruct) GT 0 THEN BEGIN
               PRINTF,lun,'GET_CHASTON_IND: Not attempting to correct fluxes since dbStruct already loaded ...'
-              correct_fluxes = 0
+              correct_fluxes                      = 0
            ENDIF ELSE BEGIN
-              correct_fluxes = 1
+              correct_fluxes                      = 1
            ENDELSE
         ENDIF
         LOAD_MAXIMUS_AND_CDBTIME,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile, $
                                  DO_CHASTDB=chastDB, $
                                  DO_DESPUNDB=despunDB, $
                                  CORRECT_FLUXES=correct_fluxes
-        MAXIMUS__maximus         = dbStruct
-        MAXIMUS__times           = dbTimes
-        MAXIMUS__dbFile          = dbFile
-        MAXIMUS__dbTimesFile     = dbTimesFile
-        MIMC__despunDB           = KEYWORD_SET(despunDB)
-        MIMC__chastDB            = KEYWORD_SET(chastDB)
+        MAXIMUS__maximus                          = dbStruct
+        MAXIMUS__times                            = dbTimes
+        MAXIMUS__dbFile                           = dbFile
+        MAXIMUS__dbTimesFile                      = dbTimesFile
+        MIMC__despunDB                            = KEYWORD_SET(despunDB)
+        MIMC__chastDB                             = KEYWORD_SET(chastDB)
      ENDELSE
   ENDIF ELSE BEGIN
-     IF N_ELEMENTS(FL_fastloc) NE 0 AND N_ELEMENTS(FASTLOC__times) NE 0 THEN BEGIN
-        dbStruct                 = FL_fastloc
-        dbTimes                  = FASTLOC__times
-        fastloc_delta_t          = FASTLOC__delta_t
-        dbFile                   = FASTLOC__dbFile
-        dbTimesFile              = FASTLOC__dbTimesFile
+     IF N_ELEMENTS(FL__fastLoc) NE 0 AND N_ELEMENTS(FASTLOC__times) NE 0 THEN BEGIN
+        dbStruct                                  = FL__fastLoc
+        dbTimes                                   = FASTLOC__times
+        fastloc_delta_t                           = FASTLOC__delta_t
+        dbFile                                    = FASTLOC__dbFile
+        dbTimesFile                               = FASTLOC__dbTimesFile
      ENDIF ELSE BEGIN
         LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,fastloc_delta_t,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile
-        FL_fastloc                  = dbStruct
-        FASTLOC__times           = dbTimes
-        FASTLOC__delta_t         = fastloc_delta_t
-        FASTLOC__dbFile          = dbFile
-        FASTLOC__dbTimesFile     = dbTimesFile
+        FL__fastLoc                                = dbStruct
+        FASTLOC__times                            = dbTimes
+        FASTLOC__delta_t                          = fastloc_delta_t
+        FASTLOC__dbFile                           = dbFile
+        FASTLOC__dbTimesFile                      = dbTimesFile
      ENDELSE
   ENDELSE
 
@@ -164,7 +167,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
         IF KEYWORD_SET(reset_good_inds) THEN BEGIN
            PRINT,'Resetting good fastLoc inds...'
         ENDIF
-        calculate        = 1
+        calculate                                 = 1
      ENDIF ELSE BEGIN
         IF N_ELEMENTS(FASTLOC__good_i) NE 0 THEN BEGIN
            CHECK_FOR_NEW_IND_CONDS,is_maximus, $
@@ -197,9 +200,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                                    NIGHTSIDE=nightside, $
                                    HAVE_GOOD_I=have_good_i, $
                                    LUN=lun
-           calculate     = MIMC__RECALCULATE
-           MAXIMUS__HAVE_GOOD_I = have_good_i
-           FASTLOC__HAVE_GOOD_I = have_good_i
+           calculate                              = MIMC__RECALCULATE
+           MAXIMUS__HAVE_GOOD_I                   = have_good_i
+           FASTLOC__HAVE_GOOD_I                   = have_good_i
         ENDIF ELSE BEGIN
            PRINT,'But you should already have FASTLOC__good_i!!'
            STOP
@@ -210,7 +213,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
         IF KEYWORD_SET(reset_good_inds) THEN BEGIN
            PRINT,'Resetting good maximus inds...'
         ENDIF
-        calculate        = 1
+        calculate                                 = 1
      ENDIF ELSE BEGIN
         IF N_ELEMENTS(MAXIMUS__good_i) NE 0 THEN BEGIN
            CHECK_FOR_NEW_IND_CONDS,is_maximus, $
@@ -242,9 +245,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                                    NIGHTSIDE=nightside, $
                                    HAVE_GOOD_I=have_good_i, $
                                    LUN=lun
-           calculate     = MIMC__RECALCULATE
-           MAXIMUS__HAVE_GOOD_I = have_good_i
-           FASTLOC__HAVE_GOOD_I = have_good_i
+           calculate                              = MIMC__RECALCULATE
+           MAXIMUS__HAVE_GOOD_I                   = have_good_i
+           FASTLOC__HAVE_GOOD_I                   = have_good_i
         ENDIF ELSE BEGIN
            PRINT,'But you should already have MAXIMUS__good_i!!'
            STOP
@@ -254,11 +257,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
 
   IF KEYWORD_SET(calculate) THEN BEGIN
 
-     IF ~KEYWORD_SET(HwMAurOval) THEN HwMAurOval = defHwMAurOval
-     IF ~KEYWORD_SET(HwMKpInd) THEN HwMKpInd     = defHwMKpInd
+     IF ~KEYWORD_SET(HwMAurOval) THEN HwMAurOval  = defHwMAurOval
+     IF ~KEYWORD_SET(HwMKpInd) THEN HwMKpInd      = defHwMKpInd
 
-
-     ;; IF ~KEYWORD_SET(print_param_summary) THEN print_param_summary = defPrintSummary
 
      ;;Welcome message
      printf,lun,""
@@ -268,35 +269,35 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
 
   ;;;;;;;;;;;;
      ;;Handle longitudes
-     MIMC__minMLT = minM
-     MIMC__maxMLT = maxM
-     MIMC__binMLT = binM
-     MIMC__dayside = KEYWORD_SET(dayside)
-     MIMC__nightside = KEYWORD_SET(nightside)
-     mlt_i = GET_MLT_INDS(dbStruct,MIMC__minMLT,MIMC__maxMLT, $
-                          DAYSIDE=MIMC__dayside,NIGHTSIDE=MIMC__nightside, $
-                          N_MLT=n_mlt,N_OUTSIDE_MLT=n_outside_MLT,LUN=lun)
-
+     MIMC__minMLT                                 = minM
+     MIMC__maxMLT                                 = maxM
+     MIMC__binMLT                                 = binM
+     MIMC__dayside                                = KEYWORD_SET(dayside)
+     MIMC__nightside                              = KEYWORD_SET(nightside)
+     mlt_i                                        = GET_MLT_INDS(dbStruct,MIMC__minMLT,MIMC__maxMLT, $
+                                                                 DAYSIDE=MIMC__dayside,NIGHTSIDE=MIMC__nightside, $
+                                                                 N_MLT=n_mlt,N_OUTSIDE_MLT=n_outside_MLT,LUN=lun)
+     
      ;;;;;;;;;;;;
      ;;Handle latitudes, combine with mlt
-     MIMC__hemi       = hemi
-     MIMC__north      = KEYWORD_SET(north)
-     MIMC__south      = KEYWORD_SET(south)
-     MIMC__both_hemis      = KEYWORD_SET(both_hemis)
+     MIMC__hemi                                   = hemi
+     MIMC__north                                  = KEYWORD_SET(north)
+     MIMC__south                                  = KEYWORD_SET(south)
+     MIMC__both_hemis                             = KEYWORD_SET(both_hemis)
      IF KEYWORD_SET(do_lShell) THEN BEGIN
-        MIMC__minLshell = minL
-        MIMC__maxLshell = maxL
-        MIMC__binLshell = binL
-        lshell_i = GET_LSHELL_INDS(dbStruct,MIMC__minLshell,MIMC__maxLshell,MIMC__hemi, $
-                                   N_LSHELL=n_lshell,N_NOT_LSHELL=n_not_lshell,LUN=lun)
-        region_i = CGSETINTERSECTION(lshell_i,mlt_i)
+        MIMC__minLshell                           = minL
+        MIMC__maxLshell                           = maxL
+        MIMC__binLshell                           = binL
+        lshell_i                                  = GET_LSHELL_INDS(dbStruct,MIMC__minLshell,MIMC__maxLshell,MIMC__hemi, $
+                                                                    N_LSHELL=n_lshell,N_NOT_LSHELL=n_not_lshell,LUN=lun)
+        region_i                                  = CGSETINTERSECTION(lshell_i,mlt_i)
      ENDIF ELSE BEGIN
-        MIMC__minILAT = minI
-        MIMC__maxILAT = maxI
-        MIMC__binILAT = binI
-        ilat_i   = GET_ILAT_INDS(dbStruct,MIMC__minILAT,MIMC__maxILAT,MIMC__hemi, $
-                                 N_ILAT=n_ilat,N_NOT_ILAT=n_not_ilat,LUN=lun)
-        region_i = CGSETINTERSECTION(ilat_i,mlt_i)
+        MIMC__minILAT                             = minI
+        MIMC__maxILAT                             = maxI
+        MIMC__binILAT                             = binI
+        ilat_i                                    = GET_ILAT_INDS(dbStruct,MIMC__minILAT,MIMC__maxILAT,MIMC__hemi, $
+                                                                  N_ILAT=n_ilat,N_NOT_ILAT=n_not_ilat,LUN=lun)
+        region_i                                  = CGSETINTERSECTION(ilat_i,mlt_i)
      ENDELSE
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -310,10 +311,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      ENDELSE
 
      IF is_maximus THEN BEGIN
-        MIMC__minMC              = minMC
-        MIMC__maxNegMC           = maxNegMC
-        magc_i = GET_MAGC_INDS(dbStruct,MIMC__minMC,MIMC__maxNegMC, $
-                               N_OUTSIDE_MAGC=n_magc_outside_range)
+        MIMC__minMC                               = minMC
+        MIMC__maxNegMC                            = maxNegMC
+        magc_i                                    = GET_MAGC_INDS(dbStruct,MIMC__minMC,MIMC__maxNegMC, $
+                                                                  N_OUTSIDE_MAGC=n_magc_outside_range)
         region_i=CGSETINTERSECTION(region_i,magc_i)
      ENDIF
 
@@ -321,24 +322,34 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
   ;;;;;;;;;;;;;;;;;;;;;;;;;;
      ;;Limits on orbits to use?
      IF KEYWORD_SET (orbRange) THEN BEGIN
-        MIMC__orbRange            = orbRange
-        IF N_ELEMENTS(orbRange) EQ 2 THEN BEGIN
-           orb_i = GET_ORBRANGE_INDS(dbStruct,MIMC__orbRange[0],MIMC__orbRange[1],LUN=lun)
-           region_i=CGSETINTERSECTION(region_i,orb_i)
-        ENDIF ELSE BEGIN
-           printf,lun,"Incorrect input for keyword 'orbRange'!!"
-           printf,lun,"Please use orbRange=[minOrb maxOrb]"
-           RETURN, -1
-        ENDELSE
+        MIMC__orbRange                            = orbRange
+        CASE N_ELEMENTS(orbRange) OF
+           1: BEGIN
+              MIMC__orbRange                      = [orbRange,orbRange]
+           END
+           2: BEGIN
+              MIMC__orbRange                      = orbRange
+           END
+           ELSE: BEGIN
+              printf,lun,"Incorrect input for keyword 'orbRange'!!"
+              printf,lun,"Please use orbRange=[minOrb maxOrb] or a single element"
+              RETURN, -1
+           END
+        ENDCASE
+        ;; IF N_ELEMENTS(orbRange) EQ 2 THEN BEGIN
+        orb_i                                     = GET_ORBRANGE_INDS(dbStruct,MIMC__orbRange[0],MIMC__orbRange[1],LUN=lun)
+        region_i                                  = CGSETINTERSECTION(region_i,orb_i)
+        ;; ENDIF ELSE BEGIN
+        ;; ENDELSE
      ENDIF
      
 
      ;;limits on altitudes to use?
      IF KEYWORD_SET (altitudeRange) THEN BEGIN
-        MIMC__altitudeRange   = altitudeRange
+        MIMC__altitudeRange                       = altitudeRange
         IF N_ELEMENTS(altitudeRange) EQ 2 THEN BEGIN
-           alt_i = GET_ALTITUDE_INDS(dbStruct,MIMC__altitudeRange[0],MIMC__altitudeRange[1],LUN=lun)
-           region_i=CGSETINTERSECTION(region_i,alt_i)
+           alt_i                                  = GET_ALTITUDE_INDS(dbStruct,MIMC__altitudeRange[0],MIMC__altitudeRange[1],LUN=lun)
+           region_i                               = CGSETINTERSECTION(region_i,alt_i)
         ENDIF ELSE BEGIN
            printf,lun,"Incorrect input for keyword 'altitudeRange'!!"
            printf,lun,"Please use altitudeRange=[minAlt maxAlt]"
@@ -350,13 +361,16 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      ;;limits on characteristic electron energies to use?
      IF KEYWORD_SET (charERange) AND is_maximus THEN BEGIN
         IF N_ELEMENTS(charERange) EQ 2 THEN BEGIN
-           MIMC__charERange   = charERange
+           MIMC__charERange                       = charERange
            
-           IF KEYWORD_SET(chastDB) THEN  orb_i=where(dbStruct.char_elec_energy GE MIMC__charERange[0] AND $
-                                                     dbStruct.char_elec_energy LE MIMC__charERange[1]) $
-           ELSE orb_i=where(dbStruct.max_chare_losscone GE MIMC__charERange[0] AND $
+           IF KEYWORD_SET(chastDB) THEN BEGIN
+              chare_i                             = WHERE(dbStruct.char_elec_energy GE MIMC__charERange[0] AND $
+                            dbStruct.char_elec_energy LE MIMC__charERange[1])
+           ENDIF ELSE BEGIN
+              chare_i                             = WHERE(dbStruct.max_chare_losscone GE MIMC__charERange[0] AND $
                             dbStruct.max_chare_losscone LE MIMC__charERange[1])
-           region_i=CGSETINTERSECTION(region_i,orb_i)
+           ENDELSE
+           region_i                               = CGSETINTERSECTION(region_i,chare_i)
         ENDIF ELSE BEGIN
            printf,lun,"Incorrect input for keyword 'charERange'!!"
            printf,lun,"Please use charERange=[minCharE maxCharE]"
@@ -365,10 +379,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      ENDIF
 
      IF KEYWORD_SET (poyntRange) THEN BEGIN
-        MIMC__poyntRange   = poyntRange
+        MIMC__poyntRange                          = poyntRange
         IF N_ELEMENTS(poyntRange) EQ 2 THEN BEGIN
-           pFlux_i = GET_PFLUX_INDS(dbStruct,MIMC__poyntRange[0],MIMC__poyntRange[1],LUN=lun)
-           region_i=CGSETINTERSECTION(region_i,pFlux_i)
+           pFlux_i                                = GET_PFLUX_INDS(dbStruct,MIMC__poyntRange[0],MIMC__poyntRange[1],LUN=lun)
+           region_i                               = CGSETINTERSECTION(region_i,pFlux_i)
         ENDIF ELSE BEGIN
            printf,lun,"Incorrect input for keyword 'poyntRange'!!"
            printf,lun,"Please use poyntRange=[minpFlux, maxpFlux]"
@@ -377,7 +391,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      ENDIF
 
      ;; IF KEYWORD_SET(poyntRange) AND is_maximus THEN BEGIN
-     ;;    MIMC__poyntRange   = poyntRange
+     ;;    MIMC__poyntRange                       = poyntRange
      ;;    IF N_ELEMENTS(poyntRange) NE 2 OR (MIMC__poyntRange[1] LE MIMC__poyntRange[0]) THEN BEGIN
      ;;       PRINT,"Invalid Poynting range specified! poyntRange should be a two-element vector, [minPoynt maxPoynt]"
      ;;       PRINT,"No Poynting range set..."
@@ -394,49 +408,47 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      ;;Only so many are useable, since ACE data start in 1998
      
      IF KEYWORD_SET(satellite) THEN BEGIN
-        sat_i=GET_SATELLITE_INDS(dbStruct,satellite,LUN=lun)
-        good_i=region_i[where(region_i GE sat_i,nGood,complement=lost,ncomplement=nlost)]
-        lost=region_i[lost]
+        sat_i                                     = GET_SATELLITE_INDS(dbStruct,satellite,LUN=lun)
+        good_i                                    = region_i[where(region_i GE sat_i,nGood,complement=lost,ncomplement=nlost)]
+        lost                                      = region_i[lost]
      ENDIF ELSE BEGIN
-        good_i = region_i
+        good_i                                    = region_i
      ENDELSE
 
      ;;Now, clear out all the garbage (NaNs & Co.)
-     ;; IF KEYWORD_SET(chastDB) THEN restore,defChastDB_cleanIndFile ELSE cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun)
-     ;; IF KEYWORD_SET(chastDB) THEN cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun,/IS_CHASTDB) ELSE cleaned_i = alfven_db_cleaner(dbStruct,LUN=lun)
      IF is_maximus THEN BEGIN
         IF N_ELEMENTS(MAXIMUS__cleaned_i) EQ 0 THEN BEGIN
-           MAXIMUS__cleaned_i = ALFVEN_DB_CLEANER(dbStruct,LUN=lun, $
-                                                  IS_CHASTDB=chastDB, $
-                                                  SAMPLE_T_RESTRICTION=sample_t_restriction, $
-                                                  DO_LSHELL=DO_lshell, $
-                                                  USING_HEAVIES=using_heavies)
+           MAXIMUS__cleaned_i                     = ALFVEN_DB_CLEANER(dbStruct,LUN=lun, $
+                                                                      IS_CHASTDB=chastDB, $
+                                                                      SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                                                                      DO_LSHELL=DO_lshell, $
+                                                                      USING_HEAVIES=using_heavies)
            IF MAXIMUS__cleaned_i EQ !NULL THEN BEGIN
               PRINTF,lun,"Couldn't clean Alfvén DB! Sup with that?"
               STOP
            ENDIF ELSE BEGIN
            ENDELSE
         ENDIF
-        good_i=CGSETINTERSECTION(good_i,MAXIMUS__cleaned_i) 
+        good_i                                    = CGSETINTERSECTION(good_i,MAXIMUS__cleaned_i) 
      ENDIF ELSE BEGIN
         IF N_ELEMENTS(FASTLOC__cleaned_i) EQ 0 THEN BEGIN
-           FASTLOC__cleaned_i = fastloc_cleaner(dbStruct,LUN=lun)
+           FASTLOC__cleaned_i                     = fastloc_cleaner(dbStruct,LUN=lun)
            IF FASTLOC__cleaned_i EQ !NULL THEN BEGIN
               PRINTF,lun,"Couldn't clean fastloc DB! Sup with that?"
               STOP
            ENDIF ELSE BEGIN
            ENDELSE
         ENDIF
-        good_i=CGSETINTERSECTION(good_i,FASTLOC__cleaned_i) 
+        good_i                                    = CGSETINTERSECTION(good_i,FASTLOC__cleaned_i) 
      ENDELSE
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                 ;Now some other user-specified exclusions set by keyword
 
      IF (~KEYWORD_SET(chastDB) AND is_maximus) THEN BEGIN
-        burst_i = WHERE(dbStruct.burst,nBurst,COMPLEMENT=survey_i,NCOMPLEMENT=nSurvey,/NULL)
+        burst_i                                   = WHERE(dbStruct.burst,nBurst,COMPLEMENT=survey_i,NCOMPLEMENT=nSurvey,/NULL)
         IF KEYWORD_SET(no_burstData) THEN BEGIN
-           good_i = CGSETINTERSECTION(survey_i,good_i)
+           good_i                                 = CGSETINTERSECTION(survey_i,good_i)
            
            printf,lun,""
            printf,lun,"You're losing " + strtrim(nBurst) + " events because you've excluded burst data."
@@ -469,20 +481,28 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      printf,lun,""
 
      IF is_maximus THEN BEGIN
-        MAXIMUS__good_i      = good_i
-        MAXIMUS__HAVE_GOOD_I = 1
+        MAXIMUS__good_i                           = good_i
+        MAXIMUS__HAVE_GOOD_I                      = 1
      ENDIF ELSE BEGIN
-        FASTLOC__good_i      = good_i
-        FASTLOC__HAVE_GOOD_I = 1
+        FASTLOC__good_i                           = good_i
+        FASTLOC__HAVE_GOOD_I                      = 1
      ENDELSE
 
   ENDIF ELSE BEGIN
      IF is_maximus THEN BEGIN
-        good_i               = MAXIMUS__good_i 
-        MAXIMUS__HAVE_GOOD_I = 1
+        good_i                                    = MAXIMUS__good_i 
+        MAXIMUS__HAVE_GOOD_I                      = 1
+        IF ARG_PRESENT(out_maximus) THEN BEGIN
+           PRINT,'Giving you maximus...'
+           out_maximus = MAXIMUS__maximus
+        ENDIF
      ENDIF ELSE BEGIN
-        good_i               = FASTLOC__good_i
-        FASTLOC__HAVE_GOOD_I = 1
+        good_i                                    = FASTLOC__good_i
+        FASTLOC__HAVE_GOOD_I                      = 1
+        IF ARG_PRESENT(out_fastLoc) AND N_ELEMENTS(out_fastLoc) EQ 0 THEN BEGIN
+           PRINT,'Giving you fastLoc...'
+           out_fastLoc = FL__fastLoc
+        ENDIF
      ENDELSE
   ENDELSE
 

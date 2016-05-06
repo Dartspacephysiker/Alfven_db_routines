@@ -42,6 +42,7 @@
 ;-
 
 PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
+                               DO_DESPUNDB=do_despunDB, $
                                DAYSIDE=dayside,NIGHTSIDE=nightside, $
                                HEMI=hemi, $
                                NORTH=north,SOUTH=south, $
@@ -58,20 +59,25 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
                                PLOT_I_FILE=plot_i_file, PLOT_I_DIR=plot_i_dir, $
                                JUST_PLOT_I=just_plot_i, $
                                PLOT_I_LIST=plot_i_list, COLOR_LIST=color_list, $
+                               IN_ORBSTRARR_LIST=in_orbStrArr_list, $
+                               IN_MAP=map, $
                                SAVEPLOT=savePlot, $
                                SPNAME=sPName, $
                                PLOTDIR=plotDir, $
                                CLOSE_AFTER_SAVE=close_after_save, $
                                STRANS=sTrans, $
                                PLOTTITLE=plotTitle, $
+                               ADD_LINE=add_line, $
+                               LINESTYLE=lineStyle, $
+                               NO_SYMBOL=no_symbol, $
                                ADD_ORBIT_LEGEND=add_orbit_legend, $
                                OUTPUT_ORBIT_DETAILS=output_orbit_details, $
                                OUT_ORBSTRARR_LIST=out_orbStrArr_list, $
+                               OUT_WINDOW=out_window, $
+                               OUT_MAP=out_map, $
                                _EXTRA = e
 
   COMPILE_OPT idl2
-
-  @utcplot_defaults.pro
 
   ;; Defaults
   defMinI = 50
@@ -81,6 +87,8 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   defMaxM = 24
 
   defTSLat = 75  ;true-scale latitude
+
+  @utcplot_defaults.pro
 
   defOutPref = 'scatterplots_polarproj'
   defExt = '.png'
@@ -186,12 +194,14 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   ;;****************************************
   ;; Now the rest of the stuff
 
-  LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
-                           DB_TFILE=DB_tFile, $
-                           DBDIR=DBDir, $
-                           DBFILE=DBFile, $
-                           DO_DESPUNDB=do_despunDB, $
-                           USING_HEAVIES=using_heavies
+  IF N_ELEMENTS(maximus) EQ 0 THEN BEGIN
+     LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
+                              DB_TFILE=DB_tFile, $
+                              DBDIR=DBDir, $
+                              DBFILE=DBFile, $
+                              DO_DESPUNDB=do_despunDB, $
+                              USING_HEAVIES=using_heavies
+  ENDIF
 
   IF KEYWORD_SET(plot_i_file) THEN BEGIN
      restore,plot_i_dir+plot_i_file
@@ -289,65 +299,68 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   ;;Are we going to go with each orbit, then?
   IF KEYWORD_SET(add_orbit_legend) OR KEYWORD_SET(output_orbit_details) THEN BEGIN
      ;;This will give back a list of arrays of orbit structures (mmhmm)
-     modPlot_i_list = SPLIT_IND_LIST_INTO_ORB_STRUCTARR_LIST(modPlot_i_list,maximus)
+     modPlot_i_list = KEYWORD_SET(in_orbStrArr_list) ? LIST(in_orbStrArr_list) : SPLIT_IND_LIST_INTO_ORB_STRUCTARR_LIST(modPlot_i_list,maximus)
   ENDIF
      
-  IF N_ELEMENTS(window) EQ 0 THEN BEGIN
+  IF ~ISA(window) THEN BEGIN
      window     = WINDOW(DIMENSIONS=[900,900])
-  ENDIF
+  ENDIF ELSE BEGIN
+     window.setCurrent
+  ENDELSE
 
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Set up a map
   ;;Polar Stereographic
   ;;SEMIMAJOR_AXIS, SEMIMINOR_AXIS, CENTER_LONGITUDE, TRUE_SCALE_LATITUDE, FALSE_EASTING, FALSE_NORTHING
-  map = MAP('Polar Stereographic', $
-            CENTER_LONGITUDE=centerLon, $
-            TRUE_SCALE_LATITUDE=tsLat, $
-            LABEL_FORMAT='polar_maplabels', $
-            FILL_COLOR="white", $
-            DIMENSIONS=KEYWORD_SET(plotPosition) ? !NULL : [100,100], $
-            OVERPLOT=overplot, $
-            ;; WINDOW=window, $
-            CURRENT=window, $
-            POSITION=plotPosition, $
-            LAYOUT=layout)
-  
-  ;; Change some grid properties.
-  grid = map.MAPGRID
-  IF KEYWORD_SET(north) THEN grid.LATITUDE_MIN = minI ELSE IF KEYWORD_SET(south) THEN grid.LATITUDE_MAX = maxI
-  grid.TRANSPARENCY=50
-  grid.color="black"
-  grid.linestyle=0
-  grid.thick=0.5
-  grid.label_angle = 0
-  grid.font_size = 16
-  
-  mlats=grid.latitudes
-  FOR i=0,n_elements(mlats)-1 DO BEGIN
-     mlats[i].label_position=0.55
-     mlats[i].label_valign=1.0
-  ENDFOR
-  
-  mlons=grid.longitudes
-  FOR i=0,n_elements(mlons)-1 DO BEGIN
-     mlons[i].label_position=KEYWORD_SET(south) ? 1.0 : 0.02
-  ENDFOR
-  
-  ;; Add auroral zone to plot?
-  IF KEYWORD_SET(overlayAurZone) THEN BEGIN
+  IF N_ELEMENTS(map) EQ 0 THEN BEGIN
+     map = MAP('Polar Stereographic', $
+               CENTER_LONGITUDE=centerLon, $
+               TRUE_SCALE_LATITUDE=tsLat, $
+               LABEL_FORMAT='polar_maplabels', $
+               FILL_COLOR="white", $
+               DIMENSIONS=KEYWORD_SET(plotPosition) ? !NULL : [100,100], $
+               OVERPLOT=overplot, $
+               ;; WINDOW=window, $
+               CURRENT=window, $
+               POSITION=plotPosition, $
+               LAYOUT=layout)
      
-     ;;get boundaries
-     nMLTs=96
-     activity_level=7
-     MLTs=indgen(nMLTs,/FLOAT)*(maxM-minM)/nMLTs+minM
-     bndry_eqWard = get_auroral_zone(nMLTs,minM,maxM,BNDRY_POLEWARD=bndry_poleWard,ACTIVITY_LEVEL=activity_level,SOUTH=south)
-     ;; aurPlot = plot([MLTS,MLTs,MLTS[0]]*15,[bndry_eqWard,bndry_poleWard,bndry_poleWard[0]],LINESTYLE='-', THICK=4,/overplot)
-     aurEqWardPlot = plot([MLTS,MLTs[0]]*15,[bndry_eqWard,bndry_eqWard[0]],LINESTYLE='-', THICK=2.5,/overplot)
-     aurPoleWardPlot = plot([MLTS,MLTs[0]]*15,[bndry_poleWard,bndry_poleWard[0]],LINESTYLE='-', THICK=2.5,/overplot)
+     ;; Change some grid properties.
+     grid = map.MAPGRID
+     IF KEYWORD_SET(north) THEN grid.LATITUDE_MIN = minI ELSE IF KEYWORD_SET(south) THEN grid.LATITUDE_MAX = maxI
+     grid.TRANSPARENCY=50
+     grid.color="black"
+     grid.linestyle=0
+     grid.thick=0.5
+     grid.label_angle = 0
+     grid.font_size = 16
      
+     mlats=grid.latitudes
+     FOR i=0,n_elements(mlats)-1 DO BEGIN
+        mlats[i].label_position=0.55
+        mlats[i].label_valign=1.0
+     ENDFOR
+     
+     mlons=grid.longitudes
+     FOR i=0,n_elements(mlons)-1 DO BEGIN
+        mlons[i].label_position=KEYWORD_SET(south) ? 1.0 : 0.02
+     ENDFOR
+     
+     ;; Add auroral zone to plot?
+     IF KEYWORD_SET(overlayAurZone) THEN BEGIN
+        
+        ;;get boundaries
+        nMLTs=96
+        activity_level=7
+        MLTs=indgen(nMLTs,/FLOAT)*(maxM-minM)/nMLTs+minM
+        bndry_eqWard = get_auroral_zone(nMLTs,minM,maxM,BNDRY_POLEWARD=bndry_poleWard,ACTIVITY_LEVEL=activity_level,SOUTH=south)
+        ;; aurPlot = plot([MLTS,MLTs,MLTS[0]]*15,[bndry_eqWard,bndry_poleWard,bndry_poleWard[0]],LINESTYLE='-', THICK=4,/overplot)
+        aurEqWardPlot = plot([MLTS,MLTs[0]]*15,[bndry_eqWard,bndry_eqWard[0]],LINESTYLE='-', THICK=2.5,/overplot)
+        aurPoleWardPlot = plot([MLTS,MLTs[0]]*15,[bndry_poleWard,bndry_poleWard[0]],LINESTYLE='-', THICK=2.5,/overplot)
+        
+     ENDIF
   ENDIF
-
 
   ;;****************************************
   ;; Plotting
@@ -364,21 +377,40 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
               IF KEYWORD_SET(mirror_south) THEN lats = ABS(lats)
 
               lons    = maximus.mlt[tmp_i]*15
-              color   = modPlot_i_list[i,j].color
+              color   = KEYWORD_SET(color_list) ? color_list[j] : modPlot_i_list[i,j].color
               name    = STRING(FORMAT='(I5,T8,"(",I0,")")',modPlot_i_list[i,j].orbit,modPlot_i_list[i,j].N)
+           CASE 1 OF
+              (KEYWORD_SET(no_symbol) OR KEYWORD_SET(add_line)): BEGIN
+                 curPlot = PLOT(lons,lats, $
+                                NAME=name, $
+                                SYM_SIZE=KEYWORD_SET(no_symbol) ? !NULL : 1.0, $
+                                SYMBOL=KEYWORD_SET(no_symbol) ? !NULL : 'o', $
+                                /OVERPLOT, $
+                                ;; SYM_TRANSPARENCY=(i EQ 2) ? 60 : sTrans, $ ;this line is for making events on plot #3 stand out
+                                LINESTYLE=lineStyle, $
+                                THICK=2.0, $
+                                SYM_TRANSPARENCY=sTrans, $ 
+                                SYM_THICK=1.5, $
+                                SYM_COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[j] : color_list, $
+                                COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[j] : color_list, $
+                                CURRENT=window, $
+                                POSITION=plotPosition, $
+                                LAYOUT=layout)
+              END
+              ELSE: BEGIN
               curPlot = SCATTERPLOT(lons,lats, $
                                     NAME=name, $
-                                    SYM_SIZE=EY, $
+                                    SYM_SIZE=1.0, $
                                     SYMBOL='o', $
                                     /OVERPLOT, $
-                                    ;; SYM_TRANSPARENCY=(i EQ 2) ? 60 : sTrans, $ ;this line is for making events on plot #3 stand out
                                     SYM_TRANSPARENCY=sTrans, $ 
                                     SYM_THICK=1.5, $
-                                    SYM_COLOR=color, $
-                                    ;; TITLE=plotTitle, $ ;,$;SYM_SIZE=0.5, $ ;There is such a high density of points that we need tranparency
+                                    SYM_COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[j] : color, $
                                     CURRENT=window, $
                                     POSITION=plotPosition, $
                                     LAYOUT=layout)
+              END
+           ENDCASE
 
               curPlotArr = [curPlotArr,curPlot]
            ENDFOR
@@ -393,26 +425,51 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
 
         ENDIF ELSE BEGIN
            
-           lats=maximus.ilat[modPlot_i_list[i]]
+           lats = maximus.ilat[modPlot_i_list[i]]
            IF KEYWORD_SET(mirror_south) THEN lats = ABS(lats)
 
-           lons=maximus.mlt[modPlot_i_list[i]]*15
+           lons = maximus.mlt[modPlot_i_list[i]]*15
 
            ;; lats=[65,65,65,65]
            ;; lons=[0,90,180,270]
            
-           curPlot = SCATTERPLOT(lons,lats,sym_size=1.0, $
-                                 SYMBOL='o',/overplot, $
-                                 ;; SYM_TRANSPARENCY=(i EQ 2) ? 60 : sTrans, $ ;this line is for making events on plot #3 stand out
-                                 SYM_TRANSPARENCY=sTrans, $ 
-                                 SYM_THICK=1.5, $
-                                 SYM_COLOR=(N_ELEMENTS(color_list) GT 1) ? color_list[i] : color_list, $
-                                 ;; TITLE=plotTitle, $ ;,$;SYM_SIZE=0.5, $ ;There is such a high density of points that we need tranparency
-                                 ;; OVERPLOT=overplot, $
-                                 ;; WINDOW=out_window, $
-                                 CURRENT=window, $
-                                 POSITION=plotPosition, $
-                                 LAYOUT=layout)
+           CASE 1 OF
+              (KEYWORD_SET(no_symbol) OR KEYWORD_SET(add_line)): BEGIN
+                 curPlot = PLOT(lons,lats, $
+                                SYM_SIZE=KEYWORD_SET(no_symbol) ? !NULL : 1.0, $
+                                SYMBOL=KEYWORD_SET(no_symbol) ? !NULL : 'o', $
+                                /OVERPLOT, $
+                                ;; SYM_TRANSPARENCY=(i EQ 2) ? 60 : sTrans, $ ;this line is for making events on plot #3 stand out
+                                LINESTYLE=lineStyle, $
+                                THICK=2.0, $
+                                SYM_TRANSPARENCY=sTrans, $ 
+                                SYM_THICK=1.5, $
+                                SYM_COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[i] : color_list, $
+                                COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[i] : color_list, $
+                                ;; TITLE=plotTitle, $ ;,$;SYM_SIZE=0.5, $ ;There is such a high density of points that we need tranparency
+                                ;; OVERPLOT=overplot, $
+                                ;; WINDOW=out_window, $
+                                CURRENT=window, $
+                                POSITION=plotPosition, $
+                                LAYOUT=layout)
+              END
+              ELSE: BEGIN
+                 curPlot = SCATTERPLOT(lons,lats, $
+                                       SYM_SIZE=1.0, $
+                                       SYMBOL=KEYWORD_SET(no_symbol) ? !NULL : 'o', $
+                                       /OVERPLOT, $
+                                       ;; SYM_TRANSPARENCY=(i EQ 2) ? 60 : sTrans, $ ;this line is for making events on plot #3 stand out
+                                       SYM_TRANSPARENCY=sTrans, $ 
+                                       SYM_THICK=1.5, $
+                                       SYM_COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[i] : color_list, $
+                                       ;; TITLE=plotTitle, $ ;,$;SYM_SIZE=0.5, $ ;There is such a high density of points that we need tranparency
+                                       ;; OVERPLOT=overplot, $
+                                       ;; WINDOW=out_window, $
+                                       CURRENT=window, $
+                                       POSITION=plotPosition, $
+                                       LAYOUT=layout)
+              END
+           ENDCASE
         ENDELSE
      ENDFOR
      
@@ -444,8 +501,8 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
      out_orbStrArr_list    = modPlot_i_list
   ENDIF
 
-  out_plot   = curPlot
-  out_window = window
-
+  out_plot                 = curPlot
+  out_window               = window
+  out_map                  = map
 
 END
