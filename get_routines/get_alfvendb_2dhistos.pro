@@ -31,13 +31,21 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ANGLELIM2=angleLim2, $
                           DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
                           BYMIN=byMin, $
-                          BZMIN=bzMin, $
                           BYMAX=byMax, $
+                          BZMIN=bzMin, $
                           BZMAX=bzMax, $
+                          BTMIN=btMin, $
+                          BTMAX=btMax, $
+                          BXMIN=bxMin, $
+                          BXMAX=bxMax, $
                           DO_ABS_BYMIN=abs_byMin, $
                           DO_ABS_BYMAX=abs_byMax, $
                           DO_ABS_BZMIN=abs_bzMin, $
                           DO_ABS_BZMAX=abs_bzMax, $
+                          DO_ABS_BTMIN=abs_btMin, $
+                          DO_ABS_BTMAX=abs_btMax, $
+                          DO_ABS_BXMIN=abs_bxMin, $
+                          DO_ABS_BXMAX=abs_bxMax, $
                           DELAY=delay, $
                           MULTIPLE_DELAYS=multiple_delays, $
                           RESOLUTION_DELAY=delay_res, $
@@ -254,10 +262,18 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  BYMAX=byMax, $
                                                  BZMIN=bzMin, $
                                                  BZMAX=bzMax, $
+                                                 BTMIN=btMin, $
+                                                 BTMAX=btMax, $
+                                                 BXMIN=bxMin, $
+                                                 BXMAX=bxMax, $
                                                  DO_ABS_BYMIN=abs_byMin, $
                                                  DO_ABS_BYMAX=abs_byMax, $
                                                  DO_ABS_BZMIN=abs_bzMin, $
                                                  DO_ABS_BZMAX=abs_bzMax, $
+                                                 DO_ABS_BTMIN=abs_btMin, $
+                                                 DO_ABS_BTMAX=abs_btMax, $
+                                                 DO_ABS_BXMIN=abs_bxMin, $
+                                                 DO_ABS_BXMAX=abs_bxMax, $
                                                  SATELLITE=satellite, $
                                                  OMNI_COORDS=omni_Coords, $
                                                  DELAY=delay, $
@@ -578,7 +594,14 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         dims                  = SIZE(ePlotRange,/DIMENSIONS)
         CASE N_ELEMENTS(dims) OF 
            0:   plotRange     = !NULL
-           1:   plotRange     = ePlotRange
+           1: BEGIN
+              CASE dims OF
+                 0: plotRange = !NULL
+                 2: plotRange = ePlotRange
+                 ELSE: BEGIN
+                 END
+              ENDCASE
+           END
            2:   plotRange     = ePlotRange[*,i]
         ENDCASE
         GET_FLUX_PLOTDATA,maximus,plot_i,/GET_EFLUX, $
@@ -669,9 +692,16 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         dims                  = SIZE(eNumFlPlotRange,/DIMENSIONS)
         CASE N_ELEMENTS(dims) OF 
            0:   plotRange     = !NULL
-           1:   plotRange     = eNumFlPlotRange
+           1: BEGIN
+              CASE dims OF
+                 0: plotRange = !NULL
+                 2: plotRange = eNumFlPlotRange
+                 ELSE: BEGIN
+                 END
+              ENDCASE
+           END
            2:   plotRange     = eNumFlPlotRange[*,i]
-        ENDCASE
+           ENDCASE
         GET_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
                           MINM=minM, $
                           MAXM=maxM, $
@@ -833,7 +863,14 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         dims                  = SIZE(iPlotRange,/DIMENSIONS)
         CASE N_ELEMENTS(dims) OF 
            0:   plotRange     = !NULL
-           1:   plotRange     = iPlotRange
+           1: BEGIN
+              CASE dims OF
+                 0: plotRange = !NULL
+                 2: plotRange = iPlotRange
+                 ELSE: BEGIN
+                 END
+              ENDCASE
+           END
            2:   plotRange     = iPlotRange[*,i]
         ENDCASE
         GET_FLUX_PLOTDATA,maximus,plot_i,/GET_IFLUX, $
@@ -997,7 +1034,14 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         dims                  = SIZE(charEPlotRange,/DIMENSIONS)
         CASE N_ELEMENTS(dims) OF 
            0:   plotRange     = !NULL
-           1:   plotRange     = charEPlotRange
+           1: BEGIN
+              CASE dims OF
+                 0: plotRange = !NULL
+                 2: plotRange = charEPlotRange
+                 ELSE: BEGIN
+                 END
+              ENDCASE
+           END
            2:   plotRange     = charEPlotRange[*,i]
         ENDCASE
         GET_FLUX_PLOTDATA,maximus,plot_i,/GET_CHAREE, $

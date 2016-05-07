@@ -15,10 +15,18 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
                                   BYMAX=byMax, $
                                   BZMIN=bzMin, $
                                   BZMAX=bzMax, $
+                                  BTMIN=btMin, $
+                                  BTMAX=btMax, $
+                                  BXMIN=bxMin, $
+                                  BXMAX=bxMax, $
                                   DO_ABS_BYMIN=abs_byMin, $
                                   DO_ABS_BYMAX=abs_byMax, $
                                   DO_ABS_BZMIN=abs_bzMin, $
                                   DO_ABS_BZMAX=abs_bzMax, $
+                                  DO_ABS_BTMIN=abs_btMin, $
+                                  DO_ABS_BTMAX=abs_btMax, $
+                                  DO_ABS_BXMIN=abs_bxMin, $
+                                  DO_ABS_BXMAX=abs_bxMax, $
                                   MINMLT=minM,MAXMLT=maxM,BINM=binM,SHIFTM=shiftM, $
                                   MINILAT=minI,MAXILAT=maxI,BINI=binI,SHIFTI=shiftI, $
                                   DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
@@ -68,13 +76,21 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
                                                                   MINILAT=minI,MAXILAT=maxI,BINI=binI, $;SHIFTI=shiftI, $ $
                                                                   DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
                                                                   BYMIN=byMin, $
-                                                                  BZMIN=bzMin, $
                                                                   BYMAX=byMax, $
+                                                                  BZMIN=bzMin, $
                                                                   BZMAX=bzMax, $
+                                                                  BTMIN=btMin, $
+                                                                  BTMAX=btMax, $
+                                                                  BXMIN=bxMin, $
+                                                                  BXMAX=bxMax, $
                                                                   DO_ABS_BYMIN=abs_byMin, $
                                                                   DO_ABS_BYMAX=abs_byMax, $
                                                                   DO_ABS_BZMIN=abs_bzMin, $
                                                                   DO_ABS_BZMAX=abs_bzMax, $
+                                                                  DO_ABS_BTMIN=abs_btMin, $
+                                                                  DO_ABS_BTMAX=abs_btMax, $
+                                                                  DO_ABS_BXMIN=abs_bxMin, $
+                                                                  DO_ABS_BXMAX=abs_bxMax, $
                                                                   CLOCKSTR=clockStr, $
                                                                   DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
                                                                   ANGLELIM1=angleLim1, $

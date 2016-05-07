@@ -10,13 +10,21 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,plot_i_list,CLOCKSTR=clockStr, ANGLELIM1
                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                BYMIN=byMin, $
-                               BZMIN=bzMin, $
                                BYMAX=byMax, $
+                               BZMIN=bzMin, $
                                BZMAX=bzMax, $
+                               BTMIN=btMin, $
+                               BTMAX=btMax, $
+                               BXMIN=bxMin, $
+                               BXMAX=bxMax, $
                                DO_ABS_BYMIN=abs_byMin, $
                                DO_ABS_BYMAX=abs_byMax, $
                                DO_ABS_BZMIN=abs_bzMin, $
                                DO_ABS_BZMAX=abs_bzMax, $
+                               DO_ABS_BTMIN=abs_btMin, $
+                               DO_ABS_BTMAX=abs_btMax, $
+                               DO_ABS_BXMIN=abs_bxMin, $
+                               DO_ABS_BXMAX=abs_bxMax, $
                                BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
                                PARAMSTRING=paramString, $
                                PARAMSTR_LIST=paramString_list, $

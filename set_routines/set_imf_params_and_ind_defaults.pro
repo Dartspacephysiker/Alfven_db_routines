@@ -74,13 +74,21 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
                                     ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                     BYMIN=byMin, $
-                                    BZMIN=bzMin, $
                                     BYMAX=byMax, $
+                                    BZMIN=bzMin, $
                                     BZMAX=bzMax, $
+                                    BTMIN=btMin, $
+                                    BTMAX=btMax, $
+                                    BXMIN=bxMin, $
+                                    BXMAX=bxMax, $
                                     DO_ABS_BYMIN=abs_byMin, $
                                     DO_ABS_BYMAX=abs_byMax, $
                                     DO_ABS_BZMIN=abs_bzMin, $
                                     DO_ABS_BZMAX=abs_bzMax, $
+                                    DO_ABS_BTMIN=abs_btMin, $
+                                    DO_ABS_BTMAX=abs_btMax, $
+                                    DO_ABS_BXMIN=abs_bxMin, $
+                                    DO_ABS_BXMAX=abs_bxMax, $
                                     BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
                                     DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
                                     PARAMSTRING=paramString, $
@@ -215,6 +223,32 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                    + 'bzMax' + String(bzMax,format='(D0.1)')
      ENDIF
      
+     ;;Requirement for IMF Bt magnitude?
+     btMinStr=''
+     btMaxStr=''
+     
+     IF N_ELEMENTS(btMin) GT 0 THEN BEGIN
+        btMinStr = '__' + (KEYWORD_SET(abs_btMin) ? 'ABS_' : '') $
+                   + 'btMin' + String(btMin,format='(D0.1)')
+     ENDIF
+     IF N_ELEMENTS(btMax) GT 0 THEN BEGIN
+        btMaxStr = '__' + (KEYWORD_SET(abs_btMax) ? 'ABS_' : '') $
+                   + 'btMax' + String(btMax,format='(D0.1)')
+     ENDIF
+     
+     ;;Requirement for IMF Bx magnitude?
+     bxMinStr=''
+     bxMaxStr=''
+     
+     IF N_ELEMENTS(bxMin) GT 0 THEN BEGIN
+        bxMinStr = '__' + (KEYWORD_SET(abs_bxMin) ? 'ABS_' : '') $
+                   + 'bxMin' + String(bxMin,format='(D0.1)')
+     ENDIF
+     IF N_ELEMENTS(bxMax) GT 0 THEN BEGIN
+        bxMaxStr = '__' + (KEYWORD_SET(abs_bxMax) ? 'ABS_' : '') $
+                   + 'bxMax' + String(bxMax,format='(D0.1)')
+     ENDIF
+     
      ;;********************************************
      ;;Set up some other strings
      
@@ -241,11 +275,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      IF KEYWORD_SET(multiple_delays) THEN BEGIN
         FOR iDel=0,N_ELEMENTS(delay)-1 DO BEGIN
            paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
-                       byMinStr+byMaxStr+bzMinStr+bzMaxStr
+                       byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
         ENDFOR
         ENDIF ELSE BEGIN
            paramString=paramString+'--'+satellite+omniStr+clockOutStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
-                       byMinStr+byMaxStr+bzMinStr+bzMaxStr
+                       byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
            paramString_list.add,paramString
         ENDELSE
   ENDELSE
