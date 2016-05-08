@@ -1,32 +1,28 @@
 ;2016/05/07
-PRO JOURNAL__20160507__SPLICE_IN_NEW_DESPUN_ORBS
+PRO JOURNAL__20160507__SPLICE_TOGETHER_ORBS_FROM_201605_RUNS
 
   save_combined_file = 1
 
   outDir             = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
 
-  ;;The heavyweight champion
-  max1File           = 'Dartdb_20160107--502-16361_despun--maximus--pflux--lshell--burst--noDupes.sav'
-  cdbT1File          = 'Dartdb_20160107--502-16361_despun--cdbtime--noDupes.sav'
+  ;;The little brother
+  max1File           = 'Dartdb_20160507--2500-3599_and_bonus_despun--maximus--pflux--lshell--noDupes.sav'
+  cdbT1File          = 'Dartdb_20160507--2500-3599_and_bonus_despun--cdbtime--noDupes.sav'
 
   ;;The contender
-  max2File           = 'Dartdb_20160508--2500-3599_plus_bonus__and_10220-16361_despun--maximus--pflux--lshell--burst--noDupes.sav'
-  cdbT2File          = 'Dartdb_20160508--2500-3599_plus_bonus__and_10220-16361_despun--cdbtime--noDupes.sav'
+  max2File           = 'Dartdb_20160507--10220-16361_despun--maximus--pflux--lshell--noDupes.sav'
+  cdbT2File          = 'Dartdb_20160507--10220-16361_despun--cdbtime--noDupes.sav'
 
   ;;Output
   outDate            = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
-  maxOutFile         = 'Dartdb_'+outDate+'--502-16361_despun--maximus--pflux_lshell--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
-  cdbTOutFile        = 'Dartdb_'+outDate+'--502-16361_despun--cdbtime--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
+  maxOutFile         = 'Dartdb_'+outDate+'--2500-3599_plus_bonus__and_10220-16361_despun--maximus--pflux--lshell--burst--noDupes.sav'
+  cdbTOutFile        = 'Dartdb_'+outDate+'--2500-3599_plus_bonus__and_10220-16361_despun--cdbtime--noDupes.sav'
 
   ;;Trim the heavyweight
   RESTORE,outDir+max1File
   RESTORE,outDir+cdbT1File
 
-  not_detritus_i     = WHERE((maximus.orbit GE 500 AND maximus.orbit LE 2499) $
-                             OR (maximus.orbit GE 3600 AND maximus.orbit LE 10209))
-
-
-  maximus1           = RESIZE_MAXIMUS__BEFORE_ADDING_CORRECTED_FLUXES_DESPUN_ETC(maximus,INDS=not_detritus_i,CDBTIME=cdbTime)
+  maximus1           = TEMPORARY(maximus)
   cdbTime1           = TEMPORARY(cdbTime)
 
   ;;Saddle up the second database
@@ -49,5 +45,15 @@ PRO JOURNAL__20160507__SPLICE_IN_NEW_DESPUN_ORBS
                       /ADD_PFLUX_AND_LSHELL, $
                       OUTFILE=maxOutFile, $
                       OUT_TFILE=cdbTOutFile
+
+
+  CHECK_DUPES,cdbtime,is_sorted
+
+  IF is_sorted THEN BEGIN
+     PRINT,'DONE!'
+  ENDIF ELSE BEGIN
+     PRINT,"So these aren't sorted. You know that?"
+     STOP
+  ENDELSE
 
 END

@@ -69,7 +69,8 @@ FUNCTION RESIZE_MAXIMUS__BEFORE_ADDING_CORRECTED_FLUXES_DESPUN_ETC,maximus,MAXIM
                   TOTAL_UPWARD_ION_OUTFLOW_SINGLE:maximus.TOTAL_UPWARD_ION_OUTFLOW_SINGLE[allowed_i],$
                   TOTAL_UPWARD_ION_OUTFLOW_MULTIPLE_TOT:maximus.TOTAL_UPWARD_ION_OUTFLOW_MULTIPLE_TOT[allowed_i],$
                   TOTAL_ALFVEN_UPWARD_ION_OUTFLOW:maximus.TOTAL_ALFVEN_UPWARD_ION_OUTFLOW[allowed_i],$
-                  BURST:maximus.burst[allowed_i], $
+                  ;; BURST:maximus.burst[allowed_i], $
+                  BURST:MAKE_ARRAY(N_ELEMENTS(allowed_i),/BYTE,VALUE=0), $
                   ;; PFLUXEST:maximus.delta_b[allowed_i]*maximus.delta_e[allowed_i]*4.0e-7*!PI, $
                   PFLUXEST:maximus.PFLUXEST[allowed_i], $
                   LSHELL:maximus.LSHELL[allowed_i]}

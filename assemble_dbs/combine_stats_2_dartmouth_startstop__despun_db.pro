@@ -23,8 +23,13 @@ PRO COMBINE_STATS_2_DARTMOUTH_STARTSTOP__DESPUN_DB,maximus
 ;open file to write list of orbits included
   OPENW,outlun,contents_file,/get_lun
 
-  min_orbit     = 10220
-  max_orbit     = 16361
+  ;;first run of the day
+  ;; min_orbit     = 10220
+  ;; max_orbit     = 16361
+
+  ;;second run today
+  min_orbit     = 2500
+  max_orbit     = 8142
 
   outFile       = outDir + STRING(FORMAT='("Dartdb_",A0,"--",I0,"-",I0,"_despun--maximus.sav")', $
                                   date, $
@@ -34,20 +39,20 @@ PRO COMBINE_STATS_2_DARTMOUTH_STARTSTOP__DESPUN_DB,maximus
   ;;For Poynting flux
   mu_0 = DOUBLE(4.0D*!PI*1e-7)
 
-  for j=min_orbit,max_orbit do begin
+  FOR j=min_orbit,max_orbit DO BEGIN
 
 ;    filename='Dartmouth_as5_startstop_dflux'+'_'+strcompress(j,/remove_all)+'_0'
      filename   = filePref+'_'+strcompress(j,/remove_all)+'_0' + fileSuff
                                 ;filename='orb'+strcompress(j,/remove_all)+'_dflux'
-     result=file_which(Dartmouth_DB,filename)
-     if result then begin
-        for jj=0,9 do begin
-           result=file_which(Dartmouth_DB,filename)
-           if result then begin
+     result=FILE_WHICH(Dartmouth_DB,filename)
+     IF result THEN BEGIN
+        FOR jj=0,9 DO BEGIN
+           result=FILE_WHICH(Dartmouth_DB,filename)
+           IF result THEN BEGIN
               print,j,jj
               printf,outlun,j,jj
-              rdf_stats_dartmouth_as5_startstop_inc__despun,result,dat
-              if j GT min_orbit then begin
+              RDF_STATS_DARTMOUTH_AS5_STARTSTOP_INC__DESPUN,result,dat
+              IF j GT min_orbit THEN BEGIN
                  maximus={ORBIT:[maximus.orbit,dat.orbit],$
                           ALFVENIC:[maximus.alfvenic,dat.alfvenic],$
                           TIME:[maximus.time,dat.time],$
@@ -98,17 +103,19 @@ PRO COMBINE_STATS_2_DARTMOUTH_STARTSTOP__DESPUN_DB,maximus
                           TOTAL_ALFVEN_UPWARD_ION_OUTFLOW:[maximus.TOTAL_ALFVEN_UPWARD_ION_OUTFLOW,dat.TOTAL_ALFVEN_UPWARD_ION_OUTFLOW]}
                  ;; pfluxest=DOUBLE((maximus.delta_e)*(maximus.delta_b*1e-9))/mu_0 ;;take away the factor of 1e-3 from E-field since we want mW/m^2                          ;; PFLUXEST:maximus.delta_b*maximus.delta_e*4.0e-7*!PI, $
                           ;; LSHELL:maximus.}
-              endif else begin
+              ENDIF ELSE BEGIN
                  maximus = dat
-              endelse
-           endif
+              ENDELSE
+           ENDIF
            filename      = filePref + '_'+strcompress(j,/remove_all)+'_'+strcompress(jj+1,/remove_all)+fileSuff
-        endfor
-     endif
-  endfor
+        ENDFOR
+     ENDIF
+  ENDFOR
 
-  save,maximus,filename=outfile
+  ADD_PFLUX_AND_LSHELL_TO_MAXIMUS__BURST_IS_ZERO,maximus
 
-  return
+  SAVE,maximus,FILENAME=outfile
+
+  RETURN
 
 end

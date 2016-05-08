@@ -7,6 +7,7 @@ PRO COMBINE_TWO_DBFILES,maximus,cdbTime, $
                         CDBTIME2=cdbTime2, $
                         DBFILE2=dbFile2, $
                         DB_TFILE2=db_tFile2, $
+                        ADD_PFLUX_AND_LSHELL=add_pflux_and_lshell, $
                         SAVE_COMBINED_FILE=save_combined_file, $
                         OUTFILE=outFile, $
                         OUT_TFILE=out_tFile
@@ -144,11 +145,11 @@ PRO COMBINE_TWO_DBFILES,maximus,cdbTime, $
   IF KEYWORD_SET(save_combined_file) THEN BEGIN
 
      PRINT,'Saving...'
-     PRINT,'OUTFILE: ' + outFile
+     PRINT,'OUTFILE: ' + outDir+outFile
      PRINT,'OUT_TFILE: ' + out_tFile
      
-     SAVE,maximus,FILENAME=outFile
-     SAVE,cdbTime,FILENAME=out_tFile
+     SAVE,maximus,FILENAME=outDir+outFile
+     SAVE,cdbTime,FILENAME=outDir+out_tFile
 
   ENDIF
 
