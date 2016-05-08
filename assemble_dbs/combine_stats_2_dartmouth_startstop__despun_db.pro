@@ -4,9 +4,13 @@
 
 PRO COMBINE_STATS_2_DARTMOUTH_STARTSTOP__DESPUN_DB,maximus
   
-  date          = '20160107'
-  Dartmouth_DB  = '/SPENCEdata/software/sdt/batch_jobs/Alfven_study/as5_14F/batch_output__ucla_mag_despin_201512/'
+  ;; date          = '20160107'
+  date          = '20160507'
+  ;; Dartmouth_DB  = '/SPENCEdata/software/sdt/batch_jobs/Alfven_study/as5_14F/batch_output__ucla_mag_despin_201512/'
+  Dartmouth_DB  = '/SPENCEdata/software/sdt/batch_jobs/Alfven_study/as5--add_later_orbs/batch_output__ucla_mag_despin_201512/'
   contents_file = './orbits_contained_in_DartDBfile_' + date + '--startstops_included.txt'
+
+  ;;SEE BELOW FOR OUTFILE
   ;; outfile       = 'Dartdb_' + date + '--502-3619--maximus.sav'
   outDir        = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
   ;; outfile       = outDir + 'Dartdb_' + date + '--500-16361--maximus.sav'
@@ -19,8 +23,16 @@ PRO COMBINE_STATS_2_DARTMOUTH_STARTSTOP__DESPUN_DB,maximus
 ;open file to write list of orbits included
   OPENW,outlun,contents_file,/get_lun
 
-  min_orbit     = 10170
+  min_orbit     = 10220
   max_orbit     = 16361
+
+  outFile       = outDir + STRING(FORMAT='("Dartdb_",A0,"--",I0,"-",I0,"_despun--maximus.sav")', $
+                                  date, $
+                                  min_orbit, $
+                                  max_orbit)
+
+  ;;For Poynting flux
+  mu_0 = DOUBLE(4.0D*!PI*1e-7)
 
   for j=min_orbit,max_orbit do begin
 
@@ -84,7 +96,7 @@ PRO COMBINE_STATS_2_DARTMOUTH_STARTSTOP__DESPUN_DB,maximus
                           TOTAL_UPWARD_ION_OUTFLOW_SINGLE:[maximus.TOTAL_UPWARD_ION_OUTFLOW_SINGLE,dat.TOTAL_UPWARD_ION_OUTFLOW_SINGLE],$
                           TOTAL_UPWARD_ION_OUTFLOW_MULTIPLE_TOT:[maximus.TOTAL_UPWARD_ION_OUTFLOW_MULTIPLE_TOT,dat.TOTAL_UPWARD_ION_OUTFLOW_MULTIPLE_TOT],$
                           TOTAL_ALFVEN_UPWARD_ION_OUTFLOW:[maximus.TOTAL_ALFVEN_UPWARD_ION_OUTFLOW,dat.TOTAL_ALFVEN_UPWARD_ION_OUTFLOW]}
-                          ;; PFLUXEST:maximus.delta_b*maximus.delta_e*4.0e-7*!PI, $
+                 ;; pfluxest=DOUBLE((maximus.delta_e)*(maximus.delta_b*1e-9))/mu_0 ;;take away the factor of 1e-3 from E-field since we want mW/m^2                          ;; PFLUXEST:maximus.delta_b*maximus.delta_e*4.0e-7*!PI, $
                           ;; LSHELL:maximus.}
               endif else begin
                  maximus = dat
