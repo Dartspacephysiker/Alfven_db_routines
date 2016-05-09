@@ -10,7 +10,10 @@
 ;; Right now I think I need to do something with reversing tempMLTS or changing the way tempMLTS is
 ;; put together, but I can't be sure
 
-PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight, $
+PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
+                          H2DMASK=h2dMask, $
+                          WHOLECAP=wholeCap, $
+                          MIDNIGHT=midnight, $
                           PLOTTITLE=plotTitle, MIRROR=mirror, $
                           DEBUG=debug, $
                           NO_COLORBAR=no_colorbar, $
@@ -210,11 +213,15 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData,WHOLECAP=wholeCap,MIDNIGHT=midnight
   ENDIF
 
   ;;binary matrix to tell us where masked values are
-  nPlots                          = N_ELEMENTS(h2dStrArr)-1   ;Subtract one since last array is the mask
+  IF ~KEYWORD_SET(h2dMask) THEN BEGIN
+     nPlots                       = N_ELEMENTS(h2dStrArr)-1 ;Subtract one since last array is the mask
+     h2dMask                      = h2dStrArr[nPlots]
+  ENDIF
+
   IF temp.dont_mask_me THEN BEGIN
-     masked                       = (h2dStrArr[nPlots].data GT 260.0) ;mask NO ONE!
+     masked                       = (h2dMask.data GT 260.0) ;mask NO ONE!
   ENDIF ELSE BEGIN
-     masked                       = (h2dStrArr[nPlots].data GT 250.0)
+     masked                       = (h2dMask.data GT 250.0)
   ENDELSE
   IF KEYWORD_SET(reverse_lShell) THEN BEGIN
      masked[*,1:-1]               = REVERSE(masked[*,1:-1],2)

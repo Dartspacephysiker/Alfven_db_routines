@@ -42,6 +42,7 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
                                   STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                   HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                   RESET_GOOD_INDS=reset_good_inds, $
+                                  RESET_OMNI_INDS=reset_omni_inds, $
                                   MAKE_OUTINDSFILE=make_outIndsFile, $
                                   OUTINDSPREFIX=outIndsPrefix,OUTINDSSUFFIX=outIndsSuffix,OUTINDSFILEBASENAME=outIndsFileBasename, $
                                   ;; FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastLoc_delta_t, $
@@ -106,6 +107,7 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
                                                                   HWMAUROVAL=HwMAurOval, $
                                                                   HWMKPIND=HwMKpInd, $
                                                                   RESET_GOOD_INDS=reset_good_inds, $
+                                                                  RESET_OMNI_INDS=reset_omni_inds, $
                                                                   NO_BURSTDATA=no_burstData, $
                                                                   /GET_TIME_I_NOT_ALFVENDB_I)
   

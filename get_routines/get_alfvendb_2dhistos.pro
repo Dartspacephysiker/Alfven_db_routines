@@ -47,9 +47,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           DO_ABS_BXMIN=abs_bxMin, $
                           DO_ABS_BXMAX=abs_bxMax, $
                           DELAY=delay, $
-                          MULTIPLE_DELAYS=multiple_delays, $
-                          RESOLUTION_DELAY=delay_res, $
-                          BINOFFSET_DELAY=binOffset_delay, $
+                          ;; MULTIPLE_DELAYS=multiple_delays, $
+                          ;; RESOLUTION_DELAY=delay_res, $
+                          ;; BINOFFSET_DELAY=binOffset_delay, $
                           STABLEIMF=stableIMF, $
                           SMOOTHWINDOW=smoothWindow, $
                           HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
@@ -188,6 +188,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           PARAMSTRSUFFIX=paramStrSuffix, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           RESET_GOOD_INDS=reset_good_inds, $
+                          RESET_OMNI_INDS=reset_omni_inds, $
                           FANCY_PLOTNAMES=fancy_plotNames, $
                           DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                           LUN=lun
@@ -287,6 +288,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  DSTCUTOFF=dstCutoff, $
                                                  HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
                                                  RESET_GOOD_INDS=reset_good_inds, $
+                                                 RESET_OMNI_INDS=reset_omni_inds, $
                                                  T1_ARR=t1_arr, $
                                                  T2_ARR=t2_arr, $
                                                  MINM=minM, $

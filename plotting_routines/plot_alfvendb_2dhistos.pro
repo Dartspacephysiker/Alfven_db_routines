@@ -1,6 +1,7 @@
 ;2016/01/15 EPS Output keyword added 
 ;2016/01/19
 PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=tempFile, $
+                           H2DMASKARR=h2dMaskArr, $
                            SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ 
                            SHOWPLOTSNOSAVE=showPlotsNoSave, $
                            PLOTDIR=plotDir, PLOTMEDORAVG=plotMedOrAvg, $
@@ -17,6 +18,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            TILEPLOTSUFF=tilePlotSuff, $
                            TILEPLOTTITLE=tilePlotTitle, $
                            TILE__FAVOR_ROWS=tile__favor_rows, $
+                           ;; BLANK_TILE_POSITIONS=blank_tile_positions, $
                            LUN=lun, $
                            EPS_OUTPUT=eps_output, $
                            _EXTRA = e
@@ -35,7 +37,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                   WTITLE='Flux plots for '+hemi+'ern Hemisphere, ' + $
                   (KEYWORD_SET(clockStr) ? clockStr+' IMF, ' : '') + strmid(plotMedOrAvg,1)
      ENDIF ELSE BEGIN
-        FOR i = 0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN
+        FOR i=0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN
            cgWindow,'interp_polar2dhist', $
                     h2dStrArr[i],tempFile, $
                     _EXTRA=e,$
@@ -82,7 +84,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
            ;; Set plotting to PostScript:
            SET_PLOT, 'PS'
            
-           FOR i = 0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN  
+           FOR i=0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN  
               
               ;; Use DEVICE to set some PostScript device options:
               DEVICE, FILENAME='myfile.ps', $
@@ -111,33 +113,67 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
            defYWTitleSize         = 6
 
            IF KEYWORD_SET(tile_images) THEN BEGIN
-              nPlots            = N_ELEMENTS(h2dStrArr) - 1
+              nPlots            = N_ELEMENTS(h2dStrArr)
+              IF ~KEYWORD_SET(h2dMaskArr) THEN nPlots-- ;take one away, because h2dMask must be at the end of h2dStrArr itself
+
               IF ~KEYWORD_SET(n_tile_columns) THEN n_tile_columns = FLOOR(SQRT(nPlots))
               ;; IF ~KEYWORD_SET(n_tile_rows)    THEN n_tile_rows    = CEIL(nPlots/2.)
               IF ~KEYWORD_SET(n_tile_rows)    THEN n_tile_rows    = ROUND(DOUBLE(nPlots)/n_tile_columns)
 
-              WHILE (n_tile_columns*n_tile_rows) LT nPlots DO BEGIN
+              ;Determine where blanks are
+              IF KEYWORD_SET(tiling_order) THEN BEGIN
+                 blankLocs = WHERE(tiling_order LT 0,nBlanks)
+              ENDIF ELSE BEGIN
+                 nBlanks   = 0
+              ENDELSE
+              ;; IF KEYWORD_SET(blank_tile_positions) THEN BEGIN
+              ;;    nBlanks = N_ELEMENTS(blank_tile_positions)
+                 
+              ;;    ;;Pad tiling order if need be
+              ;;    IF KEYWORD_SET(tiling_order) THEN BEGIN
+              ;;       padVal       = 0   ;Need this because we're changing indices
+              ;;       FOR iBlank=0,N_ELEMENTS(blank_tile_positions)-1 DO BEGIN
+              ;;          CASE blank_tile_positions[iBlank] OF
+              ;;             0: BEGIN
+              ;;                tiling_order = [-9,tiling_order]
+              ;;             END
+              ;;             nPlots-1: BEGIN
+
+              ;;             END
+              ;;             ELSE: BEGIN
+
+              ;;             END                          
+              ;;          ENDCASE
+              ;;       ENDFOR
+              ;;    ENDIF
+              ;; ENDIF ELSE BEGIN
+              ;;    nBlanks = 0
+              ;; ENDELSE
+
+              nPlotsAndBlanks     = nPlots + nBlanks
+
+              WHILE (n_tile_columns*n_tile_rows) LT nPlotsAndBlanks DO BEGIN
                  IF KEYWORD_SET(tile__favor_rows) THEN BEGIN
                     IF n_tile_rows LE n_tile_columns THEN BEGIN
                        n_tile_rows++
-                       IF (n_tile_columns*n_tile_rows) GE nPlots THEN BREAK ELSE BEGIN
+                       IF (n_tile_columns*n_tile_rows) GE nPlotsAndBlanks THEN BREAK ELSE BEGIN
                           IF n_tile_columns GE n_tile_rows THEN n_tile_rows++ ELSE n_tile_columns++
                        ENDELSE
                     ENDIF ELSE BEGIN
                        n_tile_columns++
-                       IF (n_tile_columns*n_tile_rows) GE nPlots THEN BREAK ELSE BEGIN
+                       IF (n_tile_columns*n_tile_rows) GE nPlotsAndBlanks THEN BREAK ELSE BEGIN
                           IF n_tile_columns GE n_tile_rows THEN n_tile_rows++ ELSE n_tile_columns++
                        ENDELSE
                     ENDELSE
                  ENDIF ELSE BEGIN
                     IF n_tile_columns LE n_tile_rows THEN BEGIN
                        n_tile_columns++
-                       IF (n_tile_columns*n_tile_rows) GE nPlots THEN BREAK ELSE BEGIN
+                       IF (n_tile_columns*n_tile_rows) GE nPlotsAndBlanks THEN BREAK ELSE BEGIN
                           IF n_tile_rows GE n_tile_columns THEN n_tile_columns++ ELSE n_tile_rows++
                        ENDELSE
                     ENDIF ELSE BEGIN
                        n_tile_rows++
-                       IF (n_tile_columns*n_tile_rows) GE nPlots THEN BREAK ELSE BEGIN
+                       IF (n_tile_columns*n_tile_rows) GE nPlotsAndBlanks THEN BREAK ELSE BEGIN
                           IF n_tile_rows GE n_tile_columns THEN n_tile_columns++ ELSE n_tile_rows++
                        ENDELSE
                     ENDELSE
@@ -204,8 +240,16 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                         ;; /MATCH, $
                         /LANDSCAPE_FORCE
 
-              FOR i = 0, nPlots-1 DO BEGIN  
+              ;; iPos = 0
+              FOR i=0, nPlotsAndBlanks-1 DO BEGIN  
+
                  IF KEYWORD_SET(tiling_order) THEN j = tiling_order[i] ELSE j = i
+                 IF nBlanks GT 0 THEN BEGIN ;is it blankety blank?
+                    WHILE j LT 0 DO BEGIN
+                       i++
+                       j = tiling_order[i]
+                    ENDWHILE
+                 ENDIF
 
                  position         = CALC_PLOT_POSITION(i+1,n_tile_columns,n_tile_rows)
 
@@ -224,7 +268,17 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  cb_position[3]   = (position[3]-position[1])*defCBPos[3]+position[1]
 
 
+                 CASE N_ELEMENTS(h2dMaskArr) OF
+                    1: h2dMask    = h2dMaskarr
+                    N_ELEMENTS(h2dStrArr): BEGIN
+                       h2dMask    = h2dMaskArr[j]
+                    END
+                    ELSE: BEGIN
+                    END
+                 ENDCASE
+                 
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[j],tempFile, $
+                                       H2DMASK=h2dMask, $
                                        NO_COLORBAR=no_colorbar, $
                                        WINDOW_XSIZE=xSize, $
                                        WINDOW_YSIZE=ySize, $
@@ -268,7 +322,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
               xSize    = 5
               ySize    = 5
 
-              FOR i = 0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN  
+              FOR i=0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN  
                  
                  CGPS_Open, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
                             /NOMATCH, $

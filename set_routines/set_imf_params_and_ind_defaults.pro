@@ -71,6 +71,7 @@
 ;                       2016/02/10 : Added DO_NOT_CONSIDER_IMF keyword
 ;-
 PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+                                    MULTIPLE_IMF_CLOCKANGLES=multiple_IMF_clockAngles, $
                                     DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
                                     ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                     BYMIN=byMin, $
@@ -97,6 +98,9 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     OMNI_COORDS=omni_Coords, $
                                     DELAY=delay, $
                                     MULTIPLE_DELAYS=multiple_delays, $
+                                    OUT_EXECUTING_MULTIPLES=executing_multiples, $
+                                    OUT_MULTIPLES=multiples, $
+                                    OUT_MULTISTRING=multiString, $
                                     RESOLUTION_DELAY=delay_res, $
                                     BINOFFSET_DELAY=binOffset_delay, $
                                     STABLEIMF=stableIMF, $
@@ -186,7 +190,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
         ;;Bz North at zero deg, ranging from -180<clock_angle<180
         ;;Setting angle limits 45 and 135, for example, gives a 90-deg
         ;;window for dawnward and duskward plots
-        IF clockStr NE "all_IMF" THEN BEGIN
+        IF clockStr[0] NE "all_IMF" THEN BEGIN
            angleLim1 = KEYWORD_SET(angleLim1) ? angleLim1 : defAngleLim1 ;in degrees
            angleLim2 = KEYWORD_SET(angleLim2) ? angleLim2 : defAngleLim2 ;in degrees
         ENDIF ELSE BEGIN 
@@ -266,22 +270,40 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
 
      IF KEYWORD_SET(smoothWindow) THEN smoothStr = '__' + strtrim(smoothWindow,2)+"min_IMFsmooth" ELSE smoothStr=""
      
-     
-     
      ;;parameter string
      paramString_list                    = LIST()
-     IF clockStr EQ '' THEN clockOutStr  = '' ELSE clockOutStr = '--' + clockStr
+     IF clockStr[0] EQ '' THEN clockOutStr  = '' ELSE clockOutStr = '--' + clockStr
      IF N_ELEMENTS(paramString) EQ 0 THEN paramString = ''
-     IF KEYWORD_SET(multiple_delays) THEN BEGIN
-        FOR iDel=0,N_ELEMENTS(delay)-1 DO BEGIN
-           paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
-                       byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
-        ENDFOR
-        ENDIF ELSE BEGIN
-           paramString=paramString+'--'+satellite+omniStr+clockOutStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
-                       byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
-           paramString_list.add,paramString
-        ENDELSE
+     IF KEYWORD_SET(multiple_delays) OR KEYWORD_SET(multiple_IMF_clockAngles) THEN BEGIN
+        executing_multiples           = 1
+        IF KEYWORD_SET(multiple_delays) THEN BEGIN
+           multiples                  = delay
+           multiString                = "IMF_delays"
+           FOR iDel=0,N_ELEMENTS(multiples)-1 DO BEGIN
+              paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
+                 byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
+           ENDFOR
+        ENDIF
+
+        IF KEYWORD_SET(multiple_IMF_clockAngles) THEN BEGIN
+           multiples                  = clockStr
+           ;; multiString                = "IMF_clock angles"
+           multiString                = paramString+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
+                    byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
+           IF N_ELEMENTS(clockStr) EQ 8 THEN multiString_suff = '--theRing'
+           IF KEYWORD_SET(multiString_suff) THEN multiString = multiString + multiString_suff
+           FOR iClock=0,N_ELEMENTS(multiples)-1 DO BEGIN
+              paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr[iClock]+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr+$
+                 byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
+              IF ~KEYWORD_SET(multiString_suff) THEN multiString = multiString+'_'+clockStr[iClock]
+           ENDFOR
+        ENDIF
+     ENDIF ELSE BEGIN
+        executing_multiples           = 0
+        paramString=paramString+'--'+satellite+omniStr+clockOutStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
+                    byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
+        paramString_list.add,paramString
+     ENDELSE
   ENDELSE
 
 

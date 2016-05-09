@@ -34,6 +34,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                   DSTCUTOFF=dstCutoff, $
                                   HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
                                   RESET_GOOD_INDS=reset_good_inds, $
+                                  RESET_OMNI_INDS=reset_omni_inds, $
                                   T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                   MINM=minM,MAXM=maxM, $
                                   BINM=binM, $
@@ -148,6 +149,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                    STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                    HWMAUROVAL=0,HWMKPIND=!NULL, $
                                    RESET_GOOD_INDS=reset_good_inds, $
+                                   RESET_OMNI_INDS=reset_omni_inds, $
                                    ;; MAKE_OUTINDSFILE=1, $
                                    OUTINDSPREFIX=indsFilePrefix,OUTINDSSUFFIX=indsFileSuffix,OUTINDSFILEBASENAME=outIndsBasename, $
                                    ;; FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastLoc_delta_t, $
