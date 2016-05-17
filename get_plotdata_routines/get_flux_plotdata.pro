@@ -770,7 +770,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ENDIF
 
   dataRawPtr           = PTR_NEW(inData)
-
+  h2dStr.name          = dataName
   out_h2dMask          = h2dMask
 
   IF N_ELEMENTS(removed_ii) NE 0 THEN BEGIN 

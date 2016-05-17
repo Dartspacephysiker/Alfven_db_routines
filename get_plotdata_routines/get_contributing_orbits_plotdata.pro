@@ -13,6 +13,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
                                      H2DSTR=h2dStr, $
                                      TMPLT_H2DSTR=tmplt_h2dStr, $ ;H2DFLUXN=h2dFluxN, $
                                      ORBCONTRIB_H2DSTR_FOR_DIVISION=orbContrib_h2dStr_for_division, $
+                                     EXTRACT_ORBARR_FOR_PRINTING=extract_orbArr_for_printing, $
                                      DATANAME=dataName, $
                                      PRINT_MAX_AND_MIN=print_mandm, $
                                      LUN=lun
@@ -45,9 +46,11 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
   IF is_orb_probOcc THEN BEGIN
      h2dStr.title                                = "Probability of Occurrence (orbit-based)"
      dataName                                    = "NOrbsWEventsPerContribOrbs"
+     h2dStr.name                                 = dataName
   ENDIF ELSE BEGIN
      h2dStr.title                                = "Num Contributing Orbits"
      dataName                                    = "orbsContributing"
+     h2dStr.name                                 = dataName
   ENDELSE
 
   h2dOrbN                                     = INTARR(N_ELEMENTS(tmplt_h2dStr.data[*,0]),N_ELEMENTS(tmplt_h2dStr.data[0,*]))
@@ -134,6 +137,10 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.lim       = [MIN(h2dStr.data[h2d_include_i]), $
                          MAX(h2dStr.data[h2d_include_i])]
 
+  ENDIF
+
+  IF KEYWORD_SET(extract_orbArr_for_printing) THEN BEGIN
+     extract_orbArr_for_printing = orbArr
   ENDIF
 
 END

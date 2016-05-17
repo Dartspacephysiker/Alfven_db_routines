@@ -250,6 +250,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                                  DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
                                  WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
+                                 WRITE_ORB_AND_OBS_INFO=write_obsArr_textFile, $
                                  DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                                  DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                                  MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -558,6 +559,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         GROSSRATE__CENTERS_ILAT=centersILAT, $
                         WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                         GROSSLUN=grossLun, $
+                        WRITE_ORB_AND_OBS_INFO=write_obsArr_textFile, $
                         DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                         MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                         ADD_VARIANCE_PLOTS=add_variance_plots, $
@@ -577,9 +579,12 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         MEDIANPLOT=medianPlot, MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                         LOGAVGPLOT=logAvgPlot, $
                         ALL_LOGPLOTS=all_logPlots, $
-                        PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix, $
+                        PARAMSTRING=paramString, $
+                        PARAMSTRPREFIX=plotPrefix, $
+                        PARAMSTRSUFFIX=plotSuffix, $
                         TMPLT_H2DSTR=tmplt_h2dStr, $
                         FANCY_PLOTNAMES=fancy_plotNames, $
+                        PLOTDIR=plotDir, $
                         LUN=lun
 
     IF KEYWORD_SET(grossRate_info_file) THEN BEGIN

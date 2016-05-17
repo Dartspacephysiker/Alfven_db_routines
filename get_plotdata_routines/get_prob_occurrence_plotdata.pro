@@ -161,8 +161,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
             MEDIAN(h2dStr.data[WHERE(~h2dMask)])
   ENDIF
 
-  dataRawPtr = PTR_NEW(widthData)
-  
+  dataRawPtr           = PTR_NEW(widthData)
+  h2dStr.name          = dataName
   out_h2dMask          = h2dMask
   ;; CLOSE,lun
   ;; FREE_LUN,lun

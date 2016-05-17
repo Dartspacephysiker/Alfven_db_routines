@@ -28,11 +28,13 @@ PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM, $
   h2dStr.data     = h2dContribOrbStr.data
   IF KEYWORD_SET(div_orbContrib_by_orbTot) THEN BEGIN
      h2dStr.title    = "N Orbits per Total N Orbits"
-     dataName        = "orbContrib_per_orbTot_"
+     dataName        = "orbContrib_per_orbTot"
+     h2dStr.name     = dataName
      h2dStr.data[h2d_nonZero_allOrb_i]=DOUBLE(h2dContribOrbStr.data[h2d_nonZero_allOrb_i])/h2dTotOrbStr.data[h2d_nonZero_allOrb_i]
   ENDIF ELSE BEGIN
      h2dStr.title    = "Orbit Frequency"
      dataName        = "orbFreq_"
+     h2dStr.name     = dataName
      H2D_OK_i        = WHERE(tHistDenominator GT 0)
      h2dStr.data[H2D_OK_i]=DOUBLE(h2dContribOrbStr.data[H2D_OK_i])/h2dTotOrbStr.data[H2D_OK_i]
   ENDELSE

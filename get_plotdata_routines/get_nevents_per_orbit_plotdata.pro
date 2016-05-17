@@ -78,6 +78,8 @@ PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.lim       = [MIN(h2dStr.data[div_i]),MAX(h2dStr.data[div_i])]
   ENDIF
 
+  h2dStr.name         = dataName
+
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      IF ~KEYWORD_SET(logNEventPerOrb) THEN BEGIN
         fmt    = 'G10.4' 

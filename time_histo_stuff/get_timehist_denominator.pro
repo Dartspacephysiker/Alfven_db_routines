@@ -380,6 +380,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
         h2dStr.lim              = [0.0,1]
         h2dStr.data             = h2dStr.data/maxTHist
      ENDIF
+     h2dStr.name                = dataName
 
   ENDIF
 

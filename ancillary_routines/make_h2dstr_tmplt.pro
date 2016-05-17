@@ -31,6 +31,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
 
     h2dStr_tmplt={tmplt_h2dStr, $
                   data            : KEYWORD_SET(do_plot_i) ? LIST() : DBLARR(im1bins,im2bins), $
+                  name            : '', $
                   title           : "Template for 2D hist structure", $
                   lim             : DBLARR(2), $
                   shift1          : s1, $

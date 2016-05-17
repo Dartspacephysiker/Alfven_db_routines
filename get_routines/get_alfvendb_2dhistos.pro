@@ -161,6 +161,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           GROSSRATE__CENTERS_MLT=centersMLT, $
                           GROSSRATE__CENTERS_ILAT=centersILAT, $
                           WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
+                          WRITE_ORB_AND_OBS_INFO=write_obsArr_textFile, $
                           GROSSLUN=grossLun, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -184,12 +185,14 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           MEDHISTOUTTXT=medHistOutTxt, $
                           LOGAVGPLOT=logAvgPlot, $
                           ALL_LOGPLOTS=all_logPlots, $
+                          PARAMSTRING=paramStr, $
                           PARAMSTRPREFIX=paramStrPrefix, $
                           PARAMSTRSUFFIX=paramStrSuffix, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           RESET_GOOD_INDS=reset_good_inds, $
                           RESET_OMNI_INDS=reset_omni_inds, $
                           FANCY_PLOTNAMES=fancy_plotNames, $
+                          PLOTDIR=plotDir, $
                           DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                           LUN=lun
   
@@ -320,7 +323,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  DATANAME=dataName, $
                                                  DATARAWPTR=dataRawPtr, $
                                                  H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                                                 INDSFILEPREFIX=ParamStrPrefix, $
+                                                 INDSFILEPREFIX=paramStrPrefix, $
                                                  INDSFILESUFFIX=paramStrSuffix, $
                                                  DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                                                  BURSTDATA_EXCLUDED=burstData_excluded)
@@ -1331,8 +1334,10 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   ;;    printf,lun,"Sorry, can't plot anything meaningful." & ENDIF
   ;; ENDFOR
 
-  IF KEYWORD_SET(add_variance_plots) OR KEYWORD_SET(only_variance_plots) THEN BEGIN
-     PRINTF,lun,"Getting variance plot data ..."
+  IF KEYWORD_SET(add_variance_plots) OR KEYWORD_SET(only_variance_plots) OR KEYWORD_SET(write_obsArr_textFile) THEN BEGIN
+
+     IF KEYWORD_SET(add_variance_plots) OR KEYWORD_SET(only_variance_plots) THEN doing_var_plots = 1 ELSE doing_var_plots = 0
+     IF doing_var_plots THEN PRINTF,lun,"Getting variance plot data ..."
 
      ;;some temp vars
      var_h2dStrArr                  = !NULL
@@ -1361,9 +1366,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         
         dbStruct_obsArr               = *dataRawPtrArr[varPlotRawInds[i]]
         IF N_ELEMENTS((removed_ii_listArr[i])[0]) GT 0 THEN BEGIN
-           dont_use_these_inds           = (removed_ii_listArr[i])[0]
+           dont_use_these_inds        = (removed_ii_listArr[i])[0]
         ENDIF ELSE BEGIN 
-           dont_use_these_inds   = !NULL
+           dont_use_these_inds        = !NULL
         ENDELSE
 
         IF KEYWORD_SET(grossConvFactorArr) THEN grossConvFactor = grossConvFactorArr[i]
@@ -1378,124 +1383,133 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            GROSSCONVFACTOR=grossConvFactor, $
            OUTH2D_LISTS_WITH_OBS=outH2D_lists_with_obs,$
            OUTH2D_STATS=outH2D_stats, $
-           OUTFILEPREFIX=outFilePrefix, $
-           OUTFILESUFFIX=outFileSuffix, $
-           OUTDIR=outDir, $
-           OUTPUT_TEXTFILE=output_textFile, $
+           OUTFILESTRING=paramStr, $
+           OUTFILEPREFIX=paramStrPrefix, $
+           OUTFILESUFFIX=paramStrSuffix, $
+           OUTDIR=plotDir, $
+           OUTPUT_TEXTFILE=write_obsArr_textFile, $
+           DATANAME=dataNameArr[varPlotH2DInds[i]], $
+           DBSTRUCT=maximus, $
+           DBSTR_INDS=plot_i, $
            LUN=lun
 
-           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        ;;Now get it all set up
-        h2dStrTemp                     = h2dStrArr[varPlotH2DInds[i]]
-        IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
-           dataNameTemp                = dataNameArr[varPlotH2DInds[i]] + '_stddev'
-        ENDIF ELSE BEGIN
-           dataNameTemp                = dataNameArr[varPlotH2DInds[i]] + '_var'
-        ENDELSE
-        h2dStrTemp.data                = REFORM(outH2D_stats[1,*,*])
+        IF doing_var_plots THEN BEGIN       
+           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+           ;;Now get it all set up
+           h2dStrTemp                     = h2dStrArr[varPlotH2DInds[i]]
+           IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
+              dataNameTemp                = dataNameArr[varPlotH2DInds[i]] + '_stddev'
+           ENDIF ELSE BEGIN
+              dataNameTemp                = dataNameArr[varPlotH2DInds[i]] + '_var'
+           ENDELSE
+           h2dStrTemp.data                = REFORM(outH2D_stats[1,*,*])
 
            ;;;;;;;;;;;;;;;;;;;; 
-        ;;set up lims--2 std devs on either side
-        ;; tempMed                        = MEDIAN(h2dStrTemp.data)
-        notMasked                      = WHERE(h2dStrArr[KEYWORD_SET(nPlots)].data LT 250.)
-        tempStats                      = MOMENT(h2dStrTemp.data[notMasked])
-        h2dStrTemp.do_posNeg_cb        = 1
-        h2dStrTemp.force_oobLow        = 0
-        h2dStrTemp.force_oobHigh       = 0
+           ;;set up lims--2 std devs on either side
+           ;; tempMed                        = MEDIAN(h2dStrTemp.data)
+           notMasked                      = WHERE(h2dStrArr[KEYWORD_SET(nPlots)].data LT 250.)
+           tempStats                      = MOMENT(h2dStrTemp.data[notMasked])
+           h2dStrTemp.do_posNeg_cb        = 1
+           h2dStrTemp.force_oobLow        = 0
+           h2dStrTemp.force_oobHigh       = 0
 
-        ;;handle ranges
-        IF KEYWORD_SET(var__plotRange) OR KEYWORD_SET(var__autoscale) THEN BEGIN
-           IF KEYWORD_SET(var__plotRange) AND KEYWORD_SET(var__autoscale) THEN BEGIN
-              PRINTF,lun,"Both var__plotRange and var__autoscale are set! Assuming you'd rather have me autoscale..."
-           ENDIF
-           CASE 1 OF
-              KEYWORD_SET(var__autoscale): BEGIN
-                 h2dStrTemp.lim        = [MIN(h2dStrTemp.data[h2d_nonzero_nEv_i]), $
-                                          MAX(h2dStrTemp.data[h2d_nonzero_nEv_i])]
-              END
-              KEYWORD_SET(var__plotRange): BEGIN
-                 IF N_ELEMENTS(SIZE(var__plotRange,/DIMENSIONS)) GT 1 THEN BEGIN
-                    h2dStrTemp.lim     = var__plotRange[*,i]
-                 ENDIF ELSE BEGIN
-                    h2dStrTemp.lim     = var__plotRange
-                 ENDELSE
-              END
-           ENDCASE
-        ENDIF
-        
-        IF KEYWORD_SET(var__rel_to_mean_variance) THEN BEGIN
-           ;; IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
-           ;;    h2dStrTemp.data          = SQRT(h2dStrTemp.data) - SQRT(tempStats[0])
-           ;;    h2dStrTemp.lim           = [-2.*SQRT(tempStats[1]), $
-           ;;                                2.*SQRT(tempStats[1])]
-           ;;    h2dStrTemp.title        += " (Stddev. rel.to mean stddev.)"
-           ;; ENDIF ELSE BEGIN
-           h2dStrTemp.data             = h2dStrTemp.data - tempStats[0]
-           IF ~KEYWORD_SET(var__plotRange) THEN BEGIN
-              h2dStrTemp.lim                 = [-2.*tempStats[1], $
-                                                2.*tempStats[1]]
-           ENDIF
-           ;; h2dStrTemp.lim           = h2dStrTemp.lim - tempStats[0]
-           h2dStrTemp.title        += " (Var. rel.to meanVar)"
-           ;; ENDELSE
-        ENDIF ELSE BEGIN
-           IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
-              h2dStrTemp.data          = SQRT(h2dStrTemp.data)
-              IF ~KEYWORD_SET(var__plotRange) THEN BEGIN
-                 h2dStrTemp.lim        = [SQRT(tempStats[0])-2.*SQRT(tempStats[1]), $
-                                          SQRT(tempStats[0])+2.*SQRT(tempStats[1])]
+           ;;handle ranges
+           IF KEYWORD_SET(var__plotRange) OR KEYWORD_SET(var__autoscale) THEN BEGIN
+              IF KEYWORD_SET(var__plotRange) AND KEYWORD_SET(var__autoscale) THEN BEGIN
+                 PRINTF,lun,"Both var__plotRange and var__autoscale are set! Assuming you'd rather have me autoscale..."
               ENDIF
-              h2dStrTemp.title        += " (Stddev.)"
-           ENDIF ELSE BEGIN
-              ;; h2dStrTemp.lim                 = [tempStats[0]-2.*tempStats[1], $
-              ;;                                   tempStats[0]+2.*tempStats[1]]
+              CASE 1 OF
+                 KEYWORD_SET(var__autoscale): BEGIN
+                    h2dStrTemp.lim        = [MIN(h2dStrTemp.data[h2d_nonzero_nEv_i]), $
+                                             MAX(h2dStrTemp.data[h2d_nonzero_nEv_i])]
+                 END
+                 KEYWORD_SET(var__plotRange): BEGIN
+                    IF N_ELEMENTS(SIZE(var__plotRange,/DIMENSIONS)) GT 1 THEN BEGIN
+                       h2dStrTemp.lim     = var__plotRange[*,i]
+                    ENDIF ELSE BEGIN
+                       h2dStrTemp.lim     = var__plotRange
+                    ENDELSE
+                 END
+              ENDCASE
+           ENDIF
+           
+           IF KEYWORD_SET(var__rel_to_mean_variance) THEN BEGIN
+              ;; IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
+              ;;    h2dStrTemp.data          = SQRT(h2dStrTemp.data) - SQRT(tempStats[0])
+              ;;    h2dStrTemp.lim           = [-2.*SQRT(tempStats[1]), $
+              ;;                                2.*SQRT(tempStats[1])]
+              ;;    h2dStrTemp.title        += " (Stddev. rel.to mean stddev.)"
+              ;; ENDIF ELSE BEGIN
+              h2dStrTemp.data             = h2dStrTemp.data - tempStats[0]
               IF ~KEYWORD_SET(var__plotRange) THEN BEGIN
-                 h2dStrTemp.lim        = [MIN(h2dStrTemp.data[notMasked]),MAX(h2dStrTemp.data[notMasked])]
+                 h2dStrTemp.lim                 = [-2.*tempStats[1], $
+                                                   2.*tempStats[1]]
               ENDIF
-              h2dStrTemp.title        += " (Var.)"
-           ENDELSE
-        ENDELSE
-
-        ;;Show us
-        IF KEYWORD_SET(print_mandm) THEN BEGIN
-           IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
-              fmt    = 'G10.4' 
-              maxh2d = MAX(h2dStrTemp.data[h2d_nonzero_nEv_i])
-              minh2d = MIN(h2dStrTemp.data[h2d_nonzero_nEv_i])
-              medh2d = MEDIAN(h2dStrTemp.data[h2d_nonzero_nEv_i])
+              ;; h2dStrTemp.lim           = h2dStrTemp.lim - tempStats[0]
+              h2dStrTemp.title        += " (Var. rel.to meanVar)"
+              ;; ENDELSE
            ENDIF ELSE BEGIN
-              fmt    = 'F10.2'
-              maxh2d = ALOG10(MAX(h2dStrTemp.data[h2d_nonzero_nEv_i]))
-              minh2d = ALOG10(MIN(h2dStrTemp.data[h2d_nonzero_nEv_i]))
-              medh2d = ALOG10(MEDIAN(h2dStrTemp.data[h2d_nonzero_nEv_i]))
+              IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
+                 h2dStrTemp.data          = SQRT(h2dStrTemp.data)
+                 IF ~KEYWORD_SET(var__plotRange) THEN BEGIN
+                    h2dStrTemp.lim        = [SQRT(tempStats[0])-2.*SQRT(tempStats[1]), $
+                                             SQRT(tempStats[0])+2.*SQRT(tempStats[1])]
+                 ENDIF
+                 h2dStrTemp.title        += " (Stddev.)"
+              ENDIF ELSE BEGIN
+                 ;; h2dStrTemp.lim                 = [tempStats[0]-2.*tempStats[1], $
+                 ;;                                   tempStats[0]+2.*tempStats[1]]
+                 IF ~KEYWORD_SET(var__plotRange) THEN BEGIN
+                    h2dStrTemp.lim        = [MIN(h2dStrTemp.data[notMasked]),MAX(h2dStrTemp.data[notMasked])]
+                 ENDIF
+                 h2dStrTemp.title        += " (Var.)"
+              ENDELSE
            ENDELSE
-           PRINTF,lun,h2dStrTemp.title
-           ;; PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)', $
-           ;;        MAX(h2dStrTemp.data[h2d_nonzero_nEv_i]), $
-           ;;        MIN(h2dStrTemp.data[h2d_nonzero_nEv_i])
-           PRINTF,lun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
-                  maxh2d, $
-                  minh2d, $
-                  medh2d            
-        ENDIF
 
-        var_h2dStrArr                  = [var_h2dStrArr,h2dStrTemp]
-        var_dataNameArr                = [var_dataNameArr,dataNameTemp]
+           ;;Show us
+           IF KEYWORD_SET(print_mandm) THEN BEGIN
+              IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
+                 fmt    = 'G10.4' 
+                 maxh2d = MAX(h2dStrTemp.data[h2d_nonzero_nEv_i])
+                 minh2d = MIN(h2dStrTemp.data[h2d_nonzero_nEv_i])
+                 medh2d = MEDIAN(h2dStrTemp.data[h2d_nonzero_nEv_i])
+              ENDIF ELSE BEGIN
+                 fmt    = 'F10.2'
+                 maxh2d = ALOG10(MAX(h2dStrTemp.data[h2d_nonzero_nEv_i]))
+                 minh2d = ALOG10(MIN(h2dStrTemp.data[h2d_nonzero_nEv_i]))
+                 medh2d = ALOG10(MEDIAN(h2dStrTemp.data[h2d_nonzero_nEv_i]))
+              ENDELSE
+              PRINTF,lun,h2dStrTemp.title
+              ;; PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)', $
+              ;;        MAX(h2dStrTemp.data[h2d_nonzero_nEv_i]), $
+              ;;        MIN(h2dStrTemp.data[h2d_nonzero_nEv_i])
+              PRINTF,lun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
+                     maxh2d, $
+                     minh2d, $
+                     medh2d            
+           ENDIF
+           h2dStrTemp.name                = dataNameTemp
+
+           var_h2dStrArr                  = [var_h2dStrArr,h2dStrTemp]
+           var_dataNameArr                = [var_dataNameArr,dataNameTemp]
+        ENDIF
      ENDFOR
+     
+     IF doing_var_plots THEN BEGIN       
 
-     ;;Now update dat!!!
-     CASE 1 OF
-        KEYWORD_SET(only_variance_plots): BEGIN
-           dataNameArr                 = [dataNameArr[KEYWORD_SET(nPlots)],var_dataNameArr]
-           h2dStrArr                   = [h2dStrArr[KEYWORD_SET(nPlots)],var_h2dStrArr]
-           nPlots                      = 0
-        END
-        KEYWORD_SET(add_variance_plots): BEGIN
-           dataNameArr                 = [dataNameArr,var_dataNameArr]
-           h2dStrArr                   = [h2dStrArr,var_h2dStrArr]
-        END
-     ENDCASE
-
+        ;;Now update dat!!!
+        CASE 1 OF
+           KEYWORD_SET(only_variance_plots): BEGIN
+              dataNameArr                 = [dataNameArr[KEYWORD_SET(nPlots)],var_dataNameArr]
+              h2dStrArr                   = [h2dStrArr[KEYWORD_SET(nPlots)],var_h2dStrArr]
+              nPlots                      = 0
+           END
+           KEYWORD_SET(add_variance_plots): BEGIN
+              dataNameArr                 = [dataNameArr,var_dataNameArr]
+              h2dStrArr                   = [h2dStrArr,var_h2dStrArr]
+           END
+        ENDCASE
+     ENDIF
   ENDIF
 
   ;;Now that we're done using nplots, let's log it, if requested:
@@ -1509,6 +1523,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         h2dStrArr[0].data[h2d_nonzero_nEv_i] = ALOG10(h2dStrArr[0].data[h2d_nonzero_nEv_i])
         h2dStrArr[0].lim       = [(h2dStrArr[0].lim[0] LT 1) ? 0 : ALOG10(h2dStrArr[0].lim[0]),ALOG10(h2dStrArr[0].lim[1])] ;lower bound must be one
         h2dStrArr[0].title     = 'Log ' + h2dStrArr[0].title
+        h2dStrArr[0].name      = dataNameArr[0]
         h2dStrArr[0].is_logged = 1
      ENDIF
      IF KEYWORD_SET(nEventsPlotNormalize) THEN BEGIN
@@ -1517,6 +1532,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         h2dStrArr[0].data      = h2dStrArr[0].data/maxNEv
         h2dStrArr[0].lim       = [0.0,1.0]
         h2dStrArr[0].title    += STRING(FORMAT='(" (norm: ",G0.3,")")',maxNEv)
+        h2dStrArr[0].name      = dataNameArr[0]
         ;; h2dStrArr[0].dont_mask_me = 1
      ENDIF
      IF KEYWORD_SET(nEventsPlotAutoscale) THEN BEGIN

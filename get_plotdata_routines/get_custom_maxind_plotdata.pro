@@ -402,7 +402,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
   ENDIF
 
   dataRawPtr           = PTR_NEW(inData)
-
+  h2dStr.name          = dataName
   out_h2dMask          = h2dMask
 
   IF removed_ii[0] NE -1 THEN out_removed_ii = removed_ii ELSE out_removed_ii = !NULL

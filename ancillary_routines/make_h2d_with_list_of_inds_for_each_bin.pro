@@ -24,7 +24,7 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   DEBUG = 0
 
   ;;Because MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS wants to use 'em too
-  COMMON H2D_LIST_OF_INDS,HLOI__H2D_lists_with_inds,HLOI__nInds,HLOI__nMLT,HLOI__nILAT
+  COMMON H2D_LIST_OF_INDS,HLOI__H2D_lists_with_inds,HLOI__nInds,HLOI__nMLT,HLOI__nILAT,HLOI__H2D_binCenters
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
@@ -129,6 +129,20 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
 
      ENDFOR
   ENDFOR
+
+  ;;Get bin centers
+  GET_H2D_BIN_CENTERS_OR_EDGES,HLOI__H2D_binCenters, $
+                               BINSIZE1=binMLT, BINSIZE2=binILAT, $
+                               MIN1=minMLT, MIN2=minILAT,$
+                               MAX1=maxMLT, MAX2=maxILAT,  $
+                               SHIFT1=shiftMLT,SHIFT2=shiftILAT, $
+                               OMIN1=Omin1, OMIN2=Omin2, $
+                               OMAX1=Omax1, OMAX2=Omax2,  $
+                               OBIN1=Obin1, OBIN2=Obin2, $
+                               NBINS1=nBins1, NBINS2=nBins2, $
+                               BINEDGE1=Binedge1, BINEDGE2=Binedge2
+
+
 
   ;Now reform the sucker
   ;; outH2D_lists_with_inds                   = REFORM(outH2D_lists_with_inds,nMLT,nILAT)

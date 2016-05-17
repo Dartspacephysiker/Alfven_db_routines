@@ -31,8 +31,10 @@ PRO GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
   h2dStr.title    = 'N Events per minute'
   dataName        = "nEventPerMin"
   h2dStr.lim      = nEventPerMinRange
+  h2dStr.name     = dataName
 
   h2dStr.data     = h2dFluxN
+
   ;; h2dNonzeroNEv_i = WHERE(h2dFluxN NE 0,/NULL)
   
   ;;output from get_timehist_denominator is in seconds, but we'll do minutes

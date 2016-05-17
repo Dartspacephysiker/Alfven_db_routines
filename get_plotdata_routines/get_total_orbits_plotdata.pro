@@ -31,7 +31,8 @@ PRO GET_TOTAL_ORBITS_PLOTDATA,dbStruct,MINM=minM,MAXM=maxM, $
   h2dStr           = tmplt_h2dStr
   h2dStr.data[*,*] = 0
   h2dStr.title     = "Total Orbits"
-  dataName         = "orbTot_"
+  dataName         = "orbTot"
+  h2dStr.name      = dataName
 
   orbArr           = INTARR(N_ELEMENTS(uniqueOrbs_i), $
                             N_ELEMENTS(tmplt_h2dStr.data[*,0]), $
