@@ -1389,6 +1389,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            OUTDIR=plotDir, $
            OUTPUT_TEXTFILE=write_obsArr_textFile, $
            DATANAME=dataNameArr[varPlotH2DInds[i]], $
+           DATATITLE=h2dStrArr[varPlotH2DInds[i]].title, $
            DBSTRUCT=maximus, $
            DBSTR_INDS=plot_i, $
            LUN=lun

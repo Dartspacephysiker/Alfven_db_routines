@@ -177,7 +177,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   ;;options are 'duskward', 'dawnward', 'bzNorth', 'bzSouth', and 'all_IMF'
   IF KEYWORD_SET(do_not_consider_imf) THEN BEGIN
      clockStr                      = 'NO_IMF_CONSID'
-     paramString                   = paramString + clockStr
+     paramString                   = paramString + '--' + clockStr
      paramString_list              = LIST(paramString)
   ENDIF ELSE BEGIN
 

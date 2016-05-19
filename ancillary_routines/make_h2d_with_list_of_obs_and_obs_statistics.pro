@@ -16,6 +16,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
    OUTDIR=outDir, $
    OUTPUT_TEXTFILE=output_textFile, $
    DATANAME=dataName, $
+   DATATITLE=dataTitle, $
    DBSTRUCT=dbStruct, $
    DBSTR_INDS=dbStruct_inds, $
    LUN=lun
@@ -41,7 +42,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   ;;Doing text output?
   todayStr         = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
   ;; baseFilePrefix   = todayStr + '--H2D_str_list_of_obs' + (KEYWORD_SET(outFileString) ? '--' + outFileString : '')
-  baseFilePrefix   = 'H2D_str_list_of_obs' + (KEYWORD_SET(outFileString) ? outFileString : '')
+  baseFilePrefix   = 'H2D_str_list_of_obs--' + (KEYWORD_SET(outFileString) ? outFileString : '')
   ;; defOutFilePrefix = ''
   ;; defOutFileSuffix = ''
 
@@ -53,6 +54,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
 
   outFileName     = baseFilePrefix+'--'+dataName+'.txt'
 
+  IF N_ELEMENTS(dataTitle) GT 0 THEN dTitle = dataTitle ELSE dTitle = 'Observation'
 
   IF KEYWORD_SET(output_textFile) THEN BEGIN
      PRINTF,lun,"Creating obs/orb file: " + outDir + outFileName
@@ -125,6 +127,10 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   ;; outH2D_lists_with_obs                    = !NULL
   outH2D_stats                             = MAKE_ARRAY(4,HLOI__nMLT,HLOI__nILAT,/DOUBLE)
   outH2D_lists_with_obs                    = MAKE_ARRAY(HLOI__nMLT,HLOI__nILAT,/OBJ)
+
+  IF KEYWORD_SET(output_textFile) THEN BEGIN
+     PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T20,"Time",T47,"Orbit",T56,"Altitude",T67,A0)',dTitle
+  ENDIF
   FOR j=0,HLOI__nILAT-1 DO BEGIN
      FOR i=0,HLOI__nMLT-1 DO BEGIN
         ;;check if valid
@@ -139,16 +145,27 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
 
            ;;Output to text file if requested
            IF KEYWORD_SET(output_textFile) THEN BEGIN
+              tempMLTs                     = dbStruct.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+              tempILATs                    = dbStruct.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+              tempTimes                    = dbStruct.time[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
               tempOrbs                     = dbStruct.orbit[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
               tempAlts                     = dbStruct.alt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-              PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T25,"Orbit",T35,"Altitude",T50,"Observation")'
               ;; PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T25,"Orbit",T35,"Observation")'
-              PRINTF,textLun,FORMAT='(F0.2,T10,F0.2)',HLOI__H2D_binCenters[0,i,j],HLOI__H2D_binCenters[1,i,j]
+              PRINTF,textLun,FORMAT='(F0.3,T10,F0.3)',HLOI__H2D_binCenters[0,i,j],HLOI__H2D_binCenters[1,i,j]
               PRINTF,textLun,'*************************'
               FOR iObs=0,N_ELEMENTS(tempObs)-1 DO BEGIN
-                 PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T25,I0,T35,F0.2,T50,F0.2)', $
-                        HLOI__H2D_binCenters[0,i,j], $
-                        HLOI__H2D_binCenters[1,i,j], $
+                 ;; PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T25,I0,T35,F0.2,T50,F0.2)', $
+                 ;;        HLOI__H2D_binCenters[0,i,j], $
+                 ;;        HLOI__H2D_binCenters[1,i,j], $
+                 ;;        tempOrbs[iObs], $
+                 ;;        tempAlts[iObs], $
+                 ;;        tempObs[iObs]
+                 PRINTF,textLun,FORMAT='(F0.3,T10,F0.3,T20,A0,T47,I0,T56,F0.3,T67,F0.3)', $
+                        ;; HLOI__H2D_binCenters[0,i,j], $
+                        ;; HLOI__H2D_binCenters[1,i,j], $
+                        tempMLTs[iObs], $
+                        tempILATs[iObs], $
+                        tempTimes[iObs], $
                         tempOrbs[iObs], $
                         tempAlts[iObs], $
                         tempObs[iObs]
