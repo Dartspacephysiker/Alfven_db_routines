@@ -192,7 +192,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           RESET_GOOD_INDS=reset_good_inds, $
                           RESET_OMNI_INDS=reset_omni_inds, $
                           FANCY_PLOTNAMES=fancy_plotNames, $
-                          PLOTDIR=plotDir, $
+                          TXTOUTPUTDIR=txtOutputDir, $
                           DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                           LUN=lun
   
@@ -311,7 +311,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  ;; FASTLOC_DELTA_T=fastLoc_delta_t, $
                                                  ;; FASTLOCFILE=fastLocFile, $
                                                  ;; FASTLOCTIMEFILE=fastLocTimeFile, $
-                                                 FASTLOCOUTPUTDIR=fastLocOutputDir, $
+                                                 FASTLOCOUTPUTDIR=txtOutputDir, $
                                                  OUT_FASTLOCINTERPED_I=fastLocInterped_i, $
                                                  MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
                                                  THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
@@ -657,7 +657,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           MEDIANPLOT=medianplot, $
                           MEDHISTOUTDATA=medHistOutData, $
                           MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=medHistDataDir, $
+                          MEDHISTDATADIR=txtOutputDir, $
                           LOGAVGPLOT=logAvgPlot, $
                           DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                           ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
@@ -755,7 +755,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           MEDIANPLOT=medianplot, $
                           MEDHISTOUTDATA=medHistOutData, $
                           MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=medHistDataDir, $
+                          MEDHISTDATADIR=txtOutputDir, $
                           LOGAVGPLOT=logAvgPlot, $
                           DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                           ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
@@ -830,7 +830,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MEDIANPLOT=medianplot, $
                        MEDHISTOUTDATA=medHistOutData, $
                        MEDHISTOUTTXT=medHistOutTxt, $
-                       MEDHISTDATADIR=medHistDataDir, $
+                       MEDHISTDATADIR=txtOutputDir, $
                        LOGAVGPLOT=logAvgPlot, $
                        DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                        ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
@@ -926,7 +926,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           MEDIANPLOT=medianplot, $
                           MEDHISTOUTDATA=medHistOutData, $
                           MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=medHistDataDir, $
+                          MEDHISTDATADIR=txtOutputDir, $
                           LOGAVGPLOT=logAvgPlot, $
                           DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                           ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
@@ -1001,7 +1001,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MEDIANPLOT=medianplot, $
                        MEDHISTOUTDATA=medHistOutData, $
                        MEDHISTOUTTXT=medHistOutTxt, $
-                       MEDHISTDATADIR=medHistDataDir, $
+                       MEDHISTDATADIR=txtOutputDir, $
                        LOGAVGPLOT=logAvgPlot, $
                        DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                        ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
@@ -1097,7 +1097,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           MEDIANPLOT=medianplot, $
                           MEDHISTOUTDATA=medHistOutData, $
                           MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=medHistDataDir, $
+                          MEDHISTDATADIR=txtOutputDir, $
                           LOGAVGPLOT=logAvgPlot, $
                           DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                           ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
@@ -1171,7 +1171,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        MEDIANPLOT=medianplot, $
                        MEDHISTOUTDATA=medHistOutData, $
                        MEDHISTOUTTXT=medHistOutTxt, $
-                       MEDHISTDATADIR=medHistDataDir, $
+                       MEDHISTDATADIR=txtOutputDir, $
                        LOGAVGPLOT=logAvgPlot, $
                        DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                        ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
@@ -1299,7 +1299,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                    MEDIANPLOT=medianplot, $
                                    MEDHISTOUTDATA=medHistOutData, $
                                    MEDHISTOUTTXT=medHistOutTxt, $
-                                   MEDHISTDATADIR=medHistDataDir, $
+                                   MEDHISTDATADIR=txtOutputDir, $
                                    LOGAVGPLOT=logAvgPlot, $
                                    DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                                    ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
@@ -1353,10 +1353,10 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                              MAXILAT=maxI, $
                                              BINILAT=binI, $
                                              DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-                                             OUTFILEPREFIX=outFilePrefix, $
-                                             OUTFILESUFFIX=outFileSuffix, $
-                                             OUTDIR=outDir, $
-                                             OUTPUT_TEXTFILE=output_textFile, $
+                                             ;; OUTFILEPREFIX=outFilePrefix, $
+                                             ;; OUTFILESUFFIX=outFileSuffix, $
+                                             ;; OUTDIR=txtOutputDir, $
+                                             ;; OUTPUT_TEXTFILE=output_textFile, $
                                              /FILL_WITH_INDICES_INTO_PLOT_I, $
                                              ;; RESET_H2D_LISTS_WITH_INDS=reset_h2d_lists_with_inds, $
                                              /RESET_H2D_LISTS_WITH_INDS, $
@@ -1386,7 +1386,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            OUTFILESTRING=paramStr, $
            OUTFILEPREFIX=paramStrPrefix, $
            OUTFILESUFFIX=paramStrSuffix, $
-           OUTDIR=plotDir, $
+           OUTDIR=txtOutputDir, $
            OUTPUT_TEXTFILE=write_obsArr_textFile, $
            DATANAME=dataNameArr[varPlotH2DInds[i]], $
            DATATITLE=h2dStrArr[varPlotH2DInds[i]].title, $

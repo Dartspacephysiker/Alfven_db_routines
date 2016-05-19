@@ -80,8 +80,8 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ENDIF
 
   ;; fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals3/time_histos/'
-  fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/time_histos/'
-
+  defFastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/time_histos/'
+  IF N_ELEMENTS(fastLocOutputDir) EQ 0 THEN fastLocOutputDir = defFastLocOutputDir
   IF NOT KEYWORD_SET(lun) THEN lun = -1 ;stdout
   
   PRINTF,lun,'GET_FASTLOC_INDS_UTC_RANGE is starting...'
@@ -201,10 +201,16 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   
   IF KEYWORD_SET(make_outIndsFile) THEN BEGIN
      PRINT,'Saving outindsfile ' + outIndsFilename + '...'
-     save,fastLocInterped_i,minm,maxm,binm,mini,maxi,bini,minl,maxl,binl, $
-          altituderange,charerange,orbrange, $
-          fastLocOutputDir,fastLoc__dbFile,fastLoc__dbTimesFile, $
-          FILENAME=outIndsFilename
+     SAVE,fastLocInterped_i, $
+          minm,maxm,binm, $
+          mini,maxi,bini, $
+          minl,maxl,binl, $
+          altituderange, $
+          charerange, $
+          orbrange, $
+          fastLoc__dbFile, $
+          fastLoc__dbTimesFile, $
+          FILENAME=fastLocOutputDir+outIndsFilename
   ENDIF
   ;; ENDELSE
 

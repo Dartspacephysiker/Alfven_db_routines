@@ -35,7 +35,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                WRITEASCII=writeASCII, WRITEHDF5=writeHDF5, WRITEPROCESSEDH2D=writeProcessedH2d, $
                                SAVERAW=saveRaw, RAWDIR=rawDir, $
                                SHOWPLOTSNOSAVE=showPlotsNoSave, $
-                               PLOTDIR=plotDir, $
+                               ;; PLOTDIR=plotDir, $
                                MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                                OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
                                KEEPME=keepMe, $
@@ -82,13 +82,13 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ; assorted
   defMaskMin = 1
 
-  defPlotDir = '/SPENCEdata/Research/Cusp/ACE_FAST/plots/'
+  ;; defPlotDir = '/SPENCEdata/Research/Cusp/ACE_FAST/plots/'
   defRawDir = 'rawsaves/'
 
   defOutSummary = 1 ;for output plot summary
 
   defDataDir = "/SPENCEdata/Research/Cusp/database/"
-  defMedHistDataDir = 'out/medHistData/'
+  ;; defMedHistDataDir = 'out/medHistData/'
   
   ;Auroral oval
   IF N_ELEMENTS(HwMAurOval) EQ 0 THEN HwMAurOval = defHwMAurOval
@@ -120,7 +120,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
      nPlots=1
   ENDIF
 
-  IF N_ELEMENTS(plotDir) EQ 0 THEN plotDir = defPlotDir ;;Directory stuff
+  ;; IF N_ELEMENTS(plotDir) EQ 0 THEN plotDir = defPlotDir ;;Directory stuff
   IF N_ELEMENTS(rawDir) EQ 0 THEN rawDir=defRawDir
   IF N_ELEMENTS(dataDir) EQ 0 THEN dataDir = defDataDir
 
@@ -140,7 +140,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
      PRINT, "medHistOutTxt is enabled, but medHistOutData is not!"
      print, "Enabling medHistOutData, since corresponding output is necessary for medHistOutTxt"
      WAIT, 0.5
-     IF ~KEYWORD_SET(medHistDataDir) THEN medHistDataDir = defMedHistDataDir 
+     ;; IF ~KEYWORD_SET(medHistDataDir) THEN medHistDataDir = defMedHistDataDir 
      medHistOutData = 1
   ENDIF
 

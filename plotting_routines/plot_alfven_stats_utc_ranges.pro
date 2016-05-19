@@ -280,8 +280,12 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  WRITEPROCESSEDH2D=writeProcessedH2d, $
                                  SAVERAW=saveRaw, RAWDIR=rawDir, $
                                  JUSTDATA=justData, SHOWPLOTSNOSAVE=showPlotsNoSave, $
-                                 PLOTDIR=plotDir, PLOTPREFIX=plotPrefix, PLOTSUFFIX=plotSuffix, $
-                                 MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
+                                 PLOTDIR=plotDir, $
+                                 PLOTPREFIX=plotPrefix, $
+                                 PLOTSUFFIX=plotSuffix, $
+                                 TXTOUTPUTDIR=txtOutputDir, $
+                                 MEDHISTOUTDATA=medHistOutData, $
+                                 MEDHISTOUTTXT=medHistOutTxt, $
                                  OUTPUTPLOTSUMMARY=outputPlotSummary, $
                                  DEL_PS=del_PS, $
                                  EPS_OUTPUT=eps_output, $
@@ -351,7 +355,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              WRITEASCII=writeASCII, WRITEHDF5=writeHDF5, WRITEPROCESSEDH2D=writeProcessedH2d, $
                              SAVERAW=saveRaw, RAWDIR=rawDir, $
                              SHOWPLOTSNOSAVE=showPlotsNoSave, $
-                             PLOTDIR=plotDir, $
+                             ;; PLOTDIR=plotDir, $
                              MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                              OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
                              KEEPME=keepMe, $
@@ -364,7 +368,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
 
   ;;Open file for text summary, if desired
   IF KEYWORD_SET(outputPlotSummary) THEN $
-     OPENW,lun,plotDir + 'outputSummary_'+paramString+'.txt',/GET_LUN $
+     OPENW,lun,txtOutputDir + 'outputSummary_'+paramString+'.txt',/GET_LUN $
   ELSE lun=-1                   ;-1 is lun for STDOUT
   
   ;;********************************************************
@@ -576,7 +580,9 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         CUSTOM_MAXIND_TITLE=custom_maxInd_title, $
                         CUSTOM_GROSSRATE_CONVFACTOR=custom_grossRate_convFactor, $
                         LOG_CUSTOM_MAXIND=log_custom_maxInd, $
-                        MEDIANPLOT=medianPlot, MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
+                        MEDIANPLOT=medianPlot, $
+                        MEDHISTOUTDATA=medHistOutData, $
+                        MEDHISTOUTTXT=medHistOutTxt, $
                         LOGAVGPLOT=logAvgPlot, $
                         ALL_LOGPLOTS=all_logPlots, $
                         PARAMSTRING=paramString, $
@@ -584,7 +590,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         PARAMSTRSUFFIX=plotSuffix, $
                         TMPLT_H2DSTR=tmplt_h2dStr, $
                         FANCY_PLOTNAMES=fancy_plotNames, $
-                        PLOTDIR=plotDir, $
+                        TXTOUTPUTDIR=txtOutputDir, $
+                        ;; PLOTDIR=plotDir, $
                         LUN=lun
 
     IF KEYWORD_SET(grossRate_info_file) THEN BEGIN
@@ -665,6 +672,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                           DATARAWPTRARR=dataRawPtrArr, $
                           DATANAMEARR=dataNameArr, $
                           PARAMSTR=paramString, $
-                          PLOTDIR=plotDir
+                          TXTOUTPUTDIR=txtOutputDir
+
 
 END

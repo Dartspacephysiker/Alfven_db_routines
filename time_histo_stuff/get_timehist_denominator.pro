@@ -151,10 +151,10 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                    RESET_GOOD_INDS=reset_good_inds, $
                                    RESET_OMNI_INDS=reset_omni_inds, $
                                    ;; MAKE_OUTINDSFILE=1, $
-                                   OUTINDSPREFIX=indsFilePrefix,OUTINDSSUFFIX=indsFileSuffix,OUTINDSFILEBASENAME=outIndsBasename, $
+                                   ;; OUTINDSPREFIX=indsFilePrefix,OUTINDSSUFFIX=indsFileSuffix,OUTINDSFILEBASENAME=outIndsBasename, $
                                    ;; FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastLoc_delta_t, $
                                    ;; FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, $
-                                   FASTLOCOUTPUTDIR=fastLocOutputDir, $
+                                   ;; FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                    BURSTDATA_EXCLUDED=burstData_excluded, $
                                    DO_NOT_SET_DEFAULTS=do_not_set_defaults
 
@@ -266,9 +266,9 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                      SHIFTMLT=shiftM, $
                      MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                      DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-                     FASTLOCFILE=FASTLOC__dbFile,FASTLOCTIMEFILE=FASTLOC__dbTimesFile, $
-                     OUTFILEPREFIX=outIndsBasename,OUTFILESUFFIX=outFileSuffix, OUTDIR=fastLocOutputDir, $
-                     OUTPUT_TEXTFILE=output_textFile
+                     FASTLOCFILE=FASTLOC__dbFile,FASTLOCTIMEFILE=FASTLOC__dbTimesFile
+                     ;; OUTFILEPREFIX=outIndsBasename,OUTFILESUFFIX=outFileSuffix, OUTDIR=fastLocOutputDir, $
+                     ;; OUTPUT_TEXTFILE=output_textFile
   
 
   PRINT_TIMEHISTO_SUMMARY,FL_fastLoc,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $

@@ -147,7 +147,7 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      ;; save,outTimeHisto,FILENAME=outDir+outFileName
      ;; PRINTF,lun,'Saving ' + outDir+outFileName + '...'
      
-     IF KEYWORD_SET(output_textFile) THEN CLOSE,textLun
+     ;; IF KEYWORD_SET(output_textFile) THEN CLOSE,textLun
   ;; ENDELSE
 
      out_delta_ts              = fastLoc_delta_t[fastLoc_inds]

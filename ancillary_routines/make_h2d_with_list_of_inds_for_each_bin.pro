@@ -11,10 +11,10 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
    MAXILAT=maxILAT, $
    BINILAT=binILAT, $
    DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
-   OUTFILEPREFIX=outFilePrefix, $
-   OUTFILESUFFIX=outFileSuffix, $
-   OUTDIR=outDir, $
-   OUTPUT_TEXTFILE=output_textFile, $
+   ;; OUTFILEPREFIX=outFilePrefix, $
+   ;; OUTFILESUFFIX=outFileSuffix, $
+   ;; OUTDIR=outDir, $
+   ;; OUTPUT_TEXTFILE=output_textFile, $
    FILL_WITH_INDICES_INTO_PLOT_I=fill_with_indices_into_plot_i, $
    RESET_H2D_LISTS_WITH_INDS=reset_H2D_lists_with_inds, $
    LUN=lun
@@ -40,40 +40,40 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Doing text output?
-  todayStr         = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
-  baseFilePrefix   = todayStr + '--H2D_str_list_of_inds'
-  defOutFilePrefix = ''
-  defOutFileSuffix = ''
+  ;; todayStr         = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
+  ;; baseFilePrefix   = todayStr + '--H2D_str_list_of_inds'
+  ;; defOutFilePrefix = ''
+  ;; defOutFileSuffix = ''
 
-  defOutDir = '/SPENCEdata/Research/Cusp/Alfven_db_routines/'
+  ;; defOutDir = '/SPENCEdata/Research/Cusp/Alfven_db_routines/'
 
-  IF N_ELEMENTS(outFilePrefix) EQ 0 THEN outFilePrefix = defOutFilePrefix
-  IF N_ELEMENTS(outFileSuffix) EQ 0 THEN outFileSuffix = defOutFileSuffix
-  IF N_ELEMENTS(outDir) EQ 0 THEN outDir = defOutDir
+  ;; IF N_ELEMENTS(outFilePrefix) EQ 0 THEN outFilePrefix = defOutFilePrefix
+  ;; IF N_ELEMENTS(outFileSuffix) EQ 0 THEN outFileSuffix = defOutFileSuffix
+  ;; IF N_ELEMENTS(outDir) EQ 0 THEN outDir = defOutDir
 
-  outFileName     = todayStr+outFilePrefix+outFileSuffix+'.sav'
+  ;; outFileName     = todayStr+outFilePrefix+outFileSuffix+'.sav'
 
 
-  IF FILE_TEST(outDir+outFileName) THEN BEGIN
-     PRINTF,lun,'H2D_list_with_inds file already exists: ' + outDir+outFileName
-     PRINTF,lun,"Restoring..."
-     RESTORE,outDir+outFileName
-     IF N_ELEMENTS(outH2D_lists_with_inds) EQ 0 THEN BEGIN
-        PRINTF,lun,"Error! No H2D_list_with_inds is in this file! Possibly corrupted/old file?"
-        STOP
-     ENDIF
-  ENDIF ELSE BEGIN
+  ;; IF FILE_TEST(outDir+outFileName) THEN BEGIN
+  ;;    PRINTF,lun,'H2D_list_with_inds file already exists: ' + outDir+outFileName
+  ;;    PRINTF,lun,"Restoring..."
+  ;;    RESTORE,outDir+outFileName
+  ;;    IF N_ELEMENTS(outH2D_lists_with_inds) EQ 0 THEN BEGIN
+  ;;       PRINTF,lun,"Error! No H2D_list_with_inds is in this file! Possibly corrupted/old file?"
+  ;;       STOP
+  ;;    ENDIF
+  ;; ENDIF ELSE BEGIN
 
-     ;;are we doing a text file?
-     IF KEYWORD_SET(output_textFile) THEN BEGIN
-        textFileName='txtoutput/'+fNameSansPref + ".txt"
+  ;;    ;;are we doing a text file?
+  ;;    IF KEYWORD_SET(output_textFile) THEN BEGIN
+  ;;       textFileName='txtoutput/'+fNameSansPref + ".txt"
 
-        OPENW,textLun,outDir+textFileName,/GET_LUN
-        PRINTF,textLun,"Output from make_fastloc_histo"
-        PRINTF,textLun,"The filename gives {min,max,binsize}{MLT,(ILAT|lShell)}--{min,max}Orb"
-        PRINTF,textLun,FORMAT='("MLT",T10,"(ILAT|lShell)",T25,"Time in bin (minutes)")'
-     ENDIF
-  ENDELSE
+  ;;       OPENW,textLun,outDir+textFileName,/GET_LUN
+  ;;       PRINTF,textLun,"Output from make_fastloc_histo"
+  ;;       PRINTF,textLun,"The filename gives {min,max,binsize}{MLT,(ILAT|lShell)}--{min,max}Orb"
+  ;;       PRINTF,textLun,FORMAT='("MLT",T10,"(ILAT|lShell)",T25,"Time in bin (minutes)")'
+  ;;    ENDIF
+  ;; ENDELSE
 
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
