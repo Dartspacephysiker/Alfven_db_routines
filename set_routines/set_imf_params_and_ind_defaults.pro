@@ -263,8 +263,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      ;; IF delay GT 0 THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
      IF N_ELEMENTS(delay) GT 0 THEN delayStr = STRING(FORMAT='("__",F0.2,"mindelay")',delay/60.) ELSE delayStr = ""
      IF N_ELEMENTS(delay_res) GT 0 THEN delayResStr = STRING(FORMAT='("__",F0.2,"Res")',delay_res/60.) ELSE delayResStr = ""
-     ;; IF N_ELEMENTS(binOffset_delay) GT 0 THEN delBinOffStr = STRING(FORMAT='("__",F0.2,"binOffset")',binOffset_delay/60.) ELSE delBinOffStr = ""
-     delBinOffStr = ""
+     IF N_ELEMENTS(binOffset_delay) GT 0 THEN delBinOffStr = STRING(FORMAT='("__",F0.2,"binOffset")',binOffset_delay/60.) ELSE delBinOffStr = ""
+     ;; delBinOffStr = ""
      
      delayStr = delayStr + delayResStr + delBinOffStr
 
