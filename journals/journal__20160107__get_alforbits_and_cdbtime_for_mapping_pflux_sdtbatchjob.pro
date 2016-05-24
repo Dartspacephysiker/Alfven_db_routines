@@ -1,6 +1,6 @@
 PRO JOURNAL__20160107__GET_ALFORBITS_AND_CDBTIME_FOR_MAPPING_PFLUX_SDTBATCHJOB
 
-  dataDir        = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
+  dataDir        = '/SPENCEdata/Research/database/dartdb/saves/'
   inFile         = 'Dartdb_20160107--502-16361_despun--maximus--pflux--lshell--burst--noDupes.sav'
   in_tFile       = 'Dartdb_20160107--502-16361_despun--cdbtime--noDupes.sav'
 

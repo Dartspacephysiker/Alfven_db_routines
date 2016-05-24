@@ -1,12 +1,12 @@
 ; IDL Version 8.4.1 (linux x86_64 m64)
 ; Journal File for spencerh@thelonious.dartmouth.edu
-; Working directory: /SPENCEdata/Research/Cusp/ACE_FAST/scripts_for_processing_Dartmouth_data
+; Working directory: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/scripts_for_processing_Dartmouth_data
 ; Date: Tue Apr  7 15:43:49 2015
  
-restore,'/SPENCEdata/Research/Cusp/database/time_histos/fastLoc_intervals2--20150409.sav'
+restore,'/SPENCEdata/Research/database/time_histos/fastLoc_intervals2--20150409.sav'
 cd,current=___cur & print,___cur
-;/SPENCEdata/Research/Cusp/ACE_FAST/scripts_for_processing_Dartmouth_data
-restore,'/SPENCEdata/Research/Cusp/database/time_histos/fastLoc_intervals2--20150409--times.sav'
+;/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/scripts_for_processing_Dartmouth_data
+restore,'/SPENCEdata/Research/database/time_histos/fastLoc_intervals2--20150409--times.sav'
 diff=shift(fastloc_times,-1)-fastloc_times
 inds=where(diff GT 10)
 print,fastloc.orbit(inds+1)-fastloc.orbit(inds)

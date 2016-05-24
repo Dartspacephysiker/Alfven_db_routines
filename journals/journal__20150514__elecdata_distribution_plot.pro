@@ -68,14 +68,14 @@ print,n_elements(where(10^elecdata GT 100,/null))
 ;           0
 cghistoplot,elecdata,maxinput=1.6,title='Electron energy flux histogram for duskward IMF, Bymin=5 nT'
 cghistoplot,elecdata,maxinput=1.6,title='Electron energy flux histogram for duskward IMF, Bymin=5 nT',output='elec_energy_flux_histo--duskward--byMin5.png'
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/elec_energy_flux_histo--duskward--byMin5.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/elec_energy_flux_histo--duskward--byMin5.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/elec_energy_flux_histo--duskward--byMin5.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/elec_energy_flux_histo--duskward--byMin5.png
 cghistoplot,elecdata,maxinput=1.6,title='Log(Electron energy flux) histogram for duskward IMF, Bymin=5 nT',output='log_elec_energy_flux_histo--duskward--byMin5.png'
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/log_elec_energy_flux_histo--duskward--byMin5.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/log_elec_energy_flux_histo--duskward--byMin5.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/log_elec_energy_flux_histo--duskward--byMin5.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/log_elec_energy_flux_histo--duskward--byMin5.png
 cghistoplot,10^elecdata,maxinput=35,title='Electron energy flux histogram for duskward IMF, Bymin=5 nT',output='elec_energy_flux_histo--duskward--byMin5.png'
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/elec_energy_flux_histo--duskward--byMin5.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/elec_energy_flux_histo--duskward--byMin5.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/elec_energy_flux_histo--duskward--byMin5.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/elec_energy_flux_histo--duskward--byMin5.png
 cghistoplot,10^elecdata,maxinput=35,title='Electron energy flux histogram for duskward IMF, Bymin=5 nT'
 .run "/home/spencerh/Research/Cusp/ACE_FAST/plot_alfven_stats_imf_screening.pro"
 help,/breakpoints
@@ -175,35 +175,35 @@ print,max(pfluxest)
 cghistoplot,10^pfluxEst,maxinput=35,title='Poynting flux histogram for duskward IMF, Bymin=5 nT'
 cghistoplot,10^pfluxEst,maxinput=10,title='Poynting flux histogram for duskward IMF, Bymin=5 nT'
 cghistoplot,10^elecdata,maxinput=10,title='Poynting flux histogram for duskward IMF, Bymin=5 nT',output='poynt_flux_histo--duskward--byMin5.png'
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/poynt_flux_histo--duskward--byMin5.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/poynt_flux_histo--duskward--byMin5.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/poynt_flux_histo--duskward--byMin5.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/poynt_flux_histo--duskward--byMin5.png
 cghistoplot,10^elecdata,maxinput=10,title='Log(Poynting flux) histogram for duskward IMF, Bymin=5 nT',output='log_poynt_flux_histo--duskward--byMin5.png'
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/log_poynt_flux_histo--duskward--byMin5.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/log_poynt_flux_histo--duskward--byMin5.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/log_poynt_flux_histo--duskward--byMin5.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/log_poynt_flux_histo--duskward--byMin5.png
 cghistoplot,10^pfluxest,maxinput=10,title='Log(Poynting flux) histogram for duskward IMF, Bymin=5 nT',output='log_poynt_flux_histo--duskward--byMin5.png'
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/log_poynt_flux_histo--duskward--byMin5.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/log_poynt_flux_histo--duskward--byMin5.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/log_poynt_flux_histo--duskward--byMin5.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/log_poynt_flux_histo--duskward--byMin5.png
 cghistoplot,pfluxest,maxinput=10,title='Log(Poynting flux) histogram for duskward IMF, Bymin=5 nT',output='log_poynt_flux_histo--duskward--byMin5.png'
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/log_poynt_flux_histo--duskward--byMin5.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/log_poynt_flux_histo--duskward--byMin5.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/log_poynt_flux_histo--duskward--byMin5.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/log_poynt_flux_histo--duskward--byMin5.png
 cghistoplot,10^pfluxest,maxinput=1000,title='Poynting flux histogram for duskward IMF, Bymin=5 nT',output='poynt_flux_histo--duskward--byMin5.png'
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/poynt_flux_histo--duskward--byMin5.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/poynt_flux_histo--duskward--byMin5.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/poynt_flux_histo--duskward--byMin5.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/poynt_flux_histo--duskward--byMin5.png
 cghistoplot,10^pfluxest,maxinput=1000,title='Poynting flux histogram for duskward IMF, Bymin=5 nT'
 cghistoplot,10^pfluxest,maxinput=100,title='Poynting flux histogram for duskward IMF, Bymin=5 nT'
 cghistoplot,10^pfluxest,maxinput=10,title='Poynting flux histogram for duskward IMF, Bymin=5 nT'
 cghistoplot,10^pfluxest,maxinput=10,title='Poynting flux histogram for duskward IMF, Bymin=5 nT',output='poynt_flux_histo--duskward--byMin5.png'
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/poynt_flux_histo--duskward--byMin5.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/poynt_flux_histo--duskward--byMin5.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/poynt_flux_histo--duskward--byMin5.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/poynt_flux_histo--duskward--byMin5.png
 cghistoplot,10^pfluxest(plot_i),maxinput=10,title='Poynting flux histogram for duskward IMF, Bymin=5 nT',output='poynt_flux_histo--duskward--byMin5.png'
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/poynt_flux_histo--duskward--byMin5.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/poynt_flux_histo--duskward--byMin5.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/poynt_flux_histo--duskward--byMin5.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/poynt_flux_histo--duskward--byMin5.png
 cghistoplot,pfluxest(plot_i),maxinput=10,title='Log(Poynting flux) histogram for duskward IMF, Bymin=5 nT',output='log_poynt_flux_histo--duskward--byMin5.png'
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/log_poynt_flux_histo--duskward--byMin5.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/log_poynt_flux_histo--duskward--byMin5.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/log_poynt_flux_histo--duskward--byMin5.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/log_poynt_flux_histo--duskward--byMin5.png
 cghistoplot,pfluxest(plot_i),maxinput=3,title='Log(Poynting flux) histogram for duskward IMF, Bymin=5 nT',output='log_poynt_flux_histo--duskward--byMin5.png'
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/log_poynt_flux_histo--duskward--byMin5.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/log_poynt_flux_histo--duskward--byMin5.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/log_poynt_flux_histo--duskward--byMin5.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/log_poynt_flux_histo--duskward--byMin5.png
 print,10^0.4
 ;      2.51189
 print,alog10(2.5)
@@ -290,7 +290,7 @@ plot_alfven_stats_imf_screening,bymin=5,clockstr='duskward',/logavgplot,/eplots,
 ;h2dStr.AbsNoPos--Log Poynting Flux (mW/m!U2!N) has 82
 ; elements that are zero, whereas FluxN has 87.
 ;Sorry, can't plot anything meaningful.
-;Current directory is /SPENCEdata/Research/Cusp/ACE_FAST/plots/
+;Current directory is /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/plots/
 ;Creating output files...
 ;PostScript output will be created here: 
 ;plots/NoNegs--LogeFluxMax_North_logAvg_duskward--1stable--OMNI_GSM_byMin_5.0_May_14_15.ps

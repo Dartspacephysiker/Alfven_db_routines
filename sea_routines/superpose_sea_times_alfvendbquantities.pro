@@ -177,7 +177,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
   
   COMPILE_OPT idl2
 
-  dataDir='/SPENCEdata/Research/Cusp/database/'
+  dataDir='/SPENCEdata/Research/database/'
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;defaults

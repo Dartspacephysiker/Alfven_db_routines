@@ -1,6 +1,6 @@
 PRO JOURNAL__20160212__BATCH_DO_FASTLOC_INTERVALS4_STRINGS_TO_TIMES
 
-  RESTORE,'/SPENCEdata/Research/Cusp/Alfven_db_routines/fl_i4__timestrings.temp'
+  RESTORE,'/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/fl_i4__timestrings.temp'
 
   sizeIter   = 100000L
   nIter      = LONG(N_ELEMENTS(times)/sizeIter)

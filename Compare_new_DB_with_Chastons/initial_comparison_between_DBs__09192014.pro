@@ -1,6 +1,6 @@
 ; IDL Version 8.3 (linux x86_64 m64)
 ; Journal File for spencerh@Merry2
-; Working directory: /SPENCEdata/Research/Cusp/ACE_FAST/Comparison_dflux_10000_0
+; Working directory: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/Comparison_dflux_10000_0
 ; Date: Fri Sep 19 17:46:53 2014
  
 disparate_times=WHERE(dat.time NE dat1.time)
@@ -25,7 +25,7 @@ print, dat.time[1], dat_nosmooth.time[2]
 ;1999-03-02/17:56:08.5421999-03-02/17:56:23.284
 
 ;open a file for writing
-openw,outf,"/SPENCEdata/Research/Cusp/ACE_FAST/Comparison_dflux_10000_0/compare_Chaston_and_Dartm_nosmooth_times.txt",/get_lun
+openw,outf,"/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/Comparison_dflux_10000_0/compare_Chaston_and_Dartm_nosmooth_times.txt",/get_lun
 
 printf,outf, "Chaston orig             Dartmouth_nosmooth"
 for j=0,(N_ELEMENTS(dat_nosmooth.time)-1) do begin & $

@@ -9,7 +9,7 @@
 ; to >= 32 Hz and that corresponding to >= 128 Hz. This means the data are being cast out some other way.
 PRO JOURNAL__20150820__WHY_WE_SHOULD_RESTRICT_WIDTH_TIME_AND_SAMPLE_T
 
-  restore,'/SPENCEdata/Research/Cusp/database/dartdb/saves/Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav'
+  restore,'/SPENCEdata/Research/database/dartdb/saves/Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav'
 
   good_i=get_chaston_ind(maximus,/both_hemis)
 

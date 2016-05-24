@@ -18,7 +18,7 @@ PRO JOURNAL__20151222__CHECKING_PFLUX_BEFORE_AND_AFTER_MAPPING_TO_IONOS
   LOAD_MAXIMUS_AND_CDBTIME,maximus,/DO_NOT_MAP_PFLUX,/FORCE_LOAD_MAXIMUS
   cghistoplot,ALOG10(maximus.pfluxest[good_i]),MAXINPUT=1.5,OUTPUT=beforeFile
 
-  ;; save,good_i,FILENAME='/SPENCEdata/Research/Cusp/database/good_i--20151222--temp_for_checking_Pflux_before_and_after_mapping.sav'
+  ;; save,good_i,FILENAME='/SPENCEdata/Research/database/good_i--20151222--temp_for_checking_Pflux_before_and_after_mapping.sav'
 
 
 END

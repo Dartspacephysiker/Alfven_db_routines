@@ -60,10 +60,10 @@ pro compare_chastondbfile_dartdbfile, $
     arr_elem = 1 ;default, do max current times
   endif
 
-  chastondbdir='/SPENCEdata/Research/Cusp/database/current_db/'
-  ;datadir='/SPENCEdata/Research/Cusp/ACE_FAST/Compare_new_DB_with_Chastons/'
+  chastondbdir='/SPENCEdata/Research/database/current_db/'
+  ;datadir='/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/Compare_new_DB_with_Chastons/'
   datadir='/home/spencerh/software/sdt/batch_jobs/Alfven_study_14F/output_alfven_stats/'
-  outdir='/SPENCEdata/Research/Cusp/ACE_FAST/Compare_new_DB_with_Chastons/txtoutput/'
+  outdir='/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/Compare_new_DB_with_Chastons/txtoutput/'
 
   basename='dflux_'+strcompress(orbit,/remove_all)+'_0'
   savsuf='.sav'

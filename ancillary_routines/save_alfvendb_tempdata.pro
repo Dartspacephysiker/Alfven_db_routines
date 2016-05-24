@@ -16,7 +16,7 @@ PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile,H2DSTRARR=h2dStrArr,DATANAMEARR=dat
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
-  defTempDir='/SPENCEdata/Research/Cusp/ACE_FAST/temp/'
+  defTempDir='/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/temp/'
 
   IF ~KEYWORD_SET(tempFile) THEN tempFile = defTempDir + 'polarplots_'+paramStr+".dat"
 

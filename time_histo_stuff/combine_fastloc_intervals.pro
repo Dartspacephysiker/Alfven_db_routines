@@ -14,7 +14,7 @@ PRO combine_fastloc_intervals,fastLoc
   fNamePrefix='Dartmouth_fastloc_intervals2'
   fNameSuffix='below_aur_oval'
 
-  outDir='/SPENCEdata/Research/Cusp/database/time_histos/'
+  outDir='/SPENCEdata/Research/database/time_histos/'
   outSuffix='15000-16361--below_aur_oval'
   outFileSansFExt = 'fastLoc_intervals2--'+outSuffix+'--'+date
   outFile = outFileSansFExt+'.sav'

@@ -46,7 +46,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   ;; defOutFilePrefix = ''
   ;; defOutFileSuffix = ''
 
-  defOutDir = '/SPENCEdata/Research/Cusp/Alfven_db_routines/txtOutput/'
+  defOutDir = '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/txtOutput/'
 
   ;; IF N_ELEMENTS(outFilePrefix) EQ 0 THEN outFilePrefix = defOutFilePrefix
   ;; IF N_ELEMENTS(outFileSuffix) EQ 0 THEN outFileSuffix = defOutFileSuffix

@@ -4,17 +4,17 @@ PRO combine_two_fastloc_dbfiles,fastLoc,fastLoc_times,DBFILE1=dbFile1,DB_TFILE1=
 
   date='20150613'
   
-  defDBDir1 ='/SPENCEdata/Research/Cusp/database/time_histos/'
+  defDBDir1 ='/SPENCEdata/Research/database/time_histos/'
   defDBFile1='fastLoc_intervals2--500-14999_all--20150612.sav'
   defDB_tFile1='fastLoc_intervals2--500-14999_all--20150612--times.sav'
   defDB_tRawFile1='fastLoc_intervals2--500-14999_all--20150612--times.sav_raw'
 
-  defDBDir2 ='/SPENCEdata/Research/Cusp/database/time_histos/'
+  defDBDir2 ='/SPENCEdata/Research/database/time_histos/'
   defDBFile2='fastLoc_intervals2--15000-16361--below_aur_oval--20150613.sav'
   defDB_tFile2='fastLoc_intervals2--15000-16361--below_aur_oval--20150613--times.sav'
   defDB_tRawFile2='fastLoc_intervals2--15000-16361--below_aur_oval--20150613--times.sav_raw'
 
-  outDir='/SPENCEdata/Research/Cusp/database/time_histos/'
+  outDir='/SPENCEdata/Research/database/time_histos/'
   outSuffix='500-16361_all'
   outFileSansPref = 'fastLoc_intervals2--'+outSuffix+'--'+date
   outFile = outDir+outFileSansPref+'.sav'

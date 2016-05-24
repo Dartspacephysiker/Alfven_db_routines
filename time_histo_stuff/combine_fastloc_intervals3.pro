@@ -18,7 +18,7 @@ PRO combine_fastloc_intervals3,fastLoc
   fNameSuffix='--below_aur_oval'
   fNameSuffLen=STRLEN(fNameSuffix)
 
-  outDir='/SPENCEdata/Research/Cusp/database/time_histos/'
+  outDir='/SPENCEdata/Research/database/time_histos/'
   ;; outSuffix='500-3126--below_aur_oval'
   ;; outSuffix='3127-5999--below_aur_oval'
   ;; outSuffix='6000-10780--below_aur_oval'

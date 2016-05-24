@@ -7,7 +7,7 @@
 
 ;************************************************************
 ;The following commented code is the way I selected the random orbits
-;; dbDir='/SPENCEdata/Research/Cusp/ACE_FAST/scripts_for_processing_Dartmouth_data/'
+;; dbDir='/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/scripts_for_processing_Dartmouth_data/'
 ;; dbFile='Dartdb_02282015--500-14999--maximus--cleaned.sav'
 ;; dbTimeFile='Dartdb_02282015--500-14999--cdbTime--cleaned.sav'
 

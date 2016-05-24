@@ -5,7 +5,7 @@
 PRO JOURNAL__20150526__delta_t_between_orbit_obs_for_a_given_hemisphere,HEMI=hemi
 
 	;restore db
-  dbDir='/SPENCEdata/Research/Cusp/ACE_FAST/scripts_for_processing_Dartmouth_data/'
+  dbDir='/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/scripts_for_processing_Dartmouth_data/'
   dbFile='Dartdb_02282015--500-14999--maximus--cleaned.sav'
   dbTimeFile='Dartdb_02282015--500-14999--cdbTime--cleaned.sav'
   

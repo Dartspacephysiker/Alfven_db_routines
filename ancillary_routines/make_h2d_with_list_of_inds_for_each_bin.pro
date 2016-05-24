@@ -45,7 +45,7 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   ;; defOutFilePrefix = ''
   ;; defOutFileSuffix = ''
 
-  ;; defOutDir = '/SPENCEdata/Research/Cusp/Alfven_db_routines/'
+  ;; defOutDir = '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/'
 
   ;; IF N_ELEMENTS(outFilePrefix) EQ 0 THEN outFilePrefix = defOutFilePrefix
   ;; IF N_ELEMENTS(outFileSuffix) EQ 0 THEN outFileSuffix = defOutFileSuffix

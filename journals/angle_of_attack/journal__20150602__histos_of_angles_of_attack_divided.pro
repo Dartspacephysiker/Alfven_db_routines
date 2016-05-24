@@ -1,5 +1,5 @@
 
-dataDir='/SPENCEdata/Research/Cusp/ACE_FAST/'
+dataDir='/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/'
 
 aOaDBFile='angle_of_attack__DartDB_20150228_cleaned--20150601.sav'
 aOaFastLocFile='angle_of_attack__fastLocDB_20150409--20150601.sav'

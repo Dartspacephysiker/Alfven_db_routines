@@ -8,7 +8,7 @@ PRO COMBINE_MAPPING_RATIO_FILES,mapRatio,LUN=lun
   date                 = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
   maxOrb               = 16361
 
-  outDir               = '/SPENCEdata/Research/Cusp/database/dartdb/saves/mapratio_dbs/'
+  outDir               = '/SPENCEdata/Research/database/dartdb/saves/mapratio_dbs/'
   outFile              = outDir + 'mapratio_for_20151014_DB--up_to' + $
                          STRCOMPRESS(maxOrb,/REMOVE_ALL) + '--' + date + '.dat'
 

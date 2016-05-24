@@ -82,12 +82,12 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ; assorted
   defMaskMin = 1
 
-  ;; defPlotDir = '/SPENCEdata/Research/Cusp/ACE_FAST/plots/'
+  ;; defPlotDir = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/plots/'
   defRawDir = 'rawsaves/'
 
   defOutSummary = 1 ;for output plot summary
 
-  defDataDir = "/SPENCEdata/Research/Cusp/database/"
+  defDataDir = "/SPENCEdata/Research/database/"
   ;; defMedHistDataDir = 'out/medHistData/'
   
   ;Auroral oval

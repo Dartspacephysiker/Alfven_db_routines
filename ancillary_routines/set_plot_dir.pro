@@ -9,9 +9,9 @@ PRO SET_PLOT_DIR,plotDir, $
                  VERBOSE=verbose, $
                  LUN=lun
   
-  defStormPlotDir     = '/SPENCEdata/Research/Cusp/storms_Alfvens/plots/'
-  defSW_IMFPlotDir    = '/SPENCEdata/Research/Cusp/ACE_FAST/plots/'
-  defAlfvenDBPlotDir  = '/SPENCEdata/Research/Cusp/Alfven_db_routines/plots/'
+  defStormPlotDir     = '/SPENCEdata/Research/Satellites/FAST/storms_Alfvens/plots/'
+  defSW_IMFPlotDir    = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/plots/'
+  defAlfvenDBPlotDir  = '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/plots/'
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 

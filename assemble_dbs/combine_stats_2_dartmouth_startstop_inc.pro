@@ -7,7 +7,7 @@ pro combine_stats_2_Dartmouth_startstop_inc,maximus
   contents_file='./orbits_contained_in_DartDBfile_' + date + '--startstops_included.txt'
   ;;  contents_file='./orbits_contained_in_DartDBfile_' + date + '--first5000--startstops_included.txt'
   ;; outfile='Dartdb_' + date + '--500-14999--maximus.sav'
-  outDir = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
+  outDir = '/SPENCEdata/Research/database/dartdb/saves/'
   outfile=outDir+'Dartdb_' + date + '--16150-16169--maximus.sav'
 
   ;; below_aur_ovalStr=''

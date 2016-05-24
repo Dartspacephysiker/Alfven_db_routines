@@ -1,13 +1,13 @@
 ;2016/02/12 There are dupes, so we'd better junk 'em
 PRO JOURNAL__20160212__REMOVE_DUPES_IN_FASTLOC_INTERVALS4
 
-  inDir               = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/'
+  inDir               = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals4/'
   inFile              = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205.sav'
   inFileTimes         = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--times.sav'
   inFileRaw           = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--times.sav_raw'
 
 
-  outDir              = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/'
+  outDir              = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals4/'
   outFile             = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--noDupes--sample_freq_le_0.01.sav'
   outFileTimes        = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--times--noDupes--sample_freq_le_0.01.sav'
 

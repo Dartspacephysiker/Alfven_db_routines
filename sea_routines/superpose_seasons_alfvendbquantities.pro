@@ -168,7 +168,7 @@ PRO SUPERPOSE_SEASONS_ALFVENDBQUANTITIES, $
    PDF_OUTPUT=pdf_output
   
   
-  dataDir='/SPENCEdata/Research/Cusp/database/'
+  dataDir='/SPENCEdata/Research/database/'
 
   ;;In this case, the centertimes are each year, and we want to go the full year!
   year_and_season_mode = 1

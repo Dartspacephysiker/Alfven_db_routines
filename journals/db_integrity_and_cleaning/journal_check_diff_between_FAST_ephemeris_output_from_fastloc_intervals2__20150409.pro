@@ -1,6 +1,6 @@
 ; IDL Version 8.4.1 (linux x86_64 m64)
 ; Journal File for spencerh@thelonious.dartmouth.edu
-; Working directory: /SPENCEdata/Research/Cusp/ACE_FAST/scripts_for_processing_Dartmouth_data
+; Working directory: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/scripts_for_processing_Dartmouth_data
 ; Date: Thu Apr  9 11:20:28 2015
  
 restore,'fastLoc_intervals2--20150408--times.sav'

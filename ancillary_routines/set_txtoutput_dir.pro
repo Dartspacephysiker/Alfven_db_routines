@@ -9,9 +9,9 @@ PRO SET_TXTOUTPUT_DIR,txtOutputDir, $
                  VERBOSE=verbose, $
                  LUN=lun
   
-  defStormTxtOutputDir     = '/SPENCEdata/Research/Cusp/storms_Alfvens/txtOutput/'
-  defSW_IMFTxtOutputDir    = '/SPENCEdata/Research/Cusp/ACE_FAST/txtOutput/'
-  defAlfvenDBTxtOutputDir  = '/SPENCEdata/Research/Cusp/Alfven_db_routines/txtOutput/'
+  defStormTxtOutputDir     = '/SPENCEdata/Research/Satellites/FAST/storms_Alfvens/txtOutput/'
+  defSW_IMFTxtOutputDir    = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/txtOutput/'
+  defAlfvenDBTxtOutputDir  = '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/txtOutput/'
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 

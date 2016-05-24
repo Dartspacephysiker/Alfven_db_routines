@@ -3,7 +3,7 @@ PRO combine_two_fastloc3_dbfiles,fastLoc,fastLoc_times,DBFILE1=dbFile1,DB_TFILE1
   ;This smashes together two fastloc3 DB files, ordered by time
 
   date='20151020'
-  outDir='/SPENCEdata/Research/Cusp/database/time_histos/'
+  outDir='/SPENCEdata/Research/database/time_histos/'
   outSuffix='500-16361--below_aur_oval'
   ;; outSuffix='500-16361_all'
   outFileSansPref = 'fastLoc_intervals3--'+outSuffix+'--'+date
@@ -12,7 +12,7 @@ PRO combine_two_fastloc3_dbfiles,fastLoc,fastLoc_times,DBFILE1=dbFile1,DB_TFILE1
   outTimeFile_raw = outDir+outFileSansPref+'--times.sav_raw'
 
   date1='20151020'
-  defDBDir1 ='/SPENCEdata/Research/Cusp/database/time_histos/'
+  defDBDir1 ='/SPENCEdata/Research/database/time_histos/'
   ;; dbSuffix1='500-3126--below_aur_oval'
   ;; dbSuffix1='500-10780--below_aur_oval'
   dbSuffix1='500-14063--below_aur_oval'
@@ -22,7 +22,7 @@ PRO combine_two_fastloc3_dbfiles,fastLoc,fastLoc_times,DBFILE1=dbFile1,DB_TFILE1
   defDB_tRawFile1 = DBSansFExt1+'--times.sav_raw'
 
   date2='20151020'
-  defDBDir2 ='/SPENCEdata/Research/Cusp/database/time_histos/'
+  defDBDir2 ='/SPENCEdata/Research/database/time_histos/'
   ;; dbSuffix2='3127-5999--below_aur_oval'
   ;; dbSuffix2='10781-14063--below_aur_oval'
   dbSuffix2='14064-16361--below_aur_oval'

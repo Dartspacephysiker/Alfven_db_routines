@@ -4,7 +4,7 @@
 
 PRO JOURNAL__20150603__angle_of_attack_histos_and_scatters
 
-  dataDir='/SPENCEdata/Research/Cusp/ACE_FAST/'
+  dataDir='/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/'
   aOa_fLFile='angle_of_attack__fastLocDB_20150409--20150601.sav'
   fastLocFile='time_histo_stuff/fastLoc_intervals2--20150409.sav'
 

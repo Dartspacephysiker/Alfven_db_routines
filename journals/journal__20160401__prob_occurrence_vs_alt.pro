@@ -1,7 +1,7 @@
 PRO JOURNAL__20160401__PROB_OCCURRENCE_VS_ALT
 
   outPlot_pref                   = "journal__20160401__plot_probOccurrence_vs_alt--"
-  outFile_dir                    = '/SPENCEdata/Research/Cusp/ACE_FAST/'
+  outFile_dir                    = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/'
   outFile_dat                    = 'probOccurrence_vs_alt_data.sav'
 
   nonstorm                       = 0

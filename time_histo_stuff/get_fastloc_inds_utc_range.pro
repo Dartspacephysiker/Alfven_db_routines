@@ -79,8 +79,8 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
      FASTLOC__dbTimesFile = fastLocTimeFile_in
   ENDIF
 
-  ;; fastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals3/time_histos/'
-  defFastLocOutputDir = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/time_histos/'
+  ;; fastLocOutputDir = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals3/time_histos/'
+  defFastLocOutputDir = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals4/time_histos/'
   IF N_ELEMENTS(fastLocOutputDir) EQ 0 THEN fastLocOutputDir = defFastLocOutputDir
   IF NOT KEYWORD_SET(lun) THEN lun = -1 ;stdout
   

@@ -1,6 +1,6 @@
 PRO JOURNAL__20151221__FIGURING_OUT_WHICH_MAPRATIO_TIMES_ARE_BAD
 
-  ;; restore,'/SPENCEdata/Research/Cusp/database/mapratio_for_20151014_DB--up_to16361--20151221.dat'
+  ;; restore,'/SPENCEdata/Research/database/mapratio_for_20151014_DB--up_to16361--20151221.dat'
   load_mapping_ratio_db,mapRatio
 
   load_maximus_and_cdbtime,maximus,cdbTime

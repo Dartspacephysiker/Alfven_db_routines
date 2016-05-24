@@ -1,7 +1,7 @@
 ;No way; I think there are some dupes in maximus...
 PRO JOURNAL__20150818__kill_maximus_dupes
 
-  dataDir='/SPENCEdata/Research/Cusp/database/dartdb/saves/'
+  dataDir='/SPENCEdata/Research/database/dartdb/saves/'
   DBFile='Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav'
   DB_tFile='Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--cdbtime.sav'
   stormFile='saves_output_etc/superposed_large_storm_output_w_n_Alfven_events--20150817.dat'

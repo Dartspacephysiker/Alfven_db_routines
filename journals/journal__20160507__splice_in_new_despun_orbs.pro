@@ -3,7 +3,7 @@ PRO JOURNAL__20160507__SPLICE_IN_NEW_DESPUN_ORBS
 
   save_combined_file = 1
 
-  outDir             = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
+  outDir             = '/SPENCEdata/Research/database/dartdb/saves/'
 
   ;;The heavyweight champion
   max1File           = 'Dartdb_20160107--502-16361_despun--maximus--pflux--lshell--burst--noDupes.sav'

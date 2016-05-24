@@ -5,7 +5,7 @@ pro combine_two_dbfiles__add_burst_tag,maximus,cdbTime,DBFILE1=dbFile1,DB_TFILE1
 
   date='20150814'
 
-  loaddataDir = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
+  loaddataDir = '/SPENCEdata/Research/database/dartdb/saves/'
   defPref = "Dartdb_20150611--500-16361_inc_lower_lats"
   DBFile = defPref + "--maximus.sav"
 
@@ -14,7 +14,7 @@ pro combine_two_dbfiles__add_burst_tag,maximus,cdbTime,DBFILE1=dbFile1,DB_TFILE1
   burstDBFile = 'Dartdb_20150810--1000-16361--maximus--burstmode.sav'
   burstDB_tFile = 'Dartdb_20150810--1000-16361--cdbtime--burstmode.sav'
 
-  outDir='/SPENCEdata/Research/Cusp/database/dartdb/saves/'
+  outDir='/SPENCEdata/Research/database/dartdb/saves/'
   outPref = 'Dartdb_'+date+'--500-16361_inc_lower_lats--burst_1000-16361'
   outFile = outPref + '--maximus.sav'
   out_tFile = outPref + '--cdbtime.sav'

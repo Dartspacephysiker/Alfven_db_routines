@@ -39,7 +39,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
      force_load_cdbtime = 1
   ENDIF
 
-  DefDBDir             = '/SPENCEdata/Research/Cusp/database/dartdb/saves/'
+  DefDBDir             = '/SPENCEdata/Research/database/dartdb/saves/'
   ;;DefDBFile            = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav'
   ;; DefDBFile            = 'Dartdb_20151014--500-16361_inc_lower_lats--burst_1000-16361--w_Lshell--maximus.sav'
 
@@ -54,7 +54,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
 
 
   IF KEYWORD_SET(chastDB) THEN BEGIN
-     DBDir='/SPENCEdata/Research/Cusp/database/processed/'
+     DBDir='/SPENCEdata/Research/database/processed/'
      DBFile = "maximus.dat"
      DB_tFile = "cdbtime.sav"
      correct_fluxes = 0

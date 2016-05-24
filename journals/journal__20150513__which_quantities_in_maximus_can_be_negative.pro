@@ -1,6 +1,6 @@
 ;I wanna know who can be neg and who can't
 
-dataDir = '/SPENCEdata/Research/Cusp/ACE_FAST/scripts_for_processing_Dartmouth_data/'
+dataDir = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/scripts_for_processing_Dartmouth_data/'
 dbFile = 'Dartdb_02282015--500-14999--maximus--cleaned.sav'
 restore,dataDir+dbFile
 

@@ -33,7 +33,7 @@ FUNCTION interp_mag_data_for_fastloc, satellite,DELAY=delay,LUN=lun, $
   defMaxDiff=5.0 ; (in minutes)
 
   ;defaults
-  defFastLocDir = '/SPENCEdata/Research/Cusp/database/time_histos/'
+  defFastLocDir = '/SPENCEdata/Research/database/time_histos/'
   defFastLocFile = 'fastLoc_intervals2--500-16361_all--20150613.sav'
   defFastLocTimeFile = 'fastLoc_intervals2--500-16361_all--20150613--times.sav'
 
@@ -46,7 +46,7 @@ FUNCTION interp_mag_data_for_fastloc, satellite,DELAY=delay,LUN=lun, $
   defOutFilePrefix = 'fastLoc_intervals2--timeHisto--INDS_from_interp_mag_data_for_fastloc'
   ;; defOutFileSuffix = '--timeHisto'
   defOutFileSuffix = ''
-  defOutDir = '/SPENCEdata/Research/Cusp/database/time_histos/'
+  defOutDir = '/SPENCEdata/Research/database/time_histos/'
 
   defMinMLT = 0.0
   defMaxMLT = 24.0

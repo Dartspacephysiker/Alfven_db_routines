@@ -286,8 +286,8 @@ PREF = '02142015--study_cutoffs--'
 cghistoplot,alog10(maximus.eflux_losscone_integ),output=PREF+"alog10_maximus_eflux_losscone_integ.png"
 ; % Program caused arithmetic error: Floating divide by 0
 ; % Program caused arithmetic error: Floating illegal operand
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/02142015--study_cutoffs--alog10_maximus_eflux_losscone_integ.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/02142015--study_cutoffs--alog10_maximus_eflux_losscone_integ.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/02142015--study_cutoffs--alog10_maximus_eflux_losscone_integ.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/02142015--study_cutoffs--alog10_maximus_eflux_losscone_integ.png
 ; % Program caused arithmetic error: Floating illegal operand
 print,n_elements(where(maximus.eflux_losscone_integ LT 0))
 ;      254667
@@ -322,8 +322,8 @@ print,n_elements(where(maximus.elec_energy_flux LT 0))
 ;          34
 cghistoplot,maximus.elec_energy_flux(where(maximus.elec_energy_flux LT 0))
 cghistoplot,maximus.elec_energy_flux(where(maximus.elec_energy_flux LT 0)),output=PREF+"elec_energy_flux--allnegs(tiny_number--probjunk).png"
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/02142015--study_cutoffs--elec_energy_flux--allnegs(tiny_number--probjunk).png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/02142015--study_cutoffs--elec_energy_flux--allnegs(tiny_number--probjunk).png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/02142015--study_cutoffs--elec_energy_flux--allnegs(tiny_number--probjunk).png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/02142015--study_cutoffs--elec_energy_flux--allnegs(tiny_number--probjunk).png
 .run "/home/spencerh/Research/Cusp/ACE_FAST/alfven_db_cleaner.pro"
 ; % Syntax error.
 ; % Syntax error.
@@ -379,8 +379,8 @@ print,n_elements(where(maximus.max_chare_losscone GT 1.5e4))
 cghistoplot,maximus.ion_flux
 ; % Program caused arithmetic error: Floating illegal operand
 cghistoplot,alog10(abs(maximus.ion_flux)),output=PREF+"alog10_abs_ion_flux.png"
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/02142015--study_cutoffs--alog10_abs_ion_flux.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/02142015--study_cutoffs--alog10_abs_ion_flux.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/02142015--study_cutoffs--alog10_abs_ion_flux.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/02142015--study_cutoffs--alog10_abs_ion_flux.png
 ; % Program caused arithmetic error: Floating illegal operand
 cghistoplot,alog10(abs(maximus.ion_flux))
 ; % Program caused arithmetic error: Floating illegal operand
@@ -408,8 +408,8 @@ cghistoplot,alog10(abs(maximus.ion_energy_flux))
 ; % Program caused arithmetic error: Floating divide by 0
 cghistoplot,alog10(abs(maximus.ion_energy_flux)),output=PREF+"alog10_abs_ion_energy_flux.png"
 ; % Program caused arithmetic error: Floating divide by 0
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/02142015--study_cutoffs--alog10_abs_ion_energy_flux.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/02142015--study_cutoffs--alog10_abs_ion_energy_flux.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/02142015--study_cutoffs--alog10_abs_ion_energy_flux.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/02142015--study_cutoffs--alog10_abs_ion_energy_flux.png
 print,n_elements(where(maximus.ion_energy_flux LT 0))
 ;           1
 print,where(maximus.ion_energy_flux LT 0)
@@ -3277,8 +3277,8 @@ print,N_elements(where(maximus.ion_flux_up GT 7e10))
 print,n_elements(where(maximus.ion_flux_up LT 0))
 ;           1
 cghistoplot,maximus.ion_flux_up,maxinput=1e10,output=pref+"ion_flux_up--maxinput1e10.png"
-;Output file located here: /SPENCEdata/Research/Cusp/ACE_FAST/02142015--study_cutoffs--ion_flux_up--maxinput1e10.png
-;Output File: /SPENCEdata/Research/Cusp/ACE_FAST/02142015--study_cutoffs--ion_flux_up--maxinput1e10.png
+;Output file located here: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/02142015--study_cutoffs--ion_flux_up--maxinput1e10.png
+;Output File: /SPENCEdata/Research/Satellites/FAST/OMNI_FAST/02142015--study_cutoffs--ion_flux_up--maxinput1e10.png
 cghistoplot,maximus.char_ion_energy
 ; % Program caused arithmetic error: Floating illegal operand
 print,n_elements(where(maximus.char_ion_energy GT 0))

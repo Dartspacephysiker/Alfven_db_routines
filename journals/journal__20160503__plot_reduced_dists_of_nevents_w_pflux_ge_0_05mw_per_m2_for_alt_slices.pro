@@ -6,7 +6,7 @@ PRO JOURNAL__20160503__PLOT_REDUCED_DISTS_OF_NEVENTS_W_PFLUX_GE_0_05MW_PER_M2_FO
   hemi                     = 'NORTH'
   pFluxMin                 = 0.05
 
-  inDir                    = '/SPENCEdata/Research/Cusp/ACE_FAST/temp/'
+  inDir                    = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/temp/'
   inFilePref               = 'polarplots_May_3_16--NORTH--avg'
   inFileSuff               = '--pFlux_GE_'+STRING(FORMAT='(G0.2)',pFluxMin)+'NO_IMF_CONSID.dat'
 

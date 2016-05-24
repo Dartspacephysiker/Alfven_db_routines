@@ -3,7 +3,7 @@
 
 PRO JOURNAL__20150601__plot_Holzworth_Meng_normVectors
 
-  dataDir='/SPENCEdata/Research/Cusp/ACE_FAST/'
+  dataDir='/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/'
 
   ;; hwMengFile='hwMeng_normVectorStruct_CARTESIAN.sav'
   hwMengFile='hwMeng_normVectorStruct.sav'
@@ -30,7 +30,7 @@ PRO JOURNAL__20150601__plot_Holzworth_Meng_normVectors
 
   defSTrans = 90
 
-  defDBFile = "/SPENCEdata/Research/Cusp/database/dartdb/saves/Dartdb_02282015--500-14999--maximus--cleaned.sav"
+  defDBFile = "/SPENCEdata/Research/database/dartdb/saves/Dartdb_02282015--500-14999--maximus--cleaned.sav"
   defOutDir = 'histos_scatters/polar/'
   defOutPref = 'JOURNAL__plot_Holzworth-Meng_normVectors'
   defExt = '.png'

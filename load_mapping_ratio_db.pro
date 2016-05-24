@@ -9,7 +9,7 @@ PRO LOAD_MAPPING_RATIO_DB,mapRatio, $
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout
 
-  defDBDir             = '/SPENCEdata/Research/Cusp/database/dartdb/saves/mapratio_dbs/'
+  defDBDir             = '/SPENCEdata/Research/database/dartdb/saves/mapratio_dbs/'
 
   defDBFile            = 'mapratio_for_20151014_DB--up_to16361--20151221.dat'
   defDespunDBFile      = 'mapratio_for_20160107_despun_DB--up_to16361--20160109.dat'

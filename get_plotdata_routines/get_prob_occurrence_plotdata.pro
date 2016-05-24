@@ -33,7 +33,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   
   @orbplot_tplot_defaults.pro
 
-  ;; OPENW,lun,'/SPENCEdata/Research/Cusp/ACE_FAST/20160130--Alfven_cusp_figure_of_merit/Output_for_SOUTH_proboccurrence.txt',/APPEND,/GET_LUN
+  ;; OPENW,lun,'/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/20160130--Alfven_cusp_figure_of_merit/Output_for_SOUTH_proboccurrence.txt',/APPEND,/GET_LUN
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
   IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1

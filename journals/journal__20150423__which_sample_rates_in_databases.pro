@@ -3,7 +3,7 @@
 ; Working directory: /SPENCEdata/software/sdt/batch_jobs/Alfven_study/as5_14F
 ; Date: Thu Apr 23 12:03 2015
  
-dbFile='/SPENCEdata/Research/Cusp/database/dartdb/saves/old_dbs/Dartdb_02282015--500-14999--maximus--cleaned--DEPRECATED.sav'
+dbFile='/SPENCEdata/Research/database/dartdb/saves/old_dbs/Dartdb_02282015--500-14999--maximus--cleaned--DEPRECATED.sav'
 restore,dbFile
 
 ;only for given current sizes

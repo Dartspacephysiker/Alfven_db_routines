@@ -1,7 +1,7 @@
 PRO JOURNAL__20160505__NOW_SAVE_FASTLOC_INTERVALS4_WITH_SAMP_T_LE_0_1
 
 
-  dir                     = '/SPENCEdata/Research/Cusp/database/FAST_ephemeris/fastLoc_intervals4/'
+  dir                     = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals4/'
   fastLoc_pref            = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes'
   fastLoc_dupeless_tFile  = fastLoc_pref + '--times.sav'
 

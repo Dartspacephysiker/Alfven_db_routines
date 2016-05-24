@@ -26,7 +26,7 @@ PRO medHistAnalyzer,INFILE=infile,OUTFILE=outFile
   medHistDataDir = 'out/medHistData/'
   
   ;;open database
-  ;; restore,'/SPENCEdata/Research/Cusp/database/dartdb/saves/Dartdb_02112015--500-14999--maximus.sav'
+  ;; restore,'/SPENCEdata/Research/database/dartdb/saves/Dartdb_02112015--500-14999--maximus.sav'
   
   ;;get your favorite hist file
   IF KEYWORD_SET(inFile) THEN restore,inFile $
