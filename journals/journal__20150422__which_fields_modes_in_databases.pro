@@ -3,7 +3,7 @@
 ; Working directory: /SPENCEdata/software/sdt/batch_jobs/Alfven_study/as5_14F
 ; Date: Wed Apr 22 17:43:46 2015
  
-dbFile='/SPENCEdata/Research/database/dartdb/saves/old_dbs/Dartdb_02282015--500-14999--maximus.sav'
+dbFile='/SPENCEdata/Research/database/FAST/dartdb/saves/old_dbs/Dartdb_02282015--500-14999--maximus.sav'
 restore,dbFile
 help,maximus,/str
 print,maximus.mode[0-99]

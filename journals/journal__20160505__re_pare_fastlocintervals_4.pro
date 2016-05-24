@@ -2,7 +2,7 @@ PRO JOURNAL__20160505__RE_PARE_FASTLOCINTERVALS_4
 
   do_resave_all_fastLoc_elements_separately = 0
 
-  dir                            = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals4/'
+  dir                            = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals4/'
   file                           = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205.sav'
   tFile                          = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--times.sav'
 

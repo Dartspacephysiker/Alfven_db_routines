@@ -3,7 +3,7 @@ PRO JOURNAL__20160507__SPLICE_TOGETHER_ORBS_FROM_201605_RUNS
 
   save_combined_file = 1
 
-  outDir             = '/SPENCEdata/Research/database/dartdb/saves/'
+  outDir             = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
 
   ;;The little brother
   max1File           = 'Dartdb_20160507--2500-3599_and_bonus_despun--maximus--pflux--lshell--noDupes.sav'

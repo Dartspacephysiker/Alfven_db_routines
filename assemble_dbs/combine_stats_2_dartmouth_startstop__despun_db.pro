@@ -12,7 +12,7 @@ PRO COMBINE_STATS_2_DARTMOUTH_STARTSTOP__DESPUN_DB,maximus
 
   ;;SEE BELOW FOR OUTFILE
   ;; outfile       = 'Dartdb_' + date + '--502-3619--maximus.sav'
-  outDir        = '/SPENCEdata/Research/database/dartdb/saves/'
+  outDir        = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
   ;; outfile       = outDir + 'Dartdb_' + date + '--500-16361--maximus.sav'
   ;; outfile       = outDir + 'Dartdb_' + date + '--3621-10168--maximus.sav'
   ;; outfile       = outDir + 'Dartdb_' + date + '--10170-16361--maximus.sav'

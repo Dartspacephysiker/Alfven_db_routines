@@ -54,15 +54,15 @@ PRO GET_INDS_FROM_DB, DBFILE=dbfile, CDBTIMEFILE=cdbTimeFile, $
 
   ;; Defaults
 
-  ;; defDBFile = "/SPENCEdata/Research/database/dartdb/saves/Dartdb_02282015--500-14999--maximus--cleaned.sav"
-  ;; defDBFile = "/SPENCEdata/Research/database/dartdb/saves/Dartdb_02282015--500-14999--maximus.sav"
-  defLoaddataDir = '/SPENCEdata/Research/database/dartdb/saves/'
+  ;; defDBFile = "/SPENCEdata/Research/database/FAST/dartdb/saves/Dartdb_02282015--500-14999--maximus--cleaned.sav"
+  ;; defDBFile = "/SPENCEdata/Research/database/FAST/dartdb/saves/Dartdb_02282015--500-14999--maximus.sav"
+  defLoaddataDir = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
 
   ;; defPref = "Dartdb_02282015--500-14999"
   ;; defPref = "Dartdb_20150611--500-16361_inc_lower_lats"
   defPref = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361'
 
-  ;; defDBFile = "/SPENCEdata/Research/database/dartdb/saves/Dartdb_20150611--500-16361_inc_lower_lats--maximus.sav"
+  ;; defDBFile = "/SPENCEdata/Research/database/FAST/dartdb/saves/Dartdb_20150611--500-16361_inc_lower_lats--maximus.sav"
   defDBFile = defPref + "--maximus.sav"
 
   IF NOT KEYWORD_SET(dbFile) AND NOT KEYWORD_SET(do_ChastDB) THEN dbFile=defDBFILE ELSE BEGIN
@@ -70,8 +70,8 @@ PRO GET_INDS_FROM_DB, DBFILE=dbfile, CDBTIMEFILE=cdbTimeFile, $
   ENDELSE
   restore,dbFile
 
-  ;; defCDBTimeFile = "/SPENCEdata/Research/database/dartdb/saves/Dartdb_02282015--500-14999--cdbTime--cleaned.sav"
-  ;; defCDBTimeFile = "/SPENCEdata/Research/database/dartdb/saves/Dartdb_20150611--500-16361_inc_lower_lats--cdbTime.sav"
+  ;; defCDBTimeFile = "/SPENCEdata/Research/database/FAST/dartdb/saves/Dartdb_02282015--500-14999--cdbTime--cleaned.sav"
+  ;; defCDBTimeFile = "/SPENCEdata/Research/database/FAST/dartdb/saves/Dartdb_20150611--500-16361_inc_lower_lats--cdbTime.sav"
   defCDBTimeFile = defPref + "--cdbtime.sav"
   IF NOT KEYWORD_SET(cdbTimeFile) AND NOT KEYWORD_SET(do_ChastDB) THEN cdbTimeFile = defCDBTimeFile ELSE BEGIN
      IF KEYWORD_SET(do_ChastDB) THEN cdbTimeFile = '/SPENCEdata/Research/database/processed/cdbTime.sav' 

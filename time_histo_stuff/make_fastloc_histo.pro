@@ -32,11 +32,11 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
 
   ;def outputs
   ;; defOutFilePrefix = 'fastLoc_intervals3--timeHisto--INDS_from_get_fastloc_inds_imf_conds'
-  ;; defOutDir = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals3/time_histos/'
+  ;; defOutDir = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals3/time_histos/'
 
   ;; defOutFilePrefix = 'fastLoc_intervals4--timeHisto--inds_from_get_fastloc_inds_imf_conds'
   ;; defOutFileSuffix = ''
-  ;; defOutDir        = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals4/time_histos/'
+  ;; defOutDir        = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals4/time_histos/'
 
   ;; IF N_ELEMENTS(outFilePrefix) EQ 0 THEN outFilePrefix = defOutFilePrefix
   ;; IF N_ELEMENTS(outFileSuffix) EQ 0 THEN outFileSuffix = defOutFileSuffix

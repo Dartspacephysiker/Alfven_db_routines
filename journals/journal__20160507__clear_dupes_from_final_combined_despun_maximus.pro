@@ -1,7 +1,7 @@
 PRO JOURNAL__20160507__CLEAR_DUPES_FROM_FINAL_COMBINED_DESPUN_MAXIMUS
 
   outDate       = '20160508'
-  outDir        = '/SPENCEdata/Research/database/dartdb/saves/'
+  outDir        = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
   in_maximus    = 'Dartdb_'+outDate+'--502-16361_despun--maximus--pflux_lshell--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
   cdbTimeFile   = 'Dartdb_'+outDate+'--502-16361_despun--cdbtime--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
 

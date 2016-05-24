@@ -36,9 +36,9 @@ PRO GET_FASTLOC_INDS_IMF_CONDS,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=an
   ;; minI=-88
   ;; maxI=88
 
-  ;; fastLocOutputDir = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals2/'
-  ;; fastLocOutputDir = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals3/'
-  fastLocOutputDir = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals4/'
+  ;; fastLocOutputDir = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals2/'
+  ;; fastLocOutputDir = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals3/'
+  fastLocOutputDir = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals4/'
 
   IF NOT KEYWORD_SET(lun) THEN lun = -1 ;stdout
   

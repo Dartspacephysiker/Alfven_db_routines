@@ -4,7 +4,7 @@
 ; Date: Tue Mar 31 10:10:58 2015
  
 date='20150331'
-restore,'/SPENCEdata/Research/database/dartdb/saves/Dartdb_02282015--500-14999--maximus--cleaned.sav'
+restore,'/SPENCEdata/Research/database/FAST/dartdb/saves/Dartdb_02282015--500-14999--maximus--cleaned.sav'
 print,tag_names(maximus)
 inds_gt_15=where(maximus.mag_current GT 15)
 inds_0_15=where(maximus.mag_current LE 15 AND maximus.mag_current GE 0)

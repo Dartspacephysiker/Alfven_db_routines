@@ -17,7 +17,7 @@ PRO COMBINE_TWO_DBFILES,maximus,cdbTime, $
   ;; date         = '20150814'
   date         = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
   
-  defDBDir1    = '/SPENCEdata/Research/database/dartdb/saves/'
+  defDBDir1    = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
   ;; defDBFile1='Dartdb_20150609--500-10000_below_aur_oval--10001-14999_above--maximus_diff.sav'
   ;; defDB_tFile1='Dartdb_20150609--500-10000_below_aur_oval--10001-14999_above--cdbtime_diff.sav'
 
@@ -27,7 +27,7 @@ PRO COMBINE_TWO_DBFILES,maximus,cdbTime, $
   defDBFile1   = 'Dartdb_20150611--500-16361_inc_lower_lats--maximus.sav'
   defDB_tFile1 = 'Dartdb_20150611--500-16361_inc_lower_lats--cdbtime.sav'
 
-  defDBDir2    = '/SPENCEdata/Research/database/dartdb/saves/'
+  defDBDir2    = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
   ;; defDBFile2='Dartdb_20150611--10001-14999--maximus--only_below_aur_oval.sav'
   ;; defDB_tFile2='Dartdb_20150611--10001-14999--cdbtime--only_below_aur_oval.sav'
   defDBFile2   = 'tempmaximus.sav'
@@ -38,7 +38,7 @@ PRO COMBINE_TWO_DBFILES,maximus,cdbTime, $
   ;; contents_file='./orbits_contained_in_DartDBfile_' + date + '--startstops_included.txt'
 
   IF KEYWORD_SET(save_combined_file) THEN BEGIN
-     outDir    = '/SPENCEdata/Research/database/dartdb/saves/'
+     outDir    = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
   ENDIF
 
   ;first DB file

@@ -29,7 +29,7 @@ PRO COMBINE_FASTLOC_INTERVALS4_STEPS,fastLoc
   fNameSuffix               = '--below_aur_oval.sav'
   fNameSuffLen              = STRLEN(fNameSuffix)
 
-  outDir                    = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals4/'
+  outDir                    = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals4/'
 
  ;open file to write list of orbits included
   OPENW,outlun,contents_file,/get_lun

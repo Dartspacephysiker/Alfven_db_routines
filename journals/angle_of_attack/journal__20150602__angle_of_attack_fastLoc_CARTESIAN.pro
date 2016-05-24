@@ -12,8 +12,8 @@ PRO JOURNAL__20150602__ANGLE_OF_ATTACK_FASTLOC_CARTESIAN
   dataDir='/home/spencerh/Research/Cusp/ACE_FAST/'
   
   ;;Get DB file
-  ;; dbFile='/SPENCEdata/Research/database/dartdb/saves/Dartdb_02282015--500-14999--maximus--cleaned.sav'
-  ;; dbFile='/SPENCEdata/Research/database/dartdb/saves/Dartdb_02282015--500-14999--maximus.sav'
+  ;; dbFile='/SPENCEdata/Research/database/FAST/dartdb/saves/Dartdb_02282015--500-14999--maximus--cleaned.sav'
+  ;; dbFile='/SPENCEdata/Research/database/FAST/dartdb/saves/Dartdb_02282015--500-14999--maximus.sav'
   ;; restore,dataDir+dbFile
 
   ;; ephemeris file

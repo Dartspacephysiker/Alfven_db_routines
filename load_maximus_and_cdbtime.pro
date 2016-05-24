@@ -39,7 +39,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
      force_load_cdbtime = 1
   ENDIF
 
-  DefDBDir             = '/SPENCEdata/Research/database/dartdb/saves/'
+  DefDBDir             = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
   ;;DefDBFile            = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav'
   ;; DefDBFile            = 'Dartdb_20151014--500-16361_inc_lower_lats--burst_1000-16361--w_Lshell--maximus.sav'
 

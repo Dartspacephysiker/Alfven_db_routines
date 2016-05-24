@@ -8,7 +8,7 @@ pro combine_Chaston_Dartmouth_maximus,maximus
   
   ;; Dartmouth db file
   date='01142015'
-  Dartmouth_DB='/SPENCEdata/Research/database/dartdb/saves/'
+  Dartmouth_DB='/SPENCEdata/Research/database/FAST/dartdb/saves/'
   Dart_DBfile=Dartmouth_DB + 'Dartdb_' + date + '_maximus.sav'
 
   ;; Output db file

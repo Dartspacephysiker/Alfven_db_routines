@@ -12,7 +12,7 @@ PLOT_I_FILE=plot_i_file,PLOT_I_DIR=plot_i_dir,LUN=lun,REDUCENSAMPBYFACTOR=reduce
 
   IF ~KEYWORD_SET(lun) THEN lun=-1
 
-  defDBFile='/SPENCEdata/Research/database/dartdb/saves/Dartdb_02282015--500-14999--maximus.sav'
+  defDBFile='/SPENCEdata/Research/database/FAST/dartdb/saves/Dartdb_02282015--500-14999--maximus.sav'
   defPlot_i_dir = 'plot_indices_saves/'
   defNResamples=100
 

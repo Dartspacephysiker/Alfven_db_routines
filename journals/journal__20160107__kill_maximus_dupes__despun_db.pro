@@ -1,7 +1,7 @@
 ;;OH YEAH, FOOOOL!!!!!! WASSUP NOW!!!!
 PRO JOURNAL__20160107__KILL_MAXIMUS_DUPES__DESPUN_DB
 
-  dataDir    = '/SPENCEdata/Research/database/dartdb/saves/'
+  dataDir    = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
   DBFile     = 'Dartdb_20160107--502-16361_despun--maximus--pflux--lshell--burst.sav'
   DB_tFile   = 'Dartdb_20160107--502-16361_despun--cdbtime.sav'
 

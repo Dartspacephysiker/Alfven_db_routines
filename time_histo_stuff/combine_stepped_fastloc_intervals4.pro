@@ -19,7 +19,7 @@ PRO COMBINE_STEPPED_FASTLOC_INTERVALS4,fastLoc
   fNameSuffix               = '--below_aur_oval.sav'
   fNameSuffLen              = STRLEN(fNameSuffix)
 
-  outDir                    = '/SPENCEdata/Research/database/FAST_ephemeris/fastLoc_intervals4/'
+  outDir                    = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals4/'
 
   outMaxSuffix              = STRING(FORMAT='(I0,"--",I0,"--below_aur_oval")',minOrb,maxOrb-1)
   outMaxFileSansFExt        = 'fastLoc_intervals4--'+outMaxSuffix+'--'+date
