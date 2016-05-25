@@ -275,6 +275,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  DO_CHASTDB=do_chastDB, $
                                  DO_DESPUNDB=do_despunDB, $
                                  NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
+                                 NEVENTSPLOTAUTOSCALE=nEventsPlotAutoscale, $
+                                 NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $
                                  WRITEASCII=writeASCII, $
                                  WRITEHDF5=writeHDF5, $
                                  WRITEPROCESSEDH2D=writeProcessedH2d, $
@@ -343,7 +345,6 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              CHAREPLOTS=charEPlots, CHARETYPE=charEType, $
                              CHARIEPLOTS=chariEPlots, $
                              ORBCONTRIBPLOT=orbContribPlot, $
-                             ORBCONTRIBRANGE=orbContribRange, $
                              ORBTOTPLOT=orbTotPlot, $
                              ORBFREQPLOT=orbFreqPlot, $
                              NEVENTPERORBPLOT=nEventPerOrbPlot, $
@@ -489,7 +490,11 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         DELAY=delay, STABLEIMF=stableIMF, $
                         SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                         /DO_UTC_RANGE,T1_ARR=t1_arr,T2_ARR=t2_arr, $
-                        NPLOTS=nPlots, NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
+                        NPLOTS=nPlots, $
+                        NEVENTSPLOTRANGE=nEventsPlotRange, $
+                        LOGNEVENTSPLOT=logNEventsPlot, $
+                        NEVENTSPLOTAUTOSCALE=nEventsPlotAutoscale, $
+                        NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $
                         EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, LOGEFPLOT=logEfPlot, $
                         ABSEFLUX=abseflux, NOPOSEFLUX=noPosEFlux, NONEGEFLUX=noNegEflux, EPLOTRANGE=EPlotRange, $
                         ENUMFLPLOTS=eNumFlPlots, $

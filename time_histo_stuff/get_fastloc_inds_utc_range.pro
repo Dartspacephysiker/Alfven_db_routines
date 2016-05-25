@@ -135,7 +135,6 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                              WRITEASCII=writeASCII, WRITEHDF5=writeHDF5, WRITEPROCESSEDH2D=writeProcessedH2d, $
                              SAVERAW=saveRaw, RAWDIR=rawDir, $
                              SHOWPLOTSNOSAVE=showPlotsNoSave, $
-                             PLOTDIR=plotDir, PLOTPREFIX=plotPrefix, PLOTSUFFIX=plotSuffix, $
                              MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
                              OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
                              KEEPME=keepMe, $

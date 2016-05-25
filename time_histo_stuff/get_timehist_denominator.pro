@@ -205,7 +205,6 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                    MINMLT=minM, $
                                    MAXMLT=maxM, $
                                    BINM=binM, $
-                                   SHIFTM=shiftM, $
                                    MINILAT=minI, $
                                    MAXILAT=maxI, $
                                    BINI=binI, $
