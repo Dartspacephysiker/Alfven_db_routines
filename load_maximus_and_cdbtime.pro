@@ -1,6 +1,6 @@
 ;2015/12/22 Added DO_NOT_MAP_PFLUX_keyword and FORCE_LOAD keywords
 ;2016/01/07 Added DO_DESPUNDB keyword
-PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
+PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              GOOD_I=good_i, $
                              DBDir=DBDir, $
                              DBFile=DBFile, $
@@ -25,6 +25,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
   COMMON M_VARS,MAXIMUS__maximus,MAXIMUS__HAVE_GOOD_I,MAXIMUS__times, $
      MAXIMUS__good_i,MAXIMUS__cleaned_i, $
      MAXIMUS__dbFile,MAXIMUS__dbTimesFile, $
+     MAXIMUS__dbDir, $
      MAXIMUS__RECALCULATE
 
   COMPILE_OPT idl2
@@ -54,7 +55,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
 
 
   IF KEYWORD_SET(chastDB) THEN BEGIN
-     DBDir='/SPENCEdata/Research/database/processed/'
+     DBDir='/SPENCEdata/Research/database/FAST/Chaston_et_al_2007--current_db/'
      DBFile = "maximus.dat"
      DB_tFile = "cdbtime.sav"
      correct_fluxes = 0
@@ -79,6 +80,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
         RESTORE,DBDir+DBFile
         MAXIMUS__maximus = maximus
         MAXIMUS__maximus = CREATE_STRUCT(MAXIMUS__maximus,'DESPUN',KEYWORD_SET(despunDB))     
+        MAXIMUS__dbFile  = DBFile
+        MAXIMUS__dbDir   = DBDir
      ENDIF
      IF maximus EQ !NULL THEN BEGIN
         PRINT,"Couldn't load maximus!"
@@ -86,10 +89,11 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
      ENDIF
   ENDIF ELSE BEGIN
      PRINTF,lun,"There is already a maximus struct loaded! Not loading " + DBFile
-     DBFile = 'Previously loaded maximus struct'
+     DBFile   = MAXIMUS__dbFile
+     DB_tFile = MAXIMUS__dbTimesFile
   ENDELSE
 
-  IF N_ELEMENTS(cdbTime) EQ 0 OR KEYWORD_SET(force_load_cdbTime) THEN BEGIN
+  IF N_ELEMENTS(out_cdbTime) EQ 0 OR KEYWORD_SET(force_load_cdbTime) THEN BEGIN
      IF KEYWORD_SET(force_load_cdbTime) THEN BEGIN
         PRINTF,lun,"Forcing load, whether or not we already have cdbTime..."
      ENDIF
@@ -98,9 +102,11 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
         PRINT,"Couldn't load cdbTime!"
         STOP
      ENDIF
+     MAXIMUS__times  = cdbTime
+     MAXIMUS__dbTimesFile = DB_tFile
   ENDIF ELSE BEGIN
      PRINTF,lun,"There is already a cdbTime struct loaded! Not loading " + DB_tFile
-     DBFile = 'Previously loaded cdbTime array'
+     DB_tFile = MAXIMUS__dbTimesFile
   ENDELSE
 
   IF correct_fluxes THEN BEGIN
@@ -124,5 +130,5 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,cdbTime, $
   IF ARG_PRESENT(good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH')
 
   out_maximus = MAXIMUS__maximus
-
+  out_cdbTime = MAXIMUS__times
 END
