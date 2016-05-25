@@ -107,7 +107,7 @@ pro compare_chastondbfile_dartdbfile_3_burst, $
   endif
 
 drive='SPENCEdata2'
-  chastondbdir='/'+drive+'/Research/Cusp/database/current_db/'
+  chastondbdir='/'+drive+'/Research/database/FAST/Chaston_et_al_2007--current_db/'
   ;datadir='/'+drive+'/Research/Cusp/ACE_FAST/Compare_new_DB_with_Chastons/'
   datadir='/'+drive+'/software/sdt/batch_jobs/Alfven_study/'
   IF NOT KEYWORD_SET(do_as3) THEN datadir += 'as5_14F/' $

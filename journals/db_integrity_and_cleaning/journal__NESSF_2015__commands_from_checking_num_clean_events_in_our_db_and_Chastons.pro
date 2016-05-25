@@ -33,7 +33,7 @@
 
  ;; Now let's check out the original Chaston DB
  .full_reset_session
- ;; Data dir set to /SPENCEdata2/Research/Cusp/database/
+ ;; Data dir set to /SPENCEdata2/Research/database/
  restore,'../database/processed/maximus.dat'
  lun=-1
  n_events=n_elements(maximus.mag_current)

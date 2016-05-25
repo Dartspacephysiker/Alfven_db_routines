@@ -60,7 +60,7 @@ pro compare_chastondbfile_dartdbfile, $
     arr_elem = 1 ;default, do max current times
   endif
 
-  chastondbdir='/SPENCEdata/Research/database/current_db/'
+  chastondbdir='/SPENCEdata/Research/database/FAST/Chaston_et_al_2007--current_db/'
   ;datadir='/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/Compare_new_DB_with_Chastons/'
   datadir='/home/spencerh/software/sdt/batch_jobs/Alfven_study_14F/output_alfven_stats/'
   outdir='/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/Compare_new_DB_with_Chastons/txtoutput/'

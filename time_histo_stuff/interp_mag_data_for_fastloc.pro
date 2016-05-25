@@ -38,7 +38,7 @@ FUNCTION interp_mag_data_for_fastloc, satellite,DELAY=delay,LUN=lun, $
   defFastLocTimeFile = 'fastLoc_intervals2--500-16361_all--20150613--times.sav'
 
   ;def SAT db stuff
-  defSATdbDir = '/home/spencerh/Research/Cusp/database/processed/'
+  defSATdbDir = '/home/spencerh/Research/database/processed/'
   ;; defSATdbFile = 'culled_OMNI_magdata.dat'
   defOMNI_Coords = 'GSM'
 
