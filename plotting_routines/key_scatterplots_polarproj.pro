@@ -291,7 +291,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   ENDFOR
   IF N_ELEMENTS(junk_i) GE 1 THEN BEGIN
      PRINT,'Some bad indices here! Going to remove them...'
-     STOP
+     ;; STOP
      modPlot_i_list.REMOVE,junk_i
   ENDIF
 
@@ -501,8 +501,8 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
      out_orbStrArr_list    = modPlot_i_list
   ENDIF
 
-  out_plot                 = curPlot
-  out_window               = window
-  out_map                  = map
+  IF ISA(curPlot)    THEN out_plot        = curPlot
+  IF ISA(out_window) THEN out_window      = window
+  IF ISA(out_map)    THEN out_map         = map
 
 END

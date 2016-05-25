@@ -39,6 +39,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                          PRINT_PARAM_SUMMARY=print_param_summary, $
                          FASTLOC_DELTA_T=fastloc_delta_t, $
                          OUT_MAXIMUS=out_maximus, $
+                         OUT_CDBTIME=out_cdbTime, $
+                         OUT_DELTA_T_FASTLOC=out_delta_t_fastLoc, $
+                         OUT_TIMES_FASTLOC=out_times_fastLoc, $
                          OUT_FASTLOC=out_fastloc
                          
   COMPILE_OPT idl2
@@ -496,12 +499,24 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
            PRINT,'Giving you maximus...'
            out_maximus = MAXIMUS__maximus
         ENDIF
+        IF ARG_PRESENT(out_cdbTime) THEN BEGIN
+           PRINT,'Giving you maximus...'
+           out_cdbTime = MAXIMUS__times
+        ENDIF
      ENDIF ELSE BEGIN
         good_i                                    = FASTLOC__good_i
         FASTLOC__HAVE_GOOD_I                      = 1
         IF ARG_PRESENT(out_fastLoc) AND N_ELEMENTS(out_fastLoc) EQ 0 THEN BEGIN
            PRINT,'Giving you fastLoc...'
            out_fastLoc = FL__fastLoc
+        ENDIF
+        IF ARG_PRESENT(out_times_fastLoc) AND N_ELEMENTS(out_times_fastLoc) EQ 0 THEN BEGIN
+           PRINT,'Giving you fastLoc_times...'
+           out_times_fastLoc = FASTLOC__times
+        ENDIF
+        IF ARG_PRESENT(out_delta_t_fastLoc) AND N_ELEMENTS(out_delta_t_fastLoc) EQ 0 THEN BEGIN
+           PRINT,'Giving you fastLoc_times...'
+           out_delta_t_fastLoc = FASTLOC__delta_t
         ENDIF
      ENDELSE
   ENDELSE
