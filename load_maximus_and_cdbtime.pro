@@ -19,6 +19,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              FORCE_LOAD_MAXIMUS=force_load_maximus, $
                              FORCE_LOAD_CDBTIME=force_load_cdbTime, $
                              FORCE_LOAD_BOTH=force_load_BOTH, $
+                             JUST_MAXIMUS=just_maximus, $
+                             JUST_CDBTIME=just_cdbTime, $
                              QUIET=quiet, $
                              LUN=lun
 
@@ -77,13 +79,15 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
         PRINTF,lun,"Forcing load, whether or not we already have maximus..."
      ENDIF
      IF FILE_TEST(DBDir+DBFile) THEN BEGIN
-        RESTORE,DBDir+DBFile
-        MAXIMUS__maximus = maximus
-        MAXIMUS__maximus = CREATE_STRUCT(MAXIMUS__maximus,'DESPUN',KEYWORD_SET(despunDB))     
+        IF ~KEYWORD_SET(just_cdbTime) THEN BEGIN
+           RESTORE,DBDir+DBFile
+           MAXIMUS__maximus = maximus
+           MAXIMUS__maximus = CREATE_STRUCT(MAXIMUS__maximus,'DESPUN',KEYWORD_SET(despunDB))     
+        ENDIF
         MAXIMUS__dbFile  = DBFile
         MAXIMUS__dbDir   = DBDir
      ENDIF
-     IF maximus EQ !NULL THEN BEGIN
+     IF maximus EQ !NULL AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
         PRINT,"Couldn't load maximus!"
         STOP
      ENDIF
@@ -97,8 +101,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      IF KEYWORD_SET(force_load_cdbTime) THEN BEGIN
         PRINTF,lun,"Forcing load, whether or not we already have cdbTime..."
      ENDIF
-     IF FILE_TEST(DBDir+DB_tFile) THEN RESTORE,DBDir+DB_tFile
-     IF cdbTime EQ !NULL THEN BEGIN
+     IF FILE_TEST(DBDir+DB_tFile) AND ~KEYWORD_SET(just_maximus) THEN RESTORE,DBDir+DB_tFile
+     IF cdbTime EQ !NULL AND ~KEYWORD_SET(just_maximus) THEN BEGIN
         PRINT,"Couldn't load cdbTime!"
         STOP
      ENDIF
@@ -109,7 +113,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      DB_tFile = MAXIMUS__dbTimesFile
   ENDELSE
 
-  IF correct_fluxes THEN BEGIN
+  IF correct_fluxes AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
      ;; IF KEYWORD_SET(despunDB) THEN BEGIN
      ;;    PRINTF,lun,'Not mapping to the ionosphere because we have no mapping database for the new despun data set!'
      ;; ENDIF
@@ -129,6 +133,6 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI='BOTH')
   IF ARG_PRESENT(good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH')
 
-  out_maximus = MAXIMUS__maximus
-  out_cdbTime = MAXIMUS__times
+  IF ~KEYWORD_SET(just_cdbTime) THEN out_maximus = MAXIMUS__maximus
+  IF ~KEYWORD_SET(just_maximus) THEN out_cdbTime = MAXIMUS__times
 END

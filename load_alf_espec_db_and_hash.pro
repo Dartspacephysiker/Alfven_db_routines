@@ -8,7 +8,7 @@ PRO LOAD_ALF_ESPEC_DB_AND_HASH,out_alf_eSpec_stats,out_alf_specIdent_hash, $
                              QUIET=quiet, $
                              LUN=lun
 
-  COMMON ALF_ESPEC_VARS,ALF_ESPEC__stats, $
+  COMMON ALF_ESPEC_VARS,ALF_ESPEC__stats,ALF_ESPEC__hash, $
      ALF_ESPEC__dbFile,ALF_ESPEC__dbTimesFile, $
      ALF_ESPEC__RECALCULATE
 
