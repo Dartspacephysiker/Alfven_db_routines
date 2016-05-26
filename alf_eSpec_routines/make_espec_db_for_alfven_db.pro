@@ -1,5 +1,5 @@
 ;;05/26/16
-FUNCTION MAKE_ESPEC_DB_FOR_ALFVEN_DB,cdbTime,orbArr,OUT_DIFFS=out_diffs
+FUNCTION MAKE_ESPEC_DB_FOR_ALFVEN_DB,cdbTime,orbArr,OUT_DIFFS=out_diffs,OUT_MISSING=out_missing
 
   COMPILE_OPT idl2
 
@@ -33,7 +33,7 @@ FUNCTION MAKE_ESPEC_DB_FOR_ALFVEN_DB,cdbTime,orbArr,OUT_DIFFS=out_diffs
   final_eSpecs       = !NULL
   orbCount           = 0
   maxChain           = 1000
-  missing            = MAKE_ARRAY(nTime,/BYTE,VALUE=0)
+  missing            = MAKE_ARRAY(nTime,/BYTE,VALUE=1)
   FOR curOrb=firstOrb,lastOrb DO BEGIN
      
      ;;Get events in this orb
@@ -49,7 +49,6 @@ FUNCTION MAKE_ESPEC_DB_FOR_ALFVEN_DB,cdbTime,orbArr,OUT_DIFFS=out_diffs
      cur_eSpecs      = !NULL
      tempFile        = STRING(FORMAT='(A0,A0,I0,"_",I0,".sav")',Newell_DB_dir,Newell_filePref,curOrb,curInterval)
      IF ~FILE_TEST(tempFile) THEN BEGIN
-        missing[temp_i] = 1
         CAT_EVENTS_FROM_PARSED_SPECTRAL_STRUCT,final_eSpecs_innie, $
                                                MAKE_BLANK_ESPEC_STRUCTS(nHere)
         diffs_innie  = [diffs_innie,MAKE_ARRAY(nHere,VALUE=badVal)]
@@ -74,6 +73,7 @@ FUNCTION MAKE_ESPEC_DB_FOR_ALFVEN_DB,cdbTime,orbArr,OUT_DIFFS=out_diffs
 
      ;;Now, pick up all the closest events
      tempTimes       = cdbTime[temp_i]
+     missing[temp_i] = 0
      alf_eSpec_i     = VALUE_CLOSEST(cur_eSpecs.x,tempTimes,diffs,SUCCESS=success)
 
      IF ~success THEN BEGIN
@@ -108,7 +108,8 @@ FUNCTION MAKE_ESPEC_DB_FOR_ALFVEN_DB,cdbTime,orbArr,OUT_DIFFS=out_diffs
      orbCount             = 0
   ENDIF
 
-  out_diffs               = out_diffs
+  out_diffs               = diffs_final
+  out_missing             = missing
 
   RETURN,final_eSpecs
 
