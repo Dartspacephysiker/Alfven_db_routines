@@ -13,7 +13,11 @@
 FUNCTION ALF_ESPEC_IDENTIFIED_PLOT,eSpec, $
                                    YLOG=yLog, $
                                    NEWELL_ESPEC_INTERPRETED=eSpec_interpreted, $
-                                   CURRENT=window
+                                   CURRENT=window, $
+                                   SAVEPLOT=savePlot, $
+                                   SPNAME=sPName, $
+                                   PLOTDIR=plotDir, $
+                                   CLOSE_WINDOW_AFTER_SAVE=close_window_after_save
 
   COMPILE_OPT idl2
 
@@ -154,6 +158,27 @@ FUNCTION ALF_ESPEC_IDENTIFIED_PLOT,eSpec, $
   ;; Add a title.
   plotArr[0].TITLE = "Mono, broad, and diffuse e!U-!N statistics for Alf events"
   
+  IF KEYWORD_SET(savePlot) THEN BEGIN
+
+     IF KEYWORD_SET(spName) THEN outName = spName ELSE BEGIN
+        outName = GET_TODAY_STRING() + '--Newell-based_stats.png'
+     ENDELSE
+     IF N_ELEMENTS(plotDir) GT 0 THEN BEGIN
+        pDir = plotDir
+     ENDIF ELSE BEGIN
+        SET_PLOT_DIR,pDir,/ADD_TODAY,/FOR_ALFVENDB
+     ENDELSE
+
+     PRINT,'Saving to ' + spName + '...'
+     window.save,pDir+spName
+
+     IF KEYWORD_SET(close_window_after_save) THEN BEGIN
+        window.close
+        window      = !NULL
+     ENDIF
+
+  ENDIF
+
 
   RETURN,plotArr
 

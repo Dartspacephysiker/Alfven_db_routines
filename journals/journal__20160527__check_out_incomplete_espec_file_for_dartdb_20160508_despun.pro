@@ -1,14 +1,14 @@
 ;;05/26/16
 ;;We lose about 23000 events to electron energies that are too weak.
-PRO JOURNAL__20160526__CHECK_OUT_INCOMPLETE_ESPEC_FILE_FOR_DARTDB_20151222 
+PRO JOURNAL__20160527__CHECK_OUT_INCOMPLETE_ESPEC_FILE_FOR_DARTDB_20160508_DESPUN
 
-  chare_histo_plotName = GET_TODAY_STRING() + '--NOT_despun--chare_zoomed--0-200_eV--why_we_lose_so_many_broadband_spec.png'
-  espec_identified_plotname = GET_TODAY_STRING() + '--NOT_despun--Newell-based_stats.png'
+  chare_histo_plotName = GET_TODAY_STRING() + '--despun--chare_zoomed--0-200_eV--why_we_lose_so_many_broadband_spec.png'
+  espec_identified_plotname = GET_TODAY_STRING() + '--despun--Newell-based_stats.png'
 
   ;;Get 'em back!
-  LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime,GOOD_I=good_i,HEMI__GOOD_I='BOTH'
+  LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime,GOOD_I=good_i,HEMI__GOOD_I='BOTH',/DO_DESPUNDB
   eSpec_dir     = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
-  file          = 'alf_eSpec_20151222_db--20160527.sav'
+  file          = 'alf_eSpec_20160508_despun_db--20160527.sav'
 
   RESTORE,eSpec_dir+file
 
@@ -26,7 +26,7 @@ PRO JOURNAL__20160526__CHECK_OUT_INCOMPLETE_ESPEC_FILE_FOR_DARTDB_20151222
 
 
   ;;Plot 'em
-  SET_PLOT_DIR,plotDir,/FOR_ALFVENDB,ADD_SUFF='--exploring_partial_alfven_Newell_spectra'
+  SET_PLOT_DIR,plotDir,/FOR_ALFVENDB,/ADD_TODAY,ADD_SUFF='--exploring_partial_alfven_Newell_spectra'
   plots         = ALF_ESPEC_IDENTIFIED_PLOT(goodSpecs, $
                                             NEWELL_ESPEC_INTERPRETED=goodSpecs_interpreted, $
                                             /SAVEPLOT, $
@@ -40,7 +40,7 @@ PRO JOURNAL__20160526__CHECK_OUT_INCOMPLETE_ESPEC_FILE_FOR_DARTDB_20151222
   CGHISTOPLOT,maximus.max_chare_losscone[good_i], $
               MININPUT=0, $
               MAXINPUT=200, $
-              OUTPUT=plotDir+chare_histo_plotName, $
+              OUTPUT=plotDir + chare_histo_plotName, $
               YTITLE='Counts', $
               XTITLE='Characteristic Energy (eV)', $
               TITLE='Screened Alfvén events, both hemispheres'

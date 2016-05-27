@@ -1,16 +1,16 @@
 ;;05/26/16
-PRO JOURNAL__20160526__MAKE_ESPEC_STRUCT_FOR_20151222_MAXIMUS
+PRO JOURNAL__20160527__MAKE_ESPEC_STRUCT_FOR_20160508_DESPUN_MAXIMUS
 
   outDir      = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
-  outFile     = 'alf_eSpec_20151222_db--' + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '.sav'
+  outFile     = 'alf_eSpec_20160508_despun_db--' + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '.sav'
 
   ;;Get cdbTime and the DB directory
-  LOAD_MAXIMUS_AND_CDBTIME,!NULL,cdbTime,/JUST_CDBTIME,DBDir=dbDir
+  LOAD_MAXIMUS_AND_CDBTIME,!NULL,cdbTime,/JUST_CDBTIME,/DO_DESPUNDB
 
-  orbFile      = 'Dartdb_20151222--500-16361_inc_lower_lats--burst_1000-16361--orbits.sav'
+  orbFile     = 'Dartdb_20160508--2500-3599_plus_bonus__and_10220-16361_despun--orbits.sav'
   RESTORE,dbDir + orbFile
 
-  alf_eSpecs   = MAKE_ESPEC_DB_FOR_ALFVEN_DB(cdbTime,alfven_orbList, $
+  alf_eSpecs  = MAKE_ESPEC_DB_FOR_ALFVEN_DB(cdbTime,alfven_orbList, $
                                              OUT_DIFFS=eSpec_magc_diffs, $
                                              OUT_MISSING=eSpec_missing_events)
 
