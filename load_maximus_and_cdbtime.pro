@@ -24,10 +24,13 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              QUIET=quiet, $
                              LUN=lun
 
+  ;;GET_CHASTON_IND is the other routine with this block!
   COMMON M_VARS,MAXIMUS__maximus,MAXIMUS__HAVE_GOOD_I,MAXIMUS__times, $
      MAXIMUS__good_i,MAXIMUS__cleaned_i, $
      MAXIMUS__dbFile,MAXIMUS__dbTimesFile, $
      MAXIMUS__dbDir, $
+     MAXIMUS__despun, $
+     MAXIMUS__is_chastDB, $
      MAXIMUS__RECALCULATE
 
   COMPILE_OPT idl2
@@ -56,25 +59,53 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   defDespunDB_tFile    = 'Dartdb_20160508--502-16361_despun--cdbtime--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
 
 
+  ;;Make sure we're not switching between despun and not-despun
+  IF  (  KEYWORD_SET(MAXIMUS__despun) AND ~KEYWORD_SET(despunDB) ) OR $
+      ( ~KEYWORD_SET(MAXIMUS__despun) AND  KEYWORD_SET(despunDB) ) $
+  THEN BEGIN
+     swap_DBs = 1
+     PRINTF,lun,'Swapping DBs!'
+  ENDIF ELSE BEGIN
+     swap_DBs = 0
+  ENDELSE
+
+  ;;Make sure we're not switching between despun and not-despun
+  IF ~KEYWORD_SET(swap_DBs) THEN BEGIN
+     IF  (  KEYWORD_SET(MAXIMUS__is_chastDB) AND ~KEYWORD_SET(chastDB) ) OR $
+        ( ~KEYWORD_SET(MAXIMUS__is_chastDB) AND  KEYWORD_SET(chastDB) ) $
+     THEN BEGIN
+        swap_DBs = 1
+        PRINTF,lun,'Swapping DBs!'
+     ENDIF ELSE BEGIN
+        swap_DBs = 0
+     ENDELSE
+  ENDIF
+
   IF KEYWORD_SET(chastDB) THEN BEGIN
      DBDir='/SPENCEdata/Research/database/FAST/Chaston_et_al_2007--current_db/'
      DBFile = "maximus.dat"
      DB_tFile = "cdbtime.sav"
      correct_fluxes = 0
+     MAXIMUS__is_chastDB = 1
   ENDIF ELSE BEGIN
+     MAXIMUS__is_chastDB = 0
      IF KEYWORD_SET(despunDB) THEN BEGIN
         DBDir = defDBDir
         DBFile = defDespunDBFile
         DB_tFile = defDespunDB_tFile
         PRINTF,lun,"Doing despun DB!"
+        MAXIMUS__despun = 1
      ENDIF ELSE BEGIN
         IF N_ELEMENTS(DBDir) EQ 0 THEN DBDir = DefDBDir
         IF N_ELEMENTS(DBFile) EQ 0 THEN DBFile = DefDBFile
         IF N_ELEMENTS(DB_tFile) EQ 0 THEN DB_tFile = DefDB_tFile
+        MAXIMUS__despun = 0
      ENDELSE
   ENDELSE
   
-  IF N_ELEMENTS(MAXIMUS__maximus) EQ 0 OR KEYWORD_SET(force_load_maximus) THEN BEGIN
+  IF N_ELEMENTS(MAXIMUS__maximus) EQ 0 OR $
+     KEYWORD_SET(force_load_maximus)   OR $
+     KEYWORD_SET(swap_DBs) THEN BEGIN
      IF KEYWORD_SET(force_load_maximus) THEN BEGIN
         PRINTF,lun,"Forcing load, whether or not we already have maximus..."
      ENDIF
@@ -83,6 +114,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
            RESTORE,DBDir+DBFile
            MAXIMUS__maximus = maximus
            MAXIMUS__maximus = CREATE_STRUCT(MAXIMUS__maximus,'DESPUN',KEYWORD_SET(despunDB))     
+           MAXIMUS__despun  = KEYWORD_SET(despunDB)
         ENDIF
         MAXIMUS__dbFile  = DBFile
         MAXIMUS__dbDir   = DBDir
@@ -95,9 +127,12 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      PRINTF,lun,"There is already a maximus struct loaded! Not loading " + DBFile
      DBFile   = MAXIMUS__dbFile
      DB_tFile = MAXIMUS__dbTimesFile
+     despunDB = MAXIMUS__despun
   ENDELSE
 
-  IF N_ELEMENTS(out_cdbTime) EQ 0 OR KEYWORD_SET(force_load_cdbTime) THEN BEGIN
+  IF N_ELEMENTS(MAXIMUS__times) EQ 0 OR $
+     KEYWORD_SET(force_load_cdbTime) OR $
+     KEYWORD_SET(swap_DBs) THEN BEGIN
      IF KEYWORD_SET(force_load_cdbTime) THEN BEGIN
         PRINTF,lun,"Forcing load, whether or not we already have cdbTime..."
      ENDIF
@@ -131,7 +166,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
 
 
   ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI='BOTH')
-  IF ARG_PRESENT(good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH')
+  IF ARG_PRESENT(good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH',DESPUNDB=despunDB,RESET_GOOD_INDS=KEYWORD_SET(swap_DBs))
 
   IF ~KEYWORD_SET(just_cdbTime) THEN out_maximus = MAXIMUS__maximus
   IF ~KEYWORD_SET(just_maximus) THEN out_cdbTime = MAXIMUS__times

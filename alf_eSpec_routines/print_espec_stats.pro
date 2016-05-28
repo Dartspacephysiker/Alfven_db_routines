@@ -1,6 +1,13 @@
 ;2016/05/26
 PRO PRINT_ESPEC_STATS,eSpec,SKIP_FAILURE_REPORT=skip_failure_report, $
-                      INTERPRETED_STATISTICS=interpreted_statistics
+                      INTERPRETED_STATISTICS=interpreted_statistics, $
+                      LUN=lun
+
+  COMPILE_OPT idl2 
+
+  IF N_ELEMENTS(lun) NE 0 THEN l = lun ELSE l = -1
+
+
 
   barSym           = '*'
 
@@ -40,35 +47,35 @@ PRO PRINT_ESPEC_STATS,eSpec,SKIP_FAILURE_REPORT=skip_failure_report, $
   diffusetxt       = STRING(FORMAT='("Diffuse                ",T48,": ",I0)',nDiffuse)
 
 
-  PRINT,titleBar2
-  PRINT,titleBar
-  PRINT,titleTitle
-  PRINT,titleBar
-  PRINT,titleBar2
-  PRINT,''
-  PRINT,monoTitle
-  PRINT,titleBar
-  ;; PRINT,''
-  PRINT,monoGoodtxt
-  PRINT,monoGoodS_txt
-  PRINT,monoGoodT_txt
-  PRINT,''
-  PRINT,''
-  ;; PRINT,titleBar
-  PRINT,broadTitle
-  PRINT,titleBar
-  ;; PRINT,''
-  PRINT,broadGoodtxt
-  PRINT,broadGoodS_txt
-  PRINT,broadGoodT_txt
-  PRINT,''
-  PRINT,''
-  ;; PRINT,titleBar
-  PRINT,diffuseTitle
-  PRINT,titleBar
-  ;; PRINT,''
-  PRINT,diffusetxt
-  PRINT,''
+  PRINTF,l,titleBar2
+  PRINTF,l,titleBar
+  PRINTF,l,titleTitle
+  PRINTF,l,titleBar
+  PRINTF,l,titleBar2
+  PRINTF,l,''
+  PRINTF,l,monoTitle
+  PRINTF,l,titleBar
+  ;; PRINTF,l,''
+  PRINTF,l,monoGoodtxt
+  PRINTF,l,monoGoodS_txt
+  PRINTF,l,monoGoodT_txt
+  PRINTF,l,''
+  PRINTF,l,''
+  ;; PRINTF,l,titleBar
+  PRINTF,l,broadTitle
+  PRINTF,l,titleBar
+  ;; PRINTF,l,''
+  PRINTF,l,broadGoodtxt
+  PRINTF,l,broadGoodS_txt
+  PRINTF,l,broadGoodT_txt
+  PRINTF,l,''
+  PRINTF,l,''
+  ;; PRINTF,l,titleBar
+  PRINTF,l,diffuseTitle
+  PRINTF,l,titleBar
+  ;; PRINTF,l,''
+  PRINTF,l,diffusetxt
+  PRINTF,l,''
   IF KEYWORD_SET(skip_failure_report) THEN RETURN
 
   ;;The bads
@@ -94,30 +101,30 @@ PRO PRINT_ESPEC_STATS,eSpec,SKIP_FAILURE_REPORT=skip_failure_report, $
   broadFail_txt3   = 'Broad #3--Too few bins above dJ_E/dE thresh AND min_eV'
   broadFail_txtT   = 'TOTAL # BROAD FAILURES'
 
-  PRINT,titleBar
-  PRINT,failTitle
-  PRINT,titleBar
+  PRINTF,l,titleBar
+  PRINTF,l,failTitle
+  PRINTF,l,titleBar
 
-  PRINT,monoTitle
-  PRINT,titleBar
-  ;; PRINT,''
-  PRINT,FORMAT='(A0,T59,": ",I0)',monoFail_txt1,nMF_1
-  PRINT,FORMAT='(A0,T59,": ",I0)',monoFail_txt2,nMF_2
-  PRINT,FORMAT='(A0,T59,": ",I0)',monoFail_txt3,nMF_3
-  PRINT,FORMAT='(A0,T59,": ",I0)',monoFail_txt4,nMF_4
-  ;; PRINT,''
-  PRINT,FORMAT='(A0,T59,": ",I0)',monoFail_txtT,nMF_T
-  PRINT,''
-  PRINT,''
-  PRINT,broadTitle
-  PRINT,titleBar
-  ;; PRINT,''
-  PRINT,FORMAT='(A0,T59,": ",I0)',broadFail_txt1,nBF_1
-  PRINT,FORMAT='(A0,T59,": ",I0)',broadFail_txt2,nBF_2
-  PRINT,FORMAT='(A0,T59,": ",I0)',broadFail_txt3,nBF_3
-  ;; PRINT,''
-  PRINT,FORMAT='(A0,T59,": ",I0)',broadFail_txtT,nBF_T
-  PRINT,''
+  PRINTF,l,monoTitle
+  PRINTF,l,titleBar
+  ;; PRINTF,l,''
+  PRINTF,l,FORMAT='(A0,T59,": ",I0)',monoFail_txt1,nMF_1
+  PRINTF,l,FORMAT='(A0,T59,": ",I0)',monoFail_txt2,nMF_2
+  PRINTF,l,FORMAT='(A0,T59,": ",I0)',monoFail_txt3,nMF_3
+  PRINTF,l,FORMAT='(A0,T59,": ",I0)',monoFail_txt4,nMF_4
+  ;; PRINTF,l,''
+  PRINTF,l,FORMAT='(A0,T59,": ",I0)',monoFail_txtT,nMF_T
+  PRINTF,l,''
+  PRINTF,l,''
+  PRINTF,l,broadTitle
+  PRINTF,l,titleBar
+  ;; PRINTF,l,''
+  PRINTF,l,FORMAT='(A0,T59,": ",I0)',broadFail_txt1,nBF_1
+  PRINTF,l,FORMAT='(A0,T59,": ",I0)',broadFail_txt2,nBF_2
+  PRINTF,l,FORMAT='(A0,T59,": ",I0)',broadFail_txt3,nBF_3
+  ;; PRINTF,l,''
+  PRINTF,l,FORMAT='(A0,T59,": ",I0)',broadFail_txtT,nBF_T
+  PRINTF,l,''
 
 END
 

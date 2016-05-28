@@ -5,7 +5,7 @@ PRO JOURNAL__20160527__MAKE_ESPEC_STRUCT_FOR_20160508_DESPUN_MAXIMUS
   outFile     = 'alf_eSpec_20160508_despun_db--' + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '.sav'
 
   ;;Get cdbTime and the DB directory
-  LOAD_MAXIMUS_AND_CDBTIME,!NULL,cdbTime,/JUST_CDBTIME,/DO_DESPUNDB
+  LOAD_MAXIMUS_AND_CDBTIME,!NULL,cdbTime,/JUST_CDBTIME,/DO_DESPUNDB,DBDIR=dbDir
 
   orbFile     = 'Dartdb_20160508--2500-3599_plus_bonus__and_10220-16361_despun--orbits.sav'
   RESTORE,dbDir + orbFile

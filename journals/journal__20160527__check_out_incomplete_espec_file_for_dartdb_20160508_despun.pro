@@ -2,13 +2,13 @@
 ;;We lose about 23000 events to electron energies that are too weak.
 PRO JOURNAL__20160527__CHECK_OUT_INCOMPLETE_ESPEC_FILE_FOR_DARTDB_20160508_DESPUN
 
-  chare_histo_plotName = GET_TODAY_STRING() + '--despun--chare_zoomed--0-200_eV--why_we_lose_so_many_broadband_spec.png'
-  espec_identified_plotname = GET_TODAY_STRING() + '--despun--Newell-based_stats.png'
+  chare_histo_plotName = GET_TODAY_STRING() + '--20160508_db--despun--chare_zoomed--0-200_eV--why_we_lose_so_many_broadband_spec.png'
+  espec_identified_plotname = GET_TODAY_STRING() + '--20160508_db--despun--Newell-based_stats.png'
 
   ;;Get 'em back!
   LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime,GOOD_I=good_i,HEMI__GOOD_I='BOTH',/DO_DESPUNDB
   eSpec_dir     = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
-  file          = 'alf_eSpec_20160508_despun_db--20160527.sav'
+  file          = 'alf_eSpec_20160508_despun_db--20160528.sav'
 
   RESTORE,eSpec_dir+file
 
@@ -44,6 +44,4 @@ PRO JOURNAL__20160527__CHECK_OUT_INCOMPLETE_ESPEC_FILE_FOR_DARTDB_20160508_DESPU
               YTITLE='Counts', $
               XTITLE='Characteristic Energy (eV)', $
               TITLE='Screened Alfvén events, both hemispheres'
-  STOP
-
 END

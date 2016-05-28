@@ -65,6 +65,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
   COMMON M_VARS,MAXIMUS__maximus,MAXIMUS__HAVE_GOOD_I,MAXIMUS__times, $
      MAXIMUS__good_i,MAXIMUS__cleaned_i, $
      MAXIMUS__dbFile,MAXIMUS__dbTimesFile, $
+     MAXIMUS__dbDir, $
+     MAXIMUS__despun, $
+     MAXIMUS__is_chastDB, $
      MAXIMUS__RECALCULATE
 
   COMMON FL_VARS,FL__fastLoc,FASTLOC__times,FASTLOC__delta_t, $
@@ -136,7 +139,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
               correct_fluxes                      = 1
            ENDELSE
         ENDIF
-        LOAD_MAXIMUS_AND_CDBTIME,dbStruct,dbTimes,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile, $
+        LOAD_MAXIMUS_AND_CDBTIME,dbStruct,dbTimes, $
+                                 DBDIR=loaddataDir, $
+                                 DBFILE=dbFile, $
+                                 DB_TFILE=dbTimesFile, $
                                  DO_CHASTDB=chastDB, $
                                  DO_DESPUNDB=despunDB, $
                                  CORRECT_FLUXES=correct_fluxes
@@ -156,7 +162,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
         dbTimesFile                               = FASTLOC__dbTimesFile
      ENDIF ELSE BEGIN
         LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,fastloc_delta_t,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile
-        FL__fastLoc                                = dbStruct
+        FL__fastLoc                               = dbStruct
         FASTLOC__times                            = dbTimes
         FASTLOC__delta_t                          = fastloc_delta_t
         FASTLOC__dbFile                           = dbFile
@@ -305,7 +311,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
      ;;Want just Holzworth/Meng statistical auroral oval?
-     IF HwMAurOval THEN region_i=CGSETINTERSECTION(region_i,where(abs(dbStruct.ilat) GT auroral_zone(dbStruct.mlt,HwMKpInd,/lat)/(!DPI)*180.))
+     IF HwMAurOval THEN region_i = CGSETINTERSECTION(region_i, $
+                                                     WHERE(ABS(dbStruct.ilat) GT auroral_zone(dbStruct.mlt,HwMKpInd,/lat)/(!DPI)*180.))
 
   ;;;;;;;;;;;;;;;;;;;;;;
      ;;Now combine them all
@@ -318,7 +325,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
         MIMC__maxNegMC                            = maxNegMC
         magc_i                                    = GET_MAGC_INDS(dbStruct,MIMC__minMC,MIMC__maxNegMC, $
                                                                   N_OUTSIDE_MAGC=n_magc_outside_range)
-        region_i=CGSETINTERSECTION(region_i,magc_i)
+        region_i = CGSETINTERSECTION(region_i,magc_i)
      ENDIF
 
      

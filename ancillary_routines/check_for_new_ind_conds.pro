@@ -66,14 +66,19 @@ PRO CHECK_FOR_NEW_IND_CONDS,is_maximus, $
         ENDIF
      ENDIF
 
-     IF N_ELEMENTS(despunDB) GT 0 THEN BEGIN
-        IF N_ELEMENTS(MIMC__despunDB) GT 0 THEN BEGIN
-           IF MIMC__despunDB NE despunDB THEN BEGIN
-              MIMC__RECALCULATE = 1
-              have_good_i       = 0
-              RETURN
-           ENDIF
-        ENDIF
+     ;; IF N_ELEMENTS(despunDB) GT 0 THEN BEGIN
+     ;;    IF N_ELEMENTS(MIMC__despunDB) GT 0 THEN BEGIN
+     ;;       IF MIMC__despunDB NE despunDB THEN BEGIN
+     IF  ( KEYWORD_SET(despunDB) AND ~KEYWORD_SET(MIMC__despunDB) ) OR $
+         ( ~KEYWORD_SET(despunDB) AND KEYWORD_SET(MIMC__despunDB) )    $
+     THEN BEGIN
+        ;; IF N_ELEMENTS(MIMC__despunDB) GT 0 THEN BEGIN
+        ;; IF MIMC__despunDB NE despunDB THEN BEGIN
+        MIMC__RECALCULATE = 1
+        have_good_i       = 0
+        RETURN
+        ;; ENDIF
+        ;; ENDIF
      ENDIF
 
      IF N_ELEMENTS(charERange) GT 0 THEN BEGIN
