@@ -25,7 +25,7 @@ FUNCTION MAKE_ESPEC_DB_FOR_ALFVEN_DB,cdbTime,orbArr,OUT_DIFFS=out_diffs,OUT_MISS
   ;;Loop over all events, do in two separate loops to keep things fast
 
   firstOrb           = 500
-  lastOrb            = 8000
+  lastOrb            = 11100
 
   diffs_innie        = !NULL
   diffs_final        = !NULL
