@@ -11,18 +11,13 @@
 ;;Je:         Electron number flux (#/cm^2-s)
 ;;Jee:        Electron energy flux (mW/m^2)
 ;;nBad_eSpec: 0 = no problems      , N = N bad bins
-FUNCTION MAKE_BLANK_ESPEC_STRUCTS,nSpectra
+PRO MAKE_BLANK_ESPEC_JE_AND_JEE_STRUCTS,blank_eSpec,blank_je,blank_jee,nSpectra,nEnergies
 
-  event = { x:MAKE_ARRAY(nSpectra,/DOUBLE,VALUE=0), $
-            MLT:MAKE_ARRAY(nSpectra,/FLOAT,VALUE=0), $
-            ILAT:MAKE_ARRAY(nSpectra,/FLOAT,VALUE=0), $
-            mono:MAKE_ARRAY(nSpectra,/BYTE,VALUE=0), $
-            broad:MAKE_ARRAY(nSpectra,/BYTE,VALUE=0), $
-            diffuse:MAKE_ARRAY(nSpectra,/BYTE,VALUE=0), $
-            Je:MAKE_ARRAY(nSpectra,/FLOAT,VALUE=0), $
-            Jee:MAKE_ARRAY(nSpectra,/FLOAT,VALUE=0), $
-            nBad_eSpec:MAKE_ARRAY(nSpectra,/BYTE,VALUE=0)}
+  blank_eSpec = { x:MAKE_ARRAY(nSpectra,/DOUBLE), $
+                  y:MAKE_ARRAY(nSpectra,nEnergies,/FLOAT), $
+                  v:MAKE_ARRAY(nSpectra,nEnergies,/FLOAT)}
   
-    RETURN,event
+  blank_je    = MAKE_ARRAY(nSpectra,/FLOAT)
+  blank_jee   = MAKE_ARRAY(nSpectra,/FLOAT)
 
 END
