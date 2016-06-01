@@ -658,6 +658,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         PARAMSTRING=paramString, $
                         PARAMSTRPREFIX=plotPrefix, $
                         PARAMSTRSUFFIX=plotSuffix, $
+                        SAVE_FASTLOC_INDS=save_alf_indices, $
+                        IND_FILEDIR=alfDB_ind_fileDir, $
                         TMPLT_H2DSTR=tmplt_h2dStr, $
                         FANCY_PLOTNAMES=fancy_plotNames, $
                         TXTOUTPUTDIR=txtOutputDir, $

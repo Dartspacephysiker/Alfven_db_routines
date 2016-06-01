@@ -71,12 +71,11 @@ PRO SAVE_ALFVENDB_INDICES,alfvendb_indices_filename, $
 
      IF use_paramString_list THEN BEGIN
         plot_i             = plot_i_list[k]
+        paramString        = paramString_list[k]
      ENDIF ELSE BEGIN
         plot_i             = plot_i_list
-        ;; paramString     = paramString_list
         ;; outFile         = alfvendb_indices_filename
      ENDELSE
-     paramString           = paramString_list[k]
      outFile               = alfvendb_indices_filename[k]
 
      ;;plot_i_list

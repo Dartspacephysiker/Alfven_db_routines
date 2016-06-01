@@ -58,7 +58,11 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                   DATARAWPTR=dataRawPtr, $
                                   H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
                                   PRINT_MAXANDMIN=print_mandm, $
-                                  INDSFILEPREFIX=indsFilePrefix,INDSFILESUFFIX=indsFileSuffix, $
+                                  SAVE_FASTLOC_INDS=save_fastLoc_inds, $
+                                  PARAMSTR_FOR_SAVING=paramStr, $
+                                  INDSFILEPREFIX=indsFilePrefix, $
+                                  INDSFILESUFFIX=indsFileSuffix, $
+                                  IND_FILEDIR=ind_fileDir, $
                                   BURSTDATA_EXCLUDED=burstData_excluded, $
                                   DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                                   LUN=lun
@@ -253,6 +257,10 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
      ENDELSE
   ENDELSE
 
+  IF KEYWORD_SET(save_fastLoc_inds) THEN BEGIN
+     PRINT,'Saving fastLoc inds with this paramStr: ' + paramStr
+     SAVE,fastLocInterped_i,FILENAME=ind_fileDir + paramStr + '--' + 'fastLoc_indices.sav'
+  ENDIF
 
   MAKE_FASTLOC_HISTO,OUTTIMEHISTO=tHistDenominator, $
                      FASTLOC_INDS=fastLocInterped_i, $

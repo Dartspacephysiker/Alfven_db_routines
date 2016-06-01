@@ -188,6 +188,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           PARAMSTRING=paramStr, $
                           PARAMSTRPREFIX=paramStrPrefix, $
                           PARAMSTRSUFFIX=paramStrSuffix, $
+                          SAVE_FASTLOC_INDS=save_fastLoc_inds, $
+                          IND_FILEDIR=ind_fileDir, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           RESET_GOOD_INDS=reset_good_inds, $
                           RESET_OMNI_INDS=reset_omni_inds, $
@@ -323,6 +325,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  DATANAME=dataName, $
                                                  DATARAWPTR=dataRawPtr, $
                                                  H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                                 SAVE_FASTLOC_INDS=save_fastLoc_inds, $
+                                                 PARAMSTR_FOR_SAVING=paramStr, $
+                                                 IND_FILEDIR=ind_fileDir, $
                                                  INDSFILEPREFIX=paramStrPrefix, $
                                                  INDSFILESUFFIX=paramStrSuffix, $
                                                  DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
