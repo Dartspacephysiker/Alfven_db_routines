@@ -11,7 +11,7 @@ PRO JOURNAL__20160602__GRAB_GOOD_ESPECS_AND_STITCH_THEM_TOGETHER
 
   inDir                     = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
 
-  saveFile                  = STRING(FORMAT='("alf_eSpec_",I0,"_db--ESPECS_ALIGNED_UNPARSED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
+  eSpecUnparsedFile         = STRING(FORMAT='("alf_eSpec_",I0,"_db--ESPECS_ALIGNED_UNPARSED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
                                      dbDate, $
                                      firstOrb, $
                                      lastOrb, $
@@ -31,6 +31,14 @@ PRO JOURNAL__20160602__GRAB_GOOD_ESPECS_AND_STITCH_THEM_TOGETHER
                                                              JE_OUT=je_out, $
                                                              JEE_OUT=jee_out)
 
-  SAVE,eSpecs,je_out,jee_out,FILENAME=inDir+saveFile
+  ;;Put the important stuff together
+  RESTORE,inDir+winnowedFile
+  LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbtime,DBDIR=dbDir
+
+  alf_sc_pot = maximus.sc_pot[alf_i__good_eSpec]
+  alf_mlt    = maximus.mlt[alf_i__good_eSpec]
+  alf_ilat   = maximus.ilat[alf_i__good_eSpec]
+
+  SAVE,eSpecs,je_out,jee_out,alf_sc_pot,alf_mlt,alf_ilat,FILENAME=inDir+eSpecUnparsedFile
   
 END

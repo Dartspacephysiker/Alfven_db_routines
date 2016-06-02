@@ -11,6 +11,9 @@ FUNCTION MAKE_ESPEC_DB_FOR_ALFVEN_DB_V2,cdbTime,orbArr,firstOrb,lastOrb, $
 
   COMPILE_OPT idl2
 
+  PRINT,"STOP. You know this thing shouldn't be used, right? I'm not even sure how it behaves, since I ultimately have used _V3 of this code to do any meaningful work."
+  STOP
+
   maxDiff          = 10.0 ;max allowable difference between spec and event
   badVal           = -9999
 

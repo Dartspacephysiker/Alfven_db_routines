@@ -1,6 +1,9 @@
 ;;05/26/16
 PRO JOURNAL__20160530__MAKE_ESPEC_STRUCT_FOR_20151222_MAXIMUS__AND_REANALYZE
 
+  PRINT,"You know this journal is junk aside from producing missing orb output, right? See the journals from 20160531, 20160602"
+  STOP
+
   recreate_database       = 0
   parse_eSpecs            = 0
 

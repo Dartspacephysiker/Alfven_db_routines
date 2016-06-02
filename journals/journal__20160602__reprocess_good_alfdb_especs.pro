@@ -1,0 +1,75 @@
+;;06/02/16
+PRO JOURNAL__20160602__REPROCESS_GOOD_ALFDB_ESPECS
+
+  COMPILE_OPT IDL2
+
+  quiet                     = 1
+
+  dbDate                    = '20151222'
+  date_for_inputs           = '20160602'
+
+  firstOrb                  = 500
+  lastOrb                   = 16361
+  newFileDateStr            = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
+
+  inDir                     = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
+
+  ;;Use this file to figure out which Alfven DB inds we have
+  winnowedFile              = STRING(FORMAT='("alf_eSpec_",I0,"_db--TIME_SERIES_AND_ORBITS_ALIGNED_WITH_DB--WINNOWED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
+                                     dbDate, $
+                                     firstOrb, $
+                                     lastOrb, $
+                                     date_for_inputs)
+  
+  eSpecUnparsedFile         = STRING(FORMAT='("alf_eSpec_",I0,"_db--ESPECS_ALIGNED_UNPARSED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
+                                     dbDate, $
+                                     firstOrb, $
+                                     lastOrb, $
+                                     date_for_inputs)
+
+  eSpecParsedFile           = STRING(FORMAT='("alf_eSpec_20151222_db--PARSED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
+                                     firstOrb, $
+                                     lastOrb, $
+                                     newFileDateStr)
+
+
+  save_chunks_for_speed     = 1
+  chunk_save_interval       = 50000
+  chunkDir                  = inDir+'fully_parsed/'
+  chunk_saveFile_pref       = STRING(FORMAT='("alf_eSpec_20151222_db--PARSED--Orbs_",I0,"-",I0,"--",A0)', $
+                                     firstOrb, $
+                                     lastOrb, $
+                                     newFileDateStr)
+
+  RESTORE,inDir+winnowedFile
+  RESTORE,inDir+eSpecUnparsedFile
+
+
+  ;;Give 'er a check
+  CHECK_DIFF_EFLUX_INPUTS_BEFORE_BEGINNING,eSpecs,jee_out,je_out,alf_mlt,alf_ilat
+
+  ;;Now give everything a second run-through
+  IDENTIFY_DIFF_EFLUXES_AND_CREATE_STRUCT,eSpecs,jee_out,je_out, $
+                                          alf_mlt,alf_ilat, $
+                                          alf_eSpecs_parsed, $
+                                          SC_POT=alf_sc_pot, $
+                                          ;; IND_SC_POT=ind_sc_pot, $
+                                          ;; ORBSTR=orbStr, $
+                                          /PRODUCE_FAILCODE_OUTPUT, $
+                                          OUT_FAILCODES=failCodes, $
+                                          SAVE_CHUNKS_FOR_SPEED=save_chunks_for_speed, $
+                                          CHUNK_SAVE_INTERVAL=chunk_save_interval, $
+                                          CHUNK_SAVEFILE_PREF=chunk_saveFile_pref, $
+                                          CHUNKDIR=chunkDir, $
+                                          /GIVE_TIMESPLIT_INFO, $
+                                          QUIET=quiet, $
+                                          /BATCH_MODE, $
+                                          ERRORLOGFILE=errorLogFile
+
+  
+  IF ~KEYWORD_SET(save_chunks_for_speed) THEN BEGIN
+     PRINT,'Saving parsed output to ' + eSpecParsedFile + '...'
+     SAVE,alf_eSpecs_parsed,failCodes,FILENAME=inDir+eSpecParsedFile
+  ENDIF
+
+END
