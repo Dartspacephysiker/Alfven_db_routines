@@ -3,10 +3,12 @@ PRO JOURNAL__20160531__GENERATE_LIST_OF_MISSING_ORBS
 
   COMPILE_OPT IDL2
 
-  RESTORE,'~/Research/database/FAST/dartdb/electron_Newell_db/alf_eSpec_2015122_db--MISSING_ORBS--Orbs_500-13680--20160531.sav'
+  RESTORE,'~/Research/database/FAST/dartdb/electron_Newell_db/alf_eSpec_20151222_db--MISSING_ORBS--Orbs_500-16361--20160602.sav'
 
-  file1 = 'orbs_and_n_missing--20160531.txt' 
-  file = 'orbs_to_redo--20160531.txt' 
+  todayString = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
+
+  file1 = 'orbs_and_n_missing--' + todayString + '.txt' 
+  file = 'orbs_to_redo--' + todayString + '.txt' 
 
   OPENW,lun,'~/Desktop/'+file,/GET_LUN 
   OPENW,missinglun,'~/Desktop/'+file1,/GET_LUN 

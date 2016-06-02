@@ -7,7 +7,11 @@ PRO JOURNAL__20160531__ALIGN_ALFVENDB_I_WITH_HUGE_ESPEC_TIME_SERIES
 
   ;;Stuff for eSpec database
   firstOrb                = 500
-  lastOrb                 = 14000
+  lastOrb                 = 16361
+
+  dbDate                    = '20151222'
+
+  todayStr                  = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
 
   ;;load maximus and cdbTime
   LOAD_MAXIMUS_AND_CDBTIME,!NULL,cdbTime,DBDir=dbDir,/JUST_CDBTIME
@@ -17,43 +21,40 @@ PRO JOURNAL__20160531__ALIGN_ALFVENDB_I_WITH_HUGE_ESPEC_TIME_SERIES
   RESTORE,dbDir + orbFile
 
   inDir                   = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
-  inTimeSeriesFile        = 'alf_eSpec_20151222_db--TIME_SERIES_AND_ORBITS--Orbs_500-14000--20160531.sav'
+  inTimeSeriesFile          = STRING(FORMAT='("alf_eSpec_",A0,"_db--TIME_SERIES_AND_ORBITS--Orbs_",I0,"-",I0,"--",A0,".sav")', $
+                                     dbDate, $
+                                     firstOrb, $
+                                     lastOrb, $
+                                     todayStr)
   RESTORE,inDir+inTimeSeriesFile
 
   orbChunkSize            = 100
   nChunks                 = (lastOrb-firstOrb)/orbChunkSize
-  eSpec_orbPadding        = 5
+  eSpec_orbPadding        = 1
   
-  chunk_fName_pref        = 'alf_eSpec_20151222_db--ESPEC_TIMES_COINCIDING_WITH_ALFDB--'
+  chunk_fName_pref        = 'alf_eSpec_'+dbDate+'_db--ESPEC_TIMES_COINCIDING_WITH_ALFDB--'
   TIC
   FOR iChunk=0,nChunks DO BEGIN
 
      startOrb             = firstOrb+iChunk*orbChunkSize
-     stopOrb              = startOrb+orbChunkSize
+     stopOrb              = startOrb+orbChunkSize-1
      PRINT,FORMAT='("Orbs: ",I0,T20,I0)',startOrb,stopOrb
      temp_out_fname       = STRING(FORMAT='(A0,"Orbs_",I0,"-",I0,".sav")',chunk_fName_pref,startOrb,stopOrb)
 
-     temp_alf_i           = WHERE(alfven_orbList GE startOrb AND alfven_orbList LT stopOrb,nTmpAlf)
+     temp_alf_i           = WHERE(alfven_orbList GE startOrb AND alfven_orbList LE stopOrb,nTmpAlf)
+     temp_alf_times       = cdbTime[temp_alf_i]
 
      ;;To check whether any of these are garbage (because I didn't do it up front!!!)
      ;;(AFTER CHECKING): Turns out they're all safe
-     ;; IF temp_alf_i[0] EQ -1 THEN PRINT,"BEWARE: This orb range doesn't actually have squattum!"
-     ;; CONTINUE
+     IF temp_alf_i[0] EQ -1 THEN BEGIN
+        PRINT,"BEWARE: This orb range doesn't actually have squattum!"
+        STOP
+        ;; CONTINUE
+     ENDIF
 
      temp_eSpec_i         = WHERE(orbArr_final GE (startOrb-eSpec_orbPadding) AND $
                                   orbArr_final LT (stopOrb+eSpec_orbPadding),nTmpEspec)
-
-     ;;Keep track of offset relative to all inds so we know who goes where
-     ;; temp_alf_offset      = temp_alf_i[0]
-     ;; temp_eSpec_offset    = temp_eSpec_i[0]
-
-     ;; temp_alf_time        = cdbTime[TEMPORARY(temp_alf_i)]
-     ;; temp_eSpec_times     = eSpec_times_final[TEMPORARY(temp_eSpec_i)]
-     temp_alf_times       = cdbTime[temp_alf_i]
      temp_eSpec_times     = eSpec_times_final[temp_eSpec_i]
-     ;; temp_alf_time        = cdbTime[WHERE(alfven_orbList GE startOrb AND alfven_orbList LT stopOrb,nTmpAlf)]
-     ;; temp_eSpec_times     = eSpec_times_final[WHERE(orbArr_final GE (startOrb-eSpec_orbPadding) AND $
-     ;;                                                orbArr_final LT (stopOrb+eSpec_orbPadding),nTmpEspec)]
      
      
      clock                = TIC('Orbjunk' + STRCOMPRESS(iChunk,/REMOVE_ALL))

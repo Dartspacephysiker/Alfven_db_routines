@@ -160,7 +160,7 @@ FUNCTION MAKE_ESPEC_DB_FOR_ALFVEN_DB_V2,cdbTime,orbArr,firstOrb,lastOrb, $
   ENDFOR
 
   ;;Grab stragglers
-  IF N_ELEMENTS(final_eSpecs_innie) NE 0 THEN BEGIN
+  IF orbCount GT 0 THEN BEGIN
      CAT_ESPECS_FROM_NEWELL_FILES,final_eSpecs,final_eSpecs_innie
      CAT_JE_AND_JEE_FROM_NEWELL_FILES,final_je,final_je_innie, $
                                       final_jee,final_jee_innie

@@ -4,7 +4,7 @@ PRO JOURNAL__20160531__EXTRACT_HUGE_TIMESERIES_FROM_NEWELL_FILES
   COMPILE_OPT IDL2
 
   firstOrb                = 500
-  lastOrb                 = 14000
+  lastOrb                 = 16361
 
   outDir                  = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
   outTimeSeriesFile       = STRING(FORMAT='("alf_eSpec_20151222_db--TIME_SERIES_AND_ORBITS--Orbs_",I0,"-",I0,"--",A0,".sav")', $

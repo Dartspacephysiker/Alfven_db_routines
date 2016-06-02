@@ -7,7 +7,7 @@ PRO JOURNAL__20160530__MAKE_ESPEC_STRUCT_FOR_20151222_MAXIMUS__AND_REANALYZE
   only_missing_output     = 1
 
   firstOrb                = 500
-  lastOrb                 = 13680
+  lastOrb                 = 16361
 
   outMissingOrbsFile      = STRING(FORMAT='("alf_eSpec_20151222_db--MISSING_ORBS--Orbs_",I0,"-",I0,"--",A0,".sav")', $
                                    firstOrb, $
@@ -42,6 +42,7 @@ PRO JOURNAL__20160530__MAKE_ESPEC_STRUCT_FOR_20151222_MAXIMUS__AND_REANALYZE
      IF ~KEYWORD_SET(only_missing_output) THEN BEGIN
         SAVE,alf_eSpecs_unparsed,je,jee,eSpec_magc_diffs,eSpec_missing_events,FILENAME=outDir+outunParsedF
      ENDIF ELSE BEGIN
+        PRINT,'Saving missing orb data to ' + outMissingOrbsFile
         SAVE,missingOrbArr,FILENAME=outDir+outMissingOrbsFile
      ENDELSE
   ENDIF ELSE BEGIN
