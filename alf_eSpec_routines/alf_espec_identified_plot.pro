@@ -12,6 +12,8 @@
 ;;
 FUNCTION ALF_ESPEC_IDENTIFIED_PLOT,eSpec, $
                                    YLOG=yLog, $
+                                   TITLE=title, $
+                                   ONLY_NEWELL=only_newell, $
                                    NEWELL_ESPEC_INTERPRETED=eSpec_interpreted, $
                                    CURRENT=window, $
                                    SAVEPLOT=savePlot, $
@@ -24,8 +26,17 @@ FUNCTION ALF_ESPEC_IDENTIFIED_PLOT,eSpec, $
 
   names              = ['Mono','Broad','Diffuse']
 
-  colors             = ['blue','red'] ;not-strict and strict
-  bottom_color       = 'white'
+  IF KEYWORD_SET(only_Newell) THEN BEGIN
+     colors          = ['green','gold']          
+     bottom_color    = 'gray'
+     ns_string       = 'Newell'
+     s_string        = 'Newell (Strict)'
+  ENDIF ELSE BEGIN
+     colors          = ['blue','red'] ;not-strict and strict
+     bottom_color    = 'white'
+     ns_string       = 'Not strict'
+     s_string        = 'Strict'
+  ENDELSE
 
   locations          = [1,2,3]
 
@@ -46,8 +57,8 @@ FUNCTION ALF_ESPEC_IDENTIFIED_PLOT,eSpec, $
      IF SIZE(eSpec_interpreted,/TYPE) NE 8 THEN $
         CONVERT_ESPEC_TO_STRICT_NEWELL_INTERPRETATION,eSpec,eSpec_interpreted
 
-     monoTemp_N      = WHERE(eSpec_interpreted.mono EQ 1,mono_N)
-     monoSTemp_N     = WHERE(eSpec_interpreted.mono EQ 2,monoS_N)
+     monoTemp_N      = WHERE(eSpec_interpreted.mono  EQ 1,mono_N)
+     monoSTemp_N     = WHERE(eSpec_interpreted.mono  EQ 2,monoS_N)
      broadTemp_N     = WHERE(eSpec_interpreted.broad EQ 1,broad_N)
      broadSTemp_N    = WHERE(eSpec_interpreted.broad EQ 2,broadS_N)
      diffuseTemp_N   = WHERE(eSpec_interpreted.diffuse,diffuse_N)
@@ -56,6 +67,9 @@ FUNCTION ALF_ESPEC_IDENTIFIED_PLOT,eSpec, $
      strict_N        = [monoS_N,broadS_N,         0] + notStrict_n
      colors_N        = ['green','gold']          
      bottom_color_N  = 'gray'
+
+     ns_string_N     = 'Newell'
+     s_string_N      = 'Newell (Strict)'
   ENDIF ELSE BEGIN
      nPlots          = 2
      nBars           = 1
@@ -125,13 +139,13 @@ FUNCTION ALF_ESPEC_IDENTIFIED_PLOT,eSpec, $
   vd_count        = 0
   text_s          = TEXT(horiz_normal, $
                          vert-vert_delta*(vd_count++), $
-                         'Not strict', $
+                         ns_string, $
                          /CURRENT, $
                          COLOR=colors[0], $
                          /NORMAL)
   text_ns         = TEXT(horiz_normal, $
                          vert-vert_delta*(vd_count++), $
-                         'Strict', $
+                         s_string, $
                          /CURRENT, $
                          COLOR=colors[1], $
                          /NORMAL)
@@ -139,13 +153,13 @@ FUNCTION ALF_ESPEC_IDENTIFIED_PLOT,eSpec, $
   IF KEYWORD_SET(eSpec_interpreted) THEN BEGIN
      text_s_N     = TEXT(horiz_normal, $
                          vert-vert_delta*(vd_count++), $
-                         'Newell', $
+                         ns_string_N, $
                          /CURRENT, $
                          COLOR=colors_N[0], $
                          /NORMAL)
      text_ns_N    = TEXT(horiz_normal, $
                          vert-vert_delta*(vd_count++), $
-                         'Newell (Strict)', $
+                         s_string_N, $
                          /CURRENT, $
                          COLOR=colors_N[1], $
                          /NORMAL)
@@ -156,7 +170,7 @@ FUNCTION ALF_ESPEC_IDENTIFIED_PLOT,eSpec, $
   ax[2].HIDE      = 1
 
   ;; Add a title.
-  plotArr[0].TITLE = "Mono, broad, and diffuse e!U-!N statistics for Alf events"
+  plotArr[0].TITLE = "Mono, broad, and diffuse e!U-!N statistics for Alf events" + (KEYWORD_SET(title) ? "!C" + title : '')
   
   IF KEYWORD_SET(savePlot) THEN BEGIN
 

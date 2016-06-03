@@ -146,6 +146,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
                           THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
                           THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
+                          NEWELLPLOTS=newellPlots, $
+                          NEWELL_ESPEC=newell_eSpec, $
+                          NEWELL_PLOTRANGE=newell_plotRange, $
                           TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                           TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                           LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -1200,6 +1203,34 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
 
   ENDIF
 
+  ;;NEWELL PLOTS
+  IF KEYWORD_SET(newellPlots) THEN BEGIN
+     GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
+                                MINM=minM,MAXM=maxM, $
+                                BINM=binM, $
+                                SHIFTM=shiftM, $
+                                MINI=minI,MAXI=maxI,BINI=binI, $
+                                NEWELLPLOTRANGE=newell_plotRange, $
+                                TMPLT_H2DSTR=tmplt_h2dStr, $
+                                H2DSTRS=h2dStrs, $
+                                H2DFLUXN=h2dFluxN, $
+                                H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                ;; MASKMIN=maskMin, $
+                                DATANAMES=dataNames, $
+                                DATARAWPTRS=dataRawPtrs, $
+                                CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                CB_FORCE_OOBLOW=cb_force_oobLow, $
+                                PRINT_MANDM=print_mAndM, $
+                                LUN=lun
+
+     h2dStrArr            = [h2dStrArr,h2dStrs]
+     IF keepMe THEN BEGIN 
+        dataNameArr       = [dataNameArr,dataNames] 
+        dataRawPtrArr     = [dataRawPtrArr,dataRawPtrs] 
+     ENDIF
+
+  ENDIF
+
   ;;########BONUS########
   IF KEYWORD_SET(sum_electron_and_poyntingflux) THEN BEGIN
      
@@ -1228,7 +1259,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   ENDIF
 
 
-                                ;#####Custom maxInd--the best!!##########
+  ;;#####Custom maxInd--the best!!##########
   IF KEYWORD_SET(custom_maxInds) THEN BEGIN
      nameless_customData_count    = 0
      nameless_customTitle_count   = 0

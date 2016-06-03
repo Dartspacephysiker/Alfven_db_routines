@@ -240,6 +240,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
                                  THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
                                  THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
+                                 NEWELLPLOTS=newellPlots, $
+                                 NEWELL_PLOTRANGE=newell_plotRange, $
                                  TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                                  TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                                  LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -617,6 +619,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
                         THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
                         THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
+                        NEWELLPLOTS=newellPlots, $
+                        NEWELL_PLOTRANGE=newell_plotRange, $
                         TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                         TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                         LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
