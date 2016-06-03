@@ -6,11 +6,13 @@ PRO JOURNAL__20160531__EXTRACT_HUGE_TIMESERIES_FROM_NEWELL_FILES
   firstOrb                = 500
   lastOrb                 = 16361
 
+  todayStr                = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
+
   outDir                  = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
-  outTimeSeriesFile       = STRING(FORMAT='("alf_eSpec_20151222_db--TIME_SERIES_AND_ORBITS--Orbs_",I0,"-",I0,"--",A0,".sav")', $
+  outTimeSeriesFile       = STRING(FORMAT='("eSpec_",A0,"_db--TIME_SERIES_AND_ORBITS--Orbs_",I0,"-",I0,".sav")', $
+                                   GET_TODAY_STRING(/DO_YYYYMMDD_FMT), $
                                    firstOrb, $
-                                   lastOrb, $
-                                   GET_TODAY_STRING(/DO_YYYYMMDD_FMT))
+                                   lastOrb)
 
 
   Newell_DB_dir    = '/SPENCEdata/software/sdt/batch_jobs/Alfven_study/20160520--get_Newell_identification_for_Alfven_events--NOT_despun/Newell_batch_output/'

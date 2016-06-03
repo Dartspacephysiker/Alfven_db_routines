@@ -5,39 +5,50 @@ PRO JOURNAL__20160602__REPROCESS_GOOD_ALFDB_ESPECS
 
   quiet                     = 1
 
-  dbDate                    = '20151222'
-  date_for_inputs           = '20160602'
+  despun                    = 1
 
+  date_for_inputs           = '20160603'
+
+  IF KEYWORD_SET(despun) THEN BEGIN
+     despunStr              = '--despun'
+     dbDate                 = '20160508'
+     firstDBOrb             = 502
+     orbFile                = 'Dartdb_20160508_despun--502-16361_despun--orbits.sav'
+  ENDIF ELSE BEGIN
+     despunStr              = ''
+     dbDate                 = '20151222'
+     firstDBOrb             = 500
+     orbFile                = 'Dartdb_20151222--500-16361_inc_lower_lats--burst_1000-16361--orbits.sav'
+  ENDELSE
   firstOrb                  = 500
   lastOrb                   = 16361
+
   newFileDateStr            = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
 
   inDir                     = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
 
   ;;Use this file to figure out which Alfven DB inds we have
-  winnowedFile              = STRING(FORMAT='("alf_eSpec_",I0,"_db--TIME_SERIES_AND_ORBITS_ALIGNED_WITH_DB--WINNOWED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
+  winnowedFile              = STRING(FORMAT='("alf_eSpec_",A0,"_db",A0,"--TIME_SERIES_AND_ORBITS_ALIGNED_WITH_DB--WINNOWED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
                                      dbDate, $
-                                     firstOrb, $
+                                     despunStr, $
+                                     firstDBOrb, $
                                      lastOrb, $
                                      date_for_inputs)
   
-  eSpecUnparsedFile         = STRING(FORMAT='("alf_eSpec_",I0,"_db--ESPECS_ALIGNED_UNPARSED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
+  eSpecUnparsedFile         = STRING(FORMAT='("alf_eSpec_",A0,"_db",A0,"--ESPECS_ALIGNED_UNPARSED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
                                      dbDate, $
-                                     firstOrb, $
-                                     lastOrb, $
-                                     date_for_inputs)
-
-  eSpecParsedFile           = STRING(FORMAT='("alf_eSpec_20151222_db--PARSED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
-                                     firstOrb, $
+                                     despunStr, $
+                                     firstDBOrb, $
                                      lastOrb, $
                                      newFileDateStr)
-
 
   save_chunks_for_speed     = 1
   chunk_save_interval       = 50000
   chunkDir                  = inDir+'fully_parsed/'
-  chunk_saveFile_pref       = STRING(FORMAT='("alf_eSpec_20151222_db--PARSED--Orbs_",I0,"-",I0,"--",A0)', $
-                                     firstOrb, $
+  chunk_saveFile_pref       = STRING(FORMAT='("alf_eSpec_",A0,"_db",A0,"--PARSED--Orbs_",I0,"-",I0,"--",A0)', $
+                                     dbDate, $
+                                     despunStr, $
+                                     firstDBOrb, $
                                      lastOrb, $
                                      newFileDateStr)
 

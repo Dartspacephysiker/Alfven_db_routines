@@ -3,35 +3,53 @@ PRO JOURNAL__20160531__SINCE_SOME_RESULTS_ARE_BOGUS__CAST_THEM_INTO_THE_FIRE_AND
 
   COMPILE_OPT IDL2
 
-  dbDate                    = '20151222'
+  despun                    = 1
 
+  IF KEYWORD_SET(despun) THEN BEGIN
+     despunStr              = '--despun'
+     dbDate                 = '20160508'
+     firstDBOrb             = 502
+     orbFile                = 'Dartdb_20160508_despun--502-16361_despun--orbits.sav'
+  ENDIF ELSE BEGIN
+     despunStr              = ''
+     dbDate                 = '20151222'
+     firstDBOrb             = 500
+     orbFile                = 'Dartdb_20151222--500-16361_inc_lower_lats--burst_1000-16361--orbits.sav'
+  ENDELSE
   firstOrb                  = 500
   lastOrb                   = 16361
+
   todayStr                  = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
 
   inDir                     = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;The output
-  winnowedFile              = STRING(FORMAT='("alf_eSpec_",I0,"_db--TIME_SERIES_AND_ORBITS_ALIGNED_WITH_DB--WINNOWED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
+  winnowedFile              = STRING(FORMAT='("alf_eSpec_",A0,"_db",A0,"--TIME_SERIES_AND_ORBITS_ALIGNED_WITH_DB--WINNOWED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
                                      dbDate, $
-                                     firstOrb, $
+                                     despunStr, $
+                                     firstDBOrb, $
                                      lastOrb, $
                                      todayStr)
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;The inputs
   ;;THE MASTER IN FILE
-  theMasterInFile           = STRING(FORMAT='("alf_eSpec_",I0,"_db--TIME_SERIES_AND_ORBITS_ALIGNED_WITH_DB--Orbs_",I0,"-",I0,"--",A0,".sav")', $
+  theMasterInFile           = STRING(FORMAT='("alf_eSpec_",A0,"_db",A0,"--TIME_SERIES_AND_ORBITS_ALIGNED_WITH_DB--Orbs_",I0,"-",I0,"--",A0,".sav")', $
                                      dbDate, $
-                                     firstOrb, $
+                                     despunStr, $
+                                     firstDBOrb, $
                                      lastOrb, $
                                      todayStr)
+
   ;;Use this for orbs
-  inTimeSeriesFile          = STRING(FORMAT='("alf_eSpec_",A0,"_db--TIME_SERIES_AND_ORBITS--Orbs_",I0,"-",I0,"--",A0,".sav")', $
-                                     dbDate, $
-                                     firstOrb, $
-                                     lastOrb, $
-                                     todayStr)
+  inTimeSeriesFile        = STRING(FORMAT='("eSpec_",A0,"_db--TIME_SERIES_AND_ORBITS--Orbs_",I0,"-",I0,".sav")', $
+                                   GET_TODAY_STRING(/DO_YYYYMMDD_FMT), $
+                                   firstOrb, $
+                                   lastOrb)
+
+  ;;load maximus and cdbTime
+  LOAD_MAXIMUS_AND_CDBTIME,!NULL,cdbTime,DBDir=dbDir,/JUST_CDBTIME,DO_DESPUNDB=despun
+
   RESTORE,inDir+inTimeSeriesFile
   RESTORE,inDir+theMasterInFile
 

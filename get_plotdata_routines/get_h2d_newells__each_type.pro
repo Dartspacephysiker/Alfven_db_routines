@@ -28,13 +28,14 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
   COMMON NEWELL,NEWELL__eSpec, $
      NEWELL__good_eSpec_i, $
      NEWELL__good_alf_i, $
-     NEWELL_failCodes, $
+     NEWELL__failCodes, $
+     NEWELL__despun, $
      NEWELL__dbFile,NEWELL__dbDir
 
   LOAD_MAXIMUS_AND_CDBTIME,!NULL,!NULL,DO_DESPUNDB=despun,/CHECK_DB
 
   IF N_ELEMENTS(NEWELL__eSpec) EQ 0 OR N_ELEMENTS(NEWELL__good_alf_i) EQ 0 THEN BEGIN
-     LOAD_NEWELL_ESPEC_DB,espec,good_alf_i
+     LOAD_NEWELL_ESPEC_DB,espec,good_alf_i,DESPUN_ALF_DB=despun
   ENDIF ELSE BEGIN
      eSpec            = NEWELL__eSpec
      good_eSpec_i     = NEWELL__good_eSpec_i

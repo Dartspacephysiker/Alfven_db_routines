@@ -11,28 +11,44 @@ PRO JOURNAL__20160602__STRING_TOGETHER_CHUNKED_REPROCESSED_ALFDB_ESPECS
      failCodes_string = ''
   ENDELSE
 
-  dbDate                    = '20151222'
-  date_for_inputs           = '20160602'
+  despun                    = 1
 
+  date_for_inputs           = '20160603'
+
+  IF KEYWORD_SET(despun) THEN BEGIN
+     despunStr              = '--despun'
+     dbDate                 = '20160508'
+     firstDBOrb             = 502
+     orbFile                = 'Dartdb_20160508_despun--502-16361_despun--orbits.sav'
+     totNSpectra            = 979303
+  ENDIF ELSE BEGIN
+     despunStr              = ''
+     dbDate                 = '20151222'
+     firstDBOrb             = 500
+     orbFile                = 'Dartdb_20151222--500-16361_inc_lower_lats--burst_1000-16361--orbits.sav'
+     totNSpectra            = 1139922
+  ENDELSE
   firstOrb                  = 500
   lastOrb                   = 16361
   newFileDateStr            = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
 
   inDir                     = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
 
-  totalSpectra              = 1139699
   chunk_save_interval       = 50000
-  nChunks                   = CEIL(totalSpectra/FLOAT(chunk_save_interval))
-  totNSpectra               = 1139699
+  nChunks                   = CEIL(totNSpectra/FLOAT(chunk_save_interval))
   chunkDir                  = inDir+'fully_parsed/'
-  chunk_saveFile_pref       = STRING(FORMAT='("alf_eSpec_20151222_db--PARSED--Orbs_",I0,"-",I0,"--",A0)', $
-                                     firstOrb, $
+  chunk_saveFile_pref       = STRING(FORMAT='("alf_eSpec_",A0,"_db",A0,"--PARSED--Orbs_",I0,"-",I0,"--",A0)', $
+                                     dbDate, $
+                                     despunStr, $
+                                     firstDBOrb, $
                                      lastOrb, $
-                                     date_for_inputs)
+                                     newFileDateStr)
   
-  TOTALGLORY                = STRING(FORMAT='("alf_eSpec_20151222_db--TOTAL_ESPECS_",A0,"_Orbs_",I0,"-",I0,"--",A0,".sav")', $
+  TOTALGLORY                = STRING(FORMAT='("alf_eSpec_",A0,"_db",A0,"--TOTAL_ESPECS_",A0,"_Orbs_",I0,"-",I0,"--",A0,".sav")', $
+                                     dbDate, $
+                                     despunStr, $
                                      STRUPCASE(failCodes_string), $
-                                     firstOrb, $
+                                     firstDBOrb, $
                                      lastOrb, $
                                      newFileDateStr)
 

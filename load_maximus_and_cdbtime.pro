@@ -65,8 +65,10 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
       ( ~KEYWORD_SET(MAXIMUS__despun) AND  KEYWORD_SET(despunDB) ) $
      AND ~KEYWORD_SET(check_DB) $
   THEN BEGIN
+     IF N_ELEMENTS(MAXIMUS__maximus) NE 0 THEN BEGIN
+        PRINTF,lun,'Swapping DBs!'
+     ENDIF
      swap_DBs = 1
-     PRINTF,lun,'Swapping DBs!'
   ENDIF ELSE BEGIN
      swap_DBs = 0
   ENDELSE
@@ -77,8 +79,10 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
         ( ~KEYWORD_SET(MAXIMUS__is_chastDB) AND  KEYWORD_SET(chastDB) ) $
         AND ~KEYWORD_SET(check_DB) $
      THEN BEGIN
+        IF N_ELEMENTS(MAXIMUS__maximus) NE 0 THEN BEGIN
+           PRINTF,lun,'Swapping DBs!'
+        ENDIF
         swap_DBs = 1
-        PRINTF,lun,'Swapping DBs!'
      ENDIF ELSE BEGIN
         swap_DBs = 0
      ENDELSE

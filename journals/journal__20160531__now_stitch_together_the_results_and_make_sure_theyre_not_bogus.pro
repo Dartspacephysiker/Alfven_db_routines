@@ -1,44 +1,52 @@
 ;;05/31/16
 PRO JOURNAL__20160531__NOW_STITCH_TOGETHER_THE_RESULTS_AND_MAKE_SURE_THEYRE_NOT_BOGUS
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT idl2
 
-  ;;Stuff for eSpec database
+  despun                    = 1
+
+  IF KEYWORD_SET(despun) THEN BEGIN
+     despunStr              = '--despun'
+     dbDate                 = '20160508'
+     firstDBOrb             = 502
+     orbFile                = 'Dartdb_20160508_despun--502-16361_despun--orbits.sav'
+  ENDIF ELSE BEGIN
+     despunStr              = ''
+     dbDate                 = '20151222'
+     firstDBOrb             = 500
+     orbFile                = 'Dartdb_20151222--500-16361_inc_lower_lats--burst_1000-16361--orbits.sav'
+  ENDELSE
   firstOrb                  = 500
   lastOrb                   = 16361
-
-
-  dbDate                    = '20151222'
 
   todayStr                  = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
 
   ;;THE MASTER OUT FILE
-  theMasterOutFile          = STRING(FORMAT='("alf_eSpec_",I0,"_db--TIME_SERIES_AND_ORBITS_ALIGNED_WITH_DB--Orbs_",I0,"-",I0,"--",A0,".sav")', $
+  theMasterOutFile          = STRING(FORMAT='("alf_eSpec_",A0,"_db",A0,"--TIME_SERIES_AND_ORBITS_ALIGNED_WITH_DB--Orbs_",I0,"-",I0,"--",A0,".sav")', $
                                      dbDate, $
-                                     firstOrb, $
+                                     despunStr, $
+                                     firstDBOrb, $
                                      lastOrb, $
                                      todayStr)
 
   ;;load maximus and cdbTime
-  LOAD_MAXIMUS_AND_CDBTIME,!NULL,cdbTime,DBDir=dbDir,/JUST_CDBTIME
+  LOAD_MAXIMUS_AND_CDBTIME,!NULL,cdbTime,DBDir=dbDir,/JUST_CDBTIME,DO_DESPUNDB=despun
 
   ;;load alfven_orbList
-  orbFile                   = 'Dartdb_20151222--500-16361_inc_lower_lats--burst_1000-16361--orbits.sav'
   RESTORE,dbDir + orbFile
 
   inDir                     = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
-  inTimeSeriesFile          = STRING(FORMAT='("alf_eSpec_",A0,"_db--TIME_SERIES_AND_ORBITS--Orbs_",I0,"-",I0,"--",A0,".sav")', $
-                                     dbDate, $
-                                     firstOrb, $
-                                     lastOrb, $
-                                     todayStr)
+  inTimeSeriesFile        = STRING(FORMAT='("eSpec_",A0,"_db--TIME_SERIES_AND_ORBITS--Orbs_",I0,"-",I0,".sav")', $
+                                   GET_TODAY_STRING(/DO_YYYYMMDD_FMT), $
+                                   firstOrb, $
+                                   lastOrb)
   RESTORE,inDir+inTimeSeriesFile
 
   orbChunkSize              = 100
   nChunks                   = (lastOrb-firstOrb)/orbChunkSize
   ;; eSpec_orbPadding          = 1
 
-  chunk_fName_pref          = 'alf_eSpec_20151222_db--ESPEC_TIMES_COINCIDING_WITH_ALFDB--'
+  chunk_fName_pref        = STRING(FORMAT='("alf_eSpec_",A0,"_db",A0,"--ESPEC_TIMES_COINCIDING_WITH_ALFDB--")',dbDate,despunStr)
   TIC
 
   closest_eSpec_i_final     = !NULL
@@ -88,19 +96,5 @@ PRO JOURNAL__20160531__NOW_STITCH_TOGETHER_THE_RESULTS_AND_MAKE_SURE_THEYRE_NOT_
   SAVE,closest_diffs_final,alf_i_final, $
        closest_eSpec_i_final,closest_eSpec_t_final, $
        FILENAME=inDir+theMasterOutFile
-
-  STOP
-
-  terrible_ii               = WHERE(ABS(closest_diffs_final) GT 5,nTerrible)
-  terrible                  = closest_eSpec_i_final[terrible_ii]
-  terrible_orbs             = orbArr_final[terrible]
-  CHECK_SORTED,terrible_orbs
-  terrible_orbs             = terrible_orbs[UNIQ(terrible_orbs)]
-
-  great_ii                  = WHERE(ABS(closest_diffs_final) LE 5,nGreat)
-  great                     = closest_eSpec_i_final[great_ii]
-  great_orbs                = orbArr_final[great]
-  CHECK_SORTED,great_orbs
-  great_orbs                = great_orbs[UNIQ(great_orbs)]
 
 END

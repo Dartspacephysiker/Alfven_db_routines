@@ -8,23 +8,21 @@ PRO LOAD_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec,good_eSpec_i, $
 
   COMPILE_OPT idl2
 
+  ;;This common block is defined ONLY here and in GET_H2D_NEWELLS__EACH_TYPE
   COMMON NEWELL,NEWELL__eSpec, $
      NEWELL__good_eSpec_i, $
      NEWELL__good_alf_i, $
-     NEWELL_failCodes, $
+     NEWELL__failCodes, $
+     NEWELL__despun, $
      NEWELL__dbFile,NEWELL__dbDir
 
-  IF KEYWORD_SET(despun_alf_db) THEN BEGIN
-     PRINT,'Despun is not supported!'
-     STOP
-  ENDIF
+  defNewellDBDir         = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/fully_parsed/'
+  defNewellDBFile        = 'alf_eSpec_20151222_db--TOTAL_ESPECS_FAILCODES__Orbs_500-16361--20160603.sav'
+  defNewellDespunDBFile  = 'alf_eSpec_20160508_db--despun--TOTAL_ESPECS_FAILCODES__Orbs_502-16361--20160603.sav'
 
   IF N_ELEMENTS(lun) EQ 0 THEN BEGIN
      lun                 = -1
   ENDIF
-
-  defNewellDBDir         = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/fully_parsed/'
-  defNewellDBFile        = 'alf_eSpec_20151222_db--TOTAL_ESPECS_FAILCODES__Orbs_500-16361--20160602.sav'
 
   IF N_ELEMENTS(NEWELL__eSpec) NE 0 AND ~KEYWORD_SET(force_load_db) THEN BEGIN
      PRINT,'Restoring eSpec DB already in memory...'
@@ -50,7 +48,15 @@ PRO LOAD_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec,good_eSpec_i, $
      ;; IF KEYWORD_SET(load_culled_eSpec_db) THEN BEGIN
      ;;    NewellDBFile  = defCulledNewellDBFile
      ;; ENDIF ELSE BEGIN
+     IF KEYWORD_SET(despun_alf_db) THEN BEGIN
+        PRINT,"eSpecs for despun Alfvén wave database..."
+
+        NewellDBFile     = defNewellDespunDBFile
+        NEWELL__despun   = 1
+     ENDIF ELSE BEGIN
         NewellDBFile     = defNewellDBFile
+        NEWELL__despun   = 0
+     ENDELSE
         ;; ENDELSE
   ENDIF
   NEWELL__dbFile         = NewellDBFile
