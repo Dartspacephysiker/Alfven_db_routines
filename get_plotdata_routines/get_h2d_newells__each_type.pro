@@ -12,7 +12,7 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                                H2DSTRS=h2dStrs, $
                                ;; H2DMASKSTR=h2dMaskStr, $
                                H2DFLUXN=h2dFluxN, $
-                               H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                               NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
                                ;; MASKMIN=maskMin, $
                                DATANAMES=dataNames, $
                                DATARAWPTRS=dataRawPtrs, $
@@ -104,7 +104,8 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
                              H2DSTR=h2dStr, $
                              ;; H2DMASKSTR=h2dMaskStr, $
-                             H2DFLUXN=h2dFluxN,H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                             H2DFLUXN=h2dFluxN, $
+                             NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
                              ;; MASKMIN=maskMin, $
                              DATANAME=dataNames[i], $
                              DATARAWPTR=dataRawPtr, $

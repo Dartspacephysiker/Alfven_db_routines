@@ -1219,7 +1219,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                 TMPLT_H2DSTR=tmplt_h2dStr, $
                                 H2DSTRS=h2dStrs, $
                                 H2DFLUXN=h2dFluxN, $
-                                H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
                                 ;; MASKMIN=maskMin, $
                                 DATANAMES=dataNames, $
                                 DATARAWPTRS=dataRawPtrs, $

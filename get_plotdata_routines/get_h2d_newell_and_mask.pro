@@ -15,7 +15,8 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
                             TMPLT_H2DSTR=tmplt_h2dStr, $
                             H2DSTR=h2dStr, $
                             ;; H2DMASKSTR=h2dMaskStr, $
-                            H2DFLUXN=h2dFluxN,NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
+                            H2DFLUXN=h2dFluxN, $
+                            NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
                             ;; MASKMIN=maskMin, $
                             DATANAME=dataName, $
                             DATARAWPTR=dataRawPtr, $
