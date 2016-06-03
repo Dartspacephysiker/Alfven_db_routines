@@ -8,6 +8,7 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                                LOG_NEWELLPLOT=log_newellPlot, $
                                NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                                NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
+                               NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
                                TMPLT_H2DSTR=tmplt_h2dStr, $
                                H2DSTRS=h2dStrs, $
                                ;; H2DMASKSTR=h2dMaskStr, $
@@ -87,8 +88,10 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
 
   h2dStrs         = !NULL
   dataRawPtrs     = !NULL
-  
-  FOR i=0,N_ELEMENTS(titles)-1 DO BEGIN
+  newell_nonzero_nev_i_list = LIST()  
+  nPlots          = 3
+  FOR i=0,nPlots-1 DO BEGIN
+     tmpDataName  = dataNames[i]
      GET_H2D_NEWELL_AND_MASK,tmp_eSpec, $ ;eSpec_i, $
                              TITLE=titles[i], $
                              IN_MLTS=mlt_list[i], $
@@ -102,21 +105,56 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                              LOG_NEWELLPLOT=log_newellPlot, $
                              NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                              NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
+                             NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
                              H2DSTR=h2dStr, $
                              ;; H2DMASKSTR=h2dMaskStr, $
                              H2DFLUXN=h2dFluxN, $
                              NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
                              ;; MASKMIN=maskMin, $
-                             DATANAME=dataNames[i], $
+                             DATANAME=tmpDataName, $
                              DATARAWPTR=dataRawPtr, $
                              CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                              CB_FORCE_OOBLOW=cb_force_oobLow, $
                              PRINT_MANDM=print_mAndM, $
                              LUN=lun
      
+     newell_nonzero_nev_i_list.add,newell_nonzero_nEv_i
      h2dStrs      = [h2dStrs,h2dStr]
+     dataNames[i] = tmpDataName
      dataRawPtrs  = [dataRawPtrs,dataRawPtr]
 
   ENDFOR
+
+  IF KEYWORD_SET(newellPlot_probOccurrence) THEN BEGIN
+     denom        = h2dStrs[0].data +h2dStrs[1].data+h2dStrs[2].data
+     tmp_div_i    = WHERE(denom GT 0)
+     IF tmp_div_i[0] EQ -1 THEN STOP
+     FOR i=0,nPlots-1 DO BEGIN
+        
+        h2dStrs[i].data[tmp_div_i] = h2dStrs[i].data[tmp_div_i]/FLOAT(denom[tmp_div_i])
+        h2dStrs[i].lim             = KEYWORD_SET(newell_plotRange) AND N_ELEMENTS(newell_plotRange) EQ 2 ? $
+                                     DOUBLE(newell_plotRange) : $
+                                     DOUBLE([0,1]) 
+        IF KEYWORD_SET(log_newellPlot) THEN BEGIN
+           dataNames[i]     = 'log_' + dataNames[i]
+           h2dStrs[i].data[newell_nonzero_nev_i_list[i]] = ALOG10(h2dStrs[i].data[newell_nonzero_nev_i_list[i]])
+           h2dStrs[i].lim    = [(h2dStrs[i].lim[0] LT 1e-5) ? -5 : ALOG10(h2dStrs[i].lim[0]),ALOG10(h2dStrs[i].lim[1])] ;lower bound must be one
+           h2dStrs[i].title     = 'Log ' + h2dStrs[i].title
+           h2dStrs[i].name      = dataNames[i]
+           h2dStrs[i].is_logged = 1
+        ENDIF
+
+        IF KEYWORD_SET(newellPlot_normalize) THEN BEGIN
+           dataNames[i]        += '_normed'
+           maxNEv               = MAX(h2dStrs[i].data[newell_nonzero_nEv_i_list[i]])
+           h2dStrs[i].data      = h2dStrs[i].data/maxNEv
+           h2dStrs[i].lim       = [0.0,1.0]
+           h2dStrs[i].title    += STRING(FORMAT='(" (norm: ",G0.3,")")',maxNEv)
+           h2dStrs[i].name      = dataNames[i]
+        ENDIF
+
+     ENDFOR
+  ENDIF
+
 END

@@ -12,6 +12,7 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
                             LOG_NEWELLPLOT=log_newellPlot, $
                             NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                             NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
+                            NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
                             TMPLT_H2DSTR=tmplt_h2dStr, $
                             H2DSTR=h2dStr, $
                             ;; H2DMASKSTR=h2dMaskStr, $
@@ -85,28 +86,41 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
      STOP
   ENDIF
   
-  IF KEYWORD_SET(log_newellPlot) THEN BEGIN
-     dataName         = 'log_' + dataName
-     h2dStr.data[newell_nonzero_nEv_i] = ALOG10(h2dStr.data[newell_nonzero_nEv_i])
-     h2dStr.lim       = [(h2dStr.lim[0] LT 1) ? 0 : ALOG10(h2dStr.lim[0]),ALOG10(h2dStr.lim[1])] ;lower bound must be one
-     h2dStr.title     = 'Log ' + h2dStr.title
-     h2dStr.name      = dataName
-     h2dStr.is_logged = 1
-  ENDIF
-  IF KEYWORD_SET(newellPlot_normalize) THEN BEGIN
-     dataName        += '_normed'
-     maxNEv                 = MAX(h2dStr.data[newell_nonzero_nEv_i])
-     h2dStr.data      = h2dStr.data/maxNEv
-     h2dStr.lim       = [0.0,1.0]
-     h2dStr.title    += STRING(FORMAT='(" (norm: ",G0.3,")")',maxNEv)
-     h2dStr.name      = dataName
-  ENDIF
-  IF KEYWORD_SET(newellPlot_autoscale) THEN BEGIN
-     PRINT,"Autoscaling nEvents plot..."
-     h2dStr.lim       = [MIN(h2dStr.data[newell_nonzero_nEv_i]), $
+  CASE 1 OF
+     KEYWORD_SET(newellPlot_probOccurrence): BEGIN
+        dataName         = dataName + "_probOcc"
+        h2dStr.title     = h2dStr.title + " (Prob. Occ.)"
+        h2dStr.name      = dataname
+        ;;Logging, etc happens outside of this routine
+        IF KEYWORD_SET(newellPlot_normalize) OR $
+           KEYWORD_SET(newellPlot_autoscale) THEN BEGIN
+           PRINT,"Can't do normalization or autoscale when also doing probOccurrence!"
+        ENDIF
+     END
+     ELSE: BEGIN
+        IF KEYWORD_SET(log_newellPlot) THEN BEGIN
+           dataName         = 'log_' + dataName
+           h2dStr.data[newell_nonzero_nEv_i] = ALOG10(h2dStr.data[newell_nonzero_nEv_i])
+           h2dStr.lim       = [(h2dStr.lim[0] LT 1) ? 0 : ALOG10(h2dStr.lim[0]),ALOG10(h2dStr.lim[1])] ;lower bound must be one
+           h2dStr.title     = 'Log ' + h2dStr.title
+           h2dStr.name      = dataName
+           h2dStr.is_logged = 1
+        ENDIF
+        IF KEYWORD_SET(newellPlot_normalize) THEN BEGIN
+           dataName        += '_normed'
+           maxNEv                 = MAX(h2dStr.data[newell_nonzero_nEv_i])
+           h2dStr.data      = h2dStr.data/maxNEv
+           h2dStr.lim       = [0.0,1.0]
+           h2dStr.title    += STRING(FORMAT='(" (norm: ",G0.3,")")',maxNEv)
+           h2dStr.name      = dataName
+        ENDIF
+        IF KEYWORD_SET(newellPlot_autoscale) THEN BEGIN
+           PRINT,"Autoscaling nEvents plot..."
+           h2dStr.lim       = [MIN(h2dStr.data[newell_nonzero_nEv_i]), $
                                MAX(h2dStr.data[newell_nonzero_nEv_i])]
-  ENDIF
-
+        ENDIF
+     END
+  ENDCASE
 
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      ;; IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN

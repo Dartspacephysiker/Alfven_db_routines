@@ -245,6 +245,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  LOG_NEWELLPLOT=log_newellPlot, $
                                  NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                                  NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
+                                 NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
                                  TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                                  TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                                  LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -627,6 +628,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         LOG_NEWELLPLOT=log_newellPlot, $
                         NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                         NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
+                        NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
                         TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                         TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                         LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $

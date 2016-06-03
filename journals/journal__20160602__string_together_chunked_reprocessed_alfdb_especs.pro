@@ -44,6 +44,14 @@ PRO JOURNAL__20160602__STRING_TOGETHER_CHUNKED_REPROCESSED_ALFDB_ESPECS
                                      lastOrb, $
                                      newFileDateStr)
   
+  winnowedFile              = STRING(FORMAT='("alf_eSpec_",A0,"_db",A0,"--TIME_SERIES_AND_ORBITS_ALIGNED_WITH_DB--WINNOWED--Orbs_",I0,"-",I0,"--",A0,".sav")', $
+                                     dbDate, $
+                                     despunStr, $
+                                     firstDBOrb, $
+                                     lastOrb, $
+                                     todayStr)
+
+
   TOTALGLORY                = STRING(FORMAT='("alf_eSpec_",A0,"_db",A0,"--TOTAL_ESPECS_",A0,"_Orbs_",I0,"-",I0,"--",A0,".sav")', $
                                      dbDate, $
                                      despunStr, $
@@ -72,10 +80,13 @@ PRO JOURNAL__20160602__STRING_TOGETHER_CHUNKED_REPROCESSED_ALFDB_ESPECS
 
   ENDFOR
 
+  ;;To get alf_i__good_eSpec and good_eSpec_i
+  RESTORE,inDir+winnowedFile
+
   PRINT,'Saving to ' + TOTALGLORY + '...'
   IF KEYWORD_SET(has_failCodes) THEN BEGIN
-     SAVE,eSpec,failCodes,FILENAME=chunkDir+TOTALGLORY
+     SAVE,eSpec,failCodes,alf_i__good_eSpec,good_eSpec_i,FILENAME=chunkDir+TOTALGLORY
   ENDIF ELSE BEGIN
-     SAVE,eSpec,FILENAME=chunkDir+TOTALGLORY
+     SAVE,eSpec,alf_i__good_eSpec,good_eSpec_i,FILENAME=chunkDir+TOTALGLORY
   ENDELSE
 END
