@@ -147,8 +147,10 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
                           THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
                           NEWELLPLOTS=newellPlots, $
-                          NEWELL_ESPEC=newell_eSpec, $
                           NEWELL_PLOTRANGE=newell_plotRange, $
+                          LOG_NEWELLPLOT=log_newellPlot, $
+                          NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
+                          NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                           TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                           TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                           LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -1210,7 +1212,10 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                 BINM=binM, $
                                 SHIFTM=shiftM, $
                                 MINI=minI,MAXI=maxI,BINI=binI, $
-                                NEWELLPLOTRANGE=newell_plotRange, $
+                                NEWELL_PLOTRANGE=newell_plotRange, $
+                                LOG_NEWELLPLOT=log_newellPlot, $
+                                NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
+                                NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                 TMPLT_H2DSTR=tmplt_h2dStr, $
                                 H2DSTRS=h2dStrs, $
                                 H2DFLUXN=h2dFluxN, $

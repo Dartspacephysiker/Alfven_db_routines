@@ -9,10 +9,13 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
                             MINI=minI,MAXI=maxI,BINI=binI, $
                             DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                             NEWELL_PLOTRANGE=newell_plotRange, $
+                            LOG_NEWELLPLOT=log_newellPlot, $
+                            NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
+                            NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                             TMPLT_H2DSTR=tmplt_h2dStr, $
                             H2DSTR=h2dStr, $
                             ;; H2DMASKSTR=h2dMaskStr, $
-                            H2DFLUXN=h2dFluxN,H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                            H2DFLUXN=h2dFluxN,NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
                             ;; MASKMIN=maskMin, $
                             DATANAME=dataName, $
                             DATARAWPTR=dataRawPtr, $
@@ -75,21 +78,44 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
   ;; h2dMaskStr.data[where(h2dStr.data LT maskMin,/NULL)]=255
   ;; h2dMaskStr.data[where(h2dStr.data GE maskMin,/NULL)]=0
 
-  h2d_nonzero_nEv_i             = WHERE(h2dFluxN GT 0)
-  IF h2d_nonzero_nEv_i[0] EQ -1 THEN BEGIN
+  newell_nonzero_nEv_i             = WHERE(h2dFluxN GT 0)
+  IF newell_nonzero_nEv_i[0] EQ -1 THEN BEGIN
      PRINT,"Ummm.... There's no data here, according to GET_H2D_NEWELL."
      STOP
   ENDIF
   
+  IF KEYWORD_SET(log_newellPlot) THEN BEGIN
+     dataName         = 'log_' + dataName
+     h2dStr.data[newell_nonzero_nEv_i] = ALOG10(h2dStr.data[newell_nonzero_nEv_i])
+     h2dStr.lim       = [(h2dStr.lim[0] LT 1) ? 0 : ALOG10(h2dStr.lim[0]),ALOG10(h2dStr.lim[1])] ;lower bound must be one
+     h2dStr.title     = 'Log ' + h2dStr.title
+     h2dStr.name      = dataName
+     h2dStr.is_logged = 1
+  ENDIF
+  IF KEYWORD_SET(newellPlot_normalize) THEN BEGIN
+     dataName        += '_normed'
+     maxNEv                 = MAX(h2dStr.data[newell_nonzero_nEv_i])
+     h2dStr.data      = h2dStr.data/maxNEv
+     h2dStr.lim       = [0.0,1.0]
+     h2dStr.title    += STRING(FORMAT='(" (norm: ",G0.3,")")',maxNEv)
+     h2dStr.name      = dataName
+  ENDIF
+  IF KEYWORD_SET(newellPlot_autoscale) THEN BEGIN
+     PRINT,"Autoscaling nEvents plot..."
+     h2dStr.lim       = [MIN(h2dStr.data[newell_nonzero_nEv_i]), $
+                               MAX(h2dStr.data[newell_nonzero_nEv_i])]
+  ENDIF
+
+
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      ;; IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
      fmt                     = 'G10.4' 
-     maxh2d                  = MAX(h2dStr.data[h2d_nonzero_nEv_i])
-     minh2d                  = MIN(h2dStr.data[h2d_nonzero_nEv_i])
+     maxh2d                  = MAX(h2dStr.data[newell_nonzero_nEv_i])
+     minh2d                  = MIN(h2dStr.data[newell_nonzero_nEv_i])
      ;; ENDIF ELSE BEGIN
      ;;    fmt    = 'F10.2'
-     ;;    maxh2d = ALOG10(MAX(h2dStr.data[h2d_nonzero_nEv_i]))
-     ;;    minh2d = ALOG10(MIN(h2dStr.data[h2d_nonzero_nEv_i]))
+     ;;    maxh2d = ALOG10(MAX(h2dStr.data[newell_nonzero_nEv_i]))
+     ;;    minh2d = ALOG10(MIN(h2dStr.data[newell_nonzero_nEv_i]))
      ;; ENDELSE
      PRINTF,lun,h2dStr.title
      PRINTF,lun,FORMAT='("Max, min:",T20,' + fmt + ',T35,' + fmt + ')', $

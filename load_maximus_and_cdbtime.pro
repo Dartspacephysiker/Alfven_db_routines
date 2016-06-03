@@ -21,6 +21,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              FORCE_LOAD_BOTH=force_load_BOTH, $
                              JUST_MAXIMUS=just_maximus, $
                              JUST_CDBTIME=just_cdbTime, $
+                             CHECK_DB=check_DB, $
                              QUIET=quiet, $
                              LUN=lun
 
@@ -62,6 +63,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   ;;Make sure we're not switching between despun and not-despun
   IF  (  KEYWORD_SET(MAXIMUS__despun) AND ~KEYWORD_SET(despunDB) ) OR $
       ( ~KEYWORD_SET(MAXIMUS__despun) AND  KEYWORD_SET(despunDB) ) $
+     AND ~KEYWORD_SET(check_DB) $
   THEN BEGIN
      swap_DBs = 1
      PRINTF,lun,'Swapping DBs!'
@@ -73,6 +75,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   IF ~KEYWORD_SET(swap_DBs) THEN BEGIN
      IF  (  KEYWORD_SET(MAXIMUS__is_chastDB) AND ~KEYWORD_SET(chastDB) ) OR $
         ( ~KEYWORD_SET(MAXIMUS__is_chastDB) AND  KEYWORD_SET(chastDB) ) $
+        AND ~KEYWORD_SET(check_DB) $
      THEN BEGIN
         swap_DBs = 1
         PRINTF,lun,'Swapping DBs!'

@@ -4,7 +4,10 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                                BINM=binM, $
                                SHIFTM=shiftM, $
                                MINI=minI,MAXI=maxI,BINI=binI, $
-                               NEWELLPLOTRANGE=newell_plotRange, $
+                               NEWELL_PLOTRANGE=newell_plotRange, $
+                               LOG_NEWELLPLOT=log_newellPlot, $
+                               NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
+                               NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                TMPLT_H2DSTR=tmplt_h2dStr, $
                                H2DSTRS=h2dStrs, $
                                ;; H2DMASKSTR=h2dMaskStr, $
@@ -21,13 +24,20 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
 
   COMPILE_OPT idl2
 
-  ;;This common block is defined in LOAD_NEWELL_ESPEC_DB
-  COMMON NEWELL
+  ;;This common block is defined ONLY here and in LOAD_NEWELL_ESPEC_DB
+  COMMON NEWELL,NEWELL__eSpec, $
+     NEWELL__good_eSpec_i, $
+     NEWELL__good_alf_i, $
+     NEWELL_failCodes, $
+     NEWELL__dbFile,NEWELL__dbDir
+
+  LOAD_MAXIMUS_AND_CDBTIME,!NULL,!NULL,DO_DESPUNDB=despun,/CHECK_DB
 
   IF N_ELEMENTS(NEWELL__eSpec) EQ 0 OR N_ELEMENTS(NEWELL__good_alf_i) EQ 0 THEN BEGIN
      LOAD_NEWELL_ESPEC_DB,espec,good_alf_i
   ENDIF ELSE BEGIN
-     eSpec            = NEWELL__good_eSpec_i
+     eSpec            = NEWELL__eSpec
+     good_eSpec_i     = NEWELL__good_eSpec_i
      good_alf_i       = NEWELL__good_alf_i
   ENDELSE
 
@@ -88,6 +98,9 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                              MINI=minI,MAXI=maxI,BINI=binI, $
                              DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                              NEWELL_PLOTRANGE=newell_plotRange, $
+                             LOG_NEWELLPLOT=log_newellPlot, $
+                             NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
+                             NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
                              H2DSTR=h2dStr, $
                              ;; H2DMASKSTR=h2dMaskStr, $
