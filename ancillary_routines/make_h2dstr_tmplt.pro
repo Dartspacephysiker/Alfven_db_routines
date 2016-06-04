@@ -50,6 +50,8 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                 do_grossRate    : KEYWORD_SET(do_grossRate_fluxQuantities), $
                 force_oobHigh   : KEYWORD_SET(cb_force_oobHigh), $
                 force_oobLow    : KEYWORD_SET(cb_force_oobLow), $
+                mask            : KEYWORD_SET(do_plot_i) ? LIST() : DBLARR(im1bins,im2bins), $
+                hasMask         : 0, $
                 dont_mask_me    : 0}
 
   RETURN,h2dStr_tmplt

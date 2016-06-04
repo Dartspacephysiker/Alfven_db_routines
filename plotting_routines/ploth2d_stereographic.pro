@@ -213,15 +213,23 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDIF
 
   ;;binary matrix to tell us where masked values are
-  IF ~KEYWORD_SET(h2dMask) THEN BEGIN
-     nPlots                       = N_ELEMENTS(h2dStrArr)-1 ;Subtract one since last array is the mask
-     h2dMask                      = h2dStrArr[nPlots]
-  ENDIF
+  CASE 1 OF
+     temp.hasMask: BEGIN
+        h2dMaskData = temp.mask
+     END
+     KEYWORD_SET(h2dMask): BEGIN
+        h2dMaskData  = h2dMask.data
+     END
+     ELSE: BEGIN
+        nPlots       = N_ELEMENTS(h2dStrArr)-1 ;Subtract one since last array is the mask
+        h2dMaskData  = h2dStrArr[nPlots].data
+     END
+  ENDCASE
 
   IF temp.dont_mask_me THEN BEGIN
-     masked                       = (h2dMask.data GT 260.0) ;mask NO ONE!
+     masked                       = (h2dMaskData GT 260.0) ;mask NO ONE!
   ENDIF ELSE BEGIN
-     masked                       = (h2dMask.data GT 250.0)
+     masked                       = (h2dMaskData GT 250.0)
   ENDELSE
   IF KEYWORD_SET(reverse_lShell) THEN BEGIN
      masked[*,1:-1]               = REVERSE(masked[*,1:-1],2)

@@ -11,7 +11,7 @@ PRO SPLIT_ALFDB_I_BY_ESPEC_TYPE,good_i,is_despun, $
                                 SUMMARY=summary, $
                                 OUT_TITLES=out_titles, $
                                 OUT_DATANAMESUFFS=out_datanamesuffs, $
-                                OUT_LIST=out_list, $
+                                OUT_I_LIST=out_i_list, $
                                 DESPUN_ALF_DB=despun_alf_db
 
   COMPILE_OPT IDL2
@@ -82,8 +82,8 @@ PRO SPLIT_ALFDB_I_BY_ESPEC_TYPE,good_i,is_despun, $
      PRINT,FORMAT='(A0,T10,": ",I0)',"anomal_i",N_ELEMENTS(anomal_i)
   ENDIF
 
-  out_titles = " (" + ['Broadband','Diffuse','Monoenergetic',"Broad/Diff",'Broad/Mono','Diff/Mono','BDM','Anomalous'] + ")"
+  out_titles        = " (" + ['Broadband','Diffuse','Monoenergetic',"Broad/Diff",'Broad/Mono','Diff/Mono','BDM','Anomalous'] + ")"
   out_datanamesuffs = "_" + ['broad','diff','mono','BD','BM','DM','BDM','Anom']
-  out_list   = LIST(pure_b_i,pure_d_i,pure_m_i,mix_bd_i,mix_bm_i,mix_dm_i,mix_bdm_i,anomal_i)
+  out_i_list        = LIST(pure_b_i,pure_d_i,pure_m_i,mix_bd_i,mix_bm_i,mix_dm_i,mix_bdm_i,anomal_i)
 
 END

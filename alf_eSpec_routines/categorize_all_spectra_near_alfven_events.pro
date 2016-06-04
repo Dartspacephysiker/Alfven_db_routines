@@ -92,29 +92,33 @@ PRO CATEGORIZE_ALL_SPECTRA_NEAR_ALFVEN_EVENTS
 
      tmpArr    = all_alf_eSpec_list__i[i]
 
-     tmpB      = b[tmpArr[0]]
-     tmpM      = m[tmpArr[0]]
-     tmpD      = d[tmpArr[0]]
-     FOR j=1,N_ELEMENTS(tmpArr)-1 DO BEGIN
-        tmpB   = tmpB + b[tmpArr[j]]            
-        tmpM   = tmpM + m[tmpArr[j]]            
-        tmpD   = tmpD + d[tmpArr[j]]            
-     ENDFOR
+     IF tmpArr[0] NE -1 THEN BEGIN
+        
 
-     IF tmpB GT 0 THEN tmpB = 1
-     IF tmpD GT 0 THEN tmpD = 1
-     IF tmpM GT 0 THEN tmpM = 1
+        tmpB      = b[tmpArr[0]]
+        tmpM      = m[tmpArr[0]]
+        tmpD      = d[tmpArr[0]]
+        FOR j=1,N_ELEMENTS(tmpArr)-1 DO BEGIN
+           tmpB   = tmpB + b[tmpArr[j]]            
+           tmpM   = tmpM + m[tmpArr[j]]            
+           tmpD   = tmpD + d[tmpArr[j]]            
+        ENDFOR
 
-     CASE 1 OF
-        tmpB AND tmpD AND tmpM: mix_bdm[i]  = 1
-        tmpB AND tmpD:           mix_bd[i]  = 1
-        tmpB AND tmpM:           mix_bm[i]  = 1
-        tmpD AND tmpM:           mix_dm[i]  = 1
-        tmpB:                    pure_b[i]  = 1
-        tmpD:                    pure_d[i]  = 1
-        tmpM:                    pure_m[i]  = 1
-        ELSE:                    anomal[i]  = 1
-     ENDCASE
+        IF tmpB GT 0 THEN tmpB = 1
+        IF tmpD GT 0 THEN tmpD = 1
+        IF tmpM GT 0 THEN tmpM = 1
+
+        CASE 1 OF
+           tmpB AND tmpD AND tmpM: mix_bdm[i]  = 1
+           tmpB AND tmpD:           mix_bd[i]  = 1
+           tmpB AND tmpM:           mix_bm[i]  = 1
+           tmpD AND tmpM:           mix_dm[i]  = 1
+           tmpB:                    pure_b[i]  = 1
+           tmpD:                    pure_d[i]  = 1
+           tmpM:                    pure_m[i]  = 1
+           ELSE:                    anomal[i]  = 1
+        ENDCASE
+     ENDIF
 
      IF count EQ nToCount THEN BEGIN
         TOC,clock

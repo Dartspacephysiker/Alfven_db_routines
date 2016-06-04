@@ -23,7 +23,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
                              GROSSRATE__CENTERS_MLT=centersMLT, $
                              GROSSRATE__CENTERS_ILAT=centersILAT, $
-                             GROSSCONVFACTOR=grossConvFactor, $
+                       GROSSCONVFACTORARR=grossConvFactorArr, $
                              WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                              GROSSLUN=grossLun, $
                              THISTDENOMINATOR=tHistDenominator, $
@@ -57,20 +57,43 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              PRINT_MAX_AND_MIN=print_mandm, $
                              FANCY_PLOTNAMES=fancy_plotNames, $
                              NPLOTS=nPlots, $
+                             MASKMIN=maskMin, $
+                             KEEPME=keepMe, $
                              LUN=lun
   
   COMPILE_OPT idl2
 
   SPLIT_ALFDB_I_BY_ESPEC_TYPE,plot_i,maximus.despun, $
                               OUT_TITLES=out_titles, $
+                              OUT_DATANAMESUFFS=out_datanamesuffs, $
                               OUT_I_LIST=out_i_list, $
                               DESPUN_ALF_DB=despun_alf_db
 
-  FOR k=0,N_ELEMENTS(out_list)-1 DO BEGIN
+  FOR k=0,N_ELEMENTS(out_i_list)-1 DO BEGIN
      
      tmp_i           = out_i_list[k]
 
      IF tmp_i[0] EQ -1 THEN CONTINUE
+
+     ;;Need to provide a new h2dFluxN and a new mask for each of these
+     GET_H2D_NEVENTS_AND_MASK,maximus,tmp_i, $
+                             MINM=minM,MAXM=maxM, $
+                             BINM=binM, $
+                             SHIFTM=shiftM, $
+                             MINI=minI,MAXI=maxI,BINI=binI, $
+                             DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
+                             NEVENTSPLOTRANGE=nEventsPlotRange, $
+                             TMPLT_H2DSTR=tmplt_h2dStr, $
+                             H2DSTR=tempNh2dStr,H2DMASKSTR=temph2dMaskStr, $
+                             H2DFLUXN=temph2dFluxN,H2D_NONZERO_NEV_I=temph2d_nonzero_nEv_i, $
+                             MASKMIN=maskMin/2, $
+                             DATANAME=dataName,DATARAWPTR=dataRawPtr, $
+                             CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                             CB_FORCE_OOBLOW=cb_force_oobLow, $
+                             PRINT_MANDM=print_mAndM, $
+                             LUN=lun     
+
+     temph2dmask    = temph2dmaskstr.data
 
      GET_FLUX_PLOTDATA,maximus,tmp_i,MINM=minM,MAXM=maxM, $
                        BINM=binM, $
@@ -96,15 +119,15 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
                        GROSSRATE__CENTERS_MLT=centersMLT, $
                        GROSSRATE__CENTERS_ILAT=centersILAT, $
-                       GROSSCONVFACTORARR=grossConvFactorArr, $
+                       GROSSCONVFACTOR=grossConvFactor, $
                        WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                        GROSSLUN=grossLun, $
                        THISTDENOMINATOR=tHistDenominator, $
                        H2DSTR=h2dStr, $
                        TMPLT_H2DSTR=tmplt_h2dStr, $
-                       H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                       H2DFLUXN=h2dFluxN, $
-                       H2DMASK=h2dMask, $
+                       H2D_NONZERO_NEV_I=temph2d_nonzero_nEv_i, $
+                       H2DFLUXN=temph2dFluxN, $
+                       H2DMASK=temph2dMask, $
                        UPDATE_H2D_MASK=update_h2d_mask, $
                        OUT_H2DMASK=out_h2dMask, $
                        DATANAME=dataName,DATARAWPTR=dataRawPtr, $
@@ -117,7 +140,6 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        ORBCONTRIB_H2DSTR_FOR_DIVISION=orbContrib_h2dStr_for_division, $
                        GET_EFLUX=get_eflux, $
                        GET_ENUMFLUX=get_eNumFlux, $
-                       NEWELL_ANALYZE_EFLUX=newell_analyze_eFlux, $
                        GET_PFLUX=get_pFlux, $
                        GET_IFLUX=get_iFlux, $
                        GET_OXYFLUX=get_oxyFlux, $
@@ -133,6 +155,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      ;;Add Newell-specific stuff
      h2dStr.title        += out_titles[k]
      dataName            += out_datanamesuffs[k]
+     h2dStr.hasMask       = 1
+     h2dStr.mask          = out_h2dMask
 
      h2dStrArr            = [h2dStrArr,h2dStr] 
      IF keepMe THEN BEGIN

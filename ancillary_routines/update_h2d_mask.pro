@@ -25,9 +25,11 @@ PRO UPDATE_H2D_MASK,h2dStr,H2DBinsMLT,H2DBinsILAT,H2DFluxN,dataName, $
         PRINTF,lun,FORMAT='(I0,T10,F0.2,T20,F0.2,T30,F0.3,T60,I0)',ind,H2DBinsMLT[ind MOD nMLTs],H2DBinsILAT[ind / nMLTs],h2dStr.data[ind],h2dFluxN[ind]
         PRINTF,lun,'Setting this bin to zero ...'
         h2dstr.data[ind]              = 0
-        h2dMask[ind]                  = 255
+        h2dmask[ind]              = 255
      ENDFOR
-     h2d_nonZero_nEv_i                = WHERE(~h2dMask)
+     ;; h2dStr.hasMask                   = 1
+     h2d_nonzero_nEv_i                = WHERE(~h2dMask)
+     ;; PRINTF,lun,"Might have problems in UPDATE_H2D_MASK now that each h2dStr has its own mask..."
      PRINTF,lun,""
   ENDIF
 

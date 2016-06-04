@@ -40,7 +40,7 @@ PRO GET_ALL_SPECTRA_NEAR_ALFVEN_EVENTS
   nBad                          = 0
   count                         = 0
   nToCount                      = 9999
-
+  edgeTimeLim                   = 2
   TIC
   FOR i=0,nToCheck-1 DO BEGIN
      IF count EQ 0 THEN BEGIN
@@ -55,9 +55,9 @@ PRO GET_ALL_SPECTRA_NEAR_ALFVEN_EVENTS
                             tmpTimes LE alfven_stop_time[i],nIn,/NULL)
 
      tmp_outbef_ii              = WHERE(tmpTimes LT alfven_start_time[i] AND $
-                            (ABS(tmpTimes-alfven_start_time[i]) LE 5),nOutBef,/NULL)
+                            (ABS(tmpTimes-alfven_start_time[i]) LE edgeTimeLim),nOutBef,/NULL)
      tmp_outaft_ii              = WHERE(tmpTimes GT alfven_stop_time[i] AND $
-                            (ABS(tmpTimes-alfven_stop_time[i]) LE 5),nOutAft,/NULL)
+                            (ABS(tmpTimes-alfven_stop_time[i]) LE edgeTimeLim),nOutAft,/NULL)
 
      IF N_ELEMENTS(tmp_outbef_ii) GT 1 THEN BEGIN
         tmpJunk                 = MIN(ABS(tmpTimes[tmp_outbef_ii]),tmp_outbef_iii)
@@ -101,9 +101,12 @@ PRO GET_ALL_SPECTRA_NEAR_ALFVEN_EVENTS
      ENDIF ELSE BEGIN
         nBad++
         PRINT,'Bogey ' + STRCOMPRESS(i,/REMOVE_ALL)
+        all_alf_eSpec_list__types.ADD,-1
+        all_alf_eSpec_list__i.ADD    ,-1
+        all_alf_eSpec_list__diffs.ADD,-1
      ENDELSE
 
-     IF nBad GT 5 THEN STOP
+     IF nBad GT 300 THEN STOP
 
      IF count EQ nToCount THEN BEGIN
         TOC,clock

@@ -21,8 +21,10 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
   ENDIF
 
   ;;Use for_eSpec_db          = 2 here to indicate that conversion has already happened
-  IF KEYWORD_SET(for_eSpec_db) AND ( (for_eSpec_db) NE 2) THEN BEGIN
-     dbTimes                  = dbStruct.x
+  IF KEYWORD_SET(for_eSpec_db) THEN BEGIN
+     IF for_eSpec_db NE 2 THEN BEGIN
+        dbTimes                  = dbStruct.x
+     ENDIF
   ENDIF
 
   IF KEYWORD_SET(in_restrict) THEN BEGIN
