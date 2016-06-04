@@ -1,0 +1,89 @@
+;;06/04/16
+PRO SPLIT_ALFDB_I_BY_ESPEC_TYPE,good_i,is_despun, $
+                                PURE_B_I=pure_b_i, $ 
+                                PURE_D_I=pure_d_i, $ 
+                                PURE_M_I=pure_m_i, $ 
+                                MIX_BD_I=mix_bd_i, $ 
+                                MIX_BM_I=mix_bm_i, $ 
+                                MIX_DM_I=mix_dm_i, $ 
+                                MIX_BDM_I=mix_bdm_i, $
+                                ANOMAL_I=anomal_i, $ 
+                                SUMMARY=summary, $
+                                OUT_TITLES=out_titles, $
+                                OUT_DATANAMESUFFS=out_datanamesuffs, $
+                                OUT_LIST=out_list, $
+                                DESPUN_ALF_DB=despun_alf_db
+
+  COMPILE_OPT IDL2
+
+  LOAD_ALF_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec, $
+                           NEWELLDBFILE=NewellDBFile, $
+                           NEWELLDBDIR=NewellDBDir, $
+                           DESPUN_ALF_DB=is_despun
+
+  outFile       = STRMID(NewellDBFile,0,STRPOS(newelldbfile,'TOTAL')) + $
+                     'all_good_alf_eSpec_i--CATEGORIZED--' + $
+                     STRMID(NewellDBFile,STRPOS(NewellDBFile,'Orbs_'),STRPOS(NewellDBFile,'2016')-STRPOS(NewellDBFile,'Orbs_')) + $
+                     GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '.sav'
+
+
+  RESTORE,NewellDBDir+outFile
+
+
+  pure_b_i      = WHERE(pure_b) 
+  pure_d_i      = WHERE(pure_d) 
+  pure_m_i      = WHERE(pure_m) 
+  mix_bd_i      = WHERE(mix_bd) 
+  mix_bm_i      = WHERE(mix_bm) 
+  mix_dm_i      = WHERE(mix_dm) 
+  mix_bdm_i     = WHERE(mix_bdm)
+  anomal_i      = WHERE(anomal) 
+
+  IF pure_b_i[0] NE -1 THEN BEGIN
+     pure_b_i   = CGSETINTERSECTION(good_i,pure_b_i)
+  ENDIF
+  
+  IF pure_d_i[0] NE -1 THEN BEGIN
+     pure_d_i   = CGSETINTERSECTION(good_i,pure_d_i)
+  ENDIF
+  
+  IF pure_m_i[0] NE -1 THEN BEGIN
+     pure_m_i   = CGSETINTERSECTION(good_i,pure_m_i)
+  ENDIF
+  
+  IF mix_bd_i[0] NE -1 THEN BEGIN
+     mix_bd_i   = CGSETINTERSECTION(good_i,mix_bd_i)
+  ENDIF
+  
+  IF mix_bm_i[0] NE -1 THEN BEGIN
+     mix_bm_i   = CGSETINTERSECTION(good_i,mix_bm_i)
+  ENDIF
+  
+  IF mix_dm_i[0] NE -1 THEN BEGIN
+     mix_dm_i   = CGSETINTERSECTION(good_i,mix_dm_i)
+  ENDIF
+  
+  IF mix_bdm_i[0] NE -1 THEN BEGIN
+     mix_bdm_i  = CGSETINTERSECTION(good_i,mix_bdm_i)
+  ENDIF
+
+  IF anomal_i[0] NE -1 THEN BEGIN
+     anomal_i   = CGSETINTERSECTION(good_i,anomal_i)
+  ENDIF
+
+  IF KEYWORD_SET(summary) THEN BEGIN
+     PRINT,FORMAT='(A0,T10,": ",I0)',"pure_b_i",N_ELEMENTS(pure_b_i)  
+     PRINT,FORMAT='(A0,T10,": ",I0)',"pure_d_i",N_ELEMENTS(pure_d_i)  
+     PRINT,FORMAT='(A0,T10,": ",I0)',"pure_m_i",N_ELEMENTS(pure_m_i)  
+     PRINT,FORMAT='(A0,T10,": ",I0)',"mix_bd_i",N_ELEMENTS(mix_bd_i)  
+     PRINT,FORMAT='(A0,T10,": ",I0)',"mix_bm_i",N_ELEMENTS(mix_bm_i)  
+     PRINT,FORMAT='(A0,T10,": ",I0)',"mix_dm_i",N_ELEMENTS(mix_dm_i)  
+     PRINT,FORMAT='(A0,T10,": ",I0)',"mix_bdm_i",N_ELEMENTS(mix_bdm_i)
+     PRINT,FORMAT='(A0,T10,": ",I0)',"anomal_i",N_ELEMENTS(anomal_i)
+  ENDIF
+
+  out_titles = " (" + ['Broadband','Diffuse','Monoenergetic',"Broad/Diff",'Broad/Mono','Diff/Mono','BDM','Anomalous'] + ")"
+  out_datanamesuffs = "_" + ['broad','diff','mono','BD','BM','DM','BDM','Anom']
+  out_list   = LIST(pure_b_i,pure_d_i,pure_m_i,mix_bd_i,mix_bm_i,mix_dm_i,mix_bdm_i,anomal_i)
+
+END

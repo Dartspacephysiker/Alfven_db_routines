@@ -193,6 +193,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  NOPOSENUMFL=noPosENumFl, $
                                  ENUMFLPLOTRANGE=ENumFlPlotRange, $
                                  AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
+                                 NEWELL_ANALYZE_EFLUX=newell_analyze_eFlux, $
                                  PPLOTS=pPlots, LOGPFPLOT=logPfPlot, ABSPFLUX=absPflux, $
                                  NONEGPFLUX=noNegPflux, NOPOSPFLUX=noPosPflux, PPLOTRANGE=PPlotRange, $
                                  IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, LOGIFPLOT=logIfPlot, ABSIFLUX=absIflux, $
@@ -576,6 +577,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         NOPOSENUMFL=noPosENumFl, $
                         ENUMFLPLOTRANGE=ENumFlPlotRange, $
                         AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
+                        NEWELL_ANALYZE_EFLUX=newell_analyze_eFlux, $
                         PPLOTS=pPlots, LOGPFPLOT=logPfPlot, ABSPFLUX=absPflux, $
                         NONEGPFLUX=noNegPflux, NOPOSPFLUX=noPosPflux, PPLOTRANGE=PPlotRange, $
                         IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, LOGIFPLOT=logIfPlot, ABSIFLUX=absIflux, $
