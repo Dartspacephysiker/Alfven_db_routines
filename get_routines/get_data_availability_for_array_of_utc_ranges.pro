@@ -20,11 +20,18 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
    SUMMARY=summary, $
    LIST_TO_ARR=list_to_arr, $
    SAVE_INDS_TO_FILENAME=save_filename, $
-   VERBOSE=verbose, DEBUG=debug, LUN=lun
+   GIVE_TIMESPLIT_INFO=give_timeSplit_info, $
+   VERBOSE=verbose, $
+   DEBUG=debug, LUN=lun
   
   COMPILE_OPT idl2
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
+
+  IF KEYWORD_SET(give_timesplit_info) THEN BEGIN
+     TIC
+  ENDIF
+
 
   IF KEYWORD_SET(for_eSpec_db) THEN BEGIN
      ;;Use for_eSpec_db = 2 here to indicate that conversion has already happened
@@ -157,6 +164,10 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   out_good_tArr_i    = !NULL
   WHILE nGood EQ 0 DO BEGIN
 
+     IF KEYWORD_SET(give_timesplit_info) THEN BEGIN
+        clock     = TIC("GET_DATA_FOR_UTC_RANGE"+STRCOMPRESS(nGood,/REMOVE_ALL)+'_clock')
+     ENDIF
+
      GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1_arr[iFirst],T2=t2_arr[iFirst], $
                                          DBSTRUCT=dbStruct, $
                                          DBTIMES=dbTimes, $
@@ -181,6 +192,11 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
         arrTSpanTotal      = tSpanTotal
      ENDIF
      iFirst++
+
+     IF KEYWORD_SET(give_timesplit_info) THEN BEGIN
+        TOC,clock
+     ENDIF
+
   ENDWHILE
 
   FOR i = iFirst,n_t1-1 DO BEGIN
