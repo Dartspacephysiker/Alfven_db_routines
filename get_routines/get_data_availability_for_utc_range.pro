@@ -1,7 +1,10 @@
 ;2015/08/25
 ;Tell me when we have data for 
 PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
-                                        DBSTRUCT=dbStruct,DBTIMES=dbTimes, RESTRICT_W_THESEINDS=in_restrict, $
+                                        DBSTRUCT=dbStruct, $
+                                        DBTIMES=dbTimes, $
+                                        FOR_ESPEC_DB=for_eSpec_db, $
+                                        RESTRICT_W_THESEINDS=in_restrict, $
                                         OUT_INDS=inds, $
                                         UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
                                         INDS_ORBS=inds_orbs,TRANGES_ORBS=tRanges_orbs, $
@@ -14,6 +17,11 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
   IF KEYWORD_SET(verbose) THEN BEGIN
      PRINT,'GET_DATA_AVAILABILITY_FOR_UTC_RANGE'
      print,'UTC Range: ' + TIME_TO_STR(t1) + ' through ' + TIME_TO_STR(t2)
+  ENDIF
+
+  ;;Use for_eSpec_db = 2 here to indicate that conversion has already happened
+  IF KEYWORD_SET(for_eSpec_db) AND ( (for_eSpec_db) NE 2) THEN BEGIN
+     dbTimes                = dbStruct.x
   ENDIF
 
   IF KEYWORD_SET(in_restrict) THEN BEGIN

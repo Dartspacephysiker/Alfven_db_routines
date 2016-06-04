@@ -7,6 +7,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
    T2_ARR=t2_arr, $
    DBSTRUCT=dbStruct, $
    DBTIMES=dbTimes, $
+   FOR_ESPEC_DB=for_eSpec_db, $
    RESTRICT_W_THESEINDS=restrict, $
    OUT_GOOD_TARR_I=out_good_tArr_i, $
    OUT_INDS_LIST=inds_list, $
@@ -25,8 +26,17 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
-  IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
-  IF is_maximus THEN dbString = 'maximus' ELSE dbString = 'fastLoc'
+  IF KEYWORD_SET(for_eSpec_db) THEN BEGIN
+     ;;Use for_eSpec_db = 2 here to indicate that conversion has already happened
+     IF KEYWORD_SET(for_eSpec_db) AND ( (for_eSpec_db) NE 2) THEN BEGIN
+        dbTimes                = dbStruct.x
+        for_eSpec_db           = 2
+        dbString               = 'eSpec'
+     ENDIF
+  ENDIF ELSE BEGIN
+     IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
+     IF is_maximus THEN dbString = 'maximus' ELSE dbString = 'fastLoc'
+  ENDELSE
 
   PRINTF,lun,'GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES: for ' + dbString
 
@@ -148,7 +158,10 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   WHILE nGood EQ 0 DO BEGIN
 
      GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1_arr[iFirst],T2=t2_arr[iFirst], $
-                                         DBSTRUCT=dbStruct,DBTIMES=dbTimes, RESTRICT_W_THESEINDS=restrict, $
+                                         DBSTRUCT=dbStruct, $
+                                         DBTIMES=dbTimes, $
+                                         FOR_ESPEC_DB=for_eSpec_db, $
+                                         RESTRICT_W_THESEINDS=restrict, $
                                          OUT_INDS=inds, $
                                          UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
                                          INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs, $
@@ -173,7 +186,10 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   FOR i = iFirst,n_t1-1 DO BEGIN
 
      GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1_arr[i],T2=t2_arr[i], $
-                                         DBSTRUCT=dbStruct,DBTIMES=dbTimes, RESTRICT_W_THESEINDS=restrict, $
+                                         DBSTRUCT=dbStruct, $
+                                         DBTIMES=dbTimes, $
+                                         FOR_ESPEC_DB=for_eSpec_db, $
+                                         RESTRICT_W_THESEINDS=restrict, $
                                          OUT_INDS=inds, $
                                          UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
                                          INDS_ORBS=inds_orbs,TRANGES_ORBS=tranges_orbs, $
