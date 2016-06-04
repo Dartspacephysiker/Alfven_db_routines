@@ -35,7 +35,7 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
      IF KEYWORD_SET(verbose) THEN BEGIN
         PRINT,'No restriction on inds...'
      ENDIF
-     restrict_i             = INDGEN(N_ELEMENTS(dbStruct.time),/L64)
+     restrict_i             = INDGEN(N_ELEMENTS(dbStruct.orbit),/L64)
   ENDELSE
 
   inds_ii = WHERE(dbTimes[restrict_i] GE t1 AND dbTimes[restrict_i] LE t2,nInds)

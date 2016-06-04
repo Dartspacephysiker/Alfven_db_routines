@@ -1,21 +1,23 @@
 ;2016/05/19
 PRO SET_TXTOUTPUT_DIR,txtOutputDir, $
-                 FOR_STORMS=for_storms, $
-                 FOR_SW_IMF=for_sw_imf, $
-                 FOR_ALFVENDB=for_alfvendb, $
-                 ADD_TODAY=add_today, $
-                 ADD_SUFF=add_suff, $
-                 ADD_DIR=add_dir, $
-                 VERBOSE=verbose, $
-                 LUN=lun
+                      FOR_STORMS=for_storms, $
+                      FOR_SW_IMF=for_sw_imf, $
+                      FOR_ALFVENDB=for_alfvendb, $
+                      FOR_ESPEC_DB=for_eSpec_db, $
+                      ADD_TODAY=add_today, $
+                      ADD_SUFF=add_suff, $
+                      ADD_DIR=add_dir, $
+                      VERBOSE=verbose, $
+                      LUN=lun
   
   defStormTxtOutputDir     = '/SPENCEdata/Research/Satellites/FAST/storms_Alfvens/txtOutput/'
   defSW_IMFTxtOutputDir    = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/txtOutput/'
   defAlfvenDBTxtOutputDir  = '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/txtOutput/'
+  defESpecTxtOutputDir     = '/SPENCEdata/Research/Satellites/FAST/espec_identification/txtOutput/'
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
-  proceed                     = KEYWORD_SET(for_storms) + KEYWORD_SET(for_sw_imf) + KEYWORD_SET(for_alfvendb) + KEYWORD_SET(customDir)
+  proceed                     = KEYWORD_SET(for_storms) + KEYWORD_SET(for_sw_imf) + KEYWORD_SET(for_alfvendb) + KEYWORD_SET(customDir) + KEYWORD_SET(for_eSpec_db)
   CASE proceed OF
      0: BEGIN
         do_customDir          = ''
@@ -114,6 +116,9 @@ PRO SET_TXTOUTPUT_DIR,txtOutputDir, $
            KEYWORD_SET(for_alfvendb): BEGIN
               txtOutputDir = defAlfvenDBTxtOutputDir
            END
+           KEYWORD_SET(for_eSpec_db): BEGIN
+              txtOutputDir = defESpecTxtOutputDir
+           END
            KEYWORD_SET(customDir): BEGIN
               txtOutputDir = customDir
            END
@@ -124,6 +129,7 @@ PRO SET_TXTOUTPUT_DIR,txtOutputDir, $
         IF KEYWORD_SET(for_storms) THEN PRINTF,lun,'for_storms'
         IF KEYWORD_SET(for_sw_imf) THEN PRINTF,lun,'for_sw_imf'
         IF KEYWORD_SET(for_alfvendb) THEN PRINTF,lun,'for_alfvendb'
+        IF KEYWORD_SET(for_eSpec_db) THEN PRINTF,lun,'for_eSpec_db'
         IF KEYWORD_SET(for_customDir) THEN PRINTF,lun,'for_customDir'
         PRINTF,lun,'Fix it...'
         STOP

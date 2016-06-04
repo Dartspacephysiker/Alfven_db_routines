@@ -25,28 +25,29 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
 
   COMPILE_OPT idl2
 
-  ;;This common block is defined ONLY here and in LOAD_NEWELL_ESPEC_DB
-  COMMON NEWELL,NEWELL__eSpec, $
-     NEWELL__good_eSpec_i, $
-     NEWELL__good_alf_i, $
-     NEWELL__failCodes, $
-     NEWELL__despun, $
-     NEWELL__dbFile,NEWELL__dbDir
+  ;;This common block is defined ONLY here and in LOAD_ALF_NEWELL_ESPEC_DB
+  COMMON NWLL_ALF,NWLL_ALF__eSpec, $
+     NWLL_ALF__good_eSpec_i, $
+     NWLL_ALF__good_alf_i, $
+     NWLL_ALF__failCodes, $
+     NWLL_ALF__despun, $
+     NWLL_ALF__dbFile,NWLL_ALF__dbDir
 
   LOAD_MAXIMUS_AND_CDBTIME,!NULL,!NULL,DO_DESPUNDB=despun,/CHECK_DB
 
-  IF N_ELEMENTS(NEWELL__eSpec) EQ 0 OR N_ELEMENTS(NEWELL__good_alf_i) EQ 0 THEN BEGIN
-     LOAD_NEWELL_ESPEC_DB,espec,good_alf_i,DESPUN_ALF_DB=despun
+  IF N_ELEMENTS(NWLL_ALF__eSpec) EQ 0 OR N_ELEMENTS(NWLL_ALF__good_alf_i) EQ 0 THEN BEGIN
+     LOAD_ALF_NEWELL_ESPEC_DB,espec,good_alf_i,DESPUN_ALF_DB=despun
   ENDIF ELSE BEGIN
-     eSpec            = NEWELL__eSpec
-     good_eSpec_i     = NEWELL__good_eSpec_i
-     good_alf_i       = NEWELL__good_alf_i
+     eSpec            = NWLL_ALF__eSpec
+     good_eSpec_i     = NWLL_ALF__good_eSpec_i
+     good_alf_i       = NWLL_ALF__good_alf_i
   ENDELSE
 
   plot_i__good_espec  = CGSETINTERSECTION(plot_i,good_alf_i,INDICES_B=temp_eSpec_indices)
 
 
   tmp_eSpec           = { x:eSpec.x[temp_eSpec_indices], $
+                          ;; orbit:eSpec.orbit[temp_eSpec_indices], $
                           MLT:eSpec.mlt[temp_eSpec_indices], $
                           ILAT:eSpec.ilat[temp_eSpec_indices], $
                           mono:eSpec.mono[temp_eSpec_indices], $

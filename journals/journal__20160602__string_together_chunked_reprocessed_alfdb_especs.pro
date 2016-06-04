@@ -85,8 +85,8 @@ PRO JOURNAL__20160602__STRING_TOGETHER_CHUNKED_REPROCESSED_ALFDB_ESPECS
 
   PRINT,'Saving to ' + TOTALGLORY + '...'
   IF KEYWORD_SET(has_failCodes) THEN BEGIN
-     SAVE,eSpec,failCodes,alf_i__good_eSpec,good_eSpec_i,FILENAME=chunkDir+TOTALGLORY
+     SAVE,eSpec,failCodes,alf_i__good_eSpec,good_eSpec_i,good_orbs,good_orbs_unique,FILENAME=chunkDir+TOTALGLORY
   ENDIF ELSE BEGIN
-     SAVE,eSpec,alf_i__good_eSpec,good_eSpec_i,FILENAME=chunkDir+TOTALGLORY
+     SAVE,eSpec,alf_i__good_eSpec,good_eSpec_i,good_orbs,good_orbs_unique,FILENAME=chunkDir+TOTALGLORY
   ENDELSE
 END

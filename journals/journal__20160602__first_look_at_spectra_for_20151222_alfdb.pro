@@ -6,7 +6,7 @@ PRO JOURNAL__20160602__FIRST_LOOK_AT_SPECTRA_FOR_20151222_ALFDB
 
   firstOrb                  = 500
   lastOrb                   = 16361
-  date                      = '20160602'
+  date                      = '20160603'
 
   failCodes_string          = 'failCodes_'
 
