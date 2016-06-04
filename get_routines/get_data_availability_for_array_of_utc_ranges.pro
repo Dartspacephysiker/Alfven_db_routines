@@ -8,6 +8,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
    DBSTRUCT=dbStruct, $
    DBTIMES=dbTimes, $
    FOR_ESPEC_DB=for_eSpec_db, $
+   DO_NOT_MAKE_ORB_INFO=no_orb_info, $
    RESTRICT_W_THESEINDS=restrict, $
    OUT_GOOD_TARR_I=out_good_tArr_i, $
    OUT_INDS_LIST=inds_list, $
@@ -26,7 +27,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   
   COMPILE_OPT idl2
 
-  IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
+  IF N_ELEMENTS(lun) EQ 0 THEN lun  = -1
 
   IF KEYWORD_SET(give_timesplit_info) THEN BEGIN
      TIC
@@ -34,15 +35,15 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
 
 
   IF KEYWORD_SET(for_eSpec_db) THEN BEGIN
-     ;;Use for_eSpec_db = 2 here to indicate that conversion has already happened
+     ;;Use for_eSpec_db             = 2 here to indicate that conversion has already happened
      IF KEYWORD_SET(for_eSpec_db) AND ( (for_eSpec_db) NE 2) THEN BEGIN
-        dbTimes                = dbStruct.x
-        for_eSpec_db           = 2
-        dbString               = 'eSpec'
+        dbTimes                     = dbStruct.x
+        for_eSpec_db                = 2
+        dbString                    = 'eSpec'
      ENDIF
   ENDIF ELSE BEGIN
      IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
-     IF is_maximus THEN dbString = 'maximus' ELSE dbString = 'fastLoc'
+     IF is_maximus THEN dbString    = 'maximus' ELSE dbString = 'fastLoc'
   ENDELSE
 
   PRINTF,lun,'GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES: for ' + dbString
@@ -58,29 +59,29 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
      IF KEYWORD_SET(verbose) THEN BEGIN
         PRINTF,LUN,'No restriction on inds...'
      ENDIF
-     restrict = INDGEN(N_ELEMENTS(dbStruct),/L64)
+     restrict                       = INDGEN(N_ELEMENTS(dbStruct),/L64)
   ENDELSE
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Data integrity checks
   PRINTF,lun,"Making sure t1_arr and t2_arr are sane ..."
 
-  n_t1     = N_ELEMENTS(t1_arr)
-  n_t2     = N_ELEMENTS(t2_arr)
+  n_t1                              = N_ELEMENTS(t1_arr)
+  n_t2                              = N_ELEMENTS(t2_arr)
   IF n_t1 NE n_t2 THEN BEGIN
      PRINTF,lun,"Unequal numbers of elements in t1_arr and t2_arr! Stopping ..."
      STOP
   ENDIF
 
   ;;Find out whether any ranges are bogus, report
-  bogus_range_i = WHERE((t2_arr-t1_arr) LE 0,nBogus)
+  bogus_range_i                     = WHERE((t2_arr-t1_arr) LE 0,nBogus)
   IF bogus_range_i[0] NE -1 THEN BEGIN
      PRINTF,lun,"Bogus ranges! t2 comes before t1 in " + STRCOMPRESS(nBogus,/REMOVE_ALL) + " instances!"
      STOP
   ENDIF
 
   IF n_t1 GT 1 THEN BEGIN
-     bogus_range_i = WHERE(((SHIFT(t1_arr,-1))[0:-2]-t1_arr[0:-2]) LE 0,nBogus)
+     bogus_range_i                  = WHERE(((SHIFT(t1_arr,-1))[0:-2]-t1_arr[0:-2]) LE 0,nBogus)
      IF bogus_range_i[0] NE -1 THEN BEGIN
         PRINTF,lun,"Bogus ranges! t1[later] comes before t1[earlier] in " + STRCOMPRESS(nBogus,/REMOVE_ALL) + " instances!"
         STOP
@@ -88,7 +89,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   ENDIF
   
   IF n_t2 GT 1 THEN BEGIN
-     bogus_range_i = WHERE(((SHIFT(t2_arr,-1))[0:-2]-t2_arr[0:-2]) LE 0,nBogus)
+     bogus_range_i                  = WHERE(((SHIFT(t2_arr,-1))[0:-2]-t2_arr[0:-2]) LE 0,nBogus)
      IF bogus_range_i[0] NE -1 THEN BEGIN
         PRINTF,lun,"Bogus ranges! t2[later] comes before t2[earlier] in " + STRCOMPRESS(nBogus,/REMOVE_ALL) + " instances!"
         STOP
@@ -113,22 +114,22 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
 
   ;;Check to see if there are overlaps
   PRINTF,lun,"Making sure there are no overlaps..."
-  overlap_t1_arr_i          = !NULL
-  overlap_t2_arr_i          = !NULL
-  n_overlap_t1              = 0
-  n_overlap_t2              = 0
+  overlap_t1_arr_i                  = !NULL
+  overlap_t2_arr_i                  = !NULL
+  n_overlap_t1                      = 0
+  n_overlap_t2                      = 0
   IF n_t1 GT 1 THEN BEGIN 
      FOR i=0,n_t1-2 DO BEGIN
-        test_1              = t1_arr[i+1] LT t2_arr[i]
-        test_2              = t2_arr[i]   GT t1_arr[i+1]
+        test_1                      = t1_arr[i+1] LT t2_arr[i]
+        test_2                      = t2_arr[i]   GT t1_arr[i+1]
 
         IF test_1 THEN BEGIN
-           overlap_t1_arr_i = [overlap_t1_arr_i,i+1]
+           overlap_t1_arr_i         = [overlap_t1_arr_i,i+1]
            n_overlap_t1++
         ENDIF
 
         IF test_2 THEN BEGIN
-           overlap_t2_arr_i = [overlap_t2_arr_i,i]
+           overlap_t2_arr_i         = [overlap_t2_arr_i,i]
            n_overlap_t2++
         ENDIF
      ENDFOR
@@ -144,34 +145,35 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   ;;Now find out where we have data in this restricted interval
-  ;; inds_ii = WHERE(dbTimes(restrict) GE t1_arr[0] AND dbTimes(restrict) LE t2_arr[0],nInds)
+  ;; inds_ii                        = WHERE(dbTimes(restrict) GE t1_arr[0] AND dbTimes(restrict) LE t2_arr[0],nInds)
   ;; FOR i=1,n_t1-1 DO BEGIN
-  ;;    temp_ii = WHERE(dbTimes(restrict) GE t1_arr[i] AND dbTimes(restrict) LE t2_arr[i],nTemp)
-     
+  ;;    temp_ii                     = WHERE(dbTimes(restrict) GE t1_arr[i] AND dbTimes(restrict) LE t2_arr[i],nTemp)
+  
   ;;    IF temp_ii[0] NE -1 THEN BEGIN
-  ;;       inds_ii = [inds_ii,temp_ii]
+  ;;       inds_ii                  = [inds_ii,temp_ii]
   ;;       nInds += nTemp
   ;;    ENDIF ELSE BEGIN
   ;;       IF KEYWORD_SET(verbose) THEN PRINTF,lun,FORMAT='("Interval ",I0," has no data!")',i
   ;;    ENDELSE
   ;; ENDFOR
   
-  ;; inds = restrict(inds_ii)
+  ;; inds                           = restrict(inds_ii)
 
   ;;Initialize, please
-  nGood              = 0
-  iFirst             = 0
-  out_good_tArr_i    = !NULL
+  nGood                             = 0
+  iFirst                            = 0
+  out_good_tArr_i                   = !NULL
   WHILE nGood EQ 0 DO BEGIN
 
      IF KEYWORD_SET(give_timesplit_info) THEN BEGIN
-        clock     = TIC("GET_DATA_FOR_UTC_RANGE"+STRCOMPRESS(nGood,/REMOVE_ALL)+'_clock')
+        clock                       = TIC("GET_DATA_FOR_UTC_RANGE_iFirst"+STRCOMPRESS(nGood,/REMOVE_ALL)+'_clock')
      ENDIF
 
      GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1_arr[iFirst],T2=t2_arr[iFirst], $
                                          DBSTRUCT=dbStruct, $
                                          DBTIMES=dbTimes, $
                                          FOR_ESPEC_DB=for_eSpec_db, $
+                                         DO_NOT_MAKE_ORB_INFO=no_orb_info, $
                                          RESTRICT_W_THESEINDS=restrict, $
                                          OUT_INDS=inds, $
                                          UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
@@ -182,14 +184,16 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
 
      IF inds[0] NE -1 THEN BEGIN
         nGood             ++
-        out_good_tArr_i    = [out_good_tArr_i,iFirst]
-        inds_list          = LIST(inds)
-        uniq_orbs_list     = LIST(uniq_orbs)
-        uniq_orb_inds_list = LIST(uniq_orb_inds)
-        inds_orbs_list     = LIST(inds_orbs)
-        tranges_orbs_list  = LIST(tranges_orbs)
-        tspans_orbs_list   = LIST(tspans_orbs)
-        arrTSpanTotal      = tSpanTotal
+        out_good_tArr_i             = [out_good_tArr_i,iFirst]
+        inds_list                   = LIST(inds)
+        uniq_orbs_list           = LIST(uniq_orbs)
+        uniq_orb_inds_list       = LIST(uniq_orb_inds)
+        IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
+           inds_orbs_list        = LIST(inds_orbs)
+           tranges_orbs_list     = LIST(tranges_orbs)
+           tspans_orbs_list      = LIST(tspans_orbs)
+           arrTSpanTotal         = tSpanTotal
+        ENDIF
      ENDIF
      iFirst++
 
@@ -199,12 +203,17 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
 
   ENDWHILE
 
-  FOR i = iFirst,n_t1-1 DO BEGIN
+  FOR i=iFirst,n_t1-1 DO BEGIN
+
+     IF KEYWORD_SET(give_timesplit_info) THEN BEGIN
+        clock                       = TIC("GET_DATA_FOR_UTC_RANGE_"+STRCOMPRESS(i,/REMOVE_ALL)+'_clock')
+     ENDIF
 
      GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1_arr[i],T2=t2_arr[i], $
                                          DBSTRUCT=dbStruct, $
                                          DBTIMES=dbTimes, $
                                          FOR_ESPEC_DB=for_eSpec_db, $
+                                         DO_NOT_MAKE_ORB_INFO=no_orb_info, $
                                          RESTRICT_W_THESEINDS=restrict, $
                                          OUT_INDS=inds, $
                                          UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
@@ -214,22 +223,27 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
                                          VERBOSE=verbose,DEBUG=debug
      IF inds[0] NE -1 THEN BEGIN
         nGood++
-        out_good_tArr_i    = [out_good_tArr_i,i]
+        out_good_tArr_i             = [out_good_tArr_i,i]
         inds_list.add,inds
         uniq_orbs_list.add,uniq_orbs
         uniq_orb_inds_list.add,uniq_orb_inds
-        inds_orbs_list.add,inds_orbs
-        tranges_orbs_list.add,tranges_orbs
-        tspans_orbs_list.add,tspans_orbs
-        arrTSpanTotal   += tSpanTotal
+        IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
+           inds_orbs_list.add,inds_orbs
+           tranges_orbs_list.add,tranges_orbs
+           tspans_orbs_list.add,tspans_orbs
+           arrTSpanTotal   += tSpanTotal
+        ENDIF
      ENDIF
 
+     IF KEYWORD_SET(give_timesplit_info) THEN BEGIN
+        TOC,clock
+     ENDIF
   ENDFOR
   
-  IF KEYWORD_SET(print_data_availability) OR KEYWORD_SET(summary) THEN BEGIN
-     arrTotUniqOrbs       = 0
-     arrTotInds           = 0
-     FOR k = 0,N_ELEMENTS(uniq_orbs_list)-1 DO BEGIN
+  IF KEYWORD_SET(print_data_availability) OR KEYWORD_SET(summary) AND ~KEYWORD_SET(no_orb_info) THEN BEGIN
+     arrTotUniqOrbs                 = 0
+     arrTotInds                     = 0
+     FOR k                          = 0,N_ELEMENTS(uniq_orbs_list)-1 DO BEGIN
         arrTotUniqOrbs   += N_ELEMENTS(uniq_orbs_list[k])
         arrTotInds       += N_ELEMENTS(inds_list[k])
      ENDFOR
@@ -237,46 +251,53 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
      PRINTF,lun,'***********************************'
      PRINTF,lun,'***SUMMARY OF DATA FOR UTC ARRAY***'
      PRINTF,lun,'UTC Range for array: ' + TIME_TO_STR(t1_arr[0]) + ' through ' + TIME_TO_STR(t2_arr[-1])
-     PRINTF,lun,'N UTC Ranges: ' + STRCOMPRESS(N_ELEMENTS(T1_ARR),/REMOVE_ALL)
+     PRINTF,lun,'N UTC Ranges: ' + STRCOMPRESS(N_ELEMENTS(t1_arr),/REMOVE_ALL)
      PRINTF,lun,'N with data : ' + STRCOMPRESS(nGood,/REMOVE_ALL)
      PRINTF,lun,FORMAT='("Array total event indices",T38,":",T40,I0)',arrTotInds
      PRINTF,lun,FORMAT='("Array total N unique orbits",T38,":",T40,I0)',arrTotUniqOrbs
-     PRINTF,lun,FORMAT='("Array total of all interval lengths w/ data (hrs)",T38,":",T40,F0.2)',arrTSpanTotal/3600.
+     IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
+        PRINTF,lun,FORMAT='("Array total of all interval lengths w/ data (hrs)",T38,":",T40,F0.2)',arrTSpanTotal/3600.
+     ENDIF
      PRINTF,lun,'***********************************'
      PRINTF,lun,''
   ENDIF
 
   IF KEYWORD_SET(list_to_arr) THEN BEGIN
 
-     inds_arr             = inds_list[0]
-     uniq_orbs_arr        = uniq_orbs_list[0]
-     uniq_orb_inds_arr    = uniq_orb_inds_list[0]
-     inds_orbs_arr        = inds_orbs_list[0]
-     tranges_orbs_arr     = tranges_orbs_list[0]
-     tspans_orbs_arr      = tspans_orbs_list[0]
-     
+     inds_arr                       = inds_list[0]
+     uniq_orbs_arr                  = uniq_orbs_list[0]
+     uniq_orb_inds_arr              = uniq_orb_inds_list[0]
+     IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
+        inds_orbs_arr               = inds_orbs_list[0]
+        tranges_orbs_arr            = tranges_orbs_list[0]
+        tspans_orbs_arr             = tspans_orbs_list[0]
+     ENDIF
+
      FOR i=1,nGood-1 DO BEGIN
-        inds_arr          = [ inds_arr, inds_list[i] ]
-        uniq_orbs_arr     = [ uniq_orbs_arr, uniq_orbs_list[i] ]
-        uniq_orb_inds_arr = [ uniq_orb_inds_arr, uniq_orb_inds_list[i] ]
-        inds_orbs_arr     = [ inds_orbs_arr, inds_orbs_list[i] ]
-        tranges_orbs_arr  = [ tranges_orbs_arr, tranges_orbs_list[i] ]
-        tspans_orbs_arr   = [ tspans_orbs_arr, tspans_orbs_list[i] ]
+        inds_arr                    = [ inds_arr, inds_list[i] ]
+        uniq_orbs_arr               = [ uniq_orbs_arr, uniq_orbs_list[i] ]
+        uniq_orb_inds_arr           = [ uniq_orb_inds_arr, uniq_orb_inds_list[i] ]
+        IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
+           inds_orbs_arr            = [ inds_orbs_arr, inds_orbs_list[i] ]
+           tranges_orbs_arr         = [ tranges_orbs_arr, tranges_orbs_list[i] ]
+           tspans_orbs_arr          = [ tspans_orbs_arr, tspans_orbs_list[i] ]
+        ENDIF
      ENDFOR
 
-     inds_list            = inds_arr
-     uniq_orbs_list       = uniq_orbs_arr
-     uniq_orb_inds_list   = uniq_orb_inds_arr
-     inds_orbs_list       = inds_orbs_arr
-     tranges_orbs_list    = tranges_orbs_arr
-     tspans_orbs_list     = tspans_orbs_arr
-     
+     inds_list                      = inds_arr
+     uniq_orbs_list                 = uniq_orbs_arr
+     uniq_orb_inds_list             = uniq_orb_inds_arr
+     IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
+        inds_orbs_list              = inds_orbs_arr
+        tranges_orbs_list           = tranges_orbs_arr
+        tspans_orbs_list            = tspans_orbs_arr
+     ENDIF 
   ENDIF
 
   IF KEYWORD_SET(save_filename) THEN BEGIN
      PRINTF,lun,'Saving data availability information for UTC ranges to file: ' + save_filename
      IF N_ELEMENTS(list_to_arr) EQ 0 THEN BEGIN
-        list_to_arr       = 0
+        list_to_arr                 = 0
      ENDIF
      save,inds_list,uniq_orbs_list,uniq_orb_inds_list,inds_orbs_list,tranges_orbs_list,tspans_orbs_list,list_to_arr,FILENAME=save_filename
   ENDIF
