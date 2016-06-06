@@ -12,10 +12,14 @@ PRO CATEGORIZE_ALL_SPECTRA_NEAR_ALFVEN_EVENTS
 
   inFile                        = STRMID(NewellDBFile,0,STRPOS(newelldbfile,'TOTAL')) + $
                                   'all_good_alf_eSpec_i--' + $
+                                  ;; 'all_good_alf_eSpec_i--killed_befs_afts--' + $
                                   STRMID(NewellDBFile,STRPOS(NewellDBFile,'Orbs_'),STRPOS(NewellDBFile,'2016')-STRPOS(NewellDBFile,'Orbs_')) + $
-                                  GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '.sav'
+                                  ;; GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + $
+                                  '20160604' + $
+                                  '.sav'
   outFile                       = STRMID(NewellDBFile,0,STRPOS(newelldbfile,'TOTAL')) + $
                       'all_good_alf_eSpec_i--CATEGORIZED--' + $
+                      ;; 'all_good_alf_eSpec_i--killed_befs_afts--CATEGORIZED--' + $
                       STRMID(NewellDBFile,STRPOS(NewellDBFile,'Orbs_'),STRPOS(NewellDBFile,'2016')-STRPOS(NewellDBFile,'Orbs_')) + $
                       GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '.sav'
 

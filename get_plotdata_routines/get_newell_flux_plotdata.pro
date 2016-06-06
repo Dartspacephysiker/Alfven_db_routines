@@ -86,7 +86,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
                              H2DSTR=tempNh2dStr,H2DMASKSTR=temph2dMaskStr, $
                              H2DFLUXN=temph2dFluxN,H2D_NONZERO_NEV_I=temph2d_nonzero_nEv_i, $
-                             MASKMIN=maskMin/2, $
+                             MASKMIN=maskMin, $
                              DATANAME=dataName,DATARAWPTR=dataRawPtr, $
                              CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                              CB_FORCE_OOBLOW=cb_force_oobLow, $
