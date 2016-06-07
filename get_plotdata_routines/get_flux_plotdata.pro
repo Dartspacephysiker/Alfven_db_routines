@@ -147,7 +147,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_nonAlfven"): BEGIN
            h2dStr.title  = "e- Flux (non-Alfvénic)"
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
+           nonAlfvenic      = 1
            inData           = eFlux_nonAlfven_data
+           tmp_i            = LINDGEN(N_ELEMENTS(eFlux_nonAlfven_data))
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
         END
@@ -266,7 +268,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_nonAlfven"): BEGIN
            h2dStr.title  = "e- Flux (non-Alfvénic)"
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
+           nonAlfvenic      = 1
            inData           = eNumFlux_nonAlfven_data
+           tmp_i            = LINDGEN(N_ELEMENTS(eNumFlux_nonAlfven_data))
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
         END
@@ -427,14 +431,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Ji_nonAlfven"): BEGIN
            h2dStr.title  = "Ion Flux (non-Alfvénic)"
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
+           nonAlfvenic      = 1
            inData           = iNumFlux_nonAlfven_data
+           tmp_i            = LINDGEN(N_ELEMENTS(iNumFlux_nonAlfven_data))
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Jei_nonAlfven"): BEGIN
            h2dStr.title  = "Ion Energy Flux (non-Alfvénic)"
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
+           nonAlfvenic      = 1
            inData           = iFlux_nonAlfven_data
+           tmp_i            = LINDGEN(N_ELEMENTS(eFlux_nonAlfven_data))
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
         END
@@ -605,19 +613,19 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ;;fix MLTs
   IF KEYWORD_SET(nonAlfven_mlt) THEN BEGIN
      mlts                   = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,shiftM, $
-                                                 IN_MLTS=nonAlfven_mlt)
+                                                 IN_MLTS=nonAlfven_mlt[tmp_i])
   ENDIF ELSE BEGIN
      mlts                   = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,shiftM)
   ENDELSE
   IF KEYWORD_SET(nonAlfven_ilat) THEN BEGIN
-     ilats                  = nonAlfven_ilat
+     ilats                  = nonAlfven_ilat[tmp_i]
   ENDIF ELSE BEGIN
      ilats                  = (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[tmp_i]
   ENDELSE
 
   IF KEYWORD_SET(do_plot_i_instead_of_histos) THEN BEGIN
      h2dStr.data.add,inData
-     h2d_nonzero_nEv_i      = INDGEN(N_ELEMENTS(inData))
+     h2d_nonzero_nEv_i      = LINDGEN(N_ELEMENTS(inData))
   ENDIF ELSE BEGIN
      CASE 1 OF
         KEYWORD_SET(medianplot): BEGIN 
@@ -815,6 +823,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   dataRawPtr           = PTR_NEW(inData)
   h2dStr.name          = dataName
   out_h2dMask          = h2dMask
+
+  IF KEYWORD_SET(nonAlfvenic) THEN BEGIN
+     h2dStr.mask       = h2dMask
+     h2dStr.hasMask    = 1
+  ENDIF
 
   IF N_ELEMENTS(removed_ii) NE 0 THEN BEGIN 
      IF removed_ii[0] NE -1 THEN BEGIN 
