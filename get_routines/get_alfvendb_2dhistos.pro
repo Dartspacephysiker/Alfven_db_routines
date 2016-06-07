@@ -81,6 +81,10 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
                           NEWELL_ANALYZE_EFLUX=newell_analyze_eFlux, $
                           NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
+                          EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
+                          ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
+                          IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
+                          INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
                           PPLOTS=pPlots, $
                           LOGPFPLOT=logPfPlot, $
                           ABSPFLUX=absPflux, $
@@ -645,6 +649,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     NOPOSFLUX=noPoseflux, $
                                     NONEGFLUX=noNegeflux, $
                                     ABSFLUX=abseflux, $
+                                    EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                                     DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -710,6 +715,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                              NOPOSFLUX=noPoseflux, $
                              NONEGFLUX=noNegeflux, $
                              ABSFLUX=abseflux, $
+                             EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                              DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -812,6 +818,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     NOPOSFLUX=noPosENumFl, $
                                     NONEGFLUX=noNegENumFl, $
                                     ABSFLUX=absENumFl, $
+                                    ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                                     DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -875,6 +882,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                              NOPOSFLUX=noPosENumFl, $
                              NONEGFLUX=noNegENumFl, $
                              ABSFLUX=absENumFl, $
+                             ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                              DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -1047,6 +1055,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NOPOSFLUX=noPosIflux, $
                           NONEGFLUX=noNegIflux, $
                           ABSFLUX=absIflux, $
+                          IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
+                          INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
                           OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $

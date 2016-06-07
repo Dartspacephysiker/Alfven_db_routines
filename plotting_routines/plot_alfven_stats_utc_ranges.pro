@@ -183,7 +183,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  MASKMIN=maskMin, $
                                  DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
                                  NPLOTS=nPlots, $
-                                 EPLOTS=ePlots, EPLOTRANGE=ePlotRange, EFLUXPLOTTYPE=eFluxPlotType, LOGEFPLOT=logEfPlot, $
+                                 EPLOTS=ePlots, EPLOTRANGE=ePlotRange, $
+                                 EFLUXPLOTTYPE=eFluxPlotType, LOGEFPLOT=logEfPlot, $
                                  ABSEFLUX=abseflux, NOPOSEFLUX=noPosEFlux, NONEGEFLUX=noNegEflux, $
                                  ENUMFLPLOTS=eNumFlPlots, $
                                  ENUMFLPLOTTYPE=eNumFlPlotType, $
@@ -195,6 +196,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
                                  NEWELL_ANALYZE_EFLUX=newell_analyze_eFlux, $
                                  NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
+                                 NONALFVEN_FLUX_PLOTS=nonAlfven_flux_plots, $
+                                 NONALFVEN_FOR_STORMS=nonAlfven_for_storms, $
                                  PPLOTS=pPlots, LOGPFPLOT=logPfPlot, ABSPFLUX=absPflux, $
                                  NONEGPFLUX=noNegPflux, NOPOSPFLUX=noPosPflux, PPLOTRANGE=PPlotRange, $
                                  IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, LOGIFPLOT=logIfPlot, ABSIFLUX=absIflux, $
@@ -407,6 +410,22 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
      LIST_TO_ARR=1,$
      VERBOSE=verbose, DEBUG=debug, LUN=lun
 
+  IF KEYWORD_SET(nonAlfven_flux_plots) THEN BEGIN
+
+     GET_NONALFVEN_FLUX_DATA,plot_i, $
+                             FOR_STORMS=nonAlfven_for_storms, $
+                             T1_ARR=t1_arr,T2_ARR=t2_arr, $
+                             EPLOTS=ePlots, $
+                             EFLUXPLOTTYPE=eFluxPlotType, $
+                             ENUMFLPLOTS=eNumFlPlots, $
+                             ENUMFLPLOTTYPE=eNumFlPlotType, $
+                             IONPLOTS=ionPlots, $
+                             IFLUXPLOTTYPE=iFluxPlotType, $
+                             OUT_EPLOT_DATA=ePlot_data, $
+                             OUT_ENUMFLPLOT_DATA=eNumFlPlot_data, $
+                             OUT_IONPLOT_DATA=ionPlot_data
+  ENDIF
+
   ;;;;;;;;;;;;;;;;;;;;;;
   ;;Plot lims
   SET_ALFVEN_STATS_PLOT_LIMS,EPLOTRANGE=EPlotRange, $
@@ -580,6 +599,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
                         NEWELL_ANALYZE_EFLUX=newell_analyze_eFlux, $
                         NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
+                        EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
+                        ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
+                        IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
+                        INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
                         PPLOTS=pPlots, LOGPFPLOT=logPfPlot, ABSPFLUX=absPflux, $
                         NONEGPFLUX=noNegPflux, NOPOSPFLUX=noPosPflux, PPLOTRANGE=PPlotRange, $
                         IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, LOGIFPLOT=logIfPlot, ABSIFLUX=absIflux, $

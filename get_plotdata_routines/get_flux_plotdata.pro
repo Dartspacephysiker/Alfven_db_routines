@@ -60,6 +60,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       GET_OXYFLUX=get_oxyFlux, $
                       GET_CHAREE=get_ChareE, $
                       GET_CHARIE=get_chariE, $
+                      EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
+                      ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
+                      IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
+                      INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
                       DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                       PRINT_MAX_AND_MIN=print_mandm, $
                       FANCY_PLOTNAMES=fancy_plotNames, $
@@ -125,7 +129,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.do_plotIntegral = eFlux_do_plotIntegral
      h2dStr.do_midCBLabel   = eFlux_do_midCBLabel
 
-     ;;If not allowing negative fluxes
      CASE 1 OF
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ"): BEGIN
            h2dStr.title     = title__alfDB_ind_09
@@ -134,6 +137,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         STRUPCASE(fluxplottype) EQ STRUPCASE("Max"): BEGIN
            h2dStr.title     = title__alfDB_ind_08
            inData           = maximus.elec_energy_flux[tmp_i]
+        END
+        STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_nonAlfven"): BEGIN
+           h2dStr.title  = "e- Flux (non-Alfvénic)"
+           ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
+           inData           = eFlux_nonAlfven_data
+           can_div_by_w_x   = 0
+           can_mlt_by_w_x   = 0
         END
      ENDCASE
 
@@ -249,6 +259,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            inData           = maximus.esa_current[tmp_i]
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
+        END
+        STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_nonAlfven"): BEGIN
+           h2dStr.title  = "e- Flux (non-Alfvénic)"
+           ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
+           inData           = eNumFlux_nonAlfven_data
+           can_div_by_w_x   = 0
+           can_mlt_by_w_x   = 0
         END
      ENDCASE
 
@@ -403,6 +420,20 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                  END
               ENDCASE
            ENDIF
+        END
+        STRUPCASE(fluxPlotType) EQ STRUPCASE("Ji_nonAlfven"): BEGIN
+           h2dStr.title  = "Ion Flux (non-Alfvénic)"
+           ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
+           inData           = iNumFlux_nonAlfven_data
+           can_div_by_w_x   = 0
+           can_mlt_by_w_x   = 0
+        END
+        STRUPCASE(fluxPlotType) EQ STRUPCASE("Jei_nonAlfven"): BEGIN
+           h2dStr.title  = "Ion Energy Flux (non-Alfvénic)"
+           ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
+           inData           = iFlux_nonAlfven_data
+           can_div_by_w_x   = 0
+           can_mlt_by_w_x   = 0
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Energy"): BEGIN
            h2dStr.title     = title__alfDB_ind_14
