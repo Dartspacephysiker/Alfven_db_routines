@@ -80,6 +80,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ENUMFLPLOTRANGE=ENumFlPlotRange, $
                           AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
                           NEWELL_ANALYZE_EFLUX=newell_analyze_eFlux, $
+                          NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
                           PPLOTS=pPlots, $
                           LOGPFPLOT=logPfPlot, $
                           ABSPFLUX=absPflux, $
@@ -678,6 +679,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     LOGAVGPLOT=logAvgPlot, $
                                     DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                                     ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                                    NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
+                                    TXTOUTPUTDIR=txtOutputDir, $
                                     FANCY_PLOTNAMES=fancy_plotNames, $
                                     NPLOTS=nPlots, $
                                     MASKMIN=maskMin, $

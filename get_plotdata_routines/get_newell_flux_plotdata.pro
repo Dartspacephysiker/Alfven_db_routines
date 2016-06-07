@@ -23,7 +23,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
                              GROSSRATE__CENTERS_MLT=centersMLT, $
                              GROSSRATE__CENTERS_ILAT=centersILAT, $
-                       GROSSCONVFACTORARR=grossConvFactorArr, $
+                             GROSSCONVFACTORARR=grossConvFactorArr, $
                              WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                              GROSSLUN=grossLun, $
                              THISTDENOMINATOR=tHistDenominator, $
@@ -48,6 +48,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              GET_EFLUX=get_eflux, $
                              GET_ENUMFLUX=get_eNumFlux, $
                              NEWELL_ANALYZE_EFLUX=newell_analyze_eFlux, $
+                             NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
+                             TXTOUTPUTDIR=txtOutputDir, $
                              GET_PFLUX=get_pFlux, $
                              GET_IFLUX=get_iFlux, $
                              GET_OXYFLUX=get_oxyFlux, $
@@ -63,12 +65,27 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   
   COMPILE_OPT idl2
 
+  IF KEYWORD_SET(newell_analysis__output_summary) THEN BEGIN
+
+     hamFile = "newell_event_info--"+GET_TODAY_STRING(/DO_YYYYMMDD_FMT)+".txt"
+     PRINT,"Opening " + hamFile + '...'
+     OPENW,sum_lun,txtOutputDir+hamFile,/GET_LUN,/APPEND
+     
+  ENDIF 
+
   SPLIT_ALFDB_I_BY_ESPEC_TYPE,plot_i,maximus.despun, $
                               OUT_TITLES=out_titles, $
                               OUT_DATANAMESUFFS=out_datanamesuffs, $
                               OUT_I_LIST=out_i_list, $
-                              DESPUN_ALF_DB=despun_alf_db
+                              SUMMARY=newell_analysis__output_summary, $
+                              DESPUN_ALF_DB=despun_alf_db, $
+                              SUM_LUN=sum_lun
 
+  IF KEYWORD_SET(newell_analysis__output_summary) THEN BEGIN
+     CLOSE,sum_lun
+     FREE_LUN,sum_lun
+  ENDIF
+  
   FOR k=0,N_ELEMENTS(out_i_list)-1 DO BEGIN
      
      tmp_i           = out_i_list[k]
