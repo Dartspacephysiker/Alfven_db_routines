@@ -64,6 +64,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
                       IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
                       INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                      NONALFVEN_MLT=nonAlfven_mlt, $
+                      NONALFVEN_ILAT=nonAlfven_ilat, $
                       DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                       PRINT_MAX_AND_MIN=print_mandm, $
                       FANCY_PLOTNAMES=fancy_plotNames, $
@@ -133,10 +135,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ"): BEGIN
            h2dStr.title     = title__alfDB_ind_09
            inData           = maximus.integ_elec_energy_flux[tmp_i] 
+           can_div_by_w_x   = 0
+           can_mlt_by_w_x   = 1
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Max"): BEGIN
            h2dStr.title     = title__alfDB_ind_08
            inData           = maximus.elec_energy_flux[tmp_i]
+           can_div_by_w_x   = 0
+           can_mlt_by_w_x   = 1
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_nonAlfven"): BEGIN
            h2dStr.title  = "e- Flux (non-Alfvénic)"
@@ -146,9 +152,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_mlt_by_w_x   = 0
         END
      ENDCASE
-
-     can_div_by_w_x         = 0
-     can_mlt_by_w_x         = 1
   ENDIF
 
   IF KEYWORD_SET(get_eNumFlux) THEN BEGIN
@@ -600,8 +603,17 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ENDIF
 
   ;;fix MLTs
-  mlts                      = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,shiftM)
-  ilats                     = (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[tmp_i]
+  IF KEYWORD_SET(nonAlfven_mlt) THEN BEGIN
+     mlts                   = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,shiftM, $
+                                                 IN_MLTS=nonAlfven_mlt)
+  ENDIF ELSE BEGIN
+     mlts                   = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,shiftM)
+  ENDELSE
+  IF KEYWORD_SET(nonAlfven_ilat) THEN BEGIN
+     ilats                  = nonAlfven_ilat
+  ENDIF ELSE BEGIN
+     ilats                  = (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[tmp_i]
+  ENDELSE
 
   IF KEYWORD_SET(do_plot_i_instead_of_histos) THEN BEGIN
      h2dStr.data.add,inData

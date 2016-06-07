@@ -14,6 +14,8 @@ PRO GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
                               DATANAME=dataName,DATARAWPTR=dataRawPtr, $
                               LUN=lun
   
+  COMPILE_OPT idl2
+
      ;h2dStr(0) is automatically the n_events histo whenever either nEventPerOrbPlot or nEventPerMinPlot keywords are set.
      ;This makes h2dStr(1) the mask histo.
 
@@ -71,7 +73,7 @@ PRO GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
 
   IF KEYWORD_SET(logNEventPerMin) THEN BEGIN
      h2dStr.is_logged = 1
-     h2dStr.data(where(h2dStr.data GT 0,/NULL))=ALOG10(h2dStr.data(where(h2dStr.data GT 0,/null))) 
+     h2dStr.data[WHERE(h2dStr.data GT 0,/NULL)] = ALOG10(h2dStr.data[WHERE(h2dStr.data GT 0,/NULL)]) 
      h2dStr.title = "Log " + h2dStr.title
      h2dStr.lim = ALOG10(h2dStr.lim)
   ENDIF

@@ -421,9 +421,39 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              ENUMFLPLOTTYPE=eNumFlPlotType, $
                              IONPLOTS=ionPlots, $
                              IFLUXPLOTTYPE=iFluxPlotType, $
-                             OUT_EPLOT_DATA=ePlot_data, $
-                             OUT_ENUMFLPLOT_DATA=eNumFlPlot_data, $
-                             OUT_IONPLOT_DATA=ionPlot_data
+                             OUT_EFLUX_DATA=eFlux_nonAlfven_data, $
+                             OUT_ENUMFLUX_DATA=eNumFlux_nonAlfven_data, $
+                             OUT_IFLUX_DATA=iFlux_nonAlfven_data, $
+                             OUT_INUMFLUX_DATA=iNumFlux_nonAlfven_data, $
+                             ESPEC__MLTS=eSpec__mlts, $
+                             ESPEC__ILATS=eSpec__ilats, $
+                             ION__MLTS=ion__mlts, $
+                             ION__ILATS=ion__ilats, $
+                             ORBRANGE=orbRange, $
+                             ALTITUDERANGE=altitudeRange, $
+                             ;; CHARERANGE=charERange, $
+                             BOTH_HEMIS=both_hemis, $
+                             NORTH=north, $
+                             SOUTH=south, $
+                             HEMI=hemi, $
+                             HWMAUROVAL=HwMAurOval, $
+                             HWMKPIND=HwMKpInd, $
+                             MINMLT=minM, $
+                             MAXMLT=maxM, $
+                             BINM=binM, $
+                             MINILAT=minI, $
+                             MAXILAT=maxI, $
+                             BINILAT=binI, $
+                             ;; DO_LSHELL=do_lshell, $
+                             ;; MINLSHELL=minL, $
+                             ;; MAXLSHELL=maxL, $
+                             ;; BINLSHELL=binL, $
+                             DAYSIDE=dayside, $
+                             NIGHTSIDE=nightside, $
+                             ;; GET_ESPEC_I_NOT_ION_I=get_eSpec_i, $
+                             RESET_GOOD_INDS=reset_good_inds, $
+                             DO_NOT_SET_DEFAULTS=do_not_set_defaults
+
   ENDIF
 
   ;;;;;;;;;;;;;;;;;;;;;;
@@ -603,6 +633,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
                         IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
                         INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                        ESPEC__MLTS=eSpec__mlts, $
+                        ESPEC__ILATS=eSpec__ilats, $
+                        ION__MLTS=ion__mlts, $
+                        ION__ILATS=ion__ilats, $
                         PPLOTS=pPlots, LOGPFPLOT=logPfPlot, ABSPFLUX=absPflux, $
                         NONEGPFLUX=noNegPflux, NOPOSPFLUX=noPosPflux, PPLOTRANGE=PPlotRange, $
                         IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, LOGIFPLOT=logIfPlot, ABSIFLUX=absIflux, $

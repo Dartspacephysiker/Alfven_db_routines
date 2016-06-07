@@ -36,6 +36,8 @@ PRO PRINT_TIMEHISTO_SUMMARY,fastLoc,good_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim
                             STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
                             HOYDIA=hoyDia,MASKMIN=maskMin,LUN=lun
   
+  COMPILE_OPT idl2
+
   PRINTF,lun,""
   PRINTF,lun,"**********FASTLOC TIMEHISTO SUMMARY**********"
   IF KEYWORD_SET(delay)     THEN BEGIN

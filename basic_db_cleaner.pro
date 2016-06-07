@@ -9,6 +9,8 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
                           USING_HEAVIES=using_heavies, $
                           DO_CHASTDB=do_ChastDB
   
+  COMPILE_OPT idl2
+
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
   n_events = N_ELEMENTS(dbStruct.orbit)
   n_good = n_events

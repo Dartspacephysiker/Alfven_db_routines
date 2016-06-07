@@ -118,7 +118,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      ENDELSE
   ENDELSE
 
-  IF ~KEYWORD_SET(get_alfven_db_i) AND ~KEYWORD_SET(get_time_i) AND ~KEYWORD_SET(dbStruct) THEN BEGIN
+  IF ~KEYWORD_SET(get_alfvendb_i) AND ~KEYWORD_SET(get_time_i) AND ~KEYWORD_SET(dbStruct) THEN BEGIN
      PRINTF,lun,"Assuming this is maximus ..."
      is_maximus                                   = 1             ;We assume this is maximus
   ENDIF

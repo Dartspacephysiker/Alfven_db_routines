@@ -12,6 +12,8 @@ PRO GET_CUSTOM_MAXIND_ANCILLARIES,custom_range,log_custom,custom_title,custom_da
                                   RESET_COUNTERS=reset_counters
                                   
                                   
+  COMPILE_OPT idl2
+
   COMMON CUSTMAX__nameless_customData_count,CUSTMAX__nameless_customTitle_count,CUSTMAX__index
 
   IF KEYWORD_SET(reset_counters) OR N_ELEMENTS(CUSTMAX__index) EQ 0 THEN BEGIN

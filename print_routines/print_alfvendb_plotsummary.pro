@@ -43,6 +43,8 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,plot_i_list,CLOCKSTR=clockStr, ANGLELIM1
                                MASKMIN=maskMin, $
                                LUN=lun
   
+  COMPILE_OPT idl2
+
   PRINTF,lun,""
   PRINTF,lun,"**********DATA SUMMARY**********"
   IF KEYWORD_SET(delay) THEN BEGIN

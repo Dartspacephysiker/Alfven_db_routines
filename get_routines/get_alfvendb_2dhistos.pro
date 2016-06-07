@@ -85,6 +85,10 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
                           IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
                           INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                          ESPEC__MLTS=eSpec__mlts, $
+                          ESPEC__ILATS=eSpec__ilats, $
+                          ION__MLTS=ion__mlts, $
+                          ION__ILATS=ion__ilats, $
                           PPLOTS=pPlots, $
                           LOGPFPLOT=logPfPlot, $
                           ABSPFLUX=absPflux, $
@@ -604,6 +608,39 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   ;;#####FLUX QUANTITIES#########
   ;;########ELECTRON FLUX########
   IF KEYWORD_SET(eplots) THEN BEGIN
+
+     IF N_ELEMENTS(eFlux_nonAlfven_data) GT 0 THEN BEGIN
+        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=eSpec__mlts, $
+                                 IN_ILATS=eSpec__ilats, $
+                                 MINM=minM, $
+                                 MAXM=maxM, $
+                                 BINM=binM, $
+                                 SHIFTM=shiftM, $
+                                 MINI=minI, $
+                                 MAXI=maxI, $
+                                 BINI=binI, $
+                                 DO_LSHELL=do_lshell, $
+                                 MINL=minL, $
+                                 MAXL=maxL, $
+                                 BINL=binL, $
+                                 NEVENTSPLOTRANGE=nEventsPlotRange, $
+                                 TMPLT_H2DSTR=tmplt_h2dStr, $
+                                 H2DSTR=tmpH2DStr, $
+                                 H2DMASKSTR=tmpH2DMaskStr, $
+                                 H2DFLUXN=tmpH2DFluxN, $
+                                 H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                                 MASKMIN=maskMin, $
+                                 DATANAME=dataName, $
+                                 DATARAWPTR=dataRawPtr
+
+        tmpH2DMask            = tmpH2DMaskStr.data
+
+     ENDIF ELSE BEGIN
+        tmpH2DFluxN           = H2DFluxN
+        tmpH2D_nonzero_nEv_i  = H2D_nonzero_nEv_i
+     ENDELSE
+
+
      FOR i=0,N_ELEMENTS(eFluxPlotType)-1 DO BEGIN
         fluxPlotType = eFluxPlotType[i]
 
@@ -650,6 +687,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     NONEGFLUX=noNegeflux, $
                                     ABSFLUX=abseflux, $
                                     EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
+                                    NONALFVEN_MLT=eSpec__mlts, $
+                                    NONALFVEN_ILAT=eSpec__ilats, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                                     DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -668,9 +707,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                                     H2DSTRARR=h2dStrArr, $
                                     TMPLT_H2DSTR=tmplt_h2dStr, $
-                                    H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                                    H2DFLUXN=h2dFluxN, $
-                                    H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                                    H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                                    H2DFLUXN=tmpH2DFluxN, $
+                                    H2DMASK=tmpH2DMask, $
                                     OUT_H2DMASK=out_h2dMask, $
                                     DATANAMEARR=dataNameArr, $
                                     DATARAWPTRARR=dataRawPtrArr, $
@@ -716,6 +755,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                              NONEGFLUX=noNegeflux, $
                              ABSFLUX=abseflux, $
                              EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
+                             NONALFVEN_MLT=eSpec__mlts, $
+                             NONALFVEN_ILAT=eSpec__ilats, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                              DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -734,9 +775,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                              MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                              H2DSTR=h2dStr, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
-                             H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                             H2DFLUXN=h2dFluxN, $
-                             H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                             H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                             H2DFLUXN=tmpH2DFluxN, $
+                             H2DMASK=tmpH2DMask, $
                              OUT_H2DMASK=out_h2dMask, $
                              DATANAME=dataName, $
                              DATARAWPTR=dataRawPtr, $
@@ -750,7 +791,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                              FANCY_PLOTNAMES=fancy_plotNames
 
            
-           h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+           IF ~KEYWORD_SET(eFlux_nonAlfven_data) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
            h2dStrArr            = [h2dStrArr,h2dStr] 
            IF keepMe THEN BEGIN
@@ -773,6 +814,38 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   
   ;;########ELECTRON NUMBER FLUX########
   IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
+
+     IF N_ELEMENTS(eNumFlux_nonAlfven_data) GT 0 THEN BEGIN
+        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=eSpec__mlts, $
+                                 IN_ILATS=eSpec__ilats, $
+                                 MINM=minM, $
+                                 MAXM=maxM, $
+                                 BINM=binM, $
+                                 SHIFTM=shiftM, $
+                                 MINI=minI, $
+                                 MAXI=maxI, $
+                                 BINI=binI, $
+                                 DO_LSHELL=do_lshell, $
+                                 MINL=minL, $
+                                 MAXL=maxL, $
+                                 BINL=binL, $
+                                 NEVENTSPLOTRANGE=nEventsPlotRange, $
+                                 TMPLT_H2DSTR=tmplt_h2dStr, $
+                                 H2DSTR=tmpH2DStr, $
+                                 H2DMASKSTR=tmpH2DMaskStr, $
+                                 H2DFLUXN=tmpH2DFluxN, $
+                                 H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                                 MASKMIN=maskMin, $
+                                 DATANAME=dataName, $
+                                 DATARAWPTR=dataRawPtr
+        
+        tmpH2DMask            = tmpH2DMaskStr.data
+        
+     ENDIF ELSE BEGIN
+        tmpH2DFluxN           = H2DFluxN
+        tmpH2D_nonzero_nEv_i  = H2D_nonzero_nEv_i
+     ENDELSE
+
      FOR i=0,N_ELEMENTS(eNumFlPlotType)-1 DO BEGIN
         fluxPlotType = eNumFlPlotType[i]
 
@@ -819,6 +892,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     NONEGFLUX=noNegENumFl, $
                                     ABSFLUX=absENumFl, $
                                     ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
+                                    NONALFVEN_MLT=eSpec__mlts, $
+                                    NONALFVEN_ILAT=eSpec__ilats, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                                     DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -837,9 +912,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                                     H2DSTRARR=h2dStrArr, $
                                     TMPLT_H2DSTR=tmplt_h2dStr, $
-                                    H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                                    H2DFLUXN=h2dFluxN, $
-                                    H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                                    H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                                    H2DFLUXN=tmpH2DFluxN, $
+                                    H2DMASK=tmpH2DMask, $
                                     OUT_H2DMASK=out_h2dMask, $
                                     DATANAMEARR=dataNameArr, $
                                     DATARAWPTRARR=dataRawPtrArr, $
@@ -883,6 +958,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                              NONEGFLUX=noNegENumFl, $
                              ABSFLUX=absENumFl, $
                              ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
+                             NONALFVEN_MLT=eSpec__mlts, $
+                             NONALFVEN_ILAT=eSpec__ilats, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                              DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -901,9 +978,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                              MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                              H2DSTR=h2dStr, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
-                             H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                             H2DFLUXN=h2dFluxN, $
-                             H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                             H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                             H2DFLUXN=tmpH2DFluxN, $
+                             H2DMASK=tmpH2DMask, $
                              OUT_H2DMASK=out_h2dMask, $
                              DATANAME=dataName, $
                              DATARAWPTR=dataRawPtr, $
@@ -916,7 +993,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                              ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
                              FANCY_PLOTNAMES=fancy_plotNames
 
-           h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+           IF ~KEYWORD_SET(eNumFlux_nonAlfven_data) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
            h2dStrArr            = [h2dStrArr,h2dStr] 
            IF keepMe THEN BEGIN 
@@ -1012,6 +1089,38 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   
   ;;########ION FLUX########
   IF KEYWORD_SET(ionPlots) THEN BEGIN
+     IF N_ELEMENTS(iFlux_nonAlfven_data) GT 0 OR N_ELEMENTS(iNumFlux_nonAlfven_data) GT 0 THEN BEGIN
+        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=ion__mlts, $
+                                 IN_ILATS=ion__ilats, $
+                                 MINM=minM, $
+                                 MAXM=maxM, $
+                                 BINM=binM, $
+                                 SHIFTM=shiftM, $
+                                 MINI=minI, $
+                                 MAXI=maxI, $
+                                 BINI=binI, $
+                                 DO_LSHELL=do_lshell, $
+                                 MINL=minL, $
+                                 MAXL=maxL, $
+                                 BINL=binL, $
+                                 NEVENTSPLOTRANGE=nEventsPlotRange, $
+                                 TMPLT_H2DSTR=tmplt_h2dStr, $
+                                 H2DSTR=tmpH2DStr, $
+                                 H2DMASKSTR=tmpH2DMaskStr, $
+                                 H2DFLUXN=tmpH2DFluxN, $
+                                 H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                                 MASKMIN=maskMin, $
+                                 DATANAME=dataName, $
+                                 DATARAWPTR=dataRawPtr
+        
+        tmpH2DMask            = tmpH2DMaskStr.data
+
+     ENDIF ELSE BEGIN
+        tmpH2DFluxN           = H2DFluxN
+        tmpH2D_nonzero_nEv_i  = H2D_nonzero_nEv_i
+        tmpH2DMask            = h2dStrArr[KEYWORD_SET(nPlots)].data
+     ENDELSE
+
      FOR i=0,N_ELEMENTS(iFluxPlotType)-1 DO BEGIN
         fluxPlotType = iFluxPlotType[i]
 
@@ -1057,6 +1166,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ABSFLUX=absIflux, $
                           IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
                           INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                          NONALFVEN_MLT=ion__mlts, $
+                          NONALFVEN_ILAT=ion__ilats, $
                           OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -1075,9 +1186,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
-                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                          H2DFLUXN=h2dFluxN, $
-                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                          H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                          H2DFLUXN=tmpH2DFluxN, $
+                          H2DMASK=tmpH2DMask, $
                           OUT_H2DMASK=out_h2dMask, $
                           DATANAME=dataName, $
                           DATARAWPTR=dataRawPtr, $
@@ -1090,7 +1201,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
                           FANCY_PLOTNAMES=fancy_plotNames
         
-        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+           IF ~KEYWORD_SET(iNumFlux_nonAlfven_data) AND ~KEYWORD_SET(iFlux_nonAlfven_data) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
         h2dStrArr            = [h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
