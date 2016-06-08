@@ -198,6 +198,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
                                  NONALFVEN_FLUX_PLOTS=nonAlfven_flux_plots, $
                                  NONALFVEN_FOR_STORMS=nonAlfven_for_storms, $
+                                 NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                                  PPLOTS=pPlots, LOGPFPLOT=logPfPlot, ABSPFLUX=absPflux, $
                                  NONEGPFLUX=noNegPflux, NOPOSPFLUX=noPosPflux, PPLOTRANGE=PPlotRange, $
                                  IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, LOGIFPLOT=logIfPlot, ABSIFLUX=absIflux, $
@@ -415,6 +416,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
 
      GET_NONALFVEN_FLUX_DATA,plot_i, $
                              FOR_STORMS=nonAlfven_for_storms, $
+                             NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                              T1_ARR=t1_arr,T2_ARR=t2_arr, $
                              EPLOTS=ePlots, $
                              EFLUXPLOTTYPE=eFluxPlotType, $
@@ -426,6 +428,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              OUT_ENUMFLUX_DATA=eNumFlux_nonAlfven_data, $
                              OUT_IFLUX_DATA=iFlux_nonAlfven_data, $
                              OUT_INUMFLUX_DATA=iNumFlux_nonAlfven_data, $
+                             INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
+                             INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $
                              ESPEC__MLTS=eSpec__mlts, $
                              ESPEC__ILATS=eSpec__ilats, $
                              ION__MLTS=ion__mlts, $
@@ -634,6 +638,9 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
                         IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
                         INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                        INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
+                        INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $
+                        NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                         ESPEC__MLTS=eSpec__mlts, $
                         ESPEC__ILATS=eSpec__ilats, $
                         ION__MLTS=ion__mlts, $

@@ -85,6 +85,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
                           IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
                           INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                          INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
+                          INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $
+                          NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                           ESPEC__MLTS=eSpec__mlts, $
                           ESPEC__ILATS=eSpec__ilats, $
                           ION__MLTS=ion__mlts, $
@@ -688,6 +691,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     NONEGFLUX=noNegeflux, $
                                     ABSFLUX=abseflux, $
                                     EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
+                                    INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
+                                    NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                                     NONALFVEN_MLT=eSpec__mlts, $
                                     NONALFVEN_ILAT=eSpec__ilats, $
                                     OUT_REMOVED_II=out_removed_ii, $
@@ -894,6 +899,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     NONEGFLUX=noNegENumFl, $
                                     ABSFLUX=absENumFl, $
                                     ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
+                                    INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
+                                    NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                                     NONALFVEN_MLT=eSpec__mlts, $
                                     NONALFVEN_ILAT=eSpec__ilats, $
                                     OUT_REMOVED_II=out_removed_ii, $
@@ -1168,6 +1175,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ABSFLUX=absIflux, $
                           IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
                           INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                          INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $
+                          NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                           NONALFVEN_MLT=ion__mlts, $
                           NONALFVEN_ILAT=ion__ilats, $
                           OUT_REMOVED_II=out_removed_ii, $

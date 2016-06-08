@@ -64,6 +64,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
                       IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
                       INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                      INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
+                      INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $
+                      NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                       NONALFVEN_MLT=nonAlfven_mlt, $
                       NONALFVEN_ILAT=nonAlfven_ilat, $
                       DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
@@ -96,7 +99,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ENDIF
 
   ;;Don't mod everyone's plot indices
-  tmp_i = plot_i
+  IF ~KEYWORD_SET(indices__nonAlfven_ion) AND ~KEYWORD_SET(indices__nonAlfven_eSpec) THEN tmp_i = plot_i
 
   ;; Flux plot safety
   IF KEYWORD_SET(logFluxPlot) AND NOT KEYWORD_SET(absFlux) AND NOT KEYWORD_SET(noNegFlux) AND NOT KEYWORD_SET(noPosFlux) THEN BEGIN 
@@ -148,10 +151,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            h2dStr.title     = title__alfDB_ind_10__nonAlfvenic
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            nonAlfvenic      = 1
-           inData           = eFlux_nonAlfven_data
-           tmp_i            = LINDGEN(N_ELEMENTS(eFlux_nonAlfven_data))
+           tmp_i            = indices__nonAlfven_eSpec
+           inData           = eFlux_nonAlfven_data[tmp_i]
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
+
+           IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
+              fluxPlotType += '--candidates_removed'
+           ENDIF
         END
      ENDCASE
   ENDIF
@@ -269,10 +276,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            h2dStr.title     = title__alfDB_esa_nFlux__nonAlfvenic
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            nonAlfvenic      = 1
-           inData           = eNumFlux_nonAlfven_data
-           tmp_i            = LINDGEN(N_ELEMENTS(eNumFlux_nonAlfven_data))
+           tmp_i            = indices__nonAlfven_eSpec
+           inData           = eNumFlux_nonAlfven_data[tmp_i]
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
+
+           IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
+              fluxPlotType += '--candidates_removed'
+           ENDIF
         END
      ENDCASE
 
@@ -432,19 +443,27 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            h2dStr.title  = title__alfDB_ind_18__nonAlfvenic
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            nonAlfvenic      = 1
-           inData           = iNumFlux_nonAlfven_data
-           tmp_i            = LINDGEN(N_ELEMENTS(iNumFlux_nonAlfven_data))
+           tmp_i            = indices__nonAlfven_ion
+           inData           = iNumFlux_nonAlfven_data[tmp_i]
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
+
+           IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
+              fluxPlotType += '--candidates_removed'
+           ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Jei_nonAlfven"): BEGIN
            h2dStr.title  = 'Ion Energy Flux (non-' + alficStr + ')'
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            nonAlfvenic      = 1
-           inData           = iFlux_nonAlfven_data
-           tmp_i            = LINDGEN(N_ELEMENTS(eFlux_nonAlfven_data))
+           tmp_i            = indices__nonAlfven_ion
+           inData           = iFlux_nonAlfven_data[tmp_i]
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
+
+           IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
+              fluxPlotType += '--candidates_removed'
+           ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Energy"): BEGIN
            h2dStr.title     = title__alfDB_ind_14

@@ -13,8 +13,11 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              ABSFLUX=absFlux, $
                              EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
                              ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
-                             IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
-                             INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                             ;; IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
+                             ;; INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                             INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
+                             ;; INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $
+                             NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                              NONALFVEN_MLT=nonAlfven_mlt, $
                              NONALFVEN_ILAT=nonAlfven_ilat, $
                              OUT_REMOVED_II=out_removed_ii, $
@@ -79,13 +82,38 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      
   ENDIF 
 
-  SPLIT_ALFDB_I_BY_ESPEC_TYPE,plot_i,maximus.despun, $
-                              OUT_TITLES=out_titles, $
-                              OUT_DATANAMESUFFS=out_datanamesuffs, $
-                              OUT_I_LIST=out_i_list, $
-                              SUMMARY=newell_analysis__output_summary, $
-                              DESPUN_ALF_DB=despun_alf_db, $
-                              SUM_LUN=sum_lun
+  IF KEYWORD_SET(eFlux_nonAlfven_data) OR KEYWORD_SET(eNumFlux_nonAlfven_data) $
+  THEN BEGIN
+     nonAlfven       = 1
+     ;; nonAlf_inds     = indices__nonAlfven_eSpec
+  ENDIF;;  ELSE BEGIN
+  ;;    IF KEYWORD_SET(iFlux_nonAlfven_data) OR KEYWORD_SET(iNumFlux_nonAlfven_data) $
+  ;;    THEN BEGIN
+  ;;       nonAlfven    = 1
+  ;;       nonAlf_inds  = indices__nonAlfven_ion
+  ;;    ENDIF 
+  ;; ENDELSE
+
+  IF KEYWORD_SET(nonAlfven) THEN BEGIN
+
+     SPLIT_ESPECDB_I_BY_ESPEC_TYPE,indices__nonAlfven_eSpec, $
+                                   OUT_TITLES=out_titles, $
+                                   OUT_DATANAMESUFFS=out_datanamesuffs, $
+                                   OUT_I_LIST=out_i_list, $
+                                   SUMMARY=newell_analysis__output_summary, $
+                                   SUM_LUN=sum_lun
+
+
+  ENDIF ELSE BEGIN
+
+     SPLIT_ALFDB_I_BY_ESPEC_TYPE,plot_i,maximus.despun, $
+                                 OUT_TITLES=out_titles, $
+                                 OUT_DATANAMESUFFS=out_datanamesuffs, $
+                                 OUT_I_LIST=out_i_list, $
+                                 SUMMARY=newell_analysis__output_summary, $
+                                 DESPUN_ALF_DB=despun_alf_db, $
+                                 SUM_LUN=sum_lun
+  ENDELSE
 
   IF KEYWORD_SET(newell_analysis__output_summary) THEN BEGIN
      CLOSE,sum_lun
@@ -99,9 +127,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      IF tmp_i[0] EQ -1 THEN CONTINUE
 
      ;;Need to provide a new h2dFluxN and a new mask for each of these
-     GET_H2D_NEVENTS_AND_MASK,maximus,tmp_i, $
-                             IN_MLTS=nonAlfven_mlt, $
-                             IN_ILATS=nonAlfven_ilat, $
+     GET_H2D_NEVENTS_AND_MASK, $ ;maximus,tmp_i, $
+                             IN_MLTS=nonAlfven_mlt[tmp_i], $
+                             IN_ILATS=nonAlfven_ilat[tmp_i], $
                              MINM=minM,MAXM=maxM, $
                              BINM=binM, $
                              SHIFTM=shiftM, $
@@ -120,12 +148,15 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
      temph2dmask    = temph2dmaskstr.data
 
-     GET_FLUX_PLOTDATA,maximus,tmp_i,MINM=minM,MAXM=maxM, $
+     GET_FLUX_PLOTDATA,maximus,tmp_i, $
+                       MINM=minM,MAXM=maxM, $
                        BINM=binM, $
                        SHIFTM=shiftM, $
                        MINI=minI,MAXI=maxI,BINI=binI, $
                        DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
-                       OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                       OUTH2DBINSMLT=outH2DBinsMLT, $
+                       OUTH2DBINSILAT=outH2DBinsILAT, $
+                       OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        FLUXPLOTTYPE=fluxPlotType, $
                        PLOTRANGE=plotRange, $
                        PLOTAUTOSCALE=plotAutoscale, $
@@ -134,8 +165,10 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        ABSFLUX=absFlux, $
                        EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
                        ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
-                       IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
-                       INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                       ;; IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
+                       ;; INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                       INDICES__NONALFVEN_ESPEC=KEYWORD_SET(nonAlfven) ? tmp_i : indices__nonAlfven_eSpec, $
+                       NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                        NONALFVEN_MLT=nonAlfven_mlt, $
                        NONALFVEN_ILAT=nonAlfven_ilat, $
                        OUT_REMOVED_II=out_removed_ii, $
