@@ -613,8 +613,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   IF KEYWORD_SET(eplots) THEN BEGIN
 
      IF N_ELEMENTS(eFlux_nonAlfven_data) GT 0 THEN BEGIN
-        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=eSpec__mlts, $
-                                 IN_ILATS=eSpec__ilats, $
+        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=eSpec__mlts[indices__nonAlfven_eSpec], $
+                                 IN_ILATS=eSpec__ilats[indices__nonAlfven_eSpec], $
                                  MINM=minM, $
                                  MAXM=maxM, $
                                  BINM=binM, $
@@ -822,8 +822,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
 
      IF N_ELEMENTS(eNumFlux_nonAlfven_data) GT 0 THEN BEGIN
-        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=eSpec__mlts, $
-                                 IN_ILATS=eSpec__ilats, $
+        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=eSpec__mlts[indices__nonAlfven_eSpec], $
+                                 IN_ILATS=eSpec__ilats[indices__nonAlfven_eSpec], $
                                  MINM=minM, $
                                  MAXM=maxM, $
                                  BINM=binM, $
@@ -967,6 +967,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                              NONEGFLUX=noNegENumFl, $
                              ABSFLUX=absENumFl, $
                              ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
+                             INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                              NONALFVEN_MLT=eSpec__mlts, $
                              NONALFVEN_ILAT=eSpec__ilats, $
                              OUT_REMOVED_II=out_removed_ii, $
@@ -1099,8 +1100,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   ;;########ION FLUX########
   IF KEYWORD_SET(ionPlots) THEN BEGIN
      IF N_ELEMENTS(iFlux_nonAlfven_data) GT 0 OR N_ELEMENTS(iNumFlux_nonAlfven_data) GT 0 THEN BEGIN
-        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=ion__mlts, $
-                                 IN_ILATS=ion__ilats, $
+        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=ion__mlts[indices__nonAlfven_ion], $
+                                 IN_ILATS=ion__ilats[indices__nonAlfven_ion], $
                                  MINM=minM, $
                                  MAXM=maxM, $
                                  BINM=binM, $

@@ -99,7 +99,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ENDIF
 
   ;;Don't mod everyone's plot indices
-  IF ~KEYWORD_SET(indices__nonAlfven_ion) AND ~KEYWORD_SET(indices__nonAlfven_eSpec) THEN tmp_i = plot_i
+  CASE 1 OF
+     KEYWORD_SET(indices__nonAlfven_eSpec): BEGIN
+        tmp_i = indices__nonAlfven_eSpec
+     END
+     KEYWORD_SET(indices__nonAlfven_ion): BEGIN
+        tmp_i = indices__nonAlfven_ion
+     END
+     ELSE: BEGIN
+        tmp_i = plot_i
+     END
+  ENDCASE
+  ;; IF ~KEYWORD_SET(indices__nonAlfven_ion) AND ~KEYWORD_SET(indices__nonAlfven_eSpec) THEN tmp_i = plot_i
 
   ;; Flux plot safety
   IF KEYWORD_SET(logFluxPlot) AND NOT KEYWORD_SET(absFlux) AND NOT KEYWORD_SET(noNegFlux) AND NOT KEYWORD_SET(noPosFlux) THEN BEGIN 
@@ -529,34 +540,41 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      PRINTF,lun,"N pos elements in " + dataName + " data: ",N_ELEMENTS(where(inData GT 0.))
      PRINTF,lun,"N neg elements in " + dataName + " data: ",N_ELEMENTS(where(inData LT 0.))
      IF KEYWORD_SET(noPosFlux) THEN BEGIN
-        posStr                = 'NoPos--'
+        posStr              = 'NoPos--'
         PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(inData)
-        lt_i                   =  WHERE(inData LT 0.,COMPLEMENT=removed_ii)
-        inData                 = inData[lt_i]
-        tmp_i                 = tmp_i[lt_i]
-        PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(inData)
-        inData                 = ABS(inData)
+        lt_i                =  WHERE(inData LT 0.,COMPLEMENT=removed_ii)
+        IF lt_i[0] NE -1 THEN BEGIN
+           inData           = inData[lt_i]
+           tmp_i            = tmp_i[lt_i]
+           PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(inData)
+           inData           = ABS(inData)
+        ENDIF
      ENDIF ELSE BEGIN
-        absStr                = 'Abs--' 
+        absStr              = 'Abs--' 
      ENDELSE
-     inData = ABS(inData)
+     inData                 = ABS(inData)
   ENDIF
   IF KEYWORD_SET(noNegFlux) THEN BEGIN
-     negStr                = 'NoNegs--'
+     negStr                 = 'NoNegs--'
      PRINTF,lun,"N elements in " + dataName + " before junking neg vals: ",N_ELEMENTS(inData)
      gt_i                   =  WHERE(inData GT 0.,COMPLEMENT=removed_ii)
-     inData                 = inData[gt_i]
-     tmp_i                 = tmp_i[gt_i]
-     PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",N_ELEMENTS(inData)
+     IF gt_i[0] NE -1 THEN BEGIN
+        inData              = inData[gt_i]
+        tmp_i               = tmp_i[gt_i]
+        PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",N_ELEMENTS(inData)
+     ENDIF
   ENDIF
   IF KEYWORD_SET(noPosFlux) AND ~KEYWORD_SET(absFlux) THEN BEGIN
-     posStr                = 'NoPos--'
+     posStr                 = 'NoPos--'
      PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(inData)
      lt_i                   =  WHERE(inData LT 0.,COMPLEMENT=removed_ii)
-     inData                 = inData[lt_i]
-     tmp_i                 = tmp_i[lt_i]
-     PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(inData)
-     inData                 = ABS(inData)
+     IF lt_i[0] NE -1 THEN BEGIN
+        inData              = inData[lt_i]
+        tmp_i               = tmp_i[lt_i]
+        PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(inData)
+
+        inData              = ABS(inData) ;Also make it positif
+     ENDIF
   ENDIF
   IF KEYWORD_SET(logFluxPlot) THEN BEGIN
      IF ~h2dStr.logLabels THEN BEGIN

@@ -48,7 +48,7 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
   ;; h2dFluxN                      = HIST_2D(maximus.mlt[plot_i],$
-  mlts                          = KEYWORD_SET(in_MLTS) ? in_MLTs : maximus.mlt[plot_i]-shiftM ;shift MLTs backwards, because we want to shift the binning FORWARD
+  mlts                          = (KEYWORD_SET(in_MLTS) ? in_MLTs : maximus.mlt[plot_i])-shiftM ;shift MLTs backwards, because we want to shift the binning FORWARD
   swapme                        = WHERE(mlts LT 0,nSwap)
   IF nSwap GT 0 THEN BEGIN
      mlts[swapme]               = mlts[swapme] + 24

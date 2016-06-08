@@ -4,6 +4,7 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
                                     IN_MLTS=in_mlts, $
                                     IN_ILATS=in_ilats, $
                                     PLOT_I=plot_i, $
+                                    TMPLT_H2DSTR=tmplt_h2dStr, $
                                     IN_H2DMASK=in_h2dMask, $
                                     MASKMIN=maskMin, $
                                     MASKCOLOR=in_maskColor, $
