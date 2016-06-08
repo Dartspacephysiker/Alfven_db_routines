@@ -25,6 +25,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           WINDOW_YSIZE=ySize, $
                           NO_DISPLAY=no_display, $
                           SUPPRESS_GRIDLABELS=suppress_gridLabels, $
+                          SUPPRESS_TITLES=suppress_titles, $
                           LABELS_FOR_PRESENTATION=labels_for_presentation, $
                           CB_FORCE_OOBLOW=cb_force_ooblow, $
                           CB_FORCE_OOBHIGH=cb_force_oobhigh, $
@@ -579,7 +580,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      cbOOBHighVal      = (MAX(temp.data(notMasked)) GT temp.lim[1] OR temp.force_oobHigh) ? $
                          BYTE(nLevels-1) : !NULL
      cbRange           = (temp.is_logged AND temp.logLabels) ? 10.^(ROUND(temp.lim*100.)/100.) : temp.lim
-     cbTitle           = plotTitle
+     cbTitle           = KEYWORD_SET(suppress_titles) ? !NULL : plotTitle
      nCBColors         = nlevels-is_OOBHigh-is_OOBLow
      cbBottom          = BYTE(is_OOBLow)
      ;; cbTickNames       = [String(lowerLab, Format=temp.labelFormat), $

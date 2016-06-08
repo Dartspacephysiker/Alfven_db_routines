@@ -142,12 +142,24 @@ title__alfDB_ind_18_grossRate = 'Upflowing Ions (' + numGrossStr + ')' + ionosph
 title__alfDB_ind_49_grossRate = 'Wave Energy Deposition  (' + energyGrossStr + ')' + ionosphString
 
 ;;Divided by width_x
-title__alfDB_ind_10__div_by_width_x  = 'Losscone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
+title__alfDB_ind_10__div_by_width_x  = 'Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
 title__alfDB_ind_11__div_by_width_x  = 'Total e!U-!N Energy Flux (' + energyFluxStr + ')' + ionosphString     ;"Total_Eflux_Integ"
 title__alfDB_ind_17__div_by_width_x  = 'Ion Flux (' + numFluxStr + ')' + ionosphString               ;"Integ"
 title__alfDB_ind_18__div_by_width_x  = 'Upward Ion Flux (' + numFluxStr + ')' + ionosphString        ;"Integ_Up"
 
 ;; title__alfDB_ind_10          = 
+
+;;For storm paper
+alficStr                             = ANSI_VALUE('Alfvénic')
+title__alfDB_ind_10__div_by_width_x  = alficStr + ' Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString ;"Eflux_Losscone_Integ"
+title__alfDB_ind_18__div_by_width_x  = alficStr + ' Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
+title__alfDB_ind_49                  = alficStr + ' Poynting Flux (' + energyFluxStr + ')' + ionosphString
+
+title__alfDB_ind_10__nonAlfvenic     = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString ;"Eflux_Losscone_Integ"
+title__alfDB_esa_nFlux__nonAlfvenic  = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + numFluxStr + ')' + ionosphString    ;"ESA_Number_flux"
+title__alfDB_ind_18__nonAlfvenic     = 'Non-' + alficStr + ' Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
+title__alfDB_ion_energy__nonAlfvenic = 'Non-' + alficStr + ' Upward Ion Energy Flux (' + numFluxStr + ')' + ionosphString   ;Specialty
+
 
 ;; use these for regexp additions: ^([[:alnum:]]+)
 ;; eFlux

@@ -45,7 +45,11 @@ scAltString_pub              = ', at FAST altitude'
 
 
 
-title__probOccurrence        = "Probability of occurrence"
+;; title__probOccurrence        = "Probability of occurrence"
+;;For storm paper
+alfStr                     = ANSI_VALUE('Alfvén')
+;; title__probOccurrence        = alfStr + " Wave!CProbability of Occurrence"
+title__probOccurrence        = "Probability of Occurrence"
 name__probOccurrence         = "probOccurrence"
 
 ;; title__timeAvgd_pFlux        = 'Time-averaged Poynting flux (' + energyFluxStr + ')' + ionosphString_pub

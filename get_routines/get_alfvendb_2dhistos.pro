@@ -638,6 +638,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      ENDIF ELSE BEGIN
         tmpH2DFluxN           = H2DFluxN
         tmpH2D_nonzero_nEv_i  = H2D_nonzero_nEv_i
+        tmpH2DMask            = h2dStrArr[KEYWORD_SET(nPlots)].data
      ENDELSE
 
 
@@ -731,7 +732,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     KEEPME=keepMe, $
                                     LUN=lun
 
-        ENDIF ELSE BEGIN ;No newell analysis, just regular
+        ENDIF ELSE BEGIN        ;No newell analysis, just regular
 
            GET_FLUX_PLOTDATA,maximus,plot_i,/GET_EFLUX, $
                              MINM=minM, $
@@ -844,6 +845,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      ENDIF ELSE BEGIN
         tmpH2DFluxN           = H2DFluxN
         tmpH2D_nonzero_nEv_i  = H2D_nonzero_nEv_i
+        tmpH2DMask            = h2dStrArr[KEYWORD_SET(nPlots)].data
      ENDELSE
 
      FOR i=0,N_ELEMENTS(eNumFlPlotType)-1 DO BEGIN
@@ -867,7 +869,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
               ENDCASE
            END
            2:   plotRange     = eNumFlPlotRange[*,i]
-           ENDCASE
+        ENDCASE
 
         IF KEYWORD_SET(newell_analyze_eFlux) THEN BEGIN
            GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
@@ -934,7 +936,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     KEEPME=keepMe, $
                                     LUN=lun
 
-        ENDIF ELSE BEGIN ;No newell analysis, just regular
+        ENDIF ELSE BEGIN        ;No newell analysis, just regular
 
            GET_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
                              MINM=minM, $
@@ -1201,7 +1203,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
                           FANCY_PLOTNAMES=fancy_plotNames
         
-           IF ~KEYWORD_SET(iNumFlux_nonAlfven_data) AND ~KEYWORD_SET(iFlux_nonAlfven_data) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+        IF ~KEYWORD_SET(iNumFlux_nonAlfven_data) AND ~KEYWORD_SET(iFlux_nonAlfven_data) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
         h2dStrArr            = [h2dStrArr,h2dStr] 
         IF keepMe THEN BEGIN 
@@ -1532,16 +1534,16 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
         
         
         GET_CUSTOM_MAXIND_ANCILLARIES,custom_range,log_custom,custom_title,custom_dataname,custom_autoscale, $
-                                  INDEX=index, $
-                                  CUSTOM_MAXINDS=custom_maxInds, $
-                                  CUSTOM_MAXIND_RANGE=custom_maxInd_range, $
-                                  CUSTOM_MAXIND_AUTOSCALE=custom_maxInd_autoscale, $
-                                  CUSTOM_MAXIND_DATANAME=custom_maxInd_dataname, $
-                                  CUSTOM_MAXIND_TITLE=custom_maxInd_title, $
-                                  LOG_CUSTOM_MAXIND=log_custom_maxInd, $
-                                  DO_OUTPUT_CUSTOM_MAXIND=do_output_custom_maxInd, $
-                                  OUTPUT_CUSTOM_MAXIND=output_custom_maxInd, $
-                                  RESET_COUNTERS=reset_counters
+                                      INDEX=index, $
+                                      CUSTOM_MAXINDS=custom_maxInds, $
+                                      CUSTOM_MAXIND_RANGE=custom_maxInd_range, $
+                                      CUSTOM_MAXIND_AUTOSCALE=custom_maxInd_autoscale, $
+                                      CUSTOM_MAXIND_DATANAME=custom_maxInd_dataname, $
+                                      CUSTOM_MAXIND_TITLE=custom_maxInd_title, $
+                                      LOG_CUSTOM_MAXIND=log_custom_maxInd, $
+                                      DO_OUTPUT_CUSTOM_MAXIND=do_output_custom_maxInd, $
+                                      OUTPUT_CUSTOM_MAXIND=output_custom_maxInd, $
+                                      RESET_COUNTERS=reset_counters
         
         IF KEYWORD_SET(do_grossRate_fluxQuantities) $
            OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN

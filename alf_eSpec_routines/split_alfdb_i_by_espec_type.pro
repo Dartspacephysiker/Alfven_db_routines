@@ -26,7 +26,8 @@ PRO SPLIT_ALFDB_I_BY_ESPEC_TYPE,good_i,is_despun, $
                      ;; 'all_good_alf_eSpec_i--CATEGORIZED--' + $
                       'all_good_alf_eSpec_i--killed_befs_afts--CATEGORIZED--' + $
                      STRMID(NewellDBFile,STRPOS(NewellDBFile,'Orbs_'),STRPOS(NewellDBFile,'2016')-STRPOS(NewellDBFile,'Orbs_')) + $
-                     GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '.sav'
+                     ;; GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '.sav'
+                  '20160606' + '.sav'
 
 
   RESTORE,NewellDBDir+outFile

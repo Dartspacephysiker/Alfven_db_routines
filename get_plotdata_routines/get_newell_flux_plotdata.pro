@@ -11,6 +11,12 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              NOPOSFLUX=noPosFlux, $
                              NONEGFLUX=noNegFlux, $
                              ABSFLUX=absFlux, $
+                             EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
+                             ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
+                             IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
+                             INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                             NONALFVEN_MLT=nonAlfven_mlt, $
+                             NONALFVEN_ILAT=nonAlfven_ilat, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=logFluxPlot, $
                              DIVIDE_BY_WIDTH_X=divide_by_width_x, $
@@ -94,6 +100,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
      ;;Need to provide a new h2dFluxN and a new mask for each of these
      GET_H2D_NEVENTS_AND_MASK,maximus,tmp_i, $
+                             IN_MLTS=nonAlfven_mlt, $
+                             IN_ILATS=nonAlfven_ilat, $
                              MINM=minM,MAXM=maxM, $
                              BINM=binM, $
                              SHIFTM=shiftM, $
@@ -124,6 +132,12 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        NOPOSFLUX=noPosFlux, $
                        NONEGFLUX=noNegFlux, $
                        ABSFLUX=absFlux, $
+                       EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
+                       ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
+                       IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
+                       INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
+                       NONALFVEN_MLT=nonAlfven_mlt, $
+                       NONALFVEN_ILAT=nonAlfven_ilat, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=logFluxPlot, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
@@ -167,13 +181,13 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        FANCY_PLOTNAMES=fancy_plotNames, $
                        LUN=lun
 
-     h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+     ;; IF ~KEYWORD_SET(nonAlfven_mlt) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
      ;;Add Newell-specific stuff
      h2dStr.title        += out_titles[k]
      dataName            += out_datanamesuffs[k]
-     h2dStr.hasMask       = 1
      h2dStr.mask          = out_h2dMask
+     h2dStr.hasMask       = 1
 
      h2dStrArr            = [h2dStrArr,h2dStr] 
      IF keepMe THEN BEGIN
