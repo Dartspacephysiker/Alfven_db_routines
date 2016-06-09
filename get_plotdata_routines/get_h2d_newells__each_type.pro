@@ -25,13 +25,15 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
 
   COMPILE_OPT idl2
 
-  ;;This common block is defined ONLY here and in LOAD_ALF_NEWELL_ESPEC_DB
-  COMMON NWLL_ALF,NWLL_ALF__eSpec, $
+  ;;This common block is defined ONLY here, in GET_ESPEC_ION_DB_IND, and in LOAD_ALF_NEWELL_ESPEC_DB
+  COMMON NWLL_ALF,NWLL_ALF__eSpec,NWLL_ALF__HAVE_GOOD_I, $
      NWLL_ALF__good_eSpec_i, $
      NWLL_ALF__good_alf_i, $
      NWLL_ALF__failCodes, $
      NWLL_ALF__despun, $
-     NWLL_ALF__dbFile,NWLL_ALF__dbDir
+     NWLL_ALF__dbFile,NWLL_ALF__dbDir, $
+     NWLL_ALF__RECALCULATE
+     
 
   LOAD_MAXIMUS_AND_CDBTIME,!NULL,!NULL,DO_DESPUNDB=despun,/CHECK_DB
 
@@ -56,7 +58,6 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                           Je:eSpec.Je[temp_eSpec_indices], $
                           Jee:eSpec.Jee[temp_eSpec_indices], $
                           nBad_eSpec:eSpec.nBad_eSpec[temp_eSpec_indices]}
-  
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Indices

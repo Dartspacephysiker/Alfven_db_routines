@@ -5,6 +5,8 @@ PRO JOURNAL__20160531__NOW_STITCH_TOGETHER_THE_RESULTS_AND_MAKE_SURE_THEYRE_NOT_
 
   despun                    = 1
 
+  inTimeSeriesFDate         = '20160609'
+
   IF KEYWORD_SET(despun) THEN BEGIN
      despunStr              = '--despun'
      dbDate                 = '20160508'
@@ -36,7 +38,6 @@ PRO JOURNAL__20160531__NOW_STITCH_TOGETHER_THE_RESULTS_AND_MAKE_SURE_THEYRE_NOT_
   RESTORE,dbDir + orbFile
 
   inDir                     = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
-  inTimeSeriesFDate         = '20160603'
   inTimeSeriesFile        = STRING(FORMAT='("eSpec_",A0,"_db--TIME_SERIES_AND_ORBITS--Orbs_",I0,"-",I0,".sav")', $
                                    inTimeSeriesFDate, $
                                    firstOrb, $

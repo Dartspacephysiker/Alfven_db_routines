@@ -52,7 +52,10 @@ PRO JOURNAL__20160602__GRAB_GOOD_ESPECS_AND_STITCH_THEM_TOGETHER
   alf_sc_pot = maximus.sc_pot[alf_i__good_eSpec]
   alf_mlt    = maximus.mlt[alf_i__good_eSpec]
   alf_ilat   = maximus.ilat[alf_i__good_eSpec]
+  alf_alt    = maximus.alt[alf_i__good_eSpec]
+  alf_orbit  = maximus.orbit[alf_i__good_eSpec]
 
-  SAVE,eSpecs,je_out,jee_out,alf_sc_pot,alf_mlt,alf_ilat,FILENAME=inDir+eSpecUnparsedFile
+  PRINT,'Saving ' + eSpecUnparsedFile + ' ...'
+  SAVE,eSpecs,je_out,jee_out,alf_sc_pot,alf_mlt,alf_ilat,alf_alt,alf_orbit,FILENAME=inDir+eSpecUnparsedFile
   
 END

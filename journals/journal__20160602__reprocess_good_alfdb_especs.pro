@@ -7,7 +7,7 @@ PRO JOURNAL__20160602__REPROCESS_GOOD_ALFDB_ESPECS
 
   despun                    = 1
 
-  date_for_inputs           = '20160603'
+  date_for_inputs           = '20160609'
 
   IF KEYWORD_SET(despun) THEN BEGIN
      despunStr              = '--despun'
@@ -55,17 +55,18 @@ PRO JOURNAL__20160602__REPROCESS_GOOD_ALFDB_ESPECS
   RESTORE,inDir+winnowedFile
   RESTORE,inDir+eSpecUnparsedFile
 
-
   ;;Give 'er a check
-  CHECK_DIFF_EFLUX_INPUTS_BEFORE_BEGINNING,eSpecs,jee_out,je_out,alf_mlt,alf_ilat
+  CHECK_DIFF_EFLUX_INPUTS_BEFORE_BEGINNING,eSpecs,jee_out,je_out,alf_mlt,alf_ilat,alf_alt,alf_orbit
 
   ;;Now give everything a second run-through
   IDENTIFY_DIFF_EFLUXES_AND_CREATE_STRUCT,eSpecs,jee_out,je_out, $
                                           alf_mlt,alf_ilat, $
+                                          alf_ilat,alf_orbit, $
                                           alf_eSpecs_parsed, $
                                           SC_POT=alf_sc_pot, $
                                           ;; IND_SC_POT=ind_sc_pot, $
                                           ;; ORBSTR=orbStr, $
+                                          /HAS_ALT_AND_ORBIT, $
                                           /PRODUCE_FAILCODE_OUTPUT, $
                                           OUT_FAILCODES=failCodes, $
                                           SAVE_CHUNKS_FOR_SPEED=save_chunks_for_speed, $

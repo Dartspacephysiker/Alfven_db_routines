@@ -9,19 +9,22 @@ PRO LOAD_ALF_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec,good_eSpec_i, $
 
   COMPILE_OPT idl2
 
-  ;;This common block is defined ONLY here and in GET_H2D_NEWELLS__EACH_TYPE
+  ;;This common block is defined ONLY here, GET_ESPEC_ION_DB_IND, and in GET_H2D_NEWELLS__EACH_TYPE
   IF ~KEYWORD_SET(nonMem) THEN BEGIN
-     COMMON NWLL_ALF,NWLL_ALF__eSpec, $
+     COMMON NWLL_ALF,NWLL_ALF__eSpec,NWLL_ALF__HAVE_GOOD_I, $
         NWLL_ALF__good_eSpec_i, $
         NWLL_ALF__good_alf_i, $
         NWLL_ALF__failCodes, $
         NWLL_ALF__despun, $
-        NWLL_ALF__dbFile,NWLL_ALF__dbDir
+        NWLL_ALF__dbFile,NWLL_ALF__dbDir, $
+        NWLL_ALF__RECALCULATE
   ENDIF
 
   defNewellDBDir         = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/fully_parsed/'
-  defNewellDBFile        = 'alf_eSpec_20151222_db--TOTAL_ESPECS_FAILCODES__Orbs_500-16361--20160603.sav'
-  defNewellDespunDBFile  = 'alf_eSpec_20160508_db--despun--TOTAL_ESPECS_FAILCODES__Orbs_502-16361--20160603.sav'
+  ;; defNewellDBFile        = 'alf_eSpec_20151222_db--TOTAL_ESPECS_FAILCODES__Orbs_500-16361--20160603.sav'
+  ;; defNewellDespunDBFile  = 'alf_eSpec_20160508_db--despun--TOTAL_ESPECS_FAILCODES__Orbs_502-16361--20160603.sav'
+  defNewellDBFile        = 'alf_eSpec_20151222_db--TOTAL_ESPECS_FAILCODES__Orbs_500-16361--20160609.sav'
+  defNewellDespunDBFile  = 'alf_eSpec_20160508_db--despun--TOTAL_ESPECS_FAILCODES__Orbs_502-16361--20160609.sav'
 
   IF N_ELEMENTS(lun) EQ 0 THEN BEGIN
      lun                 = -1
@@ -84,7 +87,10 @@ PRO LOAD_ALF_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec,good_eSpec_i, $
      ;;    eSpec         = eSpec_culled
      ;; ENDIF ELSE BEGIN
         PRINTF,lun,'Loading eSpec DB: ' + NewellDBDir+NewellDBFile + '...'
-        restore,NewellDBDir+NewellDBFile
+        RESTORE,NewellDBDir+NewellDBFile
+
+        PRINT,"Converting Alfven DB to strict Newell interpretation ..."
+        CONVERT_ESPEC_TO_STRICT_NEWELL_INTERPRETATION,eSpec,eSpec,/HUGE_STRUCTURE
      ;; ENDELSE
   ENDIF ELSE BEGIN
      PRINTF,lun,'eSpec DB already loaded! Not restoring ' + NewellDBFile + '...'

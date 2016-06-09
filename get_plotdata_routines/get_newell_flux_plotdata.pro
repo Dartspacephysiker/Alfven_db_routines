@@ -127,9 +127,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      IF tmp_i[0] EQ -1 THEN CONTINUE
 
      ;;Need to provide a new h2dFluxN and a new mask for each of these
-     GET_H2D_NEVENTS_AND_MASK, $ ;maximus,tmp_i, $
-                             IN_MLTS=nonAlfven_mlt[tmp_i], $
-                             IN_ILATS=nonAlfven_ilat[tmp_i], $
+     GET_H2D_NEVENTS_AND_MASK,maximus,tmp_i, $
+                             IN_MLTS=KEYWORD_SET(nonAlfven_mlt) ? nonAlfven_mlt[tmp_i] : !NULL, $
+                             IN_ILATS=KEYWORD_SET(nonAlfven_ilat) ? nonAlfven_ilat[tmp_i] : !NULL, $
                              MINM=minM,MAXM=maxM, $
                              BINM=binM, $
                              SHIFTM=shiftM, $

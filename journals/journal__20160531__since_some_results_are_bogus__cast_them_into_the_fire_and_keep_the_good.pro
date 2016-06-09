@@ -4,6 +4,7 @@ PRO JOURNAL__20160531__SINCE_SOME_RESULTS_ARE_BOGUS__CAST_THEM_INTO_THE_FIRE_AND
   COMPILE_OPT IDL2
 
   despun                    = 1
+  inTimeSeriesFDate         = '20160609'
 
   IF KEYWORD_SET(despun) THEN BEGIN
      despunStr              = '--despun'
@@ -42,7 +43,6 @@ PRO JOURNAL__20160531__SINCE_SOME_RESULTS_ARE_BOGUS__CAST_THEM_INTO_THE_FIRE_AND
                                      todayStr)
 
   ;;Use this for orbs
-  inTimeSeriesFDate         = '20160603'
   inTimeSeriesFile        = STRING(FORMAT='("eSpec_",A0,"_db--TIME_SERIES_AND_ORBITS--Orbs_",I0,"-",I0,".sav")', $
                                    inTimeSeriesFDate, $
                                    firstOrb, $

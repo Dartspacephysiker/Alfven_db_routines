@@ -4,6 +4,7 @@ PRO JOURNAL__20160602__STRING_TOGETHER_CHUNKED_REPROCESSED_ALFDB_ESPECS
   COMPILE_OPT IDL2
 
   has_failcodes             = 1
+  despun                    = 1
 
   IF has_failcodes THEN BEGIN
      failCodes_string = 'failCodes_'
@@ -11,9 +12,7 @@ PRO JOURNAL__20160602__STRING_TOGETHER_CHUNKED_REPROCESSED_ALFDB_ESPECS
      failCodes_string = ''
   ENDELSE
 
-  despun                    = 1
-
-  date_for_inputs           = '20160603'
+  date_for_inputs           = '20160609'
 
   IF KEYWORD_SET(despun) THEN BEGIN
      despunStr              = '--despun'
@@ -49,7 +48,7 @@ PRO JOURNAL__20160602__STRING_TOGETHER_CHUNKED_REPROCESSED_ALFDB_ESPECS
                                      despunStr, $
                                      firstDBOrb, $
                                      lastOrb, $
-                                     todayStr)
+                                     date_for_inputs)
 
 
   TOTALGLORY                = STRING(FORMAT='("alf_eSpec_",A0,"_db",A0,"--TOTAL_ESPECS_",A0,"_Orbs_",I0,"-",I0,"--",A0,".sav")', $
@@ -66,7 +65,7 @@ PRO JOURNAL__20160602__STRING_TOGETHER_CHUNKED_REPROCESSED_ALFDB_ESPECS
      startSpectra             = chunk_save_interval*iChunk + 1
      stopSpectra              = ( chunk_save_interval*(iChunk + 1) < totNSpectra )
 
-     chunkTempFName  = STRING(FORMAT='(A0,"--CHUNK_",I0,"--eSpecs_",A0,I0,"-",I0,".sav")',chunk_saveFile_pref,iChunk, $
+     chunkTempFName  = STRING(FORMAT='(A0,"--CHUNK_",I02,"--eSpecs_",A0,I0,"-",I0,".sav")',chunk_saveFile_pref,iChunk, $
                               failCodes_string,startSpectra,stopSpectra)
 
      failCodes_final          = !NULL
@@ -74,7 +73,7 @@ PRO JOURNAL__20160602__STRING_TOGETHER_CHUNKED_REPROCESSED_ALFDB_ESPECS
      RESTORE,chunkDir+chunkTempFName
 
      
-     ADD_EVENT_TO_SPECTRAL_STRUCT,eSpec,events_final
+     ADD_EVENT_TO_SPECTRAL_STRUCT,eSpec,events_final,/HAS_ALT_AND_ORBIT
      IF KEYWORD_SET(has_failCodes) THEN ADD_ESPEC_FAILCODES_TO_FAILCODE_STRUCT,failCodes,failCodes_final
      
 
