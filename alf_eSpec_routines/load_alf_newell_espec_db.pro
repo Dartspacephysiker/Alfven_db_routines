@@ -17,6 +17,7 @@ PRO LOAD_ALF_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec,good_eSpec_i, $
         NWLL_ALF__failCodes, $
         NWLL_ALF__despun, $
         NWLL_ALF__dbFile,NWLL_ALF__dbDir, $
+        NEWELL_I__charERange, $
         NWLL_ALF__RECALCULATE
   ENDIF
 

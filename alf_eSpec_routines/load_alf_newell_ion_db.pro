@@ -16,7 +16,10 @@ PRO LOAD_ALF_NEWELL_ION_DB, $ ;iSpec, $
         NWLL_ALF_I__good_iSpec_i, $
         NWLL_ALF_I__good_alf_i, $
         NWLL_ALF_I__despun, $
-        NWLL_ALF_I__dbFile,NWLL_ALF_I__dbDir
+        NWLL_ALF_I__cleaned_i, $
+        NWLL_ALF_I__dbFile,NWLL_ALF_I__dbDir, $
+        NEWELL_I__charIERange, $
+        NWLL_ALF_I__RECALCULATE
   ENDIF
 
   defNewellDBDir         = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/'
