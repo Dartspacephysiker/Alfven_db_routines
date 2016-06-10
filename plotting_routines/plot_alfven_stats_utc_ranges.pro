@@ -165,7 +165,12 @@
 
 PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-                                 ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, POYNTRANGE=poyntRange, NUMORBLIM=numOrbLim, $
+                                 ORBRANGE=orbRange, $
+                                 ALTITUDERANGE=altitudeRange, $
+                                 CHARERANGE=charERange, $
+                                 CHARIERANGE=charIERange, $
+                                 POYNTRANGE=poyntRange, $
+                                 NUMORBLIM=numOrbLim, $
                                  MINMLT=minM,MAXMLT=maxM, $
                                  BINMLT=binM, $
                                  SHIFTMLT=shiftM, $
@@ -417,6 +422,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
      GET_NONALFVEN_FLUX_DATA,plot_i, $
                              FOR_STORMS=nonAlfven_for_storms, $
                              NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
+                             DESPUN_ALF_DB=do_despunDB, $
                              T1_ARR=t1_arr,T2_ARR=t2_arr, $
                              EPLOTS=ePlots, $
                              EFLUXPLOTTYPE=eFluxPlotType, $
@@ -436,7 +442,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              ION__ILATS=ion__ilats, $
                              ORBRANGE=orbRange, $
                              ALTITUDERANGE=altitudeRange, $
-                             ;; CHARERANGE=charERange, $
+                             CHARERANGE=charERange, $
+                             CHARIERANGE=charIERange, $
                              BOTH_HEMIS=both_hemis, $
                              NORTH=north, $
                              SOUTH=south, $
