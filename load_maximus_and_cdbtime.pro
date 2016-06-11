@@ -41,7 +41,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   IF N_ELEMENTS(correct_fluxes) EQ 0 THEN correct_fluxes = 1
 
   IF KEYWORD_SET(force_load_both) THEN BEGIN
-     PRINTF,lun,"Forcing load of maximus and cdbTime..."
+     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"Forcing load of maximus and cdbTime..."
      force_load_maximus = 1
      force_load_cdbtime = 1
   ENDIF
@@ -66,7 +66,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      AND ~KEYWORD_SET(check_DB) $
   THEN BEGIN
      IF N_ELEMENTS(MAXIMUS__maximus) NE 0 THEN BEGIN
-        PRINTF,lun,'Swapping DBs!'
+        IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'Swapping DBs!'
      ENDIF
      swap_DBs = 1
   ENDIF ELSE BEGIN
@@ -80,7 +80,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
         AND ~KEYWORD_SET(check_DB) $
      THEN BEGIN
         IF N_ELEMENTS(MAXIMUS__maximus) NE 0 THEN BEGIN
-           PRINTF,lun,'Swapping DBs!'
+           IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'Swapping DBs!'
         ENDIF
         swap_DBs = 1
      ENDIF ELSE BEGIN
@@ -100,7 +100,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
         DBDir = defDBDir
         DBFile = defDespunDBFile
         DB_tFile = defDespunDB_tFile
-        PRINTF,lun,"Doing despun DB!"
+        IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"Doing despun DB!"
         MAXIMUS__despun = 1
      ENDIF ELSE BEGIN
         IF N_ELEMENTS(DBDir) EQ 0 THEN DBDir = DefDBDir
@@ -114,7 +114,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      KEYWORD_SET(force_load_maximus)   OR $
      KEYWORD_SET(swap_DBs) THEN BEGIN
      IF KEYWORD_SET(force_load_maximus) THEN BEGIN
-        PRINTF,lun,"Forcing load, whether or not we already have maximus..."
+        IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"Forcing load, whether or not we already have maximus..."
      ENDIF
      IF FILE_TEST(DBDir+DBFile) THEN BEGIN
         IF ~KEYWORD_SET(just_cdbTime) THEN BEGIN
@@ -131,7 +131,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
         STOP
      ENDIF
   ENDIF ELSE BEGIN
-     PRINTF,lun,"There is already a maximus struct loaded! Not loading " + DBFile
+     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"There is already a maximus struct loaded! Not loading " + DBFile
      DBFile   = MAXIMUS__dbFile
      DB_tFile = MAXIMUS__dbTimesFile
      despunDB = MAXIMUS__despun
@@ -141,7 +141,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      KEYWORD_SET(force_load_cdbTime) OR $
      KEYWORD_SET(swap_DBs) THEN BEGIN
      IF KEYWORD_SET(force_load_cdbTime) THEN BEGIN
-        PRINTF,lun,"Forcing load, whether or not we already have cdbTime..."
+        IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"Forcing load, whether or not we already have cdbTime..."
      ENDIF
      IF FILE_TEST(DBDir+DB_tFile) AND ~KEYWORD_SET(just_maximus) THEN RESTORE,DBDir+DB_tFile
      IF cdbTime EQ !NULL AND ~KEYWORD_SET(just_maximus) THEN BEGIN
@@ -151,7 +151,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      MAXIMUS__times  = cdbTime
      MAXIMUS__dbTimesFile = DB_tFile
   ENDIF ELSE BEGIN
-     PRINTF,lun,"There is already a cdbTime struct loaded! Not loading " + DB_tFile
+     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"There is already a cdbTime struct loaded! Not loading " + DB_tFile
      DB_tFile = MAXIMUS__dbTimesFile
   ENDELSE
 

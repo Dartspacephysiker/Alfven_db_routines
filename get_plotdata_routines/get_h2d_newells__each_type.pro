@@ -37,9 +37,12 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
      NWLL_ALF__dbFile, $
      NWLL_ALF__dbDir, $
      NWLL_ALF__RECALCULATE
-     
+  
+  COMMON M_VARS
 
-  LOAD_MAXIMUS_AND_CDBTIME,!NULL,!NULL,DO_DESPUNDB=despun,/CHECK_DB
+  despun       = MAXIMUS__despun
+
+  ;; LOAD_MAXIMUS_AND_CDBTIME,!NULL,!NULL,DO_DESPUNDB=despun,/CHECK_DB,/QUIET
 
   IF N_ELEMENTS(NWLL_ALF__eSpec) EQ 0 OR N_ELEMENTS(NWLL_ALF__good_alf_i) EQ 0 THEN BEGIN
      LOAD_ALF_NEWELL_ESPEC_DB,espec,good_alf_i,DESPUN_ALF_DB=despun
@@ -53,9 +56,10 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
 
 
   tmp_eSpec           = { x:eSpec.x[temp_eSpec_indices], $
-                          ;; orbit:eSpec.orbit[temp_eSpec_indices], $
+                          orbit:eSpec.orbit[temp_eSpec_indices], $
                           MLT:eSpec.mlt[temp_eSpec_indices], $
                           ILAT:eSpec.ilat[temp_eSpec_indices], $
+                          ALT:eSpec.alt[temp_eSpec_indices], $
                           mono:eSpec.mono[temp_eSpec_indices], $
                           broad:eSpec.broad[temp_eSpec_indices], $
                           diffuse:eSpec.diffuse[temp_eSpec_indices], $
@@ -131,17 +135,38 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
      dataRawPtrs  = [dataRawPtrs,dataRawPtr]
 
   ENDFOR
-
+  
+  ;;Get denom, if probOccurrence
   IF KEYWORD_SET(newellPlot_probOccurrence) THEN BEGIN
-     denom        = h2dStrs[0].data +h2dStrs[1].data+h2dStrs[2].data
-     tmp_div_i    = WHERE(denom GT 0)
-     IF tmp_div_i[0] EQ -1 THEN STOP
-     FOR i=0,nPlots-1 DO BEGIN
+
+     ;;Get the data
+     GET_NEWELL_PROBOCCURRENCE,h2dStrs, $
+                                   OUT_H2D_LIST=tmp_H2D_list
+     FOR i=0,N_ELEMENTS(h2dStrs)-1 DO BEGIN
+        h2dStrs[i].data = tmp_H2D_list[i]
+     ENDFOR
+
+     ;;Fix range if it's bogus
+     IF KEYWORD_SET(newell_plotRange) AND N_ELEMENTS(newell_plotRange) EQ 2 THEN BEGIN
+        IF newell_plotRange[0] GE 1 THEN newell_plotRange[0] = 0.
+        IF newell_plotRange[1] GE 1 THEN newell_plotRange[1] = 1.
+     ENDIF
+  ENDIF
+
+  ;;Calculate stuff, set up lims, names, etc
+  FOR i=0,nPlots-1 DO BEGIN
+     IF KEYWORD_SET(newellPlot_probOccurrence) THEN BEGIN
         
-        h2dStrs[i].data[tmp_div_i] = h2dStrs[i].data[tmp_div_i]/FLOAT(denom[tmp_div_i])
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;Now handle label stuff
+        dataNames[i]     = dataNames[i]     + "_probOcc"
+        h2dStrs[i].title = h2dStrs[i].title + " (Prob. Occ.)"
+        h2dStrs[i].name  = dataNames[i]
+
         h2dStrs[i].lim             = KEYWORD_SET(newell_plotRange) AND N_ELEMENTS(newell_plotRange) EQ 2 ? $
                                      DOUBLE(newell_plotRange) : $
                                      DOUBLE([0,1]) 
+
         IF KEYWORD_SET(log_newellPlot) THEN BEGIN
            dataNames[i]     = 'log_' + dataNames[i]
            h2dStrs[i].data[newell_nonzero_nev_i_list[i]] = ALOG10(h2dStrs[i].data[newell_nonzero_nev_i_list[i]])
@@ -160,7 +185,57 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
            h2dStrs[i].name      = dataNames[i]
         ENDIF
 
-     ENDFOR
-  ENDIF
+     ENDIF ELSE BEGIN
+
+        IF KEYWORD_SET(log_newellPlot) THEN BEGIN
+           dataNames[i]         = 'log_' + dataNames[i]
+           h2dStrs[i].data[newell_nonzero_nEv_i_list[i]] = ALOG10(h2dStrs[i].data[newell_nonzero_nEv_i_list[i]])
+           h2dStrs[i].lim       = [(h2dStrs[i].lim[0] LT 1) ? 0 : ALOG10(h2dStrs[i].lim[0]),ALOG10(h2dStrs[i].lim[1])] ;lower bound must be one
+           h2dStrs[i].title     = 'Log ' + h2dStrs[i].title
+           h2dStrs[i].name      = dataName
+           h2dStrs[i].is_logged = 1
+        ENDIF
+
+        CASE 1 OF
+           KEYWORD_SET(newellPlot_normalize): BEGIN ;Normalize?
+              dataName        += '_normed'
+              maxNEv               = MAX(h2dStrs[i].data[newell_nonzero_nEv_i_list[i]])
+              h2dStrs[i].data      = h2dStrs[i].data/maxNEv
+              h2dStrs[i].lim       = [0.0,1.0]
+              h2dStrs[i].title    += STRING(FORMAT='(" (norm: ",G0.3,")")',maxNEv)
+              h2dStrs[i].name      = dataName
+           END
+           KEYWORD_SET(newellPlot_autoscale): BEGIN ;Autoscale?
+              PRINT,"Autoscaling newellPlot: " + dataNames[i] + "..."
+              h2dStrs[i].lim       = [MIN(h2dStrs[i].data[newell_nonzero_nEv_i_list[i]]), $
+                                      MAX(h2dStrs[i].data[newell_nonzero_nEv_i_list[i]])]
+           END
+           ELSE:
+        ENDCASE
+     ENDELSE
+
+
+
+     IF KEYWORD_SET(print_mandm) THEN BEGIN
+        ;; IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
+        fmt                     = 'G10.4' 
+        maxh2d                  = MAX(h2dStrs[i].data[newell_nonzero_nEv_i_list[i]])
+        minh2d                  = MIN(h2dStrs[i].data[newell_nonzero_nEv_i_list[i]])
+        ;; ENDIF ELSE BEGIN
+        ;;    fmt    = 'F10.2'
+        ;;    maxh2d = ALOG10(MAX(h2dStrs[i].data[newell_nonzero_nEv_i_list[i]]))
+        ;;    minh2d = ALOG10(MIN(h2dStrs[i].data[newell_nonzero_nEv_i_list[i]]))
+        ;; ENDELSE
+        PRINTF,lun,h2dStrs[i].title
+        PRINTF,lun,FORMAT='("Max, min:",T20,' + fmt + ',T35,' + fmt + ')', $
+               maxh2d, $
+               minh2d
+     ENDIF
+
+
+  ENDFOR
+
+
+
 
 END
