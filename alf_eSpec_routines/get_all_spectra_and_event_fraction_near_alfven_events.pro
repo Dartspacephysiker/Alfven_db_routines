@@ -3,11 +3,18 @@ PRO GET_ALL_SPECTRA_AND_EVENT_FRACTION_NEAR_ALFVEN_EVENTS
 
   COMPILE_OPT IDL2
 
+  despun                        = 0
+
   startStopDir                  = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
-  startStopFile                 = 'alfven_startstop_maxJ_times--500-16361_inc_lower_lats--burst_1000-16361.sav'
+  IF KEYWORD_SET(despun) THEN BEGIN
+     startStopFile              = 'alfven_startstop_maxJ_times--502-16361_despun--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
+  ENDIF ELSE BEGIN
+     startStopFile              = 'alfven_startstop_maxJ_times--500-16361_inc_lower_lats--burst_1000-16361.sav'
+  ENDELSE
   RESTORE,startStopDir+startStopFile
 
   LOAD_ALF_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec,good_eSpec_i,/DONT_LOAD_IN_MEMORY, $
+                           DESPUN_ALF_DB=despun, $
                            NEWELLDBFILE=NewellDBFile, $
                            NEWELLDBDIR=NewellDBDir
   outFile                       = STRMID(NewellDBFile,0,STRPOS(newelldbfile,'TOTAL')) + $

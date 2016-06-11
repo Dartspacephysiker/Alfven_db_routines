@@ -27,6 +27,8 @@ PRO LOAD_ALF_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec,good_eSpec_i, $
   defNewellDBDir         = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/fully_parsed/'
   ;; defNewellDBFile        = 'alf_eSpec_20151222_db--TOTAL_ESPECS_FAILCODES__Orbs_500-16361--20160603.sav'
   ;; defNewellDespunDBFile  = 'alf_eSpec_20160508_db--despun--TOTAL_ESPECS_FAILCODES__Orbs_502-16361--20160603.sav'
+
+  ;;The files with failcodes
   defNewellDBFile        = 'alf_eSpec_20151222_db--TOTAL_ESPECS_FAILCODES__Orbs_500-16361--20160609.sav'
   defNewellDespunDBFile  = 'alf_eSpec_20160508_db--despun--TOTAL_ESPECS_FAILCODES__Orbs_502-16361--20160609.sav'
 
@@ -93,8 +95,8 @@ PRO LOAD_ALF_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec,good_eSpec_i, $
         PRINTF,lun,'Loading eSpec DB: ' + NewellDBDir+NewellDBFile + '...'
         RESTORE,NewellDBDir+NewellDBFile
 
-        PRINT,"Converting Alfven DB to strict Newell interpretation ..."
-        CONVERT_ESPEC_TO_STRICT_NEWELL_INTERPRETATION,eSpec,eSpec,/HUGE_STRUCTURE
+        PRINT,"Converting Alfvén eSpec DB to strict Newell interpretation ..."
+        CONVERT_ESPEC_TO_STRICT_NEWELL_INTERPRETATION,eSpec,eSpec,/HUGE_STRUCTURE,/VERBOSE
      ;; ENDELSE
   ENDIF ELSE BEGIN
      PRINTF,lun,'eSpec DB already loaded! Not restoring ' + NewellDBFile + '...'

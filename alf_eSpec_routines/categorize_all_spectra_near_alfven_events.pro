@@ -3,26 +3,50 @@ PRO CATEGORIZE_ALL_SPECTRA_NEAR_ALFVEN_EVENTS
 
   COMPILE_OPT IDL2
 
+  despun                        = 0
+  killed_befs_afts              = 1
+
   LOAD_ALF_NEWELL_ESPEC_DB,!NULL,alf_i__good_eSpec,/DONT_LOAD_IN_MEMORY, $
+                           DESPUN_ALF_DB=despun, $
                            NEWELLDBFILE=NewellDBFile, $
                            NEWELLDBDIR=NewellDBDir
+
+  IF KEYWORD_SET(despun) THEN BEGIN
+     dbDate                     = '20160611'
+     IF KEYWORD_SET(killed_befs_afts) THEN BEGIN
+        ;; dbDate                  = '20160606'
+        killedStr               = 'killed_befs_afts--'
+     ENDIF ELSE BEGIN
+        ;; dbDate                  = '20160604'
+        killedStr               = ''
+     ENDELSE
+  ENDIF ELSE BEGIN
+     IF KEYWORD_SET(killed_befs_afts) THEN BEGIN
+        dbDate                  = '20160606'
+        killedStr               = 'killed_befs_afts--'
+     ENDIF ELSE BEGIN
+        dbDate                  = '20160604'
+        killedStr               = ''
+     ENDELSE
+  ENDELSE
+
   nToCheck                      = N_ELEMENTS(alf_i__good_eSpec)
   alf_i__good_eSpec             = !NULL
   eSpec                         = !NULL
 
   inFile                        = STRMID(NewellDBFile,0,STRPOS(newelldbfile,'TOTAL')) + $
-                                  'all_good_alf_eSpec_i--' + $
-                                  ;; 'all_good_alf_eSpec_i--killed_befs_afts--' + $
+                                  ;; 'all_good_alf_eSpec_i--' + $
+                                  'all_good_alf_eSpec_i--' + killedStr + $
                                   STRMID(NewellDBFile,STRPOS(NewellDBFile,'Orbs_'),STRPOS(NewellDBFile,'2016')-STRPOS(NewellDBFile,'Orbs_')) + $
                                   ;; GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + $
-                                  '20160604' + $
-                                  '.sav'
-  outFile                       = STRMID(NewellDBFile,0,STRPOS(newelldbfile,'TOTAL')) + $
-                      'all_good_alf_eSpec_i--CATEGORIZED--' + $
-                      ;; 'all_good_alf_eSpec_i--killed_befs_afts--CATEGORIZED--' + $
-                      STRMID(NewellDBFile,STRPOS(NewellDBFile,'Orbs_'),STRPOS(NewellDBFile,'2016')-STRPOS(NewellDBFile,'Orbs_')) + $
-                      GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '.sav'
+                                  dbDate + '.sav'
 
+  outFile                       = STRMID(NewellDBFile,0,STRPOS(newelldbfile,'TOTAL')) + $
+                                  'all_good_alf_eSpec_i--' + killedStr + 'CATEGORIZED--' + $
+                                  ;; 'all_good_alf_eSpec_i--killed_befs_afts--CATEGORIZED--' + $
+                                  STRMID(NewellDBFile,STRPOS(NewellDBFile,'Orbs_'),STRPOS(NewellDBFile,'2016')-STRPOS(NewellDBFile,'Orbs_')) + $
+                                  GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '.sav'
+  
   ;;Load up all specs
   LOAD_NEWELL_ESPEC_DB,eSpec,/DONT_LOAD_IN_MEMORY
   CONVERT_ESPEC_TO_STRICT_NEWELL_INTERPRETATION,eSpec,eSpec_interp,/HUGE_STRUCTURE,/VERBOSE
