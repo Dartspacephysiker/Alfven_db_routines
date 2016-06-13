@@ -67,7 +67,7 @@ PRO JOURNAL__20160602__REPROCESS_GOOD_ALFDB_ESPECS
                                           ;; IND_SC_POT=ind_sc_pot, $
                                           ;; ORBSTR=orbStr, $
                                           /HAS_ALT_AND_ORBIT, $
-                                          /PRODUCE_FAILCODE_OUTPUT, $
+                                          ;; /PRODUCE_FAILCODE_OUTPUT, $
                                           OUT_FAILCODES=failCodes, $
                                           SAVE_CHUNKS_FOR_SPEED=save_chunks_for_speed, $
                                           CHUNK_SAVE_INTERVAL=chunk_save_interval, $
