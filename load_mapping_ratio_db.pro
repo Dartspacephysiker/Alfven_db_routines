@@ -12,7 +12,8 @@ PRO LOAD_MAPPING_RATIO_DB,mapRatio, $
   defDBDir             = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
 
   defDBFile            = 'mapratio_for_20151014_DB--up_to16361--20151221.dat'
-  defDespunDBFile      = 'mapratio_for_20160107_despun_DB--up_to16361--20160109.dat'
+  ;; defDespunDBFile      = 'mapratio_for_20160107_despun_DB--up_to16361--20160109.dat'
+  defDespunDBFile      = 'mapratio_for_20160508_despun_DB--up_to16361--20160613.dat'
 
   IF N_ELEMENTS(DBDir) EQ 0 THEN DBDir = DefDBDir
 

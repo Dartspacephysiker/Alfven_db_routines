@@ -9,13 +9,16 @@ PRO COMBINE_MAPPING_RATIO_FILES__DESPUN_DB,mapRatio,LUN=lun
   maxOrb               = 16361
 
   outDir               = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
-  outFile              = outDir + 'mapratio_for_20160107_despun_DB--up_to' + $
+  ;; outFile              = outDir + 'mapratio_for_20160107_despun_DB--up_to' + $
+  ;;                        STRCOMPRESS(maxOrb,/REMOVE_ALL) + '--' + date + '.dat'
+  outFile              = outDir + 'mapratio_for_20160508_despun_DB--up_to' + $
                          STRCOMPRESS(maxOrb,/REMOVE_ALL) + '--' + date + '.dat'
 
-  batchDir             = '/SPENCEdata/software/sdt/batch_jobs/map_Poyntingflux__20151217/output__despundb_20160107/'
+  ;; batchDir             = '/SPENCEdata/software/sdt/batch_jobs/map_Poyntingflux__20151217/output__despundb_20160107/'
+  batchDir             = '/SPENCEdata/software/sdt/batch_jobs/map_Poyntingflux__20151217/output__despundb_20160611/'
   filePref             = 'mapping_ratio--orb_'
 
-  load_maximus_and_cdbtime,maximus,/DO_DESPUNDB
+  LOAD_MAXIMUS_AND_CDBTIME,maximus,/DO_DESPUNDB
 
   uniqOrbs             = maximus.orbit[UNIQ(maximus.orbit)]
 
@@ -23,7 +26,8 @@ PRO COMBINE_MAPPING_RATIO_FILES__DESPUN_DB,mapRatio,LUN=lun
 
      tempOrb           = uniqOrbs[i]
      tempOrbStr        = STRCOMPRESS(tempOrb,/REMOVE_ALL)
-     tempFile          = batchDir+filePref+tempOrbStr
+     ;; tempFile          = batchDir+filePref+tempOrbStr
+     tempFile          = batchDir+filePref+tempOrbStr+'.sav'
      temp_i            = WHERE(maximus.orbit EQ tempOrb)
      nTemp             = N_ELEMENTS(temp_i)
 
