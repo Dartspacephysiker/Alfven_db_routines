@@ -138,8 +138,14 @@ title__alfDB_esa_nFlux_integ = 'Integ. e!U-!N Flux (' + intEnergyFluxStr + ')' +
 ;;Gross rates
 title__alfDB_esa_nFlux_grossRate = 'e!U-!N Number Deposition (' + numGrossStr + ')' + ionosphString                      ;"ESA_Number_flux"
 title__alfDB_ind_10_grossRate = 'e!U-!N Energy Deposition (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
+title__alfDB_ind_11_grossRate = 'Total Alfic e!U-!N Energy Deposition (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
 title__alfDB_ind_18_grossRate = 'Upflowing Ions (' + numGrossStr + ')' + ionosphString        ;"Integ_Up"
 title__alfDB_ind_49_grossRate = 'Wave Energy Deposition  (' + energyGrossStr + ')' + ionosphString
+
+;;The non-Alfvens
+title__alfDB_ind_10__nonAlfvenic__grossRate = 'e!U-!N Energy Deposition, every type (' + energyGrossStr + ')' + ionosphString      ;"nonAlfvenic eSpec stuff
+title__alfDB_esa_nFlux__nonAlfvenic__grossRate = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + numGrossStr + ')' + ionosphString    ;"ESA_Number_flux"
+title__alfDB_ind_18__nonAlfvenic__grossRate = 'Non-' + alficStr + ' Upward Ion Flux (' + numGrossStr + ')' + ionosphString          ;"Integ_Up"
 
 ;;Divided by width_x
 title__alfDB_ind_10__div_by_width_x  = 'Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"

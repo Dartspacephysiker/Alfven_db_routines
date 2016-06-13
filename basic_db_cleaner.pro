@@ -7,7 +7,8 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
                           CLEAN_NANS_AND_INFINITIES=clean_nans_and_infinities, $
                           DO_LSHELL=DO_lshell, $
                           USING_HEAVIES=using_heavies, $
-                          DO_CHASTDB=do_ChastDB
+                          DO_CHASTDB=do_ChastDB, $
+                          FOR_ESPEC_DBS=for_eSpec_dbs
   
   COMPILE_OPT idl2
 
@@ -19,7 +20,10 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
   IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
   
   @alfven_db_cleaner_defaults.pro
-  
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     sample_t_hcutoff = 5.00
+  ENDIF  
+
   IF KEYWORD_SET(clean_nans_and_infinities) THEN BEGIN
      dbTags = tag_names(dbStruct)
      IF is_maximus THEN BEGIN

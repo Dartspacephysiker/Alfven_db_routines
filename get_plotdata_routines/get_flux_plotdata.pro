@@ -67,6 +67,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                       INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $
                       NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
+                      NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
                       NONALFVEN_MLT=nonAlfven_mlt, $
                       NONALFVEN_ILAT=nonAlfven_ilat, $
                       DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
@@ -152,6 +153,70 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
         END
+        STRUPCASE(fluxplottype) EQ STRUPCASE("eflux_losscone_integ"): BEGIN
+           h2dStr.title     = title__alfDB_ind_10
+           inData           = maximus.eflux_losscone_integ[tmp_i] 
+           can_div_by_w_x   = 1
+           can_mlt_by_w_x   = 0
+           IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+              h2dStr.title  = title__alfDB_ind_10__div_by_width_x
+              ;; dataName     += '__div_by_width_x'
+              LOAD_MAPPING_RATIO_DB,mapRatio, $
+                                    DO_DESPUNDB=maximus.despun
+              magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
+           ENDIF
+
+           IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
+              h2dStr.title  = title__alfDB_ind_10 + '(time-averaged)'
+           ENDIF
+
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+                    h2dStr.title = title__alfDB_ind_10_grossRate
+                    grossConvFactor = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 END
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    h2dStr.title = title__alfDB_ind_10_grossRate + '(long. wid.)'
+                    grossConvFactor = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+                 END
+                 ELSE: BEGIN
+                 END
+              ENDCASE
+           ENDIF
+        END
+        STRUPCASE(fluxplottype) EQ STRUPCASE("total_eflux_integ"): BEGIN
+           h2dStr.title     = title__alfDB_ind_11
+           inData           = maximus.total_eflux_integ[tmp_i] 
+           can_div_by_w_x   = 1
+           can_mlt_by_w_x   = 0
+           IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+              h2dStr.title  = title__alfDB_ind_11__div_by_width_x
+              ;; dataName     += '__div_by_width_x'
+              LOAD_MAPPING_RATIO_DB,mapRatio, $
+                                    DO_DESPUNDB=maximus.despun
+              magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
+           ENDIF
+
+           IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
+              h2dStr.title  = title__alfDB_ind_11 + '(time-averaged)'
+           ENDIF
+
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+                    h2dStr.title = title__alfDB_ind_11_grossRate
+                    grossConvFactor = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 END
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    h2dStr.title = title__alfDB_ind_11_grossRate + '(long. wid.)'
+                    grossConvFactor = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+                 END
+                 ELSE: BEGIN
+                 END
+              ENDCASE
+           ENDIF
+        END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Max"): BEGIN
            h2dStr.title     = title__alfDB_ind_08
            inData           = maximus.elec_energy_flux[tmp_i]
@@ -162,14 +227,32 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            h2dStr.title     = title__alfDB_ind_10__nonAlfvenic
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            nonAlfvenic      = 1
-           tmp_i            = indices__nonAlfven_eSpec
+           ;; tmp_i            = indices__nonAlfven_eSpec
            inData           = eFlux_nonAlfven_data[tmp_i]
            can_div_by_w_x   = 0
-           can_mlt_by_w_x   = 0
+           can_mlt_by_w_x   = 1
 
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+                    h2dStr.title = title__alfDB_ind_10__nonAlfvenic__grossRate
+                    grossConvFactor = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 END
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    h2dStr.title = title__alfDB_ind_10__nonAlfvenic__grossRate + '(long. wid.)'
+                    grossConvFactor = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+                 END
+                 ELSE: BEGIN
+                 END
+              ENDCASE
+           ENDIF
            IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
               fluxPlotType += '--candidates_removed'
-           ENDIF
+           ENDIF ELSE BEGIN
+              IF KEYWORD_SET(nonAlfven__all_fluxes) THEN BEGIN
+                 fluxPlotType += '--all_fluxes'
+              ENDIF
+           ENDELSE
         END
      ENDCASE
   ENDIF
@@ -290,16 +373,34 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            tmp_i            = indices__nonAlfven_eSpec
            inData           = eNumFlux_nonAlfven_data[tmp_i]
            can_div_by_w_x   = 0
-           can_mlt_by_w_x   = 0
+           can_mlt_by_w_x   = 1
+
 
            IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
               fluxPlotType += '--candidates_removed'
+           ENDIF ELSE BEGIN
+              IF KEYWORD_SET(nonAlfven__all_fluxes) THEN BEGIN
+                 fluxPlotType += '--all_fluxes'
+              ENDIF
+           ENDELSE
+
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+                    h2dStr.title    = title__alfDB_esa_nFlux__nonAlfvenic__grossRate
+                    grossConvFactor = 1e10 ;Areas are given in km^2, but we need them in cm^2
+                 END
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    h2dStr.title    = title__alfDB_esa_nFlux__nonAlfvenic__grossRate + '(long. wid.)'
+                    grossConvFactor = 1e5 ;Lengths given in km, but we need them in cm.
+                 END
+              ENDCASE
            ENDIF
         END
      ENDCASE
 
      IF KEYWORD_SET(multiply_by_width_x) AND can_mlt_by_w_x THEN BEGIN
-        scale_width_for_these_plots = [STRUPCASE("ESA_Number_flux")]
+        scale_width_for_these_plots = [STRUPCASE("ESA_Number_flux"),STRUPCASE("eNumFlux_nonAlfven")]
         scale_to_cm = WHERE(STRUPCASE(fluxPlotType) EQ scale_width_for_these_plots)
         IF scale_to_cm[0] EQ -1 THEN BEGIN
            factor = 1.D
@@ -461,6 +562,23 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
            IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
               fluxPlotType += '--candidates_removed'
+           ENDIF ELSE BEGIN
+              IF KEYWORD_SET(nonAlfven__all_fluxes) THEN BEGIN
+                 fluxPlotType += '--all_fluxes'
+              ENDIF
+           ENDELSE
+
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+                    h2dStr.title    = title__alfDB_ind_18__nonAlfvenic__grossRate
+                    grossConvFactor = 1e10 ;Areas are given in km^2, but we need them in cm^2
+                 END
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    h2dStr.title    = title__alfDB_ind_18__nonAlfvenic__grossRate + '(long. wid.)'
+                    grossConvFactor = 1e5 ;Lengths given in km, but we need them in cm.
+                 END
+              ENDCASE
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Jei_nonAlfven"): BEGIN
@@ -470,11 +588,15 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            tmp_i            = indices__nonAlfven_ion
            inData           = iFlux_nonAlfven_data[tmp_i]
            can_div_by_w_x   = 0
-           can_mlt_by_w_x   = 0
+           can_mlt_by_w_x   = 1
 
            IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
               fluxPlotType += '--candidates_removed'
-           ENDIF
+           ENDIF ELSE BEGIN
+              IF KEYWORD_SET(nonAlfven__all_fluxes) THEN BEGIN
+                 fluxPlotType += '--all_fluxes'
+              ENDIF
+           ENDELSE
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Energy"): BEGIN
            h2dStr.title     = title__alfDB_ind_14
@@ -485,7 +607,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      ENDCASE
 
      IF KEYWORD_SET(divide_by_width_x) AND can_div_by_w_x THEN BEGIN
-        scale_width_for_these_plots = [STRUPCASE("Integ"),STRUPCASE("Max"),STRUPCASE("Max_Up"),STRUPCASE("Integ_Up")]
+        scale_width_for_these_plots = [STRUPCASE("Integ"),STRUPCASE("Max"),STRUPCASE("Max_Up"),STRUPCASE("Integ_Up"),STRUPCASE("Jei_nonAlfven")]
         scale_to_cm = WHERE(STRUPCASE(fluxPlotType) EQ scale_width_for_these_plots)
         IF scale_to_cm[0] EQ -1 THEN BEGIN
            factor           = 1.D

@@ -19,7 +19,9 @@
 ; 
 ;-
 
-FUNCTION FASTLOC_CLEANER,fastLoc,LUN=lun
+FUNCTION FASTLOC_CLEANER,fastLoc, $
+                         FOR_ESPEC_DBS=for_eSpec_DBs, $
+                         LUN=lun
 
   COMPILE_OPT idl2
 
@@ -28,8 +30,8 @@ FUNCTION FASTLOC_CLEANER,fastLoc,LUN=lun
 
   ;;First make sure fastLoc is present
   IF N_ELEMENTS(fastLoc) EQ 0 THEN BEGIN
-     printf,lun,"No such structure as fastLoc! Can't clean up FAST ephemeris DB."
-     printf,lun,"Returning..."
+     PRINTF,lun,"No such structure as fastLoc! Can't clean up FAST ephemeris DB."
+     PRINTF,lun,"Returning..."
      ;; RETURN, !NULL
      RETURN, !NULL
   ENDIF
@@ -39,19 +41,24 @@ FUNCTION FASTLOC_CLEANER,fastLoc,LUN=lun
   ;; valid_fields_modes = [ ]
 
   @alfven_db_cleaner_defaults.pro
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     sample_t_hcutoff = 5.00
+     PRINT,'Cleaning fastLoc version for eSpec DBs...'
+  ENDIF 
 
   ;**********
   ;   NaNs  *
   ;**********
 
   ;;number of events in total
-  n_events = n_elements(fastLoc.orbit)
+  n_events = N_ELEMENTS(fastLoc.orbit)
      
      
-  printf,lun,""
-  printf,lun,"****From fastloc_cleaner.pro****"
+  PRINTF,lun,""
+  PRINTF,lun,"****From fastloc_cleaner.pro****"
 
-  good_i = basic_db_cleaner(fastLoc,/CLEAN_NANS_AND_INFINITIES)
+  good_i = BASIC_DB_CLEANER(fastLoc,/CLEAN_NANS_AND_INFINITIES, $
+                            FOR_ESPEC_DBS=for_eSpec_DBs)
 
   ;******************
   ;   Other limits  *
@@ -64,8 +71,8 @@ FUNCTION FASTLOC_CLEANER,fastLoc,LUN=lun
   ;; nlost = n_events-n_elements(good_i)
   ;; printf,lun,FORMAT='("N lost to user-defined cutoffs:",T35,I0)', nlost
 
-  printf,lun,"****END fastloc_cleaner.pro****"
-  printf,lun,""
+  PRINTF,lun,"****END fastloc_cleaner.pro****"
+  PRINTF,lun,""
 
   RETURN, good_i
 
