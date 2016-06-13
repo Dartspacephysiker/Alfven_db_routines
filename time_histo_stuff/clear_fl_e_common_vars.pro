@@ -1,0 +1,16 @@
+PRO CLEAR_FL_E_COMMON_VARS
+
+  COMPILE_OPT idl2
+
+  COMMON FL_ESPEC_VARS
+
+  FL_eSpec__fastLoc       = !NULL
+  FASTLOC_E__times        = !NULL
+  FASTLOC_E__delta_t      = !NULL
+  FASTLOC_E__good_i       = !NULL
+  FASTLOC_E__cleaned_i    = !NULL
+  FASTLOC_E__HAVE_GOOD_I  = !NULL
+  FASTLOC_E__dbFile       = !NULL
+  FASTLOC_E__dbTimesFile  = !NULL
+
+END

@@ -65,29 +65,65 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                   IND_FILEDIR=ind_fileDir, $
                                   BURSTDATA_EXCLUDED=burstData_excluded, $
                                   DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+                                  FOR_ESPEC_DBS=for_eSpec_DBs, $
+                                  DONT_LOAD_IN_MEMORY=nonMem, $
                                   LUN=lun
 
   COMPILE_OPT idl2
 
+  ;;Defined here, in GET_FASTLOC_INDS_IMF_CONDS_V2, in GET_FASTLOC_INDS_UTC_RANGE, and in GET_CHASTON_INDS
   COMMON FL_VARS,FL_fastLoc,FASTLOC__times,FASTLOC__delta_t, $
      FASTLOC__good_i,FASTLOC__cleaned_i,FASTLOC__HAVE_GOOD_I, $
      FASTLOC__dbFile,FASTLOC__dbTimesFile
 
+  ;; IF ~KEYWORD_SET(nonMem) THEN BEGIN
+  COMMON FL_ESPEC_VARS,FL_eSpec__fastLoc,FASTLOC_E__times,FASTLOC_E__delta_t, $
+     FASTLOC_E__good_i,FASTLOC_E__cleaned_i,FASTLOC_E__HAVE_GOOD_I, $
+     FASTLOC_E__dbFile,FASTLOC_E__dbTimesFile
+  ;; ENDIF ELSE BEGIN
+  ;;    FL_eSpec__fastLoc                   = !NULL
+  ;;    FASTLOC_E__times                    = !NULL
+  ;;    FASTLOC_E__delta_t                  = !NULL
+  ;;    FASTLOC_E__dbFile                   = !NULL
+  ;;    FASTLOC_E__dbTimesFile              = !NULL
+  ;; ENDELSE
+
   @orbplot_tplot_defaults.pro
   
-  IF N_ELEMENTS(FL_fastloc) NE 0 AND N_ELEMENTS(FASTLOC__times) NE 0 THEN BEGIN
-     dbStruct                 = FL_fastloc
-     dbTimes                  = FASTLOC__times
-     fastloc_delta_t          = FASTLOC__delta_t
-     dbFile                   = FASTLOC__dbFile
-     dbTimesFile              = FASTLOC__dbTimesFile
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     IF N_ELEMENTS(FL_eSpec__fastloc) NE 0 AND N_ELEMENTS(FASTLOC_E_times) NE 0 THEN BEGIN
+        dbStruct                 = FL_eSpec__fastloc
+        dbTimes                  = FASTLOC_E__times
+        fastloc_delta_t          = FASTLOC_E__delta_t
+        dbFile                   = FASTLOC_E__dbFile
+        dbTimesFile              = FASTLOC_E__dbTimesFile
+     ENDIF ELSE BEGIN
+        LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,fastloc_delta_t, $
+                                       DBDir=loaddataDir, $
+                                       DBFile=dbFile, $
+                                       DB_TFILE=dbTimesFile, $
+                                       FOR_ESPEC_DBS=for_eSpec_DBs
+        FL_eSpec__fastloc        = TEMPORARY(dbStruct);These are too unbelievably unwieldy to have copies hanging around
+        FASTLOC_E__times         = TEMPORARY(dbTimes) ;These are too huge
+        FASTLOC_E__delta_t       = fastloc_delta_t
+        FASTLOC_E__dbFile        = dbFile
+        FASTLOC_E__dbTimesFile   = dbTimesFile
+     ENDELSE
   ENDIF ELSE BEGIN
-     LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,fastloc_delta_t,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile
-     FL_fastloc               = dbStruct
-     FASTLOC__times           = dbTimes
-     FASTLOC__delta_t         = fastloc_delta_t
-     FASTLOC__dbFile          = dbFile
-     FASTLOC__dbTimesFile     = dbTimesFile
+     IF N_ELEMENTS(FL_fastloc) NE 0 AND N_ELEMENTS(FASTLOC__times) NE 0 THEN BEGIN
+        dbStruct                 = FL_fastloc
+        dbTimes                  = FASTLOC__times
+        fastloc_delta_t          = FASTLOC__delta_t
+        dbFile                   = FASTLOC__dbFile
+        dbTimesFile              = FASTLOC__dbTimesFile
+     ENDIF ELSE BEGIN
+        LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,fastloc_delta_t,DBDir=loaddataDir,DBFile=dbFile,DB_tFile=dbTimesFile
+        FL_fastloc               = dbStruct
+        FASTLOC__times           = dbTimes
+        FASTLOC__delta_t         = fastloc_delta_t
+        FASTLOC__dbFile          = dbFile
+        FASTLOC__dbTimesFile     = dbTimesFile
+     ENDELSE
   ENDELSE
 
   ;; IF N_ELEMENTS(FL_fastLoc) EQ 0 OR N_ELEMENTS(fastLoc__times) EQ 0 OR N_ELEMENTS(fastLoc__delta_t) EQ 0 THEN BEGIN
@@ -160,7 +196,8 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                    ;; FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, $
                                    ;; FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                    BURSTDATA_EXCLUDED=burstData_excluded, $
-                                   DO_NOT_SET_DEFAULTS=do_not_set_defaults
+                                   DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+                                   FOR_ESPEC_DBS=for_eSpec_DBs
 
 
 
@@ -192,7 +229,8 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                    ;; FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
                                    ;; FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, $
                                    FASTLOCOUTPUTDIR=fastLocOutputDir, $
-                                   DO_NOT_SET_DEFAULTS=do_not_set_defaults
+                                   DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+                                   FOR_ESPEC_DBS=for_eSpec_DBs
 
 
         PRINTF,lun,FORMAT='("N fastLoc inds from UTC ranges",T40,": ",I0)',N_ELEMENTS(fastLocInterped_UTC_i)
@@ -225,7 +263,8 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                    ;; FASTLOC_STRUCT=FL_fastLoc,FASTLOC_TIMES=FASTLOC__Times,FASTLOC_DELTA_T=FASTLOC__delta_t, $
                                    ;; FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, $
                                    FASTLOCOUTPUTDIR=fastLocOutputDir, $
-                                   DO_NOT_SET_DEFAULTS=do_not_set_defaults
+                                   DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+                                   FOR_ESPEC_DBS=for_eSpec_DBs
 
         PRINTF,lun,FORMAT='("N fastLoc inds from UTC ranges",T40,": ",I0)',N_ELEMENTS(fastLocInterped_UTC_i)
      ENDIF ELSE BEGIN
@@ -235,8 +274,11 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
            PRINT,'Using user-provided fastLoc inds ...'
            fastLocInterped_i_list = fastLoc_inds
         ENDIF ELSE BEGIN
-           fastLocInterped_i_list = GET_RESTRICTED_AND_INTERPED_DB_INDICES(FL_fastLoc,satellite,delay,LUN=lun, $
-                                                                           DBTIMES=fastLoc__times,dbfile=FASTLOC__dbfile, HEMI=hemi, $
+           fastLocInterped_i_list = GET_RESTRICTED_AND_INTERPED_DB_INDICES(KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL_fastLoc, $
+                                                                           satellite,delay,LUN=lun, $
+                                                                           DBTIMES=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times, $
+                                                                           DBFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbFile : FASTLOC__dbFile, $
+                                                                           HEMI=hemi, $
                                                                            ORBRANGE=orbRange, $
                                                                            ALTITUDERANGE=altitudeRange, $
                                                                            CHARERANGE=charERange, $
@@ -250,8 +292,11 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
                                                                            CLOCKSTR=clockStr, $
                                                                            /DO_NOT_CONSIDER_IMF, $
                                                                            HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd, $
-                                                                           NO_BURSTDATA=no_burstData,GET_TIME_I_NOT_ALFVENDB_I=1, $
-                                                                           DO_NOT_SET_DEFAULTS=do_not_set_defaults)
+                                                                           NO_BURSTDATA=no_burstData, $
+                                                                           /GET_TIME_I_NOT_ALFVENDB_I, $
+                                                                           GET_TIME_FOR_ESPEC_DBS=for_eSpec_DBs, $
+                                                                           DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+                                                                           DONT_LOAD_IN_MEMORY=nonMem)
            fastLocInterped_i = fastLocInterped_i_list[0]
         ENDELSE
      ENDELSE
@@ -265,20 +310,24 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
   MAKE_FASTLOC_HISTO,OUTTIMEHISTO=tHistDenominator, $
                      FASTLOC_INDS=fastLocInterped_i, $
                      OUT_DELTA_TS=out_delta_ts, $
-                     FASTLOC_STRUCT=FL_fastLoc, $
-                     FASTLOC_TIMES=FASTLOC__Times, $
-                     FASTLOC_DELTA_T=FASTLOC__delta_t, $
-                     MINMLT=minM,MAXMLT=maxM, $
+                     FASTLOC_STRUCT=KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL_fastLoc, $
+                     FASTLOC_TIMES=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times, $
+                     FASTLOC_DELTA_T=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__delta_t : FASTLOC__delta_t, $
+                     MINMLT=minM, $
+                     MAXMLT=maxM, $
                      BINMLT=binM, $
                      SHIFTMLT=shiftM, $
                      MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                      DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-                     FASTLOCFILE=FASTLOC__dbFile,FASTLOCTIMEFILE=FASTLOC__dbTimesFile
+                     FASTLOCFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbFile : FASTLOC__dbFile, $
+                     FASTLOCTIMEFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbTimesFile : FASTLOC__dbTimesFile
                      ;; OUTFILEPREFIX=outIndsBasename,OUTFILESUFFIX=outFileSuffix, OUTDIR=fastLocOutputDir, $
                      ;; OUTPUT_TEXTFILE=output_textFile
   
 
-  PRINT_TIMEHISTO_SUMMARY,FL_fastLoc,fastLocInterped_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+  PRINT_TIMEHISTO_SUMMARY,KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL_fastLoc, $
+                          fastLocInterped_i, $
+                          CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                           ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                           minMLT=minM,maxMLT=maxM, $
                           BINMLT=binM, $
@@ -317,7 +366,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
 
   ;;Out vars
   out_fastLocInterped_i = fastLocInterped_i
-  out_fastLoc           = FL_fastLoc
+  out_fastLoc           = KEYWORD_SET(for_eSpec_DBs) ? TEMPORARY(FL_eSpec__fastLoc) : FL_fastLoc
 
   IF KEYWORD_SET(make_timeHist_h2dStr) THEN BEGIN
      IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
@@ -342,7 +391,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
         h2d_include_i          = INDGEN(N_ELEMENTS(h2dStr.data))
         h2dStr.dont_mask_me    = 1
      ENDIF ELSE BEGIN
-        h2d_include_i          = h2d_nonzero_nEv_i
+        h2d_include_i          = KEYWORD_SET(h2d_nonzero_nEv_i) ? h2d_nonzero_nEv_i : INDGEN(N_ELEMENTS(h2dStr.data))
      ENDELSE
 
      h2dStr.labelFormat        = defTHistDenomCBLabelFormat
@@ -389,6 +438,11 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
      ENDIF
      h2dStr.name                = dataName
 
+  ENDIF
+
+  IF KEYWORD_SET(nonMem) THEN BEGIN
+     CLEAR_FL_COMMON_VARS
+     CLEAR_FL_E_COMMON_VARS
   ENDIF
 
   RETURN,tHistDenominator

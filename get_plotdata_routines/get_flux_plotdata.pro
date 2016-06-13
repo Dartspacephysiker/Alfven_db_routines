@@ -70,6 +70,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
                       NONALFVEN_MLT=nonAlfven_mlt, $
                       NONALFVEN_ILAT=nonAlfven_ilat, $
+                      NONALFVEN_DELTA_T=nonAlfven_delta_t, $
+                      NONALFVEN_THISTDENOMINATOR=nonAlfven_tHistDenominator, $
                       DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                       PRINT_MAX_AND_MIN=print_mandm, $
                       FANCY_PLOTNAMES=fancy_plotNames, $
@@ -745,8 +747,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
   ;;Is this going to be a time-averaged plot?
   IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
-     inData                 = inData * maximus.width_time[tmp_i]
-     ;; h2dStr.title           = 'Time-averaged ' + h2dStr.title
+     IF KEYWORD_SET(nonAlfvenic) THEN BEGIN
+        inData              = inData * nonAlfven_delta_t[tmp_i]
+     ENDIF ELSE BEGIN
+        inData              = inData * maximus.width_time[tmp_i]
+        ;; h2dStr.title           = 'Time-averaged ' + h2dStr.title
+     ENDELSE
      dataName               = 'timeAvgd_' + dataName
   ENDIF
 
@@ -819,10 +825,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.data[where(h2dFluxN GT 0,/NULL)] = 10^(h2dStr.data[where(h2dFluxN GT 0,/NULL)])
            ENDIF
 
-           PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,tHistDenominator,outH2DBinsMLT,outH2DBinsILAT,H2DFluxN,dataName,h2dMask
+           PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr, $
+                                                   KEYWORD_SET(nonAlfvenic) ? nonAlfven_tHistDenominator : tHistDenominator, $
+                                                   outH2DBinsMLT, $
+                                                   outH2DBinsILAT, $
+                                                   H2DFluxN, $
+                                                   dataName, $
+                                                   h2dMask
 
            ;;junked all those WHERE(h2dstr.data GT 0) as of 2016/04/23
-           h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/tHistDenominator[WHERE(h2dstr.data GT 0)]
+           h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/ $
+                                                  (KEYWORD_SET(nonAlfvenic) ? nonAlfven_tHistDenominator : $
+                                                   tHistDenominator)[WHERE(h2dstr.data GT 0)]
            ;; h2dStr.data[h2d_nonzero_nEv_i] = h2dStr.data[h2d_nonzero_nEv_i]/tHistDenominator[h2d_nonzero_nEv_i]
 
         END

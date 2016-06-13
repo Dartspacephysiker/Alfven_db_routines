@@ -115,6 +115,10 @@ PRO LOAD_ALF_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec,good_eSpec_i, $
      ENDELSE
   ENDIF
 
+  IF KEYWORD_SET(nonMem) THEN BEGIN
+     CLEAR_ALF_NEWELL_COMMON_VARS
+  ENDIF
+
   RETURN
 
 END

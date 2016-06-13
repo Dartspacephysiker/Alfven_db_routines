@@ -55,17 +55,25 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
                                   GET_FASTLOC_TIMES=get_fastLoc_times, $
                                   OUT_FASTLOC_STRUCT=out_fastLoc_struct, $
                                   OUT_FASTLOC_DELTA_T=out_fastLoc_delta_t, $
-                                  OUT_FASTLOC_TIMES=out_fastLoc_times
+                                  OUT_FASTLOC_TIMES=out_fastLoc_times, $
+                                  FOR_ESPEC_DBS=for_eSpec_DBs
 
   COMPILE_OPT idl2
 
+  ;;Defined here, in GET_TIMEHIST_DENOMINATOR, in GET_CHASTON_IND, and in GET_FASTLOC_INDS_UTC_RANGE
   COMMON FL_VARS,FL_fastLoc,FASTLOC__times,FASTLOC__delta_t, $
      FASTLOC__good_i,FASTLOC__cleaned_i,FASTLOC__HAVE_GOOD_I, $
      FASTLOC__dbFile,FASTLOC__dbTimesFile
 
+  COMMON FL_ESPEC_VARS,FL_eSpec__fastLoc,FASTLOC_E__times,FASTLOC_E__delta_t, $
+     FASTLOC_E__good_i,FASTLOC_E__cleaned_i,FASTLOC_E__HAVE_GOOD_I, $
+     FASTLOC_E__dbFile,FASTLOC_E__dbTimesFile
+
+
   IF NOT KEYWORD_SET(lun) THEN lun = -1 ;stdout
   
-  fastLocInterped_i_list = GET_RESTRICTED_AND_INTERPED_DB_INDICES(FL_fastLoc,satellite,delay,LUN=lun, $
+  fastLocInterped_i_list = GET_RESTRICTED_AND_INTERPED_DB_INDICES(KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL_fastLoc, $
+                                                                  satellite,delay,LUN=lun, $
                                                                   DBTIMES=fastLoc__times, $
                                                                   DBFILE=fastLoc__dbfile, $
                                                                   HEMI=hemi, $
@@ -109,25 +117,46 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
                                                                   RESET_GOOD_INDS=reset_good_inds, $
                                                                   RESET_OMNI_INDS=reset_omni_inds, $
                                                                   NO_BURSTDATA=no_burstData, $
+                                                                  GET_TIME_FOR_ESPEC_DBS=for_eSpec_DBs, $ ;NOTE: DON'T CONFUSE THIS WITH FOR_ESPEC_OR_ION_DB
+
                                                                   /GET_TIME_I_NOT_ALFVENDB_I)
   
   
-  IF KEYWORD_SET(get_fastLoc_struct) THEN BEGIN
-     out_fastLoc_struct = FL_fastLoc
-  ENDIF
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
 
-  IF KEYWORD_SET(get_fastLoc_delta_t) THEN BEGIN
-     out_fastLoc_delta_t   = FASTLOC__delta_t
-  ENDIF
+     IF KEYWORD_SET(get_fastLoc_struct) THEN BEGIN
+        out_fastLoc_struct = FL_eSpec__fastLoc
+     ENDIF
 
-  IF KEYWORD_SET(get_fastLoc_times) THEN BEGIN
-     out_fastLoc_times   = FASTLOC__times
-  ENDIF
+     IF KEYWORD_SET(get_fastLoc_delta_t) THEN BEGIN
+        out_fastLoc_delta_t   = FASTLOC_E__delta_t
+     ENDIF
+
+     IF KEYWORD_SET(get_fastLoc_times) THEN BEGIN
+        out_fastLoc_times   = FASTLOC_E__times
+     ENDIF
+
+  ENDIF ELSE BEGIN
+
+     IF KEYWORD_SET(get_fastLoc_struct) THEN BEGIN
+        out_fastLoc_struct = FL_fastLoc
+     ENDIF
+
+     IF KEYWORD_SET(get_fastLoc_delta_t) THEN BEGIN
+        out_fastLoc_delta_t   = FASTLOC__delta_t
+     ENDIF
+
+     IF KEYWORD_SET(get_fastLoc_times) THEN BEGIN
+        out_fastLoc_times   = FASTLOC__times
+     ENDIF
+
+  ENDELSE
 
   IF KEYWORD_SET(multiple_delays) THEN BEGIN
      fastLocInterped_i = fastLocInterped_i_list
   ENDIF ELSE BEGIN
      fastLocInterped_i = fastLocInterped_i_list[0]
   ENDELSE
+
 
 END

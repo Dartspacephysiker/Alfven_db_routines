@@ -44,7 +44,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                          OUT_DELTA_T_FASTLOC=out_delta_t_fastLoc, $
                          OUT_TIMES_FASTLOC=out_times_fastLoc, $
                          OUT_FASTLOC=out_fastloc, $
-                         FOR_ESPEC_DBS=for_eSpec_DBs
+                         FOR_ESPEC_DBS=for_eSpec_DBs, $
+                         DONT_LOAD_IN_MEMORY=nonMem
                          
   COMPILE_OPT idl2
  
@@ -73,21 +74,22 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      MAXIMUS__is_chastDB, $
      MAXIMUS__RECALCULATE
 
+  ;;Defined here, in GET_FASTLOC_INDS_IMF_CONDS_V2, in GET_TIMEHIST_DENOMINATOR, and in GET_FASLOC_INDS_UTC_RANGE
   COMMON FL_VARS,FL__fastLoc,FASTLOC__times,FASTLOC__delta_t, $
      FASTLOC__good_i,FASTLOC__cleaned_i,FASTLOC__HAVE_GOOD_I, $
      FASTLOC__dbFile,FASTLOC__dbTimesFile
 
-  IF KEYWORD_SET(nonMem) THEN BEGIN
-     FL_eSpec__fastLoc                   = !NULL
-     FASTLOC_E__times                    = !NULL
-     FASTLOC_E__delta_t                  = !NULL
-     FASTLOC_E__dbFile                   = !NULL
-     FASTLOC_E__dbTimesFile              = !NULL
-  ENDIF ELSE BEGIN
-     COMMON FL_ESPEC_VARS,FL_eSpec__fastLoc,FASTLOC_E__times,FASTLOC_E__delta_t, $
-        FASTLOC_E__good_i,FASTLOC_E__cleaned_i,FASTLOC_E__HAVE_GOOD_I, $
-        FASTLOC_E__dbFile,FASTLOC_E__dbTimesFile
-  ENDIF
+  ;; IF ~KEYWORD_SET(nonMem) THEN BEGIN
+  COMMON FL_ESPEC_VARS,FL_eSpec__fastLoc,FASTLOC_E__times,FASTLOC_E__delta_t, $
+     FASTLOC_E__good_i,FASTLOC_E__cleaned_i,FASTLOC_E__HAVE_GOOD_I, $
+     FASTLOC_E__dbFile,FASTLOC_E__dbTimesFile
+  ;; ENDIF ELSE BEGIN
+  ;;    FL_eSpec__fastLoc                   = !NULL
+  ;;    FASTLOC_E__times                    = !NULL
+  ;;    FASTLOC_E__delta_t                  = !NULL
+  ;;    FASTLOC_E__dbFile                   = !NULL
+  ;;    FASTLOC_E__dbTimesFile              = !NULL
+  ;; ENDELSE
 
   ;For statistical auroral oval
   defHwMAurOval                                   = 0
@@ -637,5 +639,11 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
   ENDELSE
 
   RETURN, good_i
+
+  IF KEYWORD_SET(nonMem) THEN BEGIN
+     CLEAR_FL_E_COMMON_VARS
+     CLEAR_FL_COMMON_VARS
+     CLEAR_M_COMMON_VARS
+  ENDIF
 
 END

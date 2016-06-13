@@ -45,7 +45,8 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   ;; DefDBFile                      = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05.sav'
   ;; DefDB_tFile                    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--times.sav'
 
-  DefESpecDBFile                    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes.sav'
+  ;; DefESpecDBFile                    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes.sav'
+  DefESpecDBFile                    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--smaller_datatypes--no_interval_startstop.sav'
   DefESpecDB_tFile                  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--times.sav'
 
   IF N_ELEMENTS(DBDir) EQ 0 THEN BEGIN

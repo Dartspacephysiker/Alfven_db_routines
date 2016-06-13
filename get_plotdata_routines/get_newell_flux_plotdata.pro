@@ -21,6 +21,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
                              NONALFVEN_MLT=nonAlfven_mlt, $
                              NONALFVEN_ILAT=nonAlfven_ilat, $
+                             NONALFVEN_DELTA_T=nonAlfven_delta_t, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=logFluxPlot, $
                              DIVIDE_BY_WIDTH_X=divide_by_width_x, $
@@ -173,6 +174,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
                        NONALFVEN_MLT=nonAlfven_mlt, $
                        NONALFVEN_ILAT=nonAlfven_ilat, $
+                       NONALFVEN_DELTA_T=nonAlfven_delta_t, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=logFluxPlot, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $

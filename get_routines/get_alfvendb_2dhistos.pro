@@ -93,6 +93,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ESPEC__ILATS=eSpec__ilats, $
                           ION__MLTS=ion__mlts, $
                           ION__ILATS=ion__ilats, $
+                          ESPEC_DELTA_T=eSpec_delta_t, $
+                          ION_DELTA_T=ion_delta_t, $
                           PPLOTS=pPlots, $
                           LOGPFPLOT=logPfPlot, $
                           ABSPFLUX=absPflux, $
@@ -351,6 +353,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  INDSFILEPREFIX=paramStrPrefix, $
                                                  INDSFILESUFFIX=paramStrSuffix, $
                                                  DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+                                                 DONT_LOAD_IN_MEMORY=KEYWORD_SET(eFlux_nonAlfven_data) OR KEYWORD_SET(iFlux_nonAlfven_data), $
                                                  BURSTDATA_EXCLUDED=burstData_excluded)
 
      
@@ -361,6 +364,101 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
            dataRawPtrArr = [dataRawPtrArr,dataRawPtr] 
         ENDIF
      ENDIF
+
+     IF KEYWORD_SET(eFlux_nonAlfven_data) OR KEYWORD_SET(iFlux_nonAlfven_data) THEN BEGIN
+        nonAlfven_tHistDenominator = GET_TIMEHIST_DENOMINATOR(CLOCKSTR=clockStr, $
+                                                              ANGLELIM1=angleLim1, $
+                                                              ANGLELIM2=angleLim2, $
+                                                              DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
+                                                              ORBRANGE=orbRange, $
+                                                              ALTITUDERANGE=altitudeRange, $
+                                                              CHARERANGE=charERange, $
+                                                              SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                                                              DO_IMF_CONDS=do_IMF_conds, $
+                                                              BYMIN=byMin, $
+                                                              BYMAX=byMax, $
+                                                              BZMIN=bzMin, $
+                                                              BZMAX=bzMax, $
+                                                              BTMIN=btMin, $
+                                                              BTMAX=btMax, $
+                                                              BXMIN=bxMin, $
+                                                              BXMAX=bxMax, $
+                                                              DO_ABS_BYMIN=abs_byMin, $
+                                                              DO_ABS_BYMAX=abs_byMax, $
+                                                              DO_ABS_BZMIN=abs_bzMin, $
+                                                              DO_ABS_BZMAX=abs_bzMax, $
+                                                              DO_ABS_BTMIN=abs_btMin, $
+                                                              DO_ABS_BTMAX=abs_btMax, $
+                                                              DO_ABS_BXMIN=abs_bxMin, $
+                                                              DO_ABS_BXMAX=abs_bxMax, $
+                                                              SATELLITE=satellite, $
+                                                              OMNI_COORDS=omni_Coords, $
+                                                              DELAY=delay, $
+                                                              RESOLUTION_DELAY=delay_res, $
+                                                              BINOFFSET_DELAY=binOffset_delay, $
+                                                              STABLEIMF=stableIMF, $
+                                                              SMOOTHWINDOW=smoothWindow, $
+                                                              INCLUDENOCONSECDATA=includeNoConsecData, $
+                                                              DO_UTC_RANGE=do_UTC_range, $
+                                                              STORMSTRING=stormString, $
+                                                              DSTCUTOFF=dstCutoff, $
+                                                              HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
+                                                              RESET_GOOD_INDS=reset_good_inds, $
+                                                              RESET_OMNI_INDS=reset_omni_inds, $
+                                                              T1_ARR=t1_arr, $
+                                                              T2_ARR=t2_arr, $
+                                                              MINM=minM, $
+                                                              MAXM=maxM, $
+                                                              BINM=binM, $
+                                                              SHIFTM=shiftM, $
+                                                              MINI=minI, $
+                                                              MAXI=maxI, $
+                                                              BINI=binI, $
+                                                              DO_LSHELL=do_lshell, $
+                                                              MINL=minL, $
+                                                              MAXL=maxL, $
+                                                              BINL=binL, $
+                                                              HEMI=hemi, $
+                                                              ;; OUT_FASTLOC_STRUCT=fastLoc, $
+                                                              ;; FASTLOC_TIMES=fastLoc_Times, $
+                                                              ;; FASTLOC_DELTA_T=fastLoc_delta_t, $
+                                                              ;; FASTLOCFILE=fastLocFile, $
+                                                              ;; FASTLOCTIMEFILE=fastLocTimeFile, $
+                                                              FASTLOCOUTPUTDIR=txtOutputDir, $
+                                                              ;; OUT_FASTLOCINTERPED_I=fastLocInterped_i, $
+                                                              MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
+                                                              THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                                                              THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
+                                                              THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
+                                                              THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
+                                                              TMPLT_H2DSTR=tmplt_h2dStr, $
+                                                              H2DSTR=h2dStr, $
+                                                              DATANAME=dataName, $
+                                                              DATARAWPTR=dataRawPtr, $
+                                                              H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i__nonAlfven, $
+                                                              SAVE_FASTLOC_INDS=save_fastLoc_inds, $
+                                                              PARAMSTR_FOR_SAVING=paramStr, $
+                                                              IND_FILEDIR=ind_fileDir, $
+                                                              INDSFILEPREFIX=paramStrPrefix, $
+                                                              INDSFILESUFFIX=paramStrSuffix, $
+                                                              DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+                                                              /FOR_ESPEC_DBS, $
+                                                              /DONT_LOAD_IN_MEMORY, $
+                                                              BURSTDATA_EXCLUDED=burstData_excluded)
+        
+
+        IF keepMe THEN BEGIN 
+           IF KEYWORD_SET(tHistDenominatorPlot) THEN BEGIN
+              dataName      = dataName+'_nonAlfven'
+              h2dStr.name   = dataName
+              h2dStr.title += ' (Non-Alf)'
+              h2dStrArr     = [h2dStrArr,h2dStr] 
+              dataNameArr   = [dataNameArr,dataName] 
+              dataRawPtrArr = [dataRawPtrArr,dataRawPtr] 
+           ENDIF
+        ENDIF
+
+     ENDIF 
 
   ENDIF
   
@@ -697,6 +795,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
                                     NONALFVEN_MLT=eSpec__mlts, $
                                     NONALFVEN_ILAT=eSpec__ilats, $
+                                    NONALFVEN_DELTA_T=eSpec_delta_t, $
+                                    NONALFVEN_THISTDENOMINATOR=nonAlfven_tHistDenominator, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                                     DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -768,6 +868,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                              NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
                              NONALFVEN_MLT=eSpec__mlts, $
                              NONALFVEN_ILAT=eSpec__ilats, $
+                             NONALFVEN_DELTA_T=eSpec_delta_t, $
+                             NONALFVEN_THISTDENOMINATOR=nonAlfven_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                              DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -909,6 +1011,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
                                     NONALFVEN_MLT=eSpec__mlts, $
                                     NONALFVEN_ILAT=eSpec__ilats, $
+                                    NONALFVEN_DELTA_T=eSpec_delta_t, $
+                                    NONALFVEN_THISTDENOMINATOR=nonAlfven_tHistDenominator, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                                     DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -978,6 +1082,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                              NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
                              NONALFVEN_MLT=eSpec__mlts, $
                              NONALFVEN_ILAT=eSpec__ilats, $
+                             NONALFVEN_DELTA_T=eSpec_delta_t, $
+                             NONALFVEN_THISTDENOMINATOR=nonAlfven_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                              DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -1189,6 +1295,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
                           NONALFVEN_MLT=ion__mlts, $
                           NONALFVEN_ILAT=ion__ilats, $
+                          NONALFVEN_DELTA_T=ion_delta_t, $
+                          NONALFVEN_THISTDENOMINATOR=nonAlfven_tHistDenominator, $
                           OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $

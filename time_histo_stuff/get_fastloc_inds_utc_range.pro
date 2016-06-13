@@ -46,38 +46,66 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                                MAXLSHELL=maxL, $
                                BINL=binL, $
                                RESET_GOOD_INDS=reset_good_inds, $
-                               DO_NOT_SET_DEFAULTS=do_not_set_defaults
+                               DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+                               FOR_ESPEC_DBS=for_eSpec_DBs
 
 
   COMPILE_OPT idl2
 
-  ;;Defined in GET_TIMEHIST_DENOMINATOR, for one
+  ;;Defined here, in GET_FASTLOC_INDS_IMF_CONDS_V2, in GET_TIMEHIST_DENOMINATOR, and in GET_CHASTON_INDS
   COMMON FL_VARS
+
+  COMMON FL_ESPEC_VARS
 
   ;; minM=0
   ;; maxM=24
   ;; minI=-88
   ;; maxI=88
 
-  IF KEYWORD_SET(fastLoc_in) AND ~KEYWORD_SET(FL_fastLoc) THEN BEGIN
-     FL_fastLoc = fastLoc_in
-  ENDIF
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     IF KEYWORD_SET(fastLoc_in) AND ~KEYWORD_SET(FL_eSpec__fastLoc) THEN BEGIN
+        FL_eSpec__fastLoc = fastLoc_in
+     ENDIF
 
-  IF KEYWORD_SET(fastLoc_times_in) AND ~KEYWORD_SET(FASTLOC__times) THEN BEGIN
-     FASTLOC__times = fastLoc_times_in
-  ENDIF
+     IF KEYWORD_SET(fastLoc_times_in) AND ~KEYWORD_SET(FASTLOC_E__times) THEN BEGIN
+        FASTLOC_E__times = fastLoc_times_in
+     ENDIF
 
-  IF KEYWORD_SET(fastLoc_delta_t_in) AND ~KEYWORD_SET(FASTLOC__delta_t) THEN BEGIN
-     FASTLOC__delta_t = fastLoc_delta_t_in
-  ENDIF
+     IF KEYWORD_SET(fastLoc_delta_t_in) AND ~KEYWORD_SET(FASTLOC_E__delta_t) THEN BEGIN
+        FASTLOC_E__delta_t = fastLoc_delta_t_in
+     ENDIF
 
-  IF KEYWORD_SET(fastLocFile_in) AND ~KEYWORD_SET(FASTLOC__dbFile) THEN BEGIN
-     FASTLOC__dbFile = fastLocFile_in
-  ENDIF
+     IF KEYWORD_SET(fastLocFile_in) AND ~KEYWORD_SET(FASTLOC_E__dbFile) THEN BEGIN
+        FASTLOC_E__dbFile = fastLocFile_in
+     ENDIF
 
-  IF KEYWORD_SET(fastLocTimeFile_in) AND ~KEYWORD_SET(FASTLOC__dbTimesFile) THEN BEGIN
-     FASTLOC__dbTimesFile = fastLocTimeFile_in
-  ENDIF
+     IF KEYWORD_SET(fastLocTimeFile_in) AND ~KEYWORD_SET(FASTLOC_E__dbTimesFile) THEN BEGIN
+        FASTLOC_E__dbTimesFile = fastLocTimeFile_in
+     ENDIF     
+  ENDIF ELSE BEGIN
+     IF KEYWORD_SET(fastLoc_in) AND ~KEYWORD_SET(FL_fastLoc) THEN BEGIN
+        FL_eSpec__fastLoc = fastLoc_in
+     ENDIF
+
+     IF KEYWORD_SET(fastLoc_times_in) AND ~KEYWORD_SET(FASTLOC__times) THEN BEGIN
+        FASTLOC__times = fastLoc_times_in
+     ENDIF
+
+     IF KEYWORD_SET(fastLoc_delta_t_in) AND ~KEYWORD_SET(FASTLOC__delta_t) THEN BEGIN
+        FASTLOC__delta_t = fastLoc_delta_t_in
+     ENDIF
+
+     IF KEYWORD_SET(fastLocFile_in) AND ~KEYWORD_SET(FASTLOC__dbFile) THEN BEGIN
+        FASTLOC__dbFile = fastLocFile_in
+     ENDIF
+
+     IF KEYWORD_SET(fastLocTimeFile_in) AND ~KEYWORD_SET(FASTLOC__dbTimesFile) THEN BEGIN
+        FASTLOC__dbTimesFile = fastLocTimeFile_in
+     ENDIF
+  ENDELSE
+
+
+
 
   ;; fastLocOutputDir = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals3/time_histos/'
   defFastLocOutputDir = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals4/time_histos/'
@@ -173,20 +201,26 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ;;    RESTORE,outIndsFilename
   ;;    ;; WAIT,1
   ;; ENDIF ELSE BEGIN
-  good_i = GET_CHASTON_IND(fl_fastLoc,satellite,lun,GET_TIME_I_NOT_ALFVENDB_I=1, $
-                           DBTIMES=FASTLOC__times,DBFILE=FASTLOC__dbFile, $
+  good_i = GET_CHASTON_IND(KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL_fastLoc, $
+                           satellite,lun, $
+                           GET_TIME_I_NOT_ALFVENDB_I=1, $
+                           DBTIMES=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times, $
+                           DBFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbFile : FASTLOC__dbFile, $
                            HEMI=hemi, $
                            ORBRANGE=orbRange, $
                            ALTITUDERANGE=altitudeRange, $
-                           MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                           MINMLT=minM,MAXMLT=maxM,BINM=binM, $
+                           MINILAT=minI,MAXILAT=maxI,BINI=binI, $
                            DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
-                           HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd, $
-                           DO_NOT_SET_DEFAULTS=do_not_set_defaults)
+                           HWMAUROVAL=HwMAurOval, $
+                           HWMKPIND=HwMKpInd, $
+                           DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+                           FOR_ESPEC_DBS=for_eSpec_DBs)
   
   GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
-     DBSTRUCT=fl_fastLoc, $
+     DBSTRUCT=KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL_fastLoc, $
      OUT_GOOD_TARR_I=out_good_tArr_i, $
-     DBTIMES=fastLoc__times, $
+     DBTIMES=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times, $
      RESTRICT_W_THESEINDS=good_i, $
      OUT_INDS_LIST=fastLocInterped_i, $
      LIST_TO_ARR=list_to_arr, $
@@ -199,6 +233,7 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
      /SUMMARY
   
   IF KEYWORD_SET(make_outIndsFile) THEN BEGIN
+     for_eSpec_DBs = KEYWORD_SET(for_eSpec_DBs)
      PRINT,'Saving outindsfile ' + outIndsFilename + '...'
      SAVE,fastLocInterped_i, $
           minm,maxm,binm, $
@@ -209,13 +244,21 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
           orbrange, $
           fastLoc__dbFile, $
           fastLoc__dbTimesFile, $
+          for_eSpec_DBs, $
           FILENAME=fastLocOutputDir+outIndsFilename
   ENDIF
   ;; ENDELSE
 
   ;;Send back structs, if requested
-  IF ARG_PRESENT(fastLoc_out)          THEN fastLoc_out         = FL_fastLoc
-  IF ARG_PRESENT(fastLoc_times_out)    THEN fastLoc_times_out   = FASTLOC__times
-  IF ARG_PRESENT(fastLoc_delta_t_out)  THEN fastLoc_delta_t_out = FASTLOC__delta_t
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     IF ARG_PRESENT(fastLoc_out)          THEN fastLoc_out         = FL_eSpec__fastLoc
+     IF ARG_PRESENT(fastLoc_times_out)    THEN fastLoc_times_out   = FASTLOC_E__times
+     IF ARG_PRESENT(fastLoc_delta_t_out)  THEN fastLoc_delta_t_out = FASTLOC_E__delta_t
+  ENDIF ELSE BEGIN
+     IF ARG_PRESENT(fastLoc_out)          THEN fastLoc_out         = FL_fastLoc
+     IF ARG_PRESENT(fastLoc_times_out)    THEN fastLoc_times_out   = FASTLOC__times
+     IF ARG_PRESENT(fastLoc_delta_t_out)  THEN fastLoc_delta_t_out = FASTLOC__delta_t
+  ENDELSE
+
 
 END
