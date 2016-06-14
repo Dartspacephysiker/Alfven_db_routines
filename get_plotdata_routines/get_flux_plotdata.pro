@@ -249,10 +249,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               ENDCASE
            ENDIF
            IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
-              fluxPlotType += '--candidates_removed'
+              dataname += '--candidates_removed'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(nonAlfven__all_fluxes) THEN BEGIN
-                 fluxPlotType += '--all_fluxes'
+                 dataname += '--all_fluxes'
               ENDIF
            ENDELSE
         END
@@ -379,10 +379,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
 
            IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
-              fluxPlotType += '--candidates_removed'
+              dataname += '--candidates_removed'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(nonAlfven__all_fluxes) THEN BEGIN
-                 fluxPlotType += '--all_fluxes'
+                 dataname += '--all_fluxes'
               ENDIF
            ENDELSE
 
@@ -563,10 +563,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_mlt_by_w_x   = 0
 
            IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
-              fluxPlotType += '--candidates_removed'
+              dataname += '--candidates_removed'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(nonAlfven__all_fluxes) THEN BEGIN
-                 fluxPlotType += '--all_fluxes'
+                 dataname += '--all_fluxes'
               ENDIF
            ENDELSE
 
@@ -593,10 +593,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_mlt_by_w_x   = 1
 
            IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
-              fluxPlotType += '--candidates_removed'
+              dataname += '--candidates_removed'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(nonAlfven__all_fluxes) THEN BEGIN
-                 fluxPlotType += '--all_fluxes'
+                 dataname += '--all_fluxes'
               ENDIF
            ENDELSE
         END

@@ -80,6 +80,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ENUMFLPLOTRANGE=ENumFlPlotRange, $
                           AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
                           NEWELL_ANALYZE_EFLUX=newell_analyze_eFlux, $
+                          NEWELL_ANALYZE_MULTIPLY_BY_TYPE_PROBABILITY=newell_analyze_multiply_by_type_probability, $
                           NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
                           EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
                           ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
@@ -168,6 +169,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                           NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                           NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
+                          NONALFVEN__NEWELLPLOT_PROBOCCURRENCE=nonAlfven__newellPlot_probOccurrence, $
+                          NONALFVEN__NEWELL_PLOTRANGE=nonalfven__newell_plotRange, $
                           TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
                           TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
                           LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -831,6 +834,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     LOGAVGPLOT=logAvgPlot, $
                                     DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                                     ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                                    NEWELL_ANALYZE_MULTIPLY_BY_TYPE_PROBABILITY=newell_analyze_multiply_by_type_probability, $
                                     NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
                                     TXTOUTPUTDIR=txtOutputDir, $
                                     FANCY_PLOTNAMES=fancy_plotNames, $
@@ -1047,6 +1051,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                     LOGAVGPLOT=logAvgPlot, $
                                     DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                                     ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                                    NEWELL_ANALYZE_MULTIPLY_BY_TYPE_PROBABILITY=newell_analyze_multiply_by_type_probability, $
+                                    NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
                                     FANCY_PLOTNAMES=fancy_plotNames, $
                                     NPLOTS=nPlots, $
                                     MASKMIN=maskMin, $
@@ -1624,6 +1630,45 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      ENDIF
 
   ENDIF
+
+  IF KEYWORD_SET(nonAlfven__newellPlot_probOccurrence) THEN BEGIN
+
+     GET_H2D_NEWELLS__EACH_TYPE__NONALFVEN,eSpec,indices__nonAlfven_eSpec, $
+                                           MINM=minM, $
+                                           MAXM=maxM, $
+                                           BINM=binM, $
+                                           SHIFTM=shiftM, $
+                                           MINI=minI, $
+                                           MAXI=maxI, $
+                                           BINI=binI, $
+                                           NEWELL_PLOTRANGE=nonalfven__newell_plotRange, $
+                                           LOG_NEWELLPLOT=log_newellPlot, $
+                                           NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
+                                           NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
+                                           /NEWELLPLOT_PROBOCCURRENCE, $
+                                           TMPLT_H2DSTR=tmplt_h2dStr, $
+                                           H2DSTRS=h2dStrs, $
+                                           ;; H2DMASKSTR=h2dMaskStr, $
+                                           H2DFLUXN=junk_h2dFluxN, $
+                                           NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
+                                           ;; MASKMIN=maskMin, $
+                                           DATANAMES=dataNames, $
+                                           DATARAWPTRS=dataRawPtrs, $
+                                           CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                           CB_FORCE_OOBLOW=cb_force_oobLow, $
+                                           PRINT_MANDM=print_mAndM, $
+                                           LUN=lun
+
+     h2dStrArr            = [h2dStrArr,h2dStrs]
+     IF keepMe THEN BEGIN 
+        dataNameArr       = [dataNameArr,dataNames] 
+        dataRawPtrArr     = [dataRawPtrArr,dataRawPtrs] 
+     ENDIF
+
+
+
+  ENDIF
+
 
   ;;########BONUS########
   IF KEYWORD_SET(sum_electron_and_poyntingflux) THEN BEGIN

@@ -22,6 +22,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              NONALFVEN_MLT=nonAlfven_mlt, $
                              NONALFVEN_ILAT=nonAlfven_ilat, $
                              NONALFVEN_DELTA_T=nonAlfven_delta_t, $
+                             NONALFVEN_THISTDENOMINATOR=nonAlfven_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=logFluxPlot, $
                              DIVIDE_BY_WIDTH_X=divide_by_width_x, $
@@ -59,6 +60,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              GET_EFLUX=get_eflux, $
                              GET_ENUMFLUX=get_eNumFlux, $
                              NEWELL_ANALYZE_EFLUX=newell_analyze_eFlux, $
+                             NEWELL_ANALYZE_MULTIPLY_BY_TYPE_PROBABILITY=newell_analyze_multiply_by_type_probability, $
                              NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
                              TXTOUTPUTDIR=txtOutputDir, $
                              GET_PFLUX=get_pFlux, $
@@ -105,6 +107,38 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                    SUMMARY=newell_analysis__output_summary, $
                                    SUM_LUN=sum_lun
 
+     IF KEYWORD_SET(newell_analyze_multiply_by_type_probability) THEN BEGIN
+
+        GET_H2D_NEWELLS__EACH_TYPE__NONALFVEN,eSpec,indices__nonAlfven_eSpec, $
+                                              MINM=minM, $
+                                              MAXM=maxM, $
+                                              BINM=binM, $
+                                              SHIFTM=shiftM, $
+                                              MINI=minI, $
+                                              MAXI=maxI, $
+                                              BINI=binI, $
+                                              NEWELL_PLOTRANGE=newell_plotRange, $
+                                              LOG_NEWELLPLOT=log_newellPlot, $
+                                              NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
+                                              NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
+                                              /NEWELLPLOT_PROBOCCURRENCE, $
+                                              TMPLT_H2DSTR=tmplt_h2dStr, $
+                                              H2DSTRS=h2dStrs, $
+                                              ;; H2DMASKSTR=h2dMaskStr, $
+                                              H2DFLUXN=junk_h2dFluxN, $
+                                              NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
+                                              ;; MASKMIN=maskMin, $
+                                              DATANAMES=dataNames, $
+                                              DATARAWPTRS=dataRawPtrs, $
+                                              CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                              CB_FORCE_OOBLOW=cb_force_oobLow, $
+                                              PRINT_MANDM=print_mAndM, $
+                                              LUN=lun
+
+        H2DProboccurrenceList           = LIST(h2dStrs[0].data,h2dStrs[1].data,h2dStrs[2].data)
+        h2dStrs                         = !NULL
+        dataRawPtrs                     = !NULL
+     ENDIF
 
   ENDIF ELSE BEGIN
 
@@ -115,6 +149,36 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                  SUMMARY=newell_analysis__output_summary, $
                                  DESPUN_ALF_DB=despun_alf_db, $
                                  SUM_LUN=sum_lun
+
+     IF KEYWORD_SET(newell_analyze_multiply_by_type_probability) THEN BEGIN
+
+        GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
+                                   MINM=minM,MAXM=maxM, $
+                                   BINM=binM, $
+                                   SHIFTM=shiftM, $
+                                   MINI=minI,MAXI=maxI,BINI=binI, $
+                                   NEWELL_PLOTRANGE=newell_plotRange, $
+                                   LOG_NEWELLPLOT=log_newellPlot, $
+                                   NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
+                                   NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
+                                   NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
+                                   TMPLT_H2DSTR=tmplt_h2dStr, $
+                                   H2DSTRS=h2dStrs, $
+                                   ;; H2DMASKSTR=h2dMaskStr, $
+                                   H2DFLUXN=junk_h2dFluxN, $
+                                   NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
+                                   ;; MASKMIN=maskMin, $
+                                   DATANAMES=dataNames, $
+                                   DATARAWPTRS=dataRawPtrs, $
+                                   CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                   CB_FORCE_OOBLOW=cb_force_oobLow, $
+                                   PRINT_MANDM=print_mAndM, $
+                                   LUN=lun
+
+        H2DProboccurrenceList           = LIST(h2dStrs[0].data,h2dStrs[1].data,h2dStrs[2].data)
+        h2dStrs                         = !NULL
+        dataRawPtrs                     = !NULL
+     ENDIF
   ENDELSE
 
   IF KEYWORD_SET(newell_analysis__output_summary) THEN BEGIN
@@ -175,6 +239,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        NONALFVEN_MLT=nonAlfven_mlt, $
                        NONALFVEN_ILAT=nonAlfven_ilat, $
                        NONALFVEN_DELTA_T=nonAlfven_delta_t, $
+                       NONALFVEN_THISTDENOMINATOR=nonAlfven_tHistDenominator, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=logFluxPlot, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
@@ -225,6 +290,11 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      dataName            += out_datanamesuffs[k]
      h2dStr.mask          = out_h2dMask
      h2dStr.hasMask       = 1
+
+     IF KEYWORD_SET(newell_analyze_multiply_by_type_probability) THEN BEGIN
+        dataName         += '_mult_probOcc'
+        h2dStr.data      *= H2DProboccurrenceList[k]
+     ENDIF
 
      h2dStrArr            = [h2dStrArr,h2dStr] 
      IF keepMe THEN BEGIN

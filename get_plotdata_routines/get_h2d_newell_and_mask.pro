@@ -65,10 +65,34 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
                                               MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
                                               MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
   
-  h2dStr.data                       = h2dFluxN
-  h2dStr.lim                        = KEYWORD_SET(newell_plotRange) AND N_ELEMENTS(newell_plotRange) EQ 2 ? $
-                                      DOUBLE(newell_plotRange) : $
-                                      DOUBLE([MIN(h2dFluxN),MAX(h2dFluxN)]) 
+  h2dStr.data                     = h2dFluxN
+
+  pR_dimSize                      = SIZE(newell_plotRange,/DIMENSIONS)
+  CASE NDIMEN(newell_plotRange) OF
+     -1: BEGIN
+        h2dStr.lim            = DOUBLE([MIN(h2dFluxN),MAX(h2dFluxN)])
+     END
+     0: BEGIN
+        h2dStr.lim            = DOUBLE([MIN(h2dFluxN),MAX(h2dFluxN)])
+     END
+     1: BEGIN
+        IF pR_dimSize[0] EQ 2 THEN BEGIN
+           h2dStr.lim         = newell_plotRange
+        ENDIF ELSE BEGIN
+           h2dStr.lim         = DOUBLE([MIN(h2dFluxN),MAX(h2dFluxN)])
+        ENDELSE
+     END
+     2: BEGIN
+        ;; IF (pR_dimSize[0] EQ 2) AND (pR_dimSize[1] EQ 3) THEN BEGIN
+        ;;    h2dStr.lim         = newell_plotRange[*,i]
+        ;; ENDIF ELSE BEGIN
+        ;;    h2dStr.lim         = DOUBLE([MIN(h2dFluxN),MAX(h2dFluxN)])
+        ;; ENDELSE
+     END
+  ENDCASE
+  ;; h2dStr.lim                        = KEYWORD_SET(newell_plotRange) AND N_ELEMENTS(newell_plotRange) EQ 2 ? $
+  ;;                                     DOUBLE(newell_plotRange) : $
+  ;;                                     DOUBLE([MIN(h2dFluxN),MAX(h2dFluxN)]) 
   h2dStr.logLabels                  = 1
   dataRawPtr                        = PTR_NEW(h2dFluxN) 
 
