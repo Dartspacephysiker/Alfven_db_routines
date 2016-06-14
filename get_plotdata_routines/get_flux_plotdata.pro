@@ -97,8 +97,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   IF KEYWORD_SET(get_ChariE) THEN nDataz++
 
   IF nDataz GT 1 THEN BEGIN
-     PRINTF,lun,"Multiple plots at once currently not supported, you fool!"
-     STOP
+     IF KEYWORD_SET(get_eFlux) AND KEYWORD_SET(get_pFlux) THEN BEGIN
+        PRINT,"Summed eFlux and Poynting flux ..."
+        sum_eFlux_and_pFlux = 1
+     ENDIF ELSE BEGIN
+        PRINTF,lun,"Multiple plots at once currently not supported, you fool!"
+        STOP
+     ENDELSE
   ENDIF
 
   ;;Don't mod everyone's plot indices
@@ -428,12 +433,21 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ;;    END              
            ;;    ELSE: BEGIN
                  ;; h2dStr.title    = title__alfDB_ind_49_tAvg
-           h2dStr.title          = title__alfDB_ind_49 + '(time-averaged)'
+           IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
+              h2dStr.title          = 'Summed eFlux and pFlux (time-averaged)'
+           ENDIF ELSE BEGIN
+              h2dStr.title          = title__alfDB_ind_49 + '(time-averaged)'
+           ENDELSE
+           
            ;;    END
            ;; ENDCASE
         END
         ELSE: BEGIN
-           h2dStr.title          = title__alfDB_ind_49
+           IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
+              h2dStr.title          = 'Summed eFlux and pFlux (mW/m^2)'
+           ENDIF ELSE BEGIN
+              h2dStr.title          = title__alfDB_ind_49
+           ENDELSE
         END
      ENDCASE
 
@@ -443,37 +457,60 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                               DO_DESPUNDB=maximus.despun
         IF maximus.corrected_fluxes THEN BEGIN ;Assume that pFlux has been multiplied by mapRatio
            PRINT,'Undoing a square-root factor of multiplication by magField ratio for Poynting flux ...'
-           magFieldFactor        = 1.D/SQRT(mapRatio.ratio[tmp_i]) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
+           IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
+              magFieldFactor2    = 1.D/SQRT(mapRatio.ratio[tmp_i]) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
+           ENDIF ELSE BEGIN
+              magFieldFactor     = 1.D/SQRT(mapRatio.ratio[tmp_i]) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
+           ENDELSE
         ENDIF ELSE BEGIN
-           magFieldFactor        = SQRT(mapRatio.ratio[tmp_i])
+           IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
+              magFieldFactor2    = SQRT(mapRatio.ratio[tmp_i])
+           ENDIF ELSE BEGIN
+              magFieldFactor     = SQRT(mapRatio.ratio[tmp_i])
+           ENDELSE
         ENDELSE
      ENDIF
 
      IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
         CASE 1 OF
            KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
-              h2dStr.title = title__alfDB_ind_49_grossRate
-              grossConvFactor = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+              IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
+                 grossConvFactor  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 h2dStr.title     = "Gross summed eFlux and pFlux"
+              ENDIF ELSE BEGIN
+                 h2dStr.title     = title__alfDB_ind_49_grossRate
+                 grossConvFactor2 = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+              ENDELSE
            END
            KEYWORD_SET(do_grossRate_with_long_width): BEGIN
-              h2dStr.title = title__alfDB_ind_49_grossRate + '(long. wid.)'
-              grossConvFactor = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+              IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
+                 h2dStr.title     = 'Gross summed eFlux and pFlux (long. wid.)'
+                 grossConvFactor2 = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+              ENDIF ELSE BEGIN
+                 h2dStr.title     = title__alfDB_ind_49_grossRate + '(long. wid.)'
+                 grossConvFactor  = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+              ENDELSE
            END
            ELSE: BEGIN
            END
         ENDCASE
      ENDIF
      
-     dataName               = "pFlux"
+     dataName               = KEYWORD_SET(sum_eFlux_and_pFlux) ? "eFlux_and_pFlux" : "pFlux"
      h2dStr.labelFormat     = fluxPlotPPlotCBLabelFormat
      h2dStr.logLabels       = logPFluxLabels
      h2dStr.do_plotIntegral = PFlux_do_plotIntegral
      h2dStr.do_midCBLabel   = PFlux_do_midCBLabel
 
-     inData                 = maximus.pFluxEst[tmp_i]
-
-     can_div_by_w_x         = 0
-     can_mlt_by_w_x         = 1
+     IF KEYWORD_SET(sum_eFlux_AND_pFlux) THEN BEGIN
+        inData2             = maximus.pFluxEst[tmp_i]
+        can_div_by_w_x2     = 0
+        can_mlt_by_w_x2     = 1
+     ENDIF ELSE BEGIN
+        inData              = maximus.pFluxEst[tmp_i]
+        can_div_by_w_x      = 0
+        can_mlt_by_w_x      = 1
+     ENDELSE
 
   ENDIF
 
@@ -726,6 +763,23 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      ENDIF ELSE BEGIN
         PRINTF,lun,"Can't divide " + dataName + " by width_x! Not in the cards."
      ENDELSE
+
+     IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
+        IF can_div_by_w_x2 THEN BEGIN
+           PRINT,'Dividing by WIDTH_X!'
+           
+           dataName               = 'spatialAvg_' + dataName
+
+           ;;If the ion plots or one of the select electron plots didn't pick this up, set it to 1
+           ;;NOTE, oxy also needs to be scaled!!!
+           IF N_ELEMENTS(factor2) EQ 0 THEN factor2 = 1.0D
+           IF N_ELEMENTS(magFieldFactor2) EQ 0 THEN magFieldFactor2 = 1.0D
+
+           inData2                 = inData2*factor2*magFieldFactor2/maximus.width_x[tmp_i]
+        ENDIF ELSE BEGIN
+           PRINTF,lun,"Can't divide " + dataName + " by width_x! Not in the cards."
+        ENDELSE
+     ENDIF
   ENDIF
 
   IF KEYWORD_SET(multiply_by_width_x) THEN BEGIN
@@ -743,6 +797,38 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      ENDIF ELSE BEGIN
         PRINTF,lun,"Can't multiply " + dataName + " by width_x! Not in the cards."
      ENDELSE
+
+     IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
+        IF can_mlt_by_w_x2 THEN BEGIN
+           PRINT,'Multiplying by WIDTH_X!'
+           
+           dataName               = 'spatialInteg_' + dataName
+           
+           ;;If the ion plots or one of the select electron plots didn't pick this up, set it to 1
+           ;;NOTE, oxy also needs to be scaled!!!
+           IF N_ELEMENTS(factor2) EQ 0 THEN factor2 = 1.0D
+           IF N_ELEMENTS(magFieldFactor2) EQ 0 THEN magFieldFactor2 = 1.0D
+           
+           inData2                 = inData2*factor2*magFieldFactor2*maximus.width_x[tmp_i]
+        ENDIF ELSE BEGIN
+           PRINTF,lun,"Can't multiply " + dataName + " by width_x! Not in the cards."
+        ENDELSE
+     ENDIF
+  ENDIF
+
+  ;;If summing eFlux and pFlux, we can do it here
+  IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
+     CASE 1 OF
+        N_ELEMENTS(lt_i) GT 0: BEGIN
+           inData2                = inData2[lt_i]
+        END
+        N_ELEMENTS(gt_i) GT 0: BEGIN
+           inData2                = inData2[gt_i]
+        END
+        ELSE:
+     ENDCASE
+
+     inData                 = inData + TEMPORARY(inData2)
   ENDIF
 
   ;;Is this going to be a time-averaged plot?

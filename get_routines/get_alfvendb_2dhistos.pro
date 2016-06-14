@@ -205,6 +205,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           CUSTOM_GROSSRATE_CONVFACTOR=custom_grossRate_convFactor, $
                           LOG_CUSTOM_MAXIND=log_custom_maxInd, $
                           SUM_ELECTRON_AND_POYNTINGFLUX=sum_electron_and_poyntingflux, $
+                          SUMMED_EFLUX_PFLUXPLOTRANGE=summed_eFlux_pFluxplotRange, $
                           MEDIANPLOT=medianPlot, $
                           MEDHISTOUTDATA=medHistOutData, $
                           MEDHISTOUTTXT=medHistOutTxt, $
@@ -1673,28 +1674,102 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   ;;########BONUS########
   IF KEYWORD_SET(sum_electron_and_poyntingflux) THEN BEGIN
      
-     IF KEYWORD_SET(eNumFlPlots) AND KEYWORD_SET(pplots) THEN BEGIN
-        ePlotInd            = WHERE(STRMATCH(dataNameArr, '*enumfl*', /FOLD_CASE) EQ 1)
-        pPlotInd            = WHERE(STRMATCH(dataNameArr, '*pflux*', /FOLD_CASE) EQ 1)
+     GET_FLUX_PLOTDATA,maximus,plot_i,$
+                       /GET_PFLUX, $
+                       /GET_EFLUX, $
+                       MINM=minM, $
+                       MAXM=maxM, $
+                       BINM=binM, $
+                       SHIFTM=shiftM, $
+                       MINI=minI, $
+                       MAXI=maxI, $
+                       BINI=binI, $
+                       DO_LSHELL=do_lshell, $
+                       MINL=minL, $
+                       MAXL=maxL, $
+                       BINL=binL, $
+                       OUTH2DBINSMLT=outH2DBinsMLT, $
+                       OUTH2DBINSILAT=outH2DBinsILAT, $
+                       OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                       PLOTRANGE=summed_eFlux_pFluxplotRange, $
+                       PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ePlots), $
+                       FLUXPLOTTYPE=eFluxPlotType, $
+                       NOPOSFLUX=noPoseflux, $
+                       NONEGFLUX=noNegeflux, $
+                       ABSFLUX=abseflux, $
+                       OUT_REMOVED_II=out_removed_ii, $
+                       LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logefPlot)), $
+                       DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                       DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                       DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                       GROSSRATE__H2D_AREAS=h2dAreas, $
+                       DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                       GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+                       GROSSRATE__CENTERS_MLT=centersMLT, $
+                       GROSSRATE__CENTERS_ILAT=centersILAT, $
+                       GROSSCONVFACTOR=grossConvFactor, $
+                       WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
+                       GROSSLUN=grossLun, $
+                       THISTDENOMINATOR=tHistDenominator, $
+                       DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                       MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                       H2DSTR=h2dStr, $
+                       TMPLT_H2DSTR=tmplt_h2dStr, $
+                       H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                       H2DFLUXN=h2dFluxN, $
+                       H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                       OUT_H2DMASK=out_h2dMask, $
+                       DATANAME=dataName, $
+                       DATARAWPTR=dataRawPtr, $
+                       MEDIANPLOT=medianplot, $
+                       MEDHISTOUTDATA=medHistOutData, $
+                       MEDHISTOUTTXT=medHistOutTxt, $
+                       MEDHISTDATADIR=txtOutputDir, $
+                       LOGAVGPLOT=logAvgPlot, $
+                       DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                       ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                       FANCY_PLOTNAMES=fancy_plotNames
+     
+     h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
-        IF ePlotInd[0] NE -1 AND pPlotInd[0] NE -1 THEN BEGIN
-           h2dStrEP         = tmplt_h2dStr
-           EPdataName       = 'summed_e_and_p'
-           h2dStrEP.title   = "Summed e- and Poynting flux (mW/m!U2!N)"
-           h2dStrEP.lim     = [0.00,0.35]
-           h2dStrEP.logLabels = 0
-           h2dStrEP.data       = h2dStrArr[ePlotInd].data+h2dStrArr[pPlotInd].data
+     h2dStrArr            = [h2dStrArr,h2dStr] 
+     IF keepMe THEN BEGIN 
+        dataNameArr       = [dataNameArr,dataName] 
+        dataRawPtrArr     = [dataRawPtrArr,dataRawPtr] 
+        varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+        varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+        removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
+     ENDIF  
+     
+     IF KEYWORD_SET(do_grossRate_fluxQuantities) $
+        OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+        grossConvFactorArr   = [grossConvFactorArr,grossConvFactor]
+     ENDIF
 
-           ;;Add this curiosity to the mix
-           dataNameArr        = [dataNameArr,EPdataName]
-           h2dStrArr          = [h2dStrArr,h2dStrEP]
-        ENDIF ELSE BEGIN
-           PRINT,"Couldn't locate eplot and pplot for summing!"
-           STOP
-        ENDELSE
-     ENDIF ELSE BEGIN
-        PRINT,'Have to set eplots and pplots keywords to make this work'
-     ENDELSE
+     ;; IF KEYWORD_SET(eNumFlPlots) AND KEYWORD_SET(pplots) THEN BEGIN
+     ;;    ePlotInd            = WHERE(STRMATCH(dataNameArr, '*enumfl*', /FOLD_CASE) EQ 1)
+     ;;    pPlotInd            = WHERE(STRMATCH(dataNameArr, '*pflux*', /FOLD_CASE) EQ 1)
+
+     ;;    IF ePlotInd[0] NE -1 AND pPlotInd[0] NE -1 THEN BEGIN
+     ;;       h2dStrEP         = tmplt_h2dStr
+     ;;       EPdataName       = 'summed_e_and_p'
+     ;;       h2dStrEP.title   = "Summed e- and Poynting flux (mW/m!U2!N)"
+     ;;       h2dStrEP.lim     = [0.00,0.35]
+     ;;       h2dStrEP.logLabels = 0
+     ;;       h2dStrEP.data       = h2dStrArr[ePlotInd].data+h2dStrArr[pPlotInd].data
+
+     ;;       ;;Add this curiosity to the mix
+     ;;       dataNameArr        = [dataNameArr,EPdataName]
+     ;;       h2dStrArr          = [h2dStrArr,h2dStrEP]
+     ;;    ENDIF ELSE BEGIN
+     ;;       PRINT,"Couldn't locate eplot and pplot for summing!"
+     ;;       STOP
+     ;;    ENDELSE
+     ;; ENDIF ELSE BEGIN
+     ;;    PRINT,'Have to set eplots and pplots keywords to make this work'
+     ;; ENDELSE
+
+
   ENDIF
 
 

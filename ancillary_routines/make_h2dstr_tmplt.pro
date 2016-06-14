@@ -31,8 +31,8 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
   if (im2bins le 0) then MESSAGE, 'Illegal bin size for V2.'
 
 
-  h2dStr_tmplt={tmplt_h2dStr, $
-                data            : KEYWORD_SET(do_plot_i) ? LIST() : DBLARR(im1bins,im2bins), $
+  ;; h2dStr_tmplt={tmplt_h2dStr, $
+  h2dStr_tmplt={data            : KEYWORD_SET(do_plot_i) ? LIST() : DBLARR(im1bins,im2bins), $
                 name            : '', $
                 title           : "Template for 2D hist structure", $
                 lim             : DBLARR(2), $

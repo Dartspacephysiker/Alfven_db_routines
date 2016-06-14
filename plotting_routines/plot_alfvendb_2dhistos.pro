@@ -19,6 +19,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            TILEPLOTSUFF=tilePlotSuff, $
                            TILEPLOTTITLE=tilePlotTitle, $
                            TILE__FAVOR_ROWS=tile__favor_rows, $
+                           TILE__INCLUDE_IMF_ARROWS=tile__include_IMF_arrows, $
                            ;; BLANK_TILE_POSITIONS=blank_tile_positions, $
                            LUN=lun, $
                            EPS_OUTPUT=eps_output, $
@@ -92,7 +93,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                       /LANDSCAPE
               
               ;; Make a simple plot to the PostScript file:
-              interp_polar2dcontour,h2dStrArr[i], $
+              INTERP_POLAR2DCONTOUR,h2dStrArr[i], $
                                     dataNameArr[i], $
                                     tempFile, $
                                     FNAME=plotDir + paramStr+'--'+dataNameArr[i]+'.png', $
@@ -307,6 +308,33 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                         ALIGNMENT=0.5, $
                         CHARSIZE=2
               ENDIF
+
+              IF KEYWORD_SET(tile__include_IMF_arrows) THEN BEGIN
+                 j          = WHERE(tiling_order LT 0)
+                 IF j[0] EQ -1 THEN BEGIN
+                    PRINT,'No blank spot for me to put this thing!'
+                    STOP
+                 ENDIF
+                 
+                 blankPos   = CALC_PLOT_POSITION(j+1,n_tile_columns,n_tile_rows)
+
+                 arrowFile  = '/home/spencerh/Desktop/Spence_paper_drafts/2016/Alfvens_IMF/Figs/clockAngle_for_zhang_analog.png'
+                 arrowImage = READ_IMAGE(arrowFile,R,G,B)
+                 CGIMAGE,arrowImage,POSITION=blankPos,/INTERPOLATE,/SCALE
+                 ;; redChannel = REFORM(arrowImage[0, *, *])
+                 ;; TV,redChannel,blankpos[0],blankpos[1],XSIZE=xSize,YSIZE=ySize,/NORMAL
+
+                 ;; DEVICE,DECOMPOSED=0
+                 ;; TVLCT,R,G,B
+                 ;; arrowImage = IMAGE(arrowFile, $
+                 ;;                    AXIS_STYLE=0, $
+                 ;;                    ;; DIMENSIONS=[xSize*100,ySize*100], $
+                 ;;                    ;; IMAGE_LOCATION=blankPos[0:1], $
+                 ;;                    /CURRENT)
+
+                 ;; arrowImage.POSITION = blankPos
+              ENDIF
+
 
               CGPS_Close 
               ;;Create a PNG file with a width of 800 pixels.
