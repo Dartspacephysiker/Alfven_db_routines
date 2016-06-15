@@ -20,6 +20,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            TILEPLOTTITLE=tilePlotTitle, $
                            TILE__FAVOR_ROWS=tile__favor_rows, $
                            TILE__INCLUDE_IMF_ARROWS=tile__include_IMF_arrows, $
+                           TILE__CB_IN_CENTER_PANEL=tile__cb_in_center_panel, $
+                           TILE__NO_COLORBAR_ARRAY=tile__no_colorbar_array, $
                            ;; BLANK_TILE_POSITIONS=blank_tile_positions, $
                            LUN=lun, $
                            EPS_OUTPUT=eps_output, $
@@ -107,12 +109,15 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
         ENDIF ELSE BEGIN
            ;;Create a PostScript file.
 
-           defMapPos              = [0.125, 0.05, 0.875, 0.8]
-           defCBPos               = [0.10, 0.90, 0.90, 0.92]
+           defMapPos              = [0.125, 0.05, 0.875, 0.8 ]
+           defMapNoCBPos          = [0.1  , 0.1 , 0.9  , 0.9 ]
+           defCBPos               = [0.10 , 0.90, 0.90 , 0.92]
+           ;; vertCBPos              = [0.92 , 0.05, 0.95 , 0.95]
+           vertCBPos              = [0.07 , 0.05, 0.10 , 0.95]
 
            ;;But if you want a title...
            defXWTitleSize         = 5
-           defYWTitleSize         = 6
+           defYWTitleSize         = 5.5
 
            IF KEYWORD_SET(tile_images) THEN BEGIN
               nPlots            = N_ELEMENTS(h2dStrArr)
@@ -182,7 +187,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  ENDELSE
               ENDWHILE
 
-              IF KEYWORD_SET(tilePlotTitle) THEN BEGIN
+              IF KEYWORD_SET(tilePlotTitle) OR KEYWORD_SET(tile__cb_in_center_panel) THEN BEGIN
                  xSize              = defXWTitleSize*n_tile_columns
                  ySize              = defYWTitleSize*n_tile_rows
 
@@ -197,6 +202,11 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  defCBPos[0]        = defCBPos[0]*xRatio + (1.-xRatio)/2.
                  defCBPos[2]        = defCBPos[2]*xRatio + (1.-xRatio)/2.
 
+                 defMapNoCBPos[0]   = defMapNoCBPos[0]*xRatio + (1.-xRatio)/2.
+                 defMapNoCBPos[2]   = defMapNoCBPos[2]*xRatio + (1.-xRatio)/2.
+                 vertCBPos[0]       = vertCBPos[0]*xRatio + (1.-xRatio)/2.
+                 vertCBPos[2]       = vertCBPos[2]*xRatio + (1.-xRatio)/2.
+
                  ;; defMapPos[1] = defMapPos[1]*yRatio + (1.-yRatio)/2.
                  ;; defMapPos[3] = defMapPos[3]*yRatio + (1.-yRatio)/2.
                  ;; defCBPos[1]  = defCBPos[1]*yRatio + (1.-yRatio)/2.
@@ -206,10 +216,16 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  defCBPos[1]        = defCBPos[1]*yRatio
                  defCBPos[3]        = defCBPos[3]*yRatio
 
+                 defMapNoCBPos[1]   = defMapNoCBPos[1]*yRatio
+                 defMapNoCBPos[3]   = defMapNoCBPos[3]*yRatio
+                 vertCBPos[1]       = vertCBPos[1]*yRatio
+                 vertCBPos[3]       = vertCBPos[3]*yRatio
               ENDIF ELSE BEGIN
                  xSize              = defXSize*n_tile_columns
                  ySize              = defYSize*n_tile_rows
               
+                 xRatio             = 1
+                 yRatio             = 1
               ENDELSE
               ;; normMapWidth        = defMapPos[2]-defMapPos[0]
               ;; normMapHeight       = defMapPos[3]-defMapPos[1]
@@ -253,16 +269,30 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                     ENDWHILE
                  ENDIF
 
+                 CASE N_ELEMENTS(tile__no_colorbar_array) OF
+                    0:    no_cb = !NULL
+                    1:    no_cb = tile__no_colorbar_array
+                    ELSE: no_cb = tile__no_colorbar_array[j]
+                 ENDCASE
+
                  position         = CALC_PLOT_POSITION(i+1,n_tile_columns,n_tile_rows)
 
                  ;;handle map position
-                 map_position     = position
-                 map_position[0]  = (position[2]-position[0])*defMapPos[0]+position[0]
-                 map_position[1]  = (position[3]-position[1])*defMapPos[1]+position[1]
-                 map_position[2]  = (position[2]-position[0])*defMapPos[2]+position[0]
-                 map_position[3]  = (position[3]-position[1])*defMapPos[3]+position[1]
+                 IF KEYWORD_SET(no_cb) THEN BEGIN
+                    map_position     = position
+                    map_position[0]  = (position[2]-position[0])*defMapNoCBPos[0]+position[0]
+                    map_position[1]  = (position[3]-position[1])*defMapNoCBPos[1]+position[1]
+                    map_position[2]  = (position[2]-position[0])*defMapNoCBPos[2]+position[0]
+                    map_position[3]  = (position[3]-position[1])*defMapNoCBPos[3]+position[1]
+                 ENDIF ELSE BEGIN
+                    map_position     = position
+                    map_position[0]  = (position[2]-position[0])*defMapPos[0]+position[0]
+                    map_position[1]  = (position[3]-position[1])*defMapPos[1]+position[1]
+                    map_position[2]  = (position[2]-position[0])*defMapPos[2]+position[0]
+                    map_position[3]  = (position[3]-position[1])*defMapPos[3]+position[1]
+                 ENDELSE
 
-                 ;;handle map position
+                 ;;handle cb position
                  cb_position      = position
                  cb_position[0]   = (position[2]-position[0])*defCBPos[0]+position[0]
                  cb_position[1]   = (position[3]-position[1])*defCBPos[1]+position[1]
@@ -281,11 +311,12 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[j],tempFile, $
                                        H2DMASK=h2dMask, $
-                                       NO_COLORBAR=no_colorbar, $
+                                       NO_COLORBAR=no_cb, $
                                        WINDOW_XSIZE=xSize, $
                                        WINDOW_YSIZE=ySize, $
                                        MAP_POSITION=map_position, $
                                        CB_POSITION=cb_position, $
+                                       CB_INFO=cb_info, $
                                        /NO_DISPLAY, $
                                        SUPPRESS_GRIDLABELS=suppress_gridLabels, $
                                        SUPPRESS_TITLES=suppress_titles, $
@@ -294,7 +325,15 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                                        _EXTRA=e 
               ENDFOR
 
+              IF KEYWORD_SET(tile__cb_in_center_panel) THEN BEGIN
+                 tpTitle = h2dStrArr[0].title
+              ENDIF 
+
               IF KEYWORD_SET(tilePlotTitle) THEN BEGIN
+                 tpTitle = tilePlotTitle
+              ENDIF
+
+              IF KEYWORD_SET(tpTitle) THEN BEGIN
                  ;; tilePlotText = TEXT(0.5, $
                  ;;                     yRatio + (1.-yRatio)/2., $
                  ;;                     tilePlotTitle, $
@@ -302,25 +341,106 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  ;;                     ALIGNMENT=0.5, $
                  ;;                     FONT_SIZE=18)
                  CGTEXT,0.5, $
-                        yRatio + (1.-yRatio)/2., $
-                        tilePlotTitle, $
+                        yRatio + (1.-yRatio)/1.5, $
+                        tpTitle, $
                         /NORMAL, $
                         ALIGNMENT=0.5, $
-                        CHARSIZE=2
+                        CHARSIZE=1.7
               ENDIF
 
-              IF KEYWORD_SET(tile__include_IMF_arrows) THEN BEGIN
-                 j          = WHERE(tiling_order LT 0)
-                 IF j[0] EQ -1 THEN BEGIN
+              ;;Find out where blank panels are if including IMF arrow/setting CB in center panel
+              IF KEYWORD_SET(tile__include_IMF_arrows) OR KEYWORD_SET(tile__cb_in_center_panel) THEN BEGIN
+                 jBlank       = WHERE(tiling_order LT 0)
+                 IF jBlank[0] EQ -1 THEN BEGIN
                     PRINT,'No blank spot for me to put this thing!'
                     STOP
                  ENDIF
-                 
-                 blankPos   = CALC_PLOT_POSITION(j+1,n_tile_columns,n_tile_rows)
+              ENDIF
 
-                 arrowFile  = '/home/spencerh/Desktop/Spence_paper_drafts/2016/Alfvens_IMF/Figs/clockAngle_for_zhang_analog.png'
-                 arrowImage = READ_IMAGE(arrowFile,R,G,B)
-                 CGIMAGE,arrowImage,POSITION=blankPos,/INTERPOLATE,/SCALE
+              IF KEYWORD_SET(tile__cb_in_center_panel) THEN BEGIN
+
+                 position         = CALC_PLOT_POSITION(jBlank+1,n_tile_columns,n_tile_rows)
+
+                 ;;handle cb position
+                 cb_position      = position
+                 cb_position[0]   = (position[2]-position[0])*vertCBPos[0]+position[0]
+                 cb_position[1]   = (position[3]-position[1])*vertCBPos[1]+position[1]
+                 cb_position[2]   = (position[2]-position[0])*vertCBPos[2]+position[0]
+                 cb_position[3]   = (position[3]-position[1])*vertCBPos[3]+position[1]
+
+
+                 cb_info.vertical = 1
+                 cb_info.position = cb_position
+                 cb_info.charsize = 0.75
+
+                 CGCOLORBAR,NCOLORS=cb_info.NCOLORS, $
+                            XLOG=cb_info.XLOG, $
+                            BOTTOM=cb_info.BOTTOM, $
+                            OOB_LOW=cb_info.OOB_Low EQ -9 ? !NULL : cb_info.OOB_Low, $
+                            OOB_HIGH=cb_info.OOB_High EQ -9 ? !NULL : cb_info.OOB_High, $
+                            RANGE=cb_info.RANGE, $
+                            TITLE=!NULL, $ ;cb_info.TITLE, $
+                            TLOCATION=cb_info.TLOCATION, $
+                            TCHARSIZE=cb_info.TCHARSIZE, $
+                            POSITION=cb_info.POSITION, $
+                            TEXTTHICK=cb_info.TEXTTHICK, $
+                            VERTICAL=cb_info.VERTICAL, $
+                            CHARSIZE=cb_info.CHARSIZE, $
+                            TICKLEN=cb_info.TICKLEN
+              ENDIF
+
+              CGPS_Close 
+              ;;Create a PNG file with a width of 800 pixels.
+              IF ~KEYWORD_SET(eps_output) THEN BEGIN
+                 CGPS2RASTER, plotDir + paramStr+tPSuff+'.ps', $
+                              /PNG, $
+                              WIDTH=800*n_tile_columns, $
+                              DELETE_PS=del_PS
+
+              ENDIF
+
+              IF KEYWORD_SET(tile__include_IMF_arrows) THEN BEGIN
+
+                 position         = CALC_PLOT_POSITION(jBlank+1,n_tile_columns,n_tile_rows)
+
+                 arrowFile  = '/home/spencerh/Desktop/Spence_paper_drafts/2016/Alfvens_IMF/Figs/clockAngle_for_zhang_analog_v3.png'
+
+                 ;; wDim       = [800*n_tile_columns,800*n_tile_rows]
+                 ;; wDim       = [800*n_tile_columns*xRatio,800*n_tile_rows*yRatio]
+                 wDim       = [800*n_tile_rows*yRatio,800*n_tile_columns*xRatio]
+
+                 win        = WINDOW(DIMENSIONS=wDim, $
+                                     /BUFFER)
+
+                 im1        = IMAGE(plotDir + paramStr + tPSuff + '.png', $
+                                    MARGIN=0, $
+                                    /CURRENT, $
+                                    ;; DIMENSIONS=[xSize*100,ySize*100], $
+                                    DIMENSIONS=wDim, $
+                                    IMAGE_DIMENSIONS=wDim) ;;, $
+                 ;; IMAGE_DIMENSIONS=[800,800])
+                 
+                 imArrow    = IMAGE(arrowFile, $
+                                    ;; LAYOUT=[n_tile_columns,n_tile_rows,jBlank+1], $
+                                    POSITION=position, $
+                                    MARGIN=0, $
+                                    /CURRENT, $
+                                    ;; DIMENSIONS=[xSize*100,ySize*100], $
+                                    ;; DIMENSIONS=[800*n_tile_columns,800*n_tile_rows], $
+                                    ;; DIMENSIONS=[800,800], $
+                                    DIMENSIONS=wDim, $
+                                    IMAGE_DIMENSIONS=[801,801])
+
+                 win.SAVE,plotDir + paramStr + tPSuff + '.png'
+
+                 win.CLOSE
+
+                 win = !NULL
+
+                 ;; blankPos   = CALC_PLOT_POSITION(j+1,n_tile_columns,n_tile_rows)
+
+                 ;; arrowImage = READ_IMAGE(arrowFile,R,G,B)
+                 ;; CGIMAGE,arrowImage,POSITION=blankPos,/INTERPOLATE,/SCALE
                  ;; redChannel = REFORM(arrowImage[0, *, *])
                  ;; TV,redChannel,blankpos[0],blankpos[1],XSIZE=xSize,YSIZE=ySize,/NORMAL
 
@@ -333,16 +453,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  ;;                    /CURRENT)
 
                  ;; arrowImage.POSITION = blankPos
-              ENDIF
 
-
-              CGPS_Close 
-              ;;Create a PNG file with a width of 800 pixels.
-              IF ~KEYWORD_SET(eps_output) THEN BEGIN
-                 CGPS2RASTER, plotDir + paramStr+tPSuff+'.ps', $
-                              /PNG, $
-                              WIDTH=800*n_tile_columns, $
-                              DELETE_PS=del_PS
               ENDIF
                  
               !P.MULTI = 0
@@ -354,6 +465,12 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
 
               FOR i=0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN  
                  
+                 CASE N_ELEMENTS(no_colorbar) OF
+                    0:    no_cb = !NULL
+                    1:    no_cb = no_colorbar
+                    ELSE: no_cb = no_colorbar[i]
+                 ENDCASE
+
                  CGPS_Open, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
                             /NOMATCH, $
                             XSIZE=5, $
@@ -370,7 +487,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            /LANDSCAPE_FORCE
                  
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
-                                       NO_COLORBAR=no_colorbar, $
+                                       NO_COLORBAR=no_cb, $
                                        WINDOW_XSIZE=xSize, $
                                        WINDOW_YSIZE=ySize, $
                                        MAP_POSITION=map_position, $

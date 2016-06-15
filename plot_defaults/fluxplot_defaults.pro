@@ -152,6 +152,8 @@ title__alfDB_ind_18__div_by_width_x  = 'Upward Ion Flux (' + numFluxStr + ')' + 
 
 ;;For storm paper
 alficStr                             = ANSI_VALUE('Alfvénic')
+alficStr                             = ''
+
 title__alfDB_ind_10__div_by_width_x  = alficStr + ' Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString ;"Eflux_Losscone_Integ"
 title__alfDB_ind_18__div_by_width_x  = alficStr + ' Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
 title__alfDB_ind_49                  = alficStr + ' Poynting Flux (' + energyFluxStr + ')' + ionosphString

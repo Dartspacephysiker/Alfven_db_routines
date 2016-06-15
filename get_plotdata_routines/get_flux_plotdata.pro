@@ -79,6 +79,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   
   COMPILE_OPT idl2
 
+  for_pres = 1
+
   ;;The loaded defaults take advantage of KEYWORD_SET(fancy_plotNames)
   @fluxplot_defaults.pro
 
@@ -173,7 +175,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
            ENDIF
 
-           IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
+           IF KEYWORD_SET(do_timeAvg_fluxQuantities) AND ~KEYWORD_SET(for_pres) THEN BEGIN
               h2dStr.title  = title__alfDB_ind_10 + '(time-averaged)'
            ENDIF
 
@@ -205,7 +207,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
            ENDIF
 
-           IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
+           IF KEYWORD_SET(do_timeAvg_fluxQuantities) AND ~KEYWORD_SET(for_pres) THEN BEGIN
               h2dStr.title  = title__alfDB_ind_11 + '(time-averaged)'
            ENDIF
 
@@ -298,7 +300,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
            ENDIF
 
-           IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
+           IF KEYWORD_SET(do_timeAvg_fluxQuantities) AND ~KEYWORD_SET(for_pres) THEN BEGIN
               h2dStr.title  = title__alfDB_ind_10 + '(time-averaged)'
            ENDIF
 
@@ -339,10 +341,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
            CASE 1 OF 
               KEYWORD_SET(do_timeAvg_fluxQuantities): BEGIN
-                 h2dStr.title          = title__alfDB_esa_nFlux + '(time-averaged)'
+                 IF ~KEYWORD_SET(for_pres) THEN BEGIN
+                    h2dStr.title          = title__alfDB_esa_nFlux + '(time-averaged)'
+                 ENDIF
               END
               ELSE: BEGIN
-                 h2dStr.title          = title__alfDB_esa_nFlux + '(time-averaged)'
+                 IF ~KEYWORD_SET(for_pres) THEN BEGIN
+                    h2dStr.title          = title__alfDB_esa_nFlux + '(time-averaged)'
+                 ENDIF
               END
            ENDCASE
 
@@ -434,9 +440,15 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ;;    ELSE: BEGIN
                  ;; h2dStr.title    = title__alfDB_ind_49_tAvg
            IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
-              h2dStr.title          = 'Summed eFlux and pFlux (time-averaged)'
+              ;; h2dStr.title          = 'Summed e!U-!N Energy Flux and Poynting Flux (mW m!U-2!N)'
+              h2dStr.title          = 'Summed e!U-!N and Poynting Fluxes (mW m!U-2!N) at 100 km'
            ENDIF ELSE BEGIN
-              h2dStr.title          = title__alfDB_ind_49 + '(time-averaged)'
+              IF ~KEYWORD_SET(for_pres) THEN BEGIN
+                 h2dStr.title          = title__alfDB_ind_49 + '(time-averaged)'
+              ENDIF ELSE BEGIN
+                 h2dStr.title          = title__alfDB_ind_49
+              ENDELSE
+
            ENDELSE
            
            ;;    END
@@ -572,7 +584,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               ;;    END
               ;;    ELSE: BEGIN
               ;; h2dStr.title       = title__alfDB_ind_18_tAvg + '(time-averaged)'
-              h2dStr.title       = title__alfDB_ind_18 + '(time-averaged)'
+              IF ~KEYWORD_SET(for_pres) THEN BEGIN
+
+                 h2dStr.title       = title__alfDB_ind_18 + '(time-averaged)'
+              ENDIF
               ;;    END
               ;; ENDCASE
            ENDIF
@@ -706,6 +721,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         lt_i                =  WHERE(inData LT 0.,COMPLEMENT=removed_ii)
         IF lt_i[0] NE -1 THEN BEGIN
            inData           = inData[lt_i]
+           IF KEYWORD_SET(inData2) THEN BEGIN
+              inData2       = inData2[lt_i]
+           ENDIF
+
+           ;;mag field factors
+           IF N_ELEMENTS(magFieldFactor) GT 1 THEN BEGIN
+              magFieldFactor   = magFieldFactor[lt_i]
+           ENDIF
+           IF N_ELEMENTS(magFieldFactor2) GT 1 THEN BEGIN
+              magFieldFactor2  = magFieldFactor2[lt_i]
+           ENDIF
+
            tmp_i            = tmp_i[lt_i]
            PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(inData)
            inData           = ABS(inData)
@@ -721,6 +748,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      gt_i                   =  WHERE(inData GT 0.,COMPLEMENT=removed_ii)
      IF gt_i[0] NE -1 THEN BEGIN
         inData              = inData[gt_i]
+        IF KEYWORD_SET(inData2) THEN BEGIN
+           inData2          = inData2[gt_i]
+        ENDIF
+
+        ;;mag field factors
+        IF N_ELEMENTS(magFieldFactor) GT 1 THEN BEGIN
+           magFieldFactor   = magFieldFactor[gt_i]
+        ENDIF
+        IF N_ELEMENTS(magFieldFactor2) GT 1 THEN BEGIN
+           magFieldFactor2  = magFieldFactor2[gt_i]
+        ENDIF
+
         tmp_i               = tmp_i[gt_i]
         PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",N_ELEMENTS(inData)
      ENDIF
@@ -731,6 +770,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      lt_i                   =  WHERE(inData LT 0.,COMPLEMENT=removed_ii)
      IF lt_i[0] NE -1 THEN BEGIN
         inData              = inData[lt_i]
+        IF KEYWORD_SET(inData2) THEN BEGIN
+           inData2          = inData2[lt_i]
+        ENDIF
+
+        ;;mag field factors
+        IF N_ELEMENTS(magFieldFactor) GT 1 THEN BEGIN
+           magFieldFactor   = magFieldFactor[lt_i]
+        ENDIF
+        IF N_ELEMENTS(magFieldFactor2) GT 1 THEN BEGIN
+           magFieldFactor2  = magFieldFactor2[lt_i]
+        ENDIF
+
         tmp_i               = tmp_i[lt_i]
         PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(inData)
 
@@ -818,15 +869,15 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
   ;;If summing eFlux and pFlux, we can do it here
   IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
-     CASE 1 OF
-        N_ELEMENTS(lt_i) GT 0: BEGIN
-           inData2                = inData2[lt_i]
-        END
-        N_ELEMENTS(gt_i) GT 0: BEGIN
-           inData2                = inData2[gt_i]
-        END
-        ELSE:
-     ENDCASE
+     ;; CASE 1 OF
+     ;;    N_ELEMENTS(lt_i) GT 0: BEGIN
+     ;;       inData2                = inData2[lt_i]
+     ;;    END
+     ;;    N_ELEMENTS(gt_i) GT 0: BEGIN
+     ;;       inData2                = inData2[gt_i]
+     ;;    END
+     ;;    ELSE:
+     ;; ENDCASE
 
      inData                 = inData + TEMPORARY(inData2)
   ENDIF
