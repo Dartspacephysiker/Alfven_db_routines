@@ -3,7 +3,7 @@
 ; is it going to happen?" And then I get to writing some IDL code. Duh!
 PRO JOURNAL__20160412__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT
 
-  pFluxMin                 = 0.1
+  pFluxMin                 = 5
 
   hemi                     = 'NORTH'
   ;; hemi                     = 'SOUTH'
@@ -13,9 +13,9 @@ PRO JOURNAL__20160412__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT
   mainPhase                = 0
 
   centerLon                = 270
-  sTrans                   = 20
+  sTrans                   = 80
 
-  do_despun                = 0
+  do_despun                = 1
   despunStr                = KEYWORD_SET(DO_despun) ? "--despun" : ''
 
   ;; altRange                 = [340,500]
@@ -41,13 +41,16 @@ PRO JOURNAL__20160412__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT
 
   ;2016/04/13 For more direct comparison with Keiling et al. [2013]
   ;; altRange                 = [4000,4175]
-  altRange                 = [[3680,4180], $
+  altRange                 = [[4000,4180], $
+                              [3680,4180], $
                               [3180,3680], $
                               [2680,3180], $
                               [2180,2680], $
                               [1680,2180], $
                               [1180,1680], $
                               [340,1180]]
+
+  altRange                 = [4080,4180]
 
   ;; altRange                 = [[3180,4180], $
   ;;                             [2180,3180], $
