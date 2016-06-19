@@ -172,7 +172,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   IF N_ELEMENTS(maskMin) EQ 0 THEN maskMin = defMaskMin $
   ELSE BEGIN
      IF maskMin GT 1 THEN BEGIN
-        maskStr='--maskMin' + STRCOMPRESS(maskMin,/REMOVE_ALL)
+        maskStr='--maskMin_' + STRING(FORMAT='(I0)',maskMin)
      ENDIF
   ENDELSE
   

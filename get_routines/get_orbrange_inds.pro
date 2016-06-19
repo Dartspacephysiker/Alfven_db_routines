@@ -9,7 +9,7 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun
      STOP
   ENDIF
 
-  ind_orbs=where(dbStruct.orbit GE minOrb AND dbStruct.orbit LE maxOrb)
+  ind_orbs = WHERE(dbStruct.orbit GE minOrb AND dbStruct.orbit LE maxOrb)
 
   RETURN,ind_orbs
 

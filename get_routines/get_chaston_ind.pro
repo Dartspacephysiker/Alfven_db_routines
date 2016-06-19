@@ -13,7 +13,9 @@
 ;2016/01/07 Added DESPUNDB keyword to let us get dat despun database
 ;2016/01/13 Added USING_HEAVIES keyword for those magical times when personen wants to use TEAMS data
 ;2016/06/13 Added FOR_ESPEC_DBS keywords so we can use this routine for the eSpec and ion DBs
-FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
+FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
+                         DBFILE=dbfile, $
+                         DBTIMES=dbTimes, $
                          CHASTDB=chastDB, $
                          DESPUNDB=despunDB, $
                          ORBRANGE=orbRange, $
@@ -346,10 +348,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
 
 
      ;;Welcome message
-     printf,lun,""
-     printf,lun,"****From GET_CHASTON_IND.pro****"
-     printf,lun,FORMAT='("DBFile                        :",T35,A0)',dbFile
-     printf,lun,""
+     PRINTF,lun,""
+     PRINTF,lun,"****From GET_CHASTON_IND****"
+     PRINTF,lun,FORMAT='("DBFile                        :",T35,A0)',dbFile
+     PRINTF,lun,""
 
   ;;;;;;;;;;;;
      ;;Handle longitudes
@@ -416,14 +418,19 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
               MIMC__orbRange                      = orbRange
            END
            ELSE: BEGIN
-              printf,lun,"Incorrect input for keyword 'orbRange'!!"
-              printf,lun,"Please use orbRange=[minOrb maxOrb] or a single element"
+              PRINTF,lun,"Incorrect input for keyword 'orbRange'!!"
+              PRINTF,lun,"Please use orbRange=[minOrb maxOrb] or a single element"
               RETURN, -1
            END
         ENDCASE
         ;; IF N_ELEMENTS(orbRange) EQ 2 THEN BEGIN
         orb_i                                     = GET_ORBRANGE_INDS(dbStruct,MIMC__orbRange[0],MIMC__orbRange[1],LUN=lun)
-        region_i                                  = CGSETINTERSECTION(region_i,orb_i)
+        IF orb_i[0] NE -1 THEN BEGIN
+           region_i                               = CGSETINTERSECTION(region_i,orb_i)
+        ENDIF ELSE BEGIN
+           PRINTF,lun,'No orbs matching provided range!'
+           STOP
+        ENDELSE
         ;; ENDIF ELSE BEGIN
         ;; ENDELSE
      ENDIF
@@ -436,8 +443,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
            alt_i                                  = GET_ALTITUDE_INDS(dbStruct,MIMC__altitudeRange[0],MIMC__altitudeRange[1],LUN=lun)
            region_i                               = CGSETINTERSECTION(region_i,alt_i)
         ENDIF ELSE BEGIN
-           printf,lun,"Incorrect input for keyword 'altitudeRange'!!"
-           printf,lun,"Please use altitudeRange=[minAlt maxAlt]"
+           PRINTF,lun,"Incorrect input for keyword 'altitudeRange'!!"
+           PRINTF,lun,"Please use altitudeRange=[minAlt maxAlt]"
            RETURN, -1
         ENDELSE
      ENDIF
@@ -457,8 +464,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
            ENDELSE
            region_i                               = CGSETINTERSECTION(region_i,chare_i)
         ENDIF ELSE BEGIN
-           printf,lun,"Incorrect input for keyword 'charERange'!!"
-           printf,lun,"Please use charERange=[minCharE maxCharE]"
+           PRINTF,lun,"Incorrect input for keyword 'charERange'!!"
+           PRINTF,lun,"Please use charERange=[minCharE maxCharE]"
            RETURN, -1
         ENDELSE
      ENDIF
@@ -469,8 +476,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
            pFlux_i                                = GET_PFLUX_INDS(dbStruct,MIMC__poyntRange[0],MIMC__poyntRange[1],LUN=lun)
            region_i                               = CGSETINTERSECTION(region_i,pFlux_i)
         ENDIF ELSE BEGIN
-           printf,lun,"Incorrect input for keyword 'poyntRange'!!"
-           printf,lun,"Please use poyntRange=[minpFlux, maxpFlux]"
+           PRINTF,lun,"Incorrect input for keyword 'poyntRange'!!"
+           PRINTF,lun,"Please use poyntRange=[minpFlux, maxpFlux]"
            RETURN, -1
         ENDELSE
      ENDIF
@@ -484,7 +491,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
      ;;    ENDIF ELSE BEGIN
      ;;       region_i=CGSETINTERSECTION(region_i,where(dbStruct.pFluxEst GE MIMC__poyntRange[0] AND $
      ;;                                             dbStruct.pFluxEst LE MIMC__poyntRange[1]))
-     ;;       printf,lun,FORMAT='("Poynting flux limits (eV)     :",T35,G8.2,T45,G8.2)',MIMC__poyntRange[0],MIMC__poyntRange[1]
+     ;;       PRINTF,lun,FORMAT='("Poynting flux limits (eV)     :",T35,G8.2,T45,G8.2)',MIMC__poyntRange[0],MIMC__poyntRange[1]
      ;;    ENDELSE
      ;; ENDIF
 
@@ -556,8 +563,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
         IF KEYWORD_SET(no_burstData) THEN BEGIN
            good_i                                 = CGSETINTERSECTION(survey_i,good_i)
            
-           printf,lun,""
-           printf,lun,"You're losing " + strtrim(nBurst) + " events because you've excluded burst data."
+           PRINTF,lun,""
+           PRINTF,lun,"You're losing " + strtrim(nBurst) + " events because you've excluded burst data."
         ENDIF
         PRINTF,lun,FORMAT='("N burst elements              :",T35,I0)',nBurst
         PRINTF,lun,FORMAT='("N survey elements             :",T35,I0)',nSurvey
@@ -581,10 +588,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun,DBFILE=dbfile,DBTIMES=dbTimes, $
                                    HOYDIA=hoyDia,MASKMIN=maskMin,LUN=lun
      ENDIF
      
-     printf,lun,"There are " + strtrim(n_elements(good_i),2) + " total indices making the cut." 
+     PRINTF,lun,"There are " + strtrim(n_elements(good_i),2) + " total indices making the cut." 
      PRINTF,lun,''
-     printf,lun,"****END get_chaston_ind.pro****"
-     printf,lun,""
+     PRINTF,lun,"****END GET_CHASTON_IND****"
+     PRINTF,lun,""
 
      IF is_maximus THEN BEGIN
         MAXIMUS__good_i                           = good_i

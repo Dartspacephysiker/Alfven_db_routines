@@ -22,6 +22,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           SAMPLE_T_RESTRICTION=sample_t_restriction, $
                           NUMORBLIM=numOrbLim, $
                           MASKMIN=maskMin, $
+                          THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
                           SATELLITE=satellite, $
                           OMNI_COORDS=omni_Coords, $
                           HEMI=hemi, $
@@ -361,6 +362,29 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  BURSTDATA_EXCLUDED=burstData_excluded)
 
      
+     IF KEYWORD_SET(tHist_mask_bins_below_thresh) THEN BEGIN
+        PRINT,'Applying min threshold (' + $
+              STRCOMPRESS(tHist_mask_bins_below_thresh,/REMOVE_ALL) $
+              + ' min) to mask based on tHist ...'
+        belowThresh_i = WHERE((tHistDenominator/60.) LT tHist_mask_bins_below_thresh,nBelow)
+        IF nBelow GT 0 THEN BEGIN
+           
+           new_i = CGSETDIFFERENCE(belowThresh_i, $
+                                   WHERE(h2dStrArr[KEYWORD_SET(nPlots)].data GT 250), $
+                                   COUNT=nNew)
+           IF nNew GT 0 THEN BEGIN
+              PRINT,'Masking an additional ' + $
+                    STRCOMPRESS(nNew,/REMOVE_ALL) + $
+                    " bins based on tHist thresh ..."
+              
+              h2dStrArr[KEYWORD_SET(nPlots)].data[new_i] = 255
+           ENDIF ELSE BEGIN
+              PRINT,'No new bins to mask based on tHist thresh!'
+           ENDELSE
+        ENDIF
+     ENDIF
+
+
      IF keepMe THEN BEGIN 
         IF KEYWORD_SET(tHistDenominatorPlot) THEN BEGIN
            h2dStrArr     = [h2dStrArr,h2dStr] 

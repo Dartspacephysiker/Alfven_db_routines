@@ -1,11 +1,6 @@
-;2016/04/13 Kristina Lynch rightly pointed out that there could have been a dayside sampling bias for FAST, and maybe that's why
-;we observe strange Poynting flux distributions. I highly doubt it, but let's see.
+;2016/06/17 This journal has to do with my feeling that things got weird for FAST after Aug 1999. I think the results here may bear me out.
+PRO JOURNAL__20160617__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_20160412__KEILING_ET_AL_2003_PFLUX_JOURNAL__PRIOR_TO_AUG_1999
 
-PRO JOURNAL__20160615__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_20160412__KEILING_ET_AL_2003_PFLUX_JOURNAL
-
-  hemi                     = 'NORTH'
-  ;; hemi                     = 'SOUTH'
-  
   pFluxMin                 = 5
 
   nPlots                   = 1
@@ -20,7 +15,7 @@ PRO JOURNAL__20160615__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
   nEventPerMinPlot         = 1
   ;; nEventPerMinRange        = [1e-1,10]
   ;; logNEventPerMin          = 1
-  nEventPerMinRange        = [0,1]
+  nEventPerMinRange        = [0,2.0]
   logNEventPerMin          = 0
 
   tile_images              = 1
@@ -29,53 +24,59 @@ PRO JOURNAL__20160615__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
   n_tile_rows              = 1
   tilePlotSuff             = "--normed_nEvents_tHistos__and_nEvPerMin"
 
-  ;; altRange                 = [[0,4175], $
-  ;;                             [340,500], $
-  ;;                             [500,1000], $
-  ;;                             [1000,1500], $
-  ;;                             [1500,2000], $
-  ;;                             [2000,2500], $
-  ;;                             [2500,3000], $
-  ;;                             [3000,3500], $
-  ;;                             [3500,3750], $
-  ;;                             [3750,4000], $
-  ;;                             [4000,4175]]
+  altRange                 = [[0,4180], $
+                              [340,500], $
+                              [500,1000], $
+                              [1000,1500], $
+                              [1500,2000], $
+                              [2000,2500], $
+                              [2500,3000], $
+                              [3000,3500], $
+                              [3500,3750], $
+                              [3750,4000], $
+                              [3500,4000], $
+                              [3750,4000], $
+                              [4000,4180]]
 
-  altRange                 = [[0,4175], $
-                              [0340,0680], $
-                              [0680,1180], $
-                              [1180,1680], $
-                              [1680,2180], $
-                              [2180,2680], $
-                              [2680,3180], $
-                              [3180,3680], $
-                              [3680,4180]]
+  ;; altRange                 = [[0,4180], $
+  ;;                             [0340,0680], $
+  ;;                             [0680,1180], $
+  ;;                             [1180,1680], $
+  ;;                             [1680,2180], $
+  ;;                             [2180,2680], $
+  ;;                             [2680,3180], $
+  ;;                             [3180,3680], $
+  ;;                             [3680,4180]]
 
 
-  altRange                 = [[340,1180], $
-                              [1180,2180], $
-                              [2180,3180], $
-                              [3180,4180]]
+  ;; altRange                 = [[340,1180], $
+  ;;                             [1180,2180], $
+  ;;                             [2180,3180], $
+  ;;                             [3180,4180]]
+
+  altRange                 = [3000,4180]
+
+  orbRange                 = [500,11645]
 
   ;; altRange                 = [[0,4175]]
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;ILAT stuff
   hemi                           = 'NORTH'
-  minILAT                        = 60
-  maxILAT                        = 84
+  minILAT                        = 62
+  maxILAT                        = 86
 
   ;; hemi                           = 'SOUTH'
   ;; minILAT                        = -86
-  ;; maxILAT                        = -61
+  ;; maxILAT                        = -62
 
   ;; binILAT                        = 2.0
-  binILAT                        = 3.0
+  binILAT                        = 4.0
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;MLT stuff
-  binMLT                         = 2.0
-  ;; shiftMLT                       = 0.5
+  binMLT                         = 1.5
+  shiftMLT                       = 0.75
 
   ;;DB stuff
   do_despun                      = 1
@@ -85,11 +86,16 @@ PRO JOURNAL__20160615__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
 
   LOAD_MAXIMUS_AND_CDBTIME,maximus,DO_DESPUNDB=do_despun
 
-  restrict_with_these_i          = WHERE(maximus.pFluxEst GE pFluxMin)
+  restrict_with_these_i          = WHERE( (maximus.pFluxEst GE pFluxMin) ) ; AND $
+  ;(maximus.orbit LT 11645) )
 
   FOR i=0,N_ELEMENTS(altRange[0,*])-1 DO BEGIN
      altitudeRange = altRange[*,i]
-     altStr        = STRING(FORMAT='("--",I0,"-",I0,"km")',altitudeRange[0],altitudeRange[1]) + '--pFlux_GE_'+STRING(FORMAT='(G0.2)',pFluxMin)
+     altStr        = STRING(FORMAT='("--",I0,"-",I0,"_km--orbRange_",I0,"-",I0)', $
+                            altitudeRange[0],altitudeRange[1], $
+                            orbRange[0],orbRange[1]) + $
+                            ;; 0,0) + $
+                     '--'+'pFlux_GE_'+STRING(FORMAT='(G0.2)',pFluxMin)
      ;; tilePlotTitle = STRING(FORMAT='(I0,"-",I0," km, Poynting flux $\geq$ ",I0," mW m!U-2!N")',altitudeRange[0],altitudeRange[1],pFluxMin)
      tilePlotTitle = STRING(FORMAT='(I0,"-",I0," km")',altitudeRange[0],altitudeRange[1])
      

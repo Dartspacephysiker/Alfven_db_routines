@@ -113,11 +113,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   ;;***********************************************
   ;;Tons of defaults
   
-  defOrbRange            = [0,16361]
+  defOrbRange            = [0,12670]
   ;; defCharERange          = [4.0,300]
   ;; defAltRange            = [1000.0, 5000.0]
   defCharERange          = [4.0,10000.0]
-  defAltRange            = [0.0, 5000.0]
+  defAltRange            = [0, 5000]
 
   ; satellite defaults
   defSatellite           = "OMNI"    ;either "ACE", "wind", "wind_ACE", or "OMNI" (default, you see)

@@ -305,8 +305,10 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   ENDELSE
 
+  RAINBOW_COLORS,N_COLORS=nLevels
   ;; Set up the contour levels.
   ;;   levels                     = cgScaleVector(Indgen(nlevels), 0,255)
+  nLevels                         = 255
 
   ;;Scale this stuff
   ;;The reason for all the trickery is that we want to know what values are out of bounds,

@@ -403,6 +403,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,CLOCKSTR=clockStr, $
      IF KEYWORD_SET(tHistDenomPlotAutoscale) THEN BEGIN
         PRINTF,lun,"Autoscaling tHistDenom plot..."
         h2dStr.lim             = [MIN(h2dStr.data[h2d_include_i]), $
+        ;; h2dStr.lim             = [MIN(h2dStr.data[WHERE(h2dStr.data GT 0.0)]), $
                                    MAX(h2dStr.data[h2d_include_i])]
      ENDIF ELSE BEGIN
         h2dStr.lim             = KEYWORD_SET(tHistDenomPlotRange) ? tHistDenomPlotRange : [0,500]

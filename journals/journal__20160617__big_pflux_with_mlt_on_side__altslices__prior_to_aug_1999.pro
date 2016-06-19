@@ -1,8 +1,10 @@
-;Let's do dat, because as Professor LaBelle said, we can probably do something more useful than show the size
-; of the observed current
-PRO JOURNAL__20160502__BIG_PFLUX_WITH_MLT_ON_SIDE__ALTSLICES
+;;What happens if we restrict the orbits to those prior to the monthslong streak of huge Pflux observations?
+PRO JOURNAL__20160617__BIG_PFLUX_WITH_MLT_ON_SIDE__ALTSLICES__PRIOR_TO_AUG_1999
 
   do_despunDB          = 1  ;2016/06/17 addition
+
+  ;;11645, because maximus.time[MIN(WHERE(maximus.orbit EQ 11645))] = 1999-08-01/01:14:49.474
+  orbRange             = [0,11645]
 
   year_and_season_mode = 1
   n_years = 5
@@ -53,7 +55,7 @@ PRO JOURNAL__20160502__BIG_PFLUX_WITH_MLT_ON_SIDE__ALTSLICES
   yRange_maxInd     = [0,24]
   yTitle_maxInd     = 'MLT'
 
-  symTransparency   = 50
+  symTransparency   = 70
   ;; FOR i = 0, N_ELEMENTS(q1_st)-1,nPlotsPerWindow DO BEGIN
   ;; FOR i = 0, N_ELEMENTS(q1_st)-1,nPlotsPerWindow DO BEGIN
 
@@ -105,7 +107,8 @@ PRO JOURNAL__20160502__BIG_PFLUX_WITH_MLT_ON_SIDE__ALTSLICES
            /OVERPLOT_ALFVENDBQUANTITY, $
            YEAR_AND_SEASON_MODE=year_and_season_mode, $
            RESTRICT_POYNTRANGE=restrict_poyntRange, $
-           RESTRICT_ALTRANGE=altRange
+           RESTRICT_ALTRANGE=altRange, $
+           ORBRANGE=orbRange
 
      ;; ENDFOR
 
