@@ -666,33 +666,51 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
   
   ;;########NEvents/minute########
   IF KEYWORD_SET(nEventPerMinPlot) THEN BEGIN
-     GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
-                               MINM=minM, $
-                               MAXM=maxM, $
-                               BINM=binM, $
-                               SHIFTM=shiftM, $
-                               MINI=minI, $
-                               MAXI=maxI, $
-                               BINI=binI, $
-                               DO_LSHELL=do_lshell, $
-                               MINL=minL, $
-                               MAXL=maxL, $
-                               BINL=binL, $
-                               LOGNEVENTPERMIN=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logNEventPerMin)), $
-                               NEVENTPERMINRANGE=nEventPerMinRange, $
-                               NEVENTPERMINAUTOSCALE=nEventPerMinAutoscale, $
-                               H2DSTR=h2dStr, $
-                               TMPLT_H2DSTR=tmplt_h2dStr, $
-                               H2DFLUXN=h2dFluxN, $
-                               H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
-                               DATANAME=dataName ; , $
-     ;; DATARAWPTR=dataRawPtr
-     
-     h2dStrArr=[h2dStrArr,h2dStr] 
-     IF keepMe THEN BEGIN 
-        dataNameArr=[dataNameArr,dataName] 
-        ;; dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
-     ENDIF 
+
+     FOR i=0,N_ELEMENTS(nEventPerMinPlot)-1 DO BEGIN
+
+        nEvPMRange     = nEventPerMinRange[*,i]
+        CASE N_ELEMENTS(logNEventPerMin) OF
+           0:
+           N_ELEMENTS(nEventPerMinPlot): logNEvPM = logNEventPerMin[i]
+           ELSE: logNEvPM = logNEventPerMin
+        ENDCASE
+        CASE N_ELEMENTS(nEventPerMinAutoscale) OF
+           0:
+           N_ELEMENTS(nEventPerMinPlot): nEvPMAutoscale = nEventPerMinAutoscale[i]
+           ELSE: nEvPMAutoscale = nEventPerMinAutoscale
+        ENDCASE
+
+
+        GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
+                                  MINM=minM, $
+                                  MAXM=maxM, $
+                                  BINM=binM, $
+                                  SHIFTM=shiftM, $
+                                  MINI=minI, $
+                                  MAXI=maxI, $
+                                  BINI=binI, $
+                                  DO_LSHELL=do_lshell, $
+                                  MINL=minL, $
+                                  MAXL=maxL, $
+                                  BINL=binL, $
+                                  LOGNEVENTPERMIN=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logNEvPM)), $
+                                  NEVENTPERMINRANGE=nEvPMRange, $
+                                  NEVENTPERMINAUTOSCALE=nEvPMAutoscale, $
+                                  H2DSTR=h2dStr, $
+                                  TMPLT_H2DSTR=tmplt_h2dStr, $
+                                  H2DFLUXN=h2dFluxN, $
+                                  H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                  DATANAME=dataName ; , $
+        ;; DATARAWPTR=dataRawPtr
+        
+        h2dStrArr=[h2dStrArr,h2dStr] 
+        IF keepMe THEN BEGIN 
+           dataNameArr=[dataNameArr,dataName] 
+           ;; dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+        ENDIF 
+
+     ENDFOR
   ENDIF
   
   ;;########Event probability########

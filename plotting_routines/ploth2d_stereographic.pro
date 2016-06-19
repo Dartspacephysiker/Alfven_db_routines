@@ -24,7 +24,12 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           WINDOW_XSIZE=xSize, $
                           WINDOW_YSIZE=ySize, $
                           NO_DISPLAY=no_display, $
+                          SUPPRESS_THICKGRID=suppress_thickGrid, $
                           SUPPRESS_GRIDLABELS=suppress_gridLabels, $
+                          SUPPRESS_MLT_LABELS=suppress_MLT_labels, $
+                          SUPPRESS_ILAT_LABELS=suppress_ILAT_labels, $
+                          SUPPRESS_MLT_NAME=suppress_MLT_name, $
+                          SUPPRESS_ILAT_NAME=suppress_ILAT_name, $
                           SUPPRESS_TITLES=suppress_titles, $
                           LABELS_FOR_PRESENTATION=labels_for_presentation, $
                           CB_FORCE_OOBLOW=cb_force_ooblow, $
@@ -310,6 +315,15 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;;   levels                     = cgScaleVector(Indgen(nlevels), 0,255)
   nLevels                         = 255
 
+     ;; IF chrisPosScheme THEN BEGIN
+     ;;    ;;make first color dark gray
+     ;;    TVLCT,r,g,b,/GET
+     ;;    r[0]           = 100
+     ;;    g[0]           = 100
+     ;;    b[0]           = 100
+     ;;    TVLCT,r,g,b
+     ;; ENDIF
+
   ;;Scale this stuff
   ;;The reason for all the trickery is that we want to know what values are out of bounds,
   ;; and bytscl doesn't do things quite the way we need them done.
@@ -396,16 +410,18 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
 
   ;;add thicker grid to a few latitude lines
-  cgMap_Grid, Clip_Text=1, $
-              /NoClip, $
-              THICK=((!D.Name EQ 'PS') ? defGridBoldLineThick_PS : defGridBoldLineThick)*gridScale,$
-              LINESTYLE=defBoldGridLineStyle, $
-              COLOR=defGridColor, $
-              ;; LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : defBoldLatDelta), $
-              LONDELTA=defBoldLonDelta, $
-              LONS=gridLons, $
-              LATS=gridLats
-
+  ;; IF temp.shift1 LT 0.0001 THEN BEGIN
+  IF ~KEYWORD_SET(suppress_thickGrid) THEN BEGIN
+     cgMap_Grid, Clip_Text=1, $
+                 /NoClip, $
+                 THICK=((!D.Name EQ 'PS') ? defGridBoldLineThick_PS : defGridBoldLineThick)*gridScale,$
+                 LINESTYLE=defBoldGridLineStyle, $
+                 COLOR=defGridColor, $
+                 ;; LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : defBoldLatDelta), $
+                 LONDELTA=defBoldLonDelta, $
+                 LONS=gridLons, $
+                 LATS=gridLats
+     ENDIF
 
                                 ; Now text. Set the Clip_Text keyword to enable the NO_CLIP graphics keyword.
   IF KEYWORD_SET(do_lShell) THEN BEGIN
@@ -422,7 +438,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      IF KEYWORD_SET(wholeCap) THEN BEGIN
         factor                    = 6.0
         mltSites                  = (INDGEN((maxM-minM)/factor)*factor+minM)
-        lonNames                  = [string(minM,format=lonLabelFormat) + " MLT", $
+        mltName                   = KEYWORD_SET(suppress_MLT_name) ? '' : " MLT"
+        lonNames                  = [string(minM,format=lonLabelFormat) + mltName, $
                                      STRING(mltSites[1:-1], $
                                             format=lonLabelFormat)]
 
@@ -437,7 +454,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         gridLatNames              = STRING(gridLatNames,format=latLabelFormat)
         tmpInd                    = mirror ? -1 : 0
         gridLatNames[tmpInd]      = gridLatNames[tmpInd] + $
-                                    ( KEYWORD_SET(DO_lShell) ? " L-shell" : " ILAT" )
+                                    ( KEYWORD_SET(suppress_ILAT_name) ? '' : $
+                                      ( KEYWORD_SET(DO_lShell) ? " L-shell" : " ILAT" ) )
 
         ;; cgMap_Grid, Clip_Text=1, $
         ;;             /NoClip, $
@@ -467,20 +485,26 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 ;; [0.125, 0.05, 0.875, 0.8]
 
         ;;MLTs
-        cgText,MEAN([map_position[2],map_position[0]]), map_position[1]-0.035*yScale,'0 MLT',/NORMAL, $
-               COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
-        cgText,MEAN([map_position[2],map_position[0]]), map_position[3]+0.005*yScale,'12',/NORMAL, $
-               COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
-        cgText,map_position[2]+0.02*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'6',/NORMAL, $
-               COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
-        cgText,map_position[0]-0.03*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'18',/NORMAL, $
-               COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+        IF ~KEYWORD_SET(suppress_MLT_labels) THEN BEGIN
+           zeroMLTName                   = KEYWORD_SET(suppress_MLT_name) ? '0' : '0 MLT'
+
+           cgText,MEAN([map_position[2],map_position[0]]), map_position[1]-0.035*yScale,zeroMLTName,/NORMAL, $
+                  COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+           cgText,MEAN([map_position[2],map_position[0]]), map_position[3]+0.005*yScale,'12',/NORMAL, $
+                  COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+           cgText,map_position[2]+0.02*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'6',/NORMAL, $
+                  COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+           cgText,map_position[0]-0.03*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'18',/NORMAL, $
+                  COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+        ENDIF
 
         ;;ILATs
-        FOR ilat_i=0,N_ELEMENTS(gridLats)-1 DO BEGIN
-           cgText, 45, gridLats[ilat_i], gridLatNames[ilat_i], $ ;STRCOMPRESS((maxI LT 0? -1.0 : 1.0)*gridLats[ilat_i],/REMOVE_ALL), $
-                   ALIGNMENT=0.5,ORIENTATION=0,COLOR=defGridTextColor,CHARSIZE=defCharSize_grid*charScale
-        ENDFOR
+        IF ~KEYWORD_SET(suppress_ILAT_labels) THEN BEGIN
+           FOR ilat_i=0,N_ELEMENTS(gridLats)-1 DO BEGIN
+              cgText, 45, gridLats[ilat_i], gridLatNames[ilat_i], $ ;STRCOMPRESS((maxI LT 0? -1.0 : 1.0)*gridLats[ilat_i],/REMOVE_ALL), $
+                      ALIGNMENT=0.0,ORIENTATION=0,COLOR=defGridTextColor,CHARSIZE=defCharSize_grid*charScale
+           ENDFOR
+        ENDIF
      ENDIF ELSE BEGIN
 
         ;;Longitudes
@@ -634,7 +658,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                                      OOB_Low:KEYWORD_SET(cbOOBLowVal) ? cbOOBLowVal : -9, $
                                      OOB_High:KEYWORD_SET(cbOOBHighVal) ? cbOOBHighVal : -9, $
                                      RANGE:cbRange, $
-                                     TITLE:cbTitle, $
+                                     TITLE:N_ELEMENTS(cbTitle) GT 0 ? cbTitle : '', $
                                      TLOCATION:cbTLocation, $
                                      TCHARSIZE:KEYWORD_SET(labels_for_presentation) ? charSize_plotTitle_pres : cbTCharSize*charScale,$
                                      POSITION:KEYWORD_SET(cb_position) ? cb_position : $

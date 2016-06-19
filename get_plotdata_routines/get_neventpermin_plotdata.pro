@@ -30,7 +30,7 @@ PRO GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
                                       SHIFT1=shiftM,SHIFT2=shiftI)
   ;; h2dStr={tmplt_h2dStr}
   h2dStr          = tmplt_h2dStr
-  h2dStr.title    = 'N Events per minute'
+  h2dStr.title    = 'N Events per Minute'
   dataName        = "nEventPerMin"
   h2dStr.lim      = nEventPerMinRange
   h2dStr.name     = dataName

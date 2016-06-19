@@ -76,7 +76,8 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS,EPLOTRANGE=EPlotRange, $
      chariEPlotRange=defChariEPlotRange
   ENDIF
 
-  IF N_ELEMENTS(nEventPerMinRange) EQ 0 OR N_ELEMENTS(nEventPerMinRange) NE 2 THEN BEGIN
+  IF N_ELEMENTS(nEventPerMinRange) EQ 0 OR $
+     (N_ELEMENTS(nEventPerMinRange) MOD 2) NE 0 THEN BEGIN
      ;; IF N_ELEMENTS(logNEventPerMin) EQ 0 THEN nEventPerMinRange = defNEventPerMinRange ELSE nEventPerMinRange = defLogNEventPerMinRange
      nEventPerMinRange = defNEventPerMinRange
   ENDIF

@@ -32,9 +32,10 @@
      ctIndex_allPosData       = 39 ;This, I believe, is the color table that Chris Chaston likes
      ctBrewer_allPosData      = 0
      ctReverse_allPosData     = 0
-     maskColor                = "gray"
-     defGridColor             = "white"
-     defGridTextColor         = "dark gray"
+     maskColor                = "light gray"
+     defGridColor             = "black"
+     ;; defGridTextColor         = "dark gray"
+     defGridTextColor         = "black"
 
   ENDIF ELSE BEGIN
      ctIndex_allPosData       = 16 ;This is the one I usually use

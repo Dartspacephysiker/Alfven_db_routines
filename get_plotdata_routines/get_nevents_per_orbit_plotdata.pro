@@ -46,7 +46,7 @@ PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      nEvByAppStr     = ""
      nEvByAppNiceStr = "Orbit"
   ENDELSE
-  h2dStr.title      = 'Number of Events per ' + nEvByAppNiceStr
+  h2dStr.title      = 'N Events per ' + nEvByAppNiceStr
   dataName          = "nEventPerOrb" + nEvByAppStr
 
   IF KEYWORD_SET(divNEvByTotal) THEN BEGIN

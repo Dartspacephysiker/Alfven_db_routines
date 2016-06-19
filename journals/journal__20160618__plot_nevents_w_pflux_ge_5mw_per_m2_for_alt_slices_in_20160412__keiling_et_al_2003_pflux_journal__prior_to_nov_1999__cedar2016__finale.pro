@@ -1,8 +1,8 @@
 ;2016/06/18 Now I've been a little more rigorous inspecting the Delta-E values, and it's evident that the E-field measurements get bad
 ;after Nov 3 1999, orbit 12670
-PRO JOURNAL__20160618__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_20160412__KEILING_ET_AL_2003_PFLUX_JOURNAL__PRIOR_TO_NOV_1999
+PRO JOURNAL__20160618__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_20160412__KEILING_ET_AL_2003_PFLUX_JOURNAL__PRIOR_TO_NOV_1999__CEDAR2016__FINALE
 
-  pFluxMin                 = 1
+  pFluxMin                 = 5
 
   nPlots                   = 1
   ;; nEventsPlotNormalize     = 1  
@@ -13,17 +13,28 @@ PRO JOURNAL__20160618__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
   tHistDenomPlotAutoscale  = 1
   tHistDenomPlot_noMask    = 1
 
-  nEventPerMinPlot         = 1
+  nEventPerMinPlot         = [1,1]
+  nEventPerMinAutoscale    = [0,1]
   ;; nEventPerMinRange        = [1e-1,10]
   ;; logNEventPerMin          = 1
-  nEventPerMinRange        = [0,2.0]
-  logNEventPerMin          = 0
+  nEventPerMinRange        = [[0,0.25], $
+                              [0.0,0.0]]
+  logNEventPerMin          = [0,0]
 
   tile_images              = 1
-  tiling_order             = [2,0,1]
-  n_tile_columns           = 3
-  n_tile_rows              = 1
-  tilePlotSuff             = "--normed_nEvents_tHistos__and_nEvPerMin"
+  tiling_order             = [3,0, $
+                              1,2]
+  n_tile_columns           = 2
+  n_tile_rows              = 2
+  ;; suppress_gridLabels      = [0,1, $
+  ;;                             1,1]
+  suppress_MLT_name        = [0,1, $
+                              1,1]
+  suppress_ILAT_name       = [0,1, $
+                              1,1]
+  suppress_titles          = [0,0, $
+                              1,1]
+  tilePlotSuff             = "--nEvents_tHistos__and_nEvPerMin--CEDAR2016"
 
   altRange                 = [[0,4180], $
                               [340,500], $
@@ -55,7 +66,7 @@ PRO JOURNAL__20160618__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
   ;;                             [2180,3180], $
   ;;                             [3180,4180]]
 
-  altRange                 = [[0,4180]]
+  ;; altRange                 = [[0,4180]]
 
   altRange                 = [340,4180]
 
@@ -79,7 +90,7 @@ PRO JOURNAL__20160618__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;MLT stuff
   binMLT                         = 1.0
-  shiftMLT                       = 0.0
+  shiftMLT                       = 0.5
 
   ;;DB stuff
   do_despun                      = 1
@@ -100,7 +111,7 @@ PRO JOURNAL__20160618__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
                             ;; 0,0) + $
                      '--'+'pFlux_GE_'+STRING(FORMAT='(G0.2)',pFluxMin)
      ;; tilePlotTitle = STRING(FORMAT='(I0,"-",I0," km, Poynting flux $\geq$ ",I0," mW m!U-2!N")',altitudeRange[0],altitudeRange[1],pFluxMin)
-     tilePlotTitle = STRING(FORMAT='(I0,"-",I0," km")',altitudeRange[0],altitudeRange[1])
+     ;; tilePlotTitle = STRING(FORMAT='(I0,"-",I0," km")',altitudeRange[0],altitudeRange[1])
      
      PLOT_ALFVEN_STATS_IMF_SCREENING, $
         RESTRICT_WITH_THESE_I=restrict_with_these_i, $
@@ -173,7 +184,9 @@ PRO JOURNAL__20160618__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
         NEVENTPERORBPLOT=nEventPerOrbPlot, LOGNEVENTPERORB=logNEventPerOrb, NEVENTPERORBRANGE=nEventPerOrbRange, $
         DIVNEVBYTOTAL=divNEvByTotal, $
         NEVENTPERMINPLOT=nEventPerMinPlot, $
-        NEVENTPERMINRANGE=nEventPerMinRange, LOGNEVENTPERMIN=logNEventPerMin, $
+        NEVENTPERMINRANGE=nEventPerMinRange, $
+        NEVENTPERMINAUTOSCALE=nEventPerMinAutoscale, $
+        LOGNEVENTPERMIN=logNEventPerMin, $
         NORBSWITHEVENTSPERCONTRIBORBSPLOT=nOrbsWithEventsPerContribOrbsPlot, $
         NOWEPCO_RANGE=nowepco_range, $
         PROBOCCURRENCEPLOT=probOccurrencePlot, $
@@ -217,6 +230,13 @@ PRO JOURNAL__20160618__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
         OUTPUTPLOTSUMMARY=outputPlotSummary, $
         DEL_PS=del_PS, $
         EPS_OUTPUT=eps_output, $
+        SUPPRESS_THICKGRID=suppress_thickGrid, $
+        SUPPRESS_GRIDLABELS=suppress_gridLabels, $
+        SUPPRESS_MLT_LABELS=suppress_MLT_labels, $
+        SUPPRESS_ILAT_LABELS=suppress_ILAT_labels, $
+        SUPPRESS_MLT_NAME=suppress_MLT_name, $
+        SUPPRESS_ILAT_NAME=suppress_ILAT_name, $
+        SUPPRESS_TITLES=suppress_titles, $
         OUT_TEMPFILE_LIST=out_tempFile_list, $
         OUT_DATANAMEARR_list=out_dataNameArr_list, $
         TILE_IMAGES=tile_images, $

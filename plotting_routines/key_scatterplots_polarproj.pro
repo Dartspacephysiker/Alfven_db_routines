@@ -65,6 +65,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
                                SPNAME=sPName, $
                                PLOTDIR=plotDir, $
                                CLOSE_AFTER_SAVE=close_after_save, $
+                               HUGEPLOTMODE=hugePlotMode, $
                                STRANS=sTrans, $
                                PLOTTITLE=plotTitle, $
                                ADD_LINE=add_line, $
@@ -80,8 +81,8 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   COMPILE_OPT idl2
 
   ;; Defaults
-  defMinI = 50
-  defMaxI = 88
+  defMinI = 60
+  defMaxI = 86
   
   defMinM = 0
   defMaxM = 24
@@ -97,6 +98,11 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
 
   defSTrans = 98                ;use for plotting entire db
   ;; defSTrans = 95                ;use for very narrowed plot_i
+
+  IF KEYWORD_SET(hugePlotMode) THEN BEGIN
+     PRINT,'Huge plot mode ...'
+     plotPosition = [0.05,0.05,0.95,0.95]
+  ENDIF
 
   IF N_ELEMENTS(sTrans) EQ 0 THEN sTrans = defSTrans
 
@@ -334,8 +340,11 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
      grid.linestyle=0
      grid.thick=0.5
      grid.label_angle = 0
-     grid.font_size = 16
+     grid.font_size = KEYWORD_SET(hugePlotMode) ? 24 : 16
      
+     grid.grid_longitude = 45
+     grid.grid_latitude  = 10
+
      mlats=grid.latitudes
      FOR i=0,n_elements(mlats)-1 DO BEGIN
         mlats[i].label_position=0.55
@@ -465,8 +474,8 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
                                        ;; TITLE=plotTitle, $ ;,$;SYM_SIZE=0.5, $ ;There is such a high density of points that we need tranparency
                                        ;; OVERPLOT=overplot, $
                                        ;; WINDOW=out_window, $
-                                       CURRENT=window, $
-                                       POSITION=plotPosition, $
+                                       CURRENT=MAP, $
+                                       ;; POSITION=plotPosition, $
                                        LAYOUT=layout)
               END
            ENDCASE
@@ -480,8 +489,15 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   ENDELSE     
      
   IF KEYWORD_SET(plotTitle) THEN BEGIN
-     plotTitleText      = TEXT(0.5,0.9,plotTitle,/NORMAL,FONT_SIZE=18,ALIGNMENT=0.5)
+     plotTitleText      = TEXT(0.5,0.9,plotTitle, $
+                               /NORMAL, $
+                               FONT_SIZE=KEYWORD_SET(hugePlotMode) ? 28 : 18, $
+                               ALIGNMENT=0.5)
   ENDIF
+
+  ;; IF KEYWORD_SET(plotTitle) AND ~KEYWORD_SET(hugePlotMode) THEN BEGIN
+  ;;    plotTitleText      = TEXT(0.5,0.9,plotTitle,/NORMAL,FONT_SIZE=18,ALIGNMENT=0.5)
+  ;; ENDIF
 
   IF KEYWORD_SET(savePlot) THEN BEGIN
      IF ~KEYWORD_SET(sPName) THEN sPName = 'scatterplot_polarProj.png'

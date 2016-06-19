@@ -17,6 +17,8 @@ PRO JOURNAL__20160618__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT__PRIOR_T
   do_despun                = 1
   despunStr                = KEYWORD_SET(DO_despun) ? "--despun" : ''
 
+  hugePlotMode             = 1
+
   ;; altRange                 = [340,500]
   ;; altRange                 = [500,1000]
   ;; altRange                 = [1000,1500]
@@ -51,7 +53,7 @@ PRO JOURNAL__20160618__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT__PRIOR_T
 
   ;; altRange                 = [1500,4180]
   ;; altRange                 = [3640,4140]
-  altRange                 = [1500,4180]
+  altRange                 = [340,4180]
 
   ;; altRange                 = [[3180,4180], $
   ;;                             [2180,3180], $
@@ -132,8 +134,10 @@ PRO JOURNAL__20160618__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT__PRIOR_T
                                 'pFlux_GE_' + STRING(FORMAT='(G0.2)',pFluxMin) + $
                                 '--scatterplot' + despunStr + altStr + stormString + $
                                 '--' + hemi + '.gif'
-     plotTitle                = hemi + 'ERN HEMI: Poynting flux $\geq$ ' + STRCOMPRESS(pFluxMin,/REMOVE_ALL) + ' mW/m!U2!N' + $
-                                (KEYWORD_SET(altitudeRange) OR KEYWORD_SET(gotStorms) ? '(' + altStr + stormString + ')' : '')
+     ;; plotTitle                = hemi + 'ERN HEMI: Poynting flux $\geq$ ' + STRCOMPRESS(pFluxMin,/REMOVE_ALL) + ' mW/m!U2!N' + $
+     ;;                            (KEYWORD_SET(altitudeRange) OR KEYWORD_SET(gotStorms) ? '(' + altStr + stormString + ')' : '')
+     plotTitle                = STRING(FORMAT='("Poynting flux $\geq$ ",F0.2," mW/m!U2!N")', $
+                                       pFluxMin)
      
 
      KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
@@ -153,6 +157,7 @@ PRO JOURNAL__20160618__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT__PRIOR_T
                                 SAVEPLOT=savePlot, $
                                 SPNAME=sPName, $
                                 /CLOSE_AFTER_SAVE, $
+                                HUGEPLOTMODE=hugePlotMode, $
                                 PLOTTITLE=plotTitle, $
                                 _EXTRA = e
 

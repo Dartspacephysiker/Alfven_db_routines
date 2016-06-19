@@ -9,7 +9,12 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            HEMI=hemi, $
                            CLOCKSTR=clockStr, $
                            NO_COLORBAR=no_colorbar, $
+                           SUPPRESS_THICKGRID=suppress_thickGrid, $
                            SUPPRESS_GRIDLABELS=suppress_gridLabels, $
+                           SUPPRESS_MLT_LABELS=suppress_MLT_labels, $
+                           SUPPRESS_ILAT_LABELS=suppress_ILAT_labels, $
+                           SUPPRESS_MLT_NAME=suppress_MLT_name, $
+                           SUPPRESS_ILAT_NAME=suppress_ILAT_name, $
                            SUPPRESS_TITLES=suppress_titles, $
                            LABELS_FOR_PRESENTATION=labels_for_presentation, $
                            TILE_IMAGES=tile_images, $
@@ -277,6 +282,48 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
 
                  position         = CALC_PLOT_POSITION(i+1,n_tile_columns,n_tile_rows)
 
+                 CASE N_ELEMENTS(suppress_thickGrid) OF
+                    0: 
+                    1: suppress_tg = suppress_thickGrid
+                    N_ELEMENTS(tiling_order): suppress_tg = suppress_thickGrid[i]
+                 ENDCASE
+
+                 CASE N_ELEMENTS(suppress_gridLabels) OF
+                    0: 
+                    1: suppress_gl = suppress_gridLabels
+                    N_ELEMENTS(tiling_order): suppress_gl = suppress_gridLabels[i]
+                 ENDCASE
+
+                 CASE N_ELEMENTS(suppress_MLT_labels) OF
+                    0: 
+                    1: suppress_Ml = suppress_MLT_labels
+                    N_ELEMENTS(tiling_order): suppress_Ml = suppress_MLT_labels[i]
+                 ENDCASE
+
+                 CASE N_ELEMENTS(suppress_ILAT_labels) OF
+                    0: 
+                    1: suppress_Il = suppress_ILAT_labels
+                    N_ELEMENTS(tiling_order): suppress_Il = suppress_ILAT_labels[i]
+                 ENDCASE
+
+                 CASE N_ELEMENTS(suppress_MLT_name) OF
+                    0: 
+                    1: suppress_Mn = suppress_MLT_name
+                    N_ELEMENTS(tiling_order): suppress_Mn = suppress_MLT_name[i]
+                 ENDCASE
+
+                 CASE N_ELEMENTS(suppress_ILAT_name) OF
+                    0: 
+                    1: suppress_In = suppress_ILAT_name
+                    N_ELEMENTS(tiling_order): suppress_In = suppress_ILAT_name[i]
+                 ENDCASE
+
+                 CASE N_ELEMENTS(suppress_titles) OF
+                    0: 
+                    1: suppress_t = suppress_titles
+                    N_ELEMENTS(tiling_order): suppress_t = suppress_titles[i]
+                 ENDCASE
+
                  ;;handle map position
                  IF KEYWORD_SET(no_cb) THEN BEGIN
                     map_position     = position
@@ -318,8 +365,13 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                                        CB_POSITION=cb_position, $
                                        CB_INFO=cb_info, $
                                        /NO_DISPLAY, $
-                                       SUPPRESS_GRIDLABELS=suppress_gridLabels, $
-                                       SUPPRESS_TITLES=suppress_titles, $
+                                       SUPPRESS_THICKGRID=suppress_tg, $
+                                       SUPPRESS_GRIDLABELS=suppress_gl, $
+                                       SUPPRESS_MLT_LABELS=suppress_Ml, $
+                                       SUPPRESS_ILAT_LABELS=suppress_Il, $
+                                       SUPPRESS_MLT_NAME=suppress_Mn, $
+                                       SUPPRESS_ILAT_NAME=suppress_In, $
+                                       SUPPRESS_TITLES=suppress_t, $
                                        LABELS_FOR_PRESENTATION=labels_for_presentation, $
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
                                        _EXTRA=e 
@@ -493,7 +545,10 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                                        MAP_POSITION=map_position, $
                                        /NO_DISPLAY, $
                                        CB_POSITION=cb_position, $
+                                       SUPPRESS_THICKGRID=suppress_thickGrid, $
                                        SUPPRESS_GRIDLABELS=suppress_gridLabels, $
+                                       SUPPRESS_MLT_LABELS=suppress_MLT_labels, $
+                                       SUPPRESS_ILAT_LABELS=suppress_ILAT_labels, $
                                        SUPPRESS_TITLES=suppress_titles, $
                                        LABELS_FOR_PRESENTATION=labels_for_presentation, $
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
