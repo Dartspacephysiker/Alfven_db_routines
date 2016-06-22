@@ -115,10 +115,10 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
            ;;Create a PostScript file.
 
            defMapPos              = [0.125, 0.05, 0.875, 0.8 ]
-           defMapNoCBPos          = [0.1  , 0.1 , 0.9  , 0.9 ]
+           defMapNoCBPos          = [0.04  , 0.04 , 0.96  , 0.96 ]
            defCBPos               = [0.10 , 0.90, 0.90 , 0.92]
            ;; vertCBPos              = [0.92 , 0.05, 0.95 , 0.95]
-           vertCBPos              = [0.07 , 0.05, 0.10 , 0.95]
+           vertCBPos              = [0.11 , 0.05, 0.14 , 0.95]
 
            ;;But if you want a title...
            defXWTitleSize         = 5
@@ -192,7 +192,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  ENDELSE
               ENDWHILE
 
-              IF KEYWORD_SET(tilePlotTitle) OR KEYWORD_SET(tile__cb_in_center_panel) THEN BEGIN
+              ;; IF KEYWORD_SET(tilePlotTitle) OR KEYWORD_SET(tile__cb_in_center_panel) THEN BEGIN
+              IF KEYWORD_SET(tilePlotTitle) THEN BEGIN
                  xSize              = defXWTitleSize*n_tile_columns
                  ySize              = defYWTitleSize*n_tile_rows
 
@@ -377,9 +378,9 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                                        _EXTRA=e 
               ENDFOR
 
-              IF KEYWORD_SET(tile__cb_in_center_panel) THEN BEGIN
-                 tpTitle = h2dStrArr[0].title
-              ENDIF 
+              ;; IF KEYWORD_SET(tile__cb_in_center_panel) THEN BEGIN
+              ;;    tpTitle = h2dStrArr[0].title
+              ;; ENDIF 
 
               IF KEYWORD_SET(tilePlotTitle) THEN BEGIN
                  tpTitle = tilePlotTitle
@@ -455,7 +456,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
 
                  position         = CALC_PLOT_POSITION(jBlank+1,n_tile_columns,n_tile_rows)
 
-                 arrowFile  = '/home/spencerh/Desktop/Spence_paper_drafts/2016/Alfvens_IMF/Figs/clockAngle_for_zhang_analog_v3.png'
+                 arrowFile  = '/home/spencerh/Desktop/Spence_paper_drafts/2016/Alfvens_IMF/Figs/clockAngle_for_zhang_analog_v4.png'
 
                  ;; wDim       = [800*n_tile_columns,800*n_tile_rows]
                  ;; wDim       = [800*n_tile_columns*xRatio,800*n_tile_rows*yRatio]

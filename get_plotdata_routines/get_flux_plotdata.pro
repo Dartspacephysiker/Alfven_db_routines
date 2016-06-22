@@ -456,7 +456,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         END
         ELSE: BEGIN
            IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
-              h2dStr.title          = 'Summed eFlux and pFlux (mW/m^2)'
+              h2dStr.title          = 'Summed eFlux and pFlux (mW/m!U2!N)'
            ENDIF ELSE BEGIN
               h2dStr.title          = title__alfDB_ind_49
            ENDELSE
@@ -510,7 +510,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      
      dataName               = KEYWORD_SET(sum_eFlux_and_pFlux) ? "eFlux_and_pFlux" : "pFlux"
      h2dStr.labelFormat     = fluxPlotPPlotCBLabelFormat
-     h2dStr.logLabels       = logPFluxLabels
+     ;; h2dStr.logLabels       = logPFluxLabels
+     h2dStr.logLabels       = 1
      h2dStr.do_plotIntegral = PFlux_do_plotIntegral
      h2dStr.do_midCBLabel   = PFlux_do_midCBLabel
 

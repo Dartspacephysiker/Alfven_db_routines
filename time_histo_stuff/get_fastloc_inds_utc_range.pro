@@ -185,14 +185,23 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ;;Build output filename based on stuff provided
   ;;Should include clockStr, angleLim1,angleLim2, satellite, omnicoords, bymin, stableimf, delay, smoothwindow
   IF ~KEYWORD_SET(stormFile) THEN BEGIN
+  ;; IF ~KEYWORD_SET(stormFile) THEN BEGIN
+     ;; stormSub       = STRMID(stormfile,stormfile.INDEXOF("todays")+7, $
+     ;;                         stormfile.INDEXOF('_fastLoc')-stormfile.INDEXOF("todays")-7)
+  ;; ENDIF ELSE BEGIN
+  ;;    stormSub       = ''
+  ;; ENDELSE
+
      basenameFormat = '(A0,"--hemi_",A0,' + $
                       '"--chareRange_",F0.2,"-",F0.2,"--altRange_",F0.2,"-",F0.2,"--orbRange",I0,"-",I0,A0)'
-     outIndsFileBasename = STRING(FORMAT=basenameFormat,outIndsPrefix,hemi, $
+     outIndsFileBasename = STRING(FORMAT=basenameFormat,outIndsPrefix,stormSub,hemi, $
                                   charerange[0],charerange[1],altitudeRange[0],altitudeRange[1],orbRange[0],orbRange[1],outIndsSuffix)
      outIndsFilename = fastLocOutputDir+outIndsFileBasename+'.sav' 
   ENDIF ELSE BEGIN
      outIndsFilename = stormFile
   ENDELSE
+
+
   ;;********************************************
   ;;If this file already exists, see if it will work for us!
 

@@ -352,8 +352,17 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
      ENDFOR
      
      mlons=grid.longitudes
+
      FOR i=0,n_elements(mlons)-1 DO BEGIN
         mlons[i].label_position=KEYWORD_SET(south) ? 1.0 : 0.02
+        IF STRMATCH(mlons[i].name,'*5*') $   ;Kill lines at 3,9,15,21
+           ;; STRMATCH(mlons[i].name,'*5*') $
+           ;; STRMATCH(mlons[i].name,'*15*') OR $
+           ;; STRMATCH(mlons[i].name,'*21*')) $
+        THEN BEGIN
+           mlons[i].label_show   = 0
+        ENDIF
+           
      ENDFOR
      
      ;; Add auroral zone to plot?

@@ -10,7 +10,8 @@ PRO JOURNAL__20160618__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT__PRIOR_T
   ;; nonStorm                 = 1
   mainPhase                = 0
 
-  centerLon                = 270
+  ;; centerLon                = 270 ;For putting dusk at bottom
+  centerLon                = 0
   ;; sTrans                   = 95
   sTrans                   = 95  ;for when you do all alts, you know
 
@@ -129,15 +130,15 @@ PRO JOURNAL__20160618__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT__PRIOR_T
      these_i                  = CGSETINTERSECTION(these_i,good_i)
      
      altStr                   = KEYWORD_SET(altitudeRange) ? STRING(FORMAT='("--",I0,"-",I0,"km")',altitudeRange[0],altitudeRange[1]) : ''
-     sPName                   = 'journal__20160617--keiling_et_al_2003_comparison--' + $
-                                'before_Aug_1999--' + $
-                                'pFlux_GE_' + STRING(FORMAT='(G0.2)',pFluxMin) + $
+     sPName                   = 'journal__20160618--keiling_et_al_2003_comparison--' + $
+                                'before_Nov_1999--' + $
+                                'pFlux_GE_' + STRING(FORMAT='(F0.2)',pFluxMin) + $
                                 '--scatterplot' + despunStr + altStr + stormString + $
                                 '--' + hemi + '.gif'
      ;; plotTitle                = hemi + 'ERN HEMI: Poynting flux $\geq$ ' + STRCOMPRESS(pFluxMin,/REMOVE_ALL) + ' mW/m!U2!N' + $
      ;;                            (KEYWORD_SET(altitudeRange) OR KEYWORD_SET(gotStorms) ? '(' + altStr + stormString + ')' : '')
-     plotTitle                = STRING(FORMAT='("Poynting flux $\geq$ ",F0.2," mW/m!U2!N")', $
-                                       pFluxMin)
+     ;; plotTitle                = STRING(FORMAT='("Poynting flux $\geq$ ",I0," mW/m!U2!N")', $
+     ;;                                   pFluxMin)
      
 
      KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $

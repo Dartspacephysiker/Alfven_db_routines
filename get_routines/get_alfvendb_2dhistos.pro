@@ -207,6 +207,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           LOG_CUSTOM_MAXIND=log_custom_maxInd, $
                           SUM_ELECTRON_AND_POYNTINGFLUX=sum_electron_and_poyntingflux, $
                           SUMMED_EFLUX_PFLUXPLOTRANGE=summed_eFlux_pFluxplotRange, $
+                          SUMMED_EFLUX_PFLUX_LOGPLOT=summed_eFlux_pFlux_logPlot, $
                           MEDIANPLOT=medianPlot, $
                           MEDHISTOUTDATA=medHistOutData, $
                           MEDHISTOUTTXT=medHistOutTxt, $
@@ -1740,7 +1741,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                        NONEGFLUX=noNegeflux, $
                        ABSFLUX=abseflux, $
                        OUT_REMOVED_II=out_removed_ii, $
-                       LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logefPlot)), $
+                       LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logefPlot) $
+                                    OR KEYWORD_SET(summed_eFlux_pFlux_logPlot) ), $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                        DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                        DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
