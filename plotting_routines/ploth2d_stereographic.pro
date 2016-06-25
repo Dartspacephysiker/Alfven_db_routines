@@ -82,7 +82,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   IF ~KEYWORD_SET(map_position) THEN BEGIN
      map_position                 = defH2DMapPosition
   ENDIF
-  lim=[(mirror) ? -maxI : minI,minM*15,(mirror) ? -minI : maxI,maxM*15]
+  lim = [(mirror) ? -maxI : minI,minM*15,(mirror) ? -minI : maxI,maxM*15]
   ;; ENDIF ELSE BEGIN
   ;;    map_position              = [0.05, 0.05, 0.85, 0.85]
   ;;    lim=[(mirror) ? -maxI : minI, 0 ,(mirror) ? -minI : maxI,360] ; 
@@ -171,9 +171,15 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         tempMaxI                  = maxI
      ENDELSE
 
+     ;;Don't erase these lines! You need them
      nYlines                      = (tempMaxI-tempMinI)/binI + 1
      ilats                        = indgen(nYlines)*binI + tempMinI
 
+     ;;;;;;;;;;
+     ;;BEGIN OPTIONS
+     ;;;;;;;;;;
+
+     ;;Option #1: Calculate the gridlats
      ;; CASE 1 OF
      ;;    (tempmaxI-tempminI) LE 12: BEGIN
      ;;       minISpacing            = 6
@@ -221,24 +227,30 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ;;    END
      ;; ENDCASE
 
-     ;; IF maxI LT 0 THEN BEGIN
-     ;;    ilats                     = -1.0*REVERSE(ilats)
-     ;;    gridLats                  = -1.0*REVERSE(gridLats)
-     ;; ENDIF
+     ;;Option #2: Preset gridLats
+     gridLats                  = defGridLats
 
-     ;; gridLats                     = FIX(gridLats)
-     ;; gridLatNames                 = gridLats
+     ;;;;;;;;;;
+     ;;END OPTIONS
+     ;;;;;;;;;;
 
-     gridLats                  = defGridLats * (ABS(minI)/minI) ;IF WHERE((INDGEN(10)*binI + minI
-     gridLatNames              = defGridLats * (ABS(minI)/minI)
+     ;;Don't erase these lines! They are the only thing keeping SH plots from being insane
+     IF maxI LT 0 THEN BEGIN
+        ilats                     = -1.0*REVERSE(ilats)
+        gridLats                  = -1.0*REVERSE(gridLats)
+     ENDIF
+
+     gridLats                     = FIX(gridLats)
+     gridLatNames                 = gridLats
+
   ENDELSE
 
 
-  ;; IF mirror THEN BEGIN
-  ;;    ilats                        = -1.0 * ilats
-  ;;    gridLats                     = -1   * FIX(gridLats)
-  ;;    ;; gridLatNames              = -1.0 * gridLatNames
-  ;; ENDIF
+  IF mirror THEN BEGIN
+     ilats                        = -1.0 * ilats
+     gridLats                     = -1   * FIX(gridLats)
+     ;; gridLatNames              = -1.0 * gridLatNames
+  ENDIF
 
   ;;binary matrix to tell us where masked values are
   CASE 1 OF
@@ -477,10 +489,10 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ;;             CHARSIZE=defCharSize_grid
 
 
-        ;; cgText, 0, minI-1, '0 MLT',ALIGNMENT=0.5, ORIENTATION=0, CHARSIZE=defCharSize
-        ;; cgText, 180, minI, '12',ALIGNMENT=0.5, ORIENTATION=0.00, CHARSIZE=defCharSize
-        ;; cgText, 90, minI-1, '6',ALIGNMENT=0.5,CHARSIZE=defCharSize
-        ;; cgText, -90, minI-1, '18',ALIGNMENT=0.5,CHARSIZE=defCharSize
+        cgText, 0, minI-1, '0 MLT',ALIGNMENT=0.5, ORIENTATION=0, CHARSIZE=defCharSize
+        cgText, 180, minI, '12',ALIGNMENT=0.5, ORIENTATION=0.00, CHARSIZE=defCharSize
+        cgText, 90, minI-1, '6',ALIGNMENT=0.5,CHARSIZE=defCharSize
+        cgText, -90, minI-1, '18',ALIGNMENT=0.5,CHARSIZE=defCharSize
 
 ;; [0.125, 0.05, 0.875, 0.8]
 

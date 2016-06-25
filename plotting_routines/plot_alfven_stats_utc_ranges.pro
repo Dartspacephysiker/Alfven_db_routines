@@ -399,10 +399,14 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                            NORTH=north, $
                            SOUTH=south, $
                            HEMI=hemi, $
-                           DBTIMES=cdbTime,dbfile=dbfile, $
+                           DBTIMES=cdbTime, $
+                           DBFILE=dbfile, $
                            CHASTDB=do_chastdb, $
                            DESPUNDB=do_despunDB, $
-                           ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange,POYNTRANGE=poyntRange, $
+                           ORBRANGE=orbRange, $
+                           ALTITUDERANGE=altitudeRange, $
+                           CHARERANGE=charERange, $
+                           POYNTRANGE=poyntRange, $
                            MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                            MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                            DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $

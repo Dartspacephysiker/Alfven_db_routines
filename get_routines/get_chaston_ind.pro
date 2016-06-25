@@ -27,7 +27,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                          SOUTH=south, $
                          HEMI=hemi, $
                          HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                         MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                         MINMLT=minM,MAXMLT=maxM,BINM=binM, $
+                         MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                          DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                          MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                          SAMPLE_T_RESTRICTION=sample_t_restriction, $

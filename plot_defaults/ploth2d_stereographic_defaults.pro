@@ -23,7 +23,7 @@
   ;;******************************
 
   ;;Number of colors in the colorbar
-  nLevels                     = 10
+  nLevels                     = 255
 
   ;;color table options when all values are positive or logged
   chrisPosScheme              = 1
