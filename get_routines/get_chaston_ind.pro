@@ -191,7 +191,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
            ENDELSE
         END
         ELSE: BEGIN
-           IF N_ELEMENTS(FL__fastLoc) NE 0 AND N_ELEMENTS(FASTLOC__times) NE 0 THEN BEGIN
+           IF N_ELEMENTS(FL__fastLoc) NE 0 AND $
+              N_ELEMENTS(FASTLOC__times) NE 0 AND $
+              N_ELEMENTS(FASTLOC__delta_t) NE 0 $
+           THEN BEGIN
               dbStruct                            = FL__fastLoc
               dbTimes                             = FASTLOC__times
               fastloc_delta_t                     = FASTLOC__delta_t
@@ -210,7 +213,6 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                        DBFILE=dbFile, $
                                        DB_TFILE=dbTimesFile, $
                                        FOR_ESPEC_DBS=for_eSpec_DBs
-     ENDIF ELSE BEGIN
         IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
            IF ~KEYWORD_SET(nonMem) THEN BEGIN
               FL_eSpec__fastLoc                   = dbStruct
@@ -226,6 +228,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
            FASTLOC__dbFile                        = dbFile
            FASTLOC__dbTimesFile                   = dbTimesFile
         ENDELSE
+     ENDIF ELSE BEGIN
      ENDELSE
   ENDELSE
 

@@ -3,7 +3,9 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
    T1_ARR=t1_arr, $
    T2_ARR=t2_arr, $
    CENTERTIME=centerTime, $
-   RESTRICT_ALTRANGE=restrict_altRange,RESTRICT_CHARERANGE=restrict_charERange, $
+   RESTRICT_ALTRANGE=restrict_altRange, $
+   RESTRICT_CHARERANGE=restrict_charERange, $
+   RESTRICT_ORBRANGE=restrict_orbRange, $
    MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
    DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
    ;; BOTH_HEMIS=both_hemis, $
@@ -25,9 +27,12 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
    FASTLOC_I_LIST=fastLoc_i_list,FASTLOC_T_LIST=fastLoc_t_list,FASTLOC_DT_LIST=fastLoc_dt_list, $
    NONZERO_I=nz_i, $
    PRINT_MAXIND_SEA_STATS=print_maxInd_sea_stats, $
-   FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_times,FASTLOC_DELTA_T=fastLoc_delta_t, $
+   FASTLOC_STRUCT=fastLoc, $
+   FASTLOC_TIMES=fastLoc_times, $
+   FASTLOC_DELTA_T=fastLoc_delta_t, $
    RESET_GOOD_INDS=reset_good_inds, $
    SAVE_OR_RESTORE_IF_POSSIBLE=save_or_restore_if_possible, $
+   LET_OVERLAPS_FLY__FOR_SEA=let_overlaps_fly__for_sea, $
    LUN=lun
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
@@ -55,9 +60,21 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
                               FASTLOCTIMEFILE=fastLoc_dbTimesFile, $
                               HEMI=hemi, $
                               RESET_GOOD_INDS=reset_good_inds, $
-                              RESTRICT_ALTRANGE=restrict_altRange,RESTRICT_CHARERANGE=restrict_charERange, $
-                              MINMLT=minM,MAXMLT=maxM,BINM=binM,MINILAT=minI,MAXILAT=maxI,BINI=binI, $
-                              DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL
+                              ALTITUDERANGE=restrict_altRange, $
+                              CHARERANGE=restrict_charERange, $
+                              ORBRANGE=restrict_orbRange, $
+                              MINMLT=minM, $
+                              MAXMLT=maxM, $
+                              BINM=binM, $
+                              MINILAT=minI, $
+                              MAXILAT=maxI, $
+                              BINI=binI, $
+                              DO_LSHELL=do_lshell, $
+                              MINLSHELL=minL, $
+                              MAXLSHELL=maxL, $
+                              BINL=binL, $
+                              LET_OVERLAPS_FLY__FOR_SEA=let_overlaps_fly__for_sea, $
+                              /DO_NOT_SET_DEFAULTS
    
         IF N_ELEMENTS(out_good_tArr_i) NE N_ELEMENTS(fastloc_i_list) THEN BEGIN
            PRINT,"There are very possibly issues with this plot; be careful ..."

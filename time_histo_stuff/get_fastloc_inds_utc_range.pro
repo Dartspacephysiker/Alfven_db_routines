@@ -34,8 +34,9 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                                FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                ;;Note, all of the following keywords got added 2015/10/27, and they may screw up other stuff. Just so
                                ;;you know!
-                               RESTRICT_ALTRANGE=restrict_altRange, $
-                               RESTRICT_CHARERANGE=restrict_charERange, $
+                               ;; RESTRICT_ALTRANGE=restrict_altRange, $
+                               ;; RESTRICT_CHARERANGE=restrict_charERange, $
+                               ;; RESTRICT_ORBRANGE=restrict_orbRange, $
                                MINMLT=minM, $
                                MAXMLT=maxM,BINM=binM, $
                                MINILAT=minI, $
@@ -47,7 +48,9 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                                BINL=binL, $
                                RESET_GOOD_INDS=reset_good_inds, $
                                DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
-                               FOR_ESPEC_DBS=for_eSpec_DBs
+                               FOR_ESPEC_DBS=for_eSpec_DBs, $
+                               LET_OVERLAPS_FLY__FOR_SEA=let_overlaps_fly__for_sea
+
 
 
   COMPILE_OPT idl2
@@ -83,7 +86,7 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
         FASTLOC_E__dbTimesFile = fastLocTimeFile_in
      ENDIF     
   ENDIF ELSE BEGIN
-     IF KEYWORD_SET(fastLoc_in) AND ~KEYWORD_SET(FL_fastLoc) THEN BEGIN
+     IF KEYWORD_SET(fastLoc_in) AND ~KEYWORD_SET(FL__fastLoc) THEN BEGIN
         FL_eSpec__fastLoc = fastLoc_in
      ENDIF
 
@@ -171,7 +174,9 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                              DO_NOT_SET_DEFAULTS=do_not_set_defaults
 
   IF ~KEYWORD_SET(do_not_set_defaults) THEN BEGIN
-     SET_UTCPLOT_PARAMS_AND_IND_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+     SET_UTCPLOT_PARAMS_AND_IND_DEFAULTS,ORBRANGE=orbRange, $
+                                         ALTITUDERANGE=altitudeRange, $
+                                         CHARERANGE=charERange, $
                                          PARAMSTRING=paramString, $
                                          LUN=lun
   ENDIF
@@ -187,15 +192,23 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   IF ~KEYWORD_SET(stormFile) THEN BEGIN
   ;; IF ~KEYWORD_SET(stormFile) THEN BEGIN
      ;; stormSub       = STRMID(stormfile,stormfile.INDEXOF("todays")+7, $
-     ;;                         stormfile.INDEXOF('_fastLoc')-stormfile.INDEXOF("todays")-7)
+     ;;                         stormpfile.INDEXOF('_fastLoc')-stormfile.INDEXOF("todays")-7)
   ;; ENDIF ELSE BEGIN
   ;;    stormSub       = ''
   ;; ENDELSE
 
-     basenameFormat = '(A0,"--hemi_",A0,' + $
+     IF N_ELEMENTS(charerange) EQ 2 THEN tmpCER = chareRange ELSE tmpCER = [0,0]
+     IF N_ELEMENTS(altitudeRange) EQ 2 THEN tmpAR = altitudeRange ELSE tmpAR = [0,0]
+     IF N_ELEMENTS(orbRange) EQ 2 THEN tmpOR = orbRange ELSE tmpOR = [0,0]
+
+     basenameFormat = '(A0,"--",A0,"--hemi_",A0,' + $
                       '"--chareRange_",F0.2,"-",F0.2,"--altRange_",F0.2,"-",F0.2,"--orbRange",I0,"-",I0,A0)'
-     outIndsFileBasename = STRING(FORMAT=basenameFormat,outIndsPrefix,stormSub,hemi, $
-                                  charerange[0],charerange[1],altitudeRange[0],altitudeRange[1],orbRange[0],orbRange[1],outIndsSuffix)
+     outIndsFileBasename = STRING(FORMAT=basenameFormat, $
+                                  outIndsPrefix, $
+                                  GET_TODAY_STRING(/DO_YYYYMMDD_FMT), $
+                                  ;; stormSub, $
+                                  hemi, $
+                                  tmpCER[0],tmpCER[1],tmpAR[0],tmpAR[1],tmpOR[0],tmpOR[1],outIndsSuffix)
      outIndsFilename = fastLocOutputDir+outIndsFileBasename+'.sav' 
   ENDIF ELSE BEGIN
      outIndsFilename = stormFile
@@ -210,7 +223,7 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   ;;    RESTORE,outIndsFilename
   ;;    ;; WAIT,1
   ;; ENDIF ELSE BEGIN
-  good_i = GET_CHASTON_IND(KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL_fastLoc, $
+  good_i = GET_CHASTON_IND(KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL__fastLoc, $
                            satellite,lun, $
                            GET_TIME_I_NOT_ALFVENDB_I=1, $
                            DBTIMES=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times, $
@@ -227,7 +240,7 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
                            FOR_ESPEC_DBS=for_eSpec_DBs)
   
   GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
-     DBSTRUCT=KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL_fastLoc, $
+     DBSTRUCT=KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL__fastLoc, $
      OUT_GOOD_TARR_I=out_good_tArr_i, $
      DBTIMES=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times, $
      RESTRICT_W_THESEINDS=good_i, $
@@ -238,6 +251,7 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
      INDS_ORBS_LIST=inds_orbs_list, $
      TRANGES_ORBS_LIST=tranges_orbs_list, $
      TSPANS_ORBS_LIST=tspans_orbs_list, $
+     LET_OVERLAPS_FLY__FOR_SEA=let_overlaps_fly__for_sea, $
      /PRINT_DATA_AVAILABILITY, $
      /SUMMARY
   
@@ -264,7 +278,7 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
      IF ARG_PRESENT(fastLoc_times_out)    THEN fastLoc_times_out   = FASTLOC_E__times
      IF ARG_PRESENT(fastLoc_delta_t_out)  THEN fastLoc_delta_t_out = FASTLOC_E__delta_t
   ENDIF ELSE BEGIN
-     IF ARG_PRESENT(fastLoc_out)          THEN fastLoc_out         = FL_fastLoc
+     IF ARG_PRESENT(fastLoc_out)          THEN fastLoc_out         = FL__fastLoc
      IF ARG_PRESENT(fastLoc_times_out)    THEN fastLoc_times_out   = FASTLOC__times
      IF ARG_PRESENT(fastLoc_delta_t_out)  THEN fastLoc_delta_t_out = FASTLOC__delta_t
   ENDELSE

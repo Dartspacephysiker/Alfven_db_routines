@@ -234,11 +234,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDELSE
 
 
-  IF mirror THEN BEGIN
-     ilats                        = -1.0 * ilats
-     gridLats                     = -1   * FIX(gridLats)
-     ;; gridLatNames              = -1.0 * gridLatNames
-  ENDIF
+  ;; IF mirror THEN BEGIN
+  ;;    ilats                        = -1.0 * ilats
+  ;;    gridLats                     = -1   * FIX(gridLats)
+  ;;    ;; gridLatNames              = -1.0 * gridLatNames
+  ;; ENDIF
 
   ;;binary matrix to tell us where masked values are
   CASE 1 OF

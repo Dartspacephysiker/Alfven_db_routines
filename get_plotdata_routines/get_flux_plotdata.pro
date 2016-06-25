@@ -511,7 +511,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      dataName               = KEYWORD_SET(sum_eFlux_and_pFlux) ? "eFlux_and_pFlux" : "pFlux"
      h2dStr.labelFormat     = fluxPlotPPlotCBLabelFormat
      ;; h2dStr.logLabels       = logPFluxLabels
-     h2dStr.logLabels       = 1
+     h2dStr.logLabels       = 0
      h2dStr.do_plotIntegral = PFlux_do_plotIntegral
      h2dStr.do_midCBLabel   = PFlux_do_midCBLabel
 

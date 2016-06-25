@@ -23,7 +23,9 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
    SAVE_INDS_TO_FILENAME=save_filename, $
    GIVE_TIMESPLIT_INFO=give_timeSplit_info, $
    VERBOSE=verbose, $
-   DEBUG=debug, LUN=lun
+   LET_OVERLAPS_FLY__FOR_SEA=let_overlaps_fly__for_sea, $
+   DEBUG=debug, $
+   LUN=lun
   
   COMPILE_OPT idl2
 
@@ -136,7 +138,32 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
 
      IF n_overlap_t1 GT 0 OR n_overlap_t2 GT 0 THEN BEGIN
         PRINTF,lun,"Overlaps exist!"
-        STOP
+        PRINTF,lun,"N Instances where t1[i+1] occurs before t2[i]: " + STRCOMPRESS(n_overlap_t1,/REMOVE_ALL)
+        FOR jj=0,n_overlap_t1-1 DO BEGIN
+           PRINTF,lun,FORMAT='("t1[",I0,"] : ",A0)', $
+                  overlap_t1_arr_i[jj], $
+                  TIME_TO_STR(t1_arr[overlap_t1_arr_i[jj]],/MS)
+           PRINTF,lun,FORMAT='("t2[",I0,"] : ",A0)', $
+                  overlap_t1_arr_i[jj]-1, $
+                  TIME_TO_STR(t2_arr[overlap_t1_arr_i[jj]-1],/MS)
+        ENDFOR
+        PRINTF,lun,''
+        PRINTF,lun,"N Instances where t2[1] occurs after t1[i+1]: " + STRCOMPRESS(n_overlap_t2,/REMOVE_ALL)
+        FOR jj=0,n_overlap_t2-1 DO BEGIN
+           PRINTF,lun,FORMAT='("t1[",I0,"] : ",A0)', $
+                  overlap_t2_arr_i[jj]+1, $
+                  TIME_TO_STR(t1_arr[overlap_t2_arr_i[jj]+1],/MS)
+           PRINTF,lun,FORMAT='("t2[",I0,"] : ",A0)', $
+                  overlap_t2_arr_i[jj], $
+                  TIME_TO_STR(t2_arr[overlap_t2_arr_i[jj]],/MS)
+        ENDFOR
+        PRINTF,lun,''
+        IF KEYWORD_SET(let_overlaps_fly__for_sea) THEN BEGIN
+           PRINTF,lun,"Assuming this is OK since we're doing SEA ..."
+           WAIT,0.5
+        ENDIF ELSE BEGIN
+           STOP
+        ENDELSE
      ENDIF
   ENDIF
 
