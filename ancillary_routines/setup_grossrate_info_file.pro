@@ -1,5 +1,6 @@
 PRO SETUP_GROSSRATE_INFO_FILE,grossRate_info_file, $
                               PARAMSTRING=paramString, $
+                              TXTOUTPUTDIR=txtOutputDir, $
                               GROSSLUN=grossLun, $
                               LUN=lun
 
@@ -10,7 +11,7 @@ PRO SETUP_GROSSRATE_INFO_FILE,grossRate_info_file, $
      PRINTF,lun,"Opening grossRate file: " + grossRate_info_file
      IF FILE_TEST(grossRate_info_file) THEN BEGIN
         PRINTF,lun,"grossRate info file exists; appending..."
-        OPENW,grossLun,grossRate_info_file,/GET_LUN,/APPEND
+        OPENW,grossLun,txtOutputDir+grossRate_info_file,/GET_LUN,/APPEND
         PRINTF,grossLun,""
         PRINTF,grossLun,"##############################"
         PRINTF,grossLun,"Next run: " + SYSTIME()

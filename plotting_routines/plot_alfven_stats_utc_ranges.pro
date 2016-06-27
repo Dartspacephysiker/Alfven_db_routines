@@ -186,7 +186,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                  ;; MIN_NEVENTS=min_nEvents, $
                                  MASKMIN=maskMin, $
-                                 DELAY=delay, STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
+                                 THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
+                                 DELAY=delay, STABLEIMF=stableIMF, $
+                                 SMOOTHWINDOW=smoothWindow, $
+                                 INCLUDENOCONSECDATA=includeNoConsecData, $
                                  NPLOTS=nPlots, $
                                  EPLOTS=ePlots, EPLOTRANGE=ePlotRange, $
                                  EFLUXPLOTTYPE=eFluxPlotType, LOGEFPLOT=logEfPlot, $
@@ -604,8 +607,9 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
 
   IF KEYWORD_SET(grossRate_info_file) THEN BEGIN
      SETUP_GROSSRATE_INFO_FILE,grossRate_info_file, $
-                               GROSSLUN=grossLun, $
-                               PARAMSTRING=paramString
+                               PARAMSTRING=paramString, $
+                               TXTOUTPUTDIR=txtOutputDir, $
+                               GROSSLUN=grossLun
   ENDIF
 
   GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
@@ -619,6 +623,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, $
                         CHARERANGE=charERange, POYNTRANGE=poyntRange, NUMORBLIM=numOrbLim, $
                         MASKMIN=maskMin, $
+                        THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
                         SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
                         HEMI=hemi, $
                         DO_IMF_CONDS=do_IMF_conds, $
