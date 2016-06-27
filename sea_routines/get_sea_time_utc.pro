@@ -5,7 +5,8 @@ PRO GET_SEA_TIME_UTC,NEPOCHS=nEpochs, $
                      ;; SEAFILE=seaFile, $
                      MAXIMUS=maximus, $
                      ;; SEASTRUCTURE=seaStructure, $
-                     USE_DARTDB_START_ENDDATE=use_dartDB_start_endDate, $                                         ;DBs
+                     USE_DARTDB_START_ENDDATE=use_dartDB_start_endDate, $
+                     USE_DARTDB__BEF_NOV1999=use_dartDB__bef_nov1999, $
                      STARTDATE=startDate,STOPDATE=stopDate, $
                      SEA_CENTERTIMES_UTC=sea_centerTimes_utc, $ ;extra info
                      CENTERTIME=centerTime, $
@@ -14,6 +15,8 @@ PRO GET_SEA_TIME_UTC,NEPOCHS=nEpochs, $
                      ;; SEASTRUCT_INDS=seaStruct_inds, $ ; outs
                      RANDOMTIMES=randomTimes
   
+  COMPILE_OPT idl2
+
   IF KEYWORD_SET(use_dartdb_start_enddate) THEN BEGIN
      startDate=str_to_time(maximus.time[0])
      stopDate=str_to_time(maximus.time[-1])
@@ -22,8 +25,17 @@ PRO GET_SEA_TIME_UTC,NEPOCHS=nEpochs, $
      PRINT,'Stop time: ' + maximus.time[-1]
   ENDIF
   
-  IF KEYWORD_SET(STARTDATE) THEN BEGIN
-     IF N_ELEMENTS(STOPDATE) EQ 0 THEN BEGIN
+  IF KEYWORD_SET(use_dartdb__bef_nov1999) THEN BEGIN
+     last_i = MAX(WHERE(maximus.orbit EQ 12670))
+     startDate = STR_TO_TIME(maximus.time[0])
+     stopDate = STR_TO_TIME(maximus.time[last_i])
+     PRINT,'Using start and stop time from Alfvén database before Nov 1999...'
+     PRINT,'Start time: ' + maximus.time[0]
+     PRINT,'Stop time: ' + maximus.time[last_i]
+  ENDIF
+  
+  IF KEYWORD_SET(startDate) THEN BEGIN
+     IF N_ELEMENTS(stopDate) EQ 0 THEN BEGIN
         PRINT,"No stop year specified! Plotting data up to a full year after startDate."
         stopDate=startDate+86400.*31.*12.
      ENDIF
@@ -37,8 +49,8 @@ PRO GET_SEA_TIME_UTC,NEPOCHS=nEpochs, $
      ;; seaStruct_inds = -1
      seaString              = 'random'
      centerTime             = RANDOMU(seed,nEpochs,/DOUBLE)*(stopDate-startDate)+startDate
-     centerTime             = centerTime(SORT(centerTime))
-     julDay                 = conv_utc_to_julday(centerTime,tStamps)
+     centerTime             = centerTime[SORT(centerTime)]
+     julDay                 = CONV_UTC_TO_JULDAY(centerTime,tStamps)
   ENDIF ELSE BEGIN
      sea_inds               = WHERE(sea_centerTimes_UTC GE startDate AND sea_centerTimes_UTC LE stopDate,/NULL,NCOMPLEMENT=nDropped)
      
@@ -59,8 +71,8 @@ PRO GET_SEA_TIME_UTC,NEPOCHS=nEpochs, $
      
      IF nEpochs EQ 0 THEN BEGIN
         PRINT,"No seas found for given time range:"
-        PRINT,"Start date: ",time_to_str(startDate)
-        PRINT,"Stop date: ",time_to_str(stopDate)
+        PRINT,"Start date: ",TIME_TO_STR(startDate)
+        PRINT,"Stop date: ",TIME_TO_STR(stopDate)
         PRINT,'Returning...'
         RETURN
      ENDIF

@@ -6,6 +6,7 @@ PRO SETUP_SEA_TIMEARRAY_UTC,sea_timeArray_UTC,TBEFOREEPOCH=tBeforeEpoch,TAFTEREP
                             MAXIMUS=maximus, $
                             ;; SEASTRUCTURE=seaStruct, $
                             USE_DARTDB_START_ENDDATE=use_dartDB_start_endDate, $ ;DBs
+                            USE_DARTDB__BEF_NOV1999=use_dartDB__bef_nov1999, $
                             SEATYPE=seaType, $
                             STARTDATE=startDate, $
                             STOPDATE=stopDate, $
@@ -33,6 +34,7 @@ PRO SETUP_SEA_TIMEARRAY_UTC,sea_timeArray_UTC,TBEFOREEPOCH=tBeforeEpoch,TAFTEREP
                          EPOCHINDS=epochInds, $
                          MAXIMUS=maximus, $
                          USE_DARTDB_START_ENDDATE=use_dartDB_start_endDate, $ ;DBs
+                         USE_DARTDB__BEF_NOV1999=use_dartDB__bef_nov1999, $
                          STARTDATE=startDate,STOPDATE=stopDate, $
                          SEA_CENTERTIMES_UTC=sea_centerTimes_UTC, $ ;extra info
                          CENTERTIME=centerTime, $
@@ -48,6 +50,7 @@ PRO SETUP_SEA_TIMEARRAY_UTC,sea_timeArray_UTC,TBEFOREEPOCH=tBeforeEpoch,TAFTEREP
                          EPOCHINDS=epochInds, $
                          MAXIMUS=maximus, $
                          USE_DARTDB_START_ENDDATE=use_dartDB_start_endDate, $ ;DBs
+                         USE_DARTDB__BEF_NOV1999=use_dartDB__bef_nov1999, $
                          STARTDATE=startDate,STOPDATE=stopDate, $
                          SEA_CENTERTIMES_UTC=sea_centerTimes_UTC, $ ;extra info
                          CENTERTIME=centerTime, $

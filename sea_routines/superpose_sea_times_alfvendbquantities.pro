@@ -47,7 +47,6 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
    TBEFOREEPOCH=tBeforeEpoch,TAFTEREPOCH=tAfterEpoch, $
    STARTDATE=startDate, STOPDATE=stopDate, $
    DAYSIDE=dayside,NIGHTSIDE=nightside, $
-   ;; EPOCHINDS=epochInds, $
    SEA_CENTERTIMES_UTC=sea_centerTimes_UTC, $
    REMOVE_DUPES=remove_dupes, $
    HOURS_AFT_FOR_NO_DUPES=hours_aft_for_no_dupes, $
@@ -56,6 +55,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
    USE_SYMH=use_symh,USE_AE=use_AE, $
    OMNI_QUANTITIES_TO_PLOT=OMNI_quantities_to_plot, $
    OMNI_QUANTITY_RANGES=OMNI_quantity_ranges, $
+   OMNI_QUANTITY_AXIS_STYLE=omni_quantity_axis_style, $
    LOG_OMNI_QUANTITIES=log_omni_quantities, $
    SMOOTHWINDOW=smoothWindow, $
    NEVENTHISTS=nEventHists, $
@@ -75,10 +75,6 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
    HIST_MAXIND_SEA=hist_maxInd_sea, $
    TIMEAVGD_MAXIND_SEA=timeAvgd_maxInd_sea, $
    LOG_TIMEAVGD_MAXIND=log_timeAvgd_maxInd, $
-   ;; TIMEAVGD_PFLUX_SEA=timeAvgd_pFlux_sea, $
-   ;; LOG_TIMEAVGD_PFLUX=log_timeAvgd_pFlux, $
-   ;; TIMEAVGD_EFLUXMAX_SEA=timeAvgd_eFluxMax_sea, $
-   ;; LOG_TIMEAVGD_EFLUXMAX=log_timeAvgd_eFluxMax, $
    DIVIDE_BY_WIDTH_X=divide_by_width_x, $
    MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
    ONLY_POS=only_pos, $
@@ -94,8 +90,6 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
    RUNNING_MEDIAN=running_median, $
    RUNNING_BIN_SPACING=running_bin_spacing, $
    RUNNING_SMOOTH_NPOINTS=running_smooth_nPoints, $
-   ;; RUNNING_BIN_L_OFFSET=bin_l_offset, $
-   ;; RUNNING_BIN_R_OFFSET=bin_r_offset, $
    RUNNING_BIN_OFFSET=bin_offset, $
    RUNNING_BIN_L_EDGES=bin_l_edges, $
    RUNNING_BIN_R_EDGES=bin_r_edges, $
@@ -143,6 +137,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
    NOMAXPLOTS=noMaxPlots, $
    NOAVGPLOTS=noAvgPlots, $
    USE_DARTDB_START_ENDDATE=use_dartdb_start_enddate, $
+   USE_DARTDB__BEF_NOV1999=use_dartDB__bef_nov1999, $
    DO_DESPUNDB=do_despunDB, $
    USING_HEAVIES=using_heavies, $
    SAVEFILE=saveFile, $
@@ -193,7 +188,9 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
                              POS_LAYOUT=pos_layout, $
                              NEG_LAYOUT=neg_layout, $
                              USE_SYMH=use_SYMH,USE_AE=use_AE, $
-                             OMNI_QUANTITY=omni_quantity,LOG_OMNI_QUANTITY=log_omni_quantities,USE_DATA_MINMAX=use_data_minMax, $
+                             OMNI_QUANTITY=omni_quantity, $
+                             LOG_OMNI_QUANTITY=log_omni_quantities, $
+                             USE_DATA_MINMAX=use_data_minMax, $
                              HISTOBINSIZE=histoBinSize, HISTORANGE=histoRange, $
                              PROBOCCURRENCE_SEA=probOccurrence_sea, $
                              THIST_SEA=tHist_sea, $
@@ -242,13 +239,16 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;Get all seas occuring within specified date range, if an array of times hasn't been provided
-  SETUP_SEA_TIMEARRAY_UTC,sea_timeArray_UTC,TBEFOREEPOCH=tBeforeEpoch,TAFTEREPOCH=tAfterEpoch, $
+  SETUP_SEA_TIMEARRAY_UTC,sea_timeArray_UTC, $
+                          TBEFOREEPOCH=tBeforeEpoch, $
+                          TAFTEREPOCH=tAfterEpoch, $
                           NEPOCHS=nEpochs, $
                           EPOCHINDS=epochInds, $
                           SEAFILE=seaFile, $
                           MAXIMUS=maximus, $
                           ;; SEASTRUCTURE=seaStruct, $
                           USE_DARTDB_START_ENDDATE=use_dartDB_start_endDate, $ ;DBs
+                          USE_DARTDB__BEF_NOV1999=use_dartDB__bef_nov1999, $
                           SEATYPE=seaType, $
                           STARTDATE=startDate, $
                           STOPDATE=stopDate, $
@@ -720,7 +720,8 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;now the plots
-  xTitle=KEYWORD_SET(xTitle) ? xTitle : 'Hours since epoch'
+  tStr   = N_ELEMENTS(sea_centerTimes_UTC) EQ 1 ? TIME_TO_STR(sea_centerTimes_UTC) : 'epoch'
+  xTitle = KEYWORD_SET(xTitle) ? xTitle : 'Hours since ' + tStr
   xRange=[-tBeforeEpoch,tAfterEpoch]
 
   ;; Need a window?
@@ -741,20 +742,23 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
      ENDELSE
 
      IF makeGeomag THEN BEGIN
-        IF KEYWORD_SET(only_OMNI_plots) AND N_ELEMENTS(OMNI_quantities_to_plot) GT 1 THEN BEGIN
+        IF KEYWORD_SET(only_OMNI_plots) AND nQuantitiesToPlot GT 1 THEN BEGIN
            WINDOW_CUSTOM_SETUP,NPLOTCOLUMNS=1, $
                                NPLOTROWS=nQuantitiesToPlot, $
                                ROW_NAMES=LIST_TO_1DARRAY(geomag_title_list), $
                                SPACE_VERT_BETWEEN_ROWS=0.08, $
                                SPACE_FOR_ROW_NAMES=0.08, $
                                SPACE__XTITLE=0.09, $
-                               SPACE__YTITLE=0.07, $
+                               SPACE__YTITLE=0.02, $
                                ;; SPACE_FOR_COLUMN_NAMES=0.1, $
                                WINDOW_TITLE=winTitle, $
                                ;; XTITLE='Delay (min)', $
                                XTITLE=xTitle, $
                                ;; YTITLE=yTitle, $
-                               CURRENT_WINDOW=geomagWindow,/MAKE_NEW
+                               CURRENT_WINDOW=geomagWindow, $
+                               /MAKE_NEW, $
+                               WINDOW_DIMENSIONS=[1200,800]
+
            window_custom        = 1
         ENDIF ELSE BEGIN
            geomagWindow=WINDOW(WINDOW_TITLE="SEA plots for " + STRCOMPRESS(nEpochs,/REMOVE_ALL) + " seas: "+ $
@@ -770,6 +774,12 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
   
   IF ~noPlots AND ~noGeomagPlots THEN BEGIN
      
+     CASE N_ELEMENTS(omni_quantity_axis_style) OF
+        0: omni_quantity_axis_style = REPLICATE(1,nQuantitiesToPlot)
+        1: omni_quantity_axis_style = REPLICATE(omni_quantity_axis_style,nQuantitiesToPlot)
+        ELSE: 
+     ENDCASE
+
      FOR iQuant=0,nQuantitiesToPlot-1 DO BEGIN
         geomag_time_list         = geomag_time_list_of_lists[iQuant]
         geomag_dat_list          = geomag_dat_list_of_lists[iQuant]
@@ -789,7 +799,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
 
               PLOT_SW_OR_GEOMAGQUANTITY_TRACE__EPOCH,geomagEpochSeconds,geomagEpochDat, $
                                                      NAME=omni_quantity, $
-                                                     AXIS_STYLE=1, $
+                                                     AXIS_STYLE=omni_quantity_axis_style[iQuant], $
                                                      PLOTTITLE=plotTitle, $
                                                      XTITLE=KEYWORD_SET(window_custom) ? !NULL : xTitle, $
                                                      XRANGE=xRange, $
@@ -1010,7 +1020,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
 
      mTags=TAG_NAMES(maximus)
      yTitle = (KEYWORD_SET(yTitle_maxInd) ? yTitle_maxInd : mTags[maxInd])
-     IF ~(noPlots OR (noMaxPlots AND noAvgPlots)) THEN BEGIN
+     IF ~(noPlots OR (noMaxPlots AND noAvgPlots)) AND ~KEYWORD_SET(only_OMNI_plots) THEN BEGIN
         IF N_ELEMENTS(maximusWindow) EQ 0 THEN BEGIN
            maximusWindow=WINDOW(WINDOW_TITLE="Maximus plots", $
                                 DIMENSIONS=[1200,800])
