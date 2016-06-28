@@ -232,10 +232,18 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      btMaxStr=''
      
      IF N_ELEMENTS(btMin) GT 0 THEN BEGIN
+        IF btMin LT 0 THEN BEGIN
+           PRINT,'btMin shouldn''t be less than zero!'
+           STOP
+        ENDIF
         btMinStr = '__' + (KEYWORD_SET(abs_btMin) ? 'ABS_' : '') $
                    + 'btMin' + String(btMin,format='(D0.1)')
      ENDIF
      IF N_ELEMENTS(btMax) GT 0 THEN BEGIN
+        IF btMax LT 0 THEN BEGIN
+           PRINT,'btMax shouldn''t be less than zero!'
+           STOP
+        ENDIF
         btMaxStr = '__' + (KEYWORD_SET(abs_btMax) ? 'ABS_' : '') $
                    + 'btMax' + String(btMax,format='(D0.1)')
      ENDIF

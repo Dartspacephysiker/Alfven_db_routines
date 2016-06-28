@@ -231,6 +231,21 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            inData           = maximus.elec_energy_flux[tmp_i]
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
+
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
+                    h2dStr.title = title__alfDB_ind_08_grossRate
+                    grossConvFactor = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 END
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    h2dStr.title = title__alfDB_ind_08_grossRate + '(long. wid.)'
+                    grossConvFactor = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+                 END
+                 ELSE: BEGIN
+                 END
+              ENDCASE
+           ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_nonAlfven"): BEGIN
            h2dStr.title     = title__alfDB_ind_10__nonAlfvenic
@@ -487,11 +502,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         CASE 1 OF
            KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
               IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
-                 grossConvFactor  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
                  h2dStr.title     = "Gross summed eFlux and pFlux"
+                 grossConvFactor2 = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
               ENDIF ELSE BEGIN
                  h2dStr.title     = title__alfDB_ind_49_grossRate
-                 grossConvFactor2 = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 grossConvFactor  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
               ENDELSE
            END
            KEYWORD_SET(do_grossRate_with_long_width): BEGIN

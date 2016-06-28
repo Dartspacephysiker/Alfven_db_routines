@@ -28,6 +28,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            TILE__CB_IN_CENTER_PANEL=tile__cb_in_center_panel, $
                            TILE__NO_COLORBAR_ARRAY=tile__no_colorbar_array, $
                            ;; BLANK_TILE_POSITIONS=blank_tile_positions, $
+                           MAKE_INTEGRAL_FILE=make_integral_file, $
+                           TXTOUTPUTDIR=txtOutputDir, $
                            LUN=lun, $
                            EPS_OUTPUT=eps_output, $
                            _EXTRA = e
@@ -247,7 +249,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  tPSuff = tilePlotSuff
               ENDELSE
 
-              CGPS_Open, plotDir + paramStr+tPSuff+'.ps', $
+              CGPS_OPEN, plotDir + paramStr + tPSuff+'.ps', $
                          /NOMATCH, $
                          XSIZE=xSize, $
                          YSIZE=ySize, $
@@ -265,6 +267,16 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                         /LANDSCAPE_FORCE
 
               ;; iPos = 0
+
+              IF KEYWORD_SET(make_integral_file) THEN BEGIN
+                 integralFile = txtOutputDir + paramStr + $
+                                tPSuff + '--integrals.txt'
+                 OPENW,intLun,integralFile,/GET_LUN,/APPEND
+
+                 PRINTF,intLun,h2dStrArr[0].title
+                 PRINTF,intLun,''
+              ENDIF
+
               FOR i=0, nPlotsAndBlanks-1 DO BEGIN  
 
                  IF KEYWORD_SET(tiling_order) THEN j = tiling_order[i] ELSE j = i
@@ -357,6 +369,14 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                     END
                  ENDCASE
                  
+                 IF KEYWORD_SET(make_integral_file) THEN BEGIN
+                    PRINTF,intLun,'************'
+                    IF N_ELEMENTS(clockStr) GT 0 THEN BEGIN 
+                       PRINTF,intLun,FORMAT='("clockString: ",A0)',clockStr[j]
+                    ENDIF
+                    PRINTF,intLun,FORMAT='("plotPos: ",I0)',j
+                 ENDIF
+
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[j],tempFile, $
                                        H2DMASK=h2dMask, $
                                        NO_COLORBAR=no_cb, $
@@ -375,8 +395,15 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                                        SUPPRESS_TITLES=suppress_t, $
                                        LABELS_FOR_PRESENTATION=labels_for_presentation, $
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
+                                       DO_INTEGRAL_FILE=KEYWORD_SET(make_integral_file), $
+                                       INTLUN=intLun, $
                                        _EXTRA=e 
               ENDFOR
+
+              IF KEYWORD_SET(make_integral_file) THEN BEGIN
+                 CLOSE,intLun
+                 FREE_LUN,intLun
+              ENDIF
 
               ;; IF KEYWORD_SET(tile__cb_in_center_panel) THEN BEGIN
               ;;    tpTitle = h2dStrArr[0].title
@@ -539,6 +566,17 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                            ;; /MATCH, $
                            /LANDSCAPE_FORCE
                  
+                 IF KEYWORD_SET(make_integral_file) THEN BEGIN
+
+                    integralFile = txtOutputDir + paramStr + '--' + $
+                                   dataNameArr[i] + '--integrals.txt'
+
+                    OPENW,intLun,integralFile,/GET_LUN,/APPEND
+
+                    PRINTF,intLun,'************'
+                    PRINTF,intLun,FORMAT='(A0)',h2dStrArr[i].title
+                 ENDIF
+
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
                                        NO_COLORBAR=no_cb, $
                                        WINDOW_XSIZE=xSize, $
@@ -553,6 +591,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                                        SUPPRESS_TITLES=suppress_titles, $
                                        LABELS_FOR_PRESENTATION=labels_for_presentation, $
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
+                                       DO_INTEGRAL_FILE=KEYWORD_SET(make_integral_file), $
+                                       INTLUN=intLun, $
                                        _EXTRA=e 
                  CGPS_Close 
                  ;;Create a PNG file with a width of 800 pixels.
@@ -562,6 +602,13 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                                  WIDTH=800, $
                                  DELETE_PS=del_PS
                  ENDIF
+
+                 IF KEYWORD_SET(make_integral_file) THEN BEGIN
+                    CLOSE,intLun
+                    FREE_LUN,intLun
+                 ENDIF
+
+
               ENDFOR
 
            ENDELSE

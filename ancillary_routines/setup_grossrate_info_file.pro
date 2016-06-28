@@ -17,7 +17,7 @@ PRO SETUP_GROSSRATE_INFO_FILE,grossRate_info_file, $
         PRINTF,grossLun,"Next run: " + SYSTIME()
         PRINTF,grossLun,"##############################"
      ENDIF ELSE BEGIN
-        OPENW,grossLun,grossRate_info_file,/GET_LUN
+        OPENW,grossLun,txtOutputDir+grossRate_info_file,/GET_LUN
      ENDELSE
      PRINTF,grossLun,GET_TODAY_STRING(/DO_YYYYMMDD_FMT) $
             +  (KEYWORD_SET(paramString) ? ": " + paramString : '')

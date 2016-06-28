@@ -138,6 +138,7 @@ title__alfDB_esa_nFlux_integ = 'Integ. e!U-!N Flux (' + intEnergyFluxStr + ')' +
 
 ;;Gross rates
 title__alfDB_esa_nFlux_grossRate = 'e!U-!N Number Deposition (' + numGrossStr + ')' + ionosphString                      ;"ESA_Number_flux"
+title__alfDB_ind_08_grossRate = 'Max e!U-!N Energy Deposition (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
 title__alfDB_ind_10_grossRate = 'e!U-!N Energy Deposition (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
 title__alfDB_ind_11_grossRate = 'Total Alfic e!U-!N Energy Deposition (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
 title__alfDB_ind_18_grossRate = 'Upflowing Ions (' + numGrossStr + ')' + ionosphString        ;"Integ_Up"
