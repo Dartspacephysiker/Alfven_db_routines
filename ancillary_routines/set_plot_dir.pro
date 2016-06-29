@@ -3,7 +3,8 @@ PRO SET_PLOT_DIR,plotDir, $
                  FOR_STORMS=for_storms, $
                  FOR_SW_IMF=for_sw_imf, $
                  FOR_ALFVENDB=for_alfvendb, $
-                 FOR_ESPECDB=for_eSpecdb, $
+                 FOR_ESPEC_DB=for_eSpec_db, $
+                 FOR_SDT=for_sdt, $
                  ADD_TODAY=add_today, $
                  ADD_SUFF=add_suff, $
                  ADD_DIR=add_dir, $
@@ -14,12 +15,13 @@ PRO SET_PLOT_DIR,plotDir, $
   defSW_IMFPlotDir    = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/plots/'
   defAlfvenDBPlotDir  = '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/plots/'
   defeSpecPlotDir     = '/SPENCEdata/Research/Satellites/FAST/espec_identification/plots/'
+  defSDTDir           = '/SPENCEdata/software/sdt/batch_jobs/plots/'
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
-  proceed                     = KEYWORD_SET(for_storms) + KEYWORD_SET(for_sw_imf) + $
-                                KEYWORD_SET(for_alfvendb) + KEYWORD_SET(for_eSpecdb) + $
-                                KEYWORD_SET(customDir)
+  proceed                     = KEYWORD_SET(for_storms)   + KEYWORD_SET(for_sw_imf) + $
+                                KEYWORD_SET(for_alfvendb) + KEYWORD_SET(customDir) + $
+                                KEYWORD_SET(for_sdt)      + KEYWORD_SET(for_eSpec_db)
   CASE proceed OF
      0: BEGIN
         do_customDir          = ''
@@ -118,8 +120,11 @@ PRO SET_PLOT_DIR,plotDir, $
            KEYWORD_SET(for_alfvendb): BEGIN
               plotDir = defAlfvenDBPlotDir
            END
-           KEYWORD_SET(for_eSpecdb): BEGIN
+           KEYWORD_SET(for_eSpec_db): BEGIN
               plotDir = defeSpecPlotDir
+           END
+           KEYWORD_SET(for_sdt): BEGIN
+              plotDir = defSDTDir
            END
            KEYWORD_SET(customDir): BEGIN
               plotDir = customDir
@@ -128,17 +133,16 @@ PRO SET_PLOT_DIR,plotDir, $
      END
      ELSE: BEGIN
         PRINTF,lun,'SET_PLOT_DIR: More than one keyword set:'
-        IF KEYWORD_SET(for_storms) THEN PRINTF,lun,'for_storms'
-        IF KEYWORD_SET(for_sw_imf) THEN PRINTF,lun,'for_sw_imf'
-        IF KEYWORD_SET(for_alfvendb) THEN PRINTF,lun,'for_alfvendb'
-        IF KEYWORD_SET(for_eSpecdb)   THEN PRINTF,lun,'for_eSpecdb'
+        IF KEYWORD_SET(for_storms)    THEN PRINTF,lun,'for_storms'
+        IF KEYWORD_SET(for_sw_imf)    THEN PRINTF,lun,'for_sw_imf'
+        IF KEYWORD_SET(for_alfvendb)  THEN PRINTF,lun,'for_alfvendb'
+        IF KEYWORD_SET(for_sdt)       THEN PRINTF,lun,'for_sdt'
+        IF KEYWORD_SET(for_eSpec_db)  THEN PRINTF,lun,'for_eSpec_db'
         IF KEYWORD_SET(for_customDir) THEN PRINTF,lun,'for_customDir'
         PRINTF,lun,'Fix it...'
         STOP
      END
   ENDCASE
-
-  IF KEYWORD_SET(verbose) THEN PRINTF,lun,"plotDir set to " + plotDir
 
   ;; IF KEYWORD_SET(add_today) AND KEYWORD_SET(add_suff) THEN BEGIN
   ;;    plotDir = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '--' + add_suff + '/'
@@ -167,5 +171,7 @@ PRO SET_PLOT_DIR,plotDir, $
         STOP
      ENDIF
   ENDIF 
+
+  IF KEYWORD_SET(verbose) THEN PRINTF,lun,"plotDir set to " + plotDir
 
 END

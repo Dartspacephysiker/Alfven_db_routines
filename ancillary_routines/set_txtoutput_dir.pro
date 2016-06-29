@@ -4,6 +4,7 @@ PRO SET_TXTOUTPUT_DIR,txtOutputDir, $
                       FOR_SW_IMF=for_sw_imf, $
                       FOR_ALFVENDB=for_alfvendb, $
                       FOR_ESPEC_DB=for_eSpec_db, $
+                      FOR_SDT=for_sdt, $
                       ADD_TODAY=add_today, $
                       ADD_SUFF=add_suff, $
                       ADD_DIR=add_dir, $
@@ -14,10 +15,13 @@ PRO SET_TXTOUTPUT_DIR,txtOutputDir, $
   defSW_IMFTxtOutputDir    = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/txtOutput/'
   defAlfvenDBTxtOutputDir  = '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/txtOutput/'
   defESpecTxtOutputDir     = '/SPENCEdata/Research/Satellites/FAST/espec_identification/txtOutput/'
+  defSDTDir                = '/SPENCEdata/software/sdt/batch_jobs/txtOutput/'
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
-  proceed                     = KEYWORD_SET(for_storms) + KEYWORD_SET(for_sw_imf) + KEYWORD_SET(for_alfvendb) + KEYWORD_SET(customDir) + KEYWORD_SET(for_eSpec_db)
+  proceed                     = KEYWORD_SET(for_storms)   + KEYWORD_SET(for_sw_imf) + $
+                                KEYWORD_SET(for_alfvendb) + KEYWORD_SET(customDir) + $
+                                KEYWORD_SET(for_sdt)      + KEYWORD_SET(for_eSpec_db)
   CASE proceed OF
      0: BEGIN
         do_customDir          = ''
@@ -119,6 +123,9 @@ PRO SET_TXTOUTPUT_DIR,txtOutputDir, $
            KEYWORD_SET(for_eSpec_db): BEGIN
               txtOutputDir = defESpecTxtOutputDir
            END
+           KEYWORD_SET(for_sdt): BEGIN
+              txtOutputDir = defSDTDir
+           END
            KEYWORD_SET(customDir): BEGIN
               txtOutputDir = customDir
            END
@@ -126,10 +133,11 @@ PRO SET_TXTOUTPUT_DIR,txtOutputDir, $
      END
      ELSE: BEGIN
         PRINTF,lun,'SET_TXTOUTPUT_DIR: More than one keyword set:'
-        IF KEYWORD_SET(for_storms) THEN PRINTF,lun,'for_storms'
-        IF KEYWORD_SET(for_sw_imf) THEN PRINTF,lun,'for_sw_imf'
-        IF KEYWORD_SET(for_alfvendb) THEN PRINTF,lun,'for_alfvendb'
-        IF KEYWORD_SET(for_eSpec_db) THEN PRINTF,lun,'for_eSpec_db'
+        IF KEYWORD_SET(for_storms)    THEN PRINTF,lun,'for_storms'
+        IF KEYWORD_SET(for_sw_imf)    THEN PRINTF,lun,'for_sw_imf'
+        IF KEYWORD_SET(for_alfvendb)  THEN PRINTF,lun,'for_alfvendb'
+        IF KEYWORD_SET(for_eSpec_db)  THEN PRINTF,lun,'for_eSpec_db'
+        IF KEYWORD_SET(for_sdt)       THEN PRINTF,lun,'for_sdt'
         IF KEYWORD_SET(for_customDir) THEN PRINTF,lun,'for_customDir'
         PRINTF,lun,'Fix it...'
         STOP
