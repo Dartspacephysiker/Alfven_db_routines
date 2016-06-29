@@ -76,6 +76,9 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
         labFormat    = 'G0.4'
 
         PRINTF,intLun,''
+        PRINTF,intLun,FORMAT='(" Total ",T15,":",T20,'+labFormat+')',integral
+        PRINTF,intLun,FORMAT='("|Total|",T15,":",T20,'+labFormat+')',integral
+        PRINTF,intLun,''
         PRINTF,intLun,FORMAT='("Dayside",T15,":",T20,'+labFormat+')',dayIntegral
         PRINTF,intLun,FORMAT='("Nightside",T15,":",T20,'+labFormat+')',nightIntegral
         PRINTF,intLun,''
