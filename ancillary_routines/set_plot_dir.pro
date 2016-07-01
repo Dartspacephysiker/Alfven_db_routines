@@ -7,7 +7,7 @@ PRO SET_PLOT_DIR,plotDir, $
                  FOR_SDT=for_sdt, $
                  ADD_TODAY=add_today, $
                  ADD_SUFF=add_suff, $
-                 ADD_DIR=add_dir, $
+                 ;; ADD_DIR=add_dir, $
                  VERBOSE=verbose, $
                  LUN=lun
   
