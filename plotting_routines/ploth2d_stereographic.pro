@@ -35,6 +35,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           CB_FORCE_OOBLOW=cb_force_ooblow, $
                           CB_FORCE_OOBHIGH=cb_force_oobhigh, $
                           CB_INFO=cb_info, $
+                          EQ_SCALE_CT=eq_scale_ct, $
                           DO_INTEGRAL_FILE=do_integral_file, $
                           INTLUN=intLun, $
                           _EXTRA=e
@@ -325,6 +326,17 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDELSE
 
   RAINBOW_COLORS,N_COLORS=nLevels
+
+  eq_scale_ct = 0
+  IF KEYWORD_SET(eq_scale_ct) THEN BEGIN
+     TVLCT,r,g,b,/GET
+
+     rScale = [r[0],EQUAL_SCALE_ARR(r[1:-1],/QUIET)]
+     gScale = [g[0],EQUAL_SCALE_ARR(g[1:-1],/QUIET)]
+     bScale = [b[0],EQUAL_SCALE_ARR(b[1:-1],/QUIET)]
+     TVLCT,rScale,gScale,bScale
+
+  ENDIF
   ;; Set up the contour levels.
   ;;   levels                     = cgScaleVector(Indgen(nlevels), 0,255)
   nLevels                         = 255
@@ -496,10 +508,10 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ;;             CHARSIZE=defCharSize_grid
 
 
-        cgText, 0, minI-1, '0 MLT',ALIGNMENT=0.5, ORIENTATION=0, CHARSIZE=defCharSize
-        cgText, 180, minI, '12',ALIGNMENT=0.5, ORIENTATION=0.00, CHARSIZE=defCharSize
-        cgText, 90, minI-1, '6',ALIGNMENT=0.5,CHARSIZE=defCharSize
-        cgText, -90, minI-1, '18',ALIGNMENT=0.5,CHARSIZE=defCharSize
+        ;; cgText, 0, minI-1, '0 MLT',ALIGNMENT=0.5, ORIENTATION=0, CHARSIZE=defCharSize
+        ;; cgText, 180, minI, '12',ALIGNMENT=0.5, ORIENTATION=0.00, CHARSIZE=defCharSize
+        ;; cgText, 90, minI-1, '6',ALIGNMENT=0.5,CHARSIZE=defCharSize
+        ;; cgText, -90, minI-1, '18',ALIGNMENT=0.5,CHARSIZE=defCharSize
 
 ;; [0.125, 0.05, 0.875, 0.8]
 
