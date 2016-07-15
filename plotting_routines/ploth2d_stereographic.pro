@@ -183,55 +183,55 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ;;;;;;;;;;
 
      ;;Option #1: Calculate the gridlats
-     ;; CASE 1 OF
-     ;;    (tempmaxI-tempminI) LE 12: BEGIN
-     ;;       minISpacing            = 6
-     ;;    END
-     ;;    (tempmaxI-tempminI) LE 20: BEGIN
-     ;;       minISpacing            = 8
-     ;;    END
-     ;;    (tempmaxI-tempminI) LE 30: BEGIN
-     ;;       minISpacing            = 10
-     ;;    END
-     ;;    (tempmaxI-tempminI) GT 30: BEGIN
-     ;;       minISpacing            = 10
-     ;;    END
-     ;; ENDCASE
+     CASE 1 OF
+        (tempmaxI-tempminI) LE 12: BEGIN
+           minISpacing            = 6
+        END
+        (tempmaxI-tempminI) LE 20: BEGIN
+           minISpacing            = 8
+        END
+        (tempmaxI-tempminI) LE 30: BEGIN
+           minISpacing            = 10
+        END
+        (tempmaxI-tempminI) GT 30: BEGIN
+           minISpacing            = 10
+        END
+     ENDCASE
 
-     ;; satisfied                    = 0
-     ;; gridIFactor                  = 1
-     ;; WHILE ~satisfied DO BEGIN
-     ;;    gridISpacing              = binI * gridIFactor
-     ;;    IF gridISpacing LT minISpacing THEN BEGIN
-     ;;       gridIFactor++
-     ;;    ENDIF ELSE BEGIN
-     ;;       satisfied              = 1
-     ;;    ENDELSE
-     ;; ENDWHILE
+     satisfied                    = 0
+     gridIFactor                  = 1
+     WHILE ~satisfied DO BEGIN
+        gridISpacing              = binI * gridIFactor
+        IF gridISpacing LT minISpacing THEN BEGIN
+           gridIFactor++
+        ENDIF ELSE BEGIN
+           satisfied              = 1
+        ENDELSE
+     ENDWHILE
 
 
-     ;; gridLats                     = INDGEN(10)*gridISpacing + tempMinI
-     ;; calcILines                   = (tempMaxI-tempMinI)/minISpacing
-     ;; CASE 1 OF
-     ;;    calcILines LE 3: BEGIN
-     ;;       gridLats               = gridLats[WHERE(gridLats GE tempMinI AND gridLats LE tempMaxI)]
-     ;;    END
-     ;;    calcILines LE 4: BEGIN
-     ;;       gridMinIDist           = MIN(ABS(gridLats-tempMinI))
-     ;;       gridMaxIDist           = MIN(ABS(gridLats-tempMaxI))
-     ;;       IF gridMinIDist LT gridMaxIDist THEN BEGIN
-     ;;          gridLats            = gridLats[WHERE(gridLats GT tempMinI AND gridLats LE tempMaxI)]
-     ;;       ENDIF ELSE BEGIN
-     ;;          gridLats            = gridLats[WHERE(gridLats GE tempMinI AND gridLats LT tempMaxI)]
-     ;;       ENDELSE
-     ;;    END
-     ;;    calcILines GT 4: BEGIN
-     ;;       gridLats               = gridLats[WHERE(gridLats GT tempMinI AND gridLats LT tempMaxI)]
-     ;;    END
-     ;; ENDCASE
+     gridLats                     = INDGEN(10)*gridISpacing + tempMinI
+     calcILines                   = (tempMaxI-tempMinI)/minISpacing
+     CASE 1 OF
+        calcILines LE 3: BEGIN
+           gridLats               = gridLats[WHERE(gridLats GE tempMinI AND gridLats LE tempMaxI)]
+        END
+        calcILines LE 4: BEGIN
+           gridMinIDist           = MIN(ABS(gridLats-tempMinI))
+           gridMaxIDist           = MIN(ABS(gridLats-tempMaxI))
+           IF gridMinIDist LT gridMaxIDist THEN BEGIN
+              gridLats            = gridLats[WHERE(gridLats GT tempMinI AND gridLats LE tempMaxI)]
+           ENDIF ELSE BEGIN
+              gridLats            = gridLats[WHERE(gridLats GE tempMinI AND gridLats LT tempMaxI)]
+           ENDELSE
+        END
+        calcILines GT 4: BEGIN
+           gridLats               = gridLats[WHERE(gridLats GT tempMinI AND gridLats LT tempMaxI)]
+        END
+     ENDCASE
 
      ;;Option #2: Preset gridLats
-     gridLats                  = defGridLats
+     ;; gridLats                  = defGridLats
 
      ;;;;;;;;;;
      ;;END OPTIONS

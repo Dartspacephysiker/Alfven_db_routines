@@ -87,7 +87,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   defMinM = 0
   defMaxM = 24
 
-  defTSLat = 75  ;true-scale latitude
+  defTSLat = 75                 ;true-scale latitude
 
   @utcplot_defaults.pro
 
@@ -192,7 +192,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   ENDIF
   
   IF wholeCap NE !NULL THEN BEGIN
-     lim=[ minI, 0, maxI, 360] ; lim = [minimum lat, minimum long, maximum lat, maximum long]
+     lim=[ minI, 0, maxI, 360]  ; lim = [minimum lat, minimum long, maximum lat, maximum long]
   ENDIF ELSE BEGIN
      lim=[minI, minM*15, maxI, maxM*15]
   ENDELSE
@@ -274,7 +274,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
            IF KEYWORD_SET(SOUTH) THEN BEGIN
               FOR i=0,N_ELEMENTS(modPlot_i_list)-1 DO BEGIN
                  modPlot_i_list[i]=CGSETINTERSECTION(modPlot_i_list[i], $
-                                                  WHERE(maximus.ILAT GT minI AND maximus.ILAT LT maxI))
+                                                     WHERE(maximus.ILAT GT minI AND maximus.ILAT LT maxI))
               ENDFOR
            ENDIF ELSE BEGIN
               FOR i=0,N_ELEMENTS(modPlot_i_list)-1 DO BEGIN
@@ -284,15 +284,15 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
            ENDELSE
         ENDELSE
      ENDIF ELSE BEGIN
-        ;; maximus = resize_maximus(maximus,MAXIMUS_IND=5,MIN_FOR_IND=minI,MAX_FOR_IND=maxI)
+        ;; maximus               = resize_maximus(maximus,MAXIMUS_IND=5,MIN_FOR_IND=minI,MAX_FOR_IND=maxI)
      ENDELSE
   ENDIF
 
   ;;Get rid of -1 stuffs
-  junk_i = !NULL
+  junk_i                         = !NULL
   FOR i=0,N_ELEMENTS(modPlot_i_list)-1 DO BEGIN
      IF (modPlot_i_list[i])[0] EQ -1 THEN BEGIN
-        junk_i = [junk_i,i] 
+        junk_i                   = [junk_i,i] 
      ENDIF
   ENDFOR
   IF N_ELEMENTS(junk_i) GE 1 THEN BEGIN
@@ -305,11 +305,11 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   ;;Are we going to go with each orbit, then?
   IF KEYWORD_SET(add_orbit_legend) OR KEYWORD_SET(output_orbit_details) THEN BEGIN
      ;;This will give back a list of arrays of orbit structures (mmhmm)
-     modPlot_i_list = KEYWORD_SET(in_orbStrArr_list) ? LIST(in_orbStrArr_list) : SPLIT_IND_LIST_INTO_ORB_STRUCTARR_LIST(modPlot_i_list,maximus)
+     modPlot_i_list              = KEYWORD_SET(in_orbStrArr_list) ? LIST(in_orbStrArr_list) : SPLIT_IND_LIST_INTO_ORB_STRUCTARR_LIST(modPlot_i_list,maximus)
   ENDIF
-     
+  
   IF ~ISA(window) THEN BEGIN
-     window     = WINDOW(DIMENSIONS=[900,900])
+     window                      = WINDOW(DIMENSIONS=[900,900])
   ENDIF ELSE BEGIN
      window.setCurrent
   ENDELSE
@@ -320,62 +320,71 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
   ;;Polar Stereographic
   ;;SEMIMAJOR_AXIS, SEMIMINOR_AXIS, CENTER_LONGITUDE, TRUE_SCALE_LATITUDE, FALSE_EASTING, FALSE_NORTHING
   IF N_ELEMENTS(map) EQ 0 THEN BEGIN
-     map = MAP('Polar Stereographic', $
-               CENTER_LONGITUDE=centerLon, $
-               TRUE_SCALE_LATITUDE=tsLat, $
-               LABEL_FORMAT='polar_maplabels', $
-               FILL_COLOR="white", $
-               DIMENSIONS=KEYWORD_SET(plotPosition) ? !NULL : [100,100], $
-               OVERPLOT=overplot, $
-               ;; WINDOW=window, $
-               CURRENT=window, $
-               POSITION=plotPosition, $
-               LAYOUT=layout)
+     map                         = MAP('Polar Stereographic', $
+                                       CENTER_LONGITUDE=centerLon, $
+                                       TRUE_SCALE_LATITUDE=tsLat, $
+                                       LABEL_FORMAT='polar_maplabels', $
+                                       FILL_COLOR="white", $
+                                       DIMENSIONS=KEYWORD_SET(plotPosition) ? !NULL : [100,100], $
+                                       OVERPLOT=overplot, $
+                                       
+                                       ;; WINDOW=window, $
+                                       CURRENT=window, $
+                                       POSITION=plotPosition, $
+                                       LAYOUT=layout)
      
      ;; Change some grid properties.
-     grid = map.MAPGRID
-     IF KEYWORD_SET(north) THEN grid.LATITUDE_MIN = minI ELSE IF KEYWORD_SET(south) THEN grid.LATITUDE_MAX = maxI
-     grid.TRANSPARENCY=50
-     grid.color="black"
-     grid.linestyle=0
-     grid.thick=0.5
-     grid.label_angle = 0
-     grid.font_size = KEYWORD_SET(hugePlotMode) ? 24 : 16
+     grid                        = map.MAPGRID
+     IF KEYWORD_SET(north) THEN BEGIN
+        grid.LATITUDE_MIN        = minI
+     ENDIF ELSE BEGIN
+        IF KEYWORD_SET(south) THEN BEGIN
+           grid.LATITUDE_MAX     = maxI
+        ENDIF
+     ENDELSE
+     grid.TRANSPARENCY           = 0
+     grid.color                  = "black"
+     grid.linestyle              = 0
+     grid.thick                  = 2.0
+     grid.label_angle            = 0
+     grid.font_size              = KEYWORD_SET(hugePlotMode) ? 24 : 16
      
-     grid.grid_longitude = 45
-     grid.grid_latitude  = 10
+     ;;Grid line spacing
+     ;; grid.grid_longitude         = 45
+     grid.grid_longitude         = 90
+     grid.grid_latitude          = 10
 
-     mlats=grid.latitudes
+     mlats                       = grid.latitudes
      FOR i=0,n_elements(mlats)-1 DO BEGIN
-        mlats[i].label_position=0.55
-        mlats[i].label_valign=1.0
+        mlats[i].label_position  = 0.55
+        mlats[i].label_valign    = 1.0
      ENDFOR
      
-     mlons=grid.longitudes
+     mlons                       = grid.longitudes
 
      FOR i=0,n_elements(mlons)-1 DO BEGIN
-        mlons[i].label_position=KEYWORD_SET(south) ? 1.0 : 0.02
-        IF STRMATCH(mlons[i].name,'*5*') $   ;Kill lines at 3,9,15,21
+        mlons[i].label_position  = KEYWORD_SET(south) ? 1.0 : 0.02
+        IF STRMATCH(mlons[i].name,'*5*') $ ;Kill lines at 3,9,15,21
            ;; STRMATCH(mlons[i].name,'*5*') $
            ;; STRMATCH(mlons[i].name,'*15*') OR $
            ;; STRMATCH(mlons[i].name,'*21*')) $
         THEN BEGIN
            mlons[i].label_show   = 0
         ENDIF
-           
+        
      ENDFOR
      
      ;; Add auroral zone to plot?
      IF KEYWORD_SET(overlayAurZone) THEN BEGIN
         
         ;;get boundaries
-        nMLTs=96
-        activity_level=7
-        MLTs=indgen(nMLTs,/FLOAT)*(maxM-minM)/nMLTs+minM
-        bndry_eqWard = get_auroral_zone(nMLTs,minM,maxM,BNDRY_POLEWARD=bndry_poleWard,ACTIVITY_LEVEL=activity_level,SOUTH=south)
-        ;; aurPlot = plot([MLTS,MLTs,MLTS[0]]*15,[bndry_eqWard,bndry_poleWard,bndry_poleWard[0]],LINESTYLE='-', THICK=4,/overplot)
-        aurEqWardPlot = plot([MLTS,MLTs[0]]*15,[bndry_eqWard,bndry_eqWard[0]],LINESTYLE='-', THICK=2.5,/overplot)
-        aurPoleWardPlot = plot([MLTS,MLTs[0]]*15,[bndry_poleWard,bndry_poleWard[0]],LINESTYLE='-', THICK=2.5,/overplot)
+        nMLTs                    = 96
+        activity_level           = 7
+        MLTs                     = INDGEN(nMLTs,/FLOAT)*(maxM-minM)/nMLTs+minM
+        bndry_eqWard             = GET_AURORAL_ZONE(nMLTs,minM,maxM,BNDRY_POLEWARD=bndry_poleWard,ACTIVITY_LEVEL=activity_level,SOUTH=south)
+        ;; aurPlot               = plot([MLTS,MLTs,MLTS[0]]*15,[bndry_eqWard,bndry_poleWard,bndry_poleWard[0]],LINESTYLE='-', THICK=4,/overplot)
+        aurEqWardPlot            = PLOT([MLTS,MLTs[0]]*15,[bndry_eqWard,bndry_eqWard[0]],LINESTYLE='-', THICK=2.5,/overplot)
+        aurPoleWardPlot          = PLOT([MLTS,MLTs[0]]*15,[bndry_poleWard,bndry_poleWard[0]],LINESTYLE='-', THICK=2.5,/overplot)
         
      ENDIF
   ENDIF
@@ -397,38 +406,38 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
               lons    = maximus.mlt[tmp_i]*15
               color   = KEYWORD_SET(color_list) ? color_list[j] : modPlot_i_list[i,j].color
               name    = STRING(FORMAT='(I5,T8,"(",I0,")")',modPlot_i_list[i,j].orbit,modPlot_i_list[i,j].N)
-           CASE 1 OF
-              (KEYWORD_SET(no_symbol) OR KEYWORD_SET(add_line)): BEGIN
-                 curPlot = PLOT(lons,lats, $
-                                NAME=name, $
-                                SYM_SIZE=KEYWORD_SET(no_symbol) ? !NULL : 1.0, $
-                                SYMBOL=KEYWORD_SET(no_symbol) ? !NULL : 'o', $
-                                /OVERPLOT, $
-                                ;; SYM_TRANSPARENCY=(i EQ 2) ? 60 : sTrans, $ ;this line is for making events on plot #3 stand out
-                                LINESTYLE=lineStyle, $
-                                THICK=2.0, $
-                                SYM_TRANSPARENCY=sTrans, $ 
-                                SYM_THICK=1.5, $
-                                SYM_COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[j] : color_list, $
-                                COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[j] : color_list, $
-                                CURRENT=window, $
-                                POSITION=plotPosition, $
-                                LAYOUT=layout)
-              END
-              ELSE: BEGIN
-              curPlot = SCATTERPLOT(lons,lats, $
-                                    NAME=name, $
-                                    SYM_SIZE=1.0, $
-                                    SYMBOL='o', $
-                                    /OVERPLOT, $
-                                    SYM_TRANSPARENCY=sTrans, $ 
-                                    SYM_THICK=1.5, $
-                                    SYM_COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[j] : color, $
-                                    CURRENT=window, $
-                                    POSITION=plotPosition, $
-                                    LAYOUT=layout)
-              END
-           ENDCASE
+              CASE 1 OF
+                 (KEYWORD_SET(no_symbol) OR KEYWORD_SET(add_line)): BEGIN
+                    curPlot = PLOT(lons,lats, $
+                                   NAME=name, $
+                                   SYM_SIZE=KEYWORD_SET(no_symbol) ? !NULL : 1.0, $
+                                   SYMBOL=KEYWORD_SET(no_symbol) ? !NULL : 'o', $
+                                   /OVERPLOT, $
+                                   ;; SYM_TRANSPARENCY=(i EQ 2) ? 60 : sTrans, $ ;this line is for making events on plot #3 stand out
+                                   LINESTYLE=lineStyle, $
+                                   THICK=2.0, $
+                                   SYM_TRANSPARENCY=sTrans, $ 
+                                   SYM_THICK=1.5, $
+                                   SYM_COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[j] : color_list, $
+                                   COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[j] : color_list, $
+                                   CURRENT=window, $
+                                   POSITION=plotPosition, $
+                                   LAYOUT=layout)
+                 END
+                 ELSE: BEGIN
+                    curPlot = SCATTERPLOT(lons,lats, $
+                                          NAME=name, $
+                                          SYM_SIZE=1.0, $
+                                          SYMBOL='o', $
+                                          /OVERPLOT, $
+                                          SYM_TRANSPARENCY=sTrans, $ 
+                                          SYM_THICK=1.5, $
+                                          SYM_COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[j] : color, $
+                                          CURRENT=window, $
+                                          POSITION=plotPosition, $
+                                          LAYOUT=layout)
+                 END
+              ENDCASE
 
               curPlotArr = [curPlotArr,curPlot]
            ENDFOR
@@ -496,7 +505,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
      PRINT,'No plot_i provided for polarProj_scatterplots! What to do?'
      WAIT,1
   ENDELSE     
-     
+  
   IF KEYWORD_SET(plotTitle) THEN BEGIN
      plotTitleText      = TEXT(0.5,0.9,plotTitle, $
                                /NORMAL, $

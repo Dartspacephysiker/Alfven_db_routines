@@ -138,6 +138,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
                           ORBCONTRIB_NOMASK=orbContrib_noMask, $
                           LOGORBCONTRIBPLOT=logOrbContribPlot, $
+                          ORBCONTRIB__REFERENCE_ALFVENDB_NOT_EPHEMERIS=orbContrib__reference_alfvenDB, $
                           ORBTOTPLOT=orbTotPlot, $
                           ORBFREQPLOT=orbFreqPlot, $
                           ORBTOTRANGE=orbTotRange, $
@@ -505,7 +506,38 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      OR KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) $
      OR KEYWORD_SET(div_fluxPlots_by_applicable_orbs) THEN BEGIN
      
-     GET_CONTRIBUTING_ORBITS_PLOTDATA,fastLoc,fastLocInterped_i, $
+     ;; CASE 1 OF
+     ;; KEYWORD_SET(orbContrib__reference_alfvenDB): BEGIN
+     IF KEYWORD_SET(orbContrib__reference_alfvenDB) THEN BEGIN
+        alfRef_i = GET_CHASTON_IND(maximus,satellite, $
+                                   DBFILE=dbfile, $
+                                   DBTIMES=dbTimes, $
+                                   DESPUNDB=maximus.despun, $
+                                   ORBRANGE=orbRange, $
+                                   ALTITUDERANGE=altitudeRange, $
+                                   CHARERANGE=charERange, $
+                                   POYNTRANGE=poyntRange, $
+                                   HEMI=hemi, $
+                                   MINMLT=minM,MAXMLT=maxM,BINM=binM, $
+                                   MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                                   DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+                                   MIN_MAGCURRENT=0, $
+                                   MAX_NEGMAGCURRENT=0, $
+                                   SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                                   /GET_ALFVENDB_I, $
+                                   /RESET_GOOD_INDS, $
+                                   ;; /DO_NOT_SET_DEFAULTS, $ ;unfortunately we have to set defaults in order to get these indices
+                                   /PRINT_PARAM_SUMMARY)
+
+
+
+
+     ENDIF
+        
+     ;; ENDCASE
+
+     GET_CONTRIBUTING_ORBITS_PLOTDATA,(KEYWORD_SET(orbContrib__reference_alfvenDB) ? maximus : fastLoc), $
+                                      (KEYWORD_SET(orbContrib__reference_alfvenDB) ? alfRef_i : fastLocInterped_i), $
                                       MINM=minM, $
                                       MAXM=maxM, $
                                       BINM=binM, $
@@ -528,6 +560,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                       TMPLT_H2DSTR=tmplt_h2dStr, $ ;H2DFLUXN=h2dFluxN, $
                                       DATANAME=dataName
      
+     ADD_STR_ELEMENT,h2dContribOrbStr,'i_am_alf_ref',KEYWORD_SET(orbContrib__reference_alfvenDB)
+
      IF KEYWORD_SET(orbContribPlot) THEN BEGIN 
         h2dStrArr=[h2dStrArr,h2dContribOrbStr] 
         IF keepMe THEN dataNameArr=[dataNameArr,dataName] 

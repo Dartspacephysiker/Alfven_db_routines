@@ -42,11 +42,17 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
   ;; h2dStr                                            ={tmplt_h2dStr}
   h2dStr                                      = tmplt_h2dStr
   h2dStr.data[*,*]                            = 0
-  IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_orb_probOcc
+  IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
+  is_orb_probOcc = is_maximus AND (N_ELEMENTS(orbContrib_h2dStr_for_division) GT 0)
   IF is_orb_probOcc THEN BEGIN
      h2dStr.title                                = "Probability of Occurrence (orbit-based)"
      dataName                                    = "NOrbsWEventsPerContribOrbs"
      h2dStr.name                                 = dataName
+
+     STR_ELEMENT,orbContrib_h2dStr_for_division,'i_am_alf_ref',INDEX=have_alfdb_ref
+     IF have_alfDB_ref GE 0 THEN BEGIN
+        dataName                                += '_alfRef'
+     ENDIF
   ENDIF ELSE BEGIN
      h2dStr.title                                = "Num Contributing Orbits"
      dataName                                    = "orbsContributing"
@@ -90,7 +96,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
 
   IF is_orb_probOcc THEN BEGIN
      tempDenom                                = orbContrib_h2dStr_for_division.data
-     IF orbContrib_H2DStr_FOR_division.is_logged THEN BEGIN
+     IF orbContrib_H2DStr_for_division.is_logged THEN BEGIN
         tempDenom[h2d_nonzero_i]              = 10.^(tempDenom[h2d_nonzero_i])
      ENDIF
      h2dStr.data[h2d_nonzero_i]               = h2dStr.data[h2d_nonzero_i]/tempDenom[h2d_nonzero_i]

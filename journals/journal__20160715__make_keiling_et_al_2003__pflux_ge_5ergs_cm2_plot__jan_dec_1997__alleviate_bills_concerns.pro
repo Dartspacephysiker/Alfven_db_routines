@@ -1,19 +1,19 @@
 ;2016/06/18 I was wrong yesterday. They're bad somewhere after orbit 12670.
-PRO JOURNAL__20160618__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT__PRIOR_TO_NOV_1999
+PRO JOURNAL__20160715__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT__JAN_DEC_1997__ALLEVIATE_BILLS_CONCERNS
 
   pFluxMin                 = 5
 
   hemi                     = 'NORTH'
   ;; hemi                     = 'SOUTH'
-  overlayAurZone           = 1
+  overlayAurZone           = 0
 
   ;; nonStorm                 = 1
   ;; mainPhase                = 0
 
   centerLon                = 270 ;For putting dusk at bottom
   ;; centerLon                = 0
-  sTrans                   = 80 ;for when you do, you know, not all alts
-  ;; sTrans                   = 95  ;for when you do all alts, you know
+  ;; sTrans                   = 80 ;for when you do, you know, not all alts
+  sTrans                   = 90  ;for when you do all alts, you know
 
   do_despun                = 1
   despunStr                = KEYWORD_SET(DO_despun) ? "--despun" : ''
@@ -54,20 +54,30 @@ PRO JOURNAL__20160618__MAKE_KEILING_ET_AL_2003__PFLUX_GE_5ERGS_CM2_PLOT__PRIOR_T
 
   ;; altRange                 = [1500,4180]
   ;; altRange                 = [3640,4140]
-  ;; altRange                 = [340,4180]
+  altRange                 = [340,4180]
 
   ;; altRange                 = [[3180,4180], $
   ;;                             [2180,3180], $
   ;;                             [1180,2180], $
   ;;                             [340,1180]]
                               
-  orbRange                 = [500,12670]
+  t1Str                    = '1997-01-01/00:00:00.000'
+  t2Str                    = '1997-12-31/23:59:59.999'
+  t1                       = STR_TO_TIME(t1Str)
+  t2                       = STR_TO_TIME(t2Str)
+
 
   savePlot                 = 1
 
-  LOAD_MAXIMUS_AND_CDBTIME,maximus,DO_DESPUNDB=do_despun
+  LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime,DO_DESPUNDB=do_despun
+
+  minOrb                   = MIN(maximus.orbit[WHERE(cdbTime GE t1)])
+  maxOrb                   = MAX(maximus.orbit[WHERE(cdbTime LE t2)])
+  orbRange                 = [minOrb,maxOrb]
+
   good_i                   = GET_CHASTON_IND(maximus,HEMI=hemi)
   pFlux_i                  = WHERE(ABS(maximus.pFluxEst) GE pFluxMin)
+  
 
   IF KEYWORD_SET(nonStorm) OR KEYWORD_SET(mainPhase) OR KEYWORD_SET(recoveryPhase) THEN BEGIN
      GET_NONSTORM_MAINPHASE_AND_RECOVERYPHASE_FASTDB_INDICES, $
