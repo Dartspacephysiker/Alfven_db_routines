@@ -1,5 +1,5 @@
 
-PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
+PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           H2DSTRARR=h2dStrArr, $
                           KEEPME=keepMe, $
                           DATARAWPTRARR=dataRawPtrArr, $
@@ -55,11 +55,11 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                           SMOOTHWINDOW=smoothWindow, $
                           HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
                           INCLUDENOCONSECDATA=includeNoConsecData, $
-                          DO_UTC_RANGE=DO_UTC_range, $
-                          STORMSTRING=stormString, $
-                          DSTCUTOFF=dstCutoff, $
-                          T1_ARR=t1_arr, $
-                          T2_ARR=t2_arr, $             
+                          ;; DO_UTC_RANGE=DO_UTC_range, $
+                          ;; STORMSTRING=stormString, $
+                          ;; DSTCUTOFF=dstCutoff, $
+                          ;; T1_ARR=t1_arr, $
+                          ;; T2_ARR=t2_arr, $             
                           NPLOTS=nPlots, $
                           NEVENTSPLOTRANGE=nEventsPlotRange, $
                           LOGNEVENTSPLOT=logNEventsPlot, $
@@ -283,48 +283,51 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      OR KEYWORD_SET(tHistDenominatorPlot) $
      OR KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) $
      OR KEYWORD_SET(div_fluxPlots_by_applicable_orbs) $
+     OR KEYWORD_SET(tHist_mask_bins_below_thresh) $
+     OR KEYWORD_SET(numOrbLim) $
   THEN BEGIN 
-     tHistDenominator = GET_TIMEHIST_DENOMINATOR(CLOCKSTR=clockStr, $
-                                                 ANGLELIM1=angleLim1, $
-                                                 ANGLELIM2=angleLim2, $
-                                                 DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
-                                                 ORBRANGE=orbRange, $
-                                                 ALTITUDERANGE=altitudeRange, $
-                                                 CHARERANGE=charERange, $
-                                                 SAMPLE_T_RESTRICTION=sample_t_restriction, $
-                                                 DO_IMF_CONDS=do_IMF_conds, $
-                                                 BYMIN=byMin, $
-                                                 BYMAX=byMax, $
-                                                 BZMIN=bzMin, $
-                                                 BZMAX=bzMax, $
-                                                 BTMIN=btMin, $
-                                                 BTMAX=btMax, $
-                                                 BXMIN=bxMin, $
-                                                 BXMAX=bxMax, $
-                                                 DO_ABS_BYMIN=abs_byMin, $
-                                                 DO_ABS_BYMAX=abs_byMax, $
-                                                 DO_ABS_BZMIN=abs_bzMin, $
-                                                 DO_ABS_BZMAX=abs_bzMax, $
-                                                 DO_ABS_BTMIN=abs_btMin, $
-                                                 DO_ABS_BTMAX=abs_btMax, $
-                                                 DO_ABS_BXMIN=abs_bxMin, $
-                                                 DO_ABS_BXMAX=abs_bxMax, $
-                                                 SATELLITE=satellite, $
-                                                 OMNI_COORDS=omni_Coords, $
-                                                 DELAY=delay, $
-                                                 RESOLUTION_DELAY=delay_res, $
-                                                 BINOFFSET_DELAY=binOffset_delay, $
-                                                 STABLEIMF=stableIMF, $
-                                                 SMOOTHWINDOW=smoothWindow, $
-                                                 INCLUDENOCONSECDATA=includeNoConsecData, $
-                                                 DO_UTC_RANGE=do_UTC_range, $
-                                                 STORMSTRING=stormString, $
-                                                 DSTCUTOFF=dstCutoff, $
+     tHistDenominator = GET_TIMEHIST_DENOMINATOR(fastLocInterped_i, $
+                                                 ;; CLOCKSTR=clockStr, $
+                                                 ;; ANGLELIM1=angleLim1, $
+                                                 ;; ANGLELIM2=angleLim2, $
+                                                 ;; DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
+                                                 ;; ORBRANGE=orbRange, $
+                                                 ;; ALTITUDERANGE=altitudeRange, $
+                                                 ;; CHARERANGE=charERange, $
+                                                 ;; SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                                                 ;; DO_IMF_CONDS=do_IMF_conds, $
+                                                 ;; BYMIN=byMin, $
+                                                 ;; BYMAX=byMax, $
+                                                 ;; BZMIN=bzMin, $
+                                                 ;; BZMAX=bzMax, $
+                                                 ;; BTMIN=btMin, $
+                                                 ;; BTMAX=btMax, $
+                                                 ;; BXMIN=bxMin, $
+                                                 ;; BXMAX=bxMax, $
+                                                 ;; DO_ABS_BYMIN=abs_byMin, $
+                                                 ;; DO_ABS_BYMAX=abs_byMax, $
+                                                 ;; DO_ABS_BZMIN=abs_bzMin, $
+                                                 ;; DO_ABS_BZMAX=abs_bzMax, $
+                                                 ;; DO_ABS_BTMIN=abs_btMin, $
+                                                 ;; DO_ABS_BTMAX=abs_btMax, $
+                                                 ;; DO_ABS_BXMIN=abs_bxMin, $
+                                                 ;; DO_ABS_BXMAX=abs_bxMax, $
+                                                 ;; SATELLITE=satellite, $
+                                                 ;; OMNI_COORDS=omni_Coords, $
+                                                 ;; DELAY=delay, $
+                                                 ;; RESOLUTION_DELAY=delay_res, $
+                                                 ;; BINOFFSET_DELAY=binOffset_delay, $
+                                                 ;; STABLEIMF=stableIMF, $
+                                                 ;; SMOOTHWINDOW=smoothWindow, $
+                                                 ;; INCLUDENOCONSECDATA=includeNoConsecData, $
+                                                 ;; DO_UTC_RANGE=do_UTC_range, $
+                                                 ;; STORMSTRING=stormString, $
+                                                 ;; DSTCUTOFF=dstCutoff, $
                                                  HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
                                                  RESET_GOOD_INDS=reset_good_inds, $
                                                  RESET_OMNI_INDS=reset_omni_inds, $
-                                                 T1_ARR=t1_arr, $
-                                                 T2_ARR=t2_arr, $
+                                                 ;; T1_ARR=t1_arr, $
+                                                 ;; T2_ARR=t2_arr, $
                                                  MINM=minM, $
                                                  MAXM=maxM, $
                                                  BINM=binM, $
@@ -343,7 +346,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                                  ;; FASTLOCFILE=fastLocFile, $
                                                  ;; FASTLOCTIMEFILE=fastLocTimeFile, $
                                                  FASTLOCOUTPUTDIR=txtOutputDir, $
-                                                 OUT_FASTLOCINTERPED_I=fastLocInterped_i, $
+                                                 ;; OUT_FASTLOCINTERPED_I=fastLocInterped_i, $
                                                  MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
                                                  THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
                                                  THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
@@ -396,47 +399,48 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      ENDIF
 
      IF KEYWORD_SET(eFlux_nonAlfven_data) OR KEYWORD_SET(iFlux_nonAlfven_data) THEN BEGIN
-        nonAlfven_tHistDenominator = GET_TIMEHIST_DENOMINATOR(CLOCKSTR=clockStr, $
-                                                              ANGLELIM1=angleLim1, $
-                                                              ANGLELIM2=angleLim2, $
-                                                              DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
-                                                              ORBRANGE=orbRange, $
-                                                              ALTITUDERANGE=altitudeRange, $
-                                                              CHARERANGE=charERange, $
-                                                              SAMPLE_T_RESTRICTION=sample_t_restriction, $
-                                                              DO_IMF_CONDS=do_IMF_conds, $
-                                                              BYMIN=byMin, $
-                                                              BYMAX=byMax, $
-                                                              BZMIN=bzMin, $
-                                                              BZMAX=bzMax, $
-                                                              BTMIN=btMin, $
-                                                              BTMAX=btMax, $
-                                                              BXMIN=bxMin, $
-                                                              BXMAX=bxMax, $
-                                                              DO_ABS_BYMIN=abs_byMin, $
-                                                              DO_ABS_BYMAX=abs_byMax, $
-                                                              DO_ABS_BZMIN=abs_bzMin, $
-                                                              DO_ABS_BZMAX=abs_bzMax, $
-                                                              DO_ABS_BTMIN=abs_btMin, $
-                                                              DO_ABS_BTMAX=abs_btMax, $
-                                                              DO_ABS_BXMIN=abs_bxMin, $
-                                                              DO_ABS_BXMAX=abs_bxMax, $
-                                                              SATELLITE=satellite, $
-                                                              OMNI_COORDS=omni_Coords, $
-                                                              DELAY=delay, $
-                                                              RESOLUTION_DELAY=delay_res, $
-                                                              BINOFFSET_DELAY=binOffset_delay, $
-                                                              STABLEIMF=stableIMF, $
-                                                              SMOOTHWINDOW=smoothWindow, $
-                                                              INCLUDENOCONSECDATA=includeNoConsecData, $
-                                                              DO_UTC_RANGE=do_UTC_range, $
-                                                              STORMSTRING=stormString, $
-                                                              DSTCUTOFF=dstCutoff, $
+        nonAlfven_tHistDenominator = GET_TIMEHIST_DENOMINATOR(fastLocInterped_i, $
+                                                              ;; CLOCKSTR=clockStr, $
+                                                              ;; ANGLELIM1=angleLim1, $
+                                                              ;; ANGLELIM2=angleLim2, $
+                                                              ;; DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
+                                                              ;; ORBRANGE=orbRange, $
+                                                              ;; ALTITUDERANGE=altitudeRange, $
+                                                              ;; CHARERANGE=charERange, $
+                                                              ;; SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                                                              ;; DO_IMF_CONDS=do_IMF_conds, $
+                                                              ;; BYMIN=byMin, $
+                                                              ;; BYMAX=byMax, $
+                                                              ;; BZMIN=bzMin, $
+                                                              ;; BZMAX=bzMax, $
+                                                              ;; BTMIN=btMin, $
+                                                              ;; BTMAX=btMax, $
+                                                              ;; BXMIN=bxMin, $
+                                                              ;; BXMAX=bxMax, $
+                                                              ;; DO_ABS_BYMIN=abs_byMin, $
+                                                              ;; DO_ABS_BYMAX=abs_byMax, $
+                                                              ;; DO_ABS_BZMIN=abs_bzMin, $
+                                                              ;; DO_ABS_BZMAX=abs_bzMax, $
+                                                              ;; DO_ABS_BTMIN=abs_btMin, $
+                                                              ;; DO_ABS_BTMAX=abs_btMax, $
+                                                              ;; DO_ABS_BXMIN=abs_bxMin, $
+                                                              ;; DO_ABS_BXMAX=abs_bxMax, $
+                                                              ;; SATELLITE=satellite, $
+                                                              ;; OMNI_COORDS=omni_Coords, $
+                                                              ;; DELAY=delay, $
+                                                              ;; RESOLUTION_DELAY=delay_res, $
+                                                              ;; BINOFFSET_DELAY=binOffset_delay, $
+                                                              ;; STABLEIMF=stableIMF, $
+                                                              ;; SMOOTHWINDOW=smoothWindow, $
+                                                              ;; INCLUDENOCONSECDATA=includeNoConsecData, $
+                                                              ;; DO_UTC_RANGE=do_UTC_range, $
+                                                              ;; STORMSTRING=stormString, $
+                                                              ;; DSTCUTOFF=dstCutoff, $
                                                               HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
                                                               RESET_GOOD_INDS=reset_good_inds, $
                                                               RESET_OMNI_INDS=reset_omni_inds, $
-                                                              T1_ARR=t1_arr, $
-                                                              T2_ARR=t2_arr, $
+                                                              ;; T1_ARR=t1_arr, $
+                                                              ;; T2_ARR=t2_arr, $
                                                               MINM=minM, $
                                                               MAXM=maxM, $
                                                               BINM=binM, $
@@ -560,6 +564,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
                                       TMPLT_H2DSTR=tmplt_h2dStr, $ ;H2DFLUXN=h2dFluxN, $
                                       DATANAME=dataName
      
+     ;;Tell us who you are so we know (or rather, so GET_CONTRIBUTING_ORBITS_PLOTDATA knows) how to deal with you
      ADD_STR_ELEMENT,h2dContribOrbStr,'i_am_alf_ref',KEYWORD_SET(orbContrib__reference_alfvenDB)
 
      IF KEYWORD_SET(orbContribPlot) THEN BEGIN 
@@ -569,12 +574,31 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i, $
      
      ;;Mask all bins that don't have requisite number of orbits passing through
      IF KEYWORD_SET(numOrbLim) THEN BEGIN 
-        h2dStrArr[KEYWORD_SET(nPlots)].data[WHERE(h2dContribOrbStr.data LT numOrbLim)] = 255 ;mask 'em!
+        PRINT,'Applying orb threshold (' + STRCOMPRESS(numOrbLim,/REMOVE_ALL) + ' orbits) to mask based on nContribOrbs ...'
+        belowThresh_i = WHERE(h2dContribOrbStr.data LT numOrbLim,nBelow)
+        IF nBelow GT 0 THEN BEGIN
+           
+           new_i = CGSETDIFFERENCE(belowThresh_i, $
+                                   WHERE(h2dStrArr[KEYWORD_SET(nPlots)].data GT 250), $
+                                   COUNT=nNew)
+           IF nNew GT 0 THEN BEGIN
+              PRINT,'Masking an additional ' + $
+                    STRCOMPRESS(nNew,/REMOVE_ALL) + $
+                    " bins based on numOrbLim thresh ..."
+              
+              h2dStrArr[KEYWORD_SET(nPlots)].data[new_i] = 255
+           ENDIF ELSE BEGIN
+              PRINT,'No new bins to mask based on numOrbLim thresh!'
+           ENDELSE
+        ENDIF
+
+        ;; exc_orb_i = WHERE(h2dContribOrbStr.data LT numOrbLim,nOrbLimExcl)
+        ;; masked_i = WHERE(h2dStrArr[KEYWORD_SET(nPlots)].data GT 255,nAlreadyMasked)
+        ;; PRINT,N_ELEMENTS(nOrbLimExcl) - N_ELEMENTS(CGSETINTERSECTION(exc_orb_i,masked_i))
+
+        ;; h2dStrArr[KEYWORD_SET(nPlots)].data[WHERE(h2dContribOrbStr.data LT numOrbLim)] = 255 ;mask 'em!
 
         ;;little check to see how many more elements are getting masked
-        ;;exc_orb_i = where(h2dContribOrbStr.data LT numOrbLim)
-        ;;masked_i = where(h2dStr(1).data EQ 255)
-        ;;print,n_elements(exc_orb_i) - n_elements(cgsetintersection(exc_orb_i,masked_i))
         ;;8
      ENDIF
      

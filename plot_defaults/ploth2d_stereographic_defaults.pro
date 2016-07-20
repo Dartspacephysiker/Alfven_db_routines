@@ -23,19 +23,30 @@
   ;;******************************
 
   ;;Number of colors in the colorbar
-  nLevels                     = 13
+  nLevels                     = 255
+  ;; nLevels                     = 13
 
   ;;color table options when all values are positive or logged
   chrisPosScheme              = 1
 
   IF chrisPosScheme THEN BEGIN
+     ;; ctIndex_allPosData       = 39 ;This, I believe, is the color table that Chris Chaston likes
+     ;; ctBrewer_allPosData      = 0
+     ;; ctReverse_allPosData     = 0
+     ;; maskColor                = "light gray"
+     ;; defGridColor             = "black"
+     ;; ;; defGridTextColor         = "dark gray"
+     ;; defGridTextColor         = "black"
+
+     ;;Alternate for comparison to Polar and LFM
      ctIndex_allPosData       = 39 ;This, I believe, is the color table that Chris Chaston likes
      ctBrewer_allPosData      = 0
      ctReverse_allPosData     = 0
-     maskColor                = "light gray"
-     defGridColor             = "black"
+     maskColor                = "dark gray"
+     defGridColor             = "white"
      ;; defGridTextColor         = "dark gray"
-     defGridTextColor         = "black"
+     defGridTextColor         = "white"
+
 
   ENDIF ELSE BEGIN
      ctIndex_allPosData       = 16 ;This is the one I usually use

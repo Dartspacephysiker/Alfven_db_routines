@@ -183,59 +183,67 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ;;;;;;;;;;
 
      ;;Option #1: Calculate the gridlats
-     CASE 1 OF
-        (tempmaxI-tempminI) LE 12: BEGIN
-           minISpacing            = 6
-        END
-        (tempmaxI-tempminI) LE 20: BEGIN
-           minISpacing            = 8
-        END
-        (tempmaxI-tempminI) LE 30: BEGIN
-           minISpacing            = 10
-        END
-        (tempmaxI-tempminI) GT 30: BEGIN
-           minISpacing            = 10
-        END
-     ENDCASE
+     ;; CASE 1 OF
+     ;;    (tempmaxI-tempminI) LE 12: BEGIN
+     ;;       minISpacing            = 6
+     ;;    END
+     ;;    (tempmaxI-tempminI) LE 20: BEGIN
+     ;;       minISpacing            = 8
+     ;;    END
+     ;;    (tempmaxI-tempminI) LE 30: BEGIN
+     ;;       minISpacing            = 10
+     ;;    END
+     ;;    (tempmaxI-tempminI) GT 30: BEGIN
+     ;;       minISpacing            = 10
+     ;;    END
+     ;; ENDCASE
 
-     satisfied                    = 0
-     gridIFactor                  = 1
-     WHILE ~satisfied DO BEGIN
-        gridISpacing              = binI * gridIFactor
-        IF gridISpacing LT minISpacing THEN BEGIN
-           gridIFactor++
-        ENDIF ELSE BEGIN
-           satisfied              = 1
-        ENDELSE
-     ENDWHILE
+     ;; satisfied                    = 0
+     ;; gridIFactor                  = 1
+     ;; WHILE ~satisfied DO BEGIN
+     ;;    gridISpacing              = binI * gridIFactor
+     ;;    IF gridISpacing LT minISpacing THEN BEGIN
+     ;;       gridIFactor++
+     ;;    ENDIF ELSE BEGIN
+     ;;       satisfied              = 1
+     ;;    ENDELSE
+     ;; ENDWHILE
 
 
-     gridLats                     = INDGEN(10)*gridISpacing + tempMinI
-     calcILines                   = (tempMaxI-tempMinI)/minISpacing
-     CASE 1 OF
-        calcILines LE 3: BEGIN
-           gridLats               = gridLats[WHERE(gridLats GE tempMinI AND gridLats LE tempMaxI)]
-        END
-        calcILines LE 4: BEGIN
-           gridMinIDist           = MIN(ABS(gridLats-tempMinI))
-           gridMaxIDist           = MIN(ABS(gridLats-tempMaxI))
-           IF gridMinIDist LT gridMaxIDist THEN BEGIN
-              gridLats            = gridLats[WHERE(gridLats GT tempMinI AND gridLats LE tempMaxI)]
-           ENDIF ELSE BEGIN
-              gridLats            = gridLats[WHERE(gridLats GE tempMinI AND gridLats LT tempMaxI)]
-           ENDELSE
-        END
-        calcILines GT 4: BEGIN
-           gridLats               = gridLats[WHERE(gridLats GT tempMinI AND gridLats LT tempMaxI)]
-        END
-     ENDCASE
+     ;; gridLats                     = INDGEN(10)*gridISpacing + tempMinI
+     ;; calcILines                   = (tempMaxI-tempMinI)/minISpacing
+     ;; CASE 1 OF
+     ;;    calcILines LE 3: BEGIN
+     ;;       gridLats               = gridLats[WHERE(gridLats GE tempMinI AND gridLats LE tempMaxI)]
+     ;;    END
+     ;;    calcILines LE 4: BEGIN
+     ;;       gridMinIDist           = MIN(ABS(gridLats-tempMinI))
+     ;;       gridMaxIDist           = MIN(ABS(gridLats-tempMaxI))
+     ;;       IF gridMinIDist LT gridMaxIDist THEN BEGIN
+     ;;          gridLats            = gridLats[WHERE(gridLats GT tempMinI AND gridLats LE tempMaxI)]
+     ;;       ENDIF ELSE BEGIN
+     ;;          gridLats            = gridLats[WHERE(gridLats GE tempMinI AND gridLats LT tempMaxI)]
+     ;;       ENDELSE
+     ;;    END
+     ;;    calcILines GT 4: BEGIN
+     ;;       gridLats               = gridLats[WHERE(gridLats GT tempMinI AND gridLats LT tempMaxI)]
+     ;;    END
+     ;; ENDCASE
 
      ;;Option #2: Preset gridLats
-     ;; gridLats                  = defGridLats
+     gridLats                  = defGridLats
 
      ;;;;;;;;;;
      ;;END OPTIONS
      ;;;;;;;;;;
+
+     ;;Make sure the thicker gridLats fall right on one of our ilats
+     maxGridSep = 0.25D
+     FOR k=0,N_ELEMENTS(gridLats)-1 DO BEGIN
+        IF MIN(ABS(gridLats[k]-ilats),tempI) GT maxGridSep THEN BEGIN
+           gridLats[k] = ilats[tempI]
+        ENDIF
+     ENDFOR
 
      ;;Don't erase these lines! They are the only thing keeping SH plots from being insane
      IF maxI LT 0 THEN BEGIN
@@ -325,7 +333,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   ENDELSE
 
+  ;; RAINBOW_COLORS,N_COLORS=nLevels
   RAINBOW_COLORS,N_COLORS=nLevels
+  ;; LOADCT2,39
 
   eq_scale_ct = 0
   IF KEYWORD_SET(eq_scale_ct) THEN BEGIN
@@ -486,7 +496,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         tmpInd                    = mirror ? -1 : 0
         gridLatNames[tmpInd]      = gridLatNames[tmpInd] + $
                                     ( KEYWORD_SET(suppress_ILAT_name) ? '' : $
-                                      ( KEYWORD_SET(DO_lShell) ? " L-shell" : " ILAT" ) )
+                                      ( KEYWORD_SET(DO_lShell) ? " L-shell" : " " ) )  ;" ILAT" ) )
 
         ;; cgMap_Grid, Clip_Text=1, $
         ;;             /NoClip, $
@@ -519,21 +529,31 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         IF ~KEYWORD_SET(suppress_MLT_labels) THEN BEGIN
            zeroMLTName                   = KEYWORD_SET(suppress_MLT_name) ? '0' : '0 MLT'
 
+           MLTColor                      = 'black'
            CGTEXT,MEAN([map_position[2],map_position[0]]), map_position[1]-0.035*yScale,zeroMLTName,/NORMAL, $
-                  COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+                  COLOR=MLTColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
            CGTEXT,MEAN([map_position[2],map_position[0]]), map_position[3]+0.005*yScale,'12',/NORMAL, $
-                  COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+                  COLOR=MLTColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
            CGTEXT,map_position[2]+0.02*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'6',/NORMAL, $
-                  COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+                  COLOR=MLTColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
            CGTEXT,map_position[0]-0.03*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'18',/NORMAL, $
-                  COLOR=defGridTextColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+                  COLOR=MLTColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
         ENDIF
 
         ;;ILATs
         IF ~KEYWORD_SET(suppress_ILAT_labels) THEN BEGIN
+           ILATColor              = defGridTextColor
+           ILAT_longitude         = 45
+           ILAT_longitude         = 80
+           ;; ILATColor              = 
            FOR ilat_i=0,N_ELEMENTS(gridLats)-1 DO BEGIN
-              CGTEXT, 45, gridLats[ilat_i], gridLatNames[ilat_i], $ ;STRCOMPRESS((maxI LT 0? -1.0 : 1.0)*gridLats[ilat_i],/REMOVE_ALL), $
-                      ALIGNMENT=0.0,ORIENTATION=0,COLOR=defGridTextColor,CHARSIZE=defCharSize_grid*charScale
+              CGTEXT, ILAT_longitude, $
+                      gridLats[ilat_i], $
+                      gridLatNames[ilat_i], $ 
+                      ALIGNMENT=1.0, $
+                      ORIENTATION=0, $
+                      COLOR=defGridTextColor, $
+                      CHARSIZE=defCharSize_grid*charScale
            ENDFOR
         ENDIF
      ENDIF ELSE BEGIN

@@ -50,7 +50,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.name                                 = dataName
 
      STR_ELEMENT,orbContrib_h2dStr_for_division,'i_am_alf_ref',INDEX=have_alfdb_ref
-     IF have_alfDB_ref GE 0 THEN BEGIN
+     IF have_alfDB_ref GT 0 THEN BEGIN
         dataName                                += '_alfRef'
      ENDIF
   ENDIF ELSE BEGIN

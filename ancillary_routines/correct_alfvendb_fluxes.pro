@@ -89,6 +89,7 @@
 ;2016/02/23 Added MAP_WIDTH_X keyword so we can use it with the integrated data
 ;2016/02/23 Added correctStr so I can see at any time what's been corrected
 ;2016/03/15 Having misgivings about mapping width_x, so I've commented it out for now.
+;2016/07/18 Wow, missing a factor of two in dividing Poynting flux.
 ;-
 PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             MAP_ESA_CURRENT_TO_IONOS=map_esa_current, $
@@ -270,17 +271,15 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
 
      ;;Added 2016/04/23
      IF KEYWORD_SET(map_esa_current) THEN BEGIN
-        maximus.esa_current          = maximus.esa_current * mapRatio.ratio
+        maximus.esa_current       = maximus.esa_current * mapRatio.ratio
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->07-ESA_CURRENT'
         correctStr += '-->07-ESA_CURRENT' + STRING(10B)
      ENDIF
 
      ;;Added 2015/12/22
+     mu_0                         = DOUBLE(4.0D*!PI*1e-7)
+     maximus.pfluxest             = DOUBLE((maximus.delta_e)*(maximus.delta_b*1e-9))/(2.D*mu_0) ;rm factor of 1e-3 from E-field since we want mW/m^2
      IF KEYWORD_SET(map_pflux) THEN BEGIN
-        mu_0 = DOUBLE(4.0D*!PI*1e-7)
-        ;; maximus.pfluxest=DOUBLE((maximus.delta_e*1e-9)*(maximus.delta_b*1e-3))/mu_0
-        maximus.pfluxest=DOUBLE((maximus.delta_e)*(maximus.delta_b*1e-9))/mu_0 ;;take away the factor of 1e-3 from E-field since we want mW/m^2
-
         maximus.pFluxEst          = maximus.pFluxEst * mapRatio.ratio
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->49-PFLUXEST'
         correctStr += '-->49-PFLUXEST' + STRING(10B)

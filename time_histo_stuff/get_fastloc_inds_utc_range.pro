@@ -257,18 +257,18 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
   
   IF KEYWORD_SET(make_outIndsFile) THEN BEGIN
      for_eSpec_DBs = KEYWORD_SET(for_eSpec_DBs)
-     PRINT,'Saving outindsfile ' + outIndsFilename + '...'
-     SAVE,fastLocInterped_i, $
-          minm,maxm,binm, $
-          mini,maxi,bini, $
-          minl,maxl,binl, $
-          altituderange, $
-          charerange, $
-          orbrange, $
-          fastLoc__dbFile, $
-          fastLoc__dbTimesFile, $
-          for_eSpec_DBs, $
-          FILENAME=fastLocOutputDir+outIndsFilename
+     ;; PRINT,'Saving outindsfile ' + outIndsFilename + '...'
+     ;; SAVE,fastLocInterped_i, $
+     ;;      minm,maxm,binm, $
+     ;;      mini,maxi,bini, $
+     ;;      minl,maxl,binl, $
+     ;;      altituderange, $
+     ;;      charerange, $
+     ;;      orbrange, $
+     ;;      fastLoc__dbFile, $
+     ;;      fastLoc__dbTimesFile, $
+     ;;      for_eSpec_DBs, $
+     ;;      FILENAME=outIndsFilename
   ENDIF
   ;; ENDELSE
 

@@ -109,7 +109,9 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     LUN=lun
 
   COMPILE_OPT idl2
-  IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
+  IF N_ELEMENTS(lun) EQ 0 THEN BEGIN
+     lun = -1                   ;stdout
+  ENDIF
   ;;***********************************************
   ;;Tons of defaults
   
@@ -119,19 +121,19 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   defCharERange          = [4.0,10000.0]
   defAltRange            = [0, 5000]
 
-  ; satellite defaults
-  defSatellite           = "OMNI"    ;either "ACE", "wind", "wind_ACE", or "OMNI" (default, you see)
-  defOmni_Coords         = "GSM"             ; either "GSE" or "GSM"
+                                ; satellite defaults
+  defSatellite           = "OMNI" ;either "ACE", "wind", "wind_ACE", or "OMNI" (default, you see)
+  defOmni_Coords         = "GSM"  ; either "GSE" or "GSM"
 
   defDelay               = 900
 
-  defstableIMF           = 0S             ;Set to a time (in minutes) over which IMF stability is required
+  defstableIMF           = 0S   ;Set to a time (in minutes) over which IMF stability is required
   defIncludeNoConsecData = 0    ;Setting this to 1 includes Chaston data for which  
                                 ;there's no way to calculate IMF stability
                                 ;Only valid for stableIMF GE 1
   defCheckBothWays       = 0          
   
-  defBx_over_ByBz_Lim    = 0       ;Set this to the max ratio of Bx / SQRT(By*By + Bz*Bz)
+  defBx_over_ByBz_Lim    = 0    ;Set this to the max ratio of Bx / SQRT(By*By + Bz*Bz)
   
   defClockStr            = 'dawnward'
   
@@ -146,147 +148,198 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
 
   ;;***********************************************
   ;;RESTRICTIONS ON DATA, SOME VARIABLES
-  IF N_ELEMENTS(orbRange)            EQ 0 THEN orbRange               = defOrbRange         ; 4,~300 eV in Strangeway
+  IF N_ELEMENTS(orbRange            ) EQ 0 THEN BEGIN
+     orbRange               = defOrbRange ; 4,~300 eV in Strangeway
+  ENDIF
 
-  IF N_ELEMENTS(charERange)          EQ 0 THEN charERange             = defCharERange       ; 4,~300 eV in Strangeway
+  IF N_ELEMENTS(charERange          ) EQ 0 THEN BEGIN
+     charERange             = defCharERange ; 4,~300 eV in Strangeway
+  ENDIF
 
-  IF N_ELEMENTS(altitudeRange)       EQ 0 THEN altitudeRange          = defAltRange         ;Rob Pfaff says no lower than 1000m
+  IF N_ELEMENTS(altitudeRange       ) EQ 0 THEN BEGIN 
+     altitudeRange          = defAltRange ;Rob Pfaff says no lower than 1000m
+  ENDIF
   
   ;;********************************************
   ;;satellite data options
   
-  IF N_ELEMENTS(satellite)           EQ 0 THEN satellite              = defSatellite        ;either "ACE", "wind", "wind_ACE", or "OMNI" (default, you see)
-  IF N_ELEMENTS(omni_Coords)         EQ 0 THEN omni_Coords            = defOmni_Coords      ; either "GSE" or "GSM"
+  IF N_ELEMENTS(satellite           ) EQ 0 THEN BEGIN
+     satellite              = defSatellite ;either "ACE", "wind", "wind_ACE", or "OMNI" (default, you see)
+  ENDIF
+  IF N_ELEMENTS(omni_Coords         ) EQ 0 THEN BEGIN
+     omni_Coords            = defOmni_Coords ; either "GSE" or "GSM"
+  ENDIF
 
-  IF N_ELEMENTS(delay)               EQ 0 THEN delay                  = defDelay            ;Delay between ACE propagated data and ChastonDB data
-                                                                                            ;Bin recommends something like 11min
+  IF N_ELEMENTS(delay               ) EQ 0 THEN BEGIN
+     delay                  = defDelay ;Delay between ACE propagated data and ChastonDB data
+                                ;Bin recommends something like 11min
+  ENDIF
   
-  IF ~KEYWORD_SET(delay_res)              THEN delay_res              = 120
-  IF N_ELEMENTS(binOffset_delay)     EQ 0 THEN binOffset_delay        = 0 
+  IF ~KEYWORD_SET(delay_res) THEN BEGIN
+     delay_res              = 120
+  ENDIF
+  IF N_ELEMENTS(binOffset_delay     ) EQ 0 THEN BEGIN
+     binOffset_delay        = 0 
+  ENDIF
 
+  IF N_ELEMENTS(stableIMF           ) EQ 0 THEN BEGIN
+     stableIMF              = defStableIMF ;Set to a time (in minutes) over which IMF stability is required
+  ENDIF
 
-  IF N_ELEMENTS(stableIMF)           EQ 0 THEN stableIMF              = defStableIMF        ;Set to a time (in minutes) over which IMF stability is required
-  IF N_ELEMENTS(includeNoConsecData) EQ 0 THEN defIncludeNoConsecData = 0                   ;Setting this to 1 includes Chaston data for which  
-                                                                                            ;there's no way to calculate IMF stability
-                                                                                            ;Only valid for stableIMF GE 1
-  IF N_ELEMENTS(checkBothWays)       EQ 0 THEN checkBothWays          = defCheckBothWays    ;
+  IF N_ELEMENTS(includeNoConsecData ) EQ 0 THEN BEGIN
+     defIncludeNoConsecData = 0 ;Setting this to 1 includes Chaston data for which  
+                                ;there's no way to calculate IMF stability
+                                ;Only valid for stableIMF GE 1
+  ENDIF
+
+  IF N_ELEMENTS(checkBothWays       ) EQ 0 THEN BEGIN
+     checkBothWays          = defCheckBothWays ;
+  ENDIF
   
-  IF N_ELEMENTS(Bx_over_ByBz_Lim)    EQ 0 THEN Bx_over_ByBz_Lim       = defBx_over_ByBz_Lim ;Set this to the max ratio of Bx / SQRT(By*By + Bz*Bz)
-  
+  IF N_ELEMENTS(Bx_over_ByBz_Lim    ) EQ 0 THEN BEGIN
+     Bx_over_ByBz_Lim       = defBx_over_ByBz_Lim ;Set this to the max ratio of Bx / SQRT(By*By + Bz*Bz)
+  ENDIF
+
   ;;Which IMF clock angle are we doing?
   ;;options are 'duskward', 'dawnward', 'bzNorth', 'bzSouth', and 'all_IMF'
   IF KEYWORD_SET(do_not_consider_imf) THEN BEGIN
-     clockStr                      = 'NO_IMF_CONSID'
-     paramString                   = paramString + '--' + clockStr
-     paramString_list              = LIST(paramString)
+     clockStr                   = 'NO_IMF_CONSID'
+     paramString                = paramString + '--' + clockStr
+     paramString_list           = LIST(paramString)
   ENDIF ELSE BEGIN
 
      IF ~KEYWORD_SET(dont_consider_clockAngles) THEN BEGIN
         IF N_ELEMENTS(clockStr) EQ 0 THEN BEGIN
-           clockStr = defClockStr
+           clockStr             = defClockStr
         ENDIF
-     
+        
         ;;How to set angles? Note, clock angle is measured with
         ;;Bz North at zero deg, ranging from -180<clock_angle<180
         ;;Setting angle limits 45 and 135, for example, gives a 90-deg
         ;;window for dawnward and duskward plots
         IF clockStr[0] NE "all_IMF" THEN BEGIN
-           angleLim1 = KEYWORD_SET(angleLim1) ? angleLim1 : defAngleLim1 ;in degrees
-           angleLim2 = KEYWORD_SET(angleLim2) ? angleLim2 : defAngleLim2 ;in degrees
+           angleLim1            = KEYWORD_SET(angleLim1) ? angleLim1 : defAngleLim1 ;in degrees
+           angleLim2            = KEYWORD_SET(angleLim2) ? angleLim2 : defAngleLim2 ;in degrees
         ENDIF ELSE BEGIN 
-           angleLim1 = KEYWORD_SET(angleLim1) ? angleLim1 : 180 ;for doing all IMF
-           angleLim2 = KEYWORD_SET(angleLim2) ? angleLim2 : 180
+           angleLim1            = KEYWORD_SET(angleLim1) ? angleLim1 : 180 ;for doing all IMF
+           angleLim2            = KEYWORD_SET(angleLim2) ? angleLim2 : 180
         ENDELSE
      ENDIF ELSE BEGIN
-        clockStr  = ''
+        clockStr                = ''
      ENDELSE
 
      ;;Requirement for IMF By magnitude?
-     byMinStr=''
-     byMaxStr=''
+     byMinStr                   = ''
+     byMaxStr                   = ''
      
      IF N_ELEMENTS(byMin) GT 0 THEN BEGIN
-        byMinStr = '__' + (KEYWORD_SET(abs_byMin) ? 'ABS_' : '') $
-                   + 'byMin' + String(byMin,format='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
+        byMinStr                = '__' + (KEYWORD_SET(abs_byMin) ? 'ABS_' : '') $
+                                  + 'byMin' + String(byMin,format='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
      ENDIF
      IF N_ELEMENTS(byMax) GT 0 THEN BEGIN
-        byMaxStr = '__' + (KEYWORD_SET(abs_byMax) ? 'ABS_' : '') $
-                  + 'byMax' + String(byMax,format='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
+        byMaxStr                = '__' + (KEYWORD_SET(abs_byMax) ? 'ABS_' : '') $
+                                  + 'byMax' + String(byMax,format='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
      ENDIF
      
      ;;Requirement for IMF Bz magnitude?
-     bzMinStr=''
-     bzMaxStr=''
+     bzMinStr                   = ''
+     bzMaxStr                   = ''
      
      IF N_ELEMENTS(bzMin) GT 0 THEN BEGIN
-        bzMinStr = '__' + (KEYWORD_SET(abs_bzMin) ? 'ABS_' : '') $
-                   + 'bzMin' + String(bzMin,format='(D0.1)')
+        bzMinStr                = '__' + (KEYWORD_SET(abs_bzMin) ? 'ABS_' : '') $
+                                  + 'bzMin' + String(bzMin,format='(D0.1)')
      ENDIF
      IF N_ELEMENTS(bzMax) GT 0 THEN BEGIN
-        bzMaxStr = '__' + (KEYWORD_SET(abs_bzMax) ? 'ABS_' : '') $
-                   + 'bzMax' + String(bzMax,format='(D0.1)')
+        bzMaxStr                = '__' + (KEYWORD_SET(abs_bzMax) ? 'ABS_' : '') $
+                                  + 'bzMax' + String(bzMax,format='(D0.1)')
      ENDIF
      
      ;;Requirement for IMF Bt magnitude?
-     btMinStr=''
-     btMaxStr=''
+     btMinStr                   = ''
+     btMaxStr                   = ''
      
      IF N_ELEMENTS(btMin) GT 0 THEN BEGIN
         IF btMin LT 0 THEN BEGIN
            PRINT,'btMin shouldn''t be less than zero!'
            STOP
         ENDIF
-        btMinStr = '__' + (KEYWORD_SET(abs_btMin) ? 'ABS_' : '') $
-                   + 'btMin' + String(btMin,format='(D0.1)')
+        btMinStr                = '__' + (KEYWORD_SET(abs_btMin) ? 'ABS_' : '') $
+                                  + 'btMin' + String(btMin,format='(D0.1)')
      ENDIF
      IF N_ELEMENTS(btMax) GT 0 THEN BEGIN
         IF btMax LT 0 THEN BEGIN
            PRINT,'btMax shouldn''t be less than zero!'
            STOP
         ENDIF
-        btMaxStr = '__' + (KEYWORD_SET(abs_btMax) ? 'ABS_' : '') $
-                   + 'btMax' + String(btMax,format='(D0.1)')
+        btMaxStr                = '__' + (KEYWORD_SET(abs_btMax) ? 'ABS_' : '') $
+                                  + 'btMax' + String(btMax,format='(D0.1)')
      ENDIF
      
      ;;Requirement for IMF Bx magnitude?
-     bxMinStr=''
-     bxMaxStr=''
+     bxMinStr                   = ''
+     bxMaxStr                   = ''
      
      IF N_ELEMENTS(bxMin) GT 0 THEN BEGIN
-        bxMinStr = '__' + (KEYWORD_SET(abs_bxMin) ? 'ABS_' : '') $
-                   + 'bxMin' + String(bxMin,format='(D0.1)')
+        bxMinStr                = '__' + (KEYWORD_SET(abs_bxMin) ? 'ABS_' : '') $
+                                  + 'bxMin' + String(bxMin,format='(D0.1)')
      ENDIF
      IF N_ELEMENTS(bxMax) GT 0 THEN BEGIN
-        bxMaxStr = '__' + (KEYWORD_SET(abs_bxMax) ? 'ABS_' : '') $
-                   + 'bxMax' + String(bxMax,format='(D0.1)')
+        bxMaxStr                = '__' + (KEYWORD_SET(abs_bxMax) ? 'ABS_' : '') $
+                                  + 'bxMax' + String(bxMax,format='(D0.1)')
      ENDIF
      
      ;;********************************************
      ;;Set up some other strings
      
      ;;satellite string
-     omniStr = ""
-     IF satellite EQ "OMNI" then omniStr = "--" + omni_Coords 
-     ;;IF delay NE defDelay THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
-     ;; IF delay GT 0 THEN delayStr = strcompress(delay/60,/remove_all) + "mindelay_" ELSE delayStr = ""
-     IF N_ELEMENTS(delay) GT 0 THEN delayStr = STRING(FORMAT='("__",F0.2,"mindelay")',delay/60.) ELSE delayStr = ""
-     IF N_ELEMENTS(delay_res) GT 0 THEN delayResStr = STRING(FORMAT='("__",F0.2,"Res")',delay_res/60.) ELSE delayResStr = ""
-     IF N_ELEMENTS(binOffset_delay) GT 0 THEN delBinOffStr = STRING(FORMAT='("__",F0.2,"binOffset")',binOffset_delay/60.) ELSE delBinOffStr = ""
-     ;; delBinOffStr = ""
-     
-     delayStr = delayStr + delayResStr + delBinOffStr
+     omniStr                    = ""
+     IF satellite EQ "OMNI" THEN BEGIN
+        omniStr                 = "--" + omni_Coords 
+     ENDIF
 
-     IF KEYWORD_SET(smoothWindow) THEN smoothStr = '__' + strtrim(smoothWindow,2)+"min_IMFsmooth" ELSE smoothStr=""
+     IF N_ELEMENTS(delay) GT 0 THEN BEGIN
+        delayStr                = STRING(FORMAT='("__",F0.1,"Delay")',delay/60.) 
+     ENDIF ELSE BEGIN
+        delayStr                = ""
+     ENDELSE
+     IF N_ELEMENTS(delay_res) GT 0 THEN BEGIN
+        delayResStr             = STRING(FORMAT='("__",F0.1,"Res")',delay_res/60.)
+     ENDIF ELSE BEGIN
+        delayResStr             = ""
+     ENDELSE
+
+     IF N_ELEMENTS(binOffset_delay) GT 0 THEN BEGIN
+        delBinOffStr            = STRING(FORMAT='("__",F0.1,"Offset")',binOffset_delay/60.) 
+        ;; delBinOffStr            = ""
+     ENDIF ELSE BEGIN
+        delBinOffStr            = ""
+     ENDELSE
+     
+     delayStr                   = delayStr + delayResStr + delBinOffStr
+
+     IF KEYWORD_SET(smoothWindow) THEN BEGIN
+        smoothStr               = '__' + strtrim(smoothWindow,2)+"smooth" 
+     ENDIF ELSE BEGIN
+        smoothStr               = ""
+     ENDELSE
      
      ;;parameter string
-     paramString_list                    = LIST()
-     IF clockStr[0] EQ '' THEN clockOutStr  = '' ELSE clockOutStr = '--' + clockStr
-     IF N_ELEMENTS(paramString) EQ 0 THEN paramString = ''
+     paramString_list           = LIST()
+     IF clockStr[0] EQ '' THEN BEGIN
+        clockOutStr             = '' 
+     ENDIF ELSE BEGIN
+        clockOutStr             = '--' + clockStr
+     ENDELSE
+
+     IF N_ELEMENTS(paramString) EQ 0 THEN BEGIN
+        paramString             = ''
+     ENDIF
+
      IF KEYWORD_SET(multiple_delays) OR KEYWORD_SET(multiple_IMF_clockAngles) THEN BEGIN
-        executing_multiples           = 1
+        executing_multiples     = 1
         IF KEYWORD_SET(multiple_delays) THEN BEGIN
-           multiples                  = delay
-           multiString                = "IMF_delays"
+           multiples            = delay
+           multiString          = "IMF_delays"
            FOR iDel=0,N_ELEMENTS(multiples)-1 DO BEGIN
               paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
@@ -294,22 +347,32 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
         ENDIF
 
         IF KEYWORD_SET(multiple_IMF_clockAngles) THEN BEGIN
-           multiples                  = clockStr
-           ;; multiString                = "IMF_clock angles"
-           multiString                = paramString+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
-                    byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
-           IF N_ELEMENTS(clockStr) EQ 8 THEN multiString_suff = '--theRing'
-           IF KEYWORD_SET(multiString_suff) THEN multiString = multiString + multiString_suff
+           multiples            = clockStr
+           ;; multiString       = "IMF_clock angles"
+           multiString          = paramString+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
+                                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
+           IF N_ELEMENTS(clockStr) EQ 8 THEN BEGIN
+              multiString_suff  = '--theRing'
+           ENDIF
+           IF KEYWORD_SET(multiString_suff) THEN BEGIN
+              multiString       = multiString + multiString_suff
+           ENDIF
+
            FOR iClock=0,N_ELEMENTS(multiples)-1 DO BEGIN
-              paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr[iClock]+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr+$
+              paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr[iClock]+"__"+ $
+                 strtrim(stableIMF,2)+"stable"+smoothStr+delayStr+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
-              IF ~KEYWORD_SET(multiString_suff) THEN multiString = multiString+'_'+clockStr[iClock]
+
+              IF ~KEYWORD_SET(multiString_suff) THEN BEGIN
+                 multiString    = multiString+'_'+clockStr[iClock]
+              ENDIF
            ENDFOR
         ENDIF
      ENDIF ELSE BEGIN
-        executing_multiples           = 0
-        paramString=paramString+'--'+satellite+omniStr+clockOutStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
-                    byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
+        executing_multiples     = 0
+        paramString             = paramString+'--'+satellite+omniStr+clockOutStr+"__"+ $
+                                  strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
+                                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
         paramString_list.add,paramString
      ENDELSE
   ENDELSE

@@ -75,23 +75,26 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      ;;    PRINTF,textLun,FORMAT='("MLT",T10,"(ILAT|lShell)",T25,"Time in bin (minutes)")'
      ;; ENDIF
      
+  ;;Get these in memory
+  LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastLoc_times,fastLoc_delta_t
+
      ;;avoid any trickery
      nFastLoc = N_ELEMENTS(fastLoc.orbit)
-     nFastLoc_Times = N_ELEMENTS(fastLoc_Times)
-     IF nFastLoc NE nFastLoc_Times THEN BEGIN
-        PRINTF,lun,"Something is wrong. nFastLoc = " + strcompress(nFastLoc) + " while nFastLoc_Times = " + strcompress(nFastLoc_Times) + "."
+     nFastLoc_Times = N_ELEMENTS(fastLoc_times)
+     IF nFastLoc NE nFastLoc_times THEN BEGIN
+        PRINTF,lun,"Something is wrong. nFastLoc = " + strcompress(nFastLoc) + " while nFastLoc_times = " + strcompress(nFastLoc_times) + "."
         PRINTF,lun,"Fix it! In the meantime, we're quitting."
         RETURN
      ENDIF
      
      IF fastLoc_delta_t EQ !NULL THEN BEGIN
-        ;; IF fastLoc_Times EQ !NULL THEN fastLoc_Times = str_to_time(fastLoc.time)
-        ;; fastLoc_delta_t = shift(fastLoc_Times,-1)-fastLoc_Times
-        ;; save,fastLoc_Times,fastLoc_delta_t,FILENAME=fastLocDir+fastLocTimeFile+'_raw'
+        ;; IF fastLoc_times EQ !NULL THEN fastLoc_times = str_to_time(fastLoc.time)
+        ;; fastLoc_delta_t = shift(fastLoc_times,-1)-fastLoc_times
+        ;; save,fastLoc_times,fastLoc_delta_t,FILENAME=fastLocDir+fastLocTimeFile+'_raw'
         ;; fastLoc_delta_t[-1] = 10.0                             ;treat last element specially, since otherwise it is a huge negative number
         ;; fastLoc_delta_t = ROUND(fastLoc_delta_t*8.0)/8.0 ;round to nearest eigth of a second
         ;; fastLoc_delta_t(WHERE(fastLoc_delta_t GT 10.0)) = 10.0 ;many events with a large delta_t correspond to ends of intervals/orbits
-        ;; save,fastLoc_Times,fastLoc_delta_t,FILENAME=fastLocDir+fastLocTimeFile
+        ;; save,fastLoc_times,fastLoc_delta_t,FILENAME=fastLocDir+fastLocTimeFile
         PRINTF,lun,"Why is fastloc_delta_t empty? Returning..."
         RETURN
      ENDIF

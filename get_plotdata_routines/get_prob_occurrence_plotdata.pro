@@ -44,7 +44,6 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                                       MAX1=maxM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI), $
                                       SHIFT1=shiftM,SHIFT2=shiftI)
 
-  ;; h2dStr                     = {tmplt_h2dStr}
   h2dStr                     = tmplt_h2dStr
   
   ;; h2dStr.force_oobHigh       = 0

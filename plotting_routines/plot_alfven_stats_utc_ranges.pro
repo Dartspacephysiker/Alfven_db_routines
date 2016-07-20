@@ -356,9 +356,6 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              MASKMIN=maskMin, $
                              DO_DESPUNDB=do_despunDB, $
                              HEMI=hemi, $
-                             NORTH=north, $
-                             SOUTH=south, $
-                             BOTH_HEMIS=both_hemis, $
                              NPLOTS=nPlots, $
                              EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, $
                              ENUMFLPLOTS=eNumFlPlots, $
@@ -398,9 +395,6 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
   ;;********************************************************
   ;;Now clean and tap the database
   good_i = GET_CHASTON_IND(maximus,satellite,lun, $
-                           BOTH_HEMIS=both_hemis, $
-                           NORTH=north, $
-                           SOUTH=south, $
                            HEMI=hemi, $
                            DBTIMES=cdbTime, $
                            DBFILE=dbfile, $
@@ -423,6 +417,42 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
      PRINT_DATA_AVAILABILITY=print_data_availability, $
      LIST_TO_ARR=1,$
      VERBOSE=verbose, DEBUG=debug, LUN=lun
+
+
+  IF KEYWORD_SET(nEventPerMinPlot) OR KEYWORD_SET(probOccurrencePlot) $
+     ;; OR KEYWORD_SET(timeAvgd_pfluxPlot) OR KEYWORD_SET(timeAvgd_eFluxMaxPlot) $
+     OR KEYWORD_SET(do_timeAvg_fluxQuantities) $
+     OR KEYWORD_SET(nEventPerOrbPlot) $
+     OR KEYWORD_SET(tHistDenominatorPlot) $
+     OR KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) $
+     OR KEYWORD_SET(div_fluxPlots_by_applicable_orbs) $
+     OR KEYWORD_SET(tHist_mask_bins_below_thresh) $
+     OR KEYWORD_SET(numOrbLim) $
+  THEN BEGIN 
+     good_FL_i = GET_CHASTON_IND(fastLoc,satellite,lun, $
+                                 /GET_TIME_I_NOT_ALFVENDB_I, $
+                                 HEMI=hemi, $
+                                 DBTIMES=fastLoc_times, $
+                                 DBFILE=fastLoc_dbFile, $
+                                 ORBRANGE=orbRange, $
+                                 ALTITUDERANGE=altitudeRange, $
+                                 CHARERANGE=charERange, $
+                                 POYNTRANGE=poyntRange, $
+                                 MINMLT=minM,MAXMLT=maxM,BINM=binM, $
+                                 MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                                 DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+                                 HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd)
+     
+     GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES,T1_ARR=t1_arr,T2_ARR=t2_arr, $
+        DBSTRUCT=fastLoc,DBTIMES=fastLoc_times, RESTRICT_W_THESEINDS=good_FL_i, $
+        OUT_INDS_LIST=fastLocInterped_i,  $
+        UNIQ_ORBS_LIST=uniq_orbs_list,UNIQ_ORB_INDS_LIST=uniq_orb_inds_list, $
+        INDS_ORBS_LIST=inds_orbs_list,TRANGES_ORBS_LIST=tranges_orbs_list,TSPANS_ORBS_LIST=tspans_orbs_list, $
+        PRINT_DATA_AVAILABILITY=print_data_availability, $
+        LIST_TO_ARR=1,$
+        VERBOSE=verbose, DEBUG=debug, LUN=lun
+
+  ENDIF
 
   IF KEYWORD_SET(nonAlfven_flux_plots) THEN BEGIN
 
@@ -451,9 +481,6 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              ALTITUDERANGE=altitudeRange, $
                              CHARERANGE=charERange, $
                              CHARIERANGE=charIERange, $
-                             BOTH_HEMIS=both_hemis, $
-                             NORTH=north, $
-                             SOUTH=south, $
                              HEMI=hemi, $
                              HWMAUROVAL=HwMAurOval, $
                              HWMKPIND=HwMKpInd, $
@@ -612,27 +639,45 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                GROSSLUN=grossLun
   ENDIF
 
-  GET_ALFVENDB_2DHISTOS,maximus,plot_i, H2DSTRARR=h2dStrArr, $
-                        KEEPME=keepMe, DATARAWPTRARR=dataRawPtrArr,DATANAMEARR=dataNameArr, $
+  GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
+                        H2DSTRARR=h2dStrArr, $
+                        KEEPME=keepMe, $
+                        DATARAWPTRARR=dataRawPtrArr, $
+                        DATANAMEARR=dataNameArr, $
                         /DO_NOT_SET_DEFAULTS, $
-                        MINMLT=minM,MAXMLT=maxM, $
+                        MINMLT=minM, $
+                        MAXMLT=maxM, $
                         BINMLT=binM, $
                         SHIFTMLT=shiftM, $
-                        MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
-                        DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-                        ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, $
-                        CHARERANGE=charERange, POYNTRANGE=poyntRange, NUMORBLIM=numOrbLim, $
+                        MINILAT=minI, $
+                        MAXILAT=maxI, $
+                        BINILAT=binI, $
+                        DO_LSHELL=do_lShell, $
+                        MINLSHELL=minL, $
+                        MAXLSHELL=maxL, $
+                        BINLSHELL=binL, $
+                        ORBRANGE=orbRange, $
+                        ALTITUDERANGE=altitudeRange, $
+                        CHARERANGE=charERange, $
+                        POYNTRANGE=poyntRange, $
+                        NUMORBLIM=numOrbLim, $
                         MASKMIN=maskMin, $
                         THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
-                        SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
+                        SATELLITE=satellite, $
+                        OMNI_COORDS=omni_Coords, $
                         HEMI=hemi, $
                         DO_IMF_CONDS=do_IMF_conds, $
-                        CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+                        CLOCKSTR=clockStr, $
+                        ANGLELIM1=angleLim1, $
+                        ANGLELIM2=angleLim2, $
                         BYMIN=byMin, BZMIN=bzMin, $
                         BYMAX=byMax, BZMAX=bzMax, $
                         DELAY=delay, STABLEIMF=stableIMF, $
-                        SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
-                        /DO_UTC_RANGE,T1_ARR=t1_arr,T2_ARR=t2_arr, $
+                        SMOOTHWINDOW=smoothWindow, $
+                        INCLUDENOCONSECDATA=includeNoConsecData, $
+                        ;; /DO_UTC_RANGE, $
+                        ;; T1_ARR=t1_arr, $
+                        ;; T2_ARR=t2_arr, $
                         NPLOTS=nPlots, $
                         NEVENTSPLOTRANGE=nEventsPlotRange, $
                         LOGNEVENTSPLOT=logNEventsPlot, $
