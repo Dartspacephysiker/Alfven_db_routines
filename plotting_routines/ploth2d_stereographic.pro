@@ -437,17 +437,20 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDIF ELSE BEGIN
      shiftedMLTs                  = !NULL
   ENDELSE
-  CGMAP_GRID, CLIP_TEXT=1, $
-              /NOCLIP, $
-              LINESTYLE=0, $
-              THICK=((!D.Name EQ 'PS') ? defGridLineThick_PS : defGridLineThick_PS)*gridScale,$
-              COLOR=defGridColor, $
-              LONDELTA=binM*15, $
-              ;; LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : binI ), $
-              LONS=shiftedMLTs, $
-              ;;LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI )
-              LATS=ilats
-  ;; LATS=(KEYWORD_SET(do_lShell) ? ilats : !NULL)
+
+  IF binI GT 2.0 THEN BEGIN
+     CGMAP_GRID, CLIP_TEXT=1, $
+                 /NOCLIP, $
+                 LINESTYLE=0, $
+                 THICK=((!D.Name EQ 'PS') ? defGridLineThick_PS : defGridLineThick_PS)*gridScale,$
+                 COLOR=defGridColor, $
+                 LONDELTA=binM*15, $
+                 ;; LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : binI ), $
+                 LONS=shiftedMLTs, $
+                 ;;LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI )
+                 LATS=ilats
+     ;; LATS=(KEYWORD_SET(do_lShell) ? ilats : !NULL)
+  ENDIF
 
 
   ;;add thicker grid to a few latitude lines

@@ -244,7 +244,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  ;; FOR k=0,N_ELEMENTS(h2dStrArr)-2 DO BEGIN
                  ;;    tPSuff += '--' + dataNameArr[k]
                  ;; ENDFOR
-                 tPSuff = '--' + STRCOMPRESS(nPlots,/REMOVE_ALL) + '_tiled_plots'
+                 ;; tPSuff = '--' + STRCOMPRESS(nPlots,/REMOVE_ALL) + '_tiled'
               ENDIF ELSE BEGIN
                  tPSuff = tilePlotSuff
               ENDELSE

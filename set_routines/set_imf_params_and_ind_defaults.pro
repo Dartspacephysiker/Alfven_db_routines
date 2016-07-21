@@ -233,11 +233,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      byMaxStr                   = ''
      
      IF N_ELEMENTS(byMin) GT 0 THEN BEGIN
-        byMinStr                = '__' + (KEYWORD_SET(abs_byMin) ? 'ABS_' : '') $
+        byMinStr                = '_' + (KEYWORD_SET(abs_byMin) ? 'ABS_' : '') $
                                   + 'byMin' + String(byMin,format='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
      ENDIF
      IF N_ELEMENTS(byMax) GT 0 THEN BEGIN
-        byMaxStr                = '__' + (KEYWORD_SET(abs_byMax) ? 'ABS_' : '') $
+        byMaxStr                = '_' + (KEYWORD_SET(abs_byMax) ? 'ABS_' : '') $
                                   + 'byMax' + String(byMax,format='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
      ENDIF
      
@@ -246,11 +246,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      bzMaxStr                   = ''
      
      IF N_ELEMENTS(bzMin) GT 0 THEN BEGIN
-        bzMinStr                = '__' + (KEYWORD_SET(abs_bzMin) ? 'ABS_' : '') $
+        bzMinStr                = '_' + (KEYWORD_SET(abs_bzMin) ? 'ABS_' : '') $
                                   + 'bzMin' + String(bzMin,format='(D0.1)')
      ENDIF
      IF N_ELEMENTS(bzMax) GT 0 THEN BEGIN
-        bzMaxStr                = '__' + (KEYWORD_SET(abs_bzMax) ? 'ABS_' : '') $
+        bzMaxStr                = '_' + (KEYWORD_SET(abs_bzMax) ? 'ABS_' : '') $
                                   + 'bzMax' + String(bzMax,format='(D0.1)')
      ENDIF
      
@@ -263,7 +263,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
            PRINT,'btMin shouldn''t be less than zero!'
            STOP
         ENDIF
-        btMinStr                = '__' + (KEYWORD_SET(abs_btMin) ? 'ABS_' : '') $
+        btMinStr                = '_' + (KEYWORD_SET(abs_btMin) ? 'ABS_' : '') $
                                   + 'btMin' + String(btMin,format='(D0.1)')
      ENDIF
      IF N_ELEMENTS(btMax) GT 0 THEN BEGIN
@@ -271,7 +271,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
            PRINT,'btMax shouldn''t be less than zero!'
            STOP
         ENDIF
-        btMaxStr                = '__' + (KEYWORD_SET(abs_btMax) ? 'ABS_' : '') $
+        btMaxStr                = '_' + (KEYWORD_SET(abs_btMax) ? 'ABS_' : '') $
                                   + 'btMax' + String(btMax,format='(D0.1)')
      ENDIF
      
@@ -280,11 +280,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      bxMaxStr                   = ''
      
      IF N_ELEMENTS(bxMin) GT 0 THEN BEGIN
-        bxMinStr                = '__' + (KEYWORD_SET(abs_bxMin) ? 'ABS_' : '') $
+        bxMinStr                = '_' + (KEYWORD_SET(abs_bxMin) ? 'ABS_' : '') $
                                   + 'bxMin' + String(bxMin,format='(D0.1)')
      ENDIF
      IF N_ELEMENTS(bxMax) GT 0 THEN BEGIN
-        bxMaxStr                = '__' + (KEYWORD_SET(abs_bxMax) ? 'ABS_' : '') $
+        bxMaxStr                = '_' + (KEYWORD_SET(abs_bxMax) ? 'ABS_' : '') $
                                   + 'bxMax' + String(bxMax,format='(D0.1)')
      ENDIF
      
@@ -298,18 +298,18 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      ENDIF
 
      IF N_ELEMENTS(delay) GT 0 THEN BEGIN
-        delayStr                = STRING(FORMAT='("__",F0.1,"Delay")',delay/60.) 
+        delayStr                = STRING(FORMAT='("_",F0.1,"Delay")',delay/60.) 
      ENDIF ELSE BEGIN
         delayStr                = ""
      ENDELSE
      IF N_ELEMENTS(delay_res) GT 0 THEN BEGIN
-        delayResStr             = STRING(FORMAT='("__",F0.1,"Res")',delay_res/60.)
+        delayResStr             = STRING(FORMAT='("_",F0.1,"Res")',delay_res/60.)
      ENDIF ELSE BEGIN
         delayResStr             = ""
      ENDELSE
 
      IF N_ELEMENTS(binOffset_delay) GT 0 THEN BEGIN
-        delBinOffStr            = STRING(FORMAT='("__",F0.1,"Offset")',binOffset_delay/60.) 
+        delBinOffStr            = STRING(FORMAT='("_",F0.1,"Offset")',binOffset_delay/60.) 
         ;; delBinOffStr            = ""
      ENDIF ELSE BEGIN
         delBinOffStr            = ""
@@ -318,7 +318,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      delayStr                   = delayStr + delayResStr + delBinOffStr
 
      IF KEYWORD_SET(smoothWindow) THEN BEGIN
-        smoothStr               = '__' + strtrim(smoothWindow,2)+"smooth" 
+        smoothStr               = '_' + strtrim(smoothWindow,2)+"smooth" 
      ENDIF ELSE BEGIN
         smoothStr               = ""
      ENDELSE
@@ -341,7 +341,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
            multiples            = delay
            multiString          = "IMF_delays"
            FOR iDel=0,N_ELEMENTS(multiples)-1 DO BEGIN
-              paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
+              paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
            ENDFOR
         ENDIF
@@ -349,17 +349,17 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
         IF KEYWORD_SET(multiple_IMF_clockAngles) THEN BEGIN
            multiples            = clockStr
            ;; multiString       = "IMF_clock angles"
-           multiString          = paramString+"__"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
+           multiString          = paramString+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
                                   byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
            IF N_ELEMENTS(clockStr) EQ 8 THEN BEGIN
-              multiString_suff  = '--theRing'
+              multiString_suff  = '--Ring'
            ENDIF
            IF KEYWORD_SET(multiString_suff) THEN BEGIN
               multiString       = multiString + multiString_suff
            ENDIF
 
            FOR iClock=0,N_ELEMENTS(multiples)-1 DO BEGIN
-              paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr[iClock]+"__"+ $
+              paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr[iClock]+"_"+ $
                  strtrim(stableIMF,2)+"stable"+smoothStr+delayStr+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
 
@@ -370,7 +370,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
         ENDIF
      ENDIF ELSE BEGIN
         executing_multiples     = 0
-        paramString             = paramString+'--'+satellite+omniStr+clockOutStr+"__"+ $
+        paramString             = paramString+'--'+satellite+omniStr+clockOutStr+"_"+ $
                                   strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
                                   byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
         paramString_list.add,paramString

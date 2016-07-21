@@ -1,42 +1,5 @@
 FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
-                                  CLOCKSTR=clockStr, $
-                                  ANGLELIM1=angleLim1, $
-                                  ANGLELIM2=angleLim2, $
-                                  DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
-                                  ORBRANGE=orbRange, $
-                                  ALTITUDERANGE=altitudeRange, $
-                                  CHARERANGE=charERange, $
-                                  SAMPLE_T_RESTRICTION=sample_t_restriction, $
-                                  DO_IMF_CONDS=do_IMF_conds, $
-                                  BYMIN=byMin, $
-                                  BYMAX=byMax, $
-                                  BZMIN=bzMin, $
-                                  BZMAX=bzMax, $
-                                  BTMIN=btMin, $
-                                  BTMAX=btMax, $
-                                  BXMIN=bxMin, $
-                                  BXMAX=bxMax, $
-                                  DO_ABS_BYMIN=abs_byMin, $
-                                  DO_ABS_BYMAX=abs_byMax, $
-                                  DO_ABS_BZMIN=abs_bzMin, $
-                                  DO_ABS_BZMAX=abs_bzMax, $
-                                  DO_ABS_BTMIN=abs_btMin, $
-                                  DO_ABS_BTMAX=abs_btMax, $
-                                  DO_ABS_BXMIN=abs_bxMin, $
-                                  DO_ABS_BXMAX=abs_bxMax, $
-                                  SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                                  DELAY=delay, $
-                                  MULTIPLE_DELAYS=multiple_delays, $
-                                  RESOLUTION_DELAY=delay_res, $
-                                  BINOFFSET_DELAY=binOffset_delay, $
-                                  STABLEIMF=stableIMF, SMOOTHWINDOW=smoothWindow, INCLUDENOCONSECDATA=includeNoConsecData, $
-                                  DO_UTC_RANGE=DO_UTC_range, $
-                                  STORMSTRING=stormString, $
-                                  DSTCUTOFF=dstCutoff, $
                                   HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
-                                  RESET_GOOD_INDS=reset_good_inds, $
-                                  RESET_OMNI_INDS=reset_omni_inds, $
-                                  T1_ARR=t1_arr,T2_ARR=t2_arr, $
                                   MINM=minM,MAXM=maxM, $
                                   BINM=binM, $
                                   SHIFTM=shiftM, $
@@ -44,10 +7,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
                                   DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                   HEMI=hemi, $
                                   OUT_FASTLOC_STRUCT=out_fastLoc, $
-                                  ;; FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastLoc_delta_t, $
-                                  ;; FASTLOCFILE=fastLocFile, FASTLOCTIMEFILE=fastLocTimeFile, $
                                   FASTLOCOUTPUTDIR=fastLocOutputDir, $
-                                  OUT_FASTLOCINTERPED_I=out_fastLocInterped_i, $
                                   MAKE_TIMEHIST_H2DSTR=make_timeHist_h2dStr, $
                                   THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
                                   THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
@@ -78,11 +38,6 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
   PRINTF,lun,"Getting time histogram denominator ..."
 
   @orbplot_tplot_defaults.pro
-  
-  IF KEYWORD_SET(save_fastLoc_inds) THEN BEGIN
-     PRINT,'Saving fastLoc inds with this paramStr: ' + paramStr
-     SAVE,fastLocInterped_i,FILENAME=ind_fileDir + paramStr + '--' + 'fastLoc_indices.sav'
-  ENDIF
 
   MAKE_FASTLOC_HISTO,OUTTIMEHISTO=tHistDenominator, $
                      FASTLOC_INDS=fastLocInterped_i, $
@@ -139,7 +94,6 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
 
 
   ;;Out vars
-  ;; out_fastLocInterped_i = fastLocInterped_i
   out_fastLoc           = KEYWORD_SET(for_eSpec_DBs) ? TEMPORARY(FL_eSpec__fastLoc) : FL_fastLoc
 
   IF KEYWORD_SET(make_timeHist_h2dStr) THEN BEGIN
