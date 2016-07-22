@@ -30,6 +30,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                          MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                          MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
                          DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+                         USE_AACGM=use_aacgm, $
                          MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                          SAMPLE_T_RESTRICTION=sample_t_restriction, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
@@ -165,6 +166,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                  DB_TFILE=dbTimesFile, $
                                  DO_CHASTDB=chastDB, $
                                  DO_DESPUNDB=despunDB, $
+                                 USE_AACGM=use_aacgm, $
                                  CORRECT_FLUXES=correct_fluxes
         MAXIMUS__maximus                          = dbStruct
         MAXIMUS__times                            = dbTimes
@@ -213,6 +215,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                        DBDIR=loaddataDir, $
                                        DBFILE=dbFile, $
                                        DB_TFILE=dbTimesFile, $
+                                       USE_AACGM=use_aacgm, $
                                        FOR_ESPEC_DBS=for_eSpec_DBs
         IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
            IF ~KEYWORD_SET(nonMem) THEN BEGIN

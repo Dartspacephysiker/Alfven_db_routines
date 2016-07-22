@@ -13,6 +13,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              DO_NOT_MAP_WIDTH_X=do_not_map_width_x, $
                              DO_CHASTDB=chastDB, $
                              DO_DESPUNDB=despunDB, $
+                             USE_AACGM=use_aacgm, $
                              ;; GET_GOOD_I=get_good_i, $
                              HEMI__GOOD_I=hemi__good_i, $
                              USING_HEAVIES=using_heavies, $
@@ -59,6 +60,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   defDespunDBFile      = 'Dartdb_20160508--502-16361_despun--maximus--pflux_lshell--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
   defDespunDB_tFile    = 'Dartdb_20160508--502-16361_despun--cdbtime--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
 
+  AACGM_dir            = '/SPENCEdata/Research/database/FAST/ephemeris/'
+  AACGM_file           = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_GEO_and_MAG_coords.sav'
 
   ;;Make sure we're not switching between despun and not-despun
   IF  (  KEYWORD_SET(MAXIMUS__despun) AND ~KEYWORD_SET(despunDB) ) OR $
@@ -171,6 +174,19 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              QUIET=quiet
   ENDIF
 
+
+  IF KEYWORD_SET(use_aacgm) THEN BEGIN
+     PRINT,'Using AACGM lat and MLT ...'
+
+     LOAD,AACGM_dir+AACGM_file
+
+     MAXIMUS__maximus.mlt   = MAX_AACGM.alt
+     MAXIMUS__maximus.mlt   = MAX_AACGM.mlt
+     MAXIMUS__maximus.ilat  = MAX_AACGM.lat
+
+     MAXIMUS__maximus       = CREATE_STRUCT(MAXIMUS__maximus,'COORDS','AACGM')     
+
+  ENDIF
 
   ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI='BOTH')
   IF ARG_PRESENT(good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH',DESPUNDB=despunDB,RESET_GOOD_INDS=KEYWORD_SET(swap_DBs))

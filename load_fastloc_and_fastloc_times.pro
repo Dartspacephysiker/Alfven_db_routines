@@ -7,6 +7,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    FORCE_LOAD_TIMES=force_load_times, $
                                    FORCE_LOAD_ALL=force_load_all, $
                                    FOR_ESPEC_DBS=for_eSpec_DBs, $
+                                   USE_AACGM=use_aacgm, $
                                    OUT__DO_NOT_LOAD_IN_MEM=do_not_load_in_mem, $
                                    LUN=lun
 
@@ -49,6 +50,10 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   ;; DefESpecDBFile                    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes.sav'
   DefESpecDBFile                    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--smaller_datatypes--no_interval_startstop.sav'
   DefESpecDB_tFile                  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--times.sav'
+
+  AACGM_dir        = '/SPENCEdata/Research/database/FAST/ephemeris/'
+  AACGM_file       = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_GEO_and_MAG_coords.sav'
+
 
   IF N_ELEMENTS(DBDir) EQ 0 THEN BEGIN
      DBDir                          = DefDBDir
@@ -95,5 +100,19 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   ENDIF ELSE BEGIN
      PRINTF,lun,"There is already a fastloc_times struct loaded! Not loading " + DB_tFile
   ENDELSE
+
+  IF KEYWORD_SET(use_aacgm) THEN BEGIN
+     PRINT,'Using AACGM lat and MLT ...'
+
+     LOAD,AACGM_dir+AACGM_file
+
+     fastLoc.alt   = FL_AACGM.alt
+     fastLoc.mlt   = FL_AACGM.mlt
+     fastLoc.ilat  = FL_AACGM.lat
+
+     fastLoc       = CREATE_STRUCT(fastLoc,'COORDS','AACGM')     
+
+  ENDIF
+
 
 END

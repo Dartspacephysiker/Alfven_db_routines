@@ -294,6 +294,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  DBFILE=dbfile, NO_BURSTDATA=no_burstData, DATADIR=dataDir, $
                                  DO_CHASTDB=do_chastDB, $
                                  DO_DESPUNDB=do_despunDB, $
+                                 USE_AACGM=use_aacgm, $
                                  NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
                                  NEVENTSPLOTAUTOSCALE=nEventsPlotAutoscale, $
                                  NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $
@@ -400,6 +401,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                            DBFILE=dbfile, $
                            CHASTDB=do_chastdb, $
                            DESPUNDB=do_despunDB, $
+                           USE_AACGM=use_aacgm, $
                            ORBRANGE=orbRange, $
                            ALTITUDERANGE=altitudeRange, $
                            CHARERANGE=charERange, $
@@ -434,6 +436,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  HEMI=hemi, $
                                  DBTIMES=fastLoc_times, $
                                  DBFILE=fastLoc_dbFile, $
+                                 USE_AACGM=use_aacgm, $
                                  ORBRANGE=orbRange, $
                                  ALTITUDERANGE=altitudeRange, $
                                  CHARERANGE=charERange, $
@@ -460,6 +463,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              FOR_STORMS=nonAlfven_for_storms, $
                              NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                              DESPUN_ALF_DB=do_despunDB, $
+                             USE_AACGM=use_aacgm, $
                              T1_ARR=t1_arr,T2_ARR=t2_arr, $
                              EPLOTS=ePlots, $
                              EFLUXPLOTTYPE=eFluxPlotType, $
