@@ -12,6 +12,8 @@ PRO JOURNAL__20160722__CONVERT_ALFDB_ILATS_TO_AACGM_AND_OTHERS
   outDir           = '/SPENCEdata/Research/database/FAST/ephemeris/'
   outFile          = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_GEO_and_MAG_coords.sav'
 
+  ;;has GEO coords
+  bonusFile        = 'Dartdb_20160508--502-16361_despun--maximus--GEO_and_MAG_coords.sav'
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Input
   maxEphemFile     = 'Dartdb_20160508--502-16361_despun--maximus--bonus_ephemeris_info.sav'

@@ -5,6 +5,8 @@ PRO JOURNAL__20160721__CONVERT_ALL_ALFDB_ILATS_TO_MLATS
 
   orig_routineName = 'JOURNAL__20160721__CONVERT_ALL_ALFDB_ILATS_TO_MLATS'
 
+  R_E              = 6371.2D    ;Earth radius in km, from IGRFLIB_V2.pro
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;output
   outDir           = '/SPENCEdata/Research/database/FAST/ephemeris/'
@@ -66,6 +68,8 @@ PRO JOURNAL__20160721__CONVERT_ALL_ALFDB_ILATS_TO_MLATS
   TiltArr            = !NULL
   fEphem_MAG_arr        = MAKE_ARRAY(3,nTot,/FLOAT)
   fEphem_GEO_arr        = MAKE_ARRAY(3,nTot,/FLOAT)
+  fEphem_MAGSph_arr     = MAKE_ARRAY(3,nTot,/FLOAT)
+  fEphem_GEOSph_arr     = MAKE_ARRAY(3,nTot,/FLOAT)
   FOR i=0,nTot-1 DO BEGIN
      ;; GEOPACK_RECALC,YearArr[i],DOYArr[i],TILT=tempTilt,/DATE
      GEOPACK_RECALC,YearArr[i],MonthArr[i],DayArr[i],HourArr[i],MinArr[i],SecArr[i],/DATE 
@@ -82,53 +86,50 @@ PRO JOURNAL__20160721__CONVERT_ALL_ALFDB_ILATS_TO_MLATS
                         faPosgeo_x,faPosgeo_y,faPosgeo_z, $
                         /FROM_GEI,/TO_GEO,EPOCH=time_epoch[i]
 
+
+     ;;The others stuff
+     GEOPACK_SPHCAR,faPosgeo_x,faPosgeo_y,faPosgeo_z,geo_r,geo_theta,geo_phi,/TO_SPHERE,/DEGREE
+     GEOPACK_SPHCAR,faPosmag_x,faPosmag_y,faPosmag_z,mag_r,mag_theta,mag_phi,/TO_SPHERE,/DEGREE
+
+     ;;Lat, long, height
+     fEphem_MAGSph_arr[*,i]    = [mag_theta,mag_phi,mag_r] 
+     fEphem_GEOSph_arr[*,i]    = [geo_theta,geo_phi,geo_r] 
      ;;update
      ;; TiltArr    = [TiltArr,tempTilt]
      fEphem_MAG_arr[*,i] = [faPosmag_x,faPosmag_y,faPosmag_z]
      fEphem_GEO_arr[*,i] = [faPosgeo_x,faPosgeo_y,faPosgeo_z]
+
+     IF (i MOD 1000) EQ 0 THEN PRINT,i
   ENDFOR
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; Create format strings for a two-level axis:
-  dummy              = LABEL_DATE(DATE_FORMAT=['%D-%M','%Y'])
-  ;;plot it
-  ;; plot               = PLOT(julDay, $
-  ;;                           TiltArr, $
-  ;;                           XTICKUNITS=['Time', 'Time'], $
-  ;;                           XTICKFORMAT='LABEL_DATE', $
-  ;;                           XSTYLE=1, $
-  ;;                           XMAJOR=6, $
-  ;;                           XMINOR=0)
 
-  ;; inds               = [0:1000]
-  ;; plot               = PLOT(julDay[inds], $
-  ;;                           (faPos_GSM_arr[2,*])[inds], $
-  ;;                           NAME='Northern cusp', $
-  ;;                           COLOR='red', $
-  ;;                           XTICKUNITS=['Time', 'Time'], $
-  ;;                           XTICKFORMAT='LABEL_DATE', $
-  ;;                           XSTYLE=1, $
-  ;;                           XMAJOR=6, $
-  ;;                           XMINOR=0, $
-  ;;                           YTITLE = 'Z (GSM)')
+     ;;Lat, long, height
+     fEphem_MAGSph_arr    = [ $
+                            [90.-REFORM(fEphem_MAGSph_arr[0,*])], $
+                            [REFORM(fEphem_MAGSph_arr[1,*])], $
+                            [REFORM(fEphem_MAGSph_arr[2,*])-R_E] $ ;Convert to latitude from colatitude here
+                            ]   
 
-  ;; plot               = PLOT(julDay[inds], $
-  ;;                           (clS_GSM_arr[2,*])[inds], $
-  ;;                           NAME='Southern cusp', $
-  ;;                           COLOR='blue', $
-  ;;                           XTICKUNITS=['Time', 'Time'], $
-  ;;                           XTICKFORMAT='LABEL_DATE', $
-  ;;                           /OVERPLOT, $
-  ;;                           XSTYLE=1, $
-  ;;                           XMAJOR=6, $
-  ;;                           XMINOR=0, $
-  ;;                           YTITLE = 'Z (GSM)')
+     fEphem_GEOSph_arr    = [ $
+                            [90.-REFORM(fEphem_GEOSph_arr[0,*])], $
+                            [REFORM(fEphem_GEOSph_arr[1,*])], $
+                            [REFORM(fEphem_GEOSph_arr[2,*])-R_E] $ ;Convert to latitude from colatitude here
+                            ]
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;make some stuff
-  ;; tStamp             = TIMESTAMP(DAY=DayArr, $
-  ;;                                MONTH=MonthArr, $
-  ;;                                YEAR=YearArr) + "/00:00:00"
+     ;; fEphem_GEOSph_arr[*,i]    = [90.-geo_theta,geo_phi,geo_r-R_E] ;Convert to latitude from colatitude here
+
+
+     fEphem_GEOSph_arr = TRANSPOSE(fEphem_GEOSph_arr)
+     fEphem_MAGSph_arr = TRANSPOSE(fEphem_MAGSph_arr)
+
+
+  max_GEO     = {ALT:fEphem_GEOSph_arr[*,2], $
+                 LON:fEphem_GEOSph_arr[*,1], $
+                 LAT:fEphem_GEOSph_arr[*,0]}
+
+  max_MAG     = {ALT:fEphem_MAGSph_arr[*,2], $
+                 LON:fEphem_MAGSph_arr[*,1], $
+                 LAT:fEphem_MAGSph_arr[*,0]}
 
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -142,7 +143,7 @@ PRO JOURNAL__20160721__CONVERT_ALL_ALFDB_ILATS_TO_MLATS
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Save it
   PRINT,'Saving ' + outDir + outFile + '...'
-  save,maxCoords,FILENAME=outDir+outFile
+  save,maxCoords,max_GEO,max_MAG,FILENAME=outDir+outFile
 
   PRINT,"Did it!"
   STOP
