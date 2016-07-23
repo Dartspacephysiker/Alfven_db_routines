@@ -103,6 +103,8 @@ PRO JOURNAL__20160722__CONVERT_FASTLOCDB_ILATS_TO_AACGM_AND_OTHERS
      AACGM_MLT                 = MLT_V2(tmpAACGM[1])
      fEphem_AACGMSph_arr[*,i]  = [tmpAACGM,AACGM_MLT]
 
+     IF (i MOD 1000) EQ 0 THEN PRINT,i
+
   ENDFOR
 
   fEphem_AACGMSph_arr[2,*]     = (fEphem_AACGMSph_arr[2,*]*R_E-R_E) ;convert back to altitude above sea level
