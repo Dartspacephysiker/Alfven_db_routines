@@ -27,6 +27,7 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
    FASTLOC_I_LIST=fastLoc_i_list,FASTLOC_T_LIST=fastLoc_t_list,FASTLOC_DT_LIST=fastLoc_dt_list, $
    NONZERO_I=nz_i, $
    PRINT_MAXIND_SEA_STATS=print_maxInd_sea_stats, $
+   PRINT_MAXIND_SEA__STAT_TYPE=print_maxInd__statType, $
    FASTLOC_STRUCT=fastLoc, $
    FASTLOC_TIMES=fastLoc_times, $
    FASTLOC_DELTA_T=fastLoc_delta_t, $
@@ -118,6 +119,7 @@ PRO GET_FASTLOC_HISTOGRAM__EPOCH_ARRAY, $
            WINDOW_SUM=window_sum, $
            NONZERO_I=nz_i, $
            PRINT_MAXIND_SEA_STATS=print_maxInd_sea_stats, $
+           PRINT_MAXIND_SEA__STAT_TYPE=print_maxInd__statType, $
            LUN=lun
 
 END

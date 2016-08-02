@@ -43,7 +43,7 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
            clean_these_inds = [clean_these_inds,50]
         ENDIF
      ENDIF ELSE BEGIN
-        clean_these_inds = INDGEN(N_ELEMENTS(dbTags))
+        clean_these_inds = INDGEN(N_ELEMENTS(dbTags)-TAG_EXIST(dbStruct,'coords'))
      ENDELSE
      
      FOR i = 0,N_ELEMENTS(clean_these_inds)-1 DO BEGIN

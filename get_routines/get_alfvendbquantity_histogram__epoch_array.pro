@@ -36,12 +36,25 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
    HISTOBINSIZE=histoBinSize,NEVTOT=nEvTot, $
    NONZERO_I=nz_i, $
    PRINT_MAXIND_SEA_STATS=print_maxInd_sea_stats, $
+   PRINT_MAXIND_SEA__STAT_TYPE=print_maxInd__statType, $
    LUN=lun
 
   COMPILE_OPT idl2
 
   ;for printing stats
-  epoch_stats_ranges            = [[-60,0],[0,10],[10,20],[20,30],[30,40],[40,60]] ;pre-storm, 10 hours after commencement, and 10-20 hours after
+  ;; epoch_stats_ranges            = [[-60,0],[0,10],[10,20],[20,30],[30,40],[40,60]] ;pre-storm, 10 hours after commencement, and 10-20 hours after
+  
+  epoch_stats_ranges            = [ $
+                                  [-60,0], $
+                                  [0,2.5], $
+                                  [2.5,5.0], $
+                                  [5.0,7.5], $
+                                  [7.5,10.0], $
+                                  [0,10.0], $
+                                  [10,20], $
+                                  [20,30], $
+                                  [30,40], $
+                                  [40,60]] ;pre-storm, 10 hours after commencement, and 10-20 hours after
   
   IF ~KEYWORD_SET(lun) THEN lun = -1 ;stdout
 
@@ -263,6 +276,24 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
            PRINTF,lun,"It's all bad! Couldn't find any histo elements that were nonzero..."
         ENDELSE
      ENDIF
+  ENDIF
+
+  IF KEYWORD_SET(print_maxInd_sea_stats) THEN BEGIN
+     IF KEYWORD_SET(print_maxInd__statType) THEN BEGIN
+        CASE STRLOWCASE(print_maxInd__statType) OF
+           'med': printMed = 1
+           'avg': printAvg = 1
+           'sum': printSum = 1
+        ENDCASE
+     ENDIF ELSE BEGIN
+        printSum = 1
+     ENDELSE
+     
+     PRINT_RUNNING_STATS_RANGES,alf_t_arr,alf_y_arr,epoch_stats_ranges, $
+                                WINDOW_SUM=printSum, $
+                                AVERAGE=printAvg, $
+                                MEDIAN=printMed, $
+                                LUN=lun     
   ENDIF
 
   ;; cHistData = TOTAL(histData, /CUMULATIVE) / nEvTot

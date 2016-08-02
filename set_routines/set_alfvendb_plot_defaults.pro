@@ -13,6 +13,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                MIN_NEVENTS=min_nEvents, $
                                MASKMIN=maskMin, $
                                DO_DESPUNDB=do_despunDB, $
+                               USE_AACGM=use_aacgm, $
+                               USE_MAG_COORDS=use_MAG, $
                                HEMI=hemi, $
                                NORTH=north, $
                                SOUTH=south, $
@@ -152,6 +154,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
 
   IF KEYWORD_SET(do_despundb) THEN despunStr     = '--despun' ELSE despunStr = ''
 
+  IF KEYWORD_SET(use_AACGM)   THEN AACGMStr      = '_AACGM'   ELSE AACGMStr  = ''
+
+  IF KEYWORD_SET(use_MAG)   THEN MAGStr      = '_MAG'   ELSE MAGStr  = ''
+
   IF KEYWORD_SET(sample_t_restriction) THEN BEGIN
      sample_t_string                             = STRING(FORMAT='("--sampT_restr_",F0.2,"s")',sample_t_restriction) 
   ENDIF ELSE BEGIN
@@ -183,7 +189,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ENDIF
 
   paramString=hoyDia+'--'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
-              hemi+despunStr+sample_t_string+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
+              hemi+despunStr+AACGMStr+MAGStr+sample_t_string+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
   
   ;;Shouldn't be leftover, unused params from batch call
   IF ISA(e) THEN BEGIN

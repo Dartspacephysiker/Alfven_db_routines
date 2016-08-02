@@ -667,18 +667,18 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         NUMORBLIM=numOrbLim, $
                         MASKMIN=maskMin, $
                         THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
-                        SATELLITE=satellite, $
-                        OMNI_COORDS=omni_Coords, $
+                        ;; SATELLITE=satellite, $
+                        ;; OMNI_COORDS=omni_Coords, $
                         HEMI=hemi, $
-                        DO_IMF_CONDS=do_IMF_conds, $
-                        CLOCKSTR=clockStr, $
-                        ANGLELIM1=angleLim1, $
-                        ANGLELIM2=angleLim2, $
-                        BYMIN=byMin, BZMIN=bzMin, $
-                        BYMAX=byMax, BZMAX=bzMax, $
-                        DELAY=delay, STABLEIMF=stableIMF, $
-                        SMOOTHWINDOW=smoothWindow, $
-                        INCLUDENOCONSECDATA=includeNoConsecData, $
+                        ;; DO_IMF_CONDS=do_IMF_conds, $
+                        ;; CLOCKSTR=clockStr, $
+                        ;; ANGLELIM1=angleLim1, $
+                        ;; ANGLELIM2=angleLim2, $
+                        ;; BYMIN=byMin, BZMIN=bzMin, $
+                        ;; BYMAX=byMax, BZMAX=bzMax, $
+                        ;; DELAY=delay, STABLEIMF=stableIMF, $
+                        ;; SMOOTHWINDOW=smoothWindow, $
+                        ;; INCLUDENOCONSECDATA=includeNoConsecData, $
                         ;; /DO_UTC_RANGE, $
                         ;; T1_ARR=t1_arr, $
                         ;; T2_ARR=t2_arr, $

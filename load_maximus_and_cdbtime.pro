@@ -13,7 +13,10 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              DO_NOT_MAP_WIDTH_X=do_not_map_width_x, $
                              DO_CHASTDB=chastDB, $
                              DO_DESPUNDB=despunDB, $
-                             USE_AACGM=use_aacgm, $
+                             COORDINATE_SYSTEM=coordinate_system, $
+                             USE_AACGM_COORDS=use_aacgm, $
+                             USE_GEO_COORDS=use_geo, $
+                             USE_MAG_COORDS=use_mag, $
                              ;; GET_GOOD_I=get_good_i, $
                              HEMI__GOOD_I=hemi__good_i, $
                              USING_HEAVIES=using_heavies, $
@@ -48,6 +51,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   ENDIF
 
   DefDBDir             = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
+  defCoordDir          = DefDBDir + 'alternate_coords/'
+
   ;;DefDBFile            = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--maximus.sav'
   ;; DefDBFile            = 'Dartdb_20151014--500-16361_inc_lower_lats--burst_1000-16361--w_Lshell--maximus.sav'
 
@@ -60,13 +65,31 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   defDespunDBFile      = 'Dartdb_20160508--502-16361_despun--maximus--pflux_lshell--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
   defDespunDB_tFile    = 'Dartdb_20160508--502-16361_despun--cdbtime--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
 
-  AACGM_dir            = '/SPENCEdata/Research/database/FAST/ephemeris/'
-  AACGM_file           = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_GEO_and_MAG_coords.sav'
+  ;; AACGM_dir            = '/SPENCEdata/Research/database/FAST/ephemeris/'
+  ;; AACGM_file           = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_coords.sav'
+  ;; GEO_file             = 'Dartdb_20160508--502-16361_despun--maximus--GEO_coords.sav'
+  ;; MAG_file             = 'Dartdb_20160508--502-16361_despun--maximus--MAG_coords.sav'
+
+  AACGM_file__despun   = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_coords.sav'
+  GEO_file__despun     = 'Dartdb_20160508--502-16361_despun--maximus--GEO_coords.sav'
+  MAG_file__despun     = 'Dartdb_20160508--502-16361_despun--maximus--MAG_coords.sav'
+
+  IF KEYWORD_SET(check_DB) THEN BEGIN
+     out_maximus  = N_ELEMENTS(MAXIMUS__maximus)     GT 0 ? MAXIMUS__maximus     : !NULL
+     out_cdbTime  = N_ELEMENTS(MAXIMUS__times)       GT 0 ? MAXIMUS__times       : !NULL
+     good_i       = N_ELEMENTS(MAXIMUS__good_i)      GT 0 ? MAXIMUS__good_i      : !NULL
+     DBFile       = N_ELEMENTS(MAXIMUS__dbFile)      GT 0 ? MAXIMUS__dbFile      : !NULL
+     DB_tFile     = N_ELEMENTS(MAXIMUS__dbTimesFile) GT 0 ? MAXIMUS__dbTimesFile : !NULL
+     DBDir        = N_ELEMENTS(MAXIMUS__dbDir)       GT 0 ? MAXIMUS__dbDir       : !NULL
+     despunDB     = N_ELEMENTS(MAXIMUS__despun)      GT 0 ? MAXIMUS__despun      : !NULL
+     chastDB      = N_ELEMENTS(MAXIMUS__is_chastDB)  GT 0 ? MAXIMUS__is_chastDB  : !NULL
+
+     RETURN
+  ENDIF
 
   ;;Make sure we're not switching between despun and not-despun
   IF  (  KEYWORD_SET(MAXIMUS__despun) AND ~KEYWORD_SET(despunDB) ) OR $
       ( ~KEYWORD_SET(MAXIMUS__despun) AND  KEYWORD_SET(despunDB) ) $
-     AND ~KEYWORD_SET(check_DB) $
   THEN BEGIN
      IF N_ELEMENTS(MAXIMUS__maximus) NE 0 THEN BEGIN
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'Swapping DBs!'
@@ -80,7 +103,6 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   IF ~KEYWORD_SET(swap_DBs) THEN BEGIN
      IF  (  KEYWORD_SET(MAXIMUS__is_chastDB) AND ~KEYWORD_SET(chastDB) ) OR $
         ( ~KEYWORD_SET(MAXIMUS__is_chastDB) AND  KEYWORD_SET(chastDB) ) $
-        AND ~KEYWORD_SET(check_DB) $
      THEN BEGIN
         IF N_ELEMENTS(MAXIMUS__maximus) NE 0 THEN BEGIN
            IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'Swapping DBs!'
@@ -113,9 +135,9 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      ENDELSE
   ENDELSE
   
-  IF N_ELEMENTS(MAXIMUS__maximus) EQ 0 OR $
-     KEYWORD_SET(force_load_maximus)   OR $
-     KEYWORD_SET(swap_DBs) THEN BEGIN
+  IF (N_ELEMENTS(MAXIMUS__maximus) EQ 0 OR $
+      KEYWORD_SET(force_load_maximus)   OR $
+      KEYWORD_SET(swap_DBs)) THEN BEGIN
      IF KEYWORD_SET(force_load_maximus) THEN BEGIN
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"Forcing load, whether or not we already have maximus..."
      ENDIF
@@ -134,10 +156,13 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
         STOP
      ENDIF
   ENDIF ELSE BEGIN
-     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"There is already a maximus struct loaded! Not loading " + DBFile
-     DBFile   = MAXIMUS__dbFile
-     DB_tFile = MAXIMUS__dbTimesFile
-     despunDB = MAXIMUS__despun
+     IF ~KEYWORD_SET(quiet) THEN BEGIN
+        PRINTF,lun,"There is already a maximus struct loaded! Not loading " + DBFile
+     ENDIF
+
+     DBFile    = N_ELEMENTS(MAXIMUS__dbFile)      GT 0 ? MAXIMUS__dbFile      : '(blank)'
+     DB_tFile  = N_ELEMENTS(MAXIMUS__dbTimesFile) GT 0 ? MAXIMUS__dbTimesFile : '(blank)'
+     despunDB = N_ELEMENTS(MAXIMUS__despun)       GT 0 ? MAXIMUS__despun      : !NULL
   ENDELSE
 
   IF N_ELEMENTS(MAXIMUS__times) EQ 0 OR $
@@ -146,23 +171,27 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      IF KEYWORD_SET(force_load_cdbTime) THEN BEGIN
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"Forcing load, whether or not we already have cdbTime..."
      ENDIF
-     IF FILE_TEST(DBDir+DB_tFile) AND ~KEYWORD_SET(just_maximus) THEN RESTORE,DBDir+DB_tFile
-     IF cdbTime EQ !NULL AND ~KEYWORD_SET(just_maximus) THEN BEGIN
+     IF FILE_TEST(DBDir+DB_tFile) $
+        AND ~KEYWORD_SET(just_maximus) $
+     THEN BEGIN
+        RESTORE,DBDir+DB_tFile
+     ENDIF
+     IF ( cdbTime EQ !NULL AND ~KEYWORD_SET(just_maximus) ) $         
+     THEN BEGIN
         PRINT,"Couldn't load cdbTime!"
         STOP
      ENDIF
-     MAXIMUS__times  = cdbTime
-     MAXIMUS__dbTimesFile = DB_tFile
+     MAXIMUS__times       = N_ELEMENTS(cdbTime)  GT 0 ? cdbTime  : !NULL
+     MAXIMUS__dbTimesFile = N_ELEMENTS(DB_tFile) GT 0 ? DB_tFile : !NULL
   ENDIF ELSE BEGIN
-     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"There is already a cdbTime struct loaded! Not loading " + DB_tFile
+     IF ~KEYWORD_SET(quiet) THEN BEGIN
+        PRINTF,lun,"There is already a cdbTime struct loaded! Not loading " + DB_tFile
+     ENDIF
+
      DB_tFile = MAXIMUS__dbTimesFile
   ENDELSE
 
   IF correct_fluxes AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
-     ;; IF KEYWORD_SET(despunDB) THEN BEGIN
-     ;;    PRINTF,lun,'Not mapping to the ionosphere because we have no mapping database for the new despun data set!'
-     ;; ENDIF
-     ;; CORRECT_ALFVENDB_FLUXES,maximus,MAP_PFLUX_TO_IONOS=~(KEYWORD_SET(do_not_map_pflux) OR KEYWORD_SET(despunDB))
      CORRECT_ALFVENDB_FLUXES,MAXIMUS__maximus, $
                              MAP_ESA_CURRENT_TO_IONOS=~KEYWORD_SET(do_not_map_esa_current), $
                              MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux), $
@@ -175,16 +204,68 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   ENDIF
 
 
+  IF KEYWORD_SET(coordinate_system) THEN BEGIN
+     CASE STRUPCASE(coordinate_system) OF
+        'AACGM': BEGIN
+           use_aacgm = 1
+           use_geo   = 0
+           use_mag   = 0
+        END
+        'GEO'  : BEGIN
+           use_aacgm = 0
+           use_geo   = 1
+           use_mag   = 0
+        END
+        'MAG'  : BEGIN
+           use_aacgm = 0
+           use_geo   = 0
+           use_mag   = 1
+        END
+     ENDCASE
+  ENDIF
+
   IF KEYWORD_SET(use_aacgm) THEN BEGIN
-     PRINT,'Using AACGM lat and MLT ...'
+     PRINT,'Using AACGM lat, MLT, and alt ...'
 
-     LOAD,AACGM_dir+AACGM_file
+     IF KEYWORD_SET(despunDB) THEN BEGIN
+        AACGM_file = AACGM_file__despun
+     ENDIF;;  ELSE BEGIN
+        
+     ;; ENDELSE
 
-     MAXIMUS__maximus.mlt   = MAX_AACGM.alt
-     MAXIMUS__maximus.mlt   = MAX_AACGM.mlt
-     MAXIMUS__maximus.ilat  = MAX_AACGM.lat
+     RESTORE,defCoordDir+AACGM_file
 
-     MAXIMUS__maximus       = CREATE_STRUCT(MAXIMUS__maximus,'COORDS','AACGM')     
+     ALFDB_SWITCH_COORDS,MAXIMUS__maximus,max_AACGM,'AACGM'
+
+  ENDIF
+
+  IF KEYWORD_SET(use_geo) THEN BEGIN
+     PRINT,'Using GEO lat and alt ...'
+
+     IF KEYWORD_SET(despunDB) THEN BEGIN
+        GEO_file = GEO_file__despun
+     ENDIF;;  ELSE BEGIN
+        
+     ;; ENDELSE
+
+     RESTORE,defCoordDir+GEO_file
+
+     ALFDB_SWITCH_COORDS,MAXIMUS__maximus,max_GEO,'GEO'
+
+  ENDIF
+
+  IF KEYWORD_SET(use_mag) THEN BEGIN
+     PRINT,'Using MAG lat and alt ...'
+
+     IF KEYWORD_SET(despunDB) THEN BEGIN
+        MAG_file = MAG_file__despun
+     ENDIF;;  ELSE BEGIN
+        
+     ;; ENDELSE
+
+     RESTORE,defCoordDir+MAG_file
+
+     ALFDB_SWITCH_COORDS,MAXIMUS__maximus,max_MAG,'MAG'
 
   ENDIF
 

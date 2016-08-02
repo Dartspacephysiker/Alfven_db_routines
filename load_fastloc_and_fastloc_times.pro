@@ -7,7 +7,11 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    FORCE_LOAD_TIMES=force_load_times, $
                                    FORCE_LOAD_ALL=force_load_all, $
                                    FOR_ESPEC_DBS=for_eSpec_DBs, $
-                                   USE_AACGM=use_aacgm, $
+                                   COORDINATE_SYSTEM=coordinate_system, $
+                                   USE_AACGM_COORDS=use_aacgm, $
+                                   USE_GEO_COORDS=use_geo, $
+                                   USE_MAG_COORDS=use_mag, $
+                                   ;; CHECK_DB=check_DB, $
                                    OUT__DO_NOT_LOAD_IN_MEM=do_not_load_in_mem, $
                                    LUN=lun
 
@@ -51,9 +55,26 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   DefESpecDBFile                    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--smaller_datatypes--no_interval_startstop.sav'
   DefESpecDB_tFile                  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--times.sav'
 
-  AACGM_dir        = '/SPENCEdata/Research/database/FAST/ephemeris/'
-  AACGM_file       = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_GEO_and_MAG_coords.sav'
+  defCoordDir                       = defDBDir + 'alternate_coords/'
+  ;; AACGM_dir        = '/SPENCEdata/Research/database/FAST/ephemeris/'
+  ;; AACGM_file       = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_GEO_and_MAG_coords.sav'
+  AACGM_file                        = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_coords.sav'
+  GEO_file                          = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--GEO_coords.sav'
+  MAG_file                          = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--MAG_coords.sav'
 
+
+  ;; IF KEYWORD_SET(check_DB) THEN BEGIN
+  ;;    out_maximus  = N_ELEMENTS(MAXIMUS__maximus)     GT 0 ? MAXIMUS__maximus     : !NULL
+  ;;    out_cdbTime  = N_ELEMENTS(MAXIMUS__times)       GT 0 ? MAXIMUS__times       : !NULL
+  ;;    good_i       = N_ELEMENTS(MAXIMUS__good_i)      GT 0 ? MAXIMUS__good_i      : !NULL
+  ;;    DBFile       = N_ELEMENTS(MAXIMUS__dbFile)      GT 0 ? MAXIMUS__dbFile      : !NULL
+  ;;    DB_tFile     = N_ELEMENTS(MAXIMUS__dbTimesFile) GT 0 ? MAXIMUS__dbTimesFile : !NULL
+  ;;    DBDir        = N_ELEMENTS(MAXIMUS__dbDir)       GT 0 ? MAXIMUS__dbDir       : !NULL
+  ;;    despunDB     = N_ELEMENTS(MAXIMUS__despun)      GT 0 ? MAXIMUS__despun      : !NULL
+  ;;    chastDB      = N_ELEMENTS(MAXIMUS__is_chastDB)  GT 0 ? MAXIMUS__is_chastDB  : !NULL
+
+  ;;    RETURN
+  ;; ENDIF
 
   IF N_ELEMENTS(DBDir) EQ 0 THEN BEGIN
      DBDir                          = DefDBDir
@@ -101,18 +122,74 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      PRINTF,lun,"There is already a fastloc_times struct loaded! Not loading " + DB_tFile
   ENDELSE
 
-  IF KEYWORD_SET(use_aacgm) THEN BEGIN
-     PRINT,'Using AACGM lat and MLT ...'
-
-     LOAD,AACGM_dir+AACGM_file
-
-     fastLoc.alt   = FL_AACGM.alt
-     fastLoc.mlt   = FL_AACGM.mlt
-     fastLoc.ilat  = FL_AACGM.lat
-
-     fastLoc       = CREATE_STRUCT(fastLoc,'COORDS','AACGM')     
-
+  IF KEYWORD_SET(coordinate_system) THEN BEGIN
+     CASE STRUPCASE(coordinate_system) OF
+        'AACGM': BEGIN
+           use_aacgm = 1
+           use_geo   = 0
+           use_mag   = 0
+        END
+        'GEO'  : BEGIN
+           use_aacgm = 0
+           use_geo   = 1
+           use_mag   = 0
+        END
+        'MAG'  : BEGIN
+           use_aacgm = 0
+           use_geo   = 0
+           use_mag   = 1
+        END
+     ENDCASE
   ENDIF
 
+  IF KEYWORD_SET(use_aacgm) THEN BEGIN
+     PRINT,'Using AACGM coords ...'
+
+     RESTORE,defCoordDir+AACGM_file
+
+     ALFDB_SWITCH_COORDS,fastLoc,FL_AACGM,'AACGM'
+
+     changedCoords = 1
+  ENDIF
+
+  IF KEYWORD_SET(use_GEO) THEN BEGIN
+     PRINT,'Using GEO coords ...'
+
+     RESTORE,defCoordDir+GEO_file
+
+     ALFDB_SWITCH_COORDS,fastLoc,FL_GEO,'GEO'
+
+     changedCoords = 1
+  ENDIF
+
+  IF KEYWORD_SET(use_MAG) THEN BEGIN
+     PRINT,'Using MAG coords ...'
+
+     RESTORE,defCoordDir+MAG_file
+
+     ALFDB_SWITCH_COORDS,fastLoc,FL_MAG,'MAG'
+
+     changedCoords = 1
+  ENDIF
+
+
+  IF KEYWORD_SET(changedCoords) THEN BEGIN
+     LOAD_MAXIMUS_AND_CDBTIME,maximus,/CHECK_DB
+     IF N_ELEMENTS(maximus) GT 0 THEN BEGIN
+        CASE 1 OF
+           TAG_EXIST(maximus,'coords'): BEGIN
+              IF STRLOWCASE(fastLoc.coords) NE STRLOWCASE(maximus.coords) THEN BEGIN
+                 PRINT,'Mismatched coordinate systems!'
+                 STOP
+              ENDIF 
+           END
+           ELSE: BEGIN
+              PRINT,'Maximus coordinates have not been changed!'
+              STOP
+           END
+        ENDCASE
+     ENDIF 
+  ENDIF
+  
 
 END
