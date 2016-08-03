@@ -117,7 +117,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      DBDir='/SPENCEdata/Research/database/FAST/Chaston_et_al_2007--current_db/'
      DBFile = "maximus.dat"
      DB_tFile = "cdbtime.sav"
-     correct_fluxes = 0
+     correct_fluxes = 1
      MAXIMUS__is_chastDB = 1
   ENDIF ELSE BEGIN
      MAXIMUS__is_chastDB = 0
@@ -199,6 +199,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              MAP_HEAVIES_TO_IONOS=~KEYWORD_SET(do_not_map_heavies), $
                              ;; MAP_WIDTH_X_TO_IONOS=~KEYWORD_SET(do_not_map_width_x), $
                              DO_DESPUNDB=despunDB, $
+                             DO_CHASTDB=chastDB, $
                              USING_HEAVIES=using_heavies, $
                              QUIET=quiet
   ENDIF

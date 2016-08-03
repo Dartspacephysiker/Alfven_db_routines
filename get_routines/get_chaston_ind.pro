@@ -431,13 +431,24 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
               MIMC__orbRange                      = orbRange
            END
            ELSE: BEGIN
-              PRINTF,lun,"Incorrect input for keyword 'orbRange'!!"
-              PRINTF,lun,"Please use orbRange=[minOrb maxOrb] or a single element"
-              RETURN, -1
+              PRINTF,lun,"Assuming you want me to believe you about this orbit array ..."
+              is_orbArr                           = 1
+              MIMC__orbRange                      = orbRange
+              ;; PRINTF,lun,"Incorrect input for keyword 'orbRange'!!"
+              ;; PRINTF,lun,"Please use orbRange=[minOrb maxOrb] or a single element"
+              ;; RETURN, -1
            END
         ENDCASE
         ;; IF N_ELEMENTS(orbRange) EQ 2 THEN BEGIN
-        orb_i                                     = GET_ORBRANGE_INDS(dbStruct,MIMC__orbRange[0],MIMC__orbRange[1],LUN=lun)
+
+        IF KEYWORD_SET(is_orbArr) THEN BEGIN
+           tmp_i                                  = CGSETINTERSECTION(dbStruct.orbit, $
+                                                                      MIMC__orbRange, $
+                                                                      POSITIONS=orb_i)
+        ENDIF ELSE BEGIN
+           orb_i                                  = GET_ORBRANGE_INDS(dbStruct,MIMC__orbRange[0],MIMC__orbRange[1],LUN=lun)
+        ENDELSE
+
         IF orb_i[0] NE -1 THEN BEGIN
            region_i                               = CGSETINTERSECTION(region_i,orb_i)
         ENDIF ELSE BEGIN

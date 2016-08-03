@@ -95,6 +95,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             MAP_ESA_CURRENT_TO_IONOS=map_esa_current, $
                             MAP_PFLUX_TO_IONOS=map_pflux, $
                             DO_DESPUNDB=do_despunDB, $
+                            DO_CHASTDB=do_chastDB, $
                             USING_HEAVIES=using_heavies, $
                             MAP_HEAVIES_TO_IONOS=map_heavies, $
                             MAP_IONFLUX_TO_IONOS=map_ionflux, $
@@ -165,17 +166,28 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'09-INTEG_ELEC_ENERGY_FLUX  (Earthward is positive per AS5)'
      correctStr += '09-INTEG_ELEC_ENERGY_FLUX  (Earthward is positive per AS5)' + STRING(10B)
 
-     ;;10-EFLUX_LOSSCONE_INTEG
-     ;;Truly integrated over Alfven interval, mapped to ionosphere
-     maximus.eflux_losscone_integ[south_i] = -1 * maximus.eflux_losscone_integ[south_i]
-     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'10-EFLUX_LOSSCONE_INTEG    (Flip sign in S Hemi)'
-     correctStr += '10-EFLUX_LOSSCONE_INTEG    (Flip sign in S Hemi)' + STRING(10B)
+     IF ~KEYWORD_SET(do_chastDB) THEN BEGIN
+
+        ;;10-EFLUX_LOSSCONE_INTEG
+        ;;Truly integrated over Alfven interval, mapped to ionosphere
+        maximus.eflux_losscone_integ[south_i] = -1 * maximus.eflux_losscone_integ[south_i]
+        IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'10-EFLUX_LOSSCONE_INTEG    (Flip sign in S Hemi)'
+        correctStr += '10-EFLUX_LOSSCONE_INTEG    (Flip sign in S Hemi)' + STRING(10B)
 
      ;;11-TOTAL_EFLUX_INTEG
      ;;field-aligned energy flux Integrated over all angles, mapped to ionosphere
      maximus.total_eflux_integ[south_i] = -1 * maximus.total_eflux_integ[south_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'11-TOTAL_EFLUX_INTEG       (Flip sign in S Hemi)'
      correctStr += '11-TOTAL_EFLUX_INTEG       (Flip sign in S Hemi)' + STRING(10B)
+
+     ENDIF;;  ELSE BEGIN
+
+     ;;    maximus.integ_elec_energy_flux[south_i] = -1 * maximus.integ_elec_energy_flux[south_i]
+     ;;    IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'10-EFLUX_LOSSCONE_INTEG    (Flip sign in S Hemi)'
+     ;;    correctStr += '10-INTEG_ELEC_ENERGY_FLUX  (Flip sign in S Hemi)' + STRING(10B)
+     ;; ENDELSE
+
+
 
      ;;12-MAX_CHARE_LOSSCONE
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'12-MAX_CHARE_LOSSCONE      (All positive because AS5 uses MAX)'
@@ -234,7 +246,9 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
 
      IF KEYWORD_SET(map_heavies) OR KEYWORD_SET(map_pflux) OR KEYWORD_SET(map_ionflux) THEN BEGIN
         LOAD_MAPPING_RATIO_DB,mapRatio, $
-                              DO_DESPUNDB=do_despunDB
+                              DO_DESPUNDB=do_despunDB, $
+                              DO_CHASTDB=do_chastDB
+
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"***Mapped the following to the ionosphere, multiplying by B_100km/B_alt"
         correctStr += "***Mapped the following to the ionosphere, multiplying by B_100km/B_alt" + STRING(10B)
      ENDIF
@@ -278,7 +292,18 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
 
      ;;Added 2015/12/22
      mu_0                         = DOUBLE(4.0D*!PI*1e-7)
-     maximus.pfluxest             = DOUBLE((maximus.delta_e)*(maximus.delta_b*1e-9))/(2.D*mu_0) ;rm factor of 1e-3 from E-field since we want mW/m^2
+
+     pfluxest                     = DOUBLE((maximus.delta_e)*(maximus.delta_b*1e-9))/(2.D*mu_0) ;rm factor of 1e-3 from E-field since we want mW/m^2
+
+     CASE 1 OF
+        KEYWORD_SET(DO_chastDB): BEGIN
+           maximus                = CREATE_STRUCT(maximus,'pFluxEst',pFluxEst)
+        END
+        ELSE: BEGIN
+           maximus.pfluxest       = pFluxEst
+        END
+     ENDCASE
+
      IF KEYWORD_SET(map_pflux) THEN BEGIN
         maximus.pFluxEst          = maximus.pFluxEst * mapRatio.ratio
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->49-PFLUXEST'

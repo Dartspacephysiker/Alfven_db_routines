@@ -3,6 +3,7 @@ PRO LOAD_MAPPING_RATIO_DB,mapRatio, $
                           DBDir=DBDir, $
                           DBFile=DBFile, $
                           DO_DESPUNDB=do_despunDB, $
+                          DO_CHASTDB=do_chastDB, $
                           LUN=lun
   
   COMPILE_OPT idl2
@@ -14,16 +15,27 @@ PRO LOAD_MAPPING_RATIO_DB,mapRatio, $
   defDBFile            = 'mapratio_for_20151014_DB--up_to16361--20151221.dat'
   ;; defDespunDBFile      = 'mapratio_for_20160107_despun_DB--up_to16361--20160109.dat'
   defDespunDBFile      = 'mapratio_for_20160508_despun_DB--up_to16361--20160613.dat'
+  defChastDBFile       = 'mapratio_for_chastDB--20160802.dat'
 
   IF N_ELEMENTS(DBDir) EQ 0 THEN DBDir = DefDBDir
 
   IF N_ELEMENTS(DBFile) EQ 0 THEN BEGIN
-     IF KEYWORD_SET(do_despunDB) THEN BEGIN
-        DBFile         = defDespunDBFile
-        PRINTF,lun,'Mapping Poynting fluxes using mapping ratios for despun DB ...'
-     ENDIF ELSE BEGIN
-        DBFile         = defDBFile
-     ENDELSE
+     CASE 1 OF
+        KEYWORD_SET(do_despunDB): BEGIN
+           DBFile      = defDespunDBFile
+           dbName      = 'despun'
+        END
+        KEYWORD_SET(do_chastDB): BEGIN
+           DBFile      = defChastDBFile
+           dbName      = 'Chast'
+        END
+        ELSE: BEGIN
+           DBFile      = defDBFile
+           dbName      = 'regulièr'
+        END
+     ENDCASE
+
+     PRINTF,lun,'Mapping Poynting fluxes using mapping ratios for ' + dbName + ' DB ...'
   ENDIF
 
   IF N_ELEMENTS(mapRatio) EQ 0 THEN BEGIN
