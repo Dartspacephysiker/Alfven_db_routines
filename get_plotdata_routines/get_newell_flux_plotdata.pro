@@ -27,6 +27,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              LOGFLUXPLOT=logFluxPlot, $
                              DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                              MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                             MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                             H2DPROBOCC=H2DProbocc, $
                              DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                              DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                              DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -244,6 +246,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        LOGFLUXPLOT=logFluxPlot, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                        MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                       MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                       H2DPROBOCC=H2DProbocc, $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                        DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                        DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $

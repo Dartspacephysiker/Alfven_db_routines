@@ -160,6 +160,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           GROSSLUN=grossLun, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                          MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
                           ADD_VARIANCE_PLOTS=add_variance_plots, $
                           ONLY_VARIANCE_PLOTS=only_variance_plots, $
                           VAR__PLOTRANGE=var__plotRange, $
@@ -650,7 +651,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
   ENDIF
   
   ;;########Event probability########
-  IF KEYWORD_SET(probOccurrencePlot) THEN BEGIN
+  IF KEYWORD_SET(probOccurrencePlot) OR KEYWORD_SET(multiply_fluxes_by_probOccurrence) THEN BEGIN
      GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                                   LOGPROBOCCURRENCE=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logProbOccurrence)), $
                                   PROBOCCURRENCERANGE=probOccurrenceRange, $
@@ -674,6 +675,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                   H2DFLUXN=h2dFluxN, $
                                   H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
                                   OUT_H2DMASK=out_h2dMask, $
+                                  OUT_H2DPROBOCC=H2DProbOcc, $
                                   H2DSTR=h2dStr, $
                                   TMPLT_H2DSTR=tmplt_h2dStr, $
                                   DATANAME=dataName, $
@@ -681,11 +683,14 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
      
      h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
-     h2dStrArr=[h2dStrArr,h2dStr] 
-     IF keepMe THEN BEGIN 
-        dataNameArr=[dataNameArr,dataName] 
-        dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
-     ENDIF 
+     IF KEYWORD_SET(probOccurrencePlot) THEN BEGIN
+        h2dStrArr=[h2dStrArr,h2dStr] 
+        IF keepMe THEN BEGIN 
+           dataNameArr=[dataNameArr,dataName] 
+           dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+        ENDIF 
+     ENDIF
+
   ENDIF
 
 
@@ -795,6 +800,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     THISTDENOMINATOR=tHistDenominator, $
                                     DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                                     MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                                    MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                                    H2DPROBOCC=H2DProbOcc, $
                                     H2DSTRARR=h2dStrArr, $
                                     TMPLT_H2DSTR=tmplt_h2dStr, $
                                     H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
@@ -869,6 +876,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              THISTDENOMINATOR=tHistDenominator, $
                              DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                              MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                             MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                             H2DPROBOCC=H2DProbOcc, $
                              H2DSTR=h2dStr, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
                              H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
@@ -1012,6 +1021,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     THISTDENOMINATOR=tHistDenominator, $
                                     DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                                     MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                                    MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                                    H2DPROBOCC=H2DProbOcc, $
                                     H2DSTRARR=h2dStrArr, $
                                     TMPLT_H2DSTR=tmplt_h2dStr, $
                                     H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
@@ -1085,6 +1096,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              THISTDENOMINATOR=tHistDenominator, $
                              DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                              MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                             MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                             H2DPROBOCC=H2DProbOcc, $
                              H2DSTR=h2dStr, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
                              H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
@@ -1161,6 +1174,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        THISTDENOMINATOR=tHistDenominator, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                        MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                       MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                       H2DPROBOCC=H2DProbOcc, $
                        H2DSTR=h2dStr, $
                        TMPLT_H2DSTR=tmplt_h2dStr, $
                        H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -1298,6 +1313,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                          MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                          H2DPROBOCC=H2DProbOcc, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
@@ -1373,6 +1390,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        THISTDENOMINATOR=tHistDenominator, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                        MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                       MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                       H2DPROBOCC=H2DProbOcc, $
                        H2DSTR=h2dStr, $
                        TMPLT_H2DSTR=tmplt_h2dStr, $
                        H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -1469,6 +1488,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                          MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                          H2DPROBOCC=H2DProbOcc, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -1543,6 +1564,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        THISTDENOMINATOR=tHistDenominator, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                        MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                       MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                       H2DPROBOCC=H2DProbOcc, $
                        H2DSTR=h2dStr, $
                        TMPLT_H2DSTR=tmplt_h2dStr, $
                        H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -1692,6 +1715,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        THISTDENOMINATOR=tHistDenominator, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                        MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                       MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                       H2DPROBOCC=H2DProbOcc, $
                        H2DSTR=h2dStr, $
                        TMPLT_H2DSTR=tmplt_h2dStr, $
                        H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -1805,6 +1830,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                    LOGPLOT=log_custom, $
                                    DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                                    MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                                   MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                                   H2DPROBOCC=H2DProbOcc, $
                                    DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                    DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                                    DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $

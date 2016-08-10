@@ -23,6 +23,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                                  H2DFLUXN=h2dFluxN, $
                                  H2DMASK=h2dMask, $
                                  OUT_H2DMASK=out_h2DMask, $
+                                 OUT_H2DPROBOCC=H2DProbOcc, $
                                  TMPLT_H2DSTR=tmplt_h2dStr, $
                                  DATANAME=dataName,DATARAWPTR=dataRawPtr, $
                                  PRINT_MAX_AND_MIN=print_mandm, $
@@ -123,17 +124,17 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   mlts                      = SHIFT_MLTS_FOR_H2D(maximus,plot_i,shiftM)
   ilats                     = (KEYWORD_SET(do_lshell) ? maximus.lshell : maximus.ilat)[plot_i]
 
-  h2dStr.data=hist2d(mlts, $
-                     ilats,$
-                      widthData,$
-                      MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
-                      MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
-                      BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
-                      OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+  h2dStr.data               = HIST2D(mlts, $
+                                     ilats,$
+                                     widthData,$
+                                     MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
+                                     MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
+                                     BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                                     OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
   
 
   PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,tHistDenominator,outH2DBinsMLT,outH2DBinsILAT,H2DFluxN,dataName,h2dMask
-
+  
   ;; h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/tHistDenominator[WHERE(h2dstr.data GT 0)]
   h2dStr.data[WHERE(~h2dMask)] = h2dStr.data[WHERE(~h2dMask)]/tHistDenominator[WHERE(~h2dMask)]
 
@@ -163,6 +164,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   dataRawPtr           = PTR_NEW(widthData)
   h2dStr.name          = dataName
   out_h2dMask          = h2dMask
+
+  H2DProbOcc           = h2dStr.data
   ;; CLOSE,lun
   ;; FREE_LUN,lun
 

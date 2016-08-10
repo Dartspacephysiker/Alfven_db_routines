@@ -26,6 +26,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       LOGFLUXPLOT=logFluxPlot, $
                       DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                       MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                      MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                      H2DPROBOCC=H2DProbOcc, $
                       DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                       DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                       DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -1028,6 +1030,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            
         END
      ENDCASE
+
+     IF KEYWORD_SET(multiply_fluxes_by_probOccurrence) THEN BEGIN
+        PRINT,'Multiplying by probability of occurrence!'
+        dataName += '_probOcc'
+        h2dStr.data *= H2DProbOcc
+     ENDIF
 
      IF KEYWORD_SET(do_grossRate_fluxQuantities) $
         OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
