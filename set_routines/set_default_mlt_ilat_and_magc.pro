@@ -89,8 +89,8 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
   ENDELSE
   IF N_ELEMENTS(binI) EQ 0 THEN binI = defBinI
 
-  minI=FLOOR(minI*4.0)*0.25
-  maxI=FLOOR(maxI*4.0)*0.25
+  minI = FLOOR(minI*4.0D)*0.25D
+  maxI = FLOOR(maxI*4.0D)*0.25D
 
   ;;Handle L-shells
   IF N_ELEMENTS(minL) EQ 0 THEN minL=defMinL
