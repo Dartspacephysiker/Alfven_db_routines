@@ -40,7 +40,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           INTLUN=intLun, $
                           _EXTRA=e
 
-  restore,ancillaryData
+  RESTORE,ancillaryData
   IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
      IF ABS(minM - 0.00) LT 0.0001 AND ABS(maxM-24.00) LT 0.0001 THEN BEGIN
         wholeCap                  = 1
@@ -127,8 +127,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ENDELSE
   ENDELSE
 
-  cgMap_Set, centerLat, centerLon,/STEREOGRAPHIC, /HORIZON, $
-             /ISOTROPIC, /NOERASE, /NOBORDER, POSITION=map_position,LIMIT=lim
+  CGMAP_SET,centerLat,centerLon,/STEREOGRAPHIC,/HORIZON, $
+             /ISOTROPIC,/NOERASE,/NOBORDER, $
+            POSITION=map_position,LIMIT=lim
   ;;Limit=[minI-5,maxM*15-360,maxI+5,minM*15],
 
   IF N_ELEMENTS(plotTitle) EQ 0 THEN BEGIN
@@ -301,7 +302,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   IF ~temp.is_logged THEN BEGIN
 
      IF N_ELEMENTS(WHERE(temp.data[notMasked] LT 0,/NULL)) EQ 0 AND ~temp.do_posNeg_cb THEN BEGIN
-        RAINBOW_COLORS,N_COLORS=nLevels
+        ;; RAINBOW_COLORS,N_COLORS=nLevels
+        ;; LOADCT,76  ;Modded rainbow; drops purples at bottom
+        ;; LOADCT,77 ;greenthing
 
         ;;This is the one for doing sweet flux plots that include negative values
         ;; cgLoadCT, ctIndex, BREWER=ctBrewer, REVERSE=ctReverse, NCOLORS=nLevels
@@ -317,7 +320,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ;; cgLoadCT, ctIndex, BREWER=ctBrewer, REVERSE=ctReverse, NCOLORS=nLevels
      ENDIF ELSE BEGIN
         ;; This one is the one we use for nEvent- and orbit-type plots (plots w/ all positive values)
-        RAINBOW_COLORS,N_COLORS=nLevels
+        ;; RAINBOW_COLORS,N_COLORS=nLevels
+        ;; LOADCT,76  ;Modded rainbow; drops purples at bottom
+        ;; LOADCT,77 ;greenthing
      ENDELSE
 
      ;; cgLoadCT, ctIndex_allPosData, BREWER=ctBrewer_allPosData, REVERSE=ctReverse_allPosData, NCOLORS=nLevels
@@ -334,8 +339,12 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDELSE
 
   ;; RAINBOW_COLORS,N_COLORS=nLevels
-  RAINBOW_COLORS,N_COLORS=nLevels
-  ;; LOADCT2,39
+  ;; RAINBOW_COLORS,N_COLORS=nLevels
+  ;; LOADCT,81  ;Modded rainbow; drops purples at bottom
+  ;; LOADCT,84  ;Attempt to recreate (sort of) Bin's color bar
+  LOADCT,78,FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl'  ;Attempt to recreate (sort of) Bin's color bar
+  ;; LOADCT,77 ;greenthing
+  ;; LOADCT2,39 ;FAST rainbow table
 
   eq_scale_ct = 0
   IF KEYWORD_SET(eq_scale_ct) THEN BEGIN
