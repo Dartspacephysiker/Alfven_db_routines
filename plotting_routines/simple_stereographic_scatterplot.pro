@@ -89,12 +89,13 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
         ENDCASE
      ENDIF ELSE BEGIN
         PRINT,'No hemisphere provided! Assuming north...'
-        north                                     = 1 ;default to northern hemi
+        hemi                                      = 'NORTH'
+        ;; north                                     = 1 ;default to northern hemi
      ENDELSE
   ENDIF
 
   IF ~KEYWORD_SET(centerLon) THEN BEGIN
-     centerLon=KEYWORD_SET(south) ? 180 : 0
+     centerLon = (STRUPCASE(hemi) EQ 'SOUTH') ? 180 : 0
   ENDIF
 
   lun = -1
@@ -360,7 +361,7 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
      window.save,plotDir + sPName,RESOLUTION=defRes
 
      IF KEYWORD_SET(close_after_save) THEN BEGIN
-        window.close
+        window.Close
         window = !NULL
      ENDIF
   ENDIF

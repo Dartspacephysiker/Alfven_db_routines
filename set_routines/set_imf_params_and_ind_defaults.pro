@@ -90,6 +90,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     DO_ABS_BTMAX=abs_btMax, $
                                     DO_ABS_BXMIN=abs_bxMin, $
                                     DO_ABS_BXMAX=abs_bxMax, $
+                                    BX_OVER_BY_RATIO_MAX=bx_over_by_ratio_max, $
+                                    BX_OVER_BY_RATIO_MIN=bx_over_by_ratio_min, $
                                     BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
                                     DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
                                     PARAMSTRING=paramString, $
@@ -218,11 +220,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
         ;;Setting angle limits 45 and 135, for example, gives a 90-deg
         ;;window for dawnward and duskward plots
         IF clockStr[0] NE "all_IMF" THEN BEGIN
-           angleLim1            = KEYWORD_SET(angleLim1) ? angleLim1 : defAngleLim1 ;in degrees
-           angleLim2            = KEYWORD_SET(angleLim2) ? angleLim2 : defAngleLim2 ;in degrees
+           angleLim1            = N_ELEMENTS(angleLim1) GT 0 ? angleLim1 : defAngleLim1 ;in degrees
+           angleLim2            = N_ELEMENTS(angleLim2) GT 0 ? angleLim2 : defAngleLim2 ;in degrees
         ENDIF ELSE BEGIN 
-           angleLim1            = KEYWORD_SET(angleLim1) ? angleLim1 : 180 ;for doing all IMF
-           angleLim2            = KEYWORD_SET(angleLim2) ? angleLim2 : 180
+           angleLim1            = N_ELEMENTS(angleLim1) GT 0 ? angleLim1 : 180 ;for doing all IMF
+           angleLim2            = N_ELEMENTS(angleLim2) GT 0 ? angleLim2 : 180
         ENDELSE
      ENDIF ELSE BEGIN
         clockStr                = ''
@@ -234,11 +236,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      
      IF N_ELEMENTS(byMin) GT 0 THEN BEGIN
         byMinStr                = '_' + (KEYWORD_SET(abs_byMin) ? 'ABS_' : '') $
-                                  + 'byMin' + String(byMin,format='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
+                                  + 'byMin' + String(byMin,FORMAT='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
      ENDIF
      IF N_ELEMENTS(byMax) GT 0 THEN BEGIN
         byMaxStr                = '_' + (KEYWORD_SET(abs_byMax) ? 'ABS_' : '') $
-                                  + 'byMax' + String(byMax,format='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
+                                  + 'byMax' + String(byMax,FORMAT='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
      ENDIF
      
      ;;Requirement for IMF Bz magnitude?
@@ -247,11 +249,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      
      IF N_ELEMENTS(bzMin) GT 0 THEN BEGIN
         bzMinStr                = '_' + (KEYWORD_SET(abs_bzMin) ? 'ABS_' : '') $
-                                  + 'bzMin' + String(bzMin,format='(D0.1)')
+                                  + 'bzMin' + String(bzMin,FORMAT='(D0.1)')
      ENDIF
      IF N_ELEMENTS(bzMax) GT 0 THEN BEGIN
         bzMaxStr                = '_' + (KEYWORD_SET(abs_bzMax) ? 'ABS_' : '') $
-                                  + 'bzMax' + String(bzMax,format='(D0.1)')
+                                  + 'bzMax' + String(bzMax,FORMAT='(D0.1)')
      ENDIF
      
      ;;Requirement for IMF Bt magnitude?
@@ -264,7 +266,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
            STOP
         ENDIF
         btMinStr                = '_' + (KEYWORD_SET(abs_btMin) ? 'ABS_' : '') $
-                                  + 'btMin' + String(btMin,format='(D0.1)')
+                                  + 'btMin' + String(btMin,FORMAT='(D0.1)')
      ENDIF
      IF N_ELEMENTS(btMax) GT 0 THEN BEGIN
         IF btMax LT 0 THEN BEGIN
@@ -272,7 +274,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
            STOP
         ENDIF
         btMaxStr                = '_' + (KEYWORD_SET(abs_btMax) ? 'ABS_' : '') $
-                                  + 'btMax' + String(btMax,format='(D0.1)')
+                                  + 'btMax' + String(btMax,FORMAT='(D0.1)')
      ENDIF
      
      ;;Requirement for IMF Bx magnitude?
@@ -281,13 +283,26 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      
      IF N_ELEMENTS(bxMin) GT 0 THEN BEGIN
         bxMinStr                = '_' + (KEYWORD_SET(abs_bxMin) ? 'ABS_' : '') $
-                                  + 'bxMin' + String(bxMin,format='(D0.1)')
+                                  + 'bxMin' + String(bxMin,FORMAT='(D0.1)')
      ENDIF
      IF N_ELEMENTS(bxMax) GT 0 THEN BEGIN
         bxMaxStr                = '_' + (KEYWORD_SET(abs_bxMax) ? 'ABS_' : '') $
-                                  + 'bxMax' + String(bxMax,format='(D0.1)')
+                                  + 'bxMax' + String(bxMax,FORMAT='(D0.1)')
      ENDIF
      
+     ;;Requirement for IMF Bx magnitude?
+     bx_over_by_ratio_minStr    = ''
+     bx_over_by_ratio_maxStr    = ''
+     
+     IF N_ELEMENTS(bx_over_by_ratio_min) GT 0 THEN BEGIN
+        bx_over_by_ratio_minStr = '_' + (KEYWORD_SET(abs_bx_over_by_ratio_min) ? 'ABS_' : '') $
+                                  + 'bxy_ratMin' + String(bx_over_by_ratio_min,FORMAT='(D0.1)')
+     ENDIF
+     IF N_ELEMENTS(bx_over_by_ratio_max) GT 0 THEN BEGIN
+        bx_over_by_ratio_maxStr = '_' + (KEYWORD_SET(abs_bx_over_by_ratio_max) ? 'ABS_' : '') $
+                                  + 'bxy_ratMax' + String(bx_over_by_ratio_max,FORMAT='(D0.1)')
+     ENDIF
+
      ;;********************************************
      ;;Set up some other strings
      
@@ -342,7 +357,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
            multiString          = "IMF_delays"
            FOR iDel=0,N_ELEMENTS(multiples)-1 DO BEGIN
               paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
-                 byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
+                 byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
            ENDFOR
         ENDIF
 
@@ -350,7 +365,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
            multiples            = clockStr
            ;; multiString       = "IMF_clock angles"
            multiString          = paramString+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
-                                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
+                                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
            IF N_ELEMENTS(clockStr) EQ 8 THEN BEGIN
               multiString_suff  = '--Ring'
            ENDIF
@@ -361,7 +376,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
            FOR iClock=0,N_ELEMENTS(multiples)-1 DO BEGIN
               paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr[iClock]+"_"+ $
                  strtrim(stableIMF,2)+"stable"+smoothStr+delayStr+$
-                 byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
+                 byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
 
               IF ~KEYWORD_SET(multiString_suff) THEN BEGIN
                  multiString    = multiString+'_'+clockStr[iClock]
@@ -372,7 +387,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
         executing_multiples     = 0
         paramString             = paramString+'--'+satellite+omniStr+clockOutStr+"_"+ $
                                   strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
-                                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr
+                                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
         paramString_list.add,paramString
      ENDELSE
   ENDELSE
