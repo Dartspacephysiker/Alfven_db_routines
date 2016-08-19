@@ -8,6 +8,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
    DBSTRUCT=dbStruct, $
    DBTIMES=dbTimes, $
    FOR_ESPEC_DB=for_eSpec_db, $
+   FOR_OMNI_DB=for_OMNI_db, $
    DO_NOT_MAKE_ORB_INFO=no_orb_info, $
    RESTRICT_W_THESEINDS=restrict, $
    OUT_GOOD_TARR_I=out_good_tArr_i, $
@@ -36,17 +37,23 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   ENDIF
 
 
-  IF KEYWORD_SET(for_eSpec_db) THEN BEGIN
-     ;;Use for_eSpec_db             = 2 here to indicate that conversion has already happened
-     IF KEYWORD_SET(for_eSpec_db) AND ( (for_eSpec_db) NE 2) THEN BEGIN
-        dbTimes                     = dbStruct.x
-        for_eSpec_db                = 2
-        dbString                    = 'eSpec'
-     ENDIF
-  ENDIF ELSE BEGIN
-     IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
-     IF is_maximus THEN dbString    = 'maximus' ELSE dbString = 'fastLoc'
-  ENDELSE
+  CASE 1 OF
+     KEYWORD_SET(for_eSpec_db): BEGIN
+        ;;Use for_eSpec_db             = 2 here to indicate that conversion has already happened
+        IF KEYWORD_SET(for_eSpec_db) AND ( (for_eSpec_db) NE 2) THEN BEGIN
+           dbTimes                     = dbStruct.x
+           for_eSpec_db                = 2
+           dbString                    = 'eSpec'
+        ENDIF
+     END
+     KEYWORD_SET(for_OMNI_db): BEGIN
+        dbString                       = 'OMNI'
+     END
+     ELSE: BEGIN
+        IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct,is_maximus
+        IF is_maximus THEN dbString    = 'maximus' ELSE dbString = 'fastLoc'
+     END
+  ENDCASE
 
   PRINTF,lun,'GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES: for ' + dbString
 
@@ -61,7 +68,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
      IF KEYWORD_SET(verbose) THEN BEGIN
         PRINTF,LUN,'No restriction on inds...'
      ENDIF
-     restrict                       = INDGEN(N_ELEMENTS(dbStruct),/L64)
+     restrict                       = INDGEN(N_ELEMENTS(dbTimes),/L64)
   ENDELSE
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -200,6 +207,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
                                          DBSTRUCT=dbStruct, $
                                          DBTIMES=dbTimes, $
                                          FOR_ESPEC_DB=for_eSpec_db, $
+                                         FOR_OMNI_DB=for_OMNI_db, $
                                          DO_NOT_MAKE_ORB_INFO=no_orb_info, $
                                          RESTRICT_W_THESEINDS=restrict, $
                                          OUT_INDS=inds, $
@@ -213,13 +221,15 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
         nGood             ++
         out_good_tArr_i             = [out_good_tArr_i,iFirst]
         inds_list                   = LIST(inds)
-        uniq_orbs_list           = LIST(uniq_orbs)
-        uniq_orb_inds_list       = LIST(uniq_orb_inds)
-        IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
-           inds_orbs_list        = LIST(inds_orbs)
-           tranges_orbs_list     = LIST(tranges_orbs)
-           tspans_orbs_list      = LIST(tspans_orbs)
-           arrTSpanTotal         = tSpanTotal
+        IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+           uniq_orbs_list           = LIST(uniq_orbs)
+           uniq_orb_inds_list       = LIST(uniq_orb_inds)
+           IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
+              inds_orbs_list        = LIST(inds_orbs)
+              tranges_orbs_list     = LIST(tranges_orbs)
+              tspans_orbs_list      = LIST(tspans_orbs)
+              arrTSpanTotal         = tSpanTotal
+           ENDIF
         ENDIF
      ENDIF
      iFirst++
@@ -240,6 +250,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
                                          DBSTRUCT=dbStruct, $
                                          DBTIMES=dbTimes, $
                                          FOR_ESPEC_DB=for_eSpec_db, $
+                                         FOR_OMNI_DB=for_OMNI_db, $
                                          DO_NOT_MAKE_ORB_INFO=no_orb_info, $
                                          RESTRICT_W_THESEINDS=restrict, $
                                          OUT_INDS=inds, $
@@ -252,13 +263,15 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
         nGood++
         out_good_tArr_i             = [out_good_tArr_i,i]
         inds_list.add,inds
-        uniq_orbs_list.add,uniq_orbs
-        uniq_orb_inds_list.add,uniq_orb_inds
-        IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
-           inds_orbs_list.add,inds_orbs
-           tranges_orbs_list.add,tranges_orbs
-           tspans_orbs_list.add,tspans_orbs
-           arrTSpanTotal   += tSpanTotal
+        IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+           uniq_orbs_list.add,uniq_orbs
+           uniq_orb_inds_list.add,uniq_orb_inds
+           IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
+              inds_orbs_list.add,inds_orbs
+              tranges_orbs_list.add,tranges_orbs
+              tspans_orbs_list.add,tspans_orbs
+              arrTSpanTotal   += tSpanTotal
+           ENDIF
         ENDIF
      ENDIF
 
@@ -268,12 +281,20 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   ENDFOR
   
   IF KEYWORD_SET(print_data_availability) OR KEYWORD_SET(summary) AND ~KEYWORD_SET(no_orb_info) THEN BEGIN
-     arrTotUniqOrbs                 = 0
-     arrTotInds                     = 0
-     FOR k                          = 0,N_ELEMENTS(uniq_orbs_list)-1 DO BEGIN
-        arrTotUniqOrbs   += N_ELEMENTS(uniq_orbs_list[k])
-        arrTotInds       += N_ELEMENTS(inds_list[k])
-     ENDFOR
+
+     IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+        arrTotUniqOrbs                 = 0
+        arrTotInds                     = 0
+        FOR k=0,N_ELEMENTS(uniq_orbs_list)-1 DO BEGIN
+           arrTotUniqOrbs   += N_ELEMENTS(uniq_orbs_list[k])
+           arrTotInds       += N_ELEMENTS(inds_list[k])
+        ENDFOR
+     ENDIF ELSE BEGIN
+        arrTotInds                     = 0
+        FOR k=0,N_ELEMENTS(inds_list)-1 DO BEGIN
+           arrTotInds       += N_ELEMENTS(inds_list[k])
+        ENDFOR
+     ENDELSE
 
      PRINTF,lun,'***********************************'
      PRINTF,lun,'***SUMMARY OF DATA FOR UTC ARRAY***'
@@ -281,9 +302,9 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
      PRINTF,lun,'N UTC Ranges: ' + STRCOMPRESS(N_ELEMENTS(t1_arr),/REMOVE_ALL)
      PRINTF,lun,'N with data : ' + STRCOMPRESS(nGood,/REMOVE_ALL)
      PRINTF,lun,FORMAT='("Array total event indices",T38,":",T40,I0)',arrTotInds
-     PRINTF,lun,FORMAT='("Array total N unique orbits",T38,":",T40,I0)',arrTotUniqOrbs
+     IF ~KEYWORD_SET(for_OMNI_db) THEN PRINTF,lun,FORMAT='("Array total N unique orbits",T38,":",T40,I0)',arrTotUniqOrbs
      IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
-        PRINTF,lun,FORMAT='("Array total of all interval lengths w/ data (hrs)",T38,":",T40,F0.2)',arrTSpanTotal/3600.
+        IF ~KEYWORD_SET(for_OMNI_db) THEN PRINTF,lun,FORMAT='("Array total of all interval lengths w/ data (hrs)",T38,":",T40,F0.2)',arrTSpanTotal/3600.
      ENDIF
      PRINTF,lun,'***********************************'
      PRINTF,lun,''
@@ -292,32 +313,43 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   IF KEYWORD_SET(list_to_arr) THEN BEGIN
 
      inds_arr                       = inds_list[0]
-     uniq_orbs_arr                  = uniq_orbs_list[0]
-     uniq_orb_inds_arr              = uniq_orb_inds_list[0]
-     IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
-        inds_orbs_arr               = inds_orbs_list[0]
-        tranges_orbs_arr            = tranges_orbs_list[0]
-        tspans_orbs_arr             = tspans_orbs_list[0]
+     IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+        uniq_orbs_arr                  = uniq_orbs_list[0]
+        uniq_orb_inds_arr              = uniq_orb_inds_list[0]
+        IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
+           inds_orbs_arr               = inds_orbs_list[0]
+           tranges_orbs_arr            = tranges_orbs_list[0]
+           tspans_orbs_arr             = tspans_orbs_list[0]
+        ENDIF
      ENDIF
 
-     FOR i=1,nGood-1 DO BEGIN
-        inds_arr                    = [ inds_arr, inds_list[i] ]
-        uniq_orbs_arr               = [ uniq_orbs_arr, uniq_orbs_list[i] ]
-        uniq_orb_inds_arr           = [ uniq_orb_inds_arr, uniq_orb_inds_list[i] ]
-        IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
-           inds_orbs_arr            = [ inds_orbs_arr, inds_orbs_list[i] ]
-           tranges_orbs_arr         = [ tranges_orbs_arr, tranges_orbs_list[i] ]
-           tspans_orbs_arr          = [ tspans_orbs_arr, tspans_orbs_list[i] ]
-        ENDIF
-     ENDFOR
+     IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+        FOR i=1,nGood-1 DO BEGIN
+           inds_arr                    = [ inds_arr, inds_list[i] ]
+           uniq_orbs_arr               = [ uniq_orbs_arr, uniq_orbs_list[i] ]
+           uniq_orb_inds_arr           = [ uniq_orb_inds_arr, uniq_orb_inds_list[i] ]
+           IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
+              inds_orbs_arr            = [ inds_orbs_arr, inds_orbs_list[i] ]
+              tranges_orbs_arr         = [ tranges_orbs_arr, tranges_orbs_list[i] ]
+              tspans_orbs_arr          = [ tspans_orbs_arr, tspans_orbs_list[i] ]
+           ENDIF
+        ENDFOR
+     ENDIF ELSE BEGIN
+        FOR i=1,nGood-1 DO BEGIN
+           inds_arr                    = [ inds_arr, inds_list[i] ]
+        ENDFOR
+     ENDELSE
 
      inds_list                      = inds_arr
-     uniq_orbs_list                 = uniq_orbs_arr
-     uniq_orb_inds_list             = uniq_orb_inds_arr
-     IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
-        inds_orbs_list              = inds_orbs_arr
-        tranges_orbs_list           = tranges_orbs_arr
-        tspans_orbs_list            = tspans_orbs_arr
+
+     IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+        uniq_orbs_list              = uniq_orbs_arr
+        uniq_orb_inds_list          = uniq_orb_inds_arr
+        IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
+           inds_orbs_list           = inds_orbs_arr
+           tranges_orbs_list        = tranges_orbs_arr
+           tspans_orbs_list         = tspans_orbs_arr
+        ENDIF
      ENDIF 
   ENDIF
 
@@ -326,7 +358,11 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
      IF N_ELEMENTS(list_to_arr) EQ 0 THEN BEGIN
         list_to_arr                 = 0
      ENDIF
-     save,inds_list,uniq_orbs_list,uniq_orb_inds_list,inds_orbs_list,tranges_orbs_list,tspans_orbs_list,list_to_arr,FILENAME=save_filename
+     IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+        SAVE,inds_list,uniq_orbs_list,uniq_orb_inds_list,inds_orbs_list,tranges_orbs_list,tspans_orbs_list,list_to_arr,FILENAME=save_filename
+     ENDIF ELSE BEGIN
+        SAVE,inds_list,list_to_arr,FILENAME=save_filename
+     ENDELSE
   ENDIF
 
 END
