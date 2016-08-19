@@ -32,13 +32,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   COMPILE_OPT idl2
 
   ;;GET_CHASTON_IND is the other routine with this block!
-  COMMON M_VARS,MAXIMUS__maximus,MAXIMUS__HAVE_GOOD_I,MAXIMUS__times, $
-     MAXIMUS__good_i,MAXIMUS__cleaned_i, $
-     MAXIMUS__dbFile,MAXIMUS__dbTimesFile, $
-     MAXIMUS__dbDir, $
-     MAXIMUS__despun, $
-     MAXIMUS__is_chastDB, $
-     MAXIMUS__RECALCULATE
+  @common__maximus_vars.pro
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout
 

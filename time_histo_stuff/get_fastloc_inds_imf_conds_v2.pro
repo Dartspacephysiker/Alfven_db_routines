@@ -60,14 +60,11 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
 
   COMPILE_OPT idl2
 
-  ;;Defined here, in GET_TIMEHIST_DENOMINATOR, in GET_CHASTON_IND, and in GET_FASTLOC_INDS_UTC_RANGE
-  COMMON FL_VARS,FL_fastLoc,FASTLOC__times,FASTLOC__delta_t, $
-     FASTLOC__good_i,FASTLOC__cleaned_i,FASTLOC__HAVE_GOOD_I, $
-     FASTLOC__dbFile,FASTLOC__dbTimesFile
+  ;;Common blocks
 
-  COMMON FL_ESPEC_VARS,FL_eSpec__fastLoc,FASTLOC_E__times,FASTLOC_E__delta_t, $
-     FASTLOC_E__good_i,FASTLOC_E__cleaned_i,FASTLOC_E__HAVE_GOOD_I, $
-     FASTLOC_E__dbFile,FASTLOC_E__dbTimesFile
+  ;;Defined here, in GET_CHASTON_IND, and in GET_FASTLOC_INDS_UTC_RANGE
+  @common__fastloc_vars.pro
+  @common__fastloc_espec_vars.pro
 
 
   IF NOT KEYWORD_SET(lun) THEN lun = -1 ;stdout

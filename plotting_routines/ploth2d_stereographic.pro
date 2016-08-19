@@ -40,6 +40,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           INTLUN=intLun, $
                           _EXTRA=e
 
+  COMPILE_OPT idl2
+
   RESTORE,ancillaryData
   IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
      IF ABS(minM - 0.00) LT 0.0001 AND ABS(maxM-24.00) LT 0.0001 THEN BEGIN
@@ -283,6 +285,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDIF ELSE BEGIN
      masked                       = (h2dMaskData GT 250.0)
   ENDELSE
+
   IF KEYWORD_SET(reverse_lShell) THEN BEGIN
      masked[*,1:-1]               = REVERSE(masked[*,1:-1],2)
      masked                       = SHIFT(masked,0,-1)
@@ -688,9 +691,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   cbSpacingStr_low                = (nLevels-1)/2-is_OOBLow
   cbSpacingStr_high               = (nLevels-1)/2-is_OOBHigh
 
-  cbOOBLowVal                     = (MIN(temp.data(notMasked)) LT temp.lim[0] OR temp.force_oobLow) ? $
+  cbOOBLowVal                     = (MIN(temp.data[notMasked]) LT temp.lim[0] OR temp.force_oobLow) ? $
                                     0B : !NULL
-  cbOOBHighVal                    = (MAX(temp.data(notMasked)) GT temp.lim[1] OR temp.force_oobHigh) ? $
+  cbOOBHighVal                    = (MAX(temp.data[notMasked]) GT temp.lim[1] OR temp.force_oobHigh) ? $
                                     BYTE(nLevels-1) : !NULL
   cbRange                         = (temp.is_logged AND temp.logLabels) ? 10.^(ROUND(temp.lim*100.)/100.) : temp.lim
   cbTitle                         = KEYWORD_SET(suppress_titles) ? !NULL : plotTitle

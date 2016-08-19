@@ -55,10 +55,12 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
 
   COMPILE_OPT idl2
 
-  ;;Defined here, in GET_FASTLOC_INDS_IMF_CONDS_V2, in GET_TIMEHIST_DENOMINATOR, and in GET_CHASTON_INDS
-  COMMON FL_VARS
+  ;;Defined here, in GET_FASTLOC_INDS_IMF_CONDS_V2, and in GET_CHASTON_INDS
+  @common__fastloc_vars.pro
+  @common__fastloc_espec_vars.pro
 
-  COMMON FL_ESPEC_VARS
+  ;; COMMON FL_VARS
+  ;; COMMON FL_ESPEC_VARS
 
   ;; minM=0
   ;; maxM=24

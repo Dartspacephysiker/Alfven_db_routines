@@ -1,6 +1,8 @@
 ;;2016/04/05 I just want to take a glance at 2D histos sometimes, K?
 ;;2016/04/05 Commented out all reference to L-shell (nearly)
-PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
+PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,h2dStr, $
+                                    H2DMASK=h2dMask, $
+                                    INDATA=inData, $
                                     IN_MLTS=in_mlts, $
                                     IN_ILATS=in_ilats, $
                                     PLOT_I=plot_i, $
@@ -26,6 +28,7 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
                                     POSITION=position, $
                                     WINDOW_XPOS=xPos, $
                                     WINDOW_YPOS=yPos, $
+                                    NO_DISPLAY=no_display, $
                                     NO_COLORBAR=no_colorbar, $
                                     CB_LIMITS=cb_limits, $
                                     CB_FORCE_OOBLOW=cb_force_ooblow, $
@@ -49,6 +52,18 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
                                 BOTH_HEMIS=both_hemis, $
                                 LUN=lun  
   
+  IF ~KEYWORD_SET(no_display) THEN BEGIN
+     ;; CGDISPLAY;; ,COLOR="black", $
+     ;; XSIZE=KEYWORD_SET(postScript) ? 5 : !NULL, $
+     ;; YSIZE=KEYWORD_SET(postScript) ? 5 : !NULL, $
+               ;; XSIZE=KEYWORD_SET(xSize) ? xSize : def_H2D_xSize, $
+               ;; YSIZE=KEYWORD_SET(ySize) ? ySize : def_H2D_ySize, $
+              ;;  ;; /MATCH, $
+              ;;  ;; XPOS=xPos, $
+              ;;  ;; YPOS=yPos, $
+              ;;  /LANDSCAPE_FORCE
+  ENDIF
+
   IF KEYWORD_SET(in_h2dMask) THEN h2dMask = in_h2dMask
   IF KEYWORD_SET(in_maskColor) THEN maskColor = in_maskColor ELSE maskColor = 'GRAY'
   ;; IF N_ELEMENTS(gridColor) EQ 0 THEN gridColor = defGridColor
@@ -146,10 +161,15 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
   ENDIF
 
   ; Open a graphics window.
-  IF N_ELEMENTS(current) GT 1 THEN current.set_current ELSE CGDISPLAY,COLOR="white",XSIZE=5,YSIZE=5, $
-            XPOS=xPos, $
-            YPOS=yPos, $
-            /LANDSCAPE_FORCE
+  IF N_ELEMENTS(current) GT 1 THEN current.set_current ELSE BEGIN
+     CGDISPLAY,COLOR="white", $
+     XSIZE=KEYWORD_SET(postScript) ? 5 : !NULL, $
+     YSIZE=KEYWORD_SET(postScript) ? 5 : !NULL, $
+     XPOS=xPos, $
+     YPOS=yPos, $
+     /LANDSCAPE_FORCE
+
+  END
 
   IF KEYWORD_SET(mirror) THEN BEGIN
      IF mirror NE 0 THEN mirror = 1 ELSE mirror = 0
@@ -185,17 +205,17 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
   IF ~KEYWORD_SET(logScale) THEN BEGIN
 
      IF N_ELEMENTS(WHERE(h2dData) LT 0) GT 0 THEN BEGIN
-        RAINBOW_COLORS,N_COLORS=nLevels
+        ;; RAINBOW_COLORS,N_COLORS=nLevels
 
         ;;This is the one for doing sweet flux plots that include negative values 
         ;; cgLoadCT, ctIndex, BREWER=ctBrewer, REVERSE=ctReverse, NCOLORS=nLevels
      ENDIF ELSE BEGIN
-        SUNSET_COLORS,N_COLORS=nLevels
+        ;; SUNSET_COLORS,N_COLORS=nLevels
      ENDELSE
 
   ENDIF ELSE BEGIN
      ;; This one is the one we use for nEvent- and orbit-type plots (plots w/ all positive values)
-     RAINBOW_COLORS,N_COLORS=nLevels
+     ;; RAINBOW_COLORS,N_COLORS=nLevels
      ;; cgLoadCT, ctIndex_allPosData, BREWER=ctBrewer_allPosData, REVERSE=ctReverse_allPosData, NCOLORS=nLevels
 
      ;; IF chrisPosScheme THEN BEGIN
@@ -208,6 +228,8 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
      ;; ENDIF
 
   ENDELSE
+  LOADCT,78,FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl'  ;Attempt to recreate (sort of) Bin's color bar
+
 
   ; Set up the contour levels.
   ;   levels = cgScaleVector(Indgen(nlevels), 0,255)      
@@ -241,9 +263,13 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
   ;;       gridLatNames        = REVERSE(gridLatNames)
   ;;    ENDIF
   ;; ENDIF ELSE BEGIN
+
+     ;;Don't erase these lines! You need them
+
      nYlines                = (maxI-minI)/binI + 1
      ilats                  = indgen(nYlines)*binI + minI
 
+     ;;Option #1: Calculate the gridlats
      ;; CASE 1 OF
      ;;    (maxI-minI) LE 12: BEGIN
      ;;       minISpacing      = 6
@@ -292,34 +318,83 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
      ;; gridLats               = FIX(gridLats)
      ;; gridLatNames           = gridLats
 
+     ;;Option #2: Preset gridLats
      gridLats               = defGridLats * (ABS(minI)/minI) ;IF WHERE((INDGEN(10)*binI + minI 
      gridLatNames           = defGridLats * (ABS(minI)/minI)
-  ;; ENDELSE
+     ;; ENDELSE
+
+     ;;Make sure the thicker gridLats fall right on one of our ilats
+     maxGridSep = 0.25D
+     FOR k=0,N_ELEMENTS(gridLats)-1 DO BEGIN
+        IF MIN(ABS(gridLats[k]-ilats),tempI) GT maxGridSep THEN BEGIN
+           gridLats[k] = ilats[tempI]
+        ENDIF
+     ENDFOR
+
+     ;;Don't erase these lines! They are the only thing keeping SH plots from being insane
+     IF maxI LT 0 THEN BEGIN
+        ilats                     = -1.0*REVERSE(ilats)
+        gridLats                  = -1.0*REVERSE(gridLats)
+     ENDIF
+
+     gridLats                     = FIX(gridLats)
+     gridLatNames                 = gridLats
 
 
-  IF mirror THEN BEGIN
-     ilats                        = -1.0 * ilats 
-     gridLats                     = -1.0 * gridLats
-     ;; gridLatNames                 = -1.0 * gridLatNames
-  ENDIF
+     IF mirror THEN BEGIN
+        ilats                        = -1.0 * ilats 
+        gridLats                     = -1.0 * gridLats
+        ;; gridLatNames                 = -1.0 * gridLatNames
+     ENDIF
 
-  ;;binary matrix to tell us where masked values are
-  IF N_ELEMENTS(h2dMask) GT 0 THEN BEGIN
-     masked                       = (h2dMask GT 250.0)
-  ENDIF ELSE BEGIN
-     masked                       = FIX(h2dData)
-     masked[*,*]                  = 0
-  ENDELSE                       
-     
+     ;;binary matrix to tell us where masked values are
+     IF N_ELEMENTS(h2dStr) GT 0 THEN BEGIN
+        CASE 1 OF
+           h2dStr.hasMask: BEGIN
+              h2dMaskData               = h2dStr.mask
+           END
+           KEYWORD_SET(h2dMask): BEGIN
+              h2dMaskData               = h2dMask.data
+           END
+           ELSE: BEGIN
+              nPlots                    = 1
+              h2dMaskData               = h2dStrArr[nPlots].data
+           END
+        ENDCASE
+        
+        IF h2dStr.dont_mask_me THEN BEGIN
+           masked                       = (h2dMaskData GT 260.0) ;mask NO ONE!
+        ENDIF ELSE BEGIN
+           masked                       = (h2dMaskData GT 250.0)
+        ENDELSE
+
+     ENDIF ELSE BEGIN
+        IF N_ELEMENTS(h2dMask) GT 0 THEN BEGIN
+           masked                       = (h2dMask.data GT 250.0)
+        ENDIF ELSE BEGIN
+           masked                       = FIX(h2dData)
+           masked[*,*]                  = 0
+        ENDELSE   
+     ENDELSE
+
+
   ;; IF KEYWORD_SET(reverse_lShell) THEN BEGIN
   ;;    masked[*,1:-1]               = REVERSE(masked[*,1:-1],2)
   ;;    masked                       = SHIFT(masked,0,-1)
   ;; ENDIF
   notMasked_i                       = WHERE(~masked)
 
-  IF ~KEYWORD_SET(cb_limits) THEN BEGIN
-     cb_limits                    = [MIN(h2dData[notMasked_i]),MAX(h2dData[notMasked_i])]
-  ENDIF
+  CASE 1 OF
+     KEYWORD_SET(h2dStr): BEGIN
+        cb_limits = h2dStr.lim
+     END
+     ELSE: BEGIN
+        IF ~KEYWORD_SET(cb_limits) THEN BEGIN
+           cb_limits               = [MIN(h2dData[notMasked_i]),MAX(h2dData[notMasked_i])]
+        ENDIF
+     END
+  ENDCASE
+
 
   h2descl                         = MAKE_ARRAY(SIZE(h2dData,/DIMENSIONS),VALUE=0)
 
@@ -366,6 +441,7 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
                                                                       BINSIZE_LON=binM, $
                                                                       SHIFT_LON=shiftM, $
                                                                       ;; BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
+                                                                      /MOREPOINTS, $
                                                                       BINSIZE_LAT=binI, $
                                                                       /CONVERT_MLT_TO_LON, $
                                                                       COUNTERCLOCKWISE=KEYWORD_SET(reverse_lShell))
@@ -376,7 +452,7 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,inData, $
                                      MASKCOLOR=maskColor
   ;;Calc an integral?
   IF KEYWORD_SET(show_plotIntegral) THEN BEGIN
-     H2D_STEREOGRAPHIC_INTEGRAL,temp,lonsLats, $
+     H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
                                 H2D_MASKED=masked, $
                                 INTEGRAL=integral, $
                                 ABSINTEGRAL=absIntegral, $

@@ -55,40 +55,17 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                          
   COMPILE_OPT idl2
  
-  COMMON MLT_ILAT_MAGC_ETC,MIMC__RECALCULATE, $
-     MIMC__minMLT,MIMC__maxMLT, $
-     MIMC__minILAT,MIMC__maxILAT,MIMC__binILAT, $
-     MIMC__DO_lShell,MIMC__minLSHELL,MIMC__maxLSHELL,MIMC__binLSHELL, $
-     MIMC__minMC,MIMC__maxNegMC, $
-     MIMC__sample_t_restriction, $
-     MIMC__hemi, $
-     MIMC__orbRange, $
-     MIMC__altitudeRange, $
-     MIMC__charERange, $
-     MIMC__poyntRange, $
-     MIMC__despunDB,MIMC__chastDB, $
-     MIMC__north,MIMC__south,MIMC__both_hemis, $
-     MIMC__HwMAurOval, $
-     MIMC__HwMKpInd
+  @common__mlt_ilat_magc_etc.pro
 
-  ;;LOAD_MAXIMUS_AND_CDBTIME is the other routine with this block!
-  COMMON M_VARS,MAXIMUS__maximus,MAXIMUS__HAVE_GOOD_I,MAXIMUS__times, $
-     MAXIMUS__good_i,MAXIMUS__cleaned_i, $
-     MAXIMUS__dbFile,MAXIMUS__dbTimesFile, $
-     MAXIMUS__dbDir, $
-     MAXIMUS__despun, $
-     MAXIMUS__is_chastDB, $
-     MAXIMUS__RECALCULATE
+  ;;LOAD_MAXIMUS_AND_CDBTIME is the other routine with this block
+  @common__maximus_vars.pro
 
-  ;;Defined here, in GET_FASTLOC_INDS_IMF_CONDS_V2, in GET_TIMEHIST_DENOMINATOR, and in GET_FASLOC_INDS_UTC_RANGE
-  COMMON FL_VARS,FL__fastLoc,FASTLOC__times,FASTLOC__delta_t, $
-     FASTLOC__good_i,FASTLOC__cleaned_i,FASTLOC__HAVE_GOOD_I, $
-     FASTLOC__dbFile,FASTLOC__dbTimesFile
+  ;;Defined here, in GET_FASTLOC_INDS_IMF_CONDS_V2, and in GET_FASLOC_INDS_UTC_RANGE
+  @common__fastloc_vars.pro
 
   ;; IF ~KEYWORD_SET(nonMem) THEN BEGIN
-  COMMON FL_ESPEC_VARS,FL_eSpec__fastLoc,FASTLOC_E__times,FASTLOC_E__delta_t, $
-     FASTLOC_E__good_i,FASTLOC_E__cleaned_i,FASTLOC_E__HAVE_GOOD_I, $
-     FASTLOC_E__dbFile,FASTLOC_E__dbTimesFile
+  @common__fastloc_espec_vars.pro
+
   ;; ENDIF ELSE BEGIN
   ;;    FL_eSpec__fastLoc                   = !NULL
   ;;    FASTLOC_E__times                    = !NULL
