@@ -9,7 +9,7 @@ PRO SETUP_GROSSRATE_INFO_FILE,grossRate_info_file, $
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
 
      PRINTF,lun,"Opening grossRate file: " + grossRate_info_file
-     IF FILE_TEST(grossRate_info_file) THEN BEGIN
+     IF FILE_TEST(txtOutputDir+grossRate_info_file) THEN BEGIN
         PRINTF,lun,"grossRate info file exists; appending..."
         OPENW,grossLun,txtOutputDir+grossRate_info_file,/GET_LUN,/APPEND
         PRINTF,grossLun,""

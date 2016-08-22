@@ -346,6 +346,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;; LOADCT,81  ;Modded rainbow; drops purples at bottom
   ;; LOADCT,84  ;Attempt to recreate (sort of) Bin's color bar
   LOADCT,78,FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl'  ;Attempt to recreate (sort of) Bin's color bar
+  ;; LOADCT,33
   ;; LOADCT,77 ;greenthing
   ;; LOADCT2,39 ;FAST rainbow table
 

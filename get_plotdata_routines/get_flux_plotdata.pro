@@ -1069,6 +1069,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         maxh2d = MAX(h2dStr.data[h2d_nonzero_nEv_i])
         minh2d = MIN(h2dStr.data[h2d_nonzero_nEv_i])
         medh2d = MEDIAN(h2dStr.data[h2d_nonzero_nEv_i])
+        dayMaxh2d = MAX(h2dStr.data[dayInds])
+        dayMinh2d = MIN(h2dStr.data[dayInds])
+        dayMedh2d = MEDIAN(h2dStr.data[dayInds])
+        nightMaxh2d = MAX(h2dStr.data[nightInds])
+        nightMinh2d = MIN(h2dStr.data[nightInds])
+        nightMedh2d = MEDIAN(h2dStr.data[nightInds])
      ENDIF ELSE BEGIN
         fmt    = 'F10.2'
         maxh2d = ALOG10(MAX(h2dStr.data[h2d_nonzero_nEv_i]))
@@ -1091,34 +1097,38 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                grossDay,grossNight
 
         IF KEYWORD_SET(grossRate_info_file) THEN BEGIN
-           IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
-              fmt    = 'G10.4' 
-              maxh2d = MAX(h2dStr.data[h2d_nonzero_nEv_i])
-              minh2d = MIN(h2dStr.data[h2d_nonzero_nEv_i])
-              medh2d = MEDIAN(h2dStr.data[h2d_nonzero_nEv_i])
-           ENDIF ELSE BEGIN
-              fmt    = 'F10.2'
-              maxh2d = ALOG10(MAX(h2dStr.data[h2d_nonzero_nEv_i]))
-              minh2d = ALOG10(MIN(h2dStr.data[h2d_nonzero_nEv_i]))
-              medh2d = ALOG10(MEDIAN(h2dStr.data[h2d_nonzero_nEv_i]))
-           ENDELSE
+           ;; IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
+           ;;    fmt    = 'G10.4' 
+           ;;    maxh2d = MAX(h2dStr.data[h2d_nonzero_nEv_i])
+           ;;    minh2d = MIN(h2dStr.data[h2d_nonzero_nEv_i])
+           ;;    medh2d = MEDIAN(h2dStr.data[h2d_nonzero_nEv_i])
+           ;; ENDIF ELSE BEGIN
+           ;;    fmt    = 'F10.2'
+           ;;    maxh2d = ALOG10(MAX(h2dStr.data[h2d_nonzero_nEv_i]))
+           ;;    minh2d = ALOG10(MIN(h2dStr.data[h2d_nonzero_nEv_i]))
+           ;;    medh2d = ALOG10(MEDIAN(h2dStr.data[h2d_nonzero_nEv_i]))
+           ;; ENDELSE
            PRINTF,grossLun,h2dStr.title
-           ;; PRINTF,grossLun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)', $
-           ;;        MAX(h2dStr.data[h2d_nonzero_nEv_i]), $
-           ;;        MIN(h2dStr.data[h2d_nonzero_nEv_i])
-           PRINTF,grossLun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
-                  maxh2d, $
-                  minh2d, $
-                  medh2d            
-
-           PRINTF,grossLun,h2dStr.title
-           PRINTF,grossLun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
+           PRINTF,grossLun,FORMAT='("Max, min. med.        :",T25,' + fmt + ',T40,' + fmt + ',T55,' + fmt +')', $
                   maxh2d, $
                   minh2d, $
                   medh2d
-           PRINTF,grossLun,FORMAT='("Gross dayside, nightside:",T30,'+ $
-                  grossFmt + ',T50,' + grossFmt + ')', $
-                  grossDay,grossNight
+           PRINTF,grossLun,FORMAT='("Max, min. med. (Day)  :",T25,' + fmt + ',T40,' + fmt + ',T55,' + fmt +')', $
+                  dayMaxh2d, $
+                  dayMinh2d, $
+                  dayMedh2d
+           PRINTF,grossLun,FORMAT='("Max, min. med. (Night):",T25,' + fmt + ',T40,' + fmt + ',T55,' + fmt +')', $
+                  nightMaxh2d, $
+                  nightMinh2d, $
+                  nightMedh2d
+           ;; PRINTF,grossLun,FORMAT='("Gross dayside, nightside, net:",T30,'+ $
+           ;;        grossFmt + ',T50,' + grossFmt + ',T70,' + grossFmt + ')', $
+           ;;        grossDay,grossNight,(grossDay+grossNight)
+           PRINTF,grossLun,FORMAT='(%"GrossVals\n========\nDayside   : ",' + grossFmt + ',%"\nNightside : ",' + grossFmt + ',%"\nNet       : ",' + $
+                  grossFmt + ')', $
+                  grossDay, $
+                  grossNight, $
+                  (grossDay+grossNight)
            PRINTF,grossLun,''
         ENDIF
      ENDIF

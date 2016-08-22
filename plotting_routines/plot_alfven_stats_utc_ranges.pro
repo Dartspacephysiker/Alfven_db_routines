@@ -839,28 +839,30 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
   ENDIF
 
   ;;Now plots
-  PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=out_tempFile, $
-                         SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ 
-                         JUSTDATA=justData, SHOWPLOTSNOSAVE=showPlotsNoSave, $
-                         PLOTDIR=plotDir, PLOTMEDORAVG=plotMedOrAvg, $
-                         PARAMSTR=paramString, DEL_PS=del_PS, $
-                         HEMI=hemi, $
-                         SUPPRESS_GRIDLABELS=suppress_gridLabels, $
-                         SUPPRESS_TITLES=suppress_titles, $
-                         LABELS_FOR_PRESENTATION=labels_for_presentation, $
-                         TILE_IMAGES=tile_images, $
-                         N_TILE_ROWS=n_tile_rows, $
-                         N_TILE_COLUMNS=n_tile_columns, $
-                         TILING_ORDER=tiling_order, $
-                         TILEPLOTSUFF=tilePlotSuff, $
-                         TILEPLOTTITLE=tilePlotTitle, $
-                         TILE__FAVOR_ROWS=tile__favor_rows, $
-                         NO_COLORBAR=no_colorbar, $
-                         ;; CB_FORCE_OOBHIGH=cb_force_oobHigh, $
-                         ;; CB_FORCE_OOBLOW=cb_force_oobLow, $
-                         CLOCKSTR=clockStr, $
-                         EPS_OUTPUT=eps_output, $
-                         _EXTRA = e
+  IF ~KEYWORD_SET(justData) THEN BEGIN
+     PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=out_tempFile, $
+                            SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ 
+                            JUSTDATA=justData, SHOWPLOTSNOSAVE=showPlotsNoSave, $
+                            PLOTDIR=plotDir, PLOTMEDORAVG=plotMedOrAvg, $
+                            PARAMSTR=paramString, DEL_PS=del_PS, $
+                            HEMI=hemi, $
+                            SUPPRESS_GRIDLABELS=suppress_gridLabels, $
+                            SUPPRESS_TITLES=suppress_titles, $
+                            LABELS_FOR_PRESENTATION=labels_for_presentation, $
+                            TILE_IMAGES=tile_images, $
+                            N_TILE_ROWS=n_tile_rows, $
+                            N_TILE_COLUMNS=n_tile_columns, $
+                            TILING_ORDER=tiling_order, $
+                            TILEPLOTSUFF=tilePlotSuff, $
+                            TILEPLOTTITLE=tilePlotTitle, $
+                            TILE__FAVOR_ROWS=tile__favor_rows, $
+                            NO_COLORBAR=no_colorbar, $
+                            ;; CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                            ;; CB_FORCE_OOBLOW=cb_force_oobLow, $
+                            CLOCKSTR=clockStr, $
+                            EPS_OUTPUT=eps_output, $
+                            _EXTRA = e
+  ENDIF
 
   ;;Haven't finished writing this yet
   ;; IF KEYWORD_SET(print_alfvendb_2dhistos) THEN BEGIN
