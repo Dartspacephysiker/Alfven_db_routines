@@ -175,7 +175,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         correctStr += '10-EFLUX_LOSSCONE_INTEG    (Flip sign in S Hemi)' + STRING(10B)
 
      ;;11-TOTAL_EFLUX_INTEG
-     ;;field-aligned energy flux Integrated over all angles, mapped to ionosphere
+     ;;Field-aligned energy flux (with contrib. from ALL angles) that is then mapped to ionosphere
      maximus.total_eflux_integ[south_i] = -1 * maximus.total_eflux_integ[south_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'11-TOTAL_EFLUX_INTEG       (Flip sign in S Hemi)'
      correctStr += '11-TOTAL_EFLUX_INTEG       (Flip sign in S Hemi)' + STRING(10B)
@@ -271,9 +271,9 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         correctStr += '30-HELIUM_FLUX_UP             (Flip sign in N Hemi)' + STRING(10B)
 
         IF KEYWORD_SET(map_heavies) THEN BEGIN
-           maximus.proton_flux_up = maximus.proton_flux_up * mapRatio.ratio
-           maximus.oxy_flux_up    = maximus.oxy_flux_up * mapRatio.ratio
-           maximus.helium_flux_up = maximus.helium_flux_up * mapRatio.ratio
+           maximus.proton_flux_up = maximus.proton_flux_up  * mapRatio.ratio
+           maximus.oxy_flux_up    = maximus.oxy_flux_up     * mapRatio.ratio
+           maximus.helium_flux_up = maximus.helium_flux_up  * mapRatio.ratio
            IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->26-PROTON_FLUX_UP'
            IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->28-OXY_FLUX_UP'
            IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->30-HELIUM_FLUX_UP'
@@ -305,15 +305,15 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ENDCASE
 
      IF KEYWORD_SET(map_pflux) THEN BEGIN
-        maximus.pFluxEst          = maximus.pFluxEst * mapRatio.ratio
+        maximus.pFluxEst          = maximus.pFluxEst         * mapRatio.ratio
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->49-PFLUXEST'
         correctStr += '-->49-PFLUXEST' + STRING(10B)
      ENDIF
 
      IF KEYWORD_SET(map_ionflux) THEN BEGIN
-        maximus.ion_energy_flux   = maximus.ion_energy_flux * mapRatio.ratio
-        maximus.ion_flux          = maximus.ion_flux * mapRatio.ratio
-        maximus.ion_flux_up       = maximus.ion_flux_up * mapRatio.ratio
+        maximus.ion_energy_flux   = maximus.ion_energy_flux  * mapRatio.ratio
+        maximus.ion_flux          = maximus.ion_flux         * mapRatio.ratio
+        maximus.ion_flux_up       = maximus.ion_flux_up      * mapRatio.ratio
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->15-ION_FLUX'
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->16-ION_FLUX_UP'
         correctStr += '-->15-ION_FLUX' + STRING(10B)

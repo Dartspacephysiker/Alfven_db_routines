@@ -734,6 +734,24 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
      FOR i=0,N_ELEMENTS(eFluxPlotType)-1 DO BEGIN
         fluxPlotType = eFluxPlotType[i]
 
+        CASE N_ELEMENTS(noPosEFlux) OF
+           0:   noPosFlux     = !NULL
+           1:   noPosFlux     = noPosEFlux
+           ELSE: noPosFlux    = noPosEFlux[i]
+        ENDCASE
+
+        CASE N_ELEMENTS(noNegEFlux) OF
+           0:   noNegFlux     = !NULL
+           1:   noNegFlux     = noNegEFlux
+           ELSE: noNegFlux    = noNegEFlux[i]
+        ENDCASE
+
+        CASE N_ELEMENTS(absEFlux) OF
+           0:   absFlux       = !NULL
+           1:   absFlux       = absEFlux
+           ELSE: absFlux      = absEFlux[i]
+        ENDCASE
+
         CASE N_ELEMENTS(logEfPlot) OF
            0:   logPlot       = !NULL
            1:   logPlot       = logEfPlot
@@ -773,9 +791,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     FLUXPLOTTYPE=fluxPlotType, $
                                     PLOTRANGE=plotRange, $
                                     PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
-                                    NOPOSFLUX=noPoseflux, $
-                                    NONEGFLUX=noNegeflux, $
-                                    ABSFLUX=abseflux, $
+                                    NOPOSFLUX=noPosFlux, $
+                                    NONEGFLUX=noNegFlux, $
+                                    ABSFLUX=absFlux, $
                                     EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
                                     INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                                     NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
@@ -849,9 +867,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              FLUXPLOTTYPE=fluxPlotType, $
                              PLOTRANGE=plotRange, $
                              PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
-                             NOPOSFLUX=noPoseflux, $
-                             NONEGFLUX=noNegeflux, $
-                             ABSFLUX=abseflux, $
+                             NOPOSFLUX=noPosFlux, $
+                             NONEGFLUX=noNegFlux, $
+                             ABSFLUX=absFlux, $
                              EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
                              INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                              NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
@@ -955,6 +973,24 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
      FOR i=0,N_ELEMENTS(eNumFlPlotType)-1 DO BEGIN
         fluxPlotType = eNumFlPlotType[i]
 
+        CASE N_ELEMENTS(noPosENumFl) OF
+           0:   noPosFlux     = !NULL
+           1:   noPosFlux     = noPosENumFl
+           ELSE: noPosFlux    = noPosENumFl[i]
+        ENDCASE
+
+        CASE N_ELEMENTS(noNegENumFl) OF
+           0:   noNegFlux     = !NULL
+           1:   noNegFlux     = noNegENumFl
+           ELSE: noNegFlux    = noNegENumFl[i]
+        ENDCASE
+
+        CASE N_ELEMENTS(absENumFl) OF
+           0:   absFlux       = !NULL
+           1:   absFlux       = absENumFl
+           ELSE: absFlux      = absENumFl[i]
+        ENDCASE
+
         CASE N_ELEMENTS(logENumFlPlot) OF
            0:   logPlot       = !NULL
            1:   logPlot       = logENumFlPlot
@@ -994,9 +1030,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     FLUXPLOTTYPE=fluxPlotType, $
                                     PLOTRANGE=plotRange, $
                                     PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
-                                    NOPOSFLUX=noPosENumFl, $
-                                    NONEGFLUX=noNegENumFl, $
-                                    ABSFLUX=absENumFl, $
+                                    NOPOSFLUX=noPosFlux, $
+                                    NONEGFLUX=noNegFlux, $
+                                    ABSFLUX=absFlux, $
                                     ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
                                     INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                                     NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
@@ -1069,9 +1105,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              FLUXPLOTTYPE=fluxPlotType, $
                              PLOTRANGE=plotRange, $
                              PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
-                             NOPOSFLUX=noPosENumFl, $
-                             NONEGFLUX=noNegENumFl, $
-                             ABSFLUX=absENumFl, $
+                             NOPOSFLUX=noPosFlux, $
+                             NONEGFLUX=noNegFlux, $
+                             ABSFLUX=absFlux, $
                              ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
                              INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                              NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
@@ -1248,6 +1284,24 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
      FOR i=0,N_ELEMENTS(iFluxPlotType)-1 DO BEGIN
         fluxPlotType = iFluxPlotType[i]
 
+        CASE N_ELEMENTS(noPosIFlux) OF
+           0:   noPosFlux     = !NULL
+           1:   noPosFlux     = noPosIFlux
+           ELSE: noPosFlux    = noPosIFlux[i]
+        ENDCASE
+
+        CASE N_ELEMENTS(noNegIFlux) OF
+           0:   noNegFlux     = !NULL
+           1:   noNegFlux     = noNegIFlux
+           ELSE: noNegFlux    = noNegIFlux[i]
+        ENDCASE
+
+        CASE N_ELEMENTS(absIFlux) OF
+           0:   absFlux       = !NULL
+           1:   absFlux       = absIFlux
+           ELSE: absFlux      = absIFlux[i]
+        ENDCASE
+
         CASE N_ELEMENTS(logIfPlot) OF
            0:   logPlot       = !NULL
            1:   logPlot       = logIfPlot
@@ -1285,9 +1339,9 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           FLUXPLOTTYPE=fluxPlotType, $
                           PLOTRANGE=plotRange, $
                           PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ionPlots), $
-                          NOPOSFLUX=noPosIflux, $
-                          NONEGFLUX=noNegIflux, $
-                          ABSFLUX=absIflux, $
+                          NOPOSFLUX=noPosFlux, $
+                          NONEGFLUX=noNegFlux, $
+                          ABSFLUX=absFlux, $
                           IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
                           INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
                           INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $

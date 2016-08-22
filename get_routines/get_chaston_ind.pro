@@ -143,6 +143,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                  DBDIR=loaddataDir, $
                                  DBFILE=dbFile, $
                                  DB_TFILE=dbTimesFile, $
+                                 ;; DO_NOT_MAP_ANYTHING=no_mapping, $
                                  DO_CHASTDB=chastDB, $
                                  DO_DESPUNDB=despunDB, $
                                  COORDINATE_SYSTEM=coordinate_system, $

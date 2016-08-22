@@ -11,6 +11,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              DO_NOT_MAP_IONFLUX=do_not_map_ionflux, $
                              DO_NOT_MAP_HEAVIES=do_not_map_heavies, $
                              DO_NOT_MAP_WIDTH_X=do_not_map_width_x, $
+                             DO_NOT_MAP_ANYTHING=no_mapping, $
                              DO_CHASTDB=chastDB, $
                              DO_DESPUNDB=despunDB, $
                              COORDINATE_SYSTEM=coordinate_system, $
@@ -37,6 +38,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout
 
   IF N_ELEMENTS(correct_fluxes) EQ 0 THEN correct_fluxes = 1
+  ;; correct_fluxes = 0
 
   IF KEYWORD_SET(force_load_both) THEN BEGIN
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"Forcing load of maximus and cdbTime..."
@@ -187,16 +189,22 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
 
   IF correct_fluxes AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
      CORRECT_ALFVENDB_FLUXES,MAXIMUS__maximus, $
-                             MAP_ESA_CURRENT_TO_IONOS=~KEYWORD_SET(do_not_map_esa_current), $
-                             MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux), $
-                             MAP_IONFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_ionflux), $
-                             MAP_HEAVIES_TO_IONOS=~KEYWORD_SET(do_not_map_heavies), $
+                             MAP_ESA_CURRENT_TO_IONOS=~KEYWORD_SET(do_not_map_esa_current) $
+                             AND ~KEYWORD_SET(no_mapping), $
+                             MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux) $
+                             AND ~KEYWORD_SET(no_mapping), $
+                             MAP_IONFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_ionflux) $
+                             AND ~KEYWORD_SET(no_mapping), $
+                             MAP_HEAVIES_TO_IONOS=~KEYWORD_SET(do_not_map_heavies) $
+                             AND ~KEYWORD_SET(no_mapping), $
                              ;; MAP_WIDTH_X_TO_IONOS=~KEYWORD_SET(do_not_map_width_x), $
                              DO_DESPUNDB=despunDB, $
                              DO_CHASTDB=chastDB, $
                              USING_HEAVIES=using_heavies, $
                              QUIET=quiet
-  ENDIF
+  ENDIF ELSE BEGIN
+     PRINTF,lun,"Not correcting fluxes in maximus ..."
+  ENDELSE
 
 
   IF KEYWORD_SET(coordinate_system) THEN BEGIN
