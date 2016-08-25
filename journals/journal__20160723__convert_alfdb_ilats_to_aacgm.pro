@@ -73,9 +73,9 @@ PRO JOURNAL__20160723__CONVERT_ALFDB_ILATS_TO_AACGM
   ;;               CREATED: GET_TODAY_STRING(/DO_YYYYMMDD_FMT), $
   ;;               ORIGINATING_ROUTINE:orig_routineName}
 
-  max_AACGM   = {ALT:maxEphem_AACGMSph_arr[2,*], $
-                MLT:maxEphem_AACGMSph_arr[3,*], $
-                LAT:maxEphem_AACGMSph_arr[0,*]}
+  max_AACGM   = {ALT:REFORM(maxEphem_AACGMSph_arr[2,*]), $
+                MLT:REFORM(maxEphem_AACGMSph_arr[3,*]), $
+                LAT:REFORM(maxEphem_AACGMSph_arr[0,*])}
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Save it
