@@ -32,84 +32,97 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
   COMPILE_OPT idl2
 
   ;; Defaults
-  defMinI                                         = 60
-  defMaxI                                         = 86
-  
-  defMinM                                         = 0
-  defMaxM                                         = 24
+  lun             = -1
 
-  defTSLat                                        = 75 ;true-scale latitude
+  defMinI         = 60
+  defMaxI         = 90
+  
+  defMinM         = 0
+  defMaxM         = 24
+
+  defTSLat        = 75 ;true-scale latitude
 
   @utcplot_defaults.pro
 
-  defOutPref                                      = 'SIMPLE_STEREOGRAPHIC_SCATTERPLOT'
-  defExt                                          = '.png'
+  defOutPref      = 'SIMPLE_STEREOGRAPHIC_SCATTERPLOT'
+  defExt          = '.png'
 
-  defPlot_i_dir                                   = 'plot_indices_saves/'
+  defPlot_i_dir   = 'plot_indices_saves/'
 
-  defSTrans                                       = 90 ;use for plotting entire db
-  defSym                                          = '*'
+  defSTrans       = 90 ;use for plotting entire db
+  defSym          = '*'
+  defSymSize      = 1.0
+  legendPosition  = [0.3,0.85]
+
   IF KEYWORD_SET(hugePlotMode) THEN BEGIN
      PRINT,'Huge plot mode ...'
-     plotPosition                                 = [0.05,0.05,0.95,0.95]
+     plotPosition  = [0.05,0.05,0.95,0.95]
   ENDIF
 
-  IF N_ELEMENTS(sTrans) EQ 0 THEN sTrans          = defSTrans
+  IF N_ELEMENTS(sTrans) EQ 0 THEN BEGIN
+     sTrans        = defSTrans
+  ENDIF
 
-  IF NOT KEYWORD_SET(plotSuff) THEN plotSuff      = "" ; ELSE plotSuff
+  IF NOT KEYWORD_SET(plotSuff) THEN BEGIN
+     plotSuff      = ""             ; ELSE plotSuff
+  ENDIF
 
-  IF NOT KEYWORD_SET(plot_i_dir) THEN plot_i_dir  = defPlot_i_dir
+  IF NOT KEYWORD_SET(plot_i_dir) THEN BEGIN
+     plot_i_dir    = defPlot_i_dir
+  ENDIF
 
-  IF minM EQ !NULL THEN minM                      = defMinM
-  IF maxM EQ !NULL THEN maxM                      = defMaxM
+  IF minM EQ !NULL THEN BEGIN
+     minM   = defMinM
+  ENDIF
+  IF maxM EQ !NULL THEN BEGIN
+     maxM   = defMaxM
+  ENDIF
 
 
   IF NOT KEYWORD_SET(north) AND NOT KEYWORD_SET(south) THEN BEGIN
      IF KEYWORD_SET(hemi) THEN BEGIN
         CASE 1 OF
            STRUPCASE(hemi) EQ 'NORTH': BEGIN
-              north                               = 1
-              south                               = 0
+              north            = 1
+              south            = 0
            END
            STRUPCASE(hemi) EQ 'SOUTH': BEGIN
-              north                               = 1
-              south                               = 0
-              mirror_south                        = 1
+              north            = 1
+              south            = 0
+              mirror_south     = 1
            END
            STRUPCASE(hemi) EQ 'BOTH': BEGIN
-              north                               = 1
-              south                               = 0
-              mirror_south                        = 1
+              north            = 1
+              south            = 0
+              mirror_south     = 1
            END
            ;; STRUPCASE(hemi) EQ 'SOUTH_MIRROR': BEGIN
-           ;;    north                            = 1
-           ;;    south                            = 0
-           ;;    mirror_south                     = 1
+           ;;    north         = 1
+           ;;    south         = 0
+           ;;    mirror_south  = 1
            ;; END
         ENDCASE
      ENDIF ELSE BEGIN
         PRINT,'No hemisphere provided! Assuming north...'
-        hemi                                      = 'NORTH'
-        ;; north                                     = 1 ;default to northern hemi
+        hemi                   = 'NORTH'
+        ;; north               = 1 ;default to northern hemi
      ENDELSE
   ENDIF
 
   IF ~KEYWORD_SET(centerLon) THEN BEGIN
-     centerLon = (STRUPCASE(hemi) EQ 'SOUTH') ? 180 : 0
+     centerLon                 = (STRUPCASE(hemi) EQ 'SOUTH') ? 180 : 0
   ENDIF
-
-  lun = -1
 
   ;; Deal with map stuff
   IF KEYWORD_SET(north) THEN BEGIN
-     maxI=defMaxI
-     minI=defMinI
-     tsLat=defTSLat
+     maxI       = defMaxI
+     minI       = defMinI
+     tsLat      = defTSLat
   ENDIF ELSE BEGIN
      IF KEYWORD_SET(south) THEN BEGIN
-        maxI=-defMinI
-        minI=-defMaxI
-        tsLat=-defTSLat
+        maxI    = -defMinI
+        minI    = -defMaxI
+        tsLat   = -defTSLat
      ENDIF ELSE BEGIN
         PRINT,"Gotta select a hemisphere, bro"
         WAIT,0.5
@@ -118,9 +131,13 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
   ENDELSE
 
   IF KEYWORD_SET(mirror) THEN BEGIN
-     IF mirror NE 0 THEN mirror           = 1 ELSE mirror = 0
+     IF mirror NE 0 THEN BEGIN
+        mirror  = 1 
+     ENDIF ELSE BEGIN
+        mirror  = 0
+     ENDELSE
   ENDIF ELSE BEGIN
-     mirror                               = 0
+     mirror     = 0
   ENDELSE
 
   IF KEYWORD_SET(wholeCap) THEN BEGIN
@@ -306,7 +323,7 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
      (KEYWORD_SET(no_symbol) OR KEYWORD_SET(add_line)): BEGIN
         curPlot = PLOT(plotLons,plotLats, $
                        NAME=plotName, $
-                       SYM_SIZE=KEYWORD_SET(no_symbol) ? !NULL : 0.7, $
+                       SYM_SIZE=KEYWORD_SET(no_symbol) ? !NULL : defSymSize, $
                        SYMBOL=KEYWORD_SET(no_symbol) ? !NULL : defSym, $
                        /OVERPLOT, $
                        LINESTYLE=lineStyle, $
@@ -322,7 +339,7 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
      ELSE: BEGIN
         curPlot = SCATTERPLOT(plotLons,plotLats, $
                               NAME=plotName, $
-                              SYM_SIZE=0.7, $
+                              SYM_SIZE=defSymSize, $
                               SYMBOL=KEYWORD_SET(no_symbol) ? !NULL : defSym, $
                               /OVERPLOT, $
                               SYM_TRANSPARENCY=sTrans, $ 
@@ -347,7 +364,7 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
   IF KEYWORD_SET(add_legend) THEN BEGIN
      legend = LEGEND(TARGET=outPlotArr[*], $
                      /NORMAL, $
-                     POSITION=[0.3,0.85], $
+                     POSITION=legendPosition, $
                      /AUTO_TEXT_COLOR)
 
   ENDIF
