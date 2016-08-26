@@ -34,7 +34,7 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
   ;; Defaults
   lun             = -1
 
-  defMinI         = 60
+  defMinI         = 68
   defMaxI         = 90
   
   defMinM         = 0
@@ -49,10 +49,10 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
 
   defPlot_i_dir   = 'plot_indices_saves/'
 
-  defSTrans       = 90 ;use for plotting entire db
+  defSTrans       = 50 ;use for plotting entire db
   defSym          = '*'
   defSymSize      = 1.0
-  legendPosition  = [0.3,0.85]
+  legendPosition  = [0.35,0.85]
 
   IF KEYWORD_SET(hugePlotMode) THEN BEGIN
      PRINT,'Huge plot mode ...'
@@ -114,21 +114,23 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
   ENDIF
 
   ;; Deal with map stuff
-  IF KEYWORD_SET(north) THEN BEGIN
-     maxI       = defMaxI
-     minI       = defMinI
-     tsLat      = defTSLat
-  ENDIF ELSE BEGIN
-     IF KEYWORD_SET(south) THEN BEGIN
-        maxI    = -defMinI
-        minI    = -defMaxI
+  CASE 1 OF
+     KEYWORD_SET(north): BEGIN
+        maxI       = defMaxI > MAX(lats[WHERE(lats GT 0)])
+        minI       = defMinI < MIN(lats[WHERE(lats GT 0)])
+        tsLat      = defTSLat
+     END
+     KEYWORD_SET(south): BEGIN
+        maxI    = -defMinI > MAX(lats[WHERE(lats LT 0)])
+        minI    = -defMaxI < MIN(lats[WHERE(lats LT 0)])
         tsLat   = -defTSLat
-     ENDIF ELSE BEGIN
-        PRINT,"Gotta select a hemisphere, bro"
+     END
+     ELSE: BEGIN
+        PRINT,"Gotta select a hemisphere, bro. I don't have time for this."
         WAIT,0.5
         RETURN
-     ENDELSE
-  ENDELSE
+     END
+  ENDCASE
 
   IF KEYWORD_SET(mirror) THEN BEGIN
      IF mirror NE 0 THEN BEGIN
@@ -140,14 +142,11 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
      mirror     = 0
   ENDELSE
 
-  IF KEYWORD_SET(wholeCap) THEN BEGIN
-     IF wholeCap EQ 0 THEN wholeCap=!NULL
-  ENDIF
-  IF KEYWORD_SET(midnight) THEN BEGIN
-     IF midnight EQ 0 THEN midnight=!NULL
+  IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
+     wholeCap   = 0
   ENDIF
   
-  IF wholeCap NE !NULL THEN BEGIN
+  IF wholeCap THEN BEGIN
      lim = [ minI, 0, maxI, 360]  
   ENDIF ELSE BEGIN
      lim = [minI, minM*15, maxI, maxM*15]
@@ -216,6 +215,7 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
      map         = MAP('Polar Stereographic', $
                        CENTER_LONGITUDE=centerLon, $
                        TRUE_SCALE_LATITUDE=tsLat, $
+                       LIMIT=lim, $
                        LABEL_FORMAT='polar_maplabels', $
                        FILL_COLOR="white", $
                        DIMENSIONS=KEYWORD_SET(plotPosition) ? !NULL : [100,100], $
