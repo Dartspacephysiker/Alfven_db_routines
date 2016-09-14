@@ -4,6 +4,7 @@ PRO SET_PLOT_DIR,plotDir, $
                  FOR_SW_IMF=for_sw_imf, $
                  FOR_ALFVENDB=for_alfvendb, $
                  FOR_ESPEC_DB=for_eSpec_db, $
+                 FOR_KAPPA_DB=for_kappa_db, $
                  FOR_SDT=for_sdt, $
                  ADD_TODAY=add_today, $
                  ADD_SUFF=add_suff, $
@@ -15,13 +16,15 @@ PRO SET_PLOT_DIR,plotDir, $
   defSW_IMFPlotDir    = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/plots/'
   defAlfvenDBPlotDir  = '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/plots/'
   defeSpecPlotDir     = '/SPENCEdata/Research/Satellites/FAST/espec_identification/plots/'
-  defSDTDir           = '/SPENCEdata/software/sdt/batch_jobs/plots/'
+  defkappaPlotDir     = '/SPENCEdata/Research/Satellites/FAST/kappa_dists/plots/'
+  defSDTPlotDir       = '/SPENCEdata/software/sdt/batch_jobs/plots/'
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
-  proceed                     = KEYWORD_SET(for_storms)   + KEYWORD_SET(for_sw_imf) + $
-                                KEYWORD_SET(for_alfvendb) + KEYWORD_SET(customDir) + $
-                                KEYWORD_SET(for_sdt)      + KEYWORD_SET(for_eSpec_db)
+  proceed                     = KEYWORD_SET(for_storms)   + KEYWORD_SET(for_sw_imf)   + $
+                                KEYWORD_SET(for_alfvendb) + KEYWORD_SET(customDir)    + $
+                                KEYWORD_SET(for_sdt)      + KEYWORD_SET(for_eSpec_db) + $
+                                KEYWORD_SET(for_kappa_DB)
   CASE proceed OF
      0: BEGIN
         do_customDir          = ''
@@ -38,7 +41,7 @@ PRO SET_PLOT_DIR,plotDir, $
            'N': BEGIN
               response     = 0
               valid        = [1,2,3]
-              READ,response,PROMPT='OK, select (1) for_storms, (2) for_sw_imf, or (3)for_alfvendb: '
+              READ,response,PROMPT='OK, select (1) for_storms, (2) for_sw_imf, (3) for_alfvendb, (4) for_sdt, (5) for_eSpec_db: '
               CASE response OF
                  1: BEGIN
                     plotDir = defStormPlotDir                       
@@ -52,6 +55,14 @@ PRO SET_PLOT_DIR,plotDir, $
                     plotDir = defAlfvenDBPlotDir
                     proceed = 1
                  END
+                 4: BEGIN
+                    plotDir = defSDTPlotDir
+                    proceed = 1
+                 END
+                 5: BEGIN
+                    plotDir = defeSpecPlotDir
+                    proceed = 1
+                 END                 
                  ELSE: BEGIN
                     READ,response,PROMPT="Try again, fool. 1, 2, or 3: "
                     WHILE WHERE(response EQ valid) EQ -1 DO BEGIN
@@ -124,7 +135,10 @@ PRO SET_PLOT_DIR,plotDir, $
               plotDir = defeSpecPlotDir
            END
            KEYWORD_SET(for_sdt): BEGIN
-              plotDir = defSDTDir
+              plotDir = defSDTPlotDir
+           END
+           KEYWORD_SET(for_kappa_db): BEGIN
+              plotDir = defkappaPlotDir
            END
            KEYWORD_SET(customDir): BEGIN
               plotDir = customDir
@@ -138,6 +152,7 @@ PRO SET_PLOT_DIR,plotDir, $
         IF KEYWORD_SET(for_alfvendb)  THEN PRINTF,lun,'for_alfvendb'
         IF KEYWORD_SET(for_sdt)       THEN PRINTF,lun,'for_sdt'
         IF KEYWORD_SET(for_eSpec_db)  THEN PRINTF,lun,'for_eSpec_db'
+        IF KEYWORD_SET(for_kappa_db)  THEN PRINTF,lun,'for_kappa_db'
         IF KEYWORD_SET(for_customDir) THEN PRINTF,lun,'for_customDir'
         PRINTF,lun,'Fix it...'
         STOP

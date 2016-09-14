@@ -21,6 +21,7 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
                        BINMLT=binMLT, $
                        SHIFTMLT=shiftM, $
                        MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
+                       BOTH_HEMIS=both_hemis, $
                        DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
                        MINALT=minAlt,MAXALT=maxAlt,BINALT=binAlt, $
                        FASTLOCFILE=fastLocFile,FASTLOCTIMEFILE=fastLocTimeFile, $
@@ -105,22 +106,25 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      ;; ENDIF
      
                                 ;set up grid
-     nXlines=(maxMLT-minMLT)/binMLT + 1
-     nYlines=((KEYWORD_SET(do_lShell) ? maxLshell : maxILAT)-(KEYWORD_SET(do_lShell) ? minLshell : minILAT))/(KEYWORD_SET(do_lShell) ? binLshell : binILAT) + 1
+     nXlines       = (maxMLT-minMLT)/binMLT + 1
+     nYlines       = ((KEYWORD_SET(do_lShell) ? maxLshell : maxILAT)-(KEYWORD_SET(do_lShell) ? minLshell : minILAT))/(KEYWORD_SET(do_lShell) ? binLshell : binILAT) + 1
      
-     mlts=indgen(nXlines)*binMLT+minMLT
-     ilats=indgen(nYlines)*(KEYWORD_SET(do_lShell) ? binLshell : binILAT)+(KEYWORD_SET(do_lShell) ? minLshell : minILAT)
+     mlts          = INDGEN(nXlines)*binMLT+minMLT
+     ilats         = INDGEN(nYlines)*(KEYWORD_SET(do_lShell) ? binLshell : binILAT)+(KEYWORD_SET(do_lShell) ? minLshell : minILAT)
      
-     nMLT                           = N_ELEMENTS(mlts)
-     nILAT                          = N_ELEMENTS(ilats)
+     nMLT          = N_ELEMENTS(mlts)
+     nILAT         = N_ELEMENTS(ilats)
      
-     outTimeHisto                   = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
+     outTimeHisto  = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
      
      ;;fix MLTs
-     fastLocMLTs                    = SHIFT_MLTS_FOR_H2D(fastLoc,fastLoc_inds,shiftM)
+     fastLocMLTs   = SHIFT_MLTS_FOR_H2D(fastLoc,fastLoc_inds,shiftM)
 
-     fastLocILATS                   = (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT)[fastLoc_inds]
+     fastLocILATS  = (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT)[fastLoc_inds]
                                 ;loop over MLTs and ILATs
+
+     IF KEYWORD_SET(both_hemis) THEN fastLocILATS = ABS(fastLocILATS)
+
      FOR j=0, nILAT-2 DO BEGIN 
         FOR i=0, nMLT-2 DO BEGIN 
            ;; tempNCounts = N_ELEMENTS(WHERE(fastLocMLTs GE mlts[i] AND fastLocMLTs LT mlts[i+1] AND $

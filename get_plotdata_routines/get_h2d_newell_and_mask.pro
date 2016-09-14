@@ -59,6 +59,8 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
   mlts[WHERE(mlts LT 0)]            = mlts[WHERE(mlts LT 0)] + 24
   horiz                             = KEYWORD_SET(in_ILATs) ? in_ILATs : eSpec.ilat[eSpec_i]
 
+  IF KEYWORD_SET(h2dStr.both_hemis) THEN horiz = ABS(horiz)
+
   h2dFluxN                          = HIST_2D(mlts,$
                                               horiz,$
                                               BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$

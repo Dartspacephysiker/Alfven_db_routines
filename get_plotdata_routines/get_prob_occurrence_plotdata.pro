@@ -123,6 +123,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   ;;fix MLTs
   mlts                      = SHIFT_MLTS_FOR_H2D(maximus,plot_i,shiftM)
   ilats                     = (KEYWORD_SET(do_lshell) ? maximus.lshell : maximus.ilat)[plot_i]
+  IF KEYWORD_SET(h2dStr.both_hemis) THEN ilats = ABS(ilats)
 
   h2dStr.data               = HIST2D(mlts, $
                                      ilats,$

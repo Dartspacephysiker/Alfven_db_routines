@@ -35,6 +35,18 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
   IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
   IF N_ELEMENTS(lun)         EQ 0 THEN lun         = -1 ;stdout
 
+     IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
+        tmplt_h2dStr  = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
+                                          MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
+                                          MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
+                                          SHIFT1=shiftM,SHIFT2=shiftI, $
+                                          DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i, $
+                                          ;; PLOT_I=plot_i, $
+                                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                                          CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                          CB_FORCE_OOBLOW=cb_force_oobLow)
+     ENDIF
+
   PRINTF,lun,"Getting time histogram denominator ..."
 
   @orbplot_tplot_defaults.pro
@@ -50,6 +62,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
                      BINMLT=binM, $
                      SHIFTMLT=shiftM, $
                      MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                     BOTH_HEMIS=KEYWORD_SET(tmplt_h2dStr.both_hemis), $
                      DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                      FASTLOCFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbFile : FASTLOC__dbFile, $
                      FASTLOCTIMEFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbTimesFile : FASTLOC__dbTimesFile
@@ -97,17 +110,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
   out_fastLoc           = KEYWORD_SET(for_eSpec_DBs) ? TEMPORARY(FL_eSpec__fastLoc) : FL_fastLoc
 
   IF KEYWORD_SET(make_timeHist_h2dStr) THEN BEGIN
-     IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
-        tmplt_h2dStr  = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
-                                          MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                                          MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
-                                          SHIFT1=shiftM,SHIFT2=shiftI, $
-                                          DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i, $
-                                          ;; PLOT_I=plot_i, $
-                                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
-                                          CB_FORCE_OOBHIGH=cb_force_oobHigh, $
-                                          CB_FORCE_OOBLOW=cb_force_oobLow)
-     ENDIF
+
 
      h2dStr                    = tmplt_h2dStr
      h2dStr.is_fluxData        = 0

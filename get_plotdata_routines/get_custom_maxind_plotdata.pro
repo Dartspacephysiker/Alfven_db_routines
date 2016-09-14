@@ -220,7 +220,8 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
 
   ;;fix MLTs
   mlts                      = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,shiftM)
-  ilats                     = (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[tmp_i]
+  ilats                     = (KEYWORD_SET(DO_lShell) ? maximus.lshell : maximus.ilat)[tmp_i]
+  IF KEYWORD_SET(h2dStr.both_hemis) THEN ilats = ABS(ilats)
 
   IF KEYWORD_SET(do_plot_i_instead_of_histos) THEN BEGIN
      h2dStr.data.add,inData

@@ -1028,6 +1028,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      ilats                  = (KEYWORD_SET(DO_LSHELL) ? maximus.lshell : maximus.ilat)[tmp_i]
   ENDELSE
 
+  IF KEYWORD_SET(h2dStr.both_hemis) THEN ilats = ABS(ilats)
+
   IF KEYWORD_SET(do_plot_i_instead_of_histos) THEN BEGIN
      h2dStr.data.add,inData
      h2d_nonzero_nEv_i      = LINDGEN(N_ELEMENTS(inData))

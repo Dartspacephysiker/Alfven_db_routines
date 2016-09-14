@@ -8,6 +8,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                            DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i, $
                            ;; PLOT_I=plot_i, $
                            DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                           BOTH_HEMIS=both_hemis, $
                            CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                            CB_FORCE_OOBLOW=cb_force_oobLow
 
@@ -48,6 +49,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                 do_plotIntegral : 0, $
                 do_timeAvg      : KEYWORD_SET(do_timeAvg_fluxQuantities), $
                 do_grossRate    : KEYWORD_SET(do_grossRate_fluxQuantities), $
+                both_hemis      : KEYWORD_SET(both_hemis), $
                 force_oobHigh   : KEYWORD_SET(cb_force_oobHigh), $
                 force_oobLow    : KEYWORD_SET(cb_force_oobLow), $
                 mask            : KEYWORD_SET(do_plot_i) ? LIST() : DBLARR(im1bins,im2bins), $

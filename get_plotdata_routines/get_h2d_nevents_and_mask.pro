@@ -8,6 +8,7 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
                              MINI=minI,MAXI=maxI,BINI=binI, $
                              DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                              NEVENTSPLOTRANGE=nEventsPlotRange, $
+                             NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
                              H2DSTR=h2dStr,H2DMASKSTR=h2dMaskStr, $
                              H2DFLUXN=h2dFluxN,H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -40,7 +41,8 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
   h2dStr.DO_midCBLabel          = 1
   dataName                      = "nEvents"
   h2dStr.name                   = dataName
-  
+  h2dStr.dont_mask_me           = KEYWORD_SET(nEventsPlot__noMask)
+
   h2dMaskStr                    = tmplt_h2dStr
   h2dMaskStr.title              = "Histogram mask"
   h2dMaskStr.name               = "histoMask"
@@ -55,6 +57,8 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
   ENDIF
 
   horiz                         = KEYWORD_SET(in_ILATs) ? in_ILATs : ( (KEYWORD_SET(do_lShell) ? maximus.lshell : maximus.ilat)[plot_i] )
+
+  IF KEYWORD_SET(h2dStr.both_hemis) THEN horiz = ABS(horiz)
 
   h2dFluxN                      = HIST_2D(mlts,$
                                           horiz,$

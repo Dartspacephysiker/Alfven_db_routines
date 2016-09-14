@@ -8,6 +8,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
    DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
    GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
    GROSSCONVFACTOR=grossConvFactor, $
+   BOTH_HEMIS=both_hemis, $
    OUTH2D_LISTS_WITH_OBS=outH2D_lists_with_obs,$
    OUTH2D_STATS=outH2D_stats, $
    OUTFILESTRING=outFileString, $
@@ -147,6 +148,8 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
            IF KEYWORD_SET(output_textFile) THEN BEGIN
               tempMLTs                     = dbStruct.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
               tempILATs                    = dbStruct.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+              IF KEYWORD_SET(both_hemis) THEN tempILATs = ABS(tempILATs)
+
               tempTimes                    = dbStruct.time[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
               tempOrbs                     = dbStruct.orbit[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
               tempAlts                     = dbStruct.alt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]

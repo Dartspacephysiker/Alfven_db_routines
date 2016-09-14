@@ -30,6 +30,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           INCLUDENOCONSECDATA=includeNoConsecData, $
                           NPLOTS=nPlots, $
                           NEVENTSPLOTRANGE=nEventsPlotRange, $
+                          NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
                           LOGNEVENTSPLOT=logNEventsPlot, $
                           NEVENTSPLOTAUTOSCALE=nEventsPlotAutoscale, $
                           NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $
@@ -223,6 +224,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                            MAXL=maxL, $
                            BINL=binL, $
                            NEVENTSPLOTRANGE=nEventsPlotRange, $
+                           NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
                            TMPLT_H2DSTR=tmplt_h2dStr, $
                            H2DSTR=h2dStr, $
                            H2DMASKSTR=h2dMaskStr, $
@@ -713,6 +715,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                  MAXL=maxL, $
                                  BINL=binL, $
                                  NEVENTSPLOTRANGE=nEventsPlotRange, $
+                                 NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
                                  TMPLT_H2DSTR=tmplt_h2dStr, $
                                  H2DSTR=tmpH2DStr, $
                                  H2DMASKSTR=tmpH2DMaskStr, $
@@ -953,6 +956,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                  MAXL=maxL, $
                                  BINL=binL, $
                                  NEVENTSPLOTRANGE=nEventsPlotRange, $
+                                 NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
                                  TMPLT_H2DSTR=tmplt_h2dStr, $
                                  H2DSTR=tmpH2DStr, $
                                  H2DMASKSTR=tmpH2DMaskStr, $
@@ -1264,6 +1268,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                  MAXL=maxL, $
                                  BINL=binL, $
                                  NEVENTSPLOTRANGE=nEventsPlotRange, $
+                                 NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
                                  TMPLT_H2DSTR=tmplt_h2dStr, $
                                  H2DSTR=tmpH2DStr, $
                                  H2DMASKSTR=tmpH2DMaskStr, $
@@ -1962,6 +1967,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                              MINILAT=minI, $
                                              MAXILAT=maxI, $
                                              BINILAT=binI, $
+                                             BOTH_HEMIS=KEYWORD_SET(tmplt_h2dStr.both_hemis), $
                                              DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                                              ;; OUTFILEPREFIX=outFilePrefix, $
                                              ;; OUTFILESUFFIX=outFileSuffix, $
@@ -1991,6 +1997,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
            DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
            GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
            GROSSCONVFACTOR=grossConvFactor, $
+           BOTH_HEMIS=KEYWORD_SET(tmplt_h2dStr.both_hemis), $
            OUTH2D_LISTS_WITH_OBS=outH2D_lists_with_obs,$
            OUTH2D_STATS=outH2D_stats, $
            OUTFILESTRING=paramStr, $

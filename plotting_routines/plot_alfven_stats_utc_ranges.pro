@@ -295,7 +295,9 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  DO_CHASTDB=do_chastDB, $
                                  DO_DESPUNDB=do_despunDB, $
                                  USE_AACGM=use_aacgm, $
-                                 NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
+                                 NEVENTSPLOTRANGE=nEventsPlotRange, $
+                                 NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
+                                 LOGNEVENTSPLOT=logNEventsPlot, $
                                  NEVENTSPLOTAUTOSCALE=nEventsPlotAutoscale, $
                                  NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $
                                  WRITEASCII=writeASCII, $
@@ -345,7 +347,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
      RETURN
   ENDIF
   
-  SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, POYNTRANGE=poyntRange, $
+  SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
+                             ALTITUDERANGE=altitudeRange, $
+                             CHARERANGE=charERange, $
+                             POYNTRANGE=poyntRange, $
                              MINMLT=minM,MAXMLT=maxM, $
                              BINMLT=binM, $
                              SHIFTMLT=shiftM, $
@@ -355,6 +360,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                              ;; MIN_NEVENTS=min_nEvents, $
                              MASKMIN=maskMin, $
+                             THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
                              DO_DESPUNDB=do_despunDB, $
                              HEMI=hemi, $
                              NPLOTS=nPlots, $
@@ -606,6 +612,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                    MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI), $
                                    SHIFT1=shiftM,SHIFT2=shiftI, $
                                    DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                                   ;; DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                                   BOTH_HEMIS=STRUPCASE(hemi) EQ 'BOTH', $
                                    CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                    CB_FORCE_OOBLOW=cb_force_oobLow)
 
@@ -684,6 +692,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         ;; T2_ARR=t2_arr, $
                         NPLOTS=nPlots, $
                         NEVENTSPLOTRANGE=nEventsPlotRange, $
+                        NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
                         LOGNEVENTSPLOT=logNEventsPlot, $
                         NEVENTSPLOTAUTOSCALE=nEventsPlotAutoscale, $
                         NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $

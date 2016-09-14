@@ -10,6 +10,7 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
    MINILAT=minILAT, $
    MAXILAT=maxILAT, $
    BINILAT=binILAT, $
+   BOTH_HEMIS=both_hemis, $
    DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
    ;; OUTFILEPREFIX=outFilePrefix, $
    ;; OUTFILESUFFIX=outFileSuffix, $
@@ -94,6 +95,8 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   ;;fix MLTs, if need be
   dbStructMLTS                             = SHIFT_MLTS_FOR_H2D(dbStruct,dbStruct_inds,shiftM)
   dbStructILATS                            = (KEYWORD_SET(do_lShell) ? dbStruct.lShell : dbStruct.ILAT)[dbStruct_inds]
+
+  IF KEYWORD_SET(both_hemis) THEN dbStructILATS = ABS(dbStructILATS)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;loop over MLTs and ILATs

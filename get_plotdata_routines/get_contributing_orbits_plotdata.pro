@@ -66,6 +66,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i,MINM=minM,MAXM=maxM, $
   ;;fix MLTs
   mlts                      = SHIFT_MLTS_FOR_H2D(dbStruct,plot_i,shiftM)
   ilats                     = (KEYWORD_SET(do_lShell) ? dbStruct.lshell : dbStruct.ilat)[plot_i]
+  IF KEYWORD_SET(h2dStr.both_hemis) THEN ilats = ABS(ilats)
 
   h2dOrbTemp                                  = INTARR(N_ELEMENTS(tmplt_h2dStr.data[*,0]),N_ELEMENTS(tmplt_h2dStr.data[0,*]))
   h2dOrbTemp[*,*]                             = 0

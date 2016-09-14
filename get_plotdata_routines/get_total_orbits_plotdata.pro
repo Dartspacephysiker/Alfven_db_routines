@@ -56,8 +56,9 @@ PRO GET_TOTAL_ORBITS_PLOTDATA,dbStruct,MINM=minM,MAXM=maxM, $
   ;;fix MLTs
   mlts                      = SHIFT_MLTS_FOR_H2D(maximus,INDGEN(N_ELEMENTS(maximus.mlt)),shiftM)
   ilats                     = KEYWORD_SET(do_lShell) ? dbStruct.lshell : dbStruct.ilat
+  IF KEYWORD_SET(h2dStr.both_hemis) THEN ilats = ABS(ilats)
 
-  FOR j=0, N_ELEMENTS(uniqueOrbs_i)-1 DO BEGIN 
+  FOR j=0,N_ELEMENTS(uniqueOrbs_i)-1 DO BEGIN 
      tempOrb=dbStruct.orbit[uniqueOrbs_i[j]]
      temp_i=WHERE(dbStruct.orbit EQ tempOrb,/NULL) 
      h2dOrbTemp=hist_2d(mlts[temp_i],$

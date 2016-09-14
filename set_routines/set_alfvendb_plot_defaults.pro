@@ -12,6 +12,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
                                MIN_NEVENTS=min_nEvents, $
                                MASKMIN=maskMin, $
+                               THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
                                DO_DESPUNDB=do_despunDB, $
                                USE_AACGM=use_aacgm, $
                                USE_MAG_COORDS=use_MAG, $
@@ -174,13 +175,22 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ENDELSE
 
   ;;Set minimum allowable number of events for a histo bin to be displayed
-  maskStr=''
-  IF N_ELEMENTS(maskMin) EQ 0 THEN maskMin = defMaskMin $
-  ELSE BEGIN
-     IF maskMin GT 1 THEN BEGIN
-        maskStr='--maskMin_' + STRING(FORMAT='(I0)',maskMin)
-     ENDIF
-  ENDELSE
+  maskStr = ''
+  IF N_ELEMENTS(maskMin) EQ 0 THEN BEGIN
+     maskMin = defMaskMin
+  ENDIF
+  IF maskMin GT 1 THEN BEGIN
+     maskStr = '--maskMin_' + STRING(FORMAT='(I0)',maskMin)
+  ENDIF
+  
+  ;;Set minimum # minutes that must be spent in each bin for inclusion
+  tMaskStr = ''
+  ;; IF N_ELEMENTS(tHist_mask_bins_below_thresh) EQ 0 THEN BEGIN
+  ;;    maskMin = defMaskMin
+  ;; ENDIF
+  IF tHist_mask_bins_below_thresh GT 1 THEN BEGIN
+     tMaskStr = '--tThresh_' + STRING(FORMAT='(I0)',tHist_mask_bins_below_thresh)
+  ENDIF
   
   ;;doing polar contour?
   polarContStr=''
@@ -189,7 +199,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ENDIF
 
   paramString=hoyDia+'--'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
-              hemi+despunStr+AACGMStr+MAGStr+sample_t_string+lShellStr+plotMedOrAvg+maskStr+inc_burstStr+polarContStr+paramStrSuffix
+              hemi+despunStr+AACGMStr+MAGStr+sample_t_string+lShellStr+plotMedOrAvg+$
+              maskStr+tMaskStr+inc_burstStr+polarContStr+paramStrSuffix
   
   ;;Shouldn't be leftover, unused params from batch call
   IF ISA(e) THEN BEGIN
