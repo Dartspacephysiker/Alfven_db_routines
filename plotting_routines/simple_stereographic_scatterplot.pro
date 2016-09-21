@@ -19,6 +19,8 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
                                      CLOSE_AFTER_SAVE=close_after_save, $
                                      HUGEPLOTMODE=hugePlotMode, $
                                      STRANS=sTrans, $
+                                     SYM_THICK=sym_thick, $
+                                     THICK=thick, $
                                      PLOTTITLE=plotTitle, $
                                      ADD_LINE=add_line, $
                                      LINESTYLE=lineStyle, $
@@ -27,6 +29,7 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
                                      OUT_ORBSTRARR_LIST=out_orbStrArr_list, $
                                      OUT_WINDOW=out_window, $
                                      OUT_MAP=out_map, $
+                                     INIT_MAP_PROJ_AND_RETURN=init_map_proj_and_return, $
                                      _EXTRA=e
 
   COMPILE_OPT idl2
@@ -34,7 +37,7 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
   ;; Defaults
   lun             = -1
 
-  defMinI         = 68
+  defMinI         = 50
   defMaxI         = 90
   
   defMinM         = 0
@@ -201,6 +204,23 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
   ;; ENDIF
 
 
+  IF KEYWORD_SET(init_map_proj_and_return) THEN BEGIN
+     init_map_proj_and_return = MAP_PROJ_INIT('Polar Stereographic', $
+                                              CENTER_LONGITUDE=centerLon, $
+                                              TRUE_SCALE_LATITUDE=tsLat, $
+                                              LIMIT=lim) ;, $
+                       ;; LABEL_FORMAT='polar_maplabels', $
+                       ;; FILL_COLOR="white", $
+                       ;; DIMENSIONS=KEYWORD_SET(plotPosition) ? !NULL : [100,100], $
+                       ;; OVERPLOT=overplot, $
+                       
+                       ;; ;; WINDOW=window, $
+                       ;; CURRENT=window, $
+                       ;; POSITION=plotPosition, $
+                       ;; LAYOUT=layout
+     RETURN
+  ENDIF
+
   IF ~ISA(window) THEN BEGIN
      window                                       = WINDOW(DIMENSIONS=[900,900])
   ENDIF ELSE BEGIN
@@ -327,9 +347,9 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
                        SYMBOL=KEYWORD_SET(no_symbol) ? !NULL : defSym, $
                        /OVERPLOT, $
                        LINESTYLE=lineStyle, $
-                       THICK=2.0, $
+                       THICK=KEYWORD_SET(thick) ? thick : 2.0, $
                        SYM_TRANSPARENCY=sTrans, $ 
-                       SYM_THICK=1.5, $
+                       SYM_THICK=KEYWORD_SET(sym_thick) ? sym_thick : 1.5, $
                        SYM_COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[0] : color_list, $
                        COLOR=(N_ELEMENTS(color_list) GT 0) ? color_list[0] : color_list, $
                        CURRENT=window, $
@@ -343,7 +363,7 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
                               SYMBOL=KEYWORD_SET(no_symbol) ? !NULL : defSym, $
                               /OVERPLOT, $
                               SYM_TRANSPARENCY=sTrans, $ 
-                              SYM_THICK=1.5, $
+                              SYM_THICK=KEYWORD_SET(sym_thick) ? sym_thick : 1.5, $
                               SYM_COLOR=(N_ELEMENTS(color_list) GT 0) ? $
                               color_list[0] : color_list, $
                               CURRENT=MAP, $
