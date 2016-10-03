@@ -119,17 +119,17 @@ PRO JOURNAL__20161001__CONVERT_ALL_NOTDESPUN_ALFDB_ILATS_TO_MLATS
      ;; fEphem_GEOSph_arr[*,i]    = [90.-geo_theta,geo_phi,geo_r-R_E] ;Convert to latitude from colatitude here
 
 
-     fEphem_GEOSph_arr = TRANSPOSE(fEphem_GEOSph_arr)
-     fEphem_MAGSph_arr = TRANSPOSE(fEphem_MAGSph_arr)
+     ;; fEphem_GEOSph_arr = TRANSPOSE(fEphem_GEOSph_arr)
+     ;; fEphem_MAGSph_arr = TRANSPOSE(fEphem_MAGSph_arr)
 
 
-  max_GEO     = {ALT:fEphem_GEOSph_arr[*,2], $
-                 LON:fEphem_GEOSph_arr[*,1], $
-                 LAT:fEphem_GEOSph_arr[*,0]}
+  max_GEO     = {ALT:REFORM(fEphem_GEOSph_arr[*,2]), $
+                 LON:REFORM(fEphem_GEOSph_arr[*,1]), $
+                 LAT:REFORM(fEphem_GEOSph_arr[*,0])}
 
-  max_MAG     = {ALT:fEphem_MAGSph_arr[*,2], $
-                 LON:fEphem_MAGSph_arr[*,1], $
-                 LAT:fEphem_MAGSph_arr[*,0]}
+  max_MAG     = {ALT:REFORM(fEphem_MAGSph_arr[*,2]), $
+                 LON:REFORM(fEphem_MAGSph_arr[*,1]), $
+                 LAT:REFORM(fEphem_MAGSph_arr[*,0])}
 
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

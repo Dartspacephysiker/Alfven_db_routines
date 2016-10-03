@@ -1,9 +1,9 @@
-;;07/22/16
-PRO JOURNAL__20160723__CONVERT_ALFDB_ILATS_TO_AACGM
+;2016/10/01
+PRO JOURNAL__20161001__CONVERT_ALFDB_NOTDESPUN_ILATS_TO_AACGM
 
   COMPILE_OPT IDL2
 
-  orig_routineName = 'JOURNAL__20160723__CONVERT_ALFDB_ILATS_TO_AACGM'
+  orig_routineName = 'JOURNAL__20161001__CONVERT_ALFDB_NOTDESPUN_ILATS_TO_AACGM'
 
   R_E              = 6371.2D    ;Earth radius in km, from IGRFLIB_V2.pro
 
@@ -49,6 +49,9 @@ PRO JOURNAL__20160723__CONVERT_ALFDB_ILATS_TO_AACGM
   maximus          = !NULL
 
   PRINT,"Feeding it to AACGM ..."
+  TIC
+  runCName = "AACGM Clock"
+  runC     = TIC(runCName)
   FOR i=0,nTot-1 DO BEGIN
   ;; FOR i=0,100-1 DO BEGIN
 
@@ -59,9 +62,13 @@ PRO JOURNAL__20160723__CONVERT_ALFDB_ILATS_TO_AACGM
      AACGM_MLT                 = MLT_V2(tmpAACGM[1])
      maxEphem_AACGMSph_arr[*,i]  = [tmpAACGM,AACGM_MLT]
 
-     IF (i MOD 1000) EQ 0 THEN PRINT,i
+     IF (i MOD 1000) EQ 0 THEN BEGIN
+        PRINT,"N completed : " + STRCOMPRESS(i,/REMOVE_ALL)
+        TOC,runC
+     ENDIF
 
   ENDFOR
+  TOC
 
   maxEphem_AACGMSph_arr[2,*]     = (maxEphem_AACGMSph_arr[2,*]*R_E-R_E) ;convert back to altitude above sea level
 
