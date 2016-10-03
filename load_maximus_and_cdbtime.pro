@@ -2,6 +2,7 @@
 ;2016/01/07 Added DO_DESPUNDB keyword
 PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              GOOD_I=good_i, $
+                             INCLUDE_32HZ=include_32Hz, $
                              DBDir=DBDir, $
                              DBFile=DBFile, $
                              DB_TFILE=DB_tFile, $
@@ -66,7 +67,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   ;; GEO_file             = 'Dartdb_20160508--502-16361_despun--maximus--GEO_coords.sav'
   ;; MAG_file             = 'Dartdb_20160508--502-16361_despun--maximus--MAG_coords.sav'
 
-  AACGM_file__despun   = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_coords.sav'
+  AACGM_file__despun   = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_coords--every_tstamp--20160824.sav'
   GEO_file__despun     = 'Dartdb_20160508--502-16361_despun--maximus--GEO_coords.sav'
   MAG_file__despun     = 'Dartdb_20160508--502-16361_despun--maximus--MAG_coords.sav'
 
@@ -273,7 +274,12 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   ENDIF
 
   ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI='BOTH')
-  IF ARG_PRESENT(good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH',DESPUNDB=despunDB,RESET_GOOD_INDS=KEYWORD_SET(swap_DBs))
+  IF ARG_PRESENT(good_i) THEN good_i = GET_CHASTON_IND( $
+                                       MAXIMUS__maximus, $
+                                       INCLUDE_32HZ=include_32Hz, $
+                                       HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH', $
+                                       DESPUNDB=despunDB, $
+                                       RESET_GOOD_INDS=KEYWORD_SET(swap_DBs))
 
   IF ~KEYWORD_SET(just_cdbTime) THEN out_maximus = MAXIMUS__maximus
   IF ~KEYWORD_SET(just_maximus) THEN out_cdbTime = MAXIMUS__times

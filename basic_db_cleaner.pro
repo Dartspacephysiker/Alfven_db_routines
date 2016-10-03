@@ -5,6 +5,7 @@
 ;; 2016/01/13 New USING_HEAVIES keyword for times when TEAMS data are coming into play
 FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
                           CLEAN_NANS_AND_INFINITIES=clean_nans_and_infinities, $
+                          INCLUDE_32Hz=include_32Hz, $
                           DO_LSHELL=DO_lshell, $
                           USING_HEAVIES=using_heavies, $
                           DO_CHASTDB=do_ChastDB, $
@@ -117,7 +118,35 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
         PRINTF,lun,FORMAT='("N lost to basic sample freq restr",T40,": ",I0)',nlost
      ENDIF
   ENDIF ELSE BEGIN
-     good_i = CGSETINTERSECTION(good_i,WHERE(ABS(dbStruct.sample_t) LE sample_t_hcutoff AND ABS(dbStruct.sample_t) GT 0.,/NULL))
+
+     ;; Now sample_t stuff
+     CASE 1 OF
+        KEYWORD_SET(include_32Hz): BEGIN
+
+           PRINT,"Including 32-Hz samples ..."
+
+           width128_cutoff = 2.5  ; 1./(128/20.)
+           width32_cutoff  = 0.63 ; 1./(32/20.)
+
+           Hz32_i  = WHERE(ABS(dbStruct.sample_t - 0.03125) LT 0.003,nHz32,/NULL)
+
+           Hz128_i = WHERE((ABS(dbStruct.sample_t) LE sample_t_hcutoff) AND $
+                           (dbStruct.sample_t GT 0),nHz128,/NULL)
+
+
+           good_i  = CGSETINTERSECTION(good_i,CGSETUNION(Hz32_i,Hz128_i))
+
+        END
+        ELSE: BEGIN
+
+           good_i = CGSETINTERSECTION(good_i,WHERE(ABS(dbStruct.sample_t) LE sample_t_hcutoff AND ABS(dbStruct.sample_t) GT 0.,/NULL))
+           ;; good_i = CGSETINTERSECTION(good_i, $
+           ;;                            WHERE(ABS(dbStruct.sample_t) LE sample_t_hcutoff,/NULL))
+           ;; good_i = CGSETINTERSECTION(good_i, $
+           ;;                            WHERE(dbStruct.width_time LE width_t_cutoff,/NULL))
+        END
+     ENDCASE
+
      nlost      = n_good-N_ELEMENTS(good_i)
      tot_nLost += nLost
      n_good -= nLost

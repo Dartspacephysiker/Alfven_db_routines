@@ -32,6 +32,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
                            SAMPLE_T_RESTRICTION=sample_t_restriction, $
                            DO_LSHELL=DO_lshell, $
                            USING_HEAVIES=using_heavies, $
+                           INCLUDE_32HZ=include_32Hz, $
                            LUN=lun
 
   COMPILE_OPT idl2
@@ -52,6 +53,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
   n_events = N_ELEMENTS(maximus.orbit)
   good_i = BASIC_DB_CLEANER(maximus,DO_CHASTDB=is_chastDB, $
                             /CLEAN_NANS_AND_INFINITIES, $
+                            INCLUDE_32Hz=include_32Hz, $
                             DO_LSHELL=DO_lshell, $
                             USING_HEAVIES=using_heavies)
 
@@ -171,9 +173,31 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
      good_i = CGSETINTERSECTION(good_i,WHERE(ABS(maximus.char_ion_energy) LE char_ion_e_hcutOff AND ABS(maximus.char_ion_energy) GT char_ion_e_lcutoff,/NULL)) 
 
      ;; Now sample_t stuff
-     good_i = CGSETINTERSECTION(good_i,WHERE(ABS(maximus.sample_t) LE sample_t_hcutoff,/NULL))
+     CASE 1 OF
+        KEYWORD_SET(include_32Hz): BEGIN
 
-     good_i = CGSETINTERSECTION(good_i,WHERE(maximus.width_time LE width_t_cutoff,/NULL))
+           width128_cutoff = 2.5  ; 1./(128/20.)
+           width32_cutoff  = 0.63 ; 1./(32/20.)
+
+           Hz32_i  = WHERE((ABS(maximus.sample_t - 0.03125) LT 0.003) AND $
+                           (maximus.width_time LE width32_cutoff),nHz32,/NULL)
+
+           Hz128_i = WHERE((ABS(maximus.sample_t) LE sample_t_hcutoff) AND $
+                           (maximus.width_time LE width128_cutoff),nHz128,/NULL)
+
+
+           good_i  = CGSETINTERSECTION(good_i,CGSETUNION(Hz32_i,Hz128_i))
+
+        END
+        ELSE: BEGIN
+           good_i = CGSETINTERSECTION(good_i, $
+                                      WHERE(ABS(maximus.sample_t) LE sample_t_hcutoff,/NULL))
+           good_i = CGSETINTERSECTION(good_i, $
+                                      WHERE(maximus.width_time LE width_t_cutoff,/NULL))
+        END
+     ENDCASE
+
+     
 
   ;; for i=0,N_ELEMENTS(max_tags)-1 do begin
   ;;    nkept=N_ELEMENTS(WHERE(FINITE(maximus.(i)),NCOMPLEMENT=nlost))

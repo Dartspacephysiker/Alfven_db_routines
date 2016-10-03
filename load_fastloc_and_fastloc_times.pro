@@ -6,11 +6,12 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    FORCE_LOAD_FASTLOC=force_load_fastLoc, $
                                    FORCE_LOAD_TIMES=force_load_times, $
                                    FORCE_LOAD_ALL=force_load_all, $
-                                   FOR_ESPEC_DBS=for_eSpec_DBs, $
+                                   INCLUDE_32Hz=include_32Hz, $
                                    COORDINATE_SYSTEM=coordinate_system, $
                                    USE_AACGM_COORDS=use_aacgm, $
                                    USE_GEO_COORDS=use_geo, $
                                    USE_MAG_COORDS=use_mag, $
+                                   FOR_ESPEC_DBS=for_eSpec_DBs, $
                                    ;; CHECK_DB=check_DB, $
                                    OUT__DO_NOT_LOAD_IN_MEM=do_not_load_in_mem, $
                                    LUN=lun
@@ -25,42 +26,50 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
   IF KEYWORD_SET(force_load_all) THEN BEGIN
      PRINTF,lun,"Forcing load of fastLoc and times..."
-     force_load_fastLoc             = 1
-     force_load_times               = 1
+     force_load_fastLoc  = 1
+     force_load_times    = 1
   ENDIF
 
 
-  ;; DefDBDir                       = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals2/'
-  ;; DefDBFile                      = 'fastLoc_intervals2--500-16361_all--20150613.sav'
-  ;; DefDBFile                      = 'fastLoc_intervals2--500-16361_all--w_lshell--20151015.sav'
-  ;; DefDB_tFile                    = 'fastLoc_intervals2--500-16361_all--20150613--times.sav'
+  ;; DefDBDir        = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals2/'
+  ;; DefDBFile       = 'fastLoc_intervals2--500-16361_all--20150613.sav'
+  ;; DefDBFile       = 'fastLoc_intervals2--500-16361_all--w_lshell--20151015.sav'
+  ;; DefDB_tFile     = 'fastLoc_intervals2--500-16361_all--20150613--times.sav'
 
-  ;; DefDBDir                       = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals3/'
-  ;; DefDBFile                      = 'fastLoc_intervals3--500-16361--below_aur_oval--20151020.sav'
-  ;; DefDB_tFile                    = 'fastLoc_intervals3--500-16361--below_aur_oval--20151020--times.sav'
+  ;; DefDBDir        = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals3/'
+  ;; DefDBFile       = 'fastLoc_intervals3--500-16361--below_aur_oval--20151020.sav'
+  ;; DefDB_tFile     = 'fastLoc_intervals3--500-16361--below_aur_oval--20151020--times.sav'
 
-  DefDBDir                          = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals4/'
-  ;; DefDBFile                      = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205.sav'
-  ;; DefDB_tFile                    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--times.sav'
-  ;; DefDBFile                      = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--sample_t_le_0.01.sav'
-  ;; DefDB_tFile                    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--times--sample_t_le_0.01.sav'
+  DefDBDir           = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals4/'
+  ;; DefDBFile       = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205.sav'
+  ;; DefDB_tFile     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--times.sav'
+  ;; DefDBFile       = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--sample_t_le_0.01.sav'
+  ;; DefDB_tFile     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160205--times--sample_t_le_0.01.sav'
 
-  ;; DefDBFile                         = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--noDupes--sample_freq_le_0.01.sav'
-  DefDBFile                         = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01.sav'
-  DefDB_tFile                       = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--times--noDupes--sample_freq_le_0.01.sav'
-  ;; DefDBFile                      = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05.sav'
-  ;; DefDB_tFile                    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--times.sav'
+  ;; DefDBFile       = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--noDupes--sample_freq_le_0.01.sav'
 
-  ;; DefESpecDBFile                    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes.sav'
-  DefESpecDBFile                    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--smaller_datatypes--no_interval_startstop.sav'
-  DefESpecDB_tFile                  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--times.sav'
+  CASE 1 OF
+     KEYWORD_SET(include_32Hz): BEGIN
+        DefDBFile    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05.sav'
+        DefDB_tFile  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--times.sav'
+     END
+     ELSE: BEGIN
+        DefDBFile    = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01.sav'
+        DefDB_tFile  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--times--noDupes--sample_freq_le_0.01.sav'
+        
+     END
+  ENDCASE
 
-  defCoordDir                       = defDBDir + 'alternate_coords/'
-  ;; AACGM_dir        = '/SPENCEdata/Research/database/FAST/ephemeris/'
-  ;; AACGM_file       = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_GEO_and_MAG_coords.sav'
-  AACGM_file                        = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_coords.sav'
-  GEO_file                          = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--GEO_coords.sav'
-  MAG_file                          = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--MAG_coords.sav'
+  ;; DefESpecDBFile  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes.sav'
+  DefESpecDBFile     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--smaller_datatypes--no_interval_startstop.sav'
+  DefESpecDB_tFile   = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--times.sav'
+
+  defCoordDir        = defDBDir + 'alternate_coords/'
+  ;; AACGM_dir       = '/SPENCEdata/Research/database/FAST/ephemeris/'
+  ;; AACGM_file      = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_GEO_and_MAG_coords.sav'
+  AACGM_file         = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_coords.sav'
+  GEO_file           = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--GEO_coords.sav'
+  MAG_file           = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--MAG_coords.sav'
 
 
   ;; IF KEYWORD_SET(check_DB) THEN BEGIN

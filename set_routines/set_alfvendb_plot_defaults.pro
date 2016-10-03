@@ -3,6 +3,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                CHARERANGE=charERange, $
                                POYNTRANGE=poyntRange, $
                                SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                               INCLUDE_32HZ=include_32Hz, $
                                MINMLT=minMLT,MAXMLT=maxMLT, $
                                BINMLT=binMLT, $
                                SHIFTMLT=shiftMLT, $
@@ -14,7 +15,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                MASKMIN=maskMin, $
                                THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
                                DO_DESPUNDB=do_despunDB, $
-                               USE_AACGM=use_aacgm, $
+                               USE_AACGM_COORDS=use_aacgm, $
                                USE_MAG_COORDS=use_MAG, $
                                HEMI=hemi, $
                                NORTH=north, $
@@ -150,21 +151,27 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   IF N_ELEMENTS(paramStrSuffix) EQ 0 THEN paramStrSuffix = "" ;; ELSE paramStrSuffix = "--" + paramStrSuffix
   IF N_ELEMENTS(paramStrPrefix) EQ 0 THEN paramStrPrefix = "" ;; ELSE paramStrPrefix = paramStrPrefix + "--"
 
-  lShellStr=''
-  IF KEYWORD_SET(do_lShell) THEN lShellStr='--lShell'
+  lShellStr = ''
+  IF KEYWORD_SET(do_lShell) THEN lShellStr = '--lShell'
 
-  IF KEYWORD_SET(do_despundb) THEN despunStr     = '--despun' ELSE despunStr = ''
+  IF KEYWORD_SET(do_despundb) THEN despunStr  = '--despun' ELSE despunStr = ''
 
-  IF KEYWORD_SET(use_AACGM)   THEN AACGMStr      = '_AACGM'   ELSE AACGMStr  = ''
+  IF KEYWORD_SET(use_AACGM)   THEN AACGMStr   = '_AACGM'   ELSE AACGMStr  = ''
 
-  IF KEYWORD_SET(use_MAG)   THEN MAGStr      = '_MAG'   ELSE MAGStr  = ''
+  IF KEYWORD_SET(use_MAG)   THEN MAGStr       = '_MAG'   ELSE MAGStr  = ''
 
   IF KEYWORD_SET(sample_t_restriction) THEN BEGIN
-     sample_t_string                             = STRING(FORMAT='("--sampT_restr_",F0.2,"s")',sample_t_restriction) 
+     sample_t_string  = STRING(FORMAT='("--sampT_restr_",F0.2,"s")',sample_t_restriction) 
   ENDIF ELSE BEGIN
-     sample_t_string                             = ''
+     sample_t_string  = ''
   ENDELSE
-   
+  
+  IF KEYWORD_SET(include_32Hz) THEN BEGIN
+     Hz32_string  = '--inc_32Hz'
+  ENDIF ELSE BEGIN
+     Hz32_string  = ''
+  ENDELSE
+  
   ;;********************************************
   ;;A few other strings to tack on
   ;;tap DBs, and setup output
@@ -188,10 +195,18 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ;; IF N_ELEMENTS(tHist_mask_bins_below_thresh) EQ 0 THEN BEGIN
   ;;    maskMin = defMaskMin
   ;; ENDIF
-  IF tHist_mask_bins_below_thresh GT 1 THEN BEGIN
-     tMaskStr = '--tThresh_' + STRING(FORMAT='(I0)',tHist_mask_bins_below_thresh)
+  IF N_ELEMENTS(tHist_mask_bins_below_thresh) GT 0 THEN BEGIN
+     IF tHist_mask_bins_below_thresh GT 1 THEN BEGIN
+        tMaskStr = '--tThresh_' + STRING(FORMAT='(I0)',tHist_mask_bins_below_thresh)
+     ENDIF
   ENDIF
   
+  ;;current limits
+  MCStr = ''
+  IF (ABS(minMC-10) GT 0.1) OR (ABS(maxNegMC+10) GT 0.1) THEN BEGIN
+     MCStr = STRING(FORMAT='("--cur_",I0,"-",I0)',maxNegMC,minMC)
+  ENDIF
+
   ;;doing polar contour?
   polarContStr=''
   IF KEYWORD_SET(polarContour) THEN BEGIN
@@ -199,7 +214,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ENDIF
 
   paramString=hoyDia+'--'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
-              hemi+despunStr+AACGMStr+MAGStr+sample_t_string+lShellStr+plotMedOrAvg+$
+              hemi+despunStr+AACGMStr+MAGStr+MCStr+sample_t_string+Hz32_string+ $
+              lShellStr+plotMedOrAvg+$
               maskStr+tMaskStr+inc_burstStr+polarContStr+paramStrSuffix
   
   ;;Shouldn't be leftover, unused params from batch call

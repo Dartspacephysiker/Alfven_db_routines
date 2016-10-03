@@ -1126,6 +1126,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
      IF KEYWORD_SET(do_grossRate_fluxQuantities) $
         OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+
+        dayInds    = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
+        nightInds  = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
+
+
         CASE 1 OF
            KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
               h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dAreas[WHERE(h2dstr.data GT 0)]*grossConvFactor
@@ -1137,16 +1142,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            END
         ENDCASE
 
-        dayInds                           = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
-        nightInds                         = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
-
         IF dayInds[0] NE -1 THEN BEGIN
-           grossDay                       = TOTAL(h2dStr.data[dayInds])
-        ENDIF ELSE grossDay               = 0
+           grossDay            = TOTAL(h2dStr.data[dayInds])
+        ENDIF ELSE grossDay    = 0
 
         IF nightInds[0] NE -1 THEN BEGIN
-           grossNight                     = TOTAL(h2dStr.data[nightInds])
-        ENDIF ELSE grossNight             = 0
+           grossNight          = TOTAL(h2dStr.data[nightInds])
+        ENDIF ELSE grossNight  = 0
      ENDIF
   ENDELSE
 
@@ -1156,12 +1158,15 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         maxh2d = MAX(h2dStr.data[h2d_nonzero_nEv_i])
         minh2d = MIN(h2dStr.data[h2d_nonzero_nEv_i])
         medh2d = MEDIAN(h2dStr.data[h2d_nonzero_nEv_i])
-        dayMaxh2d = MAX(h2dStr.data[dayInds])
-        dayMinh2d = MIN(h2dStr.data[dayInds])
-        dayMedh2d = MEDIAN(h2dStr.data[dayInds])
-        nightMaxh2d = MAX(h2dStr.data[nightInds])
-        nightMinh2d = MIN(h2dStr.data[nightInds])
-        nightMedh2d = MEDIAN(h2dStr.data[nightInds])
+        IF KEYWORD_SET(do_grossRate_fluxQuantities) $
+        OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+           dayMaxh2d = MAX(h2dStr.data[dayInds])
+           dayMinh2d = MIN(h2dStr.data[dayInds])
+           dayMedh2d = MEDIAN(h2dStr.data[dayInds])
+           nightMaxh2d = MAX(h2dStr.data[nightInds])
+           nightMinh2d = MIN(h2dStr.data[nightInds])
+           nightMedh2d = MEDIAN(h2dStr.data[nightInds])
+        ENDIF
      ENDIF ELSE BEGIN
         fmt    = 'F10.2'
         maxh2d = ALOG10(MAX(h2dStr.data[h2d_nonzero_nEv_i]))

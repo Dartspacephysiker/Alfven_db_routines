@@ -451,7 +451,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      shiftedMLTs                  = !NULL
   ENDELSE
 
-  IF binI GT 2.0 THEN BEGIN
+  IF binI GT 3.0 THEN BEGIN
      CGMAP_GRID, CLIP_TEXT=1, $
                  /NOCLIP, $
                  LINESTYLE=0, $

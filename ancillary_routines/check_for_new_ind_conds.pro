@@ -24,6 +24,7 @@ PRO CHECK_FOR_NEW_IND_CONDS,is_maximus, $
                             MIN_MAGCURRENT=minMC, $
                             MAX_NEGMAGCURRENT=maxNegMC, $
                             SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                            INCLUDE_32HZ=include_32Hz, $
                             DAYSIDE=dayside, $
                             NIGHTSIDE=nightside, $
                             HAVE_GOOD_I=have_good_i, $
@@ -157,6 +158,16 @@ PRO CHECK_FOR_NEW_IND_CONDS,is_maximus, $
   IF N_ELEMENTS(sample_t_restriction) GT 0 THEN BEGIN
      IF N_ELEMENTS(MIMC__sample_t_restriction) GT 0 THEN BEGIN
         IF MIMC__sample_t_restriction NE sample_t_restriction THEN BEGIN
+           MIMC__RECALCULATE = 1
+           have_good_i       = 0
+           RETURN
+        ENDIF
+     ENDIF 
+  ENDIF
+
+  IF N_ELEMENTS(include_32Hz) GT 0 THEN BEGIN
+     IF N_ELEMENTS(MIMC__include_32Hz) GT 0 THEN BEGIN
+        IF MIMC__include_32Hz NE include_32Hz THEN BEGIN
            MIMC__RECALCULATE = 1
            have_good_i       = 0
            RETURN

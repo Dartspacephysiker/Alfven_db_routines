@@ -35,6 +35,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                          USE_MAG_COORDS=use_mag, $
                          MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                          SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                         INCLUDE_32HZ=include_32Hz, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
                          USING_HEAVIES=using_heavies, $
                          NO_BURSTDATA=no_burstData, $
@@ -198,6 +199,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                        DBFILE=dbFile, $
                                        DB_TFILE=dbTimesFile, $
                                        COORDINATE_SYSTEM=coordinate_system, $
+                                       INCLUDE_32HZ=include_32Hz, $
                                        USE_AACGM_COORDS=use_aacgm, $
                                        USE_MAG_COORDS=use_mag, $
                                        FOR_ESPEC_DBS=for_eSpec_DBs
@@ -257,6 +259,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                    MIN_MAGCURRENT=minMC, $
                                    MAX_NEGMAGCURRENT=maxNegMC, $
                                    SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                                   INCLUDE_32HZ=include_32Hz, $
                                    DAYSIDE=dayside, $
                                    NIGHTSIDE=nightside, $
                                    HAVE_GOOD_I=have_good_i, $
@@ -312,6 +315,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                    BINLSHELL=binL, $
                                    MIN_MAGCURRENT=minMC, $
                                    MAX_NEGMAGCURRENT=maxNegMC, $
+                                   SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                                   INCLUDE_32HZ=include_32Hz, $
                                    DAYSIDE=dayside, $
                                    NIGHTSIDE=nightside, $
                                    HAVE_GOOD_I=have_good_i, $
@@ -515,6 +520,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
            MAXIMUS__cleaned_i                     = ALFVEN_DB_CLEANER(dbStruct,LUN=lun, $
                                                                       IS_CHASTDB=chastDB, $
                                                                       SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                                                                      INCLUDE_32Hz=include_32Hz, $
                                                                       DO_LSHELL=DO_lshell, $
                                                                       USING_HEAVIES=using_heavies)
            IF MAXIMUS__cleaned_i EQ !NULL THEN BEGIN
@@ -533,8 +539,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
         IF nClean EQ 0 THEN BEGIN
            IF KEYWORD_SET(for_eSpec_DBS) THEN BEGIN
               FASTLOC_E__cleaned_i                = FASTLOC_CLEANER(dbStruct, $
-                                                                       /FOR_ESPEC_DBS, $
-                                                                       LUN=lun)
+                                                                    /FOR_ESPEC_DBS, $
+                                                                    INCLUDE_32Hz=include_32Hz, $
+                                                                    LUN=lun)
               
               IF FASTLOC_E__cleaned_i EQ !NULL THEN BEGIN
                  PRINTF,lun,"Couldn't clean fastloc_eSpec DB! Sup with that?"
@@ -543,7 +550,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
               ENDELSE
            ENDIF ELSE BEGIN
               FASTLOC__cleaned_i                  = FASTLOC_CLEANER(dbStruct, $
-                                                                       LUN=lun)
+                                                                    INCLUDE_32Hz=include_32Hz, $
+                                                                    LUN=lun)
               IF FASTLOC__cleaned_i EQ !NULL THEN BEGIN
                  PRINTF,lun,"Couldn't clean fastloc DB! Sup with that?"
                  STOP

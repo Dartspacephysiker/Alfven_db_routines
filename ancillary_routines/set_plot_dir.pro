@@ -6,17 +6,21 @@ PRO SET_PLOT_DIR,plotDir, $
                  FOR_ESPEC_DB=for_eSpec_db, $
                  FOR_KAPPA_DB=for_kappa_db, $
                  FOR_SDT=for_sdt, $
+                 FOR_SINGLE_SC_WVEC=for_ssc_wVec, $
                  ADD_TODAY=add_today, $
                  ADD_SUFF=add_suff, $
                  ;; ADD_DIR=add_dir, $
                  VERBOSE=verbose, $
                  LUN=lun
   
+  COMPILE_OPT idl2
+
   defStormPlotDir     = '/SPENCEdata/Research/Satellites/FAST/storms_Alfvens/plots/'
   defSW_IMFPlotDir    = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/plots/'
   defAlfvenDBPlotDir  = '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/plots/'
   defeSpecPlotDir     = '/SPENCEdata/Research/Satellites/FAST/espec_identification/plots/'
   defkappaPlotDir     = '/SPENCEdata/Research/Satellites/FAST/kappa_dists/plots/'
+  defSingleSCPlotDir  = '/SPENCEdata/Research/Satellites/FAST/single_sc_wavevector/plots/'
   defSDTPlotDir       = '/SPENCEdata/software/sdt/batch_jobs/plots/'
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
@@ -24,7 +28,7 @@ PRO SET_PLOT_DIR,plotDir, $
   proceed                     = KEYWORD_SET(for_storms)   + KEYWORD_SET(for_sw_imf)   + $
                                 KEYWORD_SET(for_alfvendb) + KEYWORD_SET(customDir)    + $
                                 KEYWORD_SET(for_sdt)      + KEYWORD_SET(for_eSpec_db) + $
-                                KEYWORD_SET(for_kappa_DB)
+                                KEYWORD_SET(for_kappa_DB) + KEYWORD_SET(for_ssc_wVec)
   CASE proceed OF
      0: BEGIN
         do_customDir          = ''
@@ -140,6 +144,9 @@ PRO SET_PLOT_DIR,plotDir, $
            KEYWORD_SET(for_kappa_db): BEGIN
               plotDir = defkappaPlotDir
            END
+           KEYWORD_SET(for_ssc_wVec): BEGIN
+              plotDir = defSingleSCPlotDir
+           END
            KEYWORD_SET(customDir): BEGIN
               plotDir = customDir
            END
@@ -153,6 +160,7 @@ PRO SET_PLOT_DIR,plotDir, $
         IF KEYWORD_SET(for_sdt)       THEN PRINTF,lun,'for_sdt'
         IF KEYWORD_SET(for_eSpec_db)  THEN PRINTF,lun,'for_eSpec_db'
         IF KEYWORD_SET(for_kappa_db)  THEN PRINTF,lun,'for_kappa_db'
+        IF KEYWORD_SET(for_ssc_wVec)  THEN PRINTF,lun,'for_single_sc_wavevec'
         IF KEYWORD_SET(for_customDir) THEN PRINTF,lun,'for_customDir'
         PRINTF,lun,'Fix it...'
         STOP
