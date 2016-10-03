@@ -10,16 +10,16 @@ PRO JOURNAL__20160723__CONVERT_ALFDB_ILATS_TO_AACGM
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;output
   outDir           = '/SPENCEdata/Research/database/FAST/ephemeris/'
-  outFile          = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_coords.sav'
+  outFile          = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--AACGM_coords.sav'
 
   ;;has GEO coords
-  maxBonusFile        = 'Dartdb_20160508--502-16361_despun--maximus--GEO_and_MAG_coords.sav'
+  maxBonusFile     = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--GEO_and_MAG_coords.sav'
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Input
-  maxEphemFile     = 'Dartdb_20160508--502-16361_despun--maximus--bonus_ephemeris_info.sav'
+  maxEphemFile     = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--bonus_ephemeris_info.sav'
 
-  maxFile          = 'Dartdb_20160508--502-16361_despun--maximus--pflux_lshell--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
-  maxTFile         = 'Dartdb_20160508--502-16361_despun--cdbtime--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
+  maxFile          = 'Dartdb_20151222--500-16361_inc_lower_lats--burst_1000-16361--w_Lshell--correct_pFlux--maximus.sav'
+  maxTFile         = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--cdbtime.sav'
   maxDir           = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
 
   ;;Load the stuff we need 
@@ -87,4 +87,3 @@ PRO JOURNAL__20160723__CONVERT_ALFDB_ILATS_TO_AACGM
 
 
 END
-JOURNAL__20160723__CONVERT_ALFDB_ILATS_TO_AACGM
