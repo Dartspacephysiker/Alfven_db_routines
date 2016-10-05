@@ -134,7 +134,7 @@ PRO JOURNAL__20161003__CONVERT_FASTLOCDB_ILATS_TO_AACGM_AND_OTHERS__INC_32HZ
   ;;Save it
   PRINT,'Saving ' + outDir + outFile + '...'
   ;; SAVE,FL_AACGM,FL_GEO,FL_MAG,FILENAME=outDir+outFile
-  SAVE,FL_AACGM,convInds,FILENAME=outDir+outFile
+  SAVE,FL_AACGM,convInds,fEphem_AACGMSph_arr,FILENAME=outDir+outFile
 
   PRINT,"Did it!"
   STOP
