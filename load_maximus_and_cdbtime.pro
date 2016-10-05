@@ -64,9 +64,9 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   defDespunDB_tFile    = 'Dartdb_20160508--502-16361_despun--cdbtime--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
 
   ;; AACGM_dir            = '/SPENCEdata/Research/database/FAST/ephemeris/'
-  ;; AACGM_file           = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_coords.sav'
-  ;; GEO_file             = 'Dartdb_20160508--502-16361_despun--maximus--GEO_coords.sav'
-  ;; MAG_file             = 'Dartdb_20160508--502-16361_despun--maximus--MAG_coords.sav'
+  AACGM_file           = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--AACGM_coords.sav'
+  GEO_file             = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--GEO_coords.sav'
+  MAG_file             = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--MAG_coords.sav'
 
   AACGM_file__despun   = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_coords--every_tstamp--20160824.sav'
   GEO_file__despun     = 'Dartdb_20160508--502-16361_despun--maximus--GEO_coords.sav'

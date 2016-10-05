@@ -52,11 +52,20 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      KEYWORD_SET(include_32Hz): BEGIN
         DefDBFile    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05.sav'
         DefDB_tFile  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--times.sav'
+
+        AACGM_file   = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--AACGM_coords.sav'
+        GEO_file     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--GEO_coords.sav'
+        MAG_file     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--MAG_coords.sav'
+
      END
      ELSE: BEGIN
         DefDBFile    = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01.sav'
         DefDB_tFile  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--times--noDupes--sample_freq_le_0.01.sav'
         
+        AACGM_file   = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_coords.sav'
+        GEO_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--GEO_coords.sav'
+        MAG_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--MAG_coords.sav'
+
      END
   ENDCASE
 
@@ -65,12 +74,6 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   DefESpecDB_tFile   = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--times.sav'
 
   defCoordDir        = defDBDir + 'alternate_coords/'
-  ;; AACGM_dir       = '/SPENCEdata/Research/database/FAST/ephemeris/'
-  ;; AACGM_file      = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_GEO_and_MAG_coords.sav'
-  AACGM_file         = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_coords.sav'
-  GEO_file           = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--GEO_coords.sav'
-  MAG_file           = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--MAG_coords.sav'
-
 
   ;; IF KEYWORD_SET(check_DB) THEN BEGIN
   ;;    out_maximus  = N_ELEMENTS(MAXIMUS__maximus)     GT 0 ? MAXIMUS__maximus     : !NULL
