@@ -29,6 +29,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              JUST_CDBTIME=just_cdbTime, $
                              CHECK_DB=check_DB, $
                              QUIET=quiet, $
+                             NO_MEMORY_LOAD=noMem, $
                              LUN=lun
 
   COMPILE_OPT idl2
@@ -283,4 +284,13 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
 
   IF ~KEYWORD_SET(just_cdbTime) THEN out_maximus = MAXIMUS__maximus
   IF ~KEYWORD_SET(just_maximus) THEN out_cdbTime = MAXIMUS__times
+
+  IF KEYWORD_SET(noMem) THEN BEGIN
+     PRINT,"Unloading maximus & assoc. from memory ..." 
+
+     UNLOAD_MAXIMUS_COMMON_VARS
+
+  ENDIF
+   
+     
 END
