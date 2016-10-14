@@ -4,6 +4,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
                                   BINM=binM, $
                                   SHIFTM=shiftM, $
                                   MINI=minI,MAXI=maxI,BINI=binI, $
+                                  EQUAL_AREA_BINNING=equal_area_binning, $
                                   DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                   HEMI=hemi, $
                                   OUT_FASTLOC_STRUCT=out_fastLoc, $
@@ -40,6 +41,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
                                           MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                                           MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
                                           SHIFT1=shiftM,SHIFT2=shiftI, $
+                                          EQUAL_AREA_BINNING=equal_area_binning, $
                                           DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i, $
                                           ;; PLOT_I=plot_i, $
                                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -62,6 +64,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
                      BINMLT=binM, $
                      SHIFTMLT=shiftM, $
                      MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                     EQUAL_AREA_BINNING=equal_area_binning, $
                      BOTH_HEMIS=KEYWORD_SET(tmplt_h2dStr.both_hemis), $
                      DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                      FASTLOCFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbFile : FASTLOC__dbFile, $

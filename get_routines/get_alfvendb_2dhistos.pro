@@ -11,6 +11,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           MINILAT=minI, $
                           MAXILAT=maxI, $
                           BINILAT=binI, $
+                          EQUAL_AREA_BINNING=equal_area_binning, $
                           DO_LSHELL=do_lShell, $
                           MINLSHELL=minL, $
                           MAXLSHELL=maxL, $
@@ -219,6 +220,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                            MINI=minI, $
                            MAXI=maxI, $
                            BINI=binI, $
+                           EQUAL_AREA_BINNING=equal_area_binning, $
                            DO_LSHELL=do_lshell, $
                            MINL=minL, $
                            MAXL=maxL, $

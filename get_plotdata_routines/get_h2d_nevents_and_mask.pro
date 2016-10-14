@@ -6,6 +6,7 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
                              BINM=binM, $
                              SHIFTM=shiftM, $
                              MINI=minI,MAXI=maxI,BINI=binI, $
+                             EQUAL_AREA_BINNING=equal_area_binning, $
                              DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                              NEVENTSPLOTRANGE=nEventsPlotRange, $
                              NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
@@ -30,6 +31,7 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
                                                     MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
                                                     MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI), $
                                                     SHIFT1=shiftM,SHIFT2=shiftI, $
+                                                    EQUAL_AREA_BINNING=equal_area_binning, $
                                                     CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                                     CB_FORCE_OOBLOW=cb_force_oobLow)
      
@@ -60,11 +62,19 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
 
   IF KEYWORD_SET(h2dStr.both_hemis) THEN horiz = ABS(horiz)
 
-  h2dFluxN                      = HIST_2D(mlts,$
-                                          horiz,$
-                                          BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
-                                          MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
-                                          MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
+  IF KEYWORD_SET(equal_area_binning) THEN BEGIN
+     h2dFluxN                      = HIST2D__EQUAL_AREA_BINNING(mlts,$
+                                                                horiz,$
+                                                                BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
+                                                                MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
+                                                                MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
+  ENDIF ELSE BEGIN
+     h2dFluxN                      = HIST_2D(mlts,$
+                                             horiz,$
+                                             BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
+                                             MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
+                                             MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
+  ENDELSE 
 
   h2dStr.data                   = h2dFluxN
   h2dStr.lim                    = KEYWORD_SET(nEventsPlotRange) AND N_ELEMENTS(nEventsPlotRange) EQ 2 ? $

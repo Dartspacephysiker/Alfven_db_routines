@@ -42,7 +42,44 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   COMPILE_OPT idl2
 
-  RESTORE,ancillaryData
+  equal_area_binning = 1
+  IF KEYWORD_SET(equal_area_binning) THEN BEGIN
+     minI         = 60
+     maxI         = 90
+     minM         = 0
+     maxM         = 24
+     binM         = 1.0
+     binI         = 3.0
+
+     inDir        = '/SPENCEdata/Research/database/equal-area_binning/'
+     EAbins_file  = 'equalArea--20161014--struct_and_ASCII_tmplt.idl'
+     RESTORE,inDir+EAbins_file
+
+     ;; ilats        = [EA.minI,EA.maxI[WHERE(EA.maxI EQ EA.maxI[-1])]]
+     ;; mlts         = [EA.minM,EA.maxM[WHERE(EA.maxI EQ EA.maxI[-1])]] ;;Baffling, but true
+
+     ilats        = EA.maxI
+     mlts         = EA.maxM ;;Baffling, but true
+
+     this = HIST2D__EQUAL_AREA_BINNING(DENSITY=thisDens)
+
+     temp = MAKE_H2DSTR_TMPLT(/EQUAL_AREA_BINNING, $
+                              DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                              BOTH_HEMIS=both_hemis, $
+                              CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                              CB_FORCE_OOBLOW=cb_force_oobLow)
+
+     ;; temp.data[WHERE(thisDens NE 0,/NULL)] = this[WHERE(thisDens NE 0,/NULL)]/thisDens[WHERE(thisDens NE 0,/NULL)]
+     temp.data[WHERE(thisDens NE 0,/NULL)] = 10.^(this[WHERE(thisDens NE 0,/NULL)]/thisDens[WHERE(thisDens NE 0,/NULL)])
+     temp.mask[WHERE(thisDens EQ 0,/NULL)] = 255B
+     temp.hasMask = 1
+
+     temp.lim = [MIN(temp.data),MAX(temp.data)]
+  ENDIF ELSE BEGIN
+
+     RESTORE,ancillaryData
+  ENDELSE
+
   IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
      IF ABS(minM - 0.00) LT 0.0001 AND ABS(maxM-24.00) LT 0.0001 THEN BEGIN
         wholeCap                  = 1
@@ -51,7 +88,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   @ploth2d_stereographic_defaults.pro
 
-                                ; Open a graphics window.
+  ;; Open a graphics window.
   IF ~KEYWORD_SET(no_display) THEN BEGIN
      CGDISPLAY,COLOR="black", $
                XSIZE=KEYWORD_SET(xSize) ? xSize : def_H2D_xSize, $
@@ -139,12 +176,13 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDIF
 
   ;;Get longitudes for drawing boxes
-  nXlines                         = (maxM-minM)/binM + 1
-  mlts                            = indgen(nXlines)*binM+minM
+  IF ~KEYWORD_SET(equal_area_binning) THEN BEGIN
+     nXlines                         = (maxM-minM)/binM + 1
+     mlts                            = indgen(nXlines)*binM+minM
+  ENDIF
   ;; IF KEYWORD_SET(wholeCap) THEN BEGIN
   gridLons                        = [0,90,180,270,360]
   ;; ENDIF
-
 
   IF KEYWORD_SET(do_lShell) THEN BEGIN
      nYlines                      = (maxL-minL)/binL + 1
@@ -178,8 +216,10 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ENDELSE
 
      ;;Don't erase these lines! You need them
-     nYlines                      = (tempMaxI-tempMinI)/binI + 1
-     ilats                        = indgen(nYlines)*binI + tempMinI
+     IF ~KEYWORD_SET(equal_area_binning) THEN BEGIN
+        nYlines                      = (tempMaxI-tempMinI)/binI + 1
+        ilats                        = indgen(nYlines)*binI + tempMinI
+     ENDIF
 
      ;;;;;;;;;;
      ;;BEGIN OPTIONS
@@ -413,6 +453,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;;******************************
   ;;Get polyfill vertices
   lonsLats                        = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(mlts,ilats, $
+                                                                            EQUAL_AREA_BINNING=equal_area_binning, $
+                                                                            EA=ea, $
                                                                             BINSIZE_LON=binM, $
                                                                             SHIFT_LON=temp.shift1, $
                                                                             BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
@@ -422,6 +464,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   ;;Fill up dat plot
   H2D_STEREOGRAPHIC_EXECUTE_POLYFILL,lonsLats,h2descl, $
+                                     EQUAL_AREA_BINNING=equal_area_binning, $
                                      H2D_MASKED=masked, $
                                      MASKCOLOR=maskColor
   ;;Calc an integral?

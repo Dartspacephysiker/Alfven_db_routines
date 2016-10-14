@@ -21,6 +21,7 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
                        BINMLT=binMLT, $
                        SHIFTMLT=shiftM, $
                        MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
+                       EQUAL_AREA_BINNING=equal_area_binning, $
                        BOTH_HEMIS=both_hemis, $
                        DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
                        MINALT=minAlt,MAXALT=maxAlt,BINALT=binAlt, $
