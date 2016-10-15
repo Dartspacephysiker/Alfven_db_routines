@@ -116,9 +116,8 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
 
      CASE 1 OF
         KEYWORD_SET(EA_binning): BEGIN
-           inDir        = '/SPENCEdata/Research/database/equal-area_binning/'
-           EAbins_file  = 'equalArea--20161014--struct_and_ASCII_tmplt.idl'
-           RESTORE,inDir+EAbins_file
+           
+           LOAD_EQUAL_AREA_BINNING_STRUCT,EA
 
            ;;set up grid
            nBins        = N_ELEMENTS(EA.minI)
