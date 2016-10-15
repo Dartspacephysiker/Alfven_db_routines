@@ -46,14 +46,24 @@ FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
 
         EA.minM *= 15.
         EA.maxM *= 15.
+        CASE STRUPCASE(EA.hemi) OF
+           'SOUTH': BEGIN
+              minLat = ABS(EA.maxI)
+              maxLat = ABS(EA.minI)
+           END
+           ELSE: BEGIN
+              minLat   = EA.minI
+              maxLat   = EA.maxI
+           END
+        ENDCASE
         FOR j=0,nLats-1 DO BEGIN 
            IF KEYWORD_SET(counterclockwise) THEN BEGIN
               ;; tempLats=[lats[nLats-1-j],lats[nLats-1-j]-binsize_lat/2.0,lats[nLats-2-j]]
-              ;; tempLons=[EA.minI[j],EA.minI[j],EA.minI[j]] 
-              tempLats          = [EA.maxI[j],EA.maxI[j]-binsize_lat/2.0,  EA.minI[j]]
+              ;; tempLons=[minLat[j],minLat[j],minLat[j]] 
+              tempLats          = [maxLat[j],maxLat[j]-binsize_lat/2.0,  minLat[j]]
               tempLons          = [  EA.minM[j],                  EA.minM[j],  EA.minM[j]] 
            ENDIF ELSE BEGIN
-              tempLats          =   [EA.minI[j],  MEAN([EA.minI[j],EA.maxI[j]]),EA.maxI[j]] 
+              tempLats          =   [minLat[j],  MEAN([minLat[j],maxLat[j]]),maxLat[j]] 
               tempLons          = [  EA.minM[j],                  EA.minM[j],  EA.minM[j]] 
            ENDELSE
 
@@ -67,14 +77,14 @@ FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
            lonFactor            = normLonFactor*EA_binsize_lon[j]*15/lonBinSplit
 
            IF KEYWORD_SET(counterclockwise) THEN BEGIN
-              tempLats          = [EA.maxI[j]          ,tempLats,EA.minI[j]          ,   REVERSE(tempLats)] 
+              tempLats          = [maxLat[j]          ,tempLats,minLat[j]          ,   REVERSE(tempLats)] 
               tempLons          = [EA.minM[j]+lonFactor,tempLons,EA.minM[j]+lonFactor,tempLons+lonFactor*2]  
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(morePoints) THEN BEGIN
-                 tempLats        = [REPLICATE(EA.minI[j],FIX(lonBinSplit-1)),tempLats,REPLICATE(EA.maxI[j],FIX(lonBinSplit-1)),REVERSE(tempLats)] 
+                 tempLats        = [REPLICATE(minLat[j],FIX(lonBinSplit-1)),tempLats,REPLICATE(maxLat[j],FIX(lonBinSplit-1)),REVERSE(tempLats)] 
                  tempLons        = [EA.minM[j]+REVERSE(lonFactor)           ,tempLons,EA.minM[j]+lonFactor,tempLons+lonFactor[0]+lonFactor[-1]]
               ENDIF ELSE BEGIN
-                 tempLats        = [EA.minI[j]          ,tempLats,EA.maxI[j]          ,   REVERSE(tempLats)] 
+                 tempLats        = [minLat[j]          ,tempLats,maxLat[j]          ,   REVERSE(tempLats)] 
                  tempLons        = [EA.minM[j]+lonFactor,tempLons,EA.minM[j]+lonFactor,tempLons+lonFactor*2]  
               ENDELSE
            ENDELSE

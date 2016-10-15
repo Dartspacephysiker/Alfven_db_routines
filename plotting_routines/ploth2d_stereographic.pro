@@ -253,7 +253,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
      ;;Option #2: Preset gridLats
      gridLats           = defGridLats
-
+     ;; IF KEYWORD_SET(EA_binning) THEN BEGIN
+     ;;    IF STRUPCASE(EA.hemi) EQ 'SOUTH' THEN BEGIN
+     ;;       gridLats    *= -1.
+     ;;    ENDIF
+     ;; ENDIF
      ;;;;;;;;;;
      ;;END OPTIONS
      ;;;;;;;;;;
