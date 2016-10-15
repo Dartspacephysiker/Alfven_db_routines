@@ -231,7 +231,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                            H2DSTR=h2dStr, $
                            H2DMASKSTR=h2dMaskStr, $
                            H2DFLUXN=h2dFluxN, $
-                           H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                           H2D_NONZERO_NEV_I=hEv_nz_i, $
                            MASKMIN=maskMin, $
                            DATANAME=dataName, $
                            DATARAWPTR=dataRawPtr
@@ -285,7 +285,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                                  H2DSTR=h2dStr, $
                                                  DATANAME=dataName, $
                                                  DATARAWPTR=dataRawPtr, $
-                                                 H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                                 H2D_NONZERO_NEV_I=hEv_nz_i, $
                                                  SAVE_FASTLOC_INDS=save_fastLoc_inds, $
                                                  PARAMSTR_FOR_SAVING=paramStr, $
                                                  IND_FILEDIR=ind_fileDir, $
@@ -353,7 +353,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                                               H2DSTR=h2dStr, $
                                                               DATANAME=dataName, $
                                                               DATARAWPTR=dataRawPtr, $
-                                                              H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i__nonAlfven, $
+                                                              H2D_NONZERO_NEV_I=hEv_nz_i__nonAlfven, $
                                                               SAVE_FASTLOC_INDS=save_fastLoc_inds, $
                                                               PARAMSTR_FOR_SAVING=paramStr, $
                                                               IND_FILEDIR=ind_fileDir, $
@@ -445,7 +445,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                       ORBCONTRIB_NOMASK=orbContrib_noMask, $
                                       UNIQUEORBS_I=uniqueOrbs_i, $
                                       H2D_NONZERO_CONTRIBORBS_I=h2d_nonzero_contribOrbs_i, $
-                                      H2D_NONZERO_I=h2d_nonzero_nEv_i, $
+                                      H2D_NONZERO_I=hEv_nz_i, $
                                       H2DSTR=h2dContribOrbStr, $
                                       TMPLT_H2DSTR=tmplt_h2dStr, $ ;H2DFLUXN=h2dFluxN, $
                                       DATANAME=dataName
@@ -602,7 +602,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     H2DSTR=h2dStr, $
                                     TMPLT_H2DSTR=tmplt_h2dStr, $
                                     H2DFLUXN=h2dFluxN, $
-                                    H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                    H2D_NONZERO_NEV_I=hEv_nz_i, $
                                     H2D_NONZERO_CONTRIBORBS_I=h2d_nonZero_contribOrbs_i, $
                                     H2DCONTRIBORBSTR=h2dContribOrbStr, $
                                     H2DTOTORBSTR=h2dTotOrbStr, $
@@ -650,7 +650,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                   H2DSTR=h2dStr, $
                                   TMPLT_H2DSTR=tmplt_h2dStr, $
                                   H2DFLUXN=h2dFluxN, $
-                                  H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                  H2D_NONZERO_NEV_I=hEv_nz_i, $
                                   DATANAME=dataName ; , $
         ;; DATARAWPTR=dataRawPtr
         
@@ -685,7 +685,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                   OUTH2DBINSMLT=outH2DBinsMLT, $
                                   OUTH2DBINSILAT=outH2DBinsILAT, $
                                   OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                                  H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                  H2D_NONZERO_NEV_I=hEv_nz_i, $
                                   H2DFLUXN=h2dFluxN, $
                                   H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
                                   OUT_H2DMASK=out_h2dMask, $
@@ -733,7 +733,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                  H2DSTR=tmpH2DStr, $
                                  H2DMASKSTR=tmpH2DMaskStr, $
                                  H2DFLUXN=tmpH2DFluxN, $
-                                 H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                                 H2D_NONZERO_NEV_I=tmphEv_nz_i, $
                                  MASKMIN=maskMin, $
                                  DATANAME=dataName, $
                                  DATARAWPTR=dataRawPtr
@@ -742,7 +742,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
 
      ENDIF ELSE BEGIN
         tmpH2DFluxN           = H2DFluxN
-        tmpH2D_nonzero_nEv_i  = H2D_nonzero_nEv_i
+        tmphEv_nz_i  = hEv_nz_i
         tmpH2DMask            = h2dStrArr[KEYWORD_SET(nPlots)].data
      ENDELSE
 
@@ -839,7 +839,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     H2DPROBOCC=H2DProbOcc, $
                                     H2DSTRARR=h2dStrArr, $
                                     TMPLT_H2DSTR=tmplt_h2dStr, $
-                                    H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                                    H2D_NONZERO_NEV_I=tmphEv_nz_i, $
                                     H2DFLUXN=tmpH2DFluxN, $
                                     H2DMASK=tmpH2DMask, $
                                     OUT_H2DMASK=out_h2dMask, $
@@ -874,6 +874,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              MINI=minI, $
                              MAXI=maxI, $
                              BINI=binI, $
+                             EQUAL_AREA_BINNING=EA_binning, $
                              DO_LSHELL=do_lshell, $
                              MINL=minL, $
                              MAXL=maxL, $
@@ -915,7 +916,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              H2DPROBOCC=H2DProbOcc, $
                              H2DSTR=h2dStr, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
-                             H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                             H2D_NONZERO_NEV_I=tmphEv_nz_i, $
                              H2DFLUXN=tmpH2DFluxN, $
                              H2DMASK=tmpH2DMask, $
                              OUT_H2DMASK=out_h2dMask, $
@@ -965,6 +966,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                  MINI=minI, $
                                  MAXI=maxI, $
                                  BINI=binI, $
+                                 EQUAL_AREA_BINNING=EA_binning, $
                                  DO_LSHELL=do_lshell, $
                                  MINL=minL, $
                                  MAXL=maxL, $
@@ -975,7 +977,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                  H2DSTR=tmpH2DStr, $
                                  H2DMASKSTR=tmpH2DMaskStr, $
                                  H2DFLUXN=tmpH2DFluxN, $
-                                 H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                                 H2D_NONZERO_NEV_I=tmphEv_nz_i, $
                                  MASKMIN=maskMin, $
                                  DATANAME=dataName, $
                                  DATARAWPTR=dataRawPtr
@@ -984,7 +986,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
         
      ENDIF ELSE BEGIN
         tmpH2DFluxN           = H2DFluxN
-        tmpH2D_nonzero_nEv_i  = H2D_nonzero_nEv_i
+        tmphEv_nz_i  = hEv_nz_i
         tmpH2DMask            = h2dStrArr[KEYWORD_SET(nPlots)].data
      ENDELSE
 
@@ -1038,6 +1040,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     MINI=minI, $
                                     MAXI=maxI, $
                                     BINI=binI, $
+                                    EQUAL_AREA_BINNING=EA_binning, $
                                     DO_LSHELL=do_lshell, $
                                     MINL=minL, $
                                     MAXL=maxL, $
@@ -1079,7 +1082,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     H2DPROBOCC=H2DProbOcc, $
                                     H2DSTRARR=h2dStrArr, $
                                     TMPLT_H2DSTR=tmplt_h2dStr, $
-                                    H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                                    H2D_NONZERO_NEV_I=tmphEv_nz_i, $
                                     H2DFLUXN=tmpH2DFluxN, $
                                     H2DMASK=tmpH2DMask, $
                                     OUT_H2DMASK=out_h2dMask, $
@@ -1113,6 +1116,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              MINI=minI, $
                              MAXI=maxI, $
                              BINI=binI, $
+                             EQUAL_AREA_BINNING=EA_binning, $
                              DO_LSHELL=do_lshell, $
                              MINL=minL, $
                              MAXL=maxL, $
@@ -1154,7 +1158,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              H2DPROBOCC=H2DProbOcc, $
                              H2DSTR=h2dStr, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
-                             H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                             H2D_NONZERO_NEV_I=tmphEv_nz_i, $
                              H2DFLUXN=tmpH2DFluxN, $
                              H2DMASK=tmpH2DMask, $
                              OUT_H2DMASK=out_h2dMask, $
@@ -1200,6 +1204,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        MINI=minI, $
                        MAXI=maxI, $
                        BINI=binI, $
+                       EQUAL_AREA_BINNING=EA_binning, $
                        DO_LSHELL=do_lshell, $
                        MINL=minL, $
                        MAXL=maxL, $
@@ -1232,7 +1237,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        H2DPROBOCC=H2DProbOcc, $
                        H2DSTR=h2dStr, $
                        TMPLT_H2DSTR=tmplt_h2dStr, $
-                       H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                       H2D_NONZERO_NEV_I=hEv_nz_i, $
                        H2DFLUXN=h2dFluxN, $
                        H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
                        OUT_H2DMASK=out_h2dMask, $
@@ -1277,6 +1282,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                  MINI=minI, $
                                  MAXI=maxI, $
                                  BINI=binI, $
+                                 EQUAL_AREA_BINNING=EA_binning, $
                                  DO_LSHELL=do_lshell, $
                                  MINL=minL, $
                                  MAXL=maxL, $
@@ -1287,7 +1293,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                  H2DSTR=tmpH2DStr, $
                                  H2DMASKSTR=tmpH2DMaskStr, $
                                  H2DFLUXN=tmpH2DFluxN, $
-                                 H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                                 H2D_NONZERO_NEV_I=tmphEv_nz_i, $
                                  MASKMIN=maskMin, $
                                  DATANAME=dataName, $
                                  DATARAWPTR=dataRawPtr
@@ -1296,7 +1302,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
 
      ENDIF ELSE BEGIN
         tmpH2DFluxN           = H2DFluxN
-        tmpH2D_nonzero_nEv_i  = H2D_nonzero_nEv_i
+        tmphEv_nz_i  = hEv_nz_i
         tmpH2DMask            = h2dStrArr[KEYWORD_SET(nPlots)].data
      ENDELSE
 
@@ -1348,6 +1354,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           MINI=minI, $
                           MAXI=maxI, $
                           BINI=binI, $
+                          EQUAL_AREA_BINNING=EA_binning, $
                           DO_LSHELL=do_lshell, $
                           MINL=minL, $
                           MAXL=maxL, $
@@ -1390,7 +1397,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           H2DPROBOCC=H2DProbOcc, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
-                          H2D_NONZERO_NEV_I=tmpH2D_nonzero_nEv_i, $
+                          H2D_NONZERO_NEV_I=tmphEv_nz_i, $
                           H2DFLUXN=tmpH2DFluxN, $
                           H2DMASK=tmpH2DMask, $
                           OUT_H2DMASK=out_h2dMask, $
@@ -1434,6 +1441,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        MINI=minI, $
                        MAXI=maxI, $
                        BINI=binI, $
+                       EQUAL_AREA_BINNING=EA_binning, $
                        DO_LSHELL=do_lshell, $
                        MINL=minL, $
                        MAXL=maxL, $
@@ -1467,7 +1475,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        H2DPROBOCC=H2DProbOcc, $
                        H2DSTR=h2dStr, $
                        TMPLT_H2DSTR=tmplt_h2dStr, $
-                       H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                       H2D_NONZERO_NEV_I=hEv_nz_i, $
                        H2DFLUXN=h2dFluxN, $
                        H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
                        OUT_H2DMASK=out_h2dMask, $
@@ -1532,6 +1540,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           MINI=minI, $
                           MAXI=maxI, $
                           BINI=binI, $
+                          EQUAL_AREA_BINNING=EA_binning, $
                           DO_LSHELL=do_lshell, $
                           MINL=minL, $
                           MAXL=maxL, $
@@ -1565,7 +1574,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           H2DPROBOCC=H2DProbOcc, $
                           H2DSTR=h2dStr, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
-                          H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                          H2D_NONZERO_NEV_I=hEv_nz_i, $
                           H2DFLUXN=h2dFluxN, $
                           H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
                           OUT_H2DMASK=out_h2dMask, $
@@ -1609,6 +1618,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        MINI=minI, $
                        MAXI=maxI, $
                        BINI=binI, $
+                       EQUAL_AREA_BINNING=EA_binning, $
                        DO_LSHELL=do_lshell, $
                        MINL=minL, $
                        MAXL=maxL, $
@@ -1641,7 +1651,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        H2DPROBOCC=H2DProbOcc, $
                        H2DSTR=h2dStr, $
                        TMPLT_H2DSTR=tmplt_h2dStr, $
-                       H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                       H2D_NONZERO_NEV_I=hEv_nz_i, $
                        H2DFLUXN=h2dFluxN, $
                        H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
                        OUT_H2DMASK=out_h2dMask, $
@@ -1681,6 +1691,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                 BINM=binM, $
                                 SHIFTM=shiftM, $
                                 MINI=minI,MAXI=maxI,BINI=binI, $
+                                EQUAL_AREA_BINNING=EA_binning, $
                                 NEWELL_PLOTRANGE=newell_plotRange, $
                                 LOG_NEWELLPLOT=log_newellPlot, $
                                 NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
@@ -1716,6 +1727,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                            MINI=minI, $
                                            MAXI=maxI, $
                                            BINI=binI, $
+                                           EQUAL_AREA_BINNING=EA_binning, $
                                            NEWELL_PLOTRANGE=nonalfven__newell_plotRange, $
                                            LOG_NEWELLPLOT=log_newellPlot, $
                                            NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
@@ -1758,6 +1770,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        MINI=minI, $
                        MAXI=maxI, $
                        BINI=binI, $
+                       EQUAL_AREA_BINNING=EA_binning, $
                        DO_LSHELL=do_lshell, $
                        MINL=minL, $
                        MAXL=maxL, $
@@ -1792,7 +1805,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        H2DPROBOCC=H2DProbOcc, $
                        H2DSTR=h2dStr, $
                        TMPLT_H2DSTR=tmplt_h2dStr, $
-                       H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                       H2D_NONZERO_NEV_I=hEv_nz_i, $
                        H2DFLUXN=h2dFluxN, $
                        H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
                        OUT_H2DMASK=out_h2dMask, $
@@ -1891,6 +1904,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                    BINM=binM, $
                                    SHIFTM=shiftM, $
                                    MINI=minI,MAXI=maxI,BINI=binI, $
+                                   EQUAL_AREA_BINNING=EA_binning, $
                                    DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                    OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT, $
                                    OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -1920,7 +1934,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                    THISTDENOMINATOR=tHistDenominator, $
                                    H2DSTR=h2dStr, $
                                    TMPLT_H2DSTR=tmplt_h2dStr, $
-                                   H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                                   H2D_NONZERO_NEV_I=hEv_nz_i, $
                                    H2DFLUXN=h2dFluxN, $
                                    H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
                                    OUT_H2DMASK=out_h2dMask, $
@@ -1955,7 +1969,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
 
   ;;********************************************************
   ;;If something screwy goes on, better take stock of it and alert user
-  ;; n_zero                     = N_ELEMENTS(h2dFluxN)-N_ELEMENTS(h2d_nonzero_nEv_i)
+  ;; n_zero                     = N_ELEMENTS(h2dFluxN)-N_ELEMENTS(hEv_nz_i)
   ;; FOR i = 2, N_ELEMENTS(h2dStrArr)-1 DO BEGIN 
   ;;    IF n_elements(where(h2dStrArr[i].data EQ 0,/NULL)) LT $
   ;;       n_zero THEN BEGIN 
@@ -2052,8 +2066,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
               ENDIF
               CASE 1 OF
                  KEYWORD_SET(var__autoscale): BEGIN
-                    h2dStrTemp.lim        = [MIN(h2dStrTemp.data[h2d_nonzero_nEv_i]), $
-                                             MAX(h2dStrTemp.data[h2d_nonzero_nEv_i])]
+                    h2dStrTemp.lim        = [MIN(h2dStrTemp.data[hEv_nz_i]), $
+                                             MAX(h2dStrTemp.data[hEv_nz_i])]
                  END
                  KEYWORD_SET(var__plotRange): BEGIN
                     IF N_ELEMENTS(SIZE(var__plotRange,/DIMENSIONS)) GT 1 THEN BEGIN
@@ -2102,19 +2116,19 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
            IF KEYWORD_SET(print_mandm) THEN BEGIN
               IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
                  fmt    = 'G10.4' 
-                 maxh2d = MAX(h2dStrTemp.data[h2d_nonzero_nEv_i])
-                 minh2d = MIN(h2dStrTemp.data[h2d_nonzero_nEv_i])
-                 medh2d = MEDIAN(h2dStrTemp.data[h2d_nonzero_nEv_i])
+                 maxh2d = MAX(h2dStrTemp.data[hEv_nz_i])
+                 minh2d = MIN(h2dStrTemp.data[hEv_nz_i])
+                 medh2d = MEDIAN(h2dStrTemp.data[hEv_nz_i])
               ENDIF ELSE BEGIN
                  fmt    = 'F10.2'
-                 maxh2d = ALOG10(MAX(h2dStrTemp.data[h2d_nonzero_nEv_i]))
-                 minh2d = ALOG10(MIN(h2dStrTemp.data[h2d_nonzero_nEv_i]))
-                 medh2d = ALOG10(MEDIAN(h2dStrTemp.data[h2d_nonzero_nEv_i]))
+                 maxh2d = ALOG10(MAX(h2dStrTemp.data[hEv_nz_i]))
+                 minh2d = ALOG10(MIN(h2dStrTemp.data[hEv_nz_i]))
+                 medh2d = ALOG10(MEDIAN(h2dStrTemp.data[hEv_nz_i]))
               ENDELSE
               PRINTF,lun,h2dStrTemp.title
               ;; PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)', $
-              ;;        MAX(h2dStrTemp.data[h2d_nonzero_nEv_i]), $
-              ;;        MIN(h2dStrTemp.data[h2d_nonzero_nEv_i])
+              ;;        MAX(h2dStrTemp.data[hEv_nz_i]), $
+              ;;        MIN(h2dStrTemp.data[hEv_nz_i])
               PRINTF,lun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
                      maxh2d, $
                      minh2d, $
@@ -2152,7 +2166,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
            WAIT,5
         ENDIF
         dataNameArr[0]         = 'log_' + dataNameArr[0]
-        h2dStrArr[0].data[h2d_nonzero_nEv_i] = ALOG10(h2dStrArr[0].data[h2d_nonzero_nEv_i])
+        h2dStrArr[0].data[hEv_nz_i] = ALOG10(h2dStrArr[0].data[hEv_nz_i])
         h2dStrArr[0].lim       = [(h2dStrArr[0].lim[0] LT 1) ? 0 : ALOG10(h2dStrArr[0].lim[0]),ALOG10(h2dStrArr[0].lim[1])] ;lower bound must be one
         h2dStrArr[0].title     = 'Log ' + h2dStrArr[0].title
         h2dStrArr[0].name      = dataNameArr[0]
@@ -2160,7 +2174,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
      ENDIF
      IF KEYWORD_SET(nEventsPlotNormalize) THEN BEGIN
         dataNameArr[0]        += '_normed'
-        maxNEv                 = MAX(h2dStrArr[0].data[h2d_nonzero_nEv_i])
+        maxNEv                 = MAX(h2dStrArr[0].data[hEv_nz_i])
         h2dStrArr[0].data      = h2dStrArr[0].data/maxNEv
         h2dStrArr[0].lim       = [0.0,1.0]
         h2dStrArr[0].title    += STRING(FORMAT='(" (norm: ",G0.3,")")',maxNEv)
@@ -2169,8 +2183,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
      ENDIF
      IF KEYWORD_SET(nEventsPlotAutoscale) THEN BEGIN
         PRINT,"Autoscaling nEvents plot..."
-        h2dStrArr[0].lim       = [MIN(h2dStrArr[0].data[h2d_nonzero_nEv_i]), $
-                                  MAX(h2dStrArr[0].data[h2d_nonzero_nEv_i])]
+        h2dStrArr[0].lim       = [MIN(h2dStrArr[0].data[hEv_nz_i]), $
+                                  MAX(h2dStrArr[0].data[hEv_nz_i])]
      ENDIF
   ENDIF
 

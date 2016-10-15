@@ -1,6 +1,5 @@
 FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
-   EQUAL_AREA_BINNING=equal_area_binning, $
-   EA=ea, $
+   EA_BINNING=EA_binning, $
    BINSIZE_LON=binsize_lon, $
    SHIFT_LON=shift_lon, $
    BINSIZE_LAT=binsize_lat, $
@@ -31,20 +30,21 @@ FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
   nLons                      = N_ELEMENTS(lons)
 
   CASE 1 OF
-     KEYWORD_SET(equal_area_binning): BEGIN
+     KEYWORD_SET(EA_binning): BEGIN
         outLonsLats          = MAKE_ARRAY(nLons,nLats,2,6+(FIX(lonBinSplit)-1)*2)
 
-        ea.minM *= 15.
-        ea.maxM *= 15.
+        LOAD_EQUAL_AREA_BINNING_STRUCT,EA
+        EA.minM *= 15.
+        EA.maxM *= 15.
         FOR j=0,nLats-1 DO BEGIN 
            IF KEYWORD_SET(counterclockwise) THEN BEGIN
               ;; tempLats=[lats[nLats-1-j],lats[nLats-1-j]-binsize_lat/2.0,lats[nLats-2-j]]
-              ;; tempLons=[ea.minI[j],ea.minI[j],ea.minI[j]] 
-              tempLats          = [ea.maxI[j],ea.maxI[j]-binsize_lat/2.0,  ea.minI[j]]
-              tempLons          = [  ea.minI[j],                  ea.minI[j],  ea.minI[j]] 
+              ;; tempLons=[EA.minI[j],EA.minI[j],EA.minI[j]] 
+              tempLats          = [EA.maxI[j],EA.maxI[j]-binsize_lat/2.0,  EA.minI[j]]
+              tempLons          = [  EA.minI[j],                  EA.minI[j],  EA.minI[j]] 
            ENDIF ELSE BEGIN
-              tempLats          =   [ea.minI[j],  MEAN([ea.minI[j],ea.maxI[j]]),ea.maxI[j]] 
-              tempLons          = [  ea.minM[j],                  ea.minM[j],  ea.minM[j]] 
+              tempLats          =   [EA.minI[j],  MEAN([EA.minI[j],EA.maxI[j]]),EA.maxI[j]] 
+              tempLons          = [  EA.minM[j],                  EA.minM[j],  EA.minM[j]] 
            ENDELSE
 
            IF KEYWORD_SET(debug) THEN BEGIN
@@ -54,17 +54,15 @@ FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
            ENDIF
 
            IF KEYWORD_SET(counterclockwise) THEN BEGIN
-              ;; tempLats=[lats[nLats-1-j],tempLats,lats[nLats-2-j],REVERSE(tempLats)] 
-              ;; tempLons=[ea.minI[j]+lonFactor,tempLons,ea.minI[j]+lonFactor,tempLons+lonFactor*2]  
-              tempLats          = [        ea.maxI[j],tempLats,          ea.minI[j],   REVERSE(tempLats)] 
-              tempLons          = [ea.minM[j]+lonFactor,tempLons,ea.minM[j]+lonFactor,tempLons+lonFactor*2]  
+              tempLats          = [EA.maxI[j]          ,tempLats,EA.minI[j]          ,   REVERSE(tempLats)] 
+              tempLons          = [EA.minM[j]+lonFactor,tempLons,EA.minM[j]+lonFactor,tempLons+lonFactor*2]  
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(morePoints) THEN BEGIN
-                 tempLats        = [REPLICATE(ea.minI[j],FIX(lonBinSplit-1)),tempLats,REPLICATE(ea.maxI[j],FIX(lonBinSplit-1)),REVERSE(tempLats)] 
-                 tempLons        = [ea.minM[j]+REVERSE(lonFactor),tempLons,ea.minM[j]+lonFactor,tempLons+lonFactor[0]+lonFactor[-1]]
+                 tempLats        = [REPLICATE(EA.minI[j],FIX(lonBinSplit-1)),tempLats,REPLICATE(EA.maxI[j],FIX(lonBinSplit-1)),REVERSE(tempLats)] 
+                 tempLons        = [EA.minM[j]+REVERSE(lonFactor)           ,tempLons,EA.minM[j]+lonFactor,tempLons+lonFactor[0]+lonFactor[-1]]
               ENDIF ELSE BEGIN
-                 tempLats        = [          ea.minI[j],tempLats,        ea.maxI[j],   REVERSE(tempLats)] 
-                 tempLons        = [ea.minM[j]+lonFactor,tempLons,ea.minM[j]+lonFactor,tempLons+lonFactor*2]  
+                 tempLats        = [EA.minI[j]          ,tempLats,EA.maxI[j]          ,   REVERSE(tempLats)] 
+                 tempLons        = [EA.minM[j]+lonFactor,tempLons,EA.minM[j]+lonFactor,tempLons+lonFactor*2]  
               ENDELSE
            ENDELSE
 

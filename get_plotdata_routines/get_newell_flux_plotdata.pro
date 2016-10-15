@@ -199,24 +199,24 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
      ;;Need to provide a new h2dFluxN and a new mask for each of these
      GET_H2D_NEVENTS_AND_MASK,maximus,tmp_i, $
-                             IN_MLTS=KEYWORD_SET(nonAlfven_mlt) ? nonAlfven_mlt[tmp_i] : !NULL, $
-                             IN_ILATS=KEYWORD_SET(nonAlfven_ilat) ? nonAlfven_ilat[tmp_i] : !NULL, $
-                             MINM=minM,MAXM=maxM, $
-                             BINM=binM, $
-                             SHIFTM=shiftM, $
-                             MINI=minI,MAXI=maxI,BINI=binI, $
+                              IN_MLTS=KEYWORD_SET(nonAlfven_mlt) ? nonAlfven_mlt[tmp_i] : !NULL, $
+                              IN_ILATS=KEYWORD_SET(nonAlfven_ilat) ? nonAlfven_ilat[tmp_i] : !NULL, $
+                              MINM=minM,MAXM=maxM, $
+                              BINM=binM, $
+                              SHIFTM=shiftM, $
+                              MINI=minI,MAXI=maxI,BINI=binI, $
                               EQUAL_AREA_BINNING=EA_binning, $
-                             DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
-                             NEVENTSPLOTRANGE=nEventsPlotRange, $
-                             TMPLT_H2DSTR=tmplt_h2dStr, $
-                             H2DSTR=tempNh2dStr,H2DMASKSTR=temph2dMaskStr, $
-                             H2DFLUXN=temph2dFluxN,H2D_NONZERO_NEV_I=temph2d_nonzero_nEv_i, $
-                             MASKMIN=maskMin, $
-                             DATANAME=dataName,DATARAWPTR=dataRawPtr, $
-                             CB_FORCE_OOBHIGH=cb_force_oobHigh, $
-                             CB_FORCE_OOBLOW=cb_force_oobLow, $
-                             PRINT_MANDM=print_mAndM, $
-                             LUN=lun     
+                              DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
+                              NEVENTSPLOTRANGE=nEventsPlotRange, $
+                              TMPLT_H2DSTR=tmplt_h2dStr, $
+                              H2DSTR=tempNh2dStr,H2DMASKSTR=temph2dMaskStr, $
+                              H2DFLUXN=temph2dFluxN,H2D_NONZERO_NEV_I=temph2d_nonzero_nEv_i, $
+                              MASKMIN=maskMin, $
+                              DATANAME=dataName,DATARAWPTR=dataRawPtr, $
+                              CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                              CB_FORCE_OOBLOW=cb_force_oobLow, $
+                              PRINT_MANDM=print_mAndM, $
+                              LUN=lun     
 
      temph2dmask    = temph2dmaskstr.data
 

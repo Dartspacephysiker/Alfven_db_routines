@@ -14,6 +14,7 @@ PRO SAVE_ALFVENDB_INDICES,alfvendb_indices_filename, $
                           MINILAT=minI, $
                           MAXILAT=maxI, $
                           BINILAT=binI, $
+                          EQUAL_AREA_BINNING=EA_binning, $
                           DO_LSHELL=do_lShell, $
                           MINLSHELL=minL, $
                           MAXLSHELL=maxL, $
@@ -149,6 +150,11 @@ PRO SAVE_ALFVENDB_INDICES,alfvendb_indices_filename, $
      ;;binI
      IF N_ELEMENTS(binI) GT 0 THEN BEGIN
         saveStr += ',binI'
+     ENDIF
+
+     ;;EA_binning
+     IF N_ELEMENTS(EA_binning) GT 0 THEN BEGIN
+        saveStr += ',EA_binning'
      ENDIF
 
      ;;do_lShell

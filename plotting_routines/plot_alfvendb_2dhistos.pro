@@ -1,11 +1,17 @@
 ;2016/01/15 EPS Output keyword added 
 ;2016/01/19
-PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=tempFile, $
+PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
+                           DATANAMEARR=dataNameArr, $
                            H2DMASKARR=h2dMaskArr, $
-                           SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ 
+                           TEMPFILE=tempFile, $
+                           EQUAL_AREA_BINNING=equal_area_binning, $
+                           SQUAREPLOT=squarePlot, $
+                           POLARCONTOUR=polarContour, $ 
                            SHOWPLOTSNOSAVE=showPlotsNoSave, $
-                           PLOTDIR=plotDir, PLOTMEDORAVG=plotMedOrAvg, $
-                           PARAMSTR=paramStr, DEL_PS=del_PS, $
+                           PLOTDIR=plotDir, $
+                           PLOTMEDORAVG=plotMedOrAvg, $
+                           PARAMSTR=paramStr, $
+                           DEL_PS=del_PS, $
                            HEMI=hemi, $
                            CLOCKSTR=clockStr, $
                            NO_COLORBAR=no_colorbar, $
@@ -378,6 +384,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  ENDIF
 
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[j],tempFile, $
+                                       EQUAL_AREA_BINNING=equal_area_binning, $
                                        H2DMASK=h2dMask, $
                                        NO_COLORBAR=no_cb, $
                                        WINDOW_XSIZE=xSize, $
@@ -578,6 +585,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=
                  ENDIF
 
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
+                                       EQUAL_AREA_BINNING=equal_area_binning, $
                                        NO_COLORBAR=no_cb, $
                                        WINDOW_XSIZE=xSize, $
                                        WINDOW_YSIZE=ySize, $

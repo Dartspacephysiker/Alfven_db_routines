@@ -45,12 +45,12 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   IF N_ELEMENTS(equal_area_binning) EQ 0 THEN equal_area_binning = 1
   IF KEYWORD_SET(equal_area_binning) THEN BEGIN
-     minI         = 60
-     maxI         = 90
-     minM         = 0
-     maxM         = 24
-     binM         = 1.0
-     binI         = 3.0
+     ;; minI         = 60
+     ;; maxI         = 90
+     ;; minM         = 0
+     ;; maxM         = 24
+     ;; binM         = 1.0
+     ;; binI         = 3.0
 
      LOAD_EQUAL_AREA_BINNING_STRUCT,EA
      ;; ilats        = [EA.minI,EA.maxI[WHERE(EA.maxI EQ EA.maxI[-1])]]
@@ -59,24 +59,25 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ilats        = EA.maxI
      mlts         = EA.maxM ;;Baffling, but true
 
-     this = HIST2D__EQUAL_AREA_BINNING(DENSITY=thisDens)
+     ;; this = HIST2D__EQUAL_AREA_BINNING(DENSITY=thisDens)
 
-     temp = MAKE_H2DSTR_TMPLT(/EQUAL_AREA_BINNING, $
-                              DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
-                              BOTH_HEMIS=both_hemis, $
-                              CB_FORCE_OOBHIGH=cb_force_oobHigh, $
-                              CB_FORCE_OOBLOW=cb_force_oobLow)
+     ;; temp = MAKE_H2DSTR_TMPLT(/EQUAL_AREA_BINNING, $
+     ;;                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+     ;;                          BOTH_HEMIS=both_hemis, $
+     ;;                          CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+     ;;                          CB_FORCE_OOBLOW=cb_force_oobLow)
 
      ;; temp.data[WHERE(thisDens NE 0,/NULL)] = this[WHERE(thisDens NE 0,/NULL)]/thisDens[WHERE(thisDens NE 0,/NULL)]
-     temp.data[WHERE(thisDens NE 0,/NULL)] = 10.^(this[WHERE(thisDens NE 0,/NULL)]/thisDens[WHERE(thisDens NE 0,/NULL)])
-     temp.mask[WHERE(thisDens EQ 0,/NULL)] = 255B
-     temp.hasMask = 1
+     ;; temp.data[WHERE(thisDens NE 0,/NULL)] = 10.^(this[WHERE(thisDens NE 0,/NULL)]/thisDens[WHERE(thisDens NE 0,/NULL)])
+     ;; temp.mask[WHERE(thisDens EQ 0,/NULL)] = 255B
+     ;; temp.hasMask = 1
 
-     temp.lim     = [MIN(temp.data),MAX(temp.data)]
-  ENDIF ELSE BEGIN
+     ;; temp.lim     = [MIN(temp.data),MAX(temp.data)]
+  ENDIF
+  ;; ENDIF ELSE BEGIN
 
-     RESTORE,ancillaryData
-  ENDELSE
+  RESTORE,ancillaryData
+  ;; ENDELSE
 
   IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
      IF ABS(minM - 0.00) LT 0.0001 AND ABS(maxM-24.00) LT 0.0001 THEN BEGIN
@@ -456,7 +457,6 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;;Get polyfill vertices
   lonsLats                        = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(mlts,ilats, $
                                                                             EQUAL_AREA_BINNING=equal_area_binning, $
-                                                                            EA=ea, $
                                                                             BINSIZE_LON=binM, $
                                                                             SHIFT_LON=temp.shift1, $
                                                                             BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $

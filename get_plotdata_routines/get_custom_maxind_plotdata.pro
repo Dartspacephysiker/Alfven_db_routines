@@ -7,6 +7,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
                                BINM=binM, $
                                SHIFTM=shiftM, $
                                MINI=minI,MAXI=maxI,BINI=binI, $
+                               EQUAL_AREA_BINNING=EA_binning, $
                                DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                OUTH2DBINSMLT=outH2DBinsMLT, $
                                OUTH2DBINSILAT=outH2DBinsILAT, $
@@ -37,7 +38,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
                                THISTDENOMINATOR=tHistDenominator, $
                                H2DSTR=h2dStr, $
                                TMPLT_H2DSTR=tmplt_h2dStr, $
-                               H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                               H2D_NONZERO_NEV_I=hEv_nz_i, $
                                H2DFLUXN=h2dFluxN, $
                                H2DMASK=h2dMask, $
                                OUT_H2DMASK=out_h2dMask, $
@@ -80,6 +81,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
                                        MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                                        MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
                                        SHIFT1=shiftM,SHIFT2=shiftI, $
+                                       EQUAL_AREA_BINNING=EA_binning, $
                                        DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                                        ;; PLOT_I=plot_i, $
                                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -225,38 +227,53 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
 
   IF KEYWORD_SET(do_plot_i_instead_of_histos) THEN BEGIN
      h2dStr.data.add,inData
-     h2d_nonzero_nEv_i      = INDGEN(N_ELEMENTS(inData))
+     hEv_nz_i      = INDGEN(N_ELEMENTS(inData))
   ENDIF ELSE BEGIN
      CASE 1 OF
         KEYWORD_SET(medianplot): BEGIN 
 
            IF KEYWORD_SET(medHistOutData) THEN BEGIN
-              medHistDatFile      = medHistDataDir + dataName+"medhist_data.sav"
+              medHistDatFile  = medHistDataDir + dataName+"medhist_data.sav"
            ENDIF
            
-           h2dStr.data=median_hist(mlts, $
-                                   ilats,$
-                                   inData,$
-                                   MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                                   MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
-                                   BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
-                                   OBIN1=outH2DBinsMLT,OBIN2=(KEYWORD_SET(do_lshell) ? outH2DBinsLShell : outH2DBinsILAT),$
-                                   ABSMED=absFlux,OUTFILE=medHistDatFile,PLOT_I=tmp_i) 
+           h2dStr.data = MEDIAN_HIST(mlts, $
+                                     ilats,$
+                                     inData,$
+                                     MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
+                                     MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
+                                     BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                                     OBIN1=outH2DBinsMLT,OBIN2=(KEYWORD_SET(do_lshell) ? outH2DBinsLShell : outH2DBinsILAT),$
+                                     ABSMED=absFlux, $
+                                     OUTFILE=medHistDatFile, $
+                                     PLOT_I=tmp_i, $
+                                     EQUAL_AREA_BINNING=EA_binning) 
            
            IF KEYWORD_SET(medHistOutTxt) THEN MEDHISTANALYZER,INFILE=medHistDatFile,outFile=medHistDataDir + dataName + "medhist.txt"
         END
         KEYWORD_SET(do_timeAvg_fluxQuantities): BEGIN
 
-           h2dStr.data=hist2d(mlts, $
-                              ilats,$
-                              (KEYWORD_SET(do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
-                              MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
-                              MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
-                              BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
-                              OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+           CASE 1 OF
+              KEYWORD_SET(EA_binning): BEGIN
+                 h2dStr.data = HIST2D__EQUAL_AREA_BINNING(mlts, $
+                                                          ilats,$
+                                                          (KEYWORD_SET(do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
+                                                          MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
+                                                          MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
+                                                          OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+              END
+              ELSE: BEGIN
+                 h2dStr.data = HIST2D(mlts, $
+                                      ilats,$
+                                      (KEYWORD_SET(do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
+                                      MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
+                                      MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
+                                      BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                                      OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+              END
+           ENDCASE
 
            IF KEYWORD_SET(do_logAvg_the_timeAvg) THEN BEGIN
-              h2dStr.data[h2d_nonzero_nEv_i]=h2dStr.data[h2d_nonzero_nEv_i]/h2dFluxN[h2d_nonzero_nEv_i] 
+              h2dStr.data[hEv_nz_i]=h2dStr.data[hEv_nz_i]/h2dFluxN[hEv_nz_i] 
               h2dStr.data[where(h2dFluxN GT 0,/NULL)] = 10^(h2dStr.data[where(h2dFluxN GT 0,/NULL)])
            ENDIF
 
@@ -280,25 +297,37 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
            ;; ENDIF
         END
         ELSE: BEGIN
-           h2dStr.data=hist2d(mlts, $
-                              ilats,$
-                              (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
-                              MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                              MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
-                              BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
-                              OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+           CASE 1 OF
+              KEYWORD_SET(EA_binning): BEGIN
+                 h2dStr.data  = HIST2D__EQUAL_AREA_BINNING(mlts, $
+                                                           ilats,$
+                                                           (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
+                                                           MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
+                                                           MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI),$
+                                                           OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+              END
+              ELSE: BEGIN
+                 h2dStr.data  = HIST2D(mlts, $
+                                       ilats,$
+                                       (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
+                                       MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
+                                       MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI),$
+                                       BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                                       OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+              END
+           ENDCASE
 
            IF KEYWORD_SET(div_fluxPlots_by_applicable_orbs) THEN BEGIN
               
-              tempDenom                                = orbContrib_h2dStr_for_division.data
+              tempDenom                        = orbContrib_h2dStr_for_division.data
               IF orbContrib_H2DStr_FOR_division.is_logged THEN BEGIN
-                 tempDenom[h2d_nonzero_nEv_i]          = 10.^(tempDenom[h2d_nonzero_nEv_i])
+                 tempDenom[hEv_nz_i]  = 10.^(tempDenom[hEv_nz_i])
               ENDIF
 
-              h2dStr.data[h2d_nonzero_nEv_i]           = h2dStr.data[h2d_nonzero_nEv_i]/tempDenom[h2d_nonzero_nEv_i]
+              h2dStr.data[hEv_nz_i]   = h2dStr.data[hEv_nz_i]/tempDenom[hEv_nz_i]
 
            ENDIF ELSE BEGIN
-              h2dStr.data[h2d_nonzero_nEv_i]           = h2dStr.data[h2d_nonzero_nEv_i]/h2dFluxN[h2d_nonzero_nEv_i] 
+              h2dStr.data[hEv_nz_i]   = h2dStr.data[hEv_nz_i]/h2dFluxN[hEv_nz_i] 
            ENDELSE
            
            IF KEYWORD_SET(logAvgPlot) THEN h2dStr.data[where(h2dFluxN NE 0,/NULL)] = 10^(h2dStr.data[where(h2dFluxN NE 0,/NULL)])
@@ -317,11 +346,11 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
         CASE 1 OF
            KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
               ;; h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dAreas[WHERE(h2dstr.data GT 0)]*grossConvFactor
-              h2dStr.data[h2d_nonzero_nEv_i] = h2dStr.data[h2d_nonzero_nEv_i]*h2dAreas[h2d_nonzero_nEv_i]*grossConvFactor
+              h2dStr.data[hEv_nz_i] = h2dStr.data[hEv_nz_i]*h2dAreas[hEv_nz_i]*grossConvFactor
            END
            KEYWORD_SET(do_grossRate_with_long_width): BEGIN
               ;; h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dLongWidths[WHERE(h2dstr.data GT 0)]*grossConvFactor
-              h2dStr.data[h2d_nonzero_nEv_i] = h2dStr.data[h2d_nonzero_nEv_i]*h2dLongWidths[h2d_nonzero_nEv_i]*grossConvFactor
+              h2dStr.data[hEv_nz_i] = h2dStr.data[hEv_nz_i]*h2dLongWidths[hEv_nz_i]*grossConvFactor
            END
         ENDCASE
 
@@ -341,19 +370,19 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
         fmt    = 'G10.4' 
-        maxh2d = MAX(h2dStr.data[h2d_nonzero_nEv_i])
-        minh2d = MIN(h2dStr.data[h2d_nonzero_nEv_i])
-        medh2d = MEDIAN(h2dStr.data[h2d_nonzero_nEv_i])
+        maxh2d = MAX(h2dStr.data[hEv_nz_i])
+        minh2d = MIN(h2dStr.data[hEv_nz_i])
+        medh2d = MEDIAN(h2dStr.data[hEv_nz_i])
      ENDIF ELSE BEGIN
         fmt    = 'F10.2'
-        maxh2d = ALOG10(MAX(h2dStr.data[h2d_nonzero_nEv_i]))
-        minh2d = ALOG10(MIN(h2dStr.data[h2d_nonzero_nEv_i]))
-        medh2d = ALOG10(MEDIAN(h2dStr.data[h2d_nonzero_nEv_i]))
+        maxh2d = ALOG10(MAX(h2dStr.data[hEv_nz_i]))
+        minh2d = ALOG10(MIN(h2dStr.data[hEv_nz_i]))
+        medh2d = ALOG10(MEDIAN(h2dStr.data[hEv_nz_i]))
      ENDELSE
      PRINTF,lun,h2dStr.title
      ;; PRINTF,lun,FORMAT='("Max, min:",T20,F10.2,T35,F10.2)', $
-     ;;        MAX(h2dStr.data[h2d_nonzero_nEv_i]), $
-     ;;        MIN(h2dStr.data[h2d_nonzero_nEv_i])
+     ;;        MAX(h2dStr.data[hEv_nz_i]), $
+     ;;        MIN(h2dStr.data[hEv_nz_i])
      PRINTF,lun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
             maxh2d, $
             minh2d, $
@@ -388,8 +417,8 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
      ENDIF
      CASE 1 OF
         KEYWORD_SET(plotAutoscale): BEGIN
-           h2dStr.lim   = [MIN(h2dStr.data[h2d_nonzero_nEv_i]), $
-                           MAX(h2dStr.data[h2d_nonzero_nEv_i])]
+           h2dStr.lim   = [MIN(h2dStr.data[hEv_nz_i]), $
+                           MAX(h2dStr.data[hEv_nz_i])]
         END
         KEYWORD_SET(plotRange): BEGIN
            h2dStr.lim   = plotRange

@@ -202,6 +202,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
      ENDIF
   ENDIF
   
+  EABinStr = ''
+  IF KEYWORD_SET(EA_binning) THEN BEGIN
+     EABinStr = '--EA_bins'
+  ENDIF
+
   ;;current limits
   MCStr = ''
   IF (ABS(minMC-10) GT 0.1) OR (ABS(maxNegMC+10) GT 0.1) THEN BEGIN
@@ -217,7 +222,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   paramString=hoyDia+'--'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
               hemi+despunStr+AACGMStr+MAGStr+MCStr+sample_t_string+Hz32_string+ $
               lShellStr+plotMedOrAvg+$
-              maskStr+tMaskStr+inc_burstStr+polarContStr+paramStrSuffix
+              maskStr+tMaskStr+EABinStr+inc_burstStr+polarContStr+paramStrSuffix
   
   ;;Shouldn't be leftover, unused params from batch call
   IF ISA(e) THEN BEGIN
