@@ -6,7 +6,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                            SHIFT1=s1in,SHIFT2=s2in, $
                            DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                            DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i, $
-                           EQUAL_AREA_BINNING=equal_area_binning, $
+                           EQUAL_AREA_BINNING=EA_binning, $
                            ;; PLOT_I=plot_i, $
                            DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                            BOTH_HEMIS=both_hemis, $
@@ -23,12 +23,12 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
 
   CASE 1 OF
      KEYWORD_SET(do_plot_i): BEGIN
-        h2dDatTmplt = LIST()
-        h2dMaskTmplt = LIST()
+        h2dDatTmplt   = LIST()
+        h2dMaskTmplt  = LIST()
      END
-     KEYWORD_SET(equal_area_binning): BEGIN
-        h2dDatTmplt = MAKE_ARRAY(672,VALUE=0.)
-        h2dMaskTmplt = h2dDatTmplt
+     KEYWORD_SET(EA_binning): BEGIN
+        h2dDatTmplt   = MAKE_ARRAY(672,VALUE=0.)
+        h2dMaskTmplt  = h2dDatTmplt
      END
      ELSE: BEGIN
         ;;Supply default values for keywords.

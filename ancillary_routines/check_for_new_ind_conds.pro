@@ -17,6 +17,7 @@ PRO CHECK_FOR_NEW_IND_CONDS,is_maximus, $
                             MINILAT=minILAT, $
                             MAXILAT=maxILAT, $
                             BINILAT=binILAT, $
+                            EQUAL_AREA_BINNING=EA_binning, $
                             DO_LSHELL=do_lshell, $
                             MINLSHELL=minLshell, $
                             MAXLSHELL=maxLshell, $
@@ -238,6 +239,16 @@ PRO CHECK_FOR_NEW_IND_CONDS,is_maximus, $
   IF N_ELEMENTS(binILAT) GT 0 THEN BEGIN
      IF N_ELEMENTS(MIMC__binILAT) GT 0 THEN BEGIN
         IF MIMC__binILAT NE binILAT THEN BEGIN
+           MIMC__RECALCULATE = 1
+           have_good_i       = 0
+           RETURN
+        ENDIF
+     ENDIF
+  ENDIF
+
+  IF N_ELEMENTS(EA_binning) GT 0 THEN BEGIN
+     IF N_ELEMENTS(MIMC__EA_binning) GT 0 THEN BEGIN
+        IF MIMC__EA_binning NE EA_binning THEN BEGIN
            MIMC__RECALCULATE = 1
            have_good_i       = 0
            RETURN

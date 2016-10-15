@@ -11,7 +11,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           MINILAT=minI, $
                           MAXILAT=maxI, $
                           BINILAT=binI, $
-                          EQUAL_AREA_BINNING=equal_area_binning, $
+                          EQUAL_AREA_BINNING=EA_binning, $
                           DO_LSHELL=do_lShell, $
                           MINLSHELL=minL, $
                           MAXLSHELL=maxL, $
@@ -220,7 +220,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                            MINI=minI, $
                            MAXI=maxI, $
                            BINI=binI, $
-                           EQUAL_AREA_BINNING=equal_area_binning, $
+                           EQUAL_AREA_BINNING=EA_binning, $
                            DO_LSHELL=do_lshell, $
                            MINL=minL, $
                            MAXL=maxL, $
@@ -268,6 +268,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                                  MINI=minI, $
                                                  MAXI=maxI, $
                                                  BINI=binI, $
+                                                 EQUAL_AREA_BINNING=EA_binning, $
                                                  DO_LSHELL=do_lshell, $
                                                  MINL=minL, $
                                                  MAXL=maxL, $
@@ -336,6 +337,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                                               MINI=minI, $
                                                               MAXI=maxI, $
                                                               BINI=binI, $
+                                                              EQUAL_AREA_BINNING=EA_binning, $
                                                               DO_LSHELL=do_lshell, $
                                                               MINL=minL, $
                                                               MAXL=maxL, $
@@ -406,6 +408,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                    HEMI=hemi, $
                                    MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                                    MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                                   EQUAL_AREA_BINNING=EA_binning, $
                                    DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                                    MIN_MAGCURRENT=0, $
                                    MAX_NEGMAGCURRENT=0, $
@@ -431,6 +434,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                       MINI=minI, $
                                       MAXI=maxI, $
                                       BINI=binI, $
+                                      EQUAL_AREA_BINNING=EA_binning, $
                                       DO_LSHELL=do_lShell, $
                                       MINL=minL, $
                                       MAXL=maxL, $

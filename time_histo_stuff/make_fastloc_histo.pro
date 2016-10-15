@@ -21,7 +21,7 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
                        BINMLT=binMLT, $
                        SHIFTMLT=shiftM, $
                        MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
-                       EQUAL_AREA_BINNING=equal_area_binning, $
+                       EQUAL_AREA_BINNING=EA_binning, $
                        BOTH_HEMIS=both_hemis, $
                        DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
                        MINALT=minAlt,MAXALT=maxAlt,BINALT=binAlt, $
@@ -106,44 +106,79 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      ;;    fastLoc = RESIZE_FASTLOC(fastLoc,fastLoc_inds,FASTLOC_TIMES=fastLoc_times,FASTLOC_DELTA_T=fastLoc_delta_t)
      ;; ENDIF
      
-                                ;set up grid
-     nXlines       = (maxMLT-minMLT)/binMLT + 1
-     nYlines       = ((KEYWORD_SET(do_lShell) ? maxLshell : maxILAT)-(KEYWORD_SET(do_lShell) ? minLshell : minILAT))/(KEYWORD_SET(do_lShell) ? binLshell : binILAT) + 1
-     
-     mlts          = INDGEN(nXlines)*binMLT+minMLT
-     ilats         = INDGEN(nYlines)*(KEYWORD_SET(do_lShell) ? binLshell : binILAT)+(KEYWORD_SET(do_lShell) ? minLshell : minILAT)
-     
-     nMLT          = N_ELEMENTS(mlts)
-     nILAT         = N_ELEMENTS(ilats)
-     
-     outTimeHisto  = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
-     
      ;;fix MLTs
      fastLocMLTs   = SHIFT_MLTS_FOR_H2D(fastLoc,fastLoc_inds,shiftM)
 
      fastLocILATS  = (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT)[fastLoc_inds]
-                                ;loop over MLTs and ILATs
 
+     ;;loop over MLTs and ILATs
      IF KEYWORD_SET(both_hemis) THEN fastLocILATS = ABS(fastLocILATS)
 
-     FOR j=0, nILAT-2 DO BEGIN 
-        FOR i=0, nMLT-2 DO BEGIN 
-           ;; tempNCounts = N_ELEMENTS(WHERE(fastLocMLTs GE mlts[i] AND fastLocMLTs LT mlts[i+1] AND $
-           ;;                                (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) GE ilats[j] AND (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT) LT ilats[j+1],/NULL))
-           ;; tempBinTime = tempNCounts * delta_T
-           tempInds = WHERE(fastLocMLTs GE mlts[i] AND fastLocMLTs LT mlts[i+1] AND $
-                            fastLocILATS GE ilats[j] AND $
-                            fastLocILATS LT ilats[j+1])
-           IF tempInds[0] NE -1 THEN BEGIN
-              tempBinTime = TOTAL(DOUBLE(fastLoc_delta_t[fastLoc_inds[tempInds]]))
-              outTimeHisto[i,j] = tempBinTime
-              
-              IF KEYWORD_SET(output_textFile) THEN PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T20,F0.3)',mlts[i],ilats[j],DOUBLE(tempBinTime)/60.0
-           ENDIF ELSE tempBinTime = DOUBLE(0.0)
-        ENDFOR
-     ENDFOR
+     CASE 1 OF
+        KEYWORD_SET(EA_binning): BEGIN
+           inDir        = '/SPENCEdata/Research/database/equal-area_binning/'
+           EAbins_file  = 'equalArea--20161014--struct_and_ASCII_tmplt.idl'
+           RESTORE,inDir+EAbins_file
+
+           ;;set up grid
+           nBins        = N_ELEMENTS(EA.minI)
+           
+           outTimeHisto  = MAKE_ARRAY(nBins,/DOUBLE) ;how long FAST spends in each bin
+           
+           latSwitch_i = [0,WHERE((EA.minI[1:-1]-EA.minI[0:-2]) NE 0),N_ELEMENTS(EA.minI)-1]
+
+           FOR k=0,N_ELEMENTS(latSwitch_i)-2 DO BEGIN
+              tmpInds = [latSwitch_i[k]:(latSwitch_i[k+1]-1)]
+
+            FOR kk=0,N_ELEMENTS(tmpInds)-1 DO BEGIN
+
+               tempInds = WHERE((fastLocMLTs  GE EA.minM[kk]) AND (fastLocMLTs  LT EA.maxM[kk]) AND $
+                                (fastLocILATS GE EA.minI[kk]) AND (fastLocILATS LT EA.maxI[kk]))
+                 IF tempInds[0] NE -1 THEN BEGIN
+                    tempBinTime = TOTAL(DOUBLE(fastLoc_delta_t[fastLoc_inds[tempInds]]))
+                    outTimeHisto[kk] = tempBinTime
+                    
+                    IF KEYWORD_SET(output_textFile) THEN PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T20,F0.3)', $
+                       MEAN([EA.minM[kk],EA.maxM[kk]]),MEAN([EA.minI[kk],EA.maxI[kk]]),DOUBLE(tempBinTime)/60.0
+                 ENDIF ELSE tempBinTime = DOUBLE(0.0)
+              ENDFOR
+           ENDFOR
+
+        END
+        ELSE: BEGIN
+           ;;set up grid
+           nXlines  = (maxMLT-minMLT)/binMLT + 1
+           nYlines  = ((KEYWORD_SET(do_lShell) ? maxLshell : maxILAT)-(KEYWORD_SET(do_lShell) ? minLshell : minILAT))/ $
+                      (KEYWORD_SET(do_lShell) ? binLshell : binILAT) + 1
+           
+           mlts     = INDGEN(nXlines)*binMLT+minMLT
+           ilats    = INDGEN(nYlines)*(KEYWORD_SET(do_lShell) ? binLshell : binILAT)+ $
+                      (KEYWORD_SET(do_lShell) ? minLshell : minILAT)
+           
+           nMLT     = N_ELEMENTS(mlts)
+           nILAT    = N_ELEMENTS(ilats)
+           
+           outTimeHisto  = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
+           
+           FOR j=0, nILAT-2 DO BEGIN 
+              FOR i=0, nMLT-2 DO BEGIN 
+                 tempInds = WHERE(fastLocMLTs GE mlts[i] AND fastLocMLTs LT mlts[i+1] AND $
+                                  fastLocILATS GE ilats[j] AND $
+                                  fastLocILATS LT ilats[j+1])
+                 IF tempInds[0] NE -1 THEN BEGIN
+                    tempBinTime = TOTAL(DOUBLE(fastLoc_delta_t[fastLoc_inds[tempInds]]))
+                    outTimeHisto[i,j] = tempBinTime
+                    
+                    IF KEYWORD_SET(output_textFile) THEN PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T20,F0.3)',mlts[i],ilats[j],DOUBLE(tempBinTime)/60.0
+                 ENDIF ELSE tempBinTime = DOUBLE(0.0)
+              ENDFOR
+           ENDFOR
+
+        END
+     ENDCASE
+
      
-                                ;save the file
+     ;; ;;save the file
      ;; IF NOT KEYWORD_SET(fastLoc_Inds) AND $
      ;; NOT ((outFilePrefix EQ defOutFilePrefix) AND (outFileSuffix EQ defOutFileSuffix)) THEN BEGIN
      ;;    save,outTimeHisto,FILENAME=outDir+outFileName

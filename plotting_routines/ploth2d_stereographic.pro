@@ -11,6 +11,7 @@
 ;; put together, but I can't be sure
 
 PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
+                          EQUAL_AREA_BINNING=equal_area_binning, $
                           H2DMASK=h2dMask, $
                           WHOLECAP=wholeCap, $
                           MIDNIGHT=midnight, $
@@ -42,7 +43,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   COMPILE_OPT idl2
 
-  equal_area_binning = 1
+  IF N_ELEMENTS(equal_area_binning) EQ 0 THEN equal_area_binning = 1
   IF KEYWORD_SET(equal_area_binning) THEN BEGIN
      minI         = 60
      maxI         = 90
@@ -51,10 +52,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      binM         = 1.0
      binI         = 3.0
 
-     inDir        = '/SPENCEdata/Research/database/equal-area_binning/'
-     EAbins_file  = 'equalArea--20161014--struct_and_ASCII_tmplt.idl'
-     RESTORE,inDir+EAbins_file
-
+     LOAD_EQUAL_AREA_BINNING_STRUCT,EA
      ;; ilats        = [EA.minI,EA.maxI[WHERE(EA.maxI EQ EA.maxI[-1])]]
      ;; mlts         = [EA.minM,EA.maxM[WHERE(EA.maxI EQ EA.maxI[-1])]] ;;Baffling, but true
 
@@ -74,7 +72,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      temp.mask[WHERE(thisDens EQ 0,/NULL)] = 255B
      temp.hasMask = 1
 
-     temp.lim = [MIN(temp.data),MAX(temp.data)]
+     temp.lim     = [MIN(temp.data),MAX(temp.data)]
   ENDIF ELSE BEGIN
 
      RESTORE,ancillaryData
@@ -82,7 +80,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
      IF ABS(minM - 0.00) LT 0.0001 AND ABS(maxM-24.00) LT 0.0001 THEN BEGIN
-        wholeCap                  = 1
+        wholeCap  = 1
      ENDIF
   ENDIF
 
@@ -101,68 +99,68 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   IF KEYWORD_SET(mirror) THEN BEGIN
      IF mirror NE 0 THEN BEGIN
-        mirror                    = 1 
+        mirror        = 1
      ENDIF ELSE BEGIN
-        mirror                    = 0
+        mirror        = 0
      ENDELSE
   ENDIF ELSE BEGIN
-     mirror                       = 0
+     mirror           = 0
   ENDELSE
 
   ;; IF KEYWORD_SET(wholeCap) THEN BEGIN
   ;;    IF wholeCap EQ 0 THEN wholeCap=!NULL
   ;; ENDIF
   IF N_ELEMENTS(midnight) EQ 0 THEN BEGIN
-     midnight                     = 1
+     midnight         = 1
   ENDIF
   ;;    IF midnight EQ 0 THEN midnight=!NULL
   ;; ENDIF
 
   ;; IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
   ;; IF ~KEYWORD_SET(wholeCap) THEN BEGIN
-  ;; map_position                 = [0.1, 0.075, 0.9, 0.75]
+  ;; map_position     = [0.1, 0.075, 0.9, 0.75]
   IF ~KEYWORD_SET(map_position) THEN BEGIN
-     map_position                 = defH2DMapPosition
+     map_position     = defH2DMapPosition
   ENDIF
-  lim = [(mirror) ? -maxI : minI,minM*15,(mirror) ? -minI : maxI,maxM*15]
+  lim                 = [(mirror) ? -maxI : minI,minM*15,(mirror) ? -minI : maxI,maxM*15]
   ;; ENDIF ELSE BEGIN
-  ;;    map_position              = [0.05, 0.05, 0.85, 0.85]
-  ;;    lim=[(mirror) ? -maxI : minI, 0 ,(mirror) ? -minI : maxI,360] ; 
-  ;; ;; lim                       = [minimum lat, minimum long, maximum lat, maximum long]
+  ;;    map_position  = [0.05, 0.05, 0.85, 0.85]
+  ;;    lim=[(mirror) ? -maxI : minI, 0 ,(mirror) ? -minI : maxI,360] ;
+  ;; ;; lim           = [minimum lat, minimum long, maximum lat, maximum long]
   ;; ENDELSE
 
-  ;; xScale                       = (defH2DMapPosition[2]-defH2DMapPosition[0])/(map_position[2]-map_position[0])
-  ;; yScale                       = (defH2DMapPosition[3]-defH2DMapPosition[1])/(map_position[3]-map_position[1])
-  xScale                          = (map_position[2]-map_position[0])/(defH2DMapPosition[2]-defH2DMapPosition[0])
-  yScale                          = (map_position[3]-map_position[1])/(defH2DMapPosition[3]-defH2DMapPosition[1])
-  charScale                       = (xScale*yScale)^(1./2.)
-  gridScale                       = (xScale*yScale)^(1./1.)
+  ;; xScale        = (defH2DMapPosition[2]-defH2DMapPosition[0])/(map_position[2]-map_position[0])
+  ;; yScale        = (defH2DMapPosition[3]-defH2DMapPosition[1])/(map_position[3]-map_position[1])
+  xScale           = (map_position[2]-map_position[0])/(defH2DMapPosition[2]-defH2DMapPosition[0])
+  yScale           = (map_position[3]-map_position[1])/(defH2DMapPosition[3]-defH2DMapPosition[1])
+  charScale        = (xScale*yScale)^(1./2.)
+  gridScale        = (xScale*yScale)^(1./1.)
 
   IF mirror THEN BEGIN
      IF minI GT 0 THEN BEGIN
-        centerLat                 = -90
+        centerLat  = -90
      ENDIF ELSE BEGIN
-        centerLat                 = 90
+        centerLat  = 90
      ENDELSE
   ENDIF ELSE BEGIN
      IF minI GT 0 THEN BEGIN
-        centerLat                 = 90
+        centerLat  = 90
      ENDIF ELSE BEGIN
-        centerLat                 = -90
+        centerLat  = -90
      ENDELSE
   ENDELSE
 
   IF minI LT 0 AND NOT mirror THEN BEGIN
      IF midnight NE !NULL THEN BEGIN
-        centerLon                 = 180 
+        centerLon  = 180
      ENDIF ELSE BEGIN
-        centerLon                 = 0
+        centerLon  = 0
      ENDELSE
   ENDIF ELSE BEGIN
      IF midnight NE !NULL THEN BEGIN
-        centerLon                 = 0 
+        centerLon  = 0
      ENDIF ELSE BEGIN
-        centerLon                 = 180
+        centerLon  = 180
      ENDELSE
   ENDELSE
 
@@ -172,53 +170,57 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;;Limit=[minI-5,maxM*15-360,maxI+5,minM*15],
 
   IF N_ELEMENTS(plotTitle) EQ 0 THEN BEGIN
-     plotTitle                    = temp.title
+     plotTitle     = temp.title
   ENDIF
 
   ;;Get longitudes for drawing boxes
   IF ~KEYWORD_SET(equal_area_binning) THEN BEGIN
-     nXlines                         = (maxM-minM)/binM + 1
-     mlts                            = indgen(nXlines)*binM+minM
+     nXlines       = (maxM-minM)/binM + 1
+     mlts          = indgen(nXlines)*binM+minM
   ENDIF
   ;; IF KEYWORD_SET(wholeCap) THEN BEGIN
-  gridLons                        = [0,90,180,270,360]
+  gridLons         = [0,90,180,270,360]
   ;; ENDIF
 
   IF KEYWORD_SET(do_lShell) THEN BEGIN
-     nYlines                      = (maxL-minL)/binL + 1
-     lShells                      = INDGEN(nYlines)*binL + minL
-     ilats                        = LSHELL_TO_ILAT_PARABOLA_FIT(lShells, $
-                                                                MINL=minL, $
-                                                                MAXL=maxL, $
-                                                                MINI=minI, $
-                                                                MAXI=maxI)
-     ;; ilats                     = DOUBLE(ROUND(ilats*4))/4
+     IF KEYWORD_SET(equal_area_binning) THEN BEGIN
+        PRINT,"Can't do l-shell stuff with equal-area binning"
+        STOP
+     ENDIF
+     nYlines       = (maxL-minL)/binL + 1
+     lShells       = INDGEN(nYlines)*binL + minL
+     ilats         = LSHELL_TO_ILAT_PARABOLA_FIT(lShells, $
+                                                 MINL=minL, $
+                                                 MAXL=maxL, $
+                                                 MINI=minI, $
+                                                 MAXI=maxI)
+     ;; ilats      = DOUBLE(ROUND(ilats*4))/4
 
-     gridLats                     = LSHELL_TO_ILAT_PARABOLA_FIT(lShells[0:-1:3], $
-                                                                MINL=minL, $
-                                                                MAXL=maxL, $
-                                                                MINI=minI, $
-                                                                MAXI=maxI)
-     gridLatNames                 = lShells[0:-1:3]
+     gridLats      = LSHELL_TO_ILAT_PARABOLA_FIT(lShells[0:-1:3], $
+                                                 MINL=minL, $
+                                                 MAXL=maxL, $
+                                                 MINI=minI, $
+                                                 MAXI=maxI)
+     gridLatNames  = lShells[0:-1:3]
 
      IF KEYWORD_SET(reverse_lShell) THEN BEGIN
-        temp.data                 = SHIFT(REVERSE(temp.data,2),0,-1)
-        gridLatNames              = REVERSE(gridLatNames)
+        temp.data     = SHIFT(REVERSE(temp.data,2),0,-1)
+        gridLatNames  = REVERSE(gridLatNames)
      ENDIF
   ENDIF ELSE BEGIN
 
      IF maxI LT 0 THEN BEGIN
-        tempMinI                  = ABS(maxI)
-        tempMaxI                  = ABS(minI)
+        tempMinI      = ABS(maxI)
+        tempMaxI      = ABS(minI)
      ENDIF ELSE BEGIN
-        tempMinI                  = minI
-        tempMaxI                  = maxI
+        tempMinI      = minI
+        tempMaxI      = maxI
      ENDELSE
 
      ;;Don't erase these lines! You need them
      IF ~KEYWORD_SET(equal_area_binning) THEN BEGIN
-        nYlines                      = (tempMaxI-tempMinI)/binI + 1
-        ilats                        = indgen(nYlines)*binI + tempMinI
+        nYlines       = (tempMaxI-tempMinI)/binI + 1
+        ilats         = indgen(nYlines)*binI + tempMinI
      ENDIF
 
      ;;;;;;;;;;
@@ -228,111 +230,111 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ;;Option #1: Calculate the gridlats
      ;; CASE 1 OF
      ;;    (tempmaxI-tempminI) LE 12: BEGIN
-     ;;       minISpacing            = 6
+     ;;       minISpacing   = 6
      ;;    END
      ;;    (tempmaxI-tempminI) LE 20: BEGIN
-     ;;       minISpacing            = 8
+     ;;       minISpacing   = 8
      ;;    END
      ;;    (tempmaxI-tempminI) LE 30: BEGIN
-     ;;       minISpacing            = 10
+     ;;       minISpacing   = 10
      ;;    END
      ;;    (tempmaxI-tempminI) GT 30: BEGIN
-     ;;       minISpacing            = 10
+     ;;       minISpacing   = 10
      ;;    END
      ;; ENDCASE
 
-     ;; satisfied                    = 0
-     ;; gridIFactor                  = 1
+     ;; satisfied           = 0
+     ;; gridIFactor         = 1
      ;; WHILE ~satisfied DO BEGIN
-     ;;    gridISpacing              = binI * gridIFactor
+     ;;    gridISpacing     = binI * gridIFactor
      ;;    IF gridISpacing LT minISpacing THEN BEGIN
      ;;       gridIFactor++
      ;;    ENDIF ELSE BEGIN
-     ;;       satisfied              = 1
+     ;;       satisfied     = 1
      ;;    ENDELSE
      ;; ENDWHILE
 
 
-     ;; gridLats                     = INDGEN(10)*gridISpacing + tempMinI
-     ;; calcILines                   = (tempMaxI-tempMinI)/minISpacing
+     ;; gridLats            = INDGEN(10)*gridISpacing + tempMinI
+     ;; calcILines          = (tempMaxI-tempMinI)/minISpacing
      ;; CASE 1 OF
      ;;    calcILines LE 3: BEGIN
-     ;;       gridLats               = gridLats[WHERE(gridLats GE tempMinI AND gridLats LE tempMaxI)]
+     ;;       gridLats      = gridLats[WHERE(gridLats GE tempMinI AND gridLats LE tempMaxI)]
      ;;    END
      ;;    calcILines LE 4: BEGIN
-     ;;       gridMinIDist           = MIN(ABS(gridLats-tempMinI))
-     ;;       gridMaxIDist           = MIN(ABS(gridLats-tempMaxI))
+     ;;       gridMinIDist  = MIN(ABS(gridLats-tempMinI))
+     ;;       gridMaxIDist  = MIN(ABS(gridLats-tempMaxI))
      ;;       IF gridMinIDist LT gridMaxIDist THEN BEGIN
-     ;;          gridLats            = gridLats[WHERE(gridLats GT tempMinI AND gridLats LE tempMaxI)]
+     ;;          gridLats   = gridLats[WHERE(gridLats GT tempMinI AND gridLats LE tempMaxI)]
      ;;       ENDIF ELSE BEGIN
-     ;;          gridLats            = gridLats[WHERE(gridLats GE tempMinI AND gridLats LT tempMaxI)]
+     ;;          gridLats   = gridLats[WHERE(gridLats GE tempMinI AND gridLats LT tempMaxI)]
      ;;       ENDELSE
      ;;    END
      ;;    calcILines GT 4: BEGIN
-     ;;       gridLats               = gridLats[WHERE(gridLats GT tempMinI AND gridLats LT tempMaxI)]
+     ;;       gridLats      = gridLats[WHERE(gridLats GT tempMinI AND gridLats LT tempMaxI)]
      ;;    END
      ;; ENDCASE
 
      ;;Option #2: Preset gridLats
-     gridLats                  = defGridLats
+     gridLats           = defGridLats
 
      ;;;;;;;;;;
      ;;END OPTIONS
      ;;;;;;;;;;
 
      ;;Make sure the thicker gridLats fall right on one of our ilats
-     maxGridSep = 0.25D
+     maxGridSep         = 0.25D
      FOR k=0,N_ELEMENTS(gridLats)-1 DO BEGIN
         IF MIN(ABS(gridLats[k]-ilats),tempI) GT maxGridSep THEN BEGIN
-           gridLats[k] = ilats[tempI]
+           gridLats[k]  = ilats[tempI]
         ENDIF
      ENDFOR
 
      ;;Don't erase these lines! They are the only thing keeping SH plots from being insane
      IF maxI LT 0 THEN BEGIN
-        ilats                     = -1.0*REVERSE(ilats)
-        gridLats                  = -1.0*REVERSE(gridLats)
+        ilats           = -1.0*REVERSE(ilats)
+        gridLats        = -1.0*REVERSE(gridLats)
      ENDIF
 
-     gridLats                     = FIX(gridLats)
-     gridLatNames                 = gridLats
+     gridLats           = FIX(gridLats)
+     gridLatNames       = gridLats
 
   ENDELSE
 
 
   IF mirror THEN BEGIN
-     ilats                        = -1.0 * ilats
-     gridLats                     = -1   * FIX(gridLats)
-     ;; gridLatNames              = -1.0 * gridLatNames
+     ilats              = -1.0 * ilats
+     gridLats           = -1   * FIX(gridLats)
+     ;; gridLatNames    = -1.0 * gridLatNames
   ENDIF
 
   ;;binary matrix to tell us where masked values are
   CASE 1 OF
      temp.hasMask: BEGIN
-        h2dMaskData               = temp.mask
+        h2dMaskData  = temp.mask
      END
      KEYWORD_SET(h2dMask): BEGIN
-        h2dMaskData               = h2dMask.data
+        h2dMaskData  = h2dMask.data
      END
      ELSE: BEGIN
-        nPlots                    = N_ELEMENTS(h2dStrArr)-1 ;Subtract one since last array is the mask
-        h2dMaskData               = h2dStrArr[nPlots].data
+        nPlots       = N_ELEMENTS(h2dStrArr)-1 ;Subtract one since last array is the mask
+        h2dMaskData  = h2dStrArr[nPlots].data
      END
   ENDCASE
 
   IF temp.dont_mask_me THEN BEGIN
-     masked                       = (h2dMaskData GT 260.0) ;mask NO ONE!
+     masked          = (h2dMaskData GT 260.0) ;mask NO ONE!
   ENDIF ELSE BEGIN
-     masked                       = (h2dMaskData GT 250.0)
+     masked          = (h2dMaskData GT 250.0)
   ENDELSE
 
   IF KEYWORD_SET(reverse_lShell) THEN BEGIN
-     masked[*,1:-1]               = REVERSE(masked[*,1:-1],2)
-     masked                       = SHIFT(masked,0,-1)
+     masked[*,1:-1]  = REVERSE(masked[*,1:-1],2)
+     masked          = SHIFT(masked,0,-1)
   ENDIF
-  notMasked                       = WHERE(~masked)
+  notMasked          = WHERE(~masked)
 
-  h2descl                         = MAKE_ARRAY(SIZE(temp.data,/DIMENSIONS),VALUE=0)
+  h2descl            = MAKE_ARRAY(SIZE(temp.data,/DIMENSIONS),VALUE=0)
 
 
   ;;5 bar things per decade
@@ -479,7 +481,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                                 NIGHTINTEGRAL=nightIntegral, $
                                 OUTPUT_INTEGRAL=KEYWORD_SET(do_integral_file), $
                                 INTLUN=intLun
-                                
+
   ENDIF
 
   ;;******************************
@@ -546,7 +548,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ;; IF mirror THEN BEGIN
         ;;    ;;    ;;IF N_ELEMENTS(wholeCap) NE 0 THEN BEGIN
         ;;   ;;   ;;    lonNames  = [lonNames[0],REVERSE(lonNames[1:*])]
-        ;;   ;;   ;; ENDIF 
+        ;;   ;;   ;; ENDIF
         ;;    gridLats            = -1.0 * gridLats
         ;;    gridLatNames        = -1.0 * gridLatNames
         ;; ENDIF
@@ -604,11 +606,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
            ILATColor              = defGridTextColor
            ILAT_longitude         = 45
            ILAT_longitude         = 80
-           ;; ILATColor              = 
+           ;; ILATColor              =
            FOR ilat_i=0,N_ELEMENTS(gridLats)-1 DO BEGIN
               CGTEXT, ILAT_longitude, $
                       gridLats[ilat_i], $
-                      gridLatNames[ilat_i], $ 
+                      gridLatNames[ilat_i], $
                       ALIGNMENT=1.0, $
                       ORIENTATION=0, $
                       COLOR=defGridTextColor, $

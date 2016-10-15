@@ -6,7 +6,7 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
                              BINM=binM, $
                              SHIFTM=shiftM, $
                              MINI=minI,MAXI=maxI,BINI=binI, $
-                             EQUAL_AREA_BINNING=equal_area_binning, $
+                             EQUAL_AREA_BINNING=EA_binning, $
                              DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                              NEVENTSPLOTRANGE=nEventsPlotRange, $
                              NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
@@ -27,64 +27,64 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
   IF N_ELEMENTS(print_mAndM) EQ 0 THEN print_mAndM = 1
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
-     tmplt_h2dStr               = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
-                                                    MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
-                                                    MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI), $
-                                                    SHIFT1=shiftM,SHIFT2=shiftI, $
-                                                    EQUAL_AREA_BINNING=equal_area_binning, $
-                                                    CB_FORCE_OOBHIGH=cb_force_oobHigh, $
-                                                    CB_FORCE_OOBLOW=cb_force_oobLow)
+     tmplt_h2dStr       = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
+                                            MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
+                                            MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI), $
+                                            SHIFT1=shiftM,SHIFT2=shiftI, $
+                                            EQUAL_AREA_BINNING=EA_binning, $
+                                            CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                            CB_FORCE_OOBLOW=cb_force_oobLow)
      
   ENDIF
 
-  h2dStr                        = tmplt_h2dStr
-  h2dStr.title                  = "Number of events"
-  h2dStr.labelFormat            = '(I0)'
-  h2dStr.DO_midCBLabel          = 1
-  dataName                      = "nEvents"
-  h2dStr.name                   = dataName
-  h2dStr.dont_mask_me           = KEYWORD_SET(nEventsPlot__noMask)
+  h2dStr                = tmplt_h2dStr
+  h2dStr.title          = "Number of events"
+  h2dStr.labelFormat    = '(I0)'
+  h2dStr.DO_midCBLabel  = 1
+  dataName              = "nEvents"
+  h2dStr.name           = dataName
+  h2dStr.dont_mask_me   = KEYWORD_SET(nEventsPlot__noMask)
 
-  h2dMaskStr                    = tmplt_h2dStr
-  h2dMaskStr.title              = "Histogram mask"
-  h2dMaskStr.name               = "histoMask"
+  h2dMaskStr            = tmplt_h2dStr
+  h2dMaskStr.title      = "Histogram mask"
+  h2dMaskStr.name       = "histoMask"
 
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
-  ;; h2dFluxN                      = HIST_2D(maximus.mlt[plot_i],$
-  mlts                          = (KEYWORD_SET(in_MLTS) ? in_MLTs : maximus.mlt[plot_i])-shiftM ;shift MLTs backwards, because we want to shift the binning FORWARD
-  swapme                        = WHERE(mlts LT 0,nSwap)
+  ;; h2dFluxN           = HIST_2D(maximus.mlt[plot_i],$
+  mlts                  = (KEYWORD_SET(in_MLTS) ? in_MLTs : maximus.mlt[plot_i])-shiftM ;shift MLTs backwards, because we want to shift the binning FORWARD
+  swapme                = WHERE(mlts LT 0,nSwap)
   IF nSwap GT 0 THEN BEGIN
-     mlts[swapme]               = mlts[swapme] + 24
+     mlts[swapme]       = mlts[swapme] + 24
   ENDIF
 
-  horiz                         = KEYWORD_SET(in_ILATs) ? in_ILATs : ( (KEYWORD_SET(do_lShell) ? maximus.lshell : maximus.ilat)[plot_i] )
+  horiz                 = KEYWORD_SET(in_ILATs) ? in_ILATs : ( (KEYWORD_SET(do_lShell) ? maximus.lshell : maximus.ilat)[plot_i] )
 
   IF KEYWORD_SET(h2dStr.both_hemis) THEN horiz = ABS(horiz)
 
-  IF KEYWORD_SET(equal_area_binning) THEN BEGIN
-     h2dFluxN                      = HIST2D__EQUAL_AREA_BINNING(mlts,$
-                                                                horiz,$
-                                                                BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
-                                                                MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
-                                                                MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
+  IF KEYWORD_SET(EA_binning) THEN BEGIN
+     h2dFluxN       = HIST2D__EQUAL_AREA_BINNING(mlts,$
+                                                 horiz,$
+                                                 BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
+                                                 MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
+                                                 MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
   ENDIF ELSE BEGIN
-     h2dFluxN                      = HIST_2D(mlts,$
-                                             horiz,$
-                                             BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
-                                             MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
-                                             MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
+     h2dFluxN       = HIST_2D(mlts,$
+                              horiz,$
+                              BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
+                              MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
+                              MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
   ENDELSE 
 
-  h2dStr.data                   = h2dFluxN
-  h2dStr.lim                    = KEYWORD_SET(nEventsPlotRange) AND N_ELEMENTS(nEventsPlotRange) EQ 2 ? $
-                                  DOUBLE(nEventsPlotRange) : $
-                                  DOUBLE([MIN(h2dFluxN),MAX(h2dFluxN)]) 
-  h2dStr.logLabels              = 1
-  dataRawPtr                    = PTR_NEW(h2dFluxN) 
+  h2dStr.data       = h2dFluxN
+  h2dStr.lim        = KEYWORD_SET(nEventsPlotRange) AND N_ELEMENTS(nEventsPlotRange) EQ 2 ? $
+                      DOUBLE(nEventsPlotRange) : $
+                      DOUBLE([MIN(h2dFluxN),MAX(h2dFluxN)]) 
+  h2dStr.logLabels  = 1
+  dataRawPtr        = PTR_NEW(h2dFluxN) 
 
   ;;Make a mask for plots so that we can show where no data exists
-  h2dMaskStr.data               = h2dFluxN
+  h2dMaskStr.data   = h2dFluxN
   h2dMaskStr.data[where(h2dStr.data LT maskMin,/NULL)]=255
   h2dMaskStr.data[where(h2dStr.data GE maskMin,/NULL)]=0
 

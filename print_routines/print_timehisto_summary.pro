@@ -6,6 +6,7 @@ PRO PRINT_TIMEHISTO_SUMMARY,fastLoc,good_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim
                             BINMLT=binM, $
                             SHIFTMLT=shiftM, $
                             MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                            EQUAL_AREA_BINNING=EA_binning, $
                             DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                             MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                             HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
@@ -79,6 +80,7 @@ PRO PRINT_TIMEHISTO_SUMMARY,fastLoc,good_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim
   IF KEYWORD_SET(angleLim1)     THEN PRINTF,lun,FORMAT='("Angle lim 1",T30,":",T35,I8)',angleLim1
   IF KEYWORD_SET(angleLim2)     THEN PRINTF,lun,FORMAT='("Angle lim 2",T30,":",T35,I8)',angleLim2
 
+  IF KEYWORD_SET(EA_binning)    THEN PRINTF,lun,FORMAT='(A0)',"Using equal-area binning (props, Ryan)"
   IF KEYWORD_SET(maskMin)       THEN PRINTF,lun,FORMAT='("Events per bin req",T30,": >=",T35,I8)',maskMin
   PRINTF,lun,FORMAT='("Number of orbits used",T30,":",T35,I8)',N_ELEMENTS(UNIQ(fastLoc.orbit[good_i],SORT(fastLoc.orbit[good_i])))
   PRINTF,lun,FORMAT='("Total N timePoints",T30,":",T35,I8)',N_ELEMENTS(good_i)
