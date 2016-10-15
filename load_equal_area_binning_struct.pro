@@ -22,11 +22,18 @@ PRO LOAD_EQUAL_AREA_BINNING_STRUCT,EA, $
               tmpMinI    = (-1.)*REVERSE(EA__s.maxI)
               tmpMaxI    = (-1.)*REVERSE(EA__s.minI)
 
-              tmpMinM    =       REVERSE(EA__s.maxM)
-              tmpMaxM    =       REVERSE(EA__s.minM)
+              ;; tmpMinM    = REVERSE(EA__s.maxM)
+              ;; tmpMaxM    = REVERSE(EA__s.minM)
+
+              tmpMinM    = REVERSE(EA__s.minM)
+              tmpMaxM    = REVERSE(EA__s.maxM)
 
               EA__s.minI = TEMPORARY(tmpMinI)
               EA__s.maxI = TEMPORARY(tmpMaxI)
+
+              EA__s.minM = tmpMinM
+              EA__s.maxM = tmpMaxM
+
               EA__s.hemi = 'SOUTH'
            ENDIF
         END

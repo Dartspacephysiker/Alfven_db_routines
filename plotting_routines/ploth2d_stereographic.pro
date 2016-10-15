@@ -44,39 +44,15 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   COMPILE_OPT idl2
 
   IF KEYWORD_SET(EA_binning) THEN BEGIN
-     ;; minI         = 60
-     ;; maxI         = 90
-     ;; minM         = 0
-     ;; maxM         = 24
-     ;; binM         = 1.0
-     ;; binI         = 3.0
 
      LOAD_EQUAL_AREA_BINNING_STRUCT,EA
-     ;; ilats        = [EA.minI,EA.maxI[WHERE(EA.maxI EQ EA.maxI[-1])]]
-     ;; mlts         = [EA.minM,EA.maxM[WHERE(EA.maxI EQ EA.maxI[-1])]] ;;Baffling, but true
 
-     ilats        = EA.maxI
-     mlts         = EA.maxM ;;Baffling, but true
+     ilats        = ABS(EA.maxI)
+     mlts         = EA.maxM
 
-     ;; this = HIST2D__EQUAL_AREA_BINNING(DENSITY=thisDens)
-
-     ;; temp = MAKE_H2DSTR_TMPLT(/EQUAL_AREA_BINNING, $
-     ;;                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
-     ;;                          BOTH_HEMIS=both_hemis, $
-     ;;                          CB_FORCE_OOBHIGH=cb_force_oobHigh, $
-     ;;                          CB_FORCE_OOBLOW=cb_force_oobLow)
-
-     ;; temp.data[WHERE(thisDens NE 0,/NULL)] = this[WHERE(thisDens NE 0,/NULL)]/thisDens[WHERE(thisDens NE 0,/NULL)]
-     ;; temp.data[WHERE(thisDens NE 0,/NULL)] = 10.^(this[WHERE(thisDens NE 0,/NULL)]/thisDens[WHERE(thisDens NE 0,/NULL)])
-     ;; temp.mask[WHERE(thisDens EQ 0,/NULL)] = 255B
-     ;; temp.hasMask = 1
-
-     ;; temp.lim     = [MIN(temp.data),MAX(temp.data)]
   ENDIF
-  ;; ENDIF ELSE BEGIN
 
   RESTORE,ancillaryData
-  ;; ENDELSE
 
   IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
      IF ABS(minM - 0.00) LT 0.0001 AND ABS(maxM-24.00) LT 0.0001 THEN BEGIN
