@@ -11,7 +11,7 @@
 ;; put together, but I can't be sure
 
 PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
-                          EQUAL_AREA_BINNING=equal_area_binning, $
+                          EQUAL_AREA_BINNING=EA_binning, $
                           H2DMASK=h2dMask, $
                           WHOLECAP=wholeCap, $
                           MIDNIGHT=midnight, $
@@ -43,8 +43,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   COMPILE_OPT idl2
 
-  IF N_ELEMENTS(equal_area_binning) EQ 0 THEN equal_area_binning = 1
-  IF KEYWORD_SET(equal_area_binning) THEN BEGIN
+  IF N_ELEMENTS(EA_binning) EQ 0 THEN EA_binning = 1
+  IF KEYWORD_SET(EA_binning) THEN BEGIN
      ;; minI         = 60
      ;; maxI         = 90
      ;; minM         = 0
@@ -175,7 +175,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDIF
 
   ;;Get longitudes for drawing boxes
-  IF ~KEYWORD_SET(equal_area_binning) THEN BEGIN
+  IF ~KEYWORD_SET(EA_binning) THEN BEGIN
      nXlines       = (maxM-minM)/binM + 1
      mlts          = indgen(nXlines)*binM+minM
   ENDIF
@@ -184,7 +184,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;; ENDIF
 
   IF KEYWORD_SET(do_lShell) THEN BEGIN
-     IF KEYWORD_SET(equal_area_binning) THEN BEGIN
+     IF KEYWORD_SET(EA_binning) THEN BEGIN
         PRINT,"Can't do l-shell stuff with equal-area binning"
         STOP
      ENDIF
@@ -219,7 +219,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ENDELSE
 
      ;;Don't erase these lines! You need them
-     IF ~KEYWORD_SET(equal_area_binning) THEN BEGIN
+     IF ~KEYWORD_SET(EA_binning) THEN BEGIN
         nYlines       = (tempMaxI-tempMinI)/binI + 1
         ilats         = indgen(nYlines)*binI + tempMinI
      ENDIF
@@ -456,7 +456,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;;******************************
   ;;Get polyfill vertices
   lonsLats                        = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(mlts,ilats, $
-                                                                            EQUAL_AREA_BINNING=equal_area_binning, $
+                                                                            EQUAL_AREA_BINNING=EA_binning, $
                                                                             BINSIZE_LON=binM, $
                                                                             SHIFT_LON=temp.shift1, $
                                                                             BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
@@ -466,7 +466,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   ;;Fill up dat plot
   H2D_STEREOGRAPHIC_EXECUTE_POLYFILL,lonsLats,h2descl, $
-                                     EQUAL_AREA_BINNING=equal_area_binning, $
+                                     EQUAL_AREA_BINNING=EA_binning, $
                                      H2D_MASKED=masked, $
                                      MASKCOLOR=maskColor
   ;;Calc an integral?

@@ -1,5 +1,5 @@
 FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
-   EA_BINNING=EA_binning, $
+   EQUAL_AREA_BINNING=EA_binning, $
    BINSIZE_LON=binsize_lon, $
    SHIFT_LON=shift_lon, $
    BINSIZE_LAT=binsize_lat, $
@@ -16,24 +16,34 @@ FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
      lonBinSplit             = 2.0
   ENDELSE
 
-  IF KEYWORD_SET(convert_mlt_to_lon) THEN BEGIN
-     ;;Need to have the lons wrap here!!! Pick it up, boah!
-     lons                    = (lons+shift_lon)*15
-     lonFactor               = (INDGEN(FIX(lonBinSplit)-1)+1)*binsize_lon*15/lonBinSplit
-  ENDIF ELSE BEGIN
-     lonFactor               = binsize_lon/lonBinSplit
-  ENDELSE
-
-  nLonFactors                = N_ELEMENTS(lonFactor)/2
-
-  nLats                      = N_ELEMENTS(lats)
-  nLons                      = N_ELEMENTS(lons)
-
   CASE 1 OF
      KEYWORD_SET(EA_binning): BEGIN
+        LOAD_EQUAL_AREA_BINNING_STRUCT,EA
+
+        IF KEYWORD_SET(shift_lon) THEN BEGIN
+           PRINT,"Can't shift lons with EA_binning (yet)!"
+           STOP
+        ENDIF
+        IF KEYWORD_SET(convert_mlt_to_lon) THEN BEGIN
+           ;;Need to have the lons wrap here!!! Pick it up, boah!
+           lons                    = (lons+shift_lon)*15
+
+           ;;So ... these bin sizes change as we ascend rings around the pole
+           ;;Handle them in the loop
+           EA_binsize_lon          = (EA.maxM-EA.minM)
+           normLonFactor           = (INDGEN(FIX(lonBinSplit)-1)+1)
+           ;; lonFactor               = (INDGEN(FIX(lonBinSplit)-1)+1)*binsize_lon*15/lonBinSplit
+        ENDIF ELSE BEGIN
+           lonFactor               = binsize_lon/lonBinSplit
+        ENDELSE
+
+        nLonFactors                = N_ELEMENTS(lonFactor)/2
+
+        nLats                      = N_ELEMENTS(lats)
+        nLons                      = N_ELEMENTS(lons)
+
         outLonsLats          = MAKE_ARRAY(nLons,nLats,2,6+(FIX(lonBinSplit)-1)*2)
 
-        LOAD_EQUAL_AREA_BINNING_STRUCT,EA
         EA.minM *= 15.
         EA.maxM *= 15.
         FOR j=0,nLats-1 DO BEGIN 
@@ -41,7 +51,7 @@ FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
               ;; tempLats=[lats[nLats-1-j],lats[nLats-1-j]-binsize_lat/2.0,lats[nLats-2-j]]
               ;; tempLons=[EA.minI[j],EA.minI[j],EA.minI[j]] 
               tempLats          = [EA.maxI[j],EA.maxI[j]-binsize_lat/2.0,  EA.minI[j]]
-              tempLons          = [  EA.minI[j],                  EA.minI[j],  EA.minI[j]] 
+              tempLons          = [  EA.minM[j],                  EA.minM[j],  EA.minM[j]] 
            ENDIF ELSE BEGIN
               tempLats          =   [EA.minI[j],  MEAN([EA.minI[j],EA.maxI[j]]),EA.maxI[j]] 
               tempLons          = [  EA.minM[j],                  EA.minM[j],  EA.minM[j]] 
@@ -52,6 +62,9 @@ FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
               tempLons          = REBIN(tempLons,4)  
               tempLats          = REBIN(tempLats,4) 
            ENDIF
+
+           ;;This has to be calculated every time, since the MLT binsizes are always changing
+           lonFactor            = normLonFactor*EA_binsize_lon[j]*15/lonBinSplit
 
            IF KEYWORD_SET(counterclockwise) THEN BEGIN
               tempLats          = [EA.maxI[j]          ,tempLats,EA.minI[j]          ,   REVERSE(tempLats)] 
@@ -72,6 +85,20 @@ FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
         ENDFOR
      END
      ELSE: BEGIN
+
+        IF KEYWORD_SET(convert_mlt_to_lon) THEN BEGIN
+           ;;Need to have the lons wrap here!!! Pick it up, boah!
+           lons                    = (lons+shift_lon)*15
+           lonFactor               = (INDGEN(FIX(lonBinSplit)-1)+1)*binsize_lon*15/lonBinSplit
+        ENDIF ELSE BEGIN
+           lonFactor               = binsize_lon/lonBinSplit
+        ENDELSE
+
+        nLonFactors                = N_ELEMENTS(lonFactor)/2
+
+        nLats                      = N_ELEMENTS(lats)
+        nLons                      = N_ELEMENTS(lons)
+
         outLonsLats                = MAKE_ARRAY(nLons-1,nLats-1,2,6+(FIX(lonBinSplit)-1)*2)
 
         FOR j=0, nLats-2 DO BEGIN 

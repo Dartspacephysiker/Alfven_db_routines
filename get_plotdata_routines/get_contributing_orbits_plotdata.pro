@@ -89,8 +89,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i, $
                                                           ilats[temp_ii],$
                                                           ;; BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                                           MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? MINL : MINI),$
-                                                          MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? MAXL : MAXI), $
-                                                          EQUAL_AREA_STRUCT=EA)
+                                                          MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? MAXL : MAXI))
            ENDIF ELSE BEGIN
               h2dOrbTemp[*]  = 0
            ENDELSE

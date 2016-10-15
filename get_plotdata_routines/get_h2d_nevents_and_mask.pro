@@ -12,7 +12,7 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
                              NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
                              H2DSTR=h2dStr,H2DMASKSTR=h2dMaskStr, $
-                             H2DFLUXN=h2dFluxN,H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
+                             H2DFLUXN=h2dFluxN,H2D_NONZERO_NEV_I=hEv_nz_i, $
                              MASKMIN=maskMin, $
                              DATANAME=dataName,DATARAWPTR=dataRawPtr, $
                              CB_FORCE_OOBHIGH=cb_force_oobHigh, $
@@ -65,7 +65,7 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
   IF KEYWORD_SET(EA_binning) THEN BEGIN
      h2dFluxN       = HIST2D__EQUAL_AREA_BINNING(mlts,$
                                                  horiz,$
-                                                 BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
+                                                 ;; BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                                  MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
                                                  MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
   ENDIF ELSE BEGIN
@@ -88,8 +88,8 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
   h2dMaskStr.data[where(h2dStr.data LT maskMin,/NULL)]=255
   h2dMaskStr.data[where(h2dStr.data GE maskMin,/NULL)]=0
 
-  h2d_nonzero_nEv_i             = WHERE(h2dFluxN GT 0)
-  IF h2d_nonzero_nEv_i[0] EQ -1 THEN BEGIN
+  hEv_nz_i             = WHERE(h2dFluxN GT 0)
+  IF hEv_nz_i[0] EQ -1 THEN BEGIN
      PRINT,"Ummm.... There's no data here, according to GET_H2D_NEVENTS_AND_MASK."
      STOP
   ENDIF
@@ -97,12 +97,12 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
   IF KEYWORD_SET(print_mandm) THEN BEGIN
      ;; IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
         fmt                     = 'G10.4' 
-        maxh2d                  = MAX(h2dStr.data[h2d_nonzero_nEv_i])
-        minh2d                  = MIN(h2dStr.data[h2d_nonzero_nEv_i])
+        maxh2d                  = MAX(h2dStr.data[hEv_nz_i])
+        minh2d                  = MIN(h2dStr.data[hEv_nz_i])
      ;; ENDIF ELSE BEGIN
      ;;    fmt    = 'F10.2'
-     ;;    maxh2d = ALOG10(MAX(h2dStr.data[h2d_nonzero_nEv_i]))
-     ;;    minh2d = ALOG10(MIN(h2dStr.data[h2d_nonzero_nEv_i]))
+     ;;    maxh2d = ALOG10(MAX(h2dStr.data[hEv_nz_i]))
+     ;;    minh2d = ALOG10(MIN(h2dStr.data[hEv_nz_i]))
      ;; ENDELSE
      PRINTF,lun,h2dStr.title
      PRINTF,lun,FORMAT='("Max, min:",T20,' + fmt + ',T35,' + fmt + ')', $

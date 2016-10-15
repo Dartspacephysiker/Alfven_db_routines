@@ -132,17 +132,27 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
 
             FOR kk=0,N_ELEMENTS(tmpInds)-1 DO BEGIN
 
-               tempInds = WHERE((fastLocMLTs  GE EA.minM[kk]) AND (fastLocMLTs  LT EA.maxM[kk]) AND $
-                                (fastLocILATS GE EA.minI[kk]) AND (fastLocILATS LT EA.maxI[kk]))
+               tempInds = WHERE((fastLocMLTs  GE EA.minM[tmpInds[kk]]) AND (fastLocMLTs  LT EA.maxM[tmpInds[kk]]) AND $
+                                (fastLocILATS GE EA.minI[tmpInds[kk]]) AND (fastLocILATS LT EA.maxI[tmpInds[kk]]))
                  IF tempInds[0] NE -1 THEN BEGIN
                     tempBinTime = TOTAL(DOUBLE(fastLoc_delta_t[fastLoc_inds[tempInds]]))
-                    outTimeHisto[kk] = tempBinTime
+                    outTimeHisto[tmpInds[kk]] = tempBinTime
                     
                     IF KEYWORD_SET(output_textFile) THEN PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T20,F0.3)', $
-                       MEAN([EA.minM[kk],EA.maxM[kk]]),MEAN([EA.minI[kk],EA.maxI[kk]]),DOUBLE(tempBinTime)/60.0
+                       MEAN([EA.minM[tmpInds[kk]],EA.maxM[tmpInds[kk]]]),MEAN([EA.minI[tmpInds[kk]],EA.maxI[tmpInds[kk]]]),DOUBLE(tempBinTime)/60.0
                  ENDIF ELSE tempBinTime = DOUBLE(0.0)
               ENDFOR
            ENDFOR
+           ;;Last by hand
+           tempInds = WHERE((fastLocMLTs  GE EA.minM[nBins-1]) AND (fastLocMLTs  LT EA.maxM[nBins-1]) AND $
+                            (fastLocILATS GE EA.minI[nBins-1]) AND (fastLocILATS LT EA.maxI[nBins-1]))
+           IF tempInds[0] NE -1 THEN BEGIN
+              tempBinTime = TOTAL(DOUBLE(fastLoc_delta_t[fastLoc_inds[tempInds]]))
+              outTimeHisto[nBins-1] = tempBinTime
+              
+              IF KEYWORD_SET(output_textFile) THEN PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T20,F0.3)', $
+                 MEAN([EA.minM[nBins-1],EA.maxM[nBins-1]]),MEAN([EA.minI[nBins-1],EA.maxI[nBins-1]]),DOUBLE(tempBinTime)/60.0
+           ENDIF ELSE tempBinTime = DOUBLE(0.0)
 
         END
         ELSE: BEGIN
