@@ -3,6 +3,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              BINM=binM, $
                              SHIFTM=shiftM, $
                              MINI=minI,MAXI=maxI,BINI=binI, $
+                             EQUAL_AREA_BINNING=EA_binning, $
                              DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                              OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
                              FLUXPLOTTYPE=fluxPlotType, $
@@ -119,6 +120,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                               MINI=minI, $
                                               MAXI=maxI, $
                                               BINI=binI, $
+                                              EQUAL_AREA_BINNING=EA_binning, $
                                               NEWELL_PLOTRANGE=newell_plotRange, $
                                               LOG_NEWELLPLOT=log_newellPlot, $
                                               NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
@@ -159,6 +161,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                    BINM=binM, $
                                    SHIFTM=shiftM, $
                                    MINI=minI,MAXI=maxI,BINI=binI, $
+                                   EQUAL_AREA_BINNING=EA_binning, $
                                    NEWELL_PLOTRANGE=newell_plotRange, $
                                    LOG_NEWELLPLOT=log_newellPlot, $
                                    NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
@@ -202,6 +205,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              BINM=binM, $
                              SHIFTM=shiftM, $
                              MINI=minI,MAXI=maxI,BINI=binI, $
+                              EQUAL_AREA_BINNING=EA_binning, $
                              DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                              NEVENTSPLOTRANGE=nEventsPlotRange, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -221,6 +225,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        BINM=binM, $
                        SHIFTM=shiftM, $
                        MINI=minI,MAXI=maxI,BINI=binI, $
+                       EQUAL_AREA_BINNING=EA_binning, $
                        DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                        OUTH2DBINSMLT=outH2DBinsMLT, $
                        OUTH2DBINSILAT=outH2DBinsILAT, $

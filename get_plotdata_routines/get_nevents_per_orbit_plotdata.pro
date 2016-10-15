@@ -4,6 +4,7 @@ PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                    BINM=binM,$
                                    SHIFTM=shiftM, $
                                    MINI=minI,MAXI=maxI,BINI=binI, $
+                                   EQUAL_AREA_BINNING=EA_binning, $
                                    DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                    NEVENTPERORBRANGE=nEventPerOrbRange, $
                                    NEVENTPERORBAUTOSCALE=nEventPerOrbAutoscale, $
@@ -31,12 +32,13 @@ PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                       MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                                       MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
                                       SHIFT1=shiftM,SHIFT2=shiftI, $
+                                      EQUAL_AREA_BINNING=EA_binning, $
                                       CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                       CB_FORCE_OOBLOW=cb_force_oobLow)
 
   ;; h2dStr = {tmplt_h2dStr}
   h2dStr            = tmplt_h2dStr
-  h2dStr.data[*,*]  = 0
+  h2dStr.data[*]    = 0
   
   nEvByAppStr       = ""
   IF KEYWORD_SET(divNEvByTotal) THEN BEGIN

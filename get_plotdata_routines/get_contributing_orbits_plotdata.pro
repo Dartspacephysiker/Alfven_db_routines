@@ -76,8 +76,9 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i, $
      KEYWORD_SET(EA_binning): BEGIN
         LOAD_EQUAL_AREA_BINNING_STRUCT,EA
 
-        h2dOrbN              = INTARR(N_ELEMENTS(tmplt_h2dStr.data[*,0]),N_ELEMENTS(tmplt_h2dStr.data[0,*]))
-        orbArr               = INTARR(N_ELEMENTS(uniqueOrbs_i),N_ELEMENTS(tmplt_h2dStr.data[*,0]),N_ELEMENTS(tmplt_h2dStr.data[0,*]))
+        nBins                = N_ELEMENTS(EA.minI)
+        h2dOrbN              = INTARR(nBins)
+        orbArr               = INTARR(N_ELEMENTS(uniqueOrbs_i),nBins)
 
         h2dOrbTemp           = MAKE_ARRAY(N_ELEMENTS(EA.minI),VALUE=0L,/LONG)
         FOR j=0,N_ELEMENTS(uniqueOrbs_i)-1 DO BEGIN 
@@ -93,8 +94,9 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i, $
            ENDIF ELSE BEGIN
               h2dOrbTemp[*]  = 0
            ENDELSE
-           orbArr[j,*,*]       = h2dOrbTemp 
-           add_i               = WHERE(h2dOrbTemp GT 0)
+
+           orbArr[j,*]          = h2dOrbTemp 
+           add_i                = WHERE(h2dOrbTemp GT 0)
            IF add_i[0] NE -1 THEN BEGIN
               h2dOrbTemp[add_i] = 1 
               h2dStr.data      += h2dOrbTemp 

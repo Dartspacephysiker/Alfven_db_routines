@@ -27,7 +27,8 @@ PRO GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lshell) ? binL : binI),$
                                       MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? MINL : MINI),$
                                       MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? MAXL : MAXI), $
-                                      SHIFT1=shiftM,SHIFT2=shiftI)
+                                      SHIFT1=shiftM,SHIFT2=shiftI, $
+                                      EQUAL_AREA_BINNING=EA_binning)
   ;; h2dStr={tmplt_h2dStr}
   h2dStr          = tmplt_h2dStr
   h2dStr.title    = 'N Events per Minute'

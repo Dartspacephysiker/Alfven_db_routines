@@ -16,6 +16,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
                                  BINM=binM, $
                                  SHIFTM=shiftM, $
                                  MINI=minI,MAXI=maxI,BINI=binI, $
+                                 EQUAL_AREA_BINNING=EA_binning, $
                                  DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                                  OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
                                  H2D_NONZERO_NEV_I=h2d_nonzero_nEv_i, $
@@ -43,7 +44,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                       MIN1=minM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
                                       MAX1=maxM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI), $
-                                      SHIFT1=shiftM,SHIFT2=shiftI)
+                                      SHIFT1=shiftM,SHIFT2=shiftI, $
+                                      EQUAL_AREA_BINNING=EA_binning)
 
   h2dStr                     = tmplt_h2dStr
   
@@ -125,13 +127,25 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   ilats                     = (KEYWORD_SET(do_lshell) ? maximus.lshell : maximus.ilat)[plot_i]
   IF KEYWORD_SET(h2dStr.both_hemis) THEN ilats = ABS(ilats)
 
-  h2dStr.data               = HIST2D(mlts, $
-                                     ilats,$
-                                     widthData,$
-                                     MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
-                                     MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
-                                     BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
-                                     OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+  CASE 1 OF
+     KEYWORD_SET(EA_binning): BEGIN
+        h2dStr.data               = HIST2D__EQUAL_AREA_BINNING(mlts, $
+                                                               ilats,$
+                                                               widthData,$
+                                                               MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
+                                                               MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
+                                                               OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+     END
+     ELSE: BEGIN
+        h2dStr.data               = HIST2D(mlts, $
+                                           ilats,$
+                                           widthData,$
+                                           MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
+                                           MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
+                                           BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                                           OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+     END
+  ENDCASE
   
 
   PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr,tHistDenominator,outH2DBinsMLT,outH2DBinsILAT,H2DFluxN,dataName,h2dMask

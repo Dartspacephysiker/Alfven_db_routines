@@ -4,6 +4,7 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                                BINM=binM, $
                                SHIFTM=shiftM, $
                                MINI=minI,MAXI=maxI,BINI=binI, $
+                               EQUAL_AREA_BINNING=EA_binning, $
                                NEWELL_PLOTRANGE=newell_plotRange, $
                                LOG_NEWELLPLOT=log_newellPlot, $
                                NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
@@ -101,6 +102,7 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                              BINM=binM, $
                              SHIFTM=shiftM, $
                              MINI=minI,MAXI=maxI,BINI=binI, $
+                             EQUAL_AREA_BINNING=EA_binning, $
                              DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
                              NEWELL_PLOTRANGE=newell_plotRange, $
                              LOG_NEWELLPLOT=log_newellPlot, $
@@ -154,9 +156,9 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
         h2dStrs[i].title = h2dStrs[i].title + " (Prob. Occ.)"
         h2dStrs[i].name  = dataNames[i]
 
-        h2dStrs[i].lim             = KEYWORD_SET(newell_plotRange) AND N_ELEMENTS(newell_plotRange) EQ 2 ? $
-                                     DOUBLE(newell_plotRange) : $
-                                     DOUBLE([0,1]) 
+        h2dStrs[i].lim   = KEYWORD_SET(newell_plotRange) AND N_ELEMENTS(newell_plotRange) EQ 2 ? $
+                           DOUBLE(newell_plotRange) : $
+                           DOUBLE([0,1]) 
 
         IF KEYWORD_SET(log_newellPlot) THEN BEGIN
            dataNames[i]     = 'log_' + dataNames[i]

@@ -4,6 +4,7 @@ PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM, $
                                  SHIFTM=shiftM, $
                                  BINM=binM, $
                                  MINI=minI,MAXI=maxI,BINI=binI, $
+                                 EQUAL_AREA_BINNING=EA_binning, $
                                  ORBFREQRANGE=orbFreqRange, $
                                  H2DSTR=h2dStr,TMPLT_H2DSTR=tmplt_h2dStr, $
                                  H2DCONTRIBORBSTR=h2dContribOrbStr, $
@@ -21,6 +22,7 @@ PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM, $
                                       MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
                                       MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
                                       SHIFT1=shiftM,SHIFT2=shiftI, $
+                                      EQUAL_AREA_BINNING=EA_binning, $
                                       CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                       CB_FORCE_OOBLOW=cb_force_oobLow)
 
@@ -38,7 +40,7 @@ PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM, $
      dataName        = "orbFreq_"
      h2dStr.name     = dataName
      H2D_OK_i        = WHERE(tHistDenominator GT 0)
-     h2dStr.data[H2D_OK_i]=DOUBLE(h2dContribOrbStr.data[H2D_OK_i])/h2dTotOrbStr.data[H2D_OK_i]
+     h2dStr.data[H2D_OK_i] = DOUBLE(h2dContribOrbStr.data[H2D_OK_i])/h2dTotOrbStr.data[H2D_OK_i]
   ENDELSE
   
   IF N_ELEMENTS(orbFreqRange) EQ 0 OR N_ELEMENTS(orbFreqRange) NE 2 THEN $
