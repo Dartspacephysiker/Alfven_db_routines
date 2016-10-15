@@ -43,7 +43,6 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   COMPILE_OPT idl2
 
-  IF N_ELEMENTS(EA_binning) EQ 0 THEN EA_binning = 1
   IF KEYWORD_SET(EA_binning) THEN BEGIN
      ;; minI         = 60
      ;; maxI         = 90

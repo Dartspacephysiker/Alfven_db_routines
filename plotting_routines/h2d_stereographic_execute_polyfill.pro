@@ -1,16 +1,16 @@
 PRO H2D_STEREOGRAPHIC_EXECUTE_POLYFILL,lonsLats,h2dScaledData, $
-                                       EQUAL_AREA_BINNING=equal_area_binning, $
+                                       EQUAL_AREA_BINNING=EA_binning, $
                                        H2D_MASKED=h2d_masked, $
                                        MASKCOLOR=maskColor, $
                                        MAP_OBJECT=map
                                        
 
   CASE 1 OF
-     KEYWORD_SET(equal_area_binning): BEGIN
+     KEYWORD_SET(EA_binning): BEGIN
         nLats = N_ELEMENTS(lonsLats[0,*,0,0])
         nLons = nLats
 
-        FOR j=0, nLats-2 DO BEGIN 
+        FOR j=0,nLats-1 DO BEGIN 
            tempLons = lonsLats[j,j,0,*]
            tempLats = lonsLats[j,j,1,*]
            cgColorFill,tempLons,tempLats, $
