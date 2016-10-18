@@ -37,6 +37,7 @@ PRO LOAD_EQUAL_AREA_BINNING_STRUCT,EA, $
               EA__s.hemi = 'SOUTH'
            ENDIF
         END
+        ELSE:
      ENDCASE
   ENDIF
 

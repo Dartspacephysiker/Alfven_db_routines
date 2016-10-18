@@ -2,6 +2,8 @@
 ;2016/01/07 Added DO_DESPUNDB keyword
 PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              GOOD_I=good_i, $
+                             MIN_MAGCURRENT=minMC, $
+                             MAX_NEGMAGCURRENT=maxNegMC, $
                              INCLUDE_32HZ=include_32Hz, $
                              DBDir=DBDir, $
                              DBFile=DBFile, $
@@ -277,6 +279,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI='BOTH')
   IF ARG_PRESENT(good_i) THEN good_i = GET_CHASTON_IND( $
                                        MAXIMUS__maximus, $
+                                       MIN_MAGCURRENT=minMC, $
+                                       MAX_NEGMAGCURRENT=maxNegMC, $
                                        INCLUDE_32HZ=include_32Hz, $
                                        HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH', $
                                        DESPUNDB=despunDB, $

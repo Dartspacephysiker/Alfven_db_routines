@@ -1,6 +1,7 @@
 ;;2016/04/15 En route to Vienna from Istanbul. (Turkey rules, by the way, or at least Turkish Airlines does.)
 ;;Ripped off MAKE_TIMEHIST_DENOMINATOR for this action
 PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
+   DBTIMES=dbTimes, $
    DONT_USE_THESE_INDS=dont_use_these_inds, $
    DO_LISTS_WITH_STATS=do_lists_with_stats, $
    DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -16,6 +17,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
    OUTFILESUFFIX=outFileSuffix, $
    OUTDIR=outDir, $
    OUTPUT_TEXTFILE=output_textFile, $
+   OUTPUT__INC_IMF_=output__inc_IMF, $
    DATANAME=dataName, $
    DATATITLE=dataTitle, $
    DBSTRUCT=dbStruct, $
@@ -25,6 +27,10 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   COMPILE_OPT idl2
 
   COMMON H2D_LIST_OF_INDS,HLOI__H2D_lists_with_inds,HLOI__nInds,HLOI__nMLT,HLOI__nILAT,HLOI__H2D_binCenters
+
+  IF KEYWORD_SET(output__inc_IMF) THEN BEGIN
+     @common__omni_stability.pro
+  ENDIF
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
@@ -130,7 +136,26 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   outH2D_lists_with_obs                    = MAKE_ARRAY(HLOI__nMLT,HLOI__nILAT,/OBJ)
 
   IF KEYWORD_SET(output_textFile) THEN BEGIN
-     PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T20,"Time",T47,"Orbit",T56,"Altitude",T67,A0)',dTitle
+     CASE 1 OF
+        KEYWORD_SET(output__inc_IMF): BEGIN
+           PRINTF,textLun,FORMAT='(A0,T9,A0,T19,A0,T46,A0,T54,A0,T64,' + $
+                  'A0,T75,A0,T85,A0,T94,A0,T103,A0,T112,' + $
+                  'F7.3)', $
+                  "MLT","ILAT","Time","Orbit","Alt", $
+                  "pFlux","charE","eFlux","Bx","By", $
+                  "Bz"
+
+           ;; PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T20,"Time",T47,"Orbit",T56,"Alt",T65,A0,T74,A0,T85,A0,T97,A0,T108)', $
+           ;;        'pFlux', $
+           ;;        'Bx', $
+           ;;        'By', $
+           ;;        'Bz', $
+           ;;        'Char e'
+        END
+        ELSE: BEGIN
+           PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T20,"Time",T47,"Orbit",T56,"Altitude",T67,A0)',dTitle
+        END
+     ENDCASE
   ENDIF
   FOR j=0,HLOI__nILAT-1 DO BEGIN
      FOR i=0,HLOI__nMLT-1 DO BEGIN
@@ -146,9 +171,10 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
 
            ;;Output to text file if requested
            IF KEYWORD_SET(output_textFile) THEN BEGIN
+              ;;Everyone want dat
               tempMLTs                     = dbStruct.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
               tempILATs                    = dbStruct.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-              IF KEYWORD_SET(both_hemis) THEN tempILATs = ABS(tempILATs)
+              ;; IF KEYWORD_SET(both_hemis) THEN tempILATs = ABS(tempILATs)
 
               tempTimes                    = dbStruct.time[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
               tempOrbs                     = dbStruct.orbit[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
@@ -156,23 +182,61 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
               ;; PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T25,"Orbit",T35,"Observation")'
               PRINTF,textLun,FORMAT='(F0.3,T10,F0.3)',HLOI__H2D_binCenters[0,i,j],HLOI__H2D_binCenters[1,i,j]
               PRINTF,textLun,'*************************'
-              FOR iObs=0,N_ELEMENTS(tempObs)-1 DO BEGIN
-                 ;; PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T25,I0,T35,F0.2,T50,F0.2)', $
-                 ;;        HLOI__H2D_binCenters[0,i,j], $
-                 ;;        HLOI__H2D_binCenters[1,i,j], $
-                 ;;        tempOrbs[iObs], $
-                 ;;        tempAlts[iObs], $
-                 ;;        tempObs[iObs]
-                 PRINTF,textLun,FORMAT='(F0.3,T10,F0.3,T20,A0,T47,I0,T56,F0.3,T67,F0.3)', $
-                        ;; HLOI__H2D_binCenters[0,i,j], $
-                        ;; HLOI__H2D_binCenters[1,i,j], $
-                        tempMLTs[iObs], $
-                        tempILATs[iObs], $
-                        tempTimes[iObs], $
-                        tempOrbs[iObs], $
-                        tempAlts[iObs], $
-                        tempObs[iObs]
-              ENDFOR
+
+              CASE 1 OF
+                 KEYWORD_SET(output__inc_IMF): BEGIN
+                    
+                    tempUTC           = dbTimes[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempChare         = dbStruct.max_chare_losscone[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempeFlux         = dbStruct.elec_energy_flux[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+
+                    IMFinds           = VALUE_CLOSEST2(C_OMNI__mag_UTC,tempUTC)
+                    tempIMFBx         = C_OMNI__Bx[IMFinds]
+                    tempIMFBy         = C_OMNI__By[IMFinds]
+                    tempIMFBz         = C_OMNI__Bz[IMFinds]
+                    tempIMFphiClock   = C_OMNI__phiClock[IMFinds]
+                    tempIMFthetaCone  = C_OMNI__thetaCone[IMFinds]
+
+                    FOR iObs=0,N_ELEMENTS(tempObs)-1 DO BEGIN
+                       ;; PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T25,I0,T35,F0.2,T50,F0.2)', $
+                       ;;        HLOI__H2D_binCenters[0,i,j], $
+                       ;;        HLOI__H2D_binCenters[1,i,j], $
+                       ;;        tempOrbs[iObs], $
+                       ;;        tempAlts[iObs], $
+                       ;;        tempObs[iObs]
+                       PRINTF,textLun,FORMAT='(F5.2,T9,F-6.2,T19,A-0,T46,I-5,T54,F10.3,T65,' + $
+                              'F9.3,T74,F8.2,T85,F7.3,T94,F7.3,T103,F7.3,T112,' + $
+                              'F7.3)', $
+                              ;; HLOI__H2D_binCenters[0,i,j], $
+                              ;; HLOI__H2D_binCenters[1,i,j], $
+                              tempMLTs[iObs],tempILATs[iObs],tempTimes[iObs],tempOrbs[iObs],tempAlts[iObs], $
+                              tempObs[iObs],tempChare[iObs],tempeFlux[iObs],tempIMFBx[iObs],tempIMFBy[iObs], $
+                              tempIMFBz[iObs]
+
+                       ;; PRINT,'Tdiff: ' + STRCOMPRESS(C_OMNI__mag_UTC[IMFinds[iObs]]-tempUTC[iObs],/REMOVE_ALL) + ' s'
+                    ENDFOR
+                 END
+                 ELSE: BEGIN
+                    FOR iObs=0,N_ELEMENTS(tempObs)-1 DO BEGIN
+                       ;; PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T25,I0,T35,F0.2,T50,F0.2)', $
+                       ;;        HLOI__H2D_binCenters[0,i,j], $
+                       ;;        HLOI__H2D_binCenters[1,i,j], $
+                       ;;        tempOrbs[iObs], $
+                       ;;        tempAlts[iObs], $
+                       ;;        tempObs[iObs]
+                       PRINTF,textLun,FORMAT='(F0.3,T10,F0.3,T20,A0,T47,I0,T56,F0.3,T67,F0.3)', $
+                              ;; HLOI__H2D_binCenters[0,i,j], $
+                              ;; HLOI__H2D_binCenters[1,i,j], $
+                              tempMLTs[iObs], $
+                              tempILATs[iObs], $
+                              tempTimes[iObs], $
+                              tempOrbs[iObs], $
+                              tempAlts[iObs], $
+                              tempObs[iObs]
+                    ENDFOR
+                 END
+              ENDCASE
+
               PRINTF,textLun,''
            ENDIF
         ENDIF ELSE BEGIN

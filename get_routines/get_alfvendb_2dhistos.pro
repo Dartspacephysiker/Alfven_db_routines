@@ -1,5 +1,6 @@
 
 PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
+                          CDBTIME=cdbTime, $
                           H2DSTRARR=h2dStrArr, $
                           KEEPME=keepMe, $
                           DATARAWPTRARR=dataRawPtrArr, $
@@ -159,6 +160,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           GROSSRATE__CENTERS_ILAT=centersILAT, $
                           WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                           WRITE_ORB_AND_OBS_INFO=write_obsArr_textFile, $
+                          WRITE_ORB_AND_OBS__INC_IMF=write_obsArr__inc_IMF, $
                           GROSSLUN=grossLun, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -2018,6 +2020,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
         IF KEYWORD_SET(grossConvFactorArr) THEN grossConvFactor = grossConvFactorArr[i]
 
         MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
+           DBTIMES=cdbTime, $
            DONT_USE_THESE_INDS=dont_use_these_inds, $
            /DO_LISTS_WITH_STATS, $
            DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -2033,6 +2036,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
            OUTFILESUFFIX=paramStrSuffix, $
            OUTDIR=txtOutputDir, $
            OUTPUT_TEXTFILE=write_obsArr_textFile, $
+           OUTPUT__INC_IMF=write_obsArr__inc_IMF, $
            DATANAME=dataNameArr[varPlotH2DInds[i]], $
            DATATITLE=h2dStrArr[varPlotH2DInds[i]].title, $
            DBSTRUCT=maximus, $

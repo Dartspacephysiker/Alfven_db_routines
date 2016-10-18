@@ -12,8 +12,8 @@
   ;;  dB_lcutOff = 0.0 ; Below zero should be garbage?
   
   ;; delta_E cutoffs
-  dE_hcutoff = 1.0e4            ;junks 328 events
-  dE_lcutoff = -1.0e4
+  dE_hcutoff = 5.0e3            ;junks 328 events
+  dE_lcutoff = -5.0e3
   ;; dE_lcutoff = 0.0              ; Below zero should be garbage?
   
   ;; losscone electron flux cutoffs
@@ -29,7 +29,7 @@
   ;; NOTE: For Dartmouth DBs, 'maximus.elec_energy_flux' only takes on absurd values for elec_energy_flux < 0
   ;; However, in the original Chaston DB, 'maximus.elec_energy_flux' takes on perfectly reasonable values and has a reasonable
   ;; distribution for elec_energy_flux < 0, generally ABS(maximus.elec_energy_flux) in ChastDB is < 10^2.
-  elec_ef_hcutoff = 1.0e3       ;junks 284 events. NOTE, units are ergs-cm^(-2)-s^(-1). 
+  elec_ef_hcutoff = 1.5e2       ;junks 284 events. NOTE, units are ergs-cm^(-2)-s^(-1). 
                                 ;1e3 ergs corresponds to ~6x10^14 eV, and Nakajima et al. [2008]
                                 ;  call FAST observations of eflux > 10^12 eV-cm^(-2)-s^(-1)
                                 ;  "remarkable"; in short this cutoff gives plenty of room for good data.

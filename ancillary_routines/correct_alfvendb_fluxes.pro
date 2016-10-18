@@ -293,7 +293,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;;Added 2015/12/22
      mu_0                         = DOUBLE(4.0D*!PI*1e-7)
 
-     pfluxest                     = DOUBLE((maximus.delta_e)*(maximus.delta_b*1e-9))/(2.D*mu_0) ;rm factor of 1e-3 from E-field since we want mW/m^2
+     pfluxest                     = DOUBLE((maximus.delta_e)*(maximus.delta_b*1e-9))/(4.D*mu_0) ;rm factor of 1e-3 from E-field since we want mW/m^2
 
      CASE 1 OF
         KEYWORD_SET(DO_chastDB): BEGIN
