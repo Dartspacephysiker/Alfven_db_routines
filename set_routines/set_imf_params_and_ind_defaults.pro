@@ -108,6 +108,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     STABLEIMF=stableIMF, $
                                     SMOOTHWINDOW=smoothWindow, $
                                     INCLUDENOCONSECDATA=includeNoConsecData, $
+                                    EARLIEST_UTC=earliest_UTC, $
+                                    LATEST_UTC=latest_UTC, $
+                                    EARLIEST_JULDAY=earliest_julDay, $
+                                    LATEST_JULDAY=latest_julDay, $
                                     LUN=lun
 
   COMPILE_OPT idl2
@@ -147,6 +151,13 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
 
   defAngleLim1           = 45.0
   defAngleLim2           = 135.0
+
+  earliest_UTC = STR_TO_TIME('1996-10-06/16:26:02.417')
+  latest_UTC   = STR_TO_TIME('1999-11-03/03:20:59.853')
+
+  earliest_julDay = UTC_TO_JULDAY(STR_TO_TIME('1996-10-06/16:26:02.417'))
+  latest_julDay   = UTC_TO_JULDAY(STR_TO_TIME('1999-11-03/03:20:59.853'))
+
 
   ;;***********************************************
   ;;RESTRICTIONS ON DATA, SOME VARIABLES
