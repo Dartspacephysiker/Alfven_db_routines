@@ -8,7 +8,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                BINMLT=binMLT, $
                                SHIFTMLT=shiftMLT, $
                                MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
-                               EQUAL_AREA_BINNING=equal_area_binning, $
+                               EQUAL_AREA_BINNING=EA_binning, $
                                DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
                                MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $

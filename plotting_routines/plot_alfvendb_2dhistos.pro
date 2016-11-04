@@ -11,6 +11,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                            PLOTDIR=plotDir, $
                            PLOTMEDORAVG=plotMedOrAvg, $
                            PARAMSTR=paramStr, $
+                           ORG_PLOTS_BY_FOLDER=org_plots_by_folder, $
                            DEL_PS=del_PS, $
                            HEMI=hemi, $
                            CLOCKSTR=clockStr, $
@@ -45,6 +46,30 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
+  IF KEYWORD_SET(org_plots_by_folder) THEN BEGIN
+
+     IF N_ELEMENTS(dataNameArr) GT 1 THEN BEGIN
+  
+      onlyOneDir = (dataNameArr[0] EQ dataNameArr[1])
+  
+        FOR k=0,(onlyOneDir ? 0 : N_ELEMENTS(dataNameArr)-1) DO BEGIN
+           plotDir_exists = FILE_TEST(plotDir + dataNameArr[k] + '/',/DIRECTORY)
+           IF ~plotDir_exists THEN BEGIN
+              ;; IF KEYWORD_SET(verbose) THEN PRINTF,lun,"SET_PLOT_DIR: Making directory " + plotDir
+              SPAWN,'mkdir -p ' + plotDir + dataNameArr[k] + '/'
+           ENDIF
+           plotDir_exists = FILE_TEST(plotDir + dataNameArr[k] + '/',/DIRECTORY)
+           IF ~plotDir_exists THEN BEGIN
+              PRINTF,lun,'Failed to make directory: ' + plotDir + dataNameArr[k] + '/'
+              STOP
+           ENDIF
+        ENDFOR
+
+     ENDIF
+
+  ENDIF
+
+
   ;;if not saving plots and plots not turned off, do some stuff  ;; otherwise, make output
   IF KEYWORD_SET(showPlotsNoSave) THEN BEGIN 
      IF KEYWORD_SET(squarePlot) THEN BEGIN
@@ -74,7 +99,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
         PRINTF,LUN, "Creating output files..." 
 
         ;;Create a PostScript file.
-        cgPS_Open, plotDir + 'fluxplots_'+paramStr+'.ps', $
+        cgPS_Open, plotDir + (KEYWORD_SET(org_plots_by_folder) ? dataNameArr[0] + '/' : '' ) + 'fluxplots_'+paramStr+'.ps', $
                    /NOMATCH, $
                    XSIZE=1000, $
                    YSIZE=1000
@@ -84,13 +109,13 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
         cgPS_Close 
 
         ;;Create a PNG file with a width of 800 pixels.
-        cgPS2Raster, plotDir + 'fluxplots_'+paramStr+'.ps', $
+        cgPS2Raster, plotDir + (KEYWORD_SET(org_plots_by_folder) ? dataNameArr[0] + '/' : '' ) + 'fluxplots_'+paramStr+'.ps', $
                      /PNG, $
                      WIDTH=800, $
                      DELETE_PS=del_PS
      
      ENDIF ELSE BEGIN
-        CD, CURRENT=c & PRINTF,LUN, "Current directory is " + c + "/" + plotDir 
+        ;; CD, CURRENT=c & PRINTF,LUN, "Current directory is " + c + "/" + plotDir + (KEYWORD_SET(org_plots_by_folder) ? dataNameArr[0] + '/' : '' )
         PRINTF,LUN, "Creating output files..." 
         
         IF KEYWORD_SET(polarContour) THEN BEGIN
@@ -111,7 +136,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
               INTERP_POLAR2DCONTOUR,h2dStrArr[i], $
                                     dataNameArr[i], $
                                     tempFile, $
-                                    FNAME=plotDir + paramStr+'--'+dataNameArr[i]+'.png', $
+                                    FNAME=plotDir + (KEYWORD_SET(org_plots_by_folder) ? dataNameArr[i] + '/' : '' ) + paramStr+'--'+dataNameArr[i]+'.png', $
                                     _EXTRA=e
               
               ;; Close the PostScript file:
@@ -255,7 +280,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  tPSuff = tilePlotSuff
               ENDELSE
 
-              CGPS_OPEN, plotDir + paramStr + tPSuff+'.ps', $
+              CGPS_OPEN, plotDir + (KEYWORD_SET(org_plots_by_folder) ? dataNameArr[0] + '/' : '' ) + paramStr + tPSuff+'.ps', $
                          /NOMATCH, $
                          XSIZE=xSize, $
                          YSIZE=ySize, $
@@ -479,7 +504,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
               CGPS_Close 
               ;;Create a PNG file with a width of 800 pixels.
               IF ~KEYWORD_SET(eps_output) THEN BEGIN
-                 CGPS2RASTER, plotDir + paramStr+tPSuff+'.ps', $
+                 CGPS2RASTER, plotDir + (KEYWORD_SET(org_plots_by_folder) ? dataNameArr[0] + '/' : '' ) + paramStr+tPSuff+'.ps', $
                               /PNG, $
                               WIDTH=800*n_tile_columns, $
                               DELETE_PS=del_PS
@@ -499,7 +524,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  win        = WINDOW(DIMENSIONS=wDim, $
                                      /BUFFER)
 
-                 im1        = IMAGE(plotDir + paramStr + tPSuff + '.png', $
+                 im1        = IMAGE(plotDir + (KEYWORD_SET(org_plots_by_folder) ? dataNameArr[0] + '/' : '' ) + paramStr + tPSuff + '.png', $
                                     MARGIN=0, $
                                     /CURRENT, $
                                     ;; DIMENSIONS=[xSize*100,ySize*100], $
@@ -518,7 +543,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                     DIMENSIONS=wDim, $
                                     IMAGE_DIMENSIONS=[801,801])
 
-                 win.SAVE,plotDir + paramStr + tPSuff + '.png'
+                 win.SAVE,plotDir + (KEYWORD_SET(org_plots_by_folder) ? dataNameArr[0] + '/' : '' ) + paramStr + tPSuff + '.png'
 
                  win.CLOSE
 
@@ -558,7 +583,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                     ELSE: no_cb = no_colorbar[i]
                  ENDCASE
 
-                 CGPS_Open, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
+                 CGPS_Open, plotDir + (KEYWORD_SET(org_plots_by_folder) ? dataNameArr[i] + '/' : '' ) + paramStr+'--'+dataNameArr[i]+'.ps', $
                             /NOMATCH, $
                             XSIZE=5, $
                             YSIZE=5, $
@@ -605,7 +630,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  CGPS_Close 
                  ;;Create a PNG file with a width of 800 pixels.
                  IF ~KEYWORD_SET(eps_output) THEN BEGIN
-                    CGPS2RASTER, plotDir + paramStr+'--'+dataNameArr[i]+'.ps', $
+                    CGPS2RASTER, plotDir + (KEYWORD_SET(org_plots_by_folder) ? dataNameArr[i] + '/' : '' ) + paramStr+'--'+dataNameArr[i]+'.ps', $
                                  /PNG, $
                                  WIDTH=800, $
                                  DELETE_PS=del_PS

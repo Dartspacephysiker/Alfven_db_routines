@@ -20,7 +20,7 @@ PRO JOURNAL__20161103__JIM_AND_I_REEXAMINE_CURRENT_THRESHOLD
 
   plotQ      = 'MAG_CURRENT'
 
-  midAlt     = 1000
+  midAlt     = 1500
   highAlt    = 4100
 
   titleArr = ['Above ' + STRCOMPRESS(midAlt,/REMOVE_ALL), $
