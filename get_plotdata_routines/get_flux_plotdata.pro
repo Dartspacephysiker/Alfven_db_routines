@@ -1191,12 +1191,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         medh2d = MEDIAN(h2dStr.data[hEv_nz_i])
         IF KEYWORD_SET(do_grossRate_fluxQuantities) $
         OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
-           dayMaxh2d = MAX(h2dStr.data[dayInds])
-           dayMinh2d = MIN(h2dStr.data[dayInds])
-           dayMedh2d = MEDIAN(h2dStr.data[dayInds])
-           nightMaxh2d = MAX(h2dStr.data[nightInds])
-           nightMinh2d = MIN(h2dStr.data[nightInds])
-           nightMedh2d = MEDIAN(h2dStr.data[nightInds])
+           dayMaxh2d = (dayInds[0] NE -1) ? MAX(h2dStr.data[dayInds]) : 0.00
+           dayMinh2d = (dayInds[0] NE -1) ? MIN(h2dStr.data[dayInds]) : 0.00
+           dayMedh2d = (dayInds[0] NE -1) ? MEDIAN(h2dStr.data[dayInds]) : 0.00
+           nightMaxh2d = (nightInds[0] NE -1) ? MAX(h2dStr.data[nightInds]) : 0.00
+           nightMinh2d = (nightInds[0] NE -1) ? MIN(h2dStr.data[nightInds]) : 0.00
+           nightMedh2d = (nightInds[0] NE -1) ? MEDIAN(h2dStr.data[nightInds]) : 0.00
         ENDIF
      ENDIF ELSE BEGIN
         fmt    = 'F10.2'

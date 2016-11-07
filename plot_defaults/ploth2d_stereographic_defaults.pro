@@ -65,7 +65,8 @@
   defLabelFormat           = '(E0.4)'
   latLabelFormat           = '(I0)'
   lonLabelFormat           = '(I0)'
-  integralLabelFormat      = '(D0.3)'
+  ;; integralLabelFormat      = '(D0.3)'
+  integralLabelFormat      = '(G0.3)'
 
   ;;********************
   ;;GRID DEFAULTS

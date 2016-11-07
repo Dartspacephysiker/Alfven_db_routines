@@ -1,4 +1,5 @@
 PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
+                                EQUAL_AREA_BINNING=EA_binning, $
                                 H2D_MASKED=h2d_masked, $
                                 INTEGRAL=integral, $
                                 ABSINTEGRAL=absIntegral, $
@@ -18,42 +19,95 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
   duskIntegral       = (h2dStr.is_fluxData) ? DOUBLE(0.0) : 0L
   dayIntegral        = (h2dStr.is_fluxData) ? DOUBLE(0.0) : 0L
   nightIntegral      = (h2dStr.is_fluxData) ? DOUBLE(0.0) : 0L
-  FOR j=0, nLats-2 DO BEGIN 
-     FOR i=0, nLons-2 DO BEGIN 
-        tempLons     = REFORM(lonsLats[i,j,0,*])
-        tempLats     = REFORM(lonsLats[i,j,1,*])
-        
-        ;;Integrals
-        IF ~h2d_masked[i,j] THEN BEGIN
+  CASE 1 OF
+     KEYWORD_SET(EA_binning): BEGIN
+        LOAD_EQUAL_AREA_BINNING_STRUCT,EA
 
-           IF tempLons[0] GE 180 AND $
-              tempLons[-1] GE 180 $
-           THEN BEGIN
-              duskIntegral    += (h2dStr.is_logged) ? 10.^h2dStr.data[i,j] : h2dStr.data[i,j]
-           ENDIF ELSE BEGIN
-              IF tempLons[0] LE 180 AND $
-                 tempLons[-1] LE 180 $
+        FOR j=0,nLats-2 DO BEGIN 
+
+           tempLons     = REFORM(lonsLats[j,j,0,*])
+           tempLats     = REFORM(lonsLats[j,j,1,*])
+           
+           ;;Integrals
+           IF ~h2d_masked[j] THEN BEGIN
+
+              IF tempLons[0] GE 180 AND $
+                 tempLons[-1] GE 180 $
               THEN BEGIN
-                 dawnIntegral += (h2dStr.is_logged) ? 10.^h2dStr.data[i,j] : h2dStr.data[i,j]
-              ENDIF
-           ENDELSE
+                 duskIntegral += (h2dStr.is_logged) ? $
+                                 10.^h2dStr.data[j] : h2dStr.data[j]
+              ENDIF ELSE BEGIN
+                 IF tempLons[0] LE 180 AND $
+                    tempLons[-1] LE 180 $
+                 THEN BEGIN
+                    dawnIntegral += (h2dStr.is_logged) ? $
+                                    10.^h2dStr.data[j] : h2dStr.data[j]
+                 ENDIF
+              ENDELSE
 
-           IF (tempLons[0] LE 90  AND tempLons[-1] LE 90 ) OR $
-              (tempLons[0] GE 270 AND tempLons[-1] GE 270)    $
-           THEN BEGIN
-              nightIntegral   += (h2dStr.is_logged) ? 10.^h2dStr.data[i,j] : h2dStr.data[i,j]
-           ENDIF ELSE BEGIN
-              IF (tempLons[0] GE 90  AND tempLons[-1] GE 90 ) AND $
-                 (tempLons[0] LE 270 AND tempLons[-1] LE 270)    $
+              IF (tempLons[0] LE 90  AND tempLons[-1] LE 90 ) OR $
+                 (tempLons[0] GE 270 AND tempLons[-1] GE 270)    $
               THEN BEGIN
-                 dayIntegral  += (h2dStr.is_logged) ? 10.^h2dStr.data[i,j] : h2dStr.data[i,j]
+                 nightIntegral   += (h2dStr.is_logged) ? $
+                                    10.^h2dStr.data[j] : h2dStr.data[j]
+              ENDIF ELSE BEGIN
+                 IF (tempLons[0] GE 90  AND tempLons[-1] GE 90 ) AND $
+                    (tempLons[0] LE 270 AND tempLons[-1] LE 270)    $
+                 THEN BEGIN
+                    dayIntegral  += (h2dStr.is_logged) ? $
+                                    10.^h2dStr.data[j] : h2dStr.data[j]
+                 ENDIF
+              ENDELSE
+
+           ENDIF
+
+        ENDFOR 
+
+     END
+     ELSE: BEGIN
+        FOR j=0, nLats-2 DO BEGIN 
+           FOR i=0, nLons-2 DO BEGIN 
+              tempLons     = REFORM(lonsLats[i,j,0,*])
+              tempLats     = REFORM(lonsLats[i,j,1,*])
+              
+              ;;Integrals
+              IF ~h2d_masked[i,j] THEN BEGIN
+
+                 IF tempLons[0] GE 180 AND $
+                    tempLons[-1] GE 180 $
+                 THEN BEGIN
+                    duskIntegral += (h2dStr.is_logged) ? $
+                                    10.^h2dStr.data[i,j] : h2dStr.data[i,j]
+                 ENDIF ELSE BEGIN
+                    IF tempLons[0] LE 180 AND $
+                       tempLons[-1] LE 180 $
+                    THEN BEGIN
+                       dawnIntegral += (h2dStr.is_logged) ? $
+                                       10.^h2dStr.data[i,j] : h2dStr.data[i,j]
+                    ENDIF
+                 ENDELSE
+
+                 IF (tempLons[0] LE 90  AND tempLons[-1] LE 90 ) OR $
+                    (tempLons[0] GE 270 AND tempLons[-1] GE 270)    $
+                 THEN BEGIN
+                    nightIntegral   += (h2dStr.is_logged) ? $
+                                       10.^h2dStr.data[i,j] : h2dStr.data[i,j]
+                 ENDIF ELSE BEGIN
+                    IF (tempLons[0] GE 90  AND tempLons[-1] GE 90 ) AND $
+                       (tempLons[0] LE 270 AND tempLons[-1] LE 270)    $
+                    THEN BEGIN
+                       dayIntegral  += (h2dStr.is_logged) ? $
+                                       10.^h2dStr.data[i,j] : h2dStr.data[i,j]
+                    ENDIF
+                 ENDELSE
+
               ENDIF
-           ENDELSE
 
-        ENDIF
+           ENDFOR 
+        ENDFOR
+     END
+  ENDCASE
 
-     ENDFOR 
-  ENDFOR
 
   IF h2dStr.is_logged THEN BEGIN
      integral        = ALOG10(TOTAL(10.0^(h2dStr.data[WHERE(~h2d_masked)])))

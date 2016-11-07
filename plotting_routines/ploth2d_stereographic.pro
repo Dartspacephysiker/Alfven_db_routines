@@ -37,6 +37,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           CB_FORCE_OOBHIGH=cb_force_oobhigh, $
                           CB_INFO=cb_info, $
                           EQ_SCALE_CT=eq_scale_ct, $
+                          SHOW_INTEGRALS=show_integrals, $
                           DO_INTEGRAL_FILE=do_integral_file, $
                           INTLUN=intLun, $
                           _EXTRA=e
@@ -449,8 +450,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                                      H2D_MASKED=masked, $
                                      MASKCOLOR=maskColor
   ;;Calc an integral?
-  IF temp.do_plotIntegral OR KEYWORD_SET(do_integral_file) THEN BEGIN
+  IF temp.do_plotIntegral OR $
+     KEYWORD_SET(do_integral_file) OR $
+     KEYWORD_SET(show_integrals) THEN BEGIN
      H2D_STEREOGRAPHIC_INTEGRAL,temp,lonsLats, $
+                                EQUAL_AREA_BINNING=EA_binning, $
                                 H2D_MASKED=masked, $
                                 INTEGRAL=integral, $
                                 ABSINTEGRAL=absIntegral, $
@@ -664,7 +668,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;;           CHARSIZE=defCharSize
   ;; ENDIF
 
-  IF temp.do_plotIntegral THEN BEGIN
+  IF temp.do_plotIntegral OR KEYWORD_SET(show_integrals) THEN BEGIN
 
      ;; IF NOT (temp.is_logged) THEN BEGIN
      ;; cgText, lTexPos1, $
