@@ -41,7 +41,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
      KEYWORD_SET(for_eSpec_db): BEGIN
         ;;Use for_eSpec_db             = 2 here to indicate that conversion has already happened
         IF KEYWORD_SET(for_eSpec_db) AND ( (for_eSpec_db) NE 2) THEN BEGIN
-           dbTimes                     = dbStruct.x
+           dbTimes                     = N_ELEMENTS(dbStruct) GT 0 ? dbStruct.x : dbTimes
            for_eSpec_db                = 2
            dbString                    = 'eSpec'
         ENDIF
@@ -221,7 +221,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
         nGood             ++
         out_good_tArr_i             = [out_good_tArr_i,iFirst]
         inds_list                   = LIST(inds)
-        IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+        IF ~KEYWORD_SET(for_OMNI_db) AND N_ELEMENTS(dbStruct) GT 0 THEN BEGIN
            uniq_orbs_list           = LIST(uniq_orbs)
            uniq_orb_inds_list       = LIST(uniq_orb_inds)
            IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
@@ -263,7 +263,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
         nGood++
         out_good_tArr_i             = [out_good_tArr_i,i]
         inds_list.add,inds
-        IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+        IF ~KEYWORD_SET(for_OMNI_db) AND N_ELEMENTS(dbStruct) GT 0 THEN BEGIN
            uniq_orbs_list.add,uniq_orbs
            uniq_orb_inds_list.add,uniq_orb_inds
            IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
@@ -313,7 +313,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   IF KEYWORD_SET(list_to_arr) THEN BEGIN
 
      inds_arr                       = inds_list[0]
-     IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+     IF ~KEYWORD_SET(for_OMNI_db) AND N_ELEMENTS(dbStruct) GT 0 THEN BEGIN
         uniq_orbs_arr                  = uniq_orbs_list[0]
         uniq_orb_inds_arr              = uniq_orb_inds_list[0]
         IF ~KEYWORD_SET(no_orb_info) THEN BEGIN
@@ -323,7 +323,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
         ENDIF
      ENDIF
 
-     IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+     IF ~KEYWORD_SET(for_OMNI_db) AND N_ELEMENTS(dbStruct) GT 0 THEN BEGIN
         FOR i=1,nGood-1 DO BEGIN
            inds_arr                    = [ inds_arr, inds_list[i] ]
            uniq_orbs_arr               = [ uniq_orbs_arr, uniq_orbs_list[i] ]
@@ -342,7 +342,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
 
      inds_list                      = inds_arr
 
-     IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+     IF ~KEYWORD_SET(for_OMNI_db) AND N_ELEMENTS(dbStruct) GT 0 THEN BEGIN
         uniq_orbs_list              = uniq_orbs_arr
         uniq_orb_inds_list          = uniq_orb_inds_arr
         IF ~KEYWORD_SET(no_orb_info) THEN BEGIN

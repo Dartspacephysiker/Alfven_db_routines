@@ -67,7 +67,7 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
 
      inds                     = restrict_i[inds_ii]
 
-     IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+     IF ~KEYWORD_SET(for_OMNI_db) AND N_ELEMENTS(dbStruct) GT 0 THEN BEGIN
         uniq_orb_inds_ii         = UNIQ(dbStruct.orbit[inds])
         uniq_orb_inds            = inds[uniq_orb_inds_ii]
 
@@ -113,7 +113,7 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
      ENDIF
 
 
-     IF ~KEYWORD_SET(for_OMNI_db) THEN BEGIN
+     IF ~KEYWORD_SET(for_OMNI_db) AND N_ELEMENTS(dbStruct) GT 0 THEN BEGIN
         IF (KEYWORD_SET(print_data_availability) OR uniq_orb_inds[0] EQ -1) AND ~KEYWORD_SET(no_orb_info) THEN BEGIN
            PRINT_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
                                                  UNIQ_ORBS=uniq_orbs,UNIQ_ORB_INDS=uniq_orb_inds, $
