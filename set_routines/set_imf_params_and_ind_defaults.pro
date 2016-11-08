@@ -124,7 +124,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   defOrbRange            = [0,12670]
   ;; defCharERange          = [4.0,300]
   ;; defAltRange            = [1000.0, 5000.0]
-  defCharERange          = [4.0,10000.0]
+  defCharERange          = [4.0,15000.0]
   defAltRange            = [0, 5000]
 
                                 ; satellite defaults

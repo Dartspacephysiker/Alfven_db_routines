@@ -467,13 +467,16 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
         IF N_ELEMENTS(charERange) EQ 2 THEN BEGIN
            MIMC__charERange  = charERange
            
-           IF KEYWORD_SET(chastDB) THEN BEGIN
-              chare_i        = WHERE(dbStruct.char_elec_energy GE MIMC__charERange[0] AND $
-                                     dbStruct.char_elec_energy LE MIMC__charERange[1])
-           ENDIF ELSE BEGIN
-              chare_i        = WHERE(dbStruct.max_chare_losscone GE MIMC__charERange[0] AND $
-                                     dbStruct.max_chare_losscone LE MIMC__charERange[1])
-           ENDELSE
+           chare_i           = GET_CHARE_INDS(dbStruct,minCharE,maxCharE, $
+                                              CHASTDB=chastDB, $
+                                              LUN=lun)
+           ;; IF KEYWORD_SET(chastDB) THEN BEGIN
+           ;;    chare_i        = WHERE(dbStruct.char_elec_energy GE MIMC__charERange[0] AND $
+           ;;                           dbStruct.char_elec_energy LE MIMC__charERange[1])
+           ;; ENDIF ELSE BEGIN
+           ;;    chare_i        = WHERE(dbStruct.max_chare_losscone GE MIMC__charERange[0] AND $
+           ;;                           dbStruct.max_chare_losscone LE MIMC__charERange[1])
+           ;; ENDELSE
            region_i          = CGSETINTERSECTION(region_i,chare_i)
         ENDIF ELSE BEGIN
            PRINTF,lun,"Incorrect input for keyword 'charERange'!!"

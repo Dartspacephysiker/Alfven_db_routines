@@ -1034,6 +1034,12 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
         ENDCASE
 
         IF KEYWORD_SET(newell_analyze_eFlux) THEN BEGIN
+        ;;    IF (STRUPCASE(STRMID(fluxPlotType,0,4)) NE 'ESA_') AND $
+        ;;       (STRUPCASE(STRMID(fluxPlotType,0,4)) NE 'ESA_') AND $
+           ;;A temporary kluge
+           IF N_ELEMENTS(eNumFlPlotRange) GT 2 THEN BEGIN
+              plotRange     = eNumFlPlotRange[*,1]
+           ENDIF
            GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
                                     MINM=minM, $
                                     MAXM=maxM, $
