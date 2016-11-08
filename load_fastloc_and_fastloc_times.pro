@@ -154,6 +154,14 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      ENDCASE
   ENDIF
 
+  IF KEYWORD_SET(for_eSpec_DBs) AND $
+     KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_GEO) OR KEYWORD_SET(use_MAG) $
+  THEN BEGIN
+     PRINT,'Not set up for this!!' 
+     STOP
+  ENDIF
+
+
   IF KEYWORD_SET(use_aacgm) THEN BEGIN
      PRINT,'Using AACGM coords ...'
 

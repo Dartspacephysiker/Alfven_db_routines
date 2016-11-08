@@ -257,7 +257,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               ENDCASE
            ENDIF
         END
-        STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_nonAlfven"): BEGIN
+        ((STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_nonAlfven")) OR $
+           (STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_nonAlfven--2009_interp"))): BEGIN
            h2dStr.title     = title__alfDB_ind_10__nonAlfvenic
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            nonAlfvenic      = 1
@@ -445,7 +446,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
         END
-        STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_nonAlfven"): BEGIN
+        ((STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_nonAlfven")) OR $
+         (STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_nonAlfven--2009_interp"))): BEGIN
            h2dStr.title     = title__alfDB_esa_nFlux__nonAlfvenic
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            nonAlfvenic      = 1
