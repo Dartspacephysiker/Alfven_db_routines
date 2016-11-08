@@ -7,7 +7,9 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
                                 DUSKINTEGRAL=duskIntegral, $
                                 DAYINTEGRAL=dayIntegral, $
                                 NIGHTINTEGRAL=nightIntegral, $
-                                OUTPUT_INTEGRAL=output_integral, $
+                                OUTPUT_INTEGRAL_TXTFILE=output_integral_txt, $
+                                OUTPUT_INTEGRAL_SAVFILE=output_integral_sav, $
+                                INTEGSAVFILE=integralSavFile, $
                                 INTLUN=intLun
   
 
@@ -121,7 +123,7 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
      absIntegral     = TOTAL(ABS(h2dStr.data[WHERE(~h2d_masked)]))
   ENDELSE     
 
-     IF KEYWORD_SET(output_integral) THEN BEGIN
+     IF KEYWORD_SET(output_integral_txt) THEN BEGIN
         ;; OPENW,intlun,integralFile,/GET_LUN,/APPEND
 
         ;; labFormat    = STRMID(h2dStr.labelFormat, $
@@ -144,6 +146,27 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
         ;; FREE_LUN,intLun
      ENDIF
 
+     IF KEYWORD_SET(output_integral_sav) THEN BEGIN
+        IF FILE_TEST(integralSavFile) THEN BEGIN
+           PRINT,'Restoring ' + integralSavFile + ' ...'
+           RESTORE,integralSavFile
 
+           hemiIntegs = {name:hemiIntegs.name, $
+                              integrals:{day:[hemiIntegs.integrals.day,dayIntegral], $
+                                         night:[hemiIntegs.integrals.night,nightIntegral], $
+                                         dawn:[hemiIntegs.integrals.dawn,dawnIntegral], $
+                                         dusk:[hemiIntegs.integrals.dusk,duskIntegral]}}
+        ENDIF ELSE BEGIN
+           hemiIntegs = {name:h2dStr.name, $
+                              integrals:{day:dayIntegral, $
+                                         night:nightIntegral, $
+                                         dawn:dawnIntegral, $
+                                         dusk:duskIntegral}}
+
+        ENDELSE
+        
+        PRINT,'Saving ' + integralSavFile + '...'
+        SAVE,hemiIntegs,FILENAME=integralSavFile
+     ENDIF
 
 END

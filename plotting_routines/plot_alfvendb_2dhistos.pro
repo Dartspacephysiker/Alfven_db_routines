@@ -36,7 +36,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                            TILE__NO_COLORBAR_ARRAY=tile__no_colorbar_array, $
                            ;; BLANK_TILE_POSITIONS=blank_tile_positions, $
                            SHOW_INTEGRALS=show_integrals, $
-                           MAKE_INTEGRAL_FILE=make_integral_file, $
+                           MAKE_INTEGRAL_TXTFILE=make_integral_txtfile, $
+                           MAKE_INTEGRAL_SAVFILE=make_integral_savfile, $
                            TXTOUTPUTDIR=txtOutputDir, $
                            LUN=lun, $
                            EPS_OUTPUT=eps_output, $
@@ -300,13 +301,18 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
 
               ;; iPos = 0
 
-              IF KEYWORD_SET(make_integral_file) THEN BEGIN
+              IF KEYWORD_SET(make_integral_txtfile) THEN BEGIN
                  integralFile = txtOutputDir + paramStr + $
                                 tPSuff + '--integrals.txt'
                  OPENW,intLun,integralFile,/GET_LUN,/APPEND
 
                  PRINTF,intLun,h2dStrArr[0].title
                  PRINTF,intLun,''
+              ENDIF
+
+              IF KEYWORD_SET(make_integral_savfile) THEN BEGIN
+                 integralSavFile = txtOutputDir + paramStr + $
+                                tPSuff + '--integrals.sav'
               ENDIF
 
               FOR i=0, nPlotsAndBlanks-1 DO BEGIN  
@@ -401,7 +407,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                     END
                  ENDCASE
                  
-                 IF KEYWORD_SET(make_integral_file) THEN BEGIN
+                 IF KEYWORD_SET(make_integral_txtFile) THEN BEGIN
                     PRINTF,intLun,'************'
                     IF N_ELEMENTS(clockStr) GT 0 THEN BEGIN 
                        PRINTF,intLun,FORMAT='("clockString: ",A0)',clockStr[j]
@@ -429,7 +435,9 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        LABELS_FOR_PRESENTATION=labels_for_presentation, $
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
                                        SHOW_INTEGRALS=show_integrals, $
-                                       DO_INTEGRAL_FILE=KEYWORD_SET(make_integral_file), $
+                                       DO_INTEGRAL_TXTFILE=KEYWORD_SET(make_integral_txtfile), $
+                                       DO_INTEGRAL_SAVFILE=KEYWORD_SET(make_integral_savfile), $
+                                       INTEGRALSAVFILE=integralSavFile, $
                                        INTLUN=intLun, $
                                        _EXTRA=e 
               ENDFOR
@@ -627,7 +635,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        LABELS_FOR_PRESENTATION=labels_for_presentation, $
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
                                        SHOW_INTEGRALS=show_integrals, $
-                                       DO_INTEGRAL_FILE=KEYWORD_SET(make_integral_file), $
+                                       DO_INTEGRAL_TXTFILE=KEYWORD_SET(make_integral_txtfile), $
+                                       DO_INTEGRAL_SAVFILE=KEYWORD_SET(make_integral_savfile), $
                                        INTLUN=intLun, $
                                        _EXTRA=e 
                  CGPS_Close 

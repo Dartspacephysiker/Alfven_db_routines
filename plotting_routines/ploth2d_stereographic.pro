@@ -38,7 +38,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           CB_INFO=cb_info, $
                           EQ_SCALE_CT=eq_scale_ct, $
                           SHOW_INTEGRALS=show_integrals, $
-                          DO_INTEGRAL_FILE=do_integral_file, $
+                          DO_INTEGRAL_TXTFILE=do_integral_txtfile, $
+                          DO_INTEGRAL_SAVFILE=do_integral_savfile, $
+                          INTEGRALSAVFILE=integralSavFile, $
                           INTLUN=intLun, $
                           _EXTRA=e
 
@@ -451,7 +453,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                                      MASKCOLOR=maskColor
   ;;Calc an integral?
   IF temp.do_plotIntegral OR $
-     KEYWORD_SET(do_integral_file) OR $
+     KEYWORD_SET(do_integral_txtfile) OR $
+     KEYWORD_SET(do_integral_savfile) OR $
      KEYWORD_SET(show_integrals) THEN BEGIN
      H2D_STEREOGRAPHIC_INTEGRAL,temp,lonsLats, $
                                 EQUAL_AREA_BINNING=EA_binning, $
@@ -462,7 +465,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                                 DUSKINTEGRAL=duskIntegral, $
                                 DAYINTEGRAL=dayIntegral, $
                                 NIGHTINTEGRAL=nightIntegral, $
-                                OUTPUT_INTEGRAL=KEYWORD_SET(do_integral_file), $
+                                OUTPUT_INTEGRAL_TXTFILE=KEYWORD_SET(do_integral_txtfile), $
+                                OUTPUT_INTEGRAL_SAVFILE=KEYWORD_SET(do_integral_savfile), $
+                                INTEGSAVFILE=integralSavFile, $
                                 INTLUN=intLun
 
   ENDIF
