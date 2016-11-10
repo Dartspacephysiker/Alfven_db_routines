@@ -175,6 +175,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  BINMLT=binM, $
                                  SHIFTMLT=shiftM, $
                                  MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                                 EQUAL_AREA_BINNING=EA_binning, $
                                  DO_LSHELL=do_lShell,REVERSE_LSHELL=reverse_lShell, $
                                  MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                                  MIN_MAGCURRENT=minMC, $
@@ -332,6 +333,9 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                  CB_FORCE_OOBLOW=cb_force_oobLow, $
                                  FANCY_PLOTNAMES=fancy_plotNames, $
+                                 SHOW_INTEGRALS=show_integrals, $
+                                 MAKE_INTEGRAL_TXTFILE=make_integral_txtfile, $
+                                 MAKE_INTEGRAL_SAVFILE=make_integral_savfiles, $
                                  LUN=lun, $
                                  PRINT_DATA_AVAILABILITY=print_data_availability, $
                                  VERBOSE=verbose, $
@@ -355,6 +359,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              BINMLT=binM, $
                              SHIFTMLT=shiftM, $
                              MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                             EQUAL_AREA_BINNING=EA_binning, $
                              DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                              MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                              HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
@@ -414,6 +419,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                            POYNTRANGE=poyntRange, $
                            MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                            MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                           EQUAL_AREA_BINNING=EA_binning, $
                            DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                            HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd)
   
@@ -449,6 +455,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  POYNTRANGE=poyntRange, $
                                  MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                                  MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                                 EQUAL_AREA_BINNING=EA_binning, $
                                  DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                                  HWMAUROVAL=HwMAurOval, HWMKPIND=HwMKpInd)
      
@@ -468,6 +475,9 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
      GET_NONALFVEN_FLUX_DATA,plot_i, $
                              FOR_STORMS=nonAlfven_for_storms, $
                              NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
+                             NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                             NONALFVEN__NEWELL_2009_INTERPRETATION=nonAlfven__newell_2009_interpretation, $
+                             NONALFVEN__NEWELLPLOT_PROBOCCURRENCE=nonAlfven__newellPlot_probOccurrence, $
                              DESPUN_ALF_DB=do_despunDB, $
                              USE_AACGM=use_aacgm, $
                              T1_ARR=t1_arr,T2_ARR=t2_arr, $
@@ -500,6 +510,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              MINILAT=minI, $
                              MAXILAT=maxI, $
                              BINILAT=binI, $
+                             EQUAL_AREA_BINNING=EA_binning, $
                              ;; DO_LSHELL=do_lshell, $
                              ;; MINLSHELL=minL, $
                              ;; MAXLSHELL=maxL, $
@@ -532,6 +543,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              BINMLT=binM, $
                              SHIFTMLT=shiftM, $
                              MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+                             EQUAL_AREA_BINNING=EA_binning, $
                              DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                              MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                              HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
@@ -562,6 +574,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                            MINILAT=minI, $
                            MAXILAT=maxI, $
                            BINILAT=binI, $
+                           EQUAL_AREA_BINNING=EA_binning, $
                            DO_LSHELL=do_lShell, $
                            MINLSHELL=minL, $
                            MAXLSHELL=maxL, $
@@ -611,6 +624,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                    MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
                                    MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI), $
                                    SHIFT1=shiftM,SHIFT2=shiftI, $
+                                   EQUAL_AREA_BINNING=EA_binning, $
                                    DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                    ;; DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                                    BOTH_HEMIS=STRUPCASE(hemi) EQ 'BOTH', $
@@ -630,7 +644,11 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                           BINSIZE1=binM*15., BINSIZE2=binI, $
                           MAX1=maxM*15., MAX2=maxI, $
                           MIN1=minM*15., MIN2=minI, $
-                          SHIFT1=shiftM*15., SHIFT2=shiftI
+                          SHIFT1=shiftM*15., SHIFT2=shiftI, $
+                          EQUAL_AREA_BINNING=EA_binning
+
+        IF KEYWORD_SET(EA_binning) THEN h2dAreas[*] = MEDIAN(h2dAreas)
+
      END
 
      IF KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
@@ -640,7 +658,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                             BINSIZE1=binM*15., BINSIZE2=binI, $
                             MAX1=maxM*15., MAX2=maxI, $
                             MIN1=minM*15., MIN2=minI, $
-                            SHIFT1=shiftM*15., SHIFT2=shiftI
+                            SHIFT1=shiftM*15., SHIFT2=shiftI, $
+                          EQUAL_AREA_BINNING=EA_binning
      ENDIF
   ENDIF
 
@@ -664,6 +683,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         MINILAT=minI, $
                         MAXILAT=maxI, $
                         BINILAT=binI, $
+                        EQUAL_AREA_BINNING=EA_binning, $
                         DO_LSHELL=do_lShell, $
                         MINLSHELL=minL, $
                         MAXLSHELL=maxL, $
@@ -849,10 +869,16 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
 
   ;;Now plots
   IF ~KEYWORD_SET(justData) THEN BEGIN
-     PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,TEMPFILE=out_tempFile, $
-                            SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ 
-                            JUSTDATA=justData, SHOWPLOTSNOSAVE=showPlotsNoSave, $
-                            PLOTDIR=plotDir, PLOTMEDORAVG=plotMedOrAvg, $
+     PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
+                            DATANAMEARR=dataNameArr, $
+                            TEMPFILE=out_tempFile, $
+                            EQUAL_AREA_BINNING=EA_binning, $
+                            SQUAREPLOT=squarePlot, $
+                            POLARCONTOUR=polarContour, $ 
+                            JUSTDATA=justData, $
+                            SHOWPLOTSNOSAVE=showPlotsNoSave, $
+                            PLOTDIR=plotDir, $
+                            PLOTMEDORAVG=plotMedOrAvg, $
                             PARAMSTR=paramString, DEL_PS=del_PS, $
                             HEMI=hemi, $
                             SUPPRESS_GRIDLABELS=suppress_gridLabels, $
@@ -866,6 +892,9 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                             TILEPLOTTITLE=tilePlotTitle, $
                             TILE__FAVOR_ROWS=tile__favor_rows, $
                             NO_COLORBAR=no_colorbar, $
+                            SHOW_INTEGRALS=show_integrals, $
+                            MAKE_INTEGRAL_TXTFILE=make_integral_txtfile, $
+                            MAKE_INTEGRAL_SAVFILE=make_integral_savfiles, $
                             ;; CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                             ;; CB_FORCE_OOBLOW=cb_force_oobLow, $
                             CLOCKSTR=clockStr, $

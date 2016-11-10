@@ -148,7 +148,7 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
 
      IF KEYWORD_SET(output_integral_sav) THEN BEGIN
         IF FILE_TEST(integralSavFile) THEN BEGIN
-           PRINT,'Restoring ' + integralSavFile + ' ...'
+           ;; PRINT,'Restoring ' + integralSavFile + ' ...'
            RESTORE,integralSavFile
 
            hemiIntegs = {name:hemiIntegs.name, $
@@ -165,7 +165,7 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
 
         ENDELSE
         
-        PRINT,'Saving ' + integralSavFile + '...'
+        ;; PRINT,'Saving ' + integralSavFile + '...'
         SAVE,hemiIntegs,FILENAME=integralSavFile
      ENDIF
 
