@@ -174,6 +174,18 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
 
      ;; Now sample_t stuff
      CASE 1 OF
+        N_ELEMENTS(sample_t_restriction) GT 0: BEGIN
+           IF sample_t_restriction EQ 0 THEN BEGIN
+              PRINT,'Screening by sample_t disabled ...'
+           ENDIF ELSE BEGIN
+              good_i = CGSETINTERSECTION(good_i, $
+                                      WHERE(ABS(maximus.sample_t) LE sample_t_hcutoff,/NULL))
+           ENDELSE
+
+           ;;And I guess we screen by width_t in any case
+           good_i = CGSETINTERSECTION(good_i, $
+                                      WHERE(maximus.width_time LE width_t_cutoff,/NULL))
+        END
         KEYWORD_SET(include_32Hz): BEGIN
 
            width128_cutoff = 2.5  ; 1./(128/20.)
@@ -196,7 +208,6 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
                                       WHERE(maximus.width_time LE width_t_cutoff,/NULL))
         END
      ENDCASE
-
      
 
   ;; for i=0,N_ELEMENTS(max_tags)-1 do begin

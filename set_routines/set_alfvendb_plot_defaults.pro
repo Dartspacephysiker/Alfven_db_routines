@@ -161,17 +161,30 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
 
   IF KEYWORD_SET(use_MAG)   THEN MAGStr       = '_MAG'   ELSE MAGStr  = ''
 
-  IF KEYWORD_SET(sample_t_restriction) THEN BEGIN
-     sample_t_string  = STRING(FORMAT='("--sampT_restr_",F0.2,"s")',sample_t_restriction) 
+  ;;Hz32 only possible if we haven't manually set sample_t_restriction
+  Hz32_string  = ''
+  IF N_ELEMENTS(sample_t_restriction) GT 0 THEN BEGIN
+     CASE sample_t_restriction OF
+        0: BEGIN
+           sample_t_string = '--no_sampT_restr'
+        END
+        ELSE: BEGIN
+           sample_t_string  = STRING(FORMAT='("--sampT_restr_",F0.2,"s")',sample_t_restriction) 
+        END
+     ENDCASE
+     IF KEYWORD_SET(include_32Hz) THEN BEGIN
+        PRINT,"Can't do 32-Hz sample inclusion if sample_t has manually been set!"
+        include_32Hz = 0
+     ENDIF
   ENDIF ELSE BEGIN
      sample_t_string  = ''
+
+     IF KEYWORD_SET(include_32Hz) THEN BEGIN
+        Hz32_string  = '--inc_32Hz'
+     ENDIF
   ENDELSE
   
-  IF KEYWORD_SET(include_32Hz) THEN BEGIN
-     Hz32_string  = '--inc_32Hz'
-  ENDIF ELSE BEGIN
-     Hz32_string  = ''
-  ENDELSE
+
   
   ;;********************************************
   ;;A few other strings to tack on

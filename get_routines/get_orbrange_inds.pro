@@ -9,7 +9,11 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun
      STOP
   ENDIF
 
-  ind_orbs = WHERE(dbStruct.orbit GE minOrb AND dbStruct.orbit LE maxOrb)
+  ind_orbs = WHERE(dbStruct.orbit GE minOrb AND dbStruct.orbit LE maxOrb,n_orb, $
+                   NCOMPLEMENT=n_not_orb)
+
+  PRINTF,lun,FORMAT='("N inside  orb range",T30,":",T35,I0)',n_orb
+  PRINTF,lun,FORMAT='("N outside orb range",T30,":",T35,I0)',n_not_orb
 
   RETURN,ind_orbs
 

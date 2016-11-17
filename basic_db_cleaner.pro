@@ -140,10 +140,6 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
         ELSE: BEGIN
 
            good_i = CGSETINTERSECTION(good_i,WHERE(ABS(dbStruct.sample_t) LE sample_t_hcutoff AND ABS(dbStruct.sample_t) GT 0.,/NULL))
-           ;; good_i = CGSETINTERSECTION(good_i, $
-           ;;                            WHERE(ABS(dbStruct.sample_t) LE sample_t_hcutoff,/NULL))
-           ;; good_i = CGSETINTERSECTION(good_i, $
-           ;;                            WHERE(dbStruct.width_time LE width_t_cutoff,/NULL))
         END
      ENDCASE
 
