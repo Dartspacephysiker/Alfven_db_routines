@@ -429,8 +429,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         STRUPCASE(fluxPlotType) EQ STRUPCASE("ESA_Number_flux"): BEGIN
            h2dStr.title  = title__alfDB_esa_nFlux
 
-           h2dStr.grossFac  = 1e23
-           h2dStr.gUnits    = 'E+23'
+           h2dStr.grossFac  = 1e25
+           h2dStr.gUnits    = 'E+25'
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            ;; inData           = maximus.esa_current[tmp_i] * (DOUBLE(1. / 1.6e-9))
            ;; inData           = maximus.esa_current * (DOUBLE(1. / 1.6e-9))
@@ -510,8 +510,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
 
-           h2dStr.grossFac  = 1e23
-           h2dStr.gUnits    = 'E+23'
+           h2dStr.grossFac  = 1e25
+           h2dStr.gUnits    = 'E+25'
 
            IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
               dataname += '--candidates_removed'
@@ -682,8 +682,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.do_plotIntegral = iFlux_do_plotIntegral
      h2dStr.do_midCBLabel   = iFlux_do_midCBLabel
 
-     h2dStr.grossFac       = 1.D22
-     h2dStr.gUnits         = 'E+22'
+     h2dStr.grossFac       = 1.D24
+     h2dStr.gUnits         = 'E+24'
 
      CASE 1 OF
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ"): BEGIN

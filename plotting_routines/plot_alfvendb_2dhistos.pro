@@ -155,6 +155,14 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
            ;; vertCBPos              = [0.92 , 0.05, 0.95 , 0.95]
            vertCBPos              = [0.11 , 0.05, 0.14 , 0.95]
 
+           IF KEYWORD_SET(tile__cb_in_center_panel) THEN BEGIN
+              defIntegPos         = [0.07 , 0.93, 0.82 , 0.07]
+           ENDIF ELSE BEGIN
+              defIntegPos         = [0.11 , 0.78, 0.68 , 0.74]
+           ENDELSE
+           defIntegDelta          = 0.05
+
+
            ;;But if you want a title...
            defXWTitleSize         = 5
            defYWTitleSize         = 5.5
@@ -242,6 +250,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  defMapPos[2]       = defMapPos[2]*xRatio + (1.-xRatio)/2.
                  defCBPos[0]        = defCBPos[0]*xRatio + (1.-xRatio)/2.
                  defCBPos[2]        = defCBPos[2]*xRatio + (1.-xRatio)/2.
+                 defIntegPos[0]     = defIntegPos[0]*xRatio + (1.-xRatio)/2.
+                 defIntegPos[2]     = defIntegPos[2]*xRatio + (1.-xRatio)/2.
 
                  defMapNoCBPos[0]   = defMapNoCBPos[0]*xRatio + (1.-xRatio)/2.
                  defMapNoCBPos[2]   = defMapNoCBPos[2]*xRatio + (1.-xRatio)/2.
@@ -256,6 +266,9 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  defMapPos[3]       = defMapPos[3]*yRatio
                  defCBPos[1]        = defCBPos[1]*yRatio
                  defCBPos[3]        = defCBPos[3]*yRatio
+                 defIntegPos[1]     = defIntegPos[1]*yRatio
+                 defIntegPos[3]     = defIntegPos[3]*yRatio
+                 defIntegDelta      = defIntegDelta*yRatio
 
                  defMapNoCBPos[1]   = defMapNoCBPos[1]*yRatio
                  defMapNoCBPos[3]   = defMapNoCBPos[3]*yRatio
@@ -397,6 +410,15 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  cb_position[2]   = (position[2]-position[0])*defCBPos[2]+position[0]
                  cb_position[3]   = (position[3]-position[1])*defCBPos[3]+position[1]
 
+                 ;;handle integ position
+                 IF KEYWORD_SET(show_integrals) THEN BEGIN
+                    integ_position    = position
+                    integ_position[0] = (position[2]-position[0])*defIntegPos[0]+position[0]
+                    integ_position[1] = (position[3]-position[1])*defIntegPos[1]+position[1]
+                    integ_position[2] = (position[2]-position[0])*defIntegPos[2]+position[0]
+                    integ_position[3] = (position[3]-position[1])*defIntegPos[3]+position[1]
+                    integ_delta       = (position[3]-position[1])*defIntegDelta
+                 ENDIF
 
                  CASE N_ELEMENTS(h2dMaskArr) OF
                     1: h2dMask    = h2dMaskarr
@@ -435,6 +457,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        LABELS_FOR_PRESENTATION=labels_for_presentation, $
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
                                        SHOW_INTEGRALS=show_integrals, $
+                                       INTEG_POSITION=integ_position, $
+                                       INTEG_DELTA=integ_delta, $
                                        DO_INTEGRAL_TXTFILE=KEYWORD_SET(make_integral_txtfile), $
                                        DO_INTEGRAL_SAVFILE=KEYWORD_SET(make_integral_savfile), $
                                        INTEGRALSAVFILE=integralSavFile, $
@@ -635,6 +659,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        LABELS_FOR_PRESENTATION=labels_for_presentation, $
                                        MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
                                        SHOW_INTEGRALS=show_integrals, $
+                                       INTEG_POSITION=integ_position, $
+                                       INTEG_DELTA=integ_delta, $
                                        DO_INTEGRAL_TXTFILE=KEYWORD_SET(make_integral_txtfile), $
                                        DO_INTEGRAL_SAVFILE=KEYWORD_SET(make_integral_savfile), $
                                        INTLUN=intLun, $

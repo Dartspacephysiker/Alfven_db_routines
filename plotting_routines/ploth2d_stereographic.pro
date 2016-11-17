@@ -20,6 +20,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           NO_COLORBAR=no_colorbar, $
                           MAP_POSITION=map_position, $
                           CB_POSITION=cb_position, $
+                          INTEG_POSITION=integ_position, $
+                          INTEG_DELTA=integ_delta, $
                           WINDOW_XPOS=xPos, $
                           WINDOW_YPOS=yPos, $
                           WINDOW_XSIZE=xSize, $
@@ -678,6 +680,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   THEN BEGIN
 
      temp.grossIntegrals.total /= temp.grossFac
+     temp.grossIntegrals.day   /= temp.grossFac
+     temp.grossIntegrals.night /= temp.grossFac
 
      ;; IF NOT (temp.is_logged) THEN BEGIN
      ;; cgText, lTexPos1, $
@@ -685,13 +689,40 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ;;         '|Integral|: ' + string(absIntegral,FORMAT=integralLabelFormat), $
      ;;         /NORMAL, $
      ;;         CHARSIZE=defCharSize_grid*charScale
-     CGTEXT,lTexPos1, $
-            bTexPos1, $
-            ;; 'Integral: ' + string(integral,Format=integralLabelFormat), $
-            ;; STRING(integral,FORMAT=integralLabelFormat), $
-            STRING(temp.grossIntegrals.total,FORMAT=integralLabelFormat)+temp.gUnits, $
-            /NORMAL, $
-            CHARSIZE=defCharSize_grid*charScale
+     ;; CGTEXT,lTexPos1, $
+     ;;        bTexPos1, $
+     CGTEXT, $
+        integ_position[0], $
+        integ_position[1], $
+        ;; 'Integral: ' + string(integral,Format=integralLabelFormat), $
+        ;; STRING(integral,FORMAT=integralLabelFormat), $
+        STRING(temp.grossIntegrals.total,FORMAT=integralLabelFormat)+temp.gUnits, $
+        /NORMAL, $
+        CHARSIZE=defCharSize_grid*charScale
+
+     CGTEXT, $
+        ;; integ_position[0], $
+        ;; integ_position[1]-integ_delta, $
+        integ_position[2], $
+        integ_position[1], $
+        ;; 'Integral: ' + string(integral,Format=integralLabelFormat), $
+        ;; STRING(integral,FORMAT=itegralLabelFormat), $
+        STRING(temp.grossIntegrals.day,FORMAT=integralLabelFormat)+temp.gUnits, $
+        COLOR='RED', $
+        /NORMAL, $
+        CHARSIZE=defCharSize_grid*charScale
+
+     CGTEXT, $
+        ;; integ_position[0], $
+        ;; integ_position[1]-integ_delta*2, $
+        integ_position[2], $
+        integ_position[3], $
+        ;; 'Integral: ' + string(integral,Format=integralLabelFormat), $
+        ;; STRING(integral,FORMAT=integralLabelFormat), $
+        STRING(temp.grossIntegrals.night,FORMAT=integralLabelFormat)+temp.gUnits, $
+        COLOR='BLUE', $
+        /NORMAL, $
+        CHARSIZE=defCharSize_grid*charScale
 
      IF KEYWORD_SET(show_daynight_integrals) THEN BEGIN
         CGTEXT,lTexPos2, $

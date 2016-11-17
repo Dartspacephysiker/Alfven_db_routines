@@ -66,7 +66,7 @@
   latLabelFormat           = '(I0)'
   lonLabelFormat           = '(I0)'
   ;; integralLabelFormat      = '(D0.3)'
-  integralLabelFormat      = '(G0.3)'
+  integralLabelFormat      = '(G0.2)'
 
   ;;********************
   ;;GRID DEFAULTS
@@ -106,6 +106,8 @@
      bTexPos1         = 0.78
      bTexPos2         = 0.74
      clockStrOffset   = -0.7
+
+     bTexDelta        = 0.05
   ;; ENDIF ELSE BEGIN
   ;;    cbPosition       = [0.86, 0.10, 0.89, 0.90]
   ;;    cbTLocation      = "RIGHT"                     ;;"RIGHT" only works if cbVertical == 1
