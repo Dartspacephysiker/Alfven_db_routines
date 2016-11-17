@@ -673,7 +673,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;;           CHARSIZE=defCharSize
   ;; ENDIF
 
-  IF temp.do_plotIntegral OR KEYWORD_SET(show_integrals) THEN BEGIN
+  IF temp.do_plotIntegral OR $
+     (KEYWORD_SET(show_integrals) AND temp.is_fluxData) $
+  THEN BEGIN
+
+     temp.grossIntegrals.total /= temp.grossFac
 
      ;; IF NOT (temp.is_logged) THEN BEGIN
      ;; cgText, lTexPos1, $
@@ -681,22 +685,27 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ;;         '|Integral|: ' + string(absIntegral,FORMAT=integralLabelFormat), $
      ;;         /NORMAL, $
      ;;         CHARSIZE=defCharSize_grid*charScale
-     cgText,lTexPos1, $
+     CGTEXT,lTexPos1, $
             bTexPos1, $
-            'Integral: ' + string(integral,Format=integralLabelFormat), $
+            ;; 'Integral: ' + string(integral,Format=integralLabelFormat), $
+            ;; STRING(integral,FORMAT=integralLabelFormat), $
+            STRING(temp.grossIntegrals.total,FORMAT=integralLabelFormat)+temp.gUnits, $
             /NORMAL, $
             CHARSIZE=defCharSize_grid*charScale
-     cgText,lTexPos2, $
-            bTexPos1, $
-            'Dawnward: ' + string(dawnIntegral,Format=integralLabelFormat), $
-            /NORMAL, $
-            CHARSIZE=defCharSize_grid*charScale
-     cgText,lTexPos2, $
-            bTexPos2, $
-            'Duskward: ' + string(duskIntegral,Format=integralLabelFormat), $
-            /NORMAL, $
-            CHARSIZE=defCharSize_grid*charScale
-     ;; ENDIF
+
+     IF KEYWORD_SET(show_daynight_integrals) THEN BEGIN
+        CGTEXT,lTexPos2, $
+               bTexPos1, $
+               'Dawnward: ' + STRING(dawnIntegral,FORMAT=integralLabelFormat), $
+               /NORMAL, $
+               CHARSIZE=defCharSize_grid*charScale
+        CGTEXT,lTexPos2, $
+               bTexPos2, $
+               'Duskward: ' + STRING(duskIntegral,FORMAT=integralLabelFormat), $
+               /NORMAL, $
+               CHARSIZE=defCharSize_grid*charScale
+        ;; ENDIF
+     ENDIF
 
   ENDIF
 

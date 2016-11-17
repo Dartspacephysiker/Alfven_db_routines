@@ -442,7 +442,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        _EXTRA=e 
               ENDFOR
 
-              IF KEYWORD_SET(make_integral_file) THEN BEGIN
+              IF KEYWORD_SET(make_integral_txtfile) THEN BEGIN
                  CLOSE,intLun
                  FREE_LUN,intLun
               ENDIF
@@ -608,7 +608,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                            ;; /MATCH, $
                            /LANDSCAPE_FORCE
                  
-                 IF KEYWORD_SET(make_integral_file) THEN BEGIN
+                 IF KEYWORD_SET(make_integral_txtfile) THEN BEGIN
 
                     integralFile = txtOutputDir + paramStr + '--' + $
                                    dataNameArr[i] + '--integrals.txt'
@@ -648,7 +648,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                  DELETE_PS=del_PS
                  ENDIF
 
-                 IF KEYWORD_SET(make_integral_file) THEN BEGIN
+                 IF KEYWORD_SET(make_integral_txtFile) THEN BEGIN
                     CLOSE,intLun
                     FREE_LUN,intLun
                  ENDIF

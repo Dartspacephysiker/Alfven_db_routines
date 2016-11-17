@@ -66,6 +66,12 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                 do_plotIntegral : 0, $
                 do_timeAvg      : KEYWORD_SET(do_timeAvg_fluxQuantities), $
                 do_grossRate    : KEYWORD_SET(do_grossRate_fluxQuantities), $
+                grossIntegrals  : {day:0.D, $
+                                   night:0.D, $
+                                   total:0.D}, $
+                grossFac        : 1.D, $
+                gUnits          : '', $
+                ;; grossConvFactor : h2dDatTmplt, $
                 both_hemis      : KEYWORD_SET(both_hemis), $
                 force_oobHigh   : KEYWORD_SET(cb_force_oobHigh), $
                 force_oobLow    : KEYWORD_SET(cb_force_oobLow), $

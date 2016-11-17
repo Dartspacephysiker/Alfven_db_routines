@@ -232,7 +232,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
      polarContStr='--polarCont'
   ENDIF
 
-  paramString=hoyDia+'--'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
+  ;; paramString=hoyDia+'--'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
+  paramString=paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
               hemi+despunStr+AACGMStr+MAGStr+MCStr+sample_t_string+Hz32_string+ $
               lShellStr+plotMedOrAvg+$
               maskStr+tMaskStr+EABinStr+inc_burstStr+polarContStr+paramStrSuffix
