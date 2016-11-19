@@ -272,6 +272,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
                                  WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                                  WRITE_ORB_AND_OBS_INFO=write_obsArr_textFile, $
+                                 WRITE_ORB_AND_OBS__INC_IMF=write_obsArr__inc_IMF, $
                                  DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                                  DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                                  MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -631,25 +632,32 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                    CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                    CB_FORCE_OOBLOW=cb_force_oobLow)
 
+  ;;Doing grossrates?
+  IF KEYWORD_SET(do_grossRate_fluxQuantities) OR $
+     KEYWORD_SET(do_grossRate_with_long_width) OR $
+     KEYWORD_SET(grossRate_info_file) OR $
+     KEYWORD_SET(show_integrals) OR $
+     KEYWORD_SET(make_integral_txtfile) OR $
+     KEYWORD_SET(make_integral_savfiles) $
+  THEN grossRateMe = 1
+
   ;;Need area or length of each bin for gross rates
-  IF KEYWORD_SET(do_grossRate_fluxQuantities) OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
-     IF KEYWORD_SET(do_grossRate_fluxQuantities) AND KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+  IF KEYWORD_SET(grossRateMe) THEN BEGIN
+     IF KEYWORD_SET(do_grossRate_fluxQuantities) AND $
+        KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
         PRINTF,lun,"Can't do both types of gross rates simultaneously!!!"
         STOP
      ENDIF
      
-     IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
-        GET_H2D_BIN_AREAS,h2dAreas, $
-                          CENTERS1=centersMLT,CENTERS2=centersILAT, $
-                          BINSIZE1=binM*15., BINSIZE2=binI, $
-                          MAX1=maxM*15., MAX2=maxI, $
-                          MIN1=minM*15., MIN2=minI, $
-                          SHIFT1=shiftM*15., SHIFT2=shiftI, $
-                          EQUAL_AREA_BINNING=EA_binning
+     GET_H2D_BIN_AREAS,h2dAreas, $
+                       CENTERS1=centersMLT,CENTERS2=centersILAT, $
+                       BINSIZE1=binM*15., BINSIZE2=binI, $
+                       MAX1=maxM*15., MAX2=maxI, $
+                       MIN1=minM*15., MIN2=minI, $
+                       SHIFT1=shiftM*15., SHIFT2=shiftI, $
+                       EQUAL_AREA_BINNING=EA_binning
 
-        IF KEYWORD_SET(EA_binning) THEN h2dAreas[*] = MEDIAN(h2dAreas)
-
-     END
+     IF KEYWORD_SET(EA_binning) THEN h2dAreas[*] = MEDIAN(h2dAreas)
 
      IF KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
         GET_H2D_BIN_LENGTHS,h2dLongWidths, $
@@ -807,8 +815,10 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                         GROSSRATE__CENTERS_MLT=centersMLT, $
                         GROSSRATE__CENTERS_ILAT=centersILAT, $
                         WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
-                        GROSSLUN=grossLun, $
                         WRITE_ORB_AND_OBS_INFO=write_obsArr_textFile, $
+                        WRITE_ORB_AND_OBS__INC_IMF=write_obsArr__inc_IMF, $
+                        GROSSLUN=grossLun, $
+                        SHOW_INTEGRALS=show_integrals, $
                         DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                         MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                         ADD_VARIANCE_PLOTS=add_variance_plots, $

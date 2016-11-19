@@ -162,6 +162,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           WRITE_ORB_AND_OBS_INFO=write_obsArr_textFile, $
                           WRITE_ORB_AND_OBS__INC_IMF=write_obsArr__inc_IMF, $
                           GROSSLUN=grossLun, $
+                          SHOW_INTEGRALS=show_integrals, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                           MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
@@ -834,6 +835,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     GROSSCONVFACTORARR=grossConvFactorArr, $
                                     WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                                     GROSSLUN=grossLun, $
+                                    SHOW_INTEGRALS=show_integrals, $
                                     THISTDENOMINATOR=tHistDenominator, $
                                     DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                                     MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -911,6 +913,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              GROSSCONVFACTOR=grossConvFactor, $
                              WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                              GROSSLUN=grossLun, $
+                             SHOW_INTEGRALS=show_integrals, $
                              THISTDENOMINATOR=tHistDenominator, $
                              DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                              MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -1083,6 +1086,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     GROSSCONVFACTORARR=grossConvFactorArr, $
                                     WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                                     GROSSLUN=grossLun, $
+                                    SHOW_INTEGRALS=show_integrals, $
                                     THISTDENOMINATOR=tHistDenominator, $
                                     DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                                     MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -1159,6 +1163,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              GROSSCONVFACTOR=grossConvFactor, $
                              WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                              GROSSLUN=grossLun, $
+                             SHOW_INTEGRALS=show_integrals, $
                              THISTDENOMINATOR=tHistDenominator, $
                              DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                              MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -1238,6 +1243,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        GROSSCONVFACTOR=grossConvFactor, $
                        WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                        GROSSLUN=grossLun, $
+                       SHOW_INTEGRALS=show_integrals, $
                        THISTDENOMINATOR=tHistDenominator, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                        MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -1398,6 +1404,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           GROSSCONVFACTOR=grossConvFactor, $
                           WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                           GROSSLUN=grossLun, $
+                          SHOW_INTEGRALS=show_integrals, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -1476,6 +1483,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        GROSSCONVFACTOR=grossConvFactor, $
                        WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                        GROSSLUN=grossLun, $
+                       SHOW_INTEGRALS=show_integrals, $
                        THISTDENOMINATOR=tHistDenominator, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                        MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -1575,6 +1583,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           GROSSCONVFACTOR=grossConvFactor, $
                           WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                           GROSSLUN=grossLun, $
+                          SHOW_INTEGRALS=show_integrals, $
                           THISTDENOMINATOR=tHistDenominator, $
                           DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                           MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -1652,6 +1661,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        GROSSCONVFACTOR=grossConvFactor, $
                        WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                        GROSSLUN=grossLun, $
+                       SHOW_INTEGRALS=show_integrals, $
                        THISTDENOMINATOR=tHistDenominator, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                        MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -1806,6 +1816,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        GROSSCONVFACTOR=grossConvFactor, $
                        WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                        GROSSLUN=grossLun, $
+                       SHOW_INTEGRALS=show_integrals, $
                        THISTDENOMINATOR=tHistDenominator, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                        MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -1939,6 +1950,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                    GROSSCONVFACTOR=grossConvFactor, $
                                    WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                                    GROSSLUN=grossLun, $
+                                   SHOW_INTEGRALS=show_integrals, $
                                    THISTDENOMINATOR=tHistDenominator, $
                                    H2DSTR=h2dStr, $
                                    TMPLT_H2DSTR=tmplt_h2dStr, $

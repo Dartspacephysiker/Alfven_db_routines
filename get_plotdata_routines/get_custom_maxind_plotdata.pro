@@ -35,6 +35,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
                                GROSSCONVFACTOR=grossConvFactor, $
                                WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                                GROSSLUN=grossLun, $
+                               SHOW_INTEGRALS=show_integrals, $
                                THISTDENOMINATOR=tHistDenominator, $
                                H2DSTR=h2dStr, $
                                TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -91,7 +92,10 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
 
   h2dStr                    = tmplt_h2dStr
 
-
+  grossRateMe = KEYWORD_SET(do_grossRate_fluxQuantities) OR $
+                KEYWORD_SET(do_grossRate_with_long_width) OR $
+                KEYWORD_SET(grossRate_info_file) OR $
+                KEYWORD_SET(show_integrals)
 
   dataName                  = N_ELEMENTS(custom_dataName) GT 0 ? custom_dataName : "custom_maxInd"
   h2dStr.labelFormat        = fluxPlotEPlotCBLabelFormat
@@ -194,8 +198,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
   ENDIF
 
   ;;gross rates?
-  IF KEYWORD_SET(do_grossRate_fluxQuantities) $
-     OR KEYWORD_SET(do_grossRate_with_long_with) THEN BEGIN
+  IF KEYWORD_SET(grossRateMe) THEN BEGIN
 
      IF ~KEYWORD_SET(custom_grossRate_convFactor) THEN BEGIN
         PRINTF,lun,'Must provide a conversion factor for custome maxInd! Out...'
@@ -341,8 +344,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
         h2dStr.data *= H2DProbOcc
      ENDIF
 
-     IF KEYWORD_SET(do_grossRate_fluxQuantities) $
-        OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+     IF KEYWORD_SET(grossRateMe) THEN BEGIN
         CASE 1 OF
            KEYWORD_SET(do_grossRate_fluxQuantities): BEGIN
               ;; h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dAreas[WHERE(h2dstr.data GT 0)]*grossConvFactor
@@ -364,6 +366,18 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
         IF nightInds[0] NE -1 THEN BEGIN
            grossNight                     = TOTAL(h2dStr.data[nightInds])
         ENDIF ELSE grossNight             = 0
+
+        grossDat    = h2dStr.data
+        grossDat[*] = 0.
+        grossDat[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]*h2dAreas[WHERE(h2dstr.data GT 0)]*grossConvFactor
+
+        IF dayInds[0] NE -1 THEN BEGIN
+           grossDay            = TOTAL(grossDat[dayInds])
+        ENDIF ELSE grossDay    = 0
+
+        IF nightInds[0] NE -1 THEN BEGIN
+           grossNight          = TOTAL(grossDat[nightInds])
+        ENDIF ELSE grossNight  = 0
      ENDIF
   ENDELSE
 
@@ -373,6 +387,23 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
         maxh2d = MAX(h2dStr.data[hEv_nz_i])
         minh2d = MIN(h2dStr.data[hEv_nz_i])
         medh2d = MEDIAN(h2dStr.data[hEv_nz_i])
+
+        IF KEYWORD_SET(grossRateMe) THEN BEGIN
+           grossMaxh2d = MAX(grossDat[hEv_nz_i])
+           grossMinh2d = MIN(grossDat[hEv_nz_i])
+           grossMedh2d = MEDIAN(grossDat[hEv_nz_i])
+           dayMaxh2d = (dayInds[0] NE -1) ? MAX(grossDat[dayInds]) : 0.00
+           dayMinh2d = (dayInds[0] NE -1) ? MIN(grossDat[dayInds]) : 0.00
+           dayMedh2d = (dayInds[0] NE -1) ? MEDIAN(grossDat[dayInds]) : 0.00
+           nightMaxh2d = (nightInds[0] NE -1) ? MAX(grossDat[nightInds]) : 0.00
+           nightMinh2d = (nightInds[0] NE -1) ? MIN(grossDat[nightInds]) : 0.00
+           nightMedh2d = (nightInds[0] NE -1) ? MEDIAN(grossDat[nightInds]) : 0.00
+           h2dStr.grossIntegrals.day   = grossDay
+           h2dStr.grossIntegrals.night = grossNight
+           h2dStr.grossIntegrals.total = grossDay+grossNight
+
+        ENDIF
+
      ENDIF ELSE BEGIN
         fmt    = 'F10.2'
         maxh2d = ALOG10(MAX(h2dStr.data[hEv_nz_i]))
@@ -388,22 +419,59 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
             minh2d, $
             medh2d            
 
-     IF KEYWORD_SET(do_grossRate_fluxQuantities) $
-        OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+     ;;KLUGE IT
+     GET_H2D_BIN_AREAS,h2dAreas, $
+                       CENTERS1=centersMLT,CENTERS2=centersILAT, $
+                       BINSIZE1=binM*15.,BINSIZE2=binI, $
+                       MAX1=maxM*15.,MAX2=maxI, $
+                       MIN1=minM*15.,MIN2=minI, $
+                       SHIFT1=shiftM*15.,SHIFT2=shiftI, $
+                       EQUAL_AREA_BINNING=EA_binning
+     ;; dayInds    = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
+     ;; nightInds  = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
+     dayInds    = WHERE(centersMLT GE 11*15 AND centersMLT LT 15*15 AND ~h2dMask)
+     nightInds  = WHERE((centersMLT GE 21*15 OR centersMLT LT 1*15) AND ~h2dMask)
+
+     ;; nightMaxes = GET_N_MAXIMA_IN_ARRAY(h2dstr.data[nightinds], $
+     ;;                                   N=10, $
+     ;;                                   OUT_I=nightMax_ii)
+     ;; dayMaxes = GET_N_MAXIMA_IN_ARRAY(h2dstr.data[dayinds], $
+     ;;                                   N=10, $
+     ;;                                   OUT_I=dayMax_ii)
+     
+     ;; dayMaxes   = MAX(h2dstr.data[dayinds],maxdayindii)
+
+     dayMax   = MAX(h2dstr.data[dayinds],maxdayindii)
+     nightMax = MAX(h2dstr.data[nightinds],maxnightindii)
+
+     PRINT,"Day max (MLT,ILAT): ",dayMax, $
+           '(' + STRCOMPRESS(centersmlt[dayinds[maxdayindii]]/15.,/REMOVE_ALL), $
+           ', ' + STRCOMPRESS(centersilat[dayinds[maxdayindii]]) + ')'
+     PRINT,"Night max (MLT,ILAT): ",nightMax, $
+           '(' + STRCOMPRESS(centersmlt[nightinds[maxnightindii]]/15.,/REMOVE_ALL), $
+           ', ' + STRCOMPRESS(centersilat[nightinds[maxnightindii]]) + ')'
+
+
+     IF KEYWORD_SET(grossRateMe) THEN BEGIN
         grossFmt      = 'G18.6'
         PRINTF,lun,FORMAT='("Gross dayside, nightside:",T30,'+ $
                grossFmt + ',T50,' + grossFmt + ')', $
                grossDay,grossNight
 
         IF KEYWORD_SET(grossRate_info_file) THEN BEGIN
-           PRINTF,grossLun,h2dStr.title
-           PRINTF,lun,FORMAT='("Max, min. med:",T20,' + fmt + ',T35,' + fmt + ',T50,' + fmt +')', $
-                  maxh2d, $
-                  minh2d, $
-                  medh2d
-           PRINTF,grossLun,FORMAT='("Gross dayside, nightside:",T30,'+ $
-                  grossFmt + ',T50,' + grossFmt + ')', $
-                  grossDay,grossNight
+           PRINTF,grossLun,FORMAT='("Max, min. med. (Day)  :",T25,' + fmt + ',T40,' + fmt + ',T55,' + fmt +')', $
+                  dayMaxh2d, $
+                  dayMinh2d, $
+                  dayMedh2d
+           PRINTF,grossLun,FORMAT='("Max, min. med. (Night):",T25,' + fmt + ',T40,' + fmt + ',T55,' + fmt +')', $
+                  nightMaxh2d, $
+                  nightMinh2d, $
+                  nightMedh2d
+           PRINTF,grossLun,FORMAT='(%"GrossVals\n========\nDayside   : ",' + grossFmt + ',%"\nNightside : ",' + grossFmt + ',%"\nNet       : ",' + $
+                  grossFmt + ')', $
+                  grossDay, $
+                  grossNight, $
+                  (grossDay+grossNight)
            PRINTF,grossLun,''
         ENDIF
      ENDIF

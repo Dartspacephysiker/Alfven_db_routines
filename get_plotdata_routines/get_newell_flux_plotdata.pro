@@ -41,6 +41,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              GROSSCONVFACTORARR=grossConvFactorArr, $
                              WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                              GROSSLUN=grossLun, $
+                             SHOW_INTEGRALS=show_integrals, $
                              THISTDENOMINATOR=tHistDenominator, $
                              H2DSTRARR=h2dStrArr, $
                              TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -264,6 +265,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        GROSSCONVFACTOR=grossConvFactor, $
                        WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
                        GROSSLUN=grossLun, $
+                       SHOW_INTEGRALS=show_integrals, $
                        THISTDENOMINATOR=tHistDenominator, $
                        H2DSTR=h2dStr, $
                        TMPLT_H2DSTR=tmplt_h2dStr, $
