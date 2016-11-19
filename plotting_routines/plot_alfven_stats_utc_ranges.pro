@@ -368,6 +368,8 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                              MASKMIN=maskMin, $
                              THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
                              DO_DESPUNDB=do_despunDB, $
+                             USE_AACGM_COORDS=use_aacgm, $
+                             USE_MAG_COORDS=use_MAG, $
                              HEMI=hemi, $
                              NPLOTS=nPlots, $
                              EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, $
