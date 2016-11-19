@@ -694,9 +694,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      CGTEXT, $
         integ_position[0], $
         integ_position[1], $
-        ;; 'Integral: ' + string(integral,Format=integralLabelFormat), $
-        ;; STRING(integral,FORMAT=integralLabelFormat), $
-        STRING(temp.grossIntegrals.total,FORMAT=integralLabelFormat)+temp.gUnits, $
+        ;; 'Integral: ' + string(integral,Format=fullIntegLabelFormat), $
+        ;; STRING(integral,FORMAT=fullIntegLabelFormat), $
+        STRING(temp.grossIntegrals.total,FORMAT=fullIntegLabelFormat)+temp.gUnits, $
         /NORMAL, $
         CHARSIZE=defCharSize_grid*charScale
 
@@ -705,9 +705,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ;; integ_position[1]-integ_delta, $
         integ_position[2], $
         integ_position[1], $
-        ;; 'Integral: ' + string(integral,Format=integralLabelFormat), $
-        ;; STRING(integral,FORMAT=itegralLabelFormat), $
-        STRING(temp.grossIntegrals.day,FORMAT=integralLabelFormat)+temp.gUnits, $
+        ;; 'Integral: ' + string(integral,Format=dayNightIntegLabelFormat), $
+        ;; STRING(integral,FORMAT=dayNightIntegLabelFormat), $
+        STRING(temp.grossIntegrals.day,FORMAT=dayNightIntegLabelFormat)+temp.gUnits, $
         COLOR='RED', $
         /NORMAL, $
         CHARSIZE=defCharSize_grid*charScale
@@ -717,9 +717,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ;; integ_position[1]-integ_delta*2, $
         integ_position[2], $
         integ_position[3], $
-        ;; 'Integral: ' + string(integral,Format=integralLabelFormat), $
-        ;; STRING(integral,FORMAT=integralLabelFormat), $
-        STRING(temp.grossIntegrals.night,FORMAT=integralLabelFormat)+temp.gUnits, $
+        ;; 'Integral: ' + string(integral,Format=dayNightIntegLabelFormat), $
+        ;; STRING(integral,FORMAT=dayNightIntegLabelFormat), $
+        STRING(temp.grossIntegrals.night,FORMAT=dayNightIntegLabelFormat)+temp.gUnits, $
         COLOR='BLUE', $
         /NORMAL, $
         CHARSIZE=defCharSize_grid*charScale

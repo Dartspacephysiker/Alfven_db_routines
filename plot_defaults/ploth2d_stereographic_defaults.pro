@@ -66,7 +66,8 @@
   latLabelFormat           = '(I0)'
   lonLabelFormat           = '(I0)'
   ;; integralLabelFormat      = '(D0.3)'
-  integralLabelFormat      = '(G0.2)'
+  dayNightIntegLabelFormat = '(F0.2)'
+  fullIntegLabelFormat     = '(F0.2)'
 
   ;;********************
   ;;GRID DEFAULTS
