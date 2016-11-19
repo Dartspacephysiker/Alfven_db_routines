@@ -609,6 +609,9 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
               xSize    = 5
               ySize    = 5
 
+              integ_position = [0.11 , 0.78, 0.68 , 0.74]
+              integ_delta    = 0.05
+
               FOR i=0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN  
                  
                  CASE N_ELEMENTS(no_colorbar) OF

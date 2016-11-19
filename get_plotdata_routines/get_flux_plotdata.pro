@@ -1320,6 +1320,38 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
             minh2d, $
             medh2d            
 
+     ;;KLUGE IT
+     GET_H2D_BIN_AREAS,h2dAreas, $
+                       CENTERS1=centersMLT,CENTERS2=centersILAT, $
+                       BINSIZE1=binM*15.,BINSIZE2=binI, $
+                       MAX1=maxM*15.,MAX2=maxI, $
+                       MIN1=minM*15.,MIN2=minI, $
+                       SHIFT1=shiftM*15.,SHIFT2=shiftI, $
+                       EQUAL_AREA_BINNING=EA_binning
+     ;; dayInds    = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
+     ;; nightInds  = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
+     dayInds    = WHERE(centersMLT GE 11*15 AND centersMLT LT 15*15 AND ~h2dMask)
+     nightInds  = WHERE((centersMLT GE 21*15 OR centersMLT LT 1*15) AND ~h2dMask)
+
+     ;; nightMaxes = GET_N_MAXIMA_IN_ARRAY(h2dstr.data[nightinds], $
+     ;;                                   N=10, $
+     ;;                                   OUT_I=nightMax_ii)
+     ;; dayMaxes = GET_N_MAXIMA_IN_ARRAY(h2dstr.data[dayinds], $
+     ;;                                   N=10, $
+     ;;                                   OUT_I=dayMax_ii)
+     
+     ;; dayMaxes   = MAX(h2dstr.data[dayinds],maxdayindii)
+
+     dayMax   = MAX(h2dstr.data[dayinds],maxdayindii)
+     nightMax = MAX(h2dstr.data[nightinds],maxnightindii)
+
+     PRINT,"Day max (MLT,ILAT): ",dayMax, $
+           '(' + STRCOMPRESS(centersmlt[dayinds[maxdayindii]]/15.,/REMOVE_ALL), $
+           ', ' + STRCOMPRESS(centersilat[dayinds[maxdayindii]]) + ')'
+     PRINT,"Night max (MLT,ILAT): ",nightMax, $
+           '(' + STRCOMPRESS(centersmlt[nightinds[maxnightindii]]/15.,/REMOVE_ALL), $
+           ', ' + STRCOMPRESS(centersilat[nightinds[maxnightindii]]) + ')'
+
      IF KEYWORD_SET(do_grossRate_fluxQuantities) $
         OR KEYWORD_SET(do_grossRate_with_long_width) $
         OR KEYWORD_SET(grossRate_info_file) THEN BEGIN
