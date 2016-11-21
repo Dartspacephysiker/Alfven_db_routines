@@ -38,6 +38,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                            SHOW_INTEGRALS=show_integrals, $
                            MAKE_INTEGRAL_TXTFILE=make_integral_txtfile, $
                            MAKE_INTEGRAL_SAVFILE=make_integral_savfile, $
+                           INTEGRALSAVFILEPREF=integralSavFilePref, $
                            TXTOUTPUTDIR=txtOutputDir, $
                            LUN=lun, $
                            EPS_OUTPUT=eps_output, $
@@ -324,8 +325,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
               ENDIF
 
               IF KEYWORD_SET(make_integral_savfile) THEN BEGIN
-                 integralSavFile = txtOutputDir + paramStr + $
-                                tPSuff + '--integrals.sav'
+                 integralSavFile = txtOutputDir + (KEYWORD_SET(integralSavFilePref) ? integralSavFilePref : paramStr ) + $
+                                   tPSuff + '--integrals.sav'
               ENDIF
 
               FOR i=0, nPlotsAndBlanks-1 DO BEGIN  
@@ -646,6 +647,11 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                     PRINTF,intLun,FORMAT='(A0)',h2dStrArr[i].title
                  ENDIF
 
+                 IF KEYWORD_SET(make_integral_savfile) THEN BEGIN
+                    integralSavFile = txtOutputDir + (KEYWORD_SET(integralSavFilePref) ? integralSavFilePref : paramStr ) + $
+                                      dataNameArr[i] + '--integrals.sav'
+                 ENDIF
+
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
                                        EQUAL_AREA_BINNING=equal_area_binning, $
                                        NO_COLORBAR=no_cb, $
@@ -666,6 +672,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        INTEG_DELTA=integ_delta, $
                                        DO_INTEGRAL_TXTFILE=KEYWORD_SET(make_integral_txtfile), $
                                        DO_INTEGRAL_SAVFILE=KEYWORD_SET(make_integral_savfile), $
+                                       INTEGRALSAVFILE=integralSavFile, $
                                        INTLUN=intLun, $
                                        _EXTRA=e 
                  CGPS_Close 

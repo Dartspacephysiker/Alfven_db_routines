@@ -1251,7 +1251,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            h2dStr.grossIntegrals.day   = grossDay
            h2dStr.grossIntegrals.night = grossNight
            h2dStr.grossIntegrals.total = grossDay+grossNight
-
+           h2dStr.gAreas               = h2dAreas
         ENDIF
 
      ENDIF ELSE BEGIN
@@ -1270,13 +1270,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
             medh2d            
 
      ;;KLUGE IT
-     GET_H2D_BIN_AREAS,h2dAreas, $
-                       CENTERS1=centersMLT,CENTERS2=centersILAT, $
-                       BINSIZE1=binM*15.,BINSIZE2=binI, $
-                       MAX1=maxM*15.,MAX2=maxI, $
-                       MIN1=minM*15.,MIN2=minI, $
-                       SHIFT1=shiftM*15.,SHIFT2=shiftI, $
-                       EQUAL_AREA_BINNING=EA_binning
+     ;; GET_H2D_BIN_AREAS,h2dAreas, $
+     ;;                   CENTERS1=centersMLT,CENTERS2=centersILAT, $
+     ;;                   BINSIZE1=binM*15.,BINSIZE2=binI, $
+     ;;                   MAX1=maxM*15.,MAX2=maxI, $
+     ;;                   MIN1=minM*15.,MIN2=minI, $
+     ;;                   SHIFT1=shiftM*15.,SHIFT2=shiftI, $
+     ;;                   EQUAL_AREA_BINNING=EA_binning
      ;; dayInds    = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
      ;; nightInds  = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
      dayInds    = WHERE(centersMLT GE 11*15 AND centersMLT LT 15*15 AND ~h2dMask)

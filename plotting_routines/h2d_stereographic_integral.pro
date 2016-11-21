@@ -1,16 +1,16 @@
-PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
-                                EQUAL_AREA_BINNING=EA_binning, $
-                                H2D_MASKED=h2d_masked, $
-                                INTEGRAL=integral, $
-                                ABSINTEGRAL=absIntegral, $
-                                DAWNINTEGRAL=dawnIntegral, $
-                                DUSKINTEGRAL=duskIntegral, $
-                                DAYINTEGRAL=dayIntegral, $
-                                NIGHTINTEGRAL=nightIntegral, $
-                                OUTPUT_INTEGRAL_TXTFILE=output_integral_txt, $
-                                OUTPUT_INTEGRAL_SAVFILE=output_integral_sav, $
-                                INTEGSAVFILE=integralSavFile, $
-                                INTLUN=intLun
+PRO H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
+                               EQUAL_AREA_BINNING=EA_binning, $
+                               H2D_MASKED=h2d_masked, $
+                               INTEGRAL=integral, $
+                               ABSINTEGRAL=absIntegral, $
+                               DAWNINTEGRAL=dawnIntegral, $
+                               DUSKINTEGRAL=duskIntegral, $
+                               DAYINTEGRAL=dayIntegral, $
+                               NIGHTINTEGRAL=nightIntegral, $
+                               OUTPUT_INTEGRAL_TXTFILE=output_integral_txt, $
+                               OUTPUT_INTEGRAL_SAVFILE=output_integral_sav, $
+                               INTEGSAVFILE=integralSavFile, $
+                               INTLUN=intLun
   
 
   nLats              = N_ELEMENTS(lonsLats[0,*,0,0])+1
@@ -21,6 +21,13 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
   duskIntegral       = (h2dStr.is_fluxData) ? DOUBLE(0.0) : 0L
   dayIntegral        = (h2dStr.is_fluxData) ? DOUBLE(0.0) : 0L
   nightIntegral      = (h2dStr.is_fluxData) ? DOUBLE(0.0) : 0L
+
+  ;;Initialize area avgs for each hemi
+  dawnArea            = DOUBLE(0.0)
+  duskArea            = DOUBLE(0.0)
+  dayArea             = DOUBLE(0.0)
+  nightArea           = DOUBLE(0.0)
+
   CASE 1 OF
      KEYWORD_SET(EA_binning): BEGIN
         LOAD_EQUAL_AREA_BINNING_STRUCT,EA
@@ -38,12 +45,14 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
               THEN BEGIN
                  duskIntegral += (h2dStr.is_logged) ? $
                                  10.^h2dStr.data[j] : h2dStr.data[j]
+                 duskArea      += h2dStr.gAreas[j]
               ENDIF ELSE BEGIN
                  IF tempLons[0] LE 180 AND $
                     tempLons[-1] LE 180 $
                  THEN BEGIN
                     dawnIntegral += (h2dStr.is_logged) ? $
                                     10.^h2dStr.data[j] : h2dStr.data[j]
+                    dawnArea      += h2dStr.gAreas[j]
                  ENDIF
               ENDELSE
 
@@ -52,12 +61,14 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
               THEN BEGIN
                  nightIntegral   += (h2dStr.is_logged) ? $
                                     10.^h2dStr.data[j] : h2dStr.data[j]
+                 nightArea        += h2dStr.gAreas[j]
               ENDIF ELSE BEGIN
                  IF (tempLons[0] GE 90  AND tempLons[-1] GE 90 ) AND $
                     (tempLons[0] LE 270 AND tempLons[-1] LE 270)    $
                  THEN BEGIN
                     dayIntegral  += (h2dStr.is_logged) ? $
                                     10.^h2dStr.data[j] : h2dStr.data[j]
+                    dayArea        += h2dStr.gAreas[j]
                  ENDIF
               ENDELSE
 
@@ -80,12 +91,14 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
                  THEN BEGIN
                     duskIntegral += (h2dStr.is_logged) ? $
                                     10.^h2dStr.data[i,j] : h2dStr.data[i,j]
+                    duskArea      += h2dStr.gAreas[i,j]
                  ENDIF ELSE BEGIN
                     IF tempLons[0] LE 180 AND $
                        tempLons[-1] LE 180 $
                     THEN BEGIN
                        dawnIntegral += (h2dStr.is_logged) ? $
                                        10.^h2dStr.data[i,j] : h2dStr.data[i,j]
+                       dawnArea      += h2dStr.gAreas[i,j]
                     ENDIF
                  ENDELSE
 
@@ -94,12 +107,14 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
                  THEN BEGIN
                     nightIntegral   += (h2dStr.is_logged) ? $
                                        10.^h2dStr.data[i,j] : h2dStr.data[i,j]
+                    nightArea        += h2dStr.gAreas[i,j]
                  ENDIF ELSE BEGIN
                     IF (tempLons[0] GE 90  AND tempLons[-1] GE 90 ) AND $
                        (tempLons[0] LE 270 AND tempLons[-1] LE 270)    $
                     THEN BEGIN
                        dayIntegral  += (h2dStr.is_logged) ? $
                                        10.^h2dStr.data[i,j] : h2dStr.data[i,j]
+                       dayArea       += h2dStr.gAreas[i,j]
                     ENDIF
                  ENDELSE
 
@@ -152,16 +167,24 @@ PRO  H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
            RESTORE,integralSavFile
 
            hemiIntegs = {name:hemiIntegs.name, $
-                              integrals:{day:[hemiIntegs.integrals.day,dayIntegral], $
-                                         night:[hemiIntegs.integrals.night,nightIntegral], $
-                                         dawn:[hemiIntegs.integrals.dawn,dawnIntegral], $
-                                         dusk:[hemiIntegs.integrals.dusk,duskIntegral]}}
+                         integrals:{day:[hemiIntegs.integrals.day,dayIntegral], $
+                                    night:[hemiIntegs.integrals.night,nightIntegral], $
+                                    dawn:[hemiIntegs.integrals.dawn,dawnIntegral], $
+                                    dusk:[hemiIntegs.integrals.dusk,duskIntegral]}, $
+                         area:{day:[hemiIntegs.area.day,dayArea], $
+                               night:[hemiIntegs.area.night,nightArea], $
+                               dawn:[hemiIntegs.area.dawn,dawnArea], $
+                               dusk:[hemiIntegs.area.dusk,duskArea]}}
         ENDIF ELSE BEGIN
            hemiIntegs = {name:h2dStr.name, $
-                              integrals:{day:dayIntegral, $
-                                         night:nightIntegral, $
-                                         dawn:dawnIntegral, $
-                                         dusk:duskIntegral}}
+                         integrals:{day:dayIntegral, $
+                                    night:nightIntegral, $
+                                    dawn:dawnIntegral, $
+                                    dusk:duskIntegral}, $
+                         area:{day:dayArea, $
+                               night:nightArea, $
+                               dawn:dawnArea, $
+                               dusk:duskArea}}
 
         ENDELSE
         

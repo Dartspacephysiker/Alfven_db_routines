@@ -71,6 +71,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                                    total:0.D}, $
                 grossFac        : 1.D, $
                 gUnits          : '', $
+                gAreas          : h2dDatTmplt, $
                 ;; grossConvFactor : h2dDatTmplt, $
                 both_hemis      : KEYWORD_SET(both_hemis), $
                 force_oobHigh   : KEYWORD_SET(cb_force_oobHigh), $
