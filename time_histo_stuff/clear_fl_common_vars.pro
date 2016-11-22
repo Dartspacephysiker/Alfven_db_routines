@@ -2,7 +2,8 @@ PRO CLEAR_FL_COMMON_VARS
 
   COMPILE_OPT idl2
 
-  COMMON FL_VARS
+  @common__fastloc_vars.pro
+  ;; COMMON FL_VARS
 
   FL__fastLoc           = !NULL
   FASTLOC__times        = !NULL

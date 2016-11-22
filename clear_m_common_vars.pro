@@ -2,7 +2,9 @@ PRO CLEAR_M_COMMON_VARS
 
   COMPILE_OPT idl2
 
-  COMMON M_VARS
+  ;; COMMON M_VARS
+
+  @common__maximus_vars.pro
 
   PRINT,'Clearing maximus COMMON vars ...'
 

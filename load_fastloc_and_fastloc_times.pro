@@ -13,8 +13,13 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    USE_MAG_COORDS=use_mag, $
                                    FOR_ESPEC_DBS=for_eSpec_DBs, $
                                    ;; CHECK_DB=check_DB, $
-                                   OUT__DO_NOT_LOAD_IN_MEM=do_not_load_in_mem, $
+                                   JUST_FASTLOC=just_fastLoc, $
+                                   JUST_TIMES=just_times, $
+                                   ;; NO_MEMORY_LOAD=noMem, $
                                    LUN=lun
+
+  ;;2016/11/21 As of right now there is no strong motivation to make this routine aware of the fastLoc common vars
+  ;; @common__fastloc_vars.pro
 
   ;; COMMON FL_VARS,fastLoc,FASTLOC__times,FASTLOC__delta_t, $
   ;;    FASTLOC__good_i,FASTLOC__cleaned_i,FASTLOC__HAVE_GOOD_I, $
@@ -91,6 +96,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   IF N_ELEMENTS(DBDir) EQ 0 THEN BEGIN
      DBDir                          = DefDBDir
   ENDIF
+
   IF N_ELEMENTS(DBFile) EQ 0 THEN BEGIN
      IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
         PRINT,'Loading FastLoc for eSpec and ion DBs...'
@@ -99,6 +105,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         DBFile                      = DefDBFile
      ENDELSE
   ENDIF
+
   IF N_ELEMENTS(DB_tFile) EQ 0 THEN BEGIN
      IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
         ;; PRINT,'Loading FastLoc times for eSpec and ion DBs...'
@@ -108,108 +115,126 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      ENDELSE
   ENDIF
   
-  IF N_ELEMENTS(fastLoc) EQ 0 OR KEYWORD_SET(force_load_fastLoc) THEN BEGIN
-     IF KEYWORD_SET(force_load_fastLoc) THEN BEGIN
-        PRINTF,lun,"Forcing load, whether or not we already have fastLoc..."
-     ENDIF
-     IF FILE_TEST(DBDir+DBFile) THEN RESTORE,DBDir+DBFile
-     IF fastLoc EQ !NULL THEN BEGIN
-        PRINT,"Couldn't load fastLoc!"
-        STOP
-     ENDIF
-  ENDIF ELSE BEGIN
-     PRINTF,lun,"There is already a fastLoc struct loaded! Not loading " + DBFile
-  ENDELSE
+  IF ~KEYWORD_SET(just_times) THEN BEGIN
 
-  IF N_ELEMENTS(fastloc_times) EQ 0 OR KEYWORD_SET(force_load_times) THEN BEGIN
-     IF KEYWORD_SET(force_load_times) THEN BEGIN
-        PRINTF,lun,"Forcing load, whether or not we already have times..."
-     ENDIF
-     IF FILE_TEST(DBDir+DB_tFile) THEN RESTORE,DBDir+DB_tFile
-     IF fastloc_times EQ !NULL THEN BEGIN
-        PRINT,"Couldn't load fastloc_times!"
-        STOP
-     ENDIF
-  ENDIF ELSE BEGIN
-     PRINTF,lun,"There is already a fastloc_times struct loaded! Not loading " + DB_tFile
-  ENDELSE
-
-  IF KEYWORD_SET(coordinate_system) THEN BEGIN
-     CASE STRUPCASE(coordinate_system) OF
-        'AACGM': BEGIN
-           use_aacgm = 1
-           use_geo   = 0
-           use_mag   = 0
-        END
-        'GEO'  : BEGIN
-           use_aacgm = 0
-           use_geo   = 1
-           use_mag   = 0
-        END
-        'MAG'  : BEGIN
-           use_aacgm = 0
-           use_geo   = 0
-           use_mag   = 1
-        END
-     ENDCASE
+     IF N_ELEMENTS(fastLoc) EQ 0 OR KEYWORD_SET(force_load_fastLoc) THEN BEGIN
+        IF KEYWORD_SET(force_load_fastLoc) THEN BEGIN
+           PRINTF,lun,"Forcing load, whether or not we already have fastLoc..."
+        ENDIF
+        IF FILE_TEST(DBDir+DBFile) THEN RESTORE,DBDir+DBFile
+        IF fastLoc EQ !NULL THEN BEGIN
+           PRINT,"Couldn't load fastLoc!"
+           STOP
+        ENDIF
+     ENDIF ELSE BEGIN
+        PRINTF,lun,"There is already a fastLoc struct loaded! Not loading " + DBFile
+     ENDELSE
+     
   ENDIF
 
-  IF KEYWORD_SET(for_eSpec_DBs) AND $
-     KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_GEO) OR KEYWORD_SET(use_MAG) $
-  THEN BEGIN
-     PRINT,'Not set up for this!!' 
-     STOP
+  IF ~KEYWORD_SET(just_fastLoc) THEN BEGIN
+
+     IF N_ELEMENTS(fastloc_times) EQ 0 OR KEYWORD_SET(force_load_times) THEN BEGIN
+        IF KEYWORD_SET(force_load_times) THEN BEGIN
+           PRINTF,lun,"Forcing load, whether or not we already have times..."
+        ENDIF
+        IF FILE_TEST(DBDir+DB_tFile) THEN RESTORE,DBDir+DB_tFile
+        IF fastloc_times EQ !NULL THEN BEGIN
+           PRINT,"Couldn't load fastloc_times!"
+           STOP
+        ENDIF
+     ENDIF ELSE BEGIN
+        PRINTF,lun,"There is already a fastloc_times struct loaded! Not loading " + DB_tFile
+     ENDELSE
+
   ENDIF
 
-
-  IF KEYWORD_SET(use_aacgm) THEN BEGIN
-     PRINT,'Using AACGM coords ...'
-
-     RESTORE,defCoordDir+AACGM_file
-
-     ALFDB_SWITCH_COORDS,fastLoc,FL_AACGM,'AACGM'
-
-     changedCoords = 1
-  ENDIF
-
-  IF KEYWORD_SET(use_GEO) THEN BEGIN
-     PRINT,'Using GEO coords ...'
-
-     RESTORE,defCoordDir+GEO_file
-
-     ALFDB_SWITCH_COORDS,fastLoc,FL_GEO,'GEO'
-
-     changedCoords = 1
-  ENDIF
-
-  IF KEYWORD_SET(use_MAG) THEN BEGIN
-     PRINT,'Using MAG coords ...'
-
-     RESTORE,defCoordDir+MAG_file
-
-     ALFDB_SWITCH_COORDS,fastLoc,FL_MAG,'MAG'
-
-     changedCoords = 1
-  ENDIF
-
-
-  IF KEYWORD_SET(changedCoords) THEN BEGIN
-     LOAD_MAXIMUS_AND_CDBTIME,maximus,/CHECK_DB
-     IF N_ELEMENTS(maximus) GT 0 THEN BEGIN
-        CASE 1 OF
-           TAG_EXIST(maximus,'coords'): BEGIN
-              IF STRLOWCASE(fastLoc.coords) NE STRLOWCASE(maximus.coords) THEN BEGIN
-                 PRINT,'Mismatched coordinate systems!'
-                 STOP
-              ENDIF 
+  IF ~KEYWORD_SET(just_times) THEN BEGIN
+     IF KEYWORD_SET(coordinate_system) THEN BEGIN
+        CASE STRUPCASE(coordinate_system) OF
+           'AACGM': BEGIN
+              use_aacgm = 1
+              use_geo   = 0
+              use_mag   = 0
            END
-           ELSE: BEGIN
-              PRINT,'Maximus coordinates have not been changed!'
-              STOP
+           'GEO'  : BEGIN
+              use_aacgm = 0
+              use_geo   = 1
+              use_mag   = 0
+           END
+           'MAG'  : BEGIN
+              use_aacgm = 0
+              use_geo   = 0
+              use_mag   = 1
            END
         ENDCASE
-     ENDIF 
+     ENDIF
+
+     IF KEYWORD_SET(for_eSpec_DBs) AND $
+        KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_GEO) OR KEYWORD_SET(use_MAG) $
+     THEN BEGIN
+        PRINT,'Not set up for this!!' 
+        STOP
+     ENDIF
+
+
+     IF KEYWORD_SET(use_aacgm) THEN BEGIN
+        PRINT,'Using AACGM coords ...'
+
+        RESTORE,defCoordDir+AACGM_file
+
+        ALFDB_SWITCH_COORDS,fastLoc,FL_AACGM,'AACGM'
+
+        changedCoords = 1
+     ENDIF
+
+     IF KEYWORD_SET(use_GEO) THEN BEGIN
+        PRINT,'Using GEO coords ...'
+
+        RESTORE,defCoordDir+GEO_file
+
+        ALFDB_SWITCH_COORDS,fastLoc,FL_GEO,'GEO'
+
+        changedCoords = 1
+     ENDIF
+
+     IF KEYWORD_SET(use_MAG) THEN BEGIN
+        PRINT,'Using MAG coords ...'
+
+        RESTORE,defCoordDir+MAG_file
+
+        ALFDB_SWITCH_COORDS,fastLoc,FL_MAG,'MAG'
+
+        changedCoords = 1
+     ENDIF
+
+
+     IF KEYWORD_SET(changedCoords) THEN BEGIN
+        LOAD_MAXIMUS_AND_CDBTIME,maximus,/CHECK_DB
+        IF N_ELEMENTS(maximus) GT 0 THEN BEGIN
+           CASE 1 OF
+              TAG_EXIST(maximus,'coords'): BEGIN
+                 IF STRLOWCASE(fastLoc.coords) NE STRLOWCASE(maximus.coords) THEN BEGIN
+                    PRINT,'Mismatched coordinate systems!'
+                    STOP
+                 ENDIF 
+              END
+              ELSE: BEGIN
+                 PRINT,'Maximus coordinates have not been changed!'
+                 STOP
+              END
+           ENDCASE
+        ENDIF 
+     ENDIF
   ENDIF
   
+  ;;Not presently used ...
+  ;; IF KEYWORD_SET(noMem) THEN BEGIN
+  ;;    PRINT,"Unloading fastLoc & assoc. from memory ..." 
+
+  ;;    CLEAR_FL_COMMON_VARS
+
+  ;; ENDIF
+
 
 END

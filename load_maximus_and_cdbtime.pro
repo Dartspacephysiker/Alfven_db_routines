@@ -292,7 +292,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   IF KEYWORD_SET(noMem) THEN BEGIN
      PRINT,"Unloading maximus & assoc. from memory ..." 
 
-     UNLOAD_MAXIMUS_COMMON_VARS
+     CLEAR_M_COMMON_VARS
 
   ENDIF
    
