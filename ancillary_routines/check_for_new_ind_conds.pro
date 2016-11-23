@@ -27,6 +27,7 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
    MAX_NEGMAGCURRENT=maxNegMC, $
    SAMPLE_T_RESTRICTION=sample_t_restriction, $
    INCLUDE_32HZ=include_32Hz, $
+   DISREGARD_SAMPLE_T=disregard_sample_t, $
    DAYSIDE=dayside, $
    NIGHTSIDE=nightside, $
    HAVE_GOOD_I=have_good_i, $
@@ -34,7 +35,8 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
 
   COMPILE_OPT idl2
 
-  COMMON MLT_ILAT_MAGC_ETC
+  ;; COMMON MLT_ILAT_MAGC_ETC
+  @common__mlt_ilat_magc_etc.pro
 
   ;; Alfven DB-specific stuff
   IF KEYWORD_SET(is_maximus) THEN BEGIN
@@ -170,6 +172,16 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
   IF N_ELEMENTS(include_32Hz) GT 0 THEN BEGIN
      IF N_ELEMENTS(MIMC__include_32Hz) GT 0 THEN BEGIN
         IF MIMC__include_32Hz NE include_32Hz THEN BEGIN
+           MIMC__RECALCULATE = 1
+           have_good_i       = 0
+           RETURN
+        ENDIF
+     ENDIF 
+  ENDIF
+
+  IF N_ELEMENTS(disregard_sample_t) GT 0 THEN BEGIN
+     IF N_ELEMENTS(MIMC__disregard_sample_t) GT 0 THEN BEGIN
+        IF MIMC__disregard_sample_t NE disregard_sample_t THEN BEGIN
            MIMC__RECALCULATE = 1
            have_good_i       = 0
            RETURN

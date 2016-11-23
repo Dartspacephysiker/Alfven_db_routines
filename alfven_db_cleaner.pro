@@ -33,6 +33,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
                            DO_LSHELL=DO_lshell, $
                            USING_HEAVIES=using_heavies, $
                            INCLUDE_32HZ=include_32Hz, $
+                           DISREGARD_SAMPLE_T=disregard_sample_t, $
                            LUN=lun
 
   COMPILE_OPT idl2
@@ -53,7 +54,9 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
   n_events = N_ELEMENTS(maximus.orbit)
   good_i = BASIC_DB_CLEANER(maximus,DO_CHASTDB=is_chastDB, $
                             /CLEAN_NANS_AND_INFINITIES, $
+                            SAMPLE_T_RESTRICTION=sample_t_restriction, $
                             INCLUDE_32Hz=include_32Hz, $
+                            DISREGARD_SAMPLE_T=disregard_sample_t, $
                             DO_LSHELL=DO_lshell, $
                             USING_HEAVIES=using_heavies)
 
@@ -174,12 +177,13 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
 
      ;; Now sample_t stuff
      CASE 1 OF
-        N_ELEMENTS(sample_t_restriction) GT 0: BEGIN
-           IF sample_t_restriction EQ 0 THEN BEGIN
+        ((N_ELEMENTS(sample_t_restriction) GT 0) OR $
+         (KEYWORD_SET(disregard_sample_t))): BEGIN
+           IF ((sample_t_restriction EQ 0) OR KEYWORD_SET(disregard_sample_t)) THEN BEGIN
               PRINT,'Screening by sample_t disabled ...'
            ENDIF ELSE BEGIN
               good_i = CGSETINTERSECTION(good_i, $
-                                      WHERE(ABS(maximus.sample_t) LE sample_t_hcutoff,/NULL))
+                                         WHERE(ABS(maximus.sample_t) LE sample_t_hcutoff,/NULL))
            ENDELSE
 
            ;;And I guess we screen by width_t in any case

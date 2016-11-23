@@ -37,6 +37,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                          MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                          SAMPLE_T_RESTRICTION=sample_t_restriction, $
                          INCLUDE_32HZ=include_32Hz, $
+                         DISREGARD_SAMPLE_T=disregard_sample_t, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
                          USING_HEAVIES=using_heavies, $
                          NO_BURSTDATA=no_burstData, $
@@ -262,6 +263,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                    MAX_NEGMAGCURRENT=maxNegMC, $
                                    SAMPLE_T_RESTRICTION=sample_t_restriction, $
                                    INCLUDE_32HZ=include_32Hz, $
+                                   DISREGARD_SAMPLE_T=disregard_sample_t, $
                                    DAYSIDE=dayside, $
                                    NIGHTSIDE=nightside, $
                                    HAVE_GOOD_I=have_good_i, $
@@ -320,6 +322,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                    MAX_NEGMAGCURRENT=maxNegMC, $
                                    SAMPLE_T_RESTRICTION=sample_t_restriction, $
                                    INCLUDE_32HZ=include_32Hz, $
+                                   DISREGARD_SAMPLE_T=disregard_sample_t, $
                                    DAYSIDE=dayside, $
                                    NIGHTSIDE=nightside, $
                                    HAVE_GOOD_I=have_good_i, $
@@ -529,6 +532,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                                         IS_CHASTDB=chastDB, $
                                                         SAMPLE_T_RESTRICTION=sample_t_restriction, $
                                                         INCLUDE_32Hz=include_32Hz, $
+                                                        DISREGARD_SAMPLE_T=disregard_sample_t, $
                                                         DO_LSHELL=DO_lshell, $
                                                         USING_HEAVIES=using_heavies)
            IF MAXIMUS__cleaned_i EQ !NULL THEN BEGIN
@@ -549,6 +553,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
               FASTLOC_E__cleaned_i  = FASTLOC_CLEANER(dbStruct, $
                                                       /FOR_ESPEC_DBS, $
                                                       INCLUDE_32Hz=include_32Hz, $
+                                                      DISREGARD_SAMPLE_T=disregard_sample_t, $
                                                       LUN=lun)
               
               IF FASTLOC_E__cleaned_i EQ !NULL THEN BEGIN
@@ -559,6 +564,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
            ENDIF ELSE BEGIN
               FASTLOC__cleaned_i    = FASTLOC_CLEANER(dbStruct, $
                                                       INCLUDE_32Hz=include_32Hz, $
+                                                      DISREGARD_SAMPLE_T=disregard_sample_t, $
                                                       LUN=lun)
               IF FASTLOC__cleaned_i EQ !NULL THEN BEGIN
                  PRINTF,lun,"Couldn't clean fastloc DB! Sup with that?"

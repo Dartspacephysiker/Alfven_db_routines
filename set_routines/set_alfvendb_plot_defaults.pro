@@ -4,6 +4,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                POYNTRANGE=poyntRange, $
                                SAMPLE_T_RESTRICTION=sample_t_restriction, $
                                INCLUDE_32HZ=include_32Hz, $
+                               DISREGARD_SAMPLE_T=disregard_sample_t, $
                                MINMLT=minMLT,MAXMLT=maxMLT, $
                                BINMLT=binMLT, $
                                SHIFTMLT=shiftMLT, $
@@ -163,27 +164,30 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
 
   ;;Hz32 only possible if we haven't manually set sample_t_restriction
   Hz32_string  = ''
-  IF N_ELEMENTS(sample_t_restriction) GT 0 THEN BEGIN
-     CASE sample_t_restriction OF
-        0: BEGIN
-           sample_t_string = '--no_sampT_restr'
-        END
-        ELSE: BEGIN
-           sample_t_string  = STRING(FORMAT='("--sampT_restr_",F0.2,"s")',sample_t_restriction) 
-        END
-     ENDCASE
-     IF KEYWORD_SET(include_32Hz) THEN BEGIN
-        PRINT,"Can't do 32-Hz sample inclusion if sample_t has manually been set!"
-        include_32Hz = 0
-     ENDIF
+  IF KEYWORD_SET(disregard_sample_t) THEN BEGIN
+     sample_t_string = '--no_sampT_restr'
   ENDIF ELSE BEGIN
-     sample_t_string  = ''
+     IF N_ELEMENTS(sample_t_restriction) GT 0 THEN BEGIN
+        CASE sample_t_restriction OF
+           0: BEGIN
+              sample_t_string = '--no_sampT_restr'
+           END
+           ELSE: BEGIN
+              sample_t_string  = STRING(FORMAT='("--sampT_restr_",F0.2,"s")',sample_t_restriction) 
+           END
+        ENDCASE
+        IF KEYWORD_SET(include_32Hz) THEN BEGIN
+           PRINT,"Can't do 32-Hz sample inclusion if sample_t has manually been set!"
+           include_32Hz = 0
+        ENDIF
+     ENDIF ELSE BEGIN
+        sample_t_string  = ''
 
-     IF KEYWORD_SET(include_32Hz) THEN BEGIN
-        Hz32_string  = '--inc_32Hz'
-     ENDIF
+        IF KEYWORD_SET(include_32Hz) THEN BEGIN
+           Hz32_string  = '--inc_32Hz'
+        ENDIF
+     ENDELSE
   ENDELSE
-  
 
   
   ;;********************************************

@@ -5,7 +5,9 @@
 ;; 2016/01/13 New USING_HEAVIES keyword for times when TEAMS data are coming into play
 FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
                           CLEAN_NANS_AND_INFINITIES=clean_nans_and_infinities, $
+                          SAMPLE_T_RESTRICTION=sample_t_restriction, $
                           INCLUDE_32Hz=include_32Hz, $
+                          DISREGARD_SAMPLE_T=disregard_sample_t, $
                           DO_LSHELL=DO_lshell, $
                           USING_HEAVIES=using_heavies, $
                           DO_CHASTDB=do_ChastDB, $
@@ -24,6 +26,12 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
   IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
      sample_t_hcutoff = 5.00
   ENDIF  
+
+  IF KEYWORD_SET(sample_t_restriction) THEN BEGIN
+     PRINT,'Changing sample_t_hcutoff to ' + $
+           STRCOMPRESS(sample_t_restriction,/REMOVE_ALL) + ' ...'
+     sample_t_hcutoff = sample_t_restriction
+  ENDIF
 
   IF KEYWORD_SET(clean_nans_and_infinities) THEN BEGIN
      dbTags = tag_names(dbStruct)
@@ -110,10 +118,15 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
 
   ;; good_i = CGSETINTERSECTION(good_i,WHERE(dbStruct.sample_t LE sample_t_hcutoff,/NULL))
   IF KEYWORD_SET(do_ChastDB) THEN BEGIN
-     good_i = CGSETINTERSECTION(good_i,WHERE(ABS(dbStruct.mode) LE sample_t_hcutoff AND ABS(dbStruct.mode) GT 0.,/NULL))
-     nlost      = n_good-N_ELEMENTS(good_i)
-     tot_nLost += nLost
-     n_good -= nLost
+     IF KEYWORD_SET(disregard_sample_t) THEN BEGIN
+        PRINT,'Disregarding sample_t ...'
+        nlost = 0
+     ENDIF ELSE BEGIN
+        good_i = CGSETINTERSECTION(good_i,WHERE(ABS(dbStruct.mode) LE sample_t_hcutoff AND ABS(dbStruct.mode) GT 0.,/NULL))
+        nlost      = n_good-N_ELEMENTS(good_i)
+        tot_nLost += nLost
+        n_good -= nLost
+     ENDELSE
      IF nLost GT 0 THEN BEGIN
         PRINTF,lun,FORMAT='("N lost to basic sample freq restr",T40,": ",I0)',nlost
      ENDIF
@@ -121,6 +134,9 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
 
      ;; Now sample_t stuff
      CASE 1 OF
+        KEYWORD_SET(disregard_sample_t): BEGIN
+           PRINT,'Disregarding all things sample_t ...'
+        END
         KEYWORD_SET(include_32Hz): BEGIN
 
            PRINT,"Including 32-Hz samples ..."

@@ -99,7 +99,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
   IF N_ELEMENTS(DBFile) EQ 0 THEN BEGIN
      IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-        PRINT,'Loading FastLoc for eSpec and ion DBs...'
+        PRINT,'Loading fastLoc for eSpec and ion DBs...'
         DBFile                      = DefESpecDBFile
      ENDIF ELSE BEGIN
         DBFile                      = DefDBFile
@@ -108,7 +108,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
   IF N_ELEMENTS(DB_tFile) EQ 0 THEN BEGIN
      IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-        ;; PRINT,'Loading FastLoc times for eSpec and ion DBs...'
+        ;; PRINT,'Loading fastLoc times for eSpec and ion DBs...'
         DB_tFile                    = DefESpecDB_tFile
      ENDIF ELSE BEGIN
         DB_tFile                    = DefDB_tFile

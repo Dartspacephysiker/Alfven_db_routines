@@ -21,7 +21,9 @@
 
 FUNCTION FASTLOC_CLEANER,fastLoc, $
                          FOR_ESPEC_DBS=for_eSpec_DBs, $
+                         SAMPLE_T_RESTRICTION=sample_t_restriction, $
                          INCLUDE_32Hz=include_32Hz, $
+                         DISREGARD_SAMPLE_T=disregard_sample_t, $
                          LUN=lun
 
   COMPILE_OPT idl2
@@ -59,7 +61,9 @@ FUNCTION FASTLOC_CLEANER,fastLoc, $
   PRINTF,lun,"****From fastloc_cleaner.pro****"
 
   good_i = BASIC_DB_CLEANER(fastLoc,/CLEAN_NANS_AND_INFINITIES, $
+                            SAMPLE_T_RESTRICTION=sample_t_restriction, $
                             INCLUDE_32Hz=include_32Hz, $
+                            DISREGARD_SAMPLE_T=disregard_sample_t, $
                             FOR_ESPEC_DBS=for_eSpec_DBs)
 
   ;******************
