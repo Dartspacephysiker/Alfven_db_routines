@@ -11,7 +11,7 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                                NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
                                NONALFVEN__NO_MAXIMUS=no_maximus, $
-                               ;; NONALFVEN__NEWELL_2009_INTERPRETATION=nonAlfven__newell_2009_interpretation, $
+                               ;; ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
                                ;; NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
                                INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                                TMPLT_H2DSTR=tmplt_h2dStr, $
