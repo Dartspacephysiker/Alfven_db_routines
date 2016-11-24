@@ -65,6 +65,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           NONALFVEN__NO_MAXIMUS=no_maximus, $
                           NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                           NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                          NONALFVEN__NEWELL_2009_INTERP=nonAlfven__newell_2009_interp, $
                           ;; FOR_ESPEC_DB=for_eSpec_DB, $
                           ESPEC__MLTS=eSpec__mlts, $
                           ESPEC__ILATS=eSpec__ilats, $
@@ -851,6 +852,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                                     NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                                     NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                                    NONALFVEN__NEWELL_2009_INTERP=nonAlfven__newell_2009_interp, $
                                     NONALFVEN_MLT=eSpec__mlts, $
                                     NONALFVEN_ILAT=eSpec__ilats, $
                                     NONALFVEN_DELTA_T=eSpec_delta_t, $
@@ -929,6 +931,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                              NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                              NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                             NONALFVEN__NEWELL_2009_INTERP=nonAlfven__newell_2009_interp, $
                              NONALFVEN_MLT=eSpec__mlts, $
                              NONALFVEN_ILAT=eSpec__ilats, $
                              NONALFVEN_DELTA_T=eSpec_delta_t, $
@@ -1102,6 +1105,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                                     NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                                     NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                                    NONALFVEN__NEWELL_2009_INTERP=nonAlfven__newell_2009_interp, $
                                     NONALFVEN_MLT=eSpec__mlts, $
                                     NONALFVEN_ILAT=eSpec__ilats, $
                                     NONALFVEN_DELTA_T=eSpec_delta_t, $
@@ -1179,6 +1183,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                              NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                              NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                             NONALFVEN__NEWELL_2009_INTERP=nonAlfven__newell_2009_interp, $
                              NONALFVEN_MLT=eSpec__mlts, $
                              NONALFVEN_ILAT=eSpec__ilats, $
                              NONALFVEN_DELTA_T=eSpec_delta_t, $
@@ -1420,6 +1425,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $
                           NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                           NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                          NONALFVEN__NEWELL_2009_INTERP=nonAlfven__newell_2009_interp, $
                           NONALFVEN_MLT=ion__mlts, $
                           NONALFVEN_ILAT=ion__ilats, $
                           NONALFVEN_DELTA_T=ion_delta_t, $
@@ -1749,6 +1755,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                    NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                    NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
                                    NONALFVEN__NO_MAXIMUS=no_maximus, $
+                                   ;; NONALFVEN__NEWELL_2009_INTERP=nonAlfven__newell_2009_interp, $
                                    INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                                    TMPLT_H2DSTR=tmplt_h2dStr, $
                                    H2DSTRS=h2dStrs, $
@@ -1786,6 +1793,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                            NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                                            NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                            /NEWELLPLOT_PROBOCCURRENCE, $
+                                           NEWELL_2009_INTERP=nonAlfven__newell_2009_interp, $
                                            TMPLT_H2DSTR=tmplt_h2dStr, $
                                            H2DSTRS=h2dStrs, $
                                            ;; H2DMASKSTR=h2dMaskStr, $

@@ -20,6 +20,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              ;; INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $
                              NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                              NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                             NONALFVEN__NEWELL_2009_INTERP=nonAlfven__newell_2009_interp, $
                              NONALFVEN_MLT=nonAlfven_mlt, $
                              NONALFVEN_ILAT=nonAlfven_ilat, $
                              NONALFVEN_DELTA_T=nonAlfven_delta_t, $
@@ -244,6 +245,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        INDICES__NONALFVEN_ESPEC=KEYWORD_SET(nonAlfven) ? tmp_i : indices__nonAlfven_eSpec, $
                        NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                        NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                       NONALFVEN__NEWELL_2009_INTERP=nonAlfven__newell_2009_interp, $
                        NONALFVEN_MLT=nonAlfven_mlt, $
                        NONALFVEN_ILAT=nonAlfven_ilat, $
                        NONALFVEN_DELTA_T=nonAlfven_delta_t, $
