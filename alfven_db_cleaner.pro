@@ -134,7 +134,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
   ;; ENDELSE
 
   printf,lun,""
-  printf,lun,"****From alfven_db_cleaner.pro****"
+  printf,lun,"****ALFVEN_DB_CLEANER****"
 
   ;; nlost = n_events-N_ELEMENTS(good_i)
   ;; printf,lun,FORMAT='("N lost to NaNs, infinities    :",T35,I0)',nlost
@@ -277,7 +277,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
   nlost = n_basic-N_ELEMENTS(good_i)
   printf,lun,FORMAT='("N lost to user-defined cutoffs:",T35,I0)', nlost
 
-  printf,lun,"****END alfven_db_cleaner.pro****"
+  printf,lun,"****END ALFVEN_DB_CLEANER****"
   printf,lun,""
 
   RETURN, good_i
