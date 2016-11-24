@@ -4,6 +4,7 @@ PRO LOAD_ALF_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec,good_eSpec_i, $
                              NEWELLDBFILE=NewellDBFile, $
                              FORCE_LOAD_DB=force_load_db, $
                              DESPUN_ALF_DB=despun_alf_db, $
+                             DONT_CONVERT_TO_STRICT_NEWELL=dont_convert_to_strict_newell, $
                              DONT_LOAD_IN_MEMORY=nonMem, $
                              LUN=lun
 
@@ -93,12 +94,24 @@ PRO LOAD_ALF_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec,good_eSpec_i, $
      ;;    restore,NewellDBDir+NewellDBFile
      ;;    eSpec         = eSpec_culled
      ;; ENDIF ELSE BEGIN
-        PRINTF,lun,'Loading eSpec DB: ' + NewellDBDir+NewellDBFile + '...'
+        PRINTF,lun,'Loading Alfvén eSpec DB: ' + NewellDBDir+NewellDBFile + '...'
         RESTORE,NewellDBDir+NewellDBFile
 
-        PRINT,"Converting Alfvén eSpec DB to strict Newell interpretation ..."
-        CONVERT_ESPEC_TO_STRICT_NEWELL_INTERPRETATION,eSpec,eSpec,/HUGE_STRUCTURE,/VERBOSE
-     ;; ENDELSE
+        NEWELL_ESPEC__ADD_INFO_STRUCT,eSpec, $
+                                      DB_DATE=DB_date, $
+                                      DB_VERSION=DB_version, $
+                                      DB_EXTRAS=DB_extras, $
+                                      REDUCE_DBSIZE=reduce_dbSize, $
+                                      /IS_ALFNEWELL
+
+
+        IF ~KEYWORD_SET(dont_convert_to_strict_newell) THEN BEGIN
+           IF ~quiet THEN PRINT,"Converting Alfvén eSpec DB to strict Newell interpretation ..."
+           CONVERT_ESPEC_TO_STRICT_NEWELL_INTERPRETATION,eSpec,eSpec,/HUGE_STRUCTURE,/VERBOSE
+        ENDIF ELSE BEGIN
+           IF ~quiet THEN PRINT,'Not converting Alfvén eSpec to strict Newell interp ...'
+        ENDELSE
+
   ENDIF ELSE BEGIN
      PRINTF,lun,'eSpec DB already loaded! Not restoring ' + NewellDBFile + '...'
   ENDELSE

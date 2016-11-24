@@ -67,7 +67,6 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
      KEYWORD_SET(EA_binning): BEGIN
         h2dFluxN       = HIST2D__EQUAL_AREA_BINNING(mlts,$
                                                     horiz,$
-                                                    BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
                                                     MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
                                                     MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
 
