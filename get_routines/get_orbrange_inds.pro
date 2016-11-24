@@ -1,4 +1,5 @@
-FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun
+FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
+                           DONT_TRASH_BAD_ORBITS=keepJunk
 
   COMPILE_OPT idl2
 
@@ -14,6 +15,10 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun
 
   PRINTF,lun,FORMAT='("N inside  orb range",T30,":",T35,I0)',n_orb
   PRINTF,lun,FORMAT='("N outside orb range",T30,":",T35,I0)',n_not_orb
+
+  IF ~KEYWORD_SET(keepJunk) THEN BEGIN
+     ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs)
+  ENDIF
 
   RETURN,ind_orbs
 
