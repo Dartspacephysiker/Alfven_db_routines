@@ -58,7 +58,7 @@ FUNCTION FASTLOC_CLEANER,fastLoc, $
      
      
   PRINTF,lun,""
-  PRINTF,lun,"****From fastloc_cleaner.pro****"
+  PRINTF,lun,"****FASTLOC_CLEANER****"
 
   good_i = BASIC_DB_CLEANER(fastLoc,/CLEAN_NANS_AND_INFINITIES, $
                             SAMPLE_T_RESTRICTION=sample_t_restriction, $
@@ -77,7 +77,7 @@ FUNCTION FASTLOC_CLEANER,fastLoc, $
   ;; nlost = n_events-n_elements(good_i)
   ;; printf,lun,FORMAT='("N lost to user-defined cutoffs:",T35,I0)', nlost
 
-  PRINTF,lun,"****END fastloc_cleaner.pro****"
+  PRINTF,lun,"****END FASTLOC_CLEANER****"
   PRINTF,lun,""
 
   RETURN, good_i

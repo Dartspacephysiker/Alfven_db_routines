@@ -176,10 +176,17 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
      good_i = CGSETINTERSECTION(good_i,WHERE(ABS(maximus.char_ion_energy) LE char_ion_e_hcutOff AND ABS(maximus.char_ion_energy) GT char_ion_e_lcutoff,/NULL)) 
 
      ;; Now sample_t stuff
+     noSampTRestriction = KEYWORD_SET(disregard_sample_t)
+     IF ~noSampTRestriction THEN BEGIN
+        IF N_ELEMENTS(sample_t_restriction) GT 0 THEN BEGIN
+           noSampTRestriction = sample_t_restriction EQ 0
+        ENDIF
+     ENDIF
+
      CASE 1 OF
         ((N_ELEMENTS(sample_t_restriction) GT 0) OR $
          (KEYWORD_SET(disregard_sample_t))): BEGIN
-           IF ((sample_t_restriction EQ 0) OR KEYWORD_SET(disregard_sample_t)) THEN BEGIN
+           IF noSampTRestriction THEN BEGIN
               PRINT,'Screening by sample_t disabled ...'
            ENDIF ELSE BEGIN
               good_i = CGSETINTERSECTION(good_i, $

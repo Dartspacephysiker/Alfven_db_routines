@@ -22,6 +22,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           CHARERANGE=charERange, $
                           POYNTRANGE=poyntRange, $
                           SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                          INCLUDE_32HZ=include_32Hz, $
+                          DISREGARD_SAMPLE_T=disregard_sample_t, $
                           NUMORBLIM=numOrbLim, $
                           MASKMIN=maskMin, $
                           THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
@@ -60,10 +62,13 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
                           INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                           INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $
+                          NONALFVEN__NO_MAXIMUS=no_maximus, $
                           NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                           NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                          ;; FOR_ESPEC_DB=for_eSpec_DB, $
                           ESPEC__MLTS=eSpec__mlts, $
                           ESPEC__ILATS=eSpec__ilats, $
+                          ;; FOR_ION_DB=for_ion_DB, $
                           ION__MLTS=ion__mlts, $
                           ION__ILATS=ion__ilats, $
                           ESPEC_DELTA_T=eSpec_delta_t, $
@@ -215,7 +220,25 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
 
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
+  IF KEYWORD_SET(no_maximus) THEN BEGIN
+     CASE 1 OF
+        ( (N_ELEMENTS(eFlux_nonAlfven_data) GT 0) OR $
+          (N_ELEMENTS(eNumFlux_nonAlfven_data) GT 0) ): BEGIN
+           in_MLTS  = eSpec__mlts[indices__nonAlfven_eSpec]
+           in_ILATS = eSpec__ilats[indices__nonAlfven_eSpec]
+        END
+        ( (N_ELEMENTS(iFlux_nonAlfven_data) GT 0) OR $
+          (N_ELEMENTS(iNumFlux_nonAlfven_data) GT 0) ): BEGIN
+           in_MLTS  = ion__mlts[indices__nonAlfven_ion]
+           in_ILATS = ion__ilats[indices__nonAlfven_ion]
+        END
+     ENDCASE
+
+  ENDIF
+
   GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
+                           IN_MLTS=in_MLTs, $
+                           IN_ILATS=in_ILATs, $
                            MINM=minM, $
                            MAXM=maxM, $
                            BINM=binM, $
@@ -262,72 +285,80 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
      OR KEYWORD_SET(tHist_mask_bins_below_thresh) $
      OR KEYWORD_SET(numOrbLim) $
   THEN BEGIN 
-     tHistDenominator = GET_TIMEHIST_DENOMINATOR(fastLocInterped_i, $
-                                                 HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
-                                                 MINM=minM, $
-                                                 MAXM=maxM, $
-                                                 BINM=binM, $
-                                                 SHIFTM=shiftM, $
-                                                 MINI=minI, $
-                                                 MAXI=maxI, $
-                                                 BINI=binI, $
-                                                 EQUAL_AREA_BINNING=EA_binning, $
-                                                 DO_LSHELL=do_lshell, $
-                                                 MINL=minL, $
-                                                 MAXL=maxL, $
-                                                 BINL=binL, $
-                                                 HEMI=hemi, $
-                                                 OUT_FASTLOC_STRUCT=fastLoc, $
-                                                 FASTLOCOUTPUTDIR=txtOutputDir, $
-                                                 MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
-                                                 THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
-                                                 THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
-                                                 THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
-                                                 THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
-                                                 TMPLT_H2DSTR=tmplt_h2dStr, $
-                                                 H2DSTR=h2dStr, $
-                                                 DATANAME=dataName, $
-                                                 DATARAWPTR=dataRawPtr, $
-                                                 H2D_NONZERO_NEV_I=hEv_nz_i, $
-                                                 SAVE_FASTLOC_INDS=save_fastLoc_inds, $
-                                                 PARAMSTR_FOR_SAVING=paramStr, $
-                                                 IND_FILEDIR=ind_fileDir, $
-                                                 INDSFILEPREFIX=paramStrPrefix, $
-                                                 INDSFILESUFFIX=paramStrSuffix, $
-                                                 DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
-                                                 DONT_LOAD_IN_MEMORY=KEYWORD_SET(eFlux_nonAlfven_data) OR KEYWORD_SET(iFlux_nonAlfven_data), $
-                                                 BURSTDATA_EXCLUDED=burstData_excluded)
 
-     
-     IF KEYWORD_SET(tHist_mask_bins_below_thresh) THEN BEGIN
-        PRINT,'Applying min threshold (' + $
-              STRCOMPRESS(tHist_mask_bins_below_thresh,/REMOVE_ALL) $
-              + ' min) to mask based on tHist ...'
-        belowThresh_i = WHERE((tHistDenominator/60.) LT tHist_mask_bins_below_thresh,nBelow)
-        IF nBelow GT 0 THEN BEGIN
-           
-           new_i = CGSETDIFFERENCE(belowThresh_i, $
-                                   WHERE(h2dStrArr[KEYWORD_SET(nPlots)].data GT 250), $
-                                   COUNT=nNew)
-           IF nNew GT 0 THEN BEGIN
-              PRINT,'Masking an additional ' + $
-                    STRCOMPRESS(nNew,/REMOVE_ALL) + $
-                    " bins based on tHist thresh ..."
+     IF ~KEYWORD_SET(no_maximus) THEN BEGIN
+        tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
+                           fastLocInterped_i, $
+                           HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
+                           MINM=minM, $
+                           MAXM=maxM, $
+                           BINM=binM, $
+                           SHIFTM=shiftM, $
+                           MINI=minI, $
+                           MAXI=maxI, $
+                           BINI=binI, $
+                           EQUAL_AREA_BINNING=EA_binning, $
+                           DO_LSHELL=do_lshell, $
+                           MINL=minL, $
+                           MAXL=maxL, $
+                           BINL=binL, $
+                           HEMI=hemi, $
+                           OUT_FASTLOC_STRUCT=fastLoc, $
+                           FASTLOCOUTPUTDIR=txtOutputDir, $
+                           MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
+                           THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                           THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
+                           THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
+                           THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
+                           TMPLT_H2DSTR=tmplt_h2dStr, $
+                           H2DSTR=h2dStr, $
+                           DATANAME=dataName, $
+                           DATARAWPTR=dataRawPtr, $
+                           H2D_NONZERO_NEV_I=hEv_nz_i, $
+                           SAVE_FASTLOC_INDS=save_fastLoc_inds, $
+                           PARAMSTR_FOR_SAVING=paramStr, $
+                           IND_FILEDIR=ind_fileDir, $
+                           INDSFILEPREFIX=paramStrPrefix, $
+                           INDSFILESUFFIX=paramStrSuffix, $
+                           DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+                           DONT_LOAD_IN_MEMORY=KEYWORD_SET(eFlux_nonAlfven_data) OR $
+                           KEYWORD_SET(iFlux_nonAlfven_data) OR $
+                           KEYWORD_SET(eNumFlux_nonAlfven_data) OR $
+                           KEYWORD_SET(iNumFlux_nonAlfven_data), $
+                           BURSTDATA_EXCLUDED=burstData_excluded)
+
+        
+        IF KEYWORD_SET(tHist_mask_bins_below_thresh) THEN BEGIN
+           PRINT,'Applying min threshold (' + $
+                 STRCOMPRESS(tHist_mask_bins_below_thresh,/REMOVE_ALL) $
+                 + ' min) to mask based on tHist ...'
+           belowThresh_i = WHERE((tHistDenominator/60.) LT tHist_mask_bins_below_thresh,nBelow)
+           IF nBelow GT 0 THEN BEGIN
               
-              h2dStrArr[KEYWORD_SET(nPlots)].data[new_i] = 255
-           ENDIF ELSE BEGIN
-              PRINT,'No new bins to mask based on tHist thresh!'
-           ENDELSE
+              new_i = CGSETDIFFERENCE(belowThresh_i, $
+                                      WHERE(h2dStrArr[KEYWORD_SET(nPlots)].data GT 250), $
+                                      COUNT=nNew)
+              IF nNew GT 0 THEN BEGIN
+                 PRINT,'Masking an additional ' + $
+                       STRCOMPRESS(nNew,/REMOVE_ALL) + $
+                       " bins based on tHist thresh ..."
+                 
+                 h2dStrArr[KEYWORD_SET(nPlots)].data[new_i] = 255
+              ENDIF ELSE BEGIN
+                 PRINT,'No new bins to mask based on tHist thresh!'
+              ENDELSE
+           ENDIF
         ENDIF
-     ENDIF
 
 
-     IF keepMe THEN BEGIN 
-        IF KEYWORD_SET(tHistDenominatorPlot) THEN BEGIN
-           h2dStrArr     = [h2dStrArr,h2dStr] 
-           dataNameArr   = [dataNameArr,dataName] 
-           dataRawPtrArr = [dataRawPtrArr,dataRawPtr] 
+        IF keepMe THEN BEGIN 
+           IF KEYWORD_SET(tHistDenominatorPlot) THEN BEGIN
+              h2dStrArr     = [h2dStrArr,h2dStr] 
+              dataNameArr   = [dataNameArr,dataName] 
+              dataRawPtrArr = [dataRawPtrArr,dataRawPtr] 
+           ENDIF
         ENDIF
+
      ENDIF
 
      IF KEYWORD_SET(eFlux_nonAlfven_data) OR KEYWORD_SET(iFlux_nonAlfven_data) THEN BEGIN
@@ -416,6 +447,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                    MIN_MAGCURRENT=0, $
                                    MAX_NEGMAGCURRENT=0, $
                                    SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                                   INCLUDE_32HZ=include_32Hz, $
+                                   DISREGARD_SAMPLE_T=disregard_sample_t, $
                                    /GET_ALFVENDB_I, $
                                    /RESET_GOOD_INDS, $
                                    ;; /DO_NOT_SET_DEFAULTS, $ ;unfortunately we have to set defaults in order to get these indices
@@ -715,7 +748,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
   ;;########ELECTRON FLUX########
   IF KEYWORD_SET(eplots) THEN BEGIN
 
-     IF N_ELEMENTS(eFlux_nonAlfven_data) GT 0 THEN BEGIN
+     IF N_ELEMENTS(eFlux_nonAlfven_data) GT 0 AND ~KEYWORD_SET(no_maximus) THEN BEGIN
         GET_H2D_NEVENTS_AND_MASK,IN_MLTS=eSpec__mlts[indices__nonAlfven_eSpec], $
                                  IN_ILATS=eSpec__ilats[indices__nonAlfven_eSpec], $
                                  MINM=minM, $
@@ -1703,35 +1736,37 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
   ENDIF
 
   ;;NEWELL PLOTS
-  IF KEYWORD_SET(newellPlots) THEN BEGIN
-     GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
-                                MINM=minM,MAXM=maxM, $
-                                BINM=binM, $
-                                SHIFTM=shiftM, $
-                                MINI=minI,MAXI=maxI,BINI=binI, $
-                                EQUAL_AREA_BINNING=EA_binning, $
-                                NEWELL_PLOTRANGE=newell_plotRange, $
-                                LOG_NEWELLPLOT=log_newellPlot, $
-                                NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
-                                NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
-                                NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
-                                TMPLT_H2DSTR=tmplt_h2dStr, $
-                                H2DSTRS=h2dStrs, $
-                                H2DFLUXN=h2dFluxN, $
-                                NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
-                                ;; MASKMIN=maskMin, $
-                                DATANAMES=dataNames, $
-                                DATARAWPTRS=dataRawPtrs, $
-                                CB_FORCE_OOBHIGH=cb_force_oobHigh, $
-                                CB_FORCE_OOBLOW=cb_force_oobLow, $
-                                PRINT_MANDM=print_mAndM, $
-                                LUN=lun
+  IF KEYWORD_SET(newellPlots) AND ~KEYWORD_SET(no_maximus) THEN BEGIN
+        GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
+                                   MINM=minM,MAXM=maxM, $
+                                   BINM=binM, $
+                                   SHIFTM=shiftM, $
+                                   MINI=minI,MAXI=maxI,BINI=binI, $
+                                   EQUAL_AREA_BINNING=EA_binning, $
+                                   NEWELL_PLOTRANGE=newell_plotRange, $
+                                   LOG_NEWELLPLOT=log_newellPlot, $
+                                   NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
+                                   NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
+                                   NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
+                                   NONALFVEN__NO_MAXIMUS=no_maximus, $
+                                   INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
+                                   TMPLT_H2DSTR=tmplt_h2dStr, $
+                                   H2DSTRS=h2dStrs, $
+                                   H2DFLUXN=h2dFluxN, $
+                                   NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
+                                   ;; MASKMIN=maskMin, $
+                                   DATANAMES=dataNames, $
+                                   DATARAWPTRS=dataRawPtrs, $
+                                   CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                   CB_FORCE_OOBLOW=cb_force_oobLow, $
+                                   PRINT_MANDM=print_mAndM, $
+                                   LUN=lun
 
-     h2dStrArr            = [h2dStrArr,h2dStrs]
-     IF keepMe THEN BEGIN 
-        dataNameArr       = [dataNameArr,dataNames] 
-        dataRawPtrArr     = [dataRawPtrArr,dataRawPtrs] 
-     ENDIF
+        h2dStrArr            = [h2dStrArr,h2dStrs]
+        IF keepMe THEN BEGIN 
+           dataNameArr       = [dataNameArr,dataNames] 
+           dataRawPtrArr     = [dataRawPtrArr,dataRawPtrs] 
+        ENDIF
 
   ENDIF
 
@@ -1769,8 +1804,6 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
         dataNameArr       = [dataNameArr,dataNames] 
         dataRawPtrArr     = [dataRawPtrArr,dataRawPtrs] 
      ENDIF
-
-
 
   ENDIF
 

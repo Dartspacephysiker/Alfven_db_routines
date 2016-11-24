@@ -10,6 +10,9 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                                NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                                NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
+                               NONALFVEN__NO_MAXIMUS=no_maximus, $
+                               ;; NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                               INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                                TMPLT_H2DSTR=tmplt_h2dStr, $
                                H2DSTRS=h2dStrs, $
                                ;; H2DMASKSTR=h2dMaskStr, $
@@ -32,32 +35,45 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
   @common__maximus_vars.pro
   ;; COMMON M_VARS
 
-  despun       = MAXIMUS__despun
+  IF ~KEYWORD_SET(no_maximus) THEN BEGIN
+     despun       = MAXIMUS__despun
+  ENDIF
 
   ;; LOAD_MAXIMUS_AND_CDBTIME,!NULL,!NULL,DO_DESPUNDB=despun,/CHECK_DB,/QUIET
 
-  IF N_ELEMENTS(NWLL_ALF__eSpec) EQ 0 OR N_ELEMENTS(NWLL_ALF__good_alf_i) EQ 0 THEN BEGIN
-     LOAD_ALF_NEWELL_ESPEC_DB,espec,good_alf_i,DESPUN_ALF_DB=despun
+  IF ~KEYWORD_SET(no_maximus) THEN BEGIN
+     IF N_ELEMENTS(NWLL_ALF__eSpec) EQ 0 OR N_ELEMENTS(NWLL_ALF__good_alf_i) EQ 0 THEN BEGIN
+        LOAD_ALF_NEWELL_ESPEC_DB,espec,good_alf_i,DESPUN_ALF_DB=despun
+     ENDIF ELSE BEGIN
+        eSpec            = NWLL_ALF__eSpec
+        good_eSpec_i     = NWLL_ALF__good_eSpec_i
+        good_alf_i       = NWLL_ALF__good_alf_i
+     ENDELSE
+
+     plot_i__good_espec  = CGSETINTERSECTION(plot_i,good_alf_i,INDICES_B=temp_eSpec_indices)
+
+     tmp_eSpec           = { x:eSpec.x[temp_eSpec_indices], $
+                             orbit:eSpec.orbit[temp_eSpec_indices], $
+                             MLT:eSpec.mlt[temp_eSpec_indices], $
+                             ILAT:eSpec.ilat[temp_eSpec_indices], $
+                             ALT:eSpec.alt[temp_eSpec_indices], $
+                             mono:eSpec.mono[temp_eSpec_indices], $
+                             broad:eSpec.broad[temp_eSpec_indices], $
+                             diffuse:eSpec.diffuse[temp_eSpec_indices], $
+                             Je:eSpec.Je[temp_eSpec_indices], $
+                             Jee:eSpec.Jee[temp_eSpec_indices], $
+                             nBad_eSpec:eSpec.nBad_eSpec[temp_eSpec_indices]}
+
   ENDIF ELSE BEGIN
-     eSpec            = NWLL_ALF__eSpec
-     good_eSpec_i     = NWLL_ALF__good_eSpec_i
-     good_alf_i       = NWLL_ALF__good_alf_i
+     LOAD_NEWELL_ESPEC_DB,tmp_eSpec
+
+     tmp_eSpec        = {mlt      : tmp_eSpec.mlt[indices__nonAlfven_eSpec], $
+                         ilat     : tmp_eSpec.ilat[indices__nonAlfven_eSpec], $
+                         mono     : tmp_eSpec.mono[indices__nonAlfven_eSpec], $
+                         broad    : tmp_eSpec.broad[indices__nonAlfven_eSpec], $
+                         diffuse  : tmp_eSpec.diffuse[indices__nonAlfven_eSpec]}
   ENDELSE
 
-  plot_i__good_espec  = CGSETINTERSECTION(plot_i,good_alf_i,INDICES_B=temp_eSpec_indices)
-
-
-  tmp_eSpec           = { x:eSpec.x[temp_eSpec_indices], $
-                          orbit:eSpec.orbit[temp_eSpec_indices], $
-                          MLT:eSpec.mlt[temp_eSpec_indices], $
-                          ILAT:eSpec.ilat[temp_eSpec_indices], $
-                          ALT:eSpec.alt[temp_eSpec_indices], $
-                          mono:eSpec.mono[temp_eSpec_indices], $
-                          broad:eSpec.broad[temp_eSpec_indices], $
-                          diffuse:eSpec.diffuse[temp_eSpec_indices], $
-                          Je:eSpec.Je[temp_eSpec_indices], $
-                          Jee:eSpec.Jee[temp_eSpec_indices], $
-                          nBad_eSpec:eSpec.nBad_eSpec[temp_eSpec_indices]}
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Indices
