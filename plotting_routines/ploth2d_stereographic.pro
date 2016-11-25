@@ -472,7 +472,13 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
               tmpLons = ( (ea.minM+ea.maxM)/2. + temp.shift1 )* 15.
               tmpLats = (ea.mini+ea.maxi)/2.
 
-              ;; h2dTmp[WHERE(masked)] = 0.0D
+              IF (WHERE(masked))[0] NE -1 THEN BEGIN
+                 ;; h2dTmp[WHERE(masked)] = 0.0D
+                 h2dTmp = h2dTmp[WHERE(~masked)]
+                 tmpLons = tmpLons[WHERE(~masked)]
+                 tmpLats = tmpLats[WHERE(~masked)]
+              ENDIF
+
               ;; this    = SORT(tmpLons)
               ;; tmpLons = tmpLons[this]
               ;; tmpLats = tmpLats[this]
@@ -499,9 +505,12 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
               tmpLons  = tmpLons[   *,0:-2]
               tmpLats  = tmpLats[0:-2,*   ]
               tmpLats  = tmpLats[   *,0:-2]
-              ;; IF (WHERE(masked))[0] NE -1 THEN BEGIN
-              ;;    h2dTmp[WHERE(masked)] = !VALUES.F_NaN
-              ;; ENDIF
+              IF (WHERE(masked))[0] NE -1 THEN BEGIN
+                 ;; h2dTmp[WHERE(masked)] = 0.0D
+                 h2dTmp = h2dTmp[WHERE(~masked)]
+                 tmpLons = tmpLons[WHERE(~masked)]
+                 tmpLats = tmpLats[WHERE(~masked)]
+              ENDIF
 
               ;; tmpLons = centersMLT
               ;; tmpLats = centersILAT
