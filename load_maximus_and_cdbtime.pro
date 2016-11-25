@@ -59,6 +59,9 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   ;;commented out 2016/01/07 while checking out the despun database
   DefDBFile            = 'Dartdb_20151222--500-16361_inc_lower_lats--burst_1000-16361--w_Lshell--correct_pFlux--maximus.sav'
   DefDB_tFile          = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--cdbtime.sav'
+  DB_date              = '20151222'
+  DB_version           = 'v0.0'
+  DB_extras            = ''
 
   ;; defDespunDBFile      = 'Dartdb_20160107--502-16361_despun--maximus--pflux--lshell--burst--noDupes.sav'
   ;; defDespunDB_tFile    = 'Dartdb_20160107--502-16361_despun--cdbtime--noDupes.sav'
@@ -117,8 +120,13 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      DBDir='/SPENCEdata/Research/database/FAST/Chaston_et_al_2007--current_db/'
      DBFile = "maximus.dat"
      DB_tFile = "cdbtime.sav"
+     DB_date  = '2007'
+     DB_version = 'v0.0'
+     DB_extras  = 'vintage'
+
      correct_fluxes = 1
      MAXIMUS__is_chastDB = 1
+
   ENDIF ELSE BEGIN
      MAXIMUS__is_chastDB = 0
      IF KEYWORD_SET(despunDB) THEN BEGIN
@@ -144,9 +152,20 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      IF FILE_TEST(DBDir+DBFile) THEN BEGIN
         IF ~KEYWORD_SET(just_cdbTime) THEN BEGIN
            RESTORE,DBDir+DBFile
+
+           FASTDB__ADD_INFO_STRUCT,maximus, $
+                                   /FOR_ALFDB, $
+                                   DB_DATE=DB_date, $
+                                   DB_VERSION=DB_version, $
+                                   DB_EXTRAS=DB_extras
+
+           maximus.info.despun     = KEYWORD_SET(despunDB)
+           maximus.info.is_chastDB = MAXIMUS__is_chastDB
+
            MAXIMUS__maximus = maximus
-           MAXIMUS__maximus = CREATE_STRUCT(MAXIMUS__maximus,'DESPUN',KEYWORD_SET(despunDB))     
+           ;; MAXIMUS__maximus = CREATE_STRUCT(MAXIMUS__maximus,'DESPUN',KEYWORD_SET(despunDB))     
            MAXIMUS__despun  = KEYWORD_SET(despunDB)
+
         ENDIF
         MAXIMUS__dbFile  = DBFile
         MAXIMUS__dbDir   = DBDir
@@ -206,6 +225,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              DO_CHASTDB=chastDB, $
                              USING_HEAVIES=using_heavies, $
                              QUIET=quiet
+
   ENDIF ELSE BEGIN
      PRINTF,lun,"Not correcting fluxes in maximus ..."
   ENDELSE

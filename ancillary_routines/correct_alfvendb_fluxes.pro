@@ -122,7 +122,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
   ;;Find out if correction is applicable
   IF is_maximus THEN BEGIN
      IF TAG_EXIST(maximus,"CORRECTED_FLUXES") THEN BEGIN
-        IF maximus.corrected_fluxes THEN BEGIN
+        IF maximus.info.corrected_fluxes THEN BEGIN
            do_correction           = 0
         ENDIF ELSE BEGIN
            do_correction           = 1
@@ -280,6 +280,8 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
            correctStr += '-->26-PROTON_FLUX_UP' + STRING(10B)
            correctStr += '-->28-OXY_FLUX_UP' + STRING(10B)
            correctStr += '-->30-HELIUM_FLUX_UP' + STRING(10B)
+
+           maximus.info.mapped.heavies = 1
         ENDIF
      ENDIF
 
@@ -288,6 +290,8 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         maximus.esa_current       = maximus.esa_current * mapRatio.ratio
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->07-ESA_CURRENT'
         correctStr += '-->07-ESA_CURRENT' + STRING(10B)
+
+        maximus.info.mapped.esa_current = 1
      ENDIF
 
      ;;Added 2015/12/22
@@ -308,6 +312,8 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         maximus.pFluxEst          = maximus.pFluxEst         * mapRatio.ratio
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->49-PFLUXEST'
         correctStr += '-->49-PFLUXEST' + STRING(10B)
+
+        maximus.info.mapped.pFlux = 1
      ENDIF
 
      IF KEYWORD_SET(map_ionflux) THEN BEGIN
@@ -318,6 +324,8 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->16-ION_FLUX_UP'
         correctStr += '-->15-ION_FLUX' + STRING(10B)
         correctStr += '-->16-ION_FLUX_UP' + STRING(10B)
+
+        maximus.info.mapped.ion_flux = 1
      ENDIF
 
      ;; IF KEYWORD_SET(map_width_x) THEN BEGIN
@@ -328,7 +336,12 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
 
      ;;Now add the CORRECTED_FLUXES tag to maximus
      ;; maximus=CREATE_STRUCT(NAME='maximus',maximus,'CORRECTED_FLUXES',1)     
-     maximus                      = CREATE_STRUCT(maximus,'CORRECTED_FLUXES',1,'CORRECTED_STRING',correctStr)     
+     ;; IF TAG_EXIST(maximus,'info') THEN BEGIN
+     maximus.info.corrected_fluxes = 1B
+     maximus.info.corrected_string = correctStr
+     ;; ENDIF ELSE BEGIN
+     ;;    maximus                = CREATE_STRUCT(maximus,'CORRECTED_FLUXES',1,'CORRECTED_STRING',correctStr)
+     ;; ENDELSE
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'...Finished correcting fluxes in Alfvén DB!'
 
   ENDIF ELSE BEGIN

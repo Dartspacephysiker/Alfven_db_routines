@@ -57,16 +57,33 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      KEYWORD_SET(include_32Hz): BEGIN
         DefDBFile    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05.sav'
         DefDB_tFile  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--times.sav'
+        DB_date      = '20160505'
+        DB_version   = 'v0.0'
+        DB_extras    = 'samp_t_le_0.05'
 
         AACGM_file   = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--AACGM_coords.sav'
         GEO_file     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--GEO_coords.sav'
         MAG_file     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--MAG_coords.sav'
 
      END
+     KEYWORD_SET(for_eSpec_DBs): BEGIN
+        DefDBFile     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--smaller_datatypes--no_interval_startstop.sav'
+        DefDB_tFile   = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--times.sav'
+        DB_date       = '20160505'
+        DB_version    = 'v0.0'
+        DB_extras     = 'smaller_dataTypes/no_interval_startstop'
+        defCoordDir   = defDBDir + 'alternate_coords/'
+        is_128Hz      = 0
+        is_noRestrict = 1
+     END
      ELSE: BEGIN
         DefDBFile    = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01.sav'
         DefDB_tFile  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--times--noDupes--sample_freq_le_0.01.sav'
-        
+        DB_date      = '20160505'
+        DB_version   = 'v0.0'
+        DB_extras    = 'samp_t_le_0.01'
+        is_128Hz     = 1
+
         AACGM_file   = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_coords.sav'
         GEO_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--GEO_coords.sav'
         MAG_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--MAG_coords.sav'
@@ -75,10 +92,14 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   ENDCASE
 
   ;; DefESpecDBFile  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes.sav'
-  DefESpecDBFile     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--smaller_datatypes--no_interval_startstop.sav'
-  DefESpecDB_tFile   = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--times.sav'
-
-  defCoordDir        = defDBDir + 'alternate_coords/'
+  ;; DefESpecDBFile     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--smaller_datatypes--no_interval_startstop.sav'
+  ;; DefESpecDB_tFile   = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--times.sav'
+  ;; eSpecDB_date       = '20160505'
+  ;; eSpecDB_version    = 'v0.0'
+  ;; eSpecDB_extras     = 'smaller_dataTypes/no_interval_startstop'
+  ;; defCoordDir        = defDBDir + 'alternate_coords/'
+  ;; eSpecDB_is_128Hz   = 0
+  ;; eSpecDB_noRestrict = 1
 
   ;; IF KEYWORD_SET(check_DB) THEN BEGIN
   ;;    out_maximus  = N_ELEMENTS(MAXIMUS__maximus)     GT 0 ? MAXIMUS__maximus     : !NULL
@@ -98,21 +119,25 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   ENDIF
 
   IF N_ELEMENTS(DBFile) EQ 0 THEN BEGIN
-     IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-        PRINT,'Loading fastLoc for eSpec and ion DBs...'
-        DBFile                      = DefESpecDBFile
-     ENDIF ELSE BEGIN
+     ;; IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     ;;    PRINT,'Loading fastLoc for eSpec and ion DBs...'
+     ;;    DBFile                      = DefESpecDBFile
+     ;;    DB_date       = eSpecDB_date
+     ;;    DB_version    = eSpecDB_version
+     ;;    DB_extras     = eSpecDB_extras
+     ;;    is_noRestrict = eSpecDB_noRestrict
+     ;; ENDIF ELSE BEGIN
         DBFile                      = DefDBFile
-     ENDELSE
+     ;; ENDELSE
   ENDIF
 
   IF N_ELEMENTS(DB_tFile) EQ 0 THEN BEGIN
-     IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-        ;; PRINT,'Loading fastLoc times for eSpec and ion DBs...'
-        DB_tFile                    = DefESpecDB_tFile
-     ENDIF ELSE BEGIN
+     ;; IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     ;;    ;; PRINT,'Loading fastLoc times for eSpec and ion DBs...'
+     ;;    DB_tFile                    = DefESpecDB_tFile
+     ;; ENDIF ELSE BEGIN
         DB_tFile                    = DefDB_tFile
-     ENDELSE
+     ;; ENDELSE
   ENDIF
   
   IF ~KEYWORD_SET(just_times) THEN BEGIN
@@ -126,6 +151,17 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
            PRINT,"Couldn't load fastLoc!"
            STOP
         ENDIF
+
+        FASTDB__ADD_INFO_STRUCT,fastLoc, $
+                                /FOR_FASTLOC, $
+                                DB_DATE=DB_date, $
+                                DB_VERSION=DB_version, $
+                                DB_EXTRAS=DB_extras
+
+        fastLoc.info.is_32Hz       = KEYWORD_SET(include_32Hz)
+        fastLoc.info.is_128Hz      = KEYWORD_SET(is_128Hz)
+        fastLoc.info.is_noRestrict = KEYWORD_SET(is_noRestrict)
+        fastLoc.info.for_eSpecDB   = KEYWORD_SET(for_eSpec_DBs)
      ENDIF ELSE BEGIN
         PRINTF,lun,"There is already a fastLoc struct loaded! Not loading " + DBFile
      ENDELSE

@@ -28,10 +28,14 @@ PRO ALFDB_SWITCH_COORDS,dbStruct,coordStr,coordName
         
      ENDIF
 
-     IF TAG_EXIST(dbStruct,'coords') THEN BEGIN
-        dbStruct.coords = coordString
+     IF TAG_EXIST(dbStruct,'info') THEN BEGIN
+        dbStruct.info.coords = coordString
      ENDIF ELSE BEGIN
-        dbStruct        = CREATE_STRUCT(dbStruct,'COORDS',coordString)
+        IF TAG_EXIST(dbStruct,'coords') THEN BEGIN
+           dbStruct.coords = coordString
+        ENDIF ELSE BEGIN
+           dbStruct        = CREATE_STRUCT(dbStruct,'COORDS',coordString)
+        ENDELSE
      ENDELSE
 
   ENDFOR
