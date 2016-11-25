@@ -1,4 +1,4 @@
-PRO plot_fast_crossings,do_gif=no_gif
+PRO plot_fast_crossings,no_gif=no_gif
   
   @startup
   
