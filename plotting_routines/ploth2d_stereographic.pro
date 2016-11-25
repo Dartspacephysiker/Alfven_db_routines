@@ -39,6 +39,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           CB_FORCE_OOBHIGH=cb_force_oobhigh, $
                           CB_INFO=cb_info, $
                           EQ_SCALE_CT=eq_scale_ct, $
+                          PLOTH2D_CONTOUR=plotH2D_contour, $
+                          CENTERS_MLT=centersMLT, $
+                          CENTERS_ILAT=centersILAT, $
                           SHOW_INTEGRALS=show_integrals, $
                           DO_INTEGRAL_TXTFILE=do_integral_txtfile, $
                           DO_INTEGRAL_SAVFILE=do_integral_savfile, $
@@ -403,56 +406,180 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;;Scale this stuff
   ;;The reason for all the trickery is that we want to know what values are out of bounds,
   ;; and bytscl doesn't do things quite the way we need them done.
-  is_OOBHigh                      = 0
-  is_OOBLow                       = 0
-  OOB_HIGH_i                      = WHERE(temp.data GT temp.lim[1] AND ~masked)
-  OOB_LOW_i                       = WHERE(temp.data LT temp.lim[0] AND ~masked)
+  is_OOBHigh              = 0
+  is_OOBLow               = 0
+  OOB_HIGH_i              = WHERE(temp.data GT temp.lim[1] AND ~masked)
+  OOB_LOW_i               = WHERE(temp.data LT temp.lim[0] AND ~masked)
 
   IF KEYWORD_SET(cb_force_oobHigh) THEN BEGIN
-     temp.force_oobHigh           = 1
+     temp.force_oobHigh   = 1
   ENDIF
   IF KEYWORD_SET(cb_force_oobLow) THEN BEGIN
-     temp.force_oobLow            = 1
+     temp.force_oobLow    = 1
   ENDIF
 
   IF OOB_HIGH_i[0] NE -1 OR temp.force_oobHigh THEN BEGIN
-     is_OOBHigh                   = 1
+     is_OOBHigh           = 1
   ENDIF
 
   IF OOB_LOW_i[0] NE -1 OR temp.force_oobLow THEN BEGIN
-     is_OOBLow                    = 1
+     is_OOBLow            = 1
   ENDIF
 
-  h2descl[notMasked]              = BYTSCL(temp.data[notMasked], $
-                                           top=nLevels-1-is_OOBHigh-is_OOBLow, $
-                                           MAX=temp.lim[1], $
-                                           MIN=temp.lim[0] ) + is_OOBLow
+  h2descl[notMasked]      = BYTSCL(temp.data[notMasked], $
+                                   TOP=nLevels-1-is_OOBHigh-is_OOBLow, $
+                                   MAX=temp.lim[1], $
+                                   MIN=temp.lim[0] ) + is_OOBLow
 
   IF OOB_HIGH_i[0] NE -1 THEN BEGIN
-     h2descl[OOB_HIGH_i]          = BYTE(nLevels-1)
+     h2descl[OOB_HIGH_i]  = BYTE(nLevels-1)
   ENDIF
   IF OOB_LOW_i[0] NE -1 THEN BEGIN
-     h2descl[OOB_LOW_i]           = 0B
+     h2descl[OOB_LOW_i]   = 0B
   ENDIF
 
   ;;******************************
   ;;PLOT STUFF
   ;;******************************
   ;;Get polyfill vertices
-  lonsLats                        = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(mlts,ilats, $
-                                                                            EQUAL_AREA_BINNING=EA_binning, $
-                                                                            BINSIZE_LON=binM, $
-                                                                            SHIFT_LON=temp.shift1, $
-                                                                            BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
-                                                                            /CONVERT_MLT_TO_LON, $
-                                                                            /MOREPOINTS, $
-                                                                            COUNTERCLOCKWISE=KEYWORD_SET(reverse_lShell))
+  CASE 1 OF
+     KEYWORD_SET(plotH2D_contour): BEGIN
 
-  ;;Fill up dat plot
-  H2D_STEREOGRAPHIC_EXECUTE_POLYFILL,lonsLats,h2descl, $
-                                     EQUAL_AREA_BINNING=EA_binning, $
-                                     H2D_MASKED=masked, $
-                                     MASKCOLOR=maskColor
+        h2dTmp =  DOUBLE(temp.data)
+
+        CASE 1 OF
+           KEYWORD_SET(EA_binning): BEGIN
+              ;; tmpLons = (mlts+temp.shift1)*15.
+              ;; tmpLats = ilats
+
+              tmpLons = ( (ea.minM+ea.maxM)/2. + temp.shift1 )* 15.
+              tmpLats = (ea.mini+ea.maxi)/2.
+
+              ;; h2dTmp[WHERE(masked)] = 0.0D
+              ;; this    = SORT(tmpLons)
+              ;; tmpLons = tmpLons[this]
+              ;; tmpLats = tmpLats[this]
+              ;; h2dTmp  = h2dTmp[this]
+           END
+           ELSE: BEGIN
+              ;; h2dTmp = h2dTmp[0:-2,*]
+              ;; h2dTmp = h2dTmp[*,0:-2]
+              ;; masked  = masked[0:-2,*]
+              ;; masked  = masked[*,0:-2]
+
+              tmpMasked = masked
+
+              h2dTmp   [-1,*] = h2dTmp[0,*]
+              tmpMasked[-1,*] = tmpMasked[0,*]
+              tmpNotMasked    = WHERE(~tmpMasked)
+
+              h2dTmp  = h2dTmp[0:-2,*   ]
+              h2dTmp  = h2dTmp[   *,0:-2]
+              tmpLons = centersMLT + binM/2.*15.
+              tmpLats = centersILAT + binI/2
+
+              tmpLons  = tmpLons[0:-2,*   ]
+              tmpLons  = tmpLons[   *,0:-2]
+              tmpLats  = tmpLats[0:-2,*   ]
+              tmpLats  = tmpLats[   *,0:-2]
+              ;; IF (WHERE(masked))[0] NE -1 THEN BEGIN
+              ;;    h2dTmp[WHERE(masked)] = !VALUES.F_NaN
+              ;; ENDIF
+
+              ;; tmpLons = centersMLT
+              ;; tmpLats = centersILAT
+              ;; tmpLons = centersMLT [0:-2,*   ]
+              ;; tmpLons = centersMLT [   *,0:-2]
+              ;; tmpLats = centersILAT[0:-2,*   ]
+              ;; tmpLats = centersILAT[   *,0:-2]
+
+              ;; FOR k=0,N_ELEMENTS(mlts)  DO PRINT,tmpLats[k,0],tmpLons[k,0]
+              ;; FOR k=0,N_ELEMENTS(ilats) DO PRINT,tmpLats[0,k],tmpLons[0,k]
+           END
+        ENDCASE
+
+        lonDelta = 1.0
+        latDelta = 1.0
+        ;; nX       = (maxM-minM)/lonDelta*15.
+        ;; ny       = (maxI-minI)/latDelta
+        ;; outLons = FINDGEN(nX)            # REPLICATE(lonDelta,nY) + lonDelta/2.0
+        ;; outLats = REPLICATE(latDelta,nX) # FINDGEN(nY) + minI + latDelta/2.0
+        nX       = (maxM-minM)/lonDelta*15.+1
+        ny       = (maxI-minI)/latDelta+1
+        outLons = FINDGEN(nX)            # REPLICATE(lonDelta,nY)
+        outLats = REPLICATE(latDelta,nX) # FINDGEN(nY) + minI
+
+        ;; IF KEYWORD_SET(EA_binning) THEN BEGIN
+        ;;    TRIANGULATE,tmpLons,tmpLats,FVALUE=h2dTmp,SPHERE=sph,/DEGREES
+        ;;    bro = TRIGRID(h2dTmp,SPHERE=sph,[lonDelta,latDelta],[lim[1],lim[0],lim[3],lim[2]],/DEGREES)
+        ;; ENDIF
+
+        ;;temporarily flatten
+        tmpDim = SIZE(h2dTmp,/DIM)
+        h2dTmp = REFORM(h2dTmp,N_ELEMENTS(h2dTmp))
+        tmpLons = REFORM(tmpLons,N_ELEMENTS(tmpLons))
+        tmpLats = REFORM(tmpLats,N_ELEMENTS(tmpLats))
+        newescl = MIN_CURVE_SURF(DOUBLE(h2dTmp), DOUBLE(tmpLons), DOUBLE(tmpLats), $
+                                 /SPHERE, $
+                                 ;; /TPS, $
+                                 CONST=KEYWORD_SET(EA_binning), $
+                                 XPOUT=outLons,YPOUT=outLats, $
+                                 /DOUBLE)
+
+        newescl      = BYTSCL(newescl, $
+                              TOP=nLevels-1-is_OOBHigh-is_OOBLow, $
+                              MAX=temp.lim[1], $
+                              MIN=temp.lim[0] ) + is_OOBLow
+
+        nCLevels = 9
+        cLevels  = [0,ROUND((FINDGEN(nCLevels-1)+1)*nLevels/(nCLevels-1))]
+        defgridcolor = 'black' 
+        ;; CONTOUR,h2dTmp, $
+        ;;         tmpLons, $
+        ;;         tmpLats, $
+        CONTOUR,newescl, $
+                outLons, $
+                outLats, $
+                ;; /IRREGULAR, $
+                LEVELS=cLevels, $
+                /CELL_FILL, $
+                C_COLORS=cLevels, $
+                /OVERPLOT
+
+        ;; lat = REPLICATE(10., 37) # FINDGEN(19) - 90.
+        ;; lon = FINDGEN(37) # REPLICATE(10, 19)
+        ;; Convert lat and lon to Cartesian coordinates:
+        ;; X = COS(!DTOR * lon) * COS(!DTOR * lat)
+        ;; Y = SIN(!DTOR * lon) * COS(!DTOR * lat)
+        ;; Z = SIN(!DTOR * lat)
+        ;; Create the function to be plotted, set it equal
+        ;; to the distance squared from (1,1,1):
+        ;; F = (X-1.)^2 + (Y-1.)^2 + (Z-1.)^2
+        ;; CONTOUR, F, lon, lat, NLEVELS=7, $
+        ;;          /OVERPLOT, /DOWNHILL, /FOLLOW
+        ;; cgColorFill,tempLons,tempLats, $
+        ;;             COLOR=(h2d_masked[j]) ? maskColor : h2dScaledData[j]
+
+     END
+     ELSE: BEGIN
+        lonsLats  = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(mlts,ilats, $
+                                                            EQUAL_AREA_BINNING=EA_binning, $
+                                                            BINSIZE_LON=binM, $
+                                                            SHIFT_LON=temp.shift1, $
+                                                            BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
+                                                            /CONVERT_MLT_TO_LON, $
+                                                            /MOREPOINTS, $
+                                                            COUNTERCLOCKWISE=KEYWORD_SET(reverse_lShell))
+
+        ;;Fill up dat plot
+        H2D_STEREOGRAPHIC_EXECUTE_POLYFILL,lonsLats,h2descl, $
+                                           EQUAL_AREA_BINNING=EA_binning, $
+                                           H2D_MASKED=masked, $
+                                           MASKCOLOR=maskColor
+
+     END
+  ENDCASE
+
   ;;Calc an integral?
   IF temp.do_plotIntegral OR $
      KEYWORD_SET(do_integral_txtfile) OR $

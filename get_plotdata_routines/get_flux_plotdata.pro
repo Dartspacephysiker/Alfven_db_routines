@@ -1281,8 +1281,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      ;;                   EQUAL_AREA_BINNING=EA_binning
      ;; dayInds    = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
      ;; nightInds  = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
-     dayInds    = WHERE(centersMLT GE 11*15 AND centersMLT LT 15*15 AND ~h2dMask)
-     nightInds  = WHERE((centersMLT GE 21*15 OR centersMLT LT 1*15) AND ~h2dMask)
+     IF N_ELEMENTS(centersMLT) GT 0 THEN BEGIN
+        dayInds    = WHERE(centersMLT GE 11*15 AND centersMLT LT 15*15 AND ~h2dMask)
+        nightInds  = WHERE((centersMLT GE 21*15 OR centersMLT LT 1*15) AND ~h2dMask)
 
      ;; nightMaxes = GET_N_MAXIMA_IN_ARRAY(h2dstr.data[nightinds], $
      ;;                                   N=10, $
@@ -1293,15 +1294,16 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      
      ;; dayMaxes   = MAX(h2dstr.data[dayinds],maxdayindii)
 
-     dayMax   = MAX(h2dstr.data[dayinds],maxdayindii)
-     nightMax = MAX(h2dstr.data[nightinds],maxnightindii)
+        dayMax   = MAX(h2dstr.data[dayinds],maxdayindii)
+        nightMax = MAX(h2dstr.data[nightinds],maxnightindii)
 
-     PRINT,"Day max (MLT,ILAT): ",dayMax, $
-           '(' + STRCOMPRESS(centersmlt[dayinds[maxdayindii]]/15.,/REMOVE_ALL), $
-           ', ' + STRCOMPRESS(centersilat[dayinds[maxdayindii]]) + ')'
-     PRINT,"Night max (MLT,ILAT): ",nightMax, $
-           '(' + STRCOMPRESS(centersmlt[nightinds[maxnightindii]]/15.,/REMOVE_ALL), $
-           ', ' + STRCOMPRESS(centersilat[nightinds[maxnightindii]]) + ')'
+        PRINT,"Day max (MLT,ILAT): ",dayMax, $
+              '(' + STRCOMPRESS(centersmlt[dayinds[maxdayindii]]/15.,/REMOVE_ALL), $
+              ', ' + STRCOMPRESS(centersilat[dayinds[maxdayindii]]) + ')'
+        PRINT,"Night max (MLT,ILAT): ",nightMax, $
+              '(' + STRCOMPRESS(centersmlt[nightinds[maxnightindii]]/15.,/REMOVE_ALL), $
+              ', ' + STRCOMPRESS(centersilat[nightinds[maxnightindii]]) + ')'
+     ENDIF
 
      IF KEYWORD_SET(grossRateMe) THEN BEGIN
         grossFmt      = 'G18.6'
