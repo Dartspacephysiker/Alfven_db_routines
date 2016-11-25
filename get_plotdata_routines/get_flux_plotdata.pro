@@ -189,7 +189,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.title  = title__alfDB_ind_10__div_by_width_x
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.despun
+                                    DO_DESPUNDB=maximus.info.despun
               ;; magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
               h2dStr.grossFac  = 1e9
@@ -226,7 +226,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.title  = title__alfDB_ind_11__div_by_width_x
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.despun
+                                    DO_DESPUNDB=maximus.info.despun
               ;; magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
            ENDIF
@@ -332,7 +332,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.title  = title__alfDB_ind_11__div_by_width_x
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.despun
+                                    DO_DESPUNDB=maximus.info.despun
               ;; magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
            ENDIF
@@ -351,7 +351,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.despun
+                                    DO_DESPUNDB=maximus.info.despun
               ;; magFieldFactor = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
               magFieldFactor = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
 
@@ -422,7 +422,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
               h2dStr.title     = title__alfDB_esa_nFlux_integ
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.despun
+                                    DO_DESPUNDB=maximus.info.despun
               IF maximus.corrected_fluxes THEN BEGIN ;Assume that ESA current has been multiplied by mapRatio
                  PRINT,'Undoing a square-root factor of multiplication by magField ratio for ESA number flux...'
                  ;; magFieldFactor        = 1.D/SQRT(mapRatio.ratio[tmp_i]) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
@@ -569,7 +569,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      IF KEYWORD_SET(multiply_by_width_x) THEN BEGIN
         h2dStr.title     = title__alfDB_ind_49_integ
         LOAD_MAPPING_RATIO_DB,mapRatio, $
-                              DO_DESPUNDB=maximus.despun
+                              DO_DESPUNDB=maximus.info.despun
         IF maximus.corrected_fluxes THEN BEGIN ;Assume that pFlux has been multiplied by mapRatio
            PRINT,'Undoing a square-root factor of multiplication by magField ratio for Poynting flux ...'
            IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
@@ -661,7 +661,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.title  = title__alfDB_ind_17__div_by_width_x
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.despun
+                                    DO_DESPUNDB=maximus.info.despun
               ;; magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
            ENDIF
@@ -691,7 +691,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.title  = title__alfDB_ind_18__div_by_width_x
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.despun
+                                    DO_DESPUNDB=maximus.info.despun
               ;; magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
 
