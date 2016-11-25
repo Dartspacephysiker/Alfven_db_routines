@@ -444,14 +444,15 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
        KEYWORD_SET(do_integral_savfile) OR $
        KEYWORD_SET(show_integrals)) $
   THEN BEGIN
-     lonsLats  = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(mlts,ilats, $
-                                                         EQUAL_AREA_BINNING=EA_binning, $
-                                                         BINSIZE_LON=binM, $
-                                                         SHIFT_LON=temp.shift1, $
-                                                         BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
-                                                         /CONVERT_MLT_TO_LON, $
-                                                         /MOREPOINTS, $
-                                                         COUNTERCLOCKWISE=KEYWORD_SET(reverse_lShell))
+     lonsLats  = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES( $
+                 mlts,ilats, $
+                 EQUAL_AREA_BINNING=EA_binning, $
+                 BINSIZE_LON=binM, $
+                 SHIFT_LON=temp.shift1, $
+                 BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
+                 /CONVERT_MLT_TO_LON, $
+                 /MOREPOINTS, $
+                 COUNTERCLOCKWISE=KEYWORD_SET(reverse_lShell))
   ENDIF
 
   ;;******************************
