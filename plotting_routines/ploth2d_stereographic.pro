@@ -438,6 +438,22 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      h2descl[OOB_LOW_i]   = 0B
   ENDIF
 
+  IF ~KEYWORD_SET(plotH2D_contour) OR $
+     ( temp.do_plotIntegral OR $
+       KEYWORD_SET(do_integral_txtfile) OR $
+       KEYWORD_SET(do_integral_savfile) OR $
+       KEYWORD_SET(show_integrals)) $
+  THEN BEGIN
+     lonsLats  = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(mlts,ilats, $
+                                                         EQUAL_AREA_BINNING=EA_binning, $
+                                                         BINSIZE_LON=binM, $
+                                                         SHIFT_LON=temp.shift1, $
+                                                         BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
+                                                         /CONVERT_MLT_TO_LON, $
+                                                         /MOREPOINTS, $
+                                                         COUNTERCLOCKWISE=KEYWORD_SET(reverse_lShell))
+  ENDIF
+
   ;;******************************
   ;;PLOT STUFF
   ;;******************************
@@ -562,14 +578,6 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
      END
      ELSE: BEGIN
-        lonsLats  = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(mlts,ilats, $
-                                                            EQUAL_AREA_BINNING=EA_binning, $
-                                                            BINSIZE_LON=binM, $
-                                                            SHIFT_LON=temp.shift1, $
-                                                            BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
-                                                            /CONVERT_MLT_TO_LON, $
-                                                            /MOREPOINTS, $
-                                                            COUNTERCLOCKWISE=KEYWORD_SET(reverse_lShell))
 
         ;;Fill up dat plot
         H2D_STEREOGRAPHIC_EXECUTE_POLYFILL,lonsLats,h2descl, $
