@@ -53,6 +53,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
   ;; DefDBFile       = 'fastLoc_intervals4--500-16361--below_aur_oval--20160213--noDupes--sample_freq_le_0.01.sav'
 
+  defCoordDir        = defDBDir + 'alternate_coords/'
   CASE 1 OF
      KEYWORD_SET(include_32Hz): BEGIN
         DefDBFile    = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05.sav'
@@ -97,7 +98,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   ;; eSpecDB_date       = '20160505'
   ;; eSpecDB_version    = 'v0.0'
   ;; eSpecDB_extras     = 'smaller_dataTypes/no_interval_startstop'
-  ;; defCoordDir        = defDBDir + 'alternate_coords/'
+  ;; 
   ;; eSpecDB_is_128Hz   = 0
   ;; eSpecDB_noRestrict = 1
 
@@ -250,7 +251,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         IF N_ELEMENTS(maximus) GT 0 THEN BEGIN
            CASE 1 OF
               TAG_EXIST(maximus,'coords'): BEGIN
-                 IF STRLOWCASE(fastLoc.coords) NE STRLOWCASE(maximus.coords) THEN BEGIN
+                 IF STRLOWCASE(fastLoc.info.coords) NE STRLOWCASE(maximus.info.coords) THEN BEGIN
                     PRINT,'Mismatched coordinate systems!'
                     STOP
                  ENDIF 
