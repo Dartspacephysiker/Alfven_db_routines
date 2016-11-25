@@ -48,7 +48,7 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i
   IF KEYWORD_SET(broken) THEN STOP
 
   FOR k=0,N_ELEMENTS(individual_blackballOrbs)-1 DO BEGIN
-     opener = STRING(FORMAT='("Blackball orbit ",I0,T25," : ")',individual_blackballOrbs[k])
+     opener = STRING(FORMAT='("Blackball orbit ",I0,T30," : ")',individual_blackballOrbs[k])
 
      ;; blackBall_i = WHERE(dbStruct.orbit EQ individual_blackballOrbs[k],nBlackBall)
      blackBall_ii = WHERE(dbStruct.orbit[good_i] EQ individual_blackballOrbs[k],nBlackBall, $
