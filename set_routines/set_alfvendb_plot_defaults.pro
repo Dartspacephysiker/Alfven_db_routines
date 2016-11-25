@@ -46,6 +46,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
                                OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
                                KEEPME=keepMe, $
                                PARAMSTRING=paramString,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
+                               PLOTH2D_CONTOUR=plotH2D_contour, $
                                HOYDIA=hoyDia,LUN=lun, $
                                DONT_CORRECT_ILATS=dont_correct_ilats, $
                                DO_NOT_SET_DEFAULTS=do_not_set_defaults
@@ -232,8 +233,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
 
   ;;doing polar contour?
   polarContStr=''
-  IF KEYWORD_SET(polarContour) THEN BEGIN
-     polarContStr='--polarCont'
+  IF KEYWORD_SET(plotH2D_contour) THEN BEGIN
+     polarContStr='--cont'
   ENDIF
 
   ;; paramString=hoyDia+'--'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
