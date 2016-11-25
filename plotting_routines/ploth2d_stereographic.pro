@@ -444,14 +444,15 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
        KEYWORD_SET(do_integral_savfile) OR $
        KEYWORD_SET(show_integrals)) $
   THEN BEGIN
-     lonsLats  = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES(mlts,ilats, $
-                                                         EQUAL_AREA_BINNING=EA_binning, $
-                                                         BINSIZE_LON=binM, $
-                                                         SHIFT_LON=temp.shift1, $
-                                                         BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
-                                                         /CONVERT_MLT_TO_LON, $
-                                                         /MOREPOINTS, $
-                                                         COUNTERCLOCKWISE=KEYWORD_SET(reverse_lShell))
+     lonsLats  = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES( $
+                 mlts,ilats, $
+                 EQUAL_AREA_BINNING=EA_binning, $
+                 BINSIZE_LON=binM, $
+                 SHIFT_LON=temp.shift1, $
+                 BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
+                 /CONVERT_MLT_TO_LON, $
+                 /MOREPOINTS, $
+                 COUNTERCLOCKWISE=KEYWORD_SET(reverse_lShell))
   ENDIF
 
   ;;******************************
@@ -471,7 +472,13 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
               tmpLons = ( (ea.minM+ea.maxM)/2. + temp.shift1 )* 15.
               tmpLats = (ea.mini+ea.maxi)/2.
 
-              ;; h2dTmp[WHERE(masked)] = 0.0D
+              IF (WHERE(masked))[0] NE -1 THEN BEGIN
+                 ;; h2dTmp[WHERE(masked)] = 0.0D
+                 h2dTmp = h2dTmp[WHERE(~masked)]
+                 tmpLons = tmpLons[WHERE(~masked)]
+                 tmpLats = tmpLats[WHERE(~masked)]
+              ENDIF
+
               ;; this    = SORT(tmpLons)
               ;; tmpLons = tmpLons[this]
               ;; tmpLats = tmpLats[this]
@@ -498,9 +505,12 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
               tmpLons  = tmpLons[   *,0:-2]
               tmpLats  = tmpLats[0:-2,*   ]
               tmpLats  = tmpLats[   *,0:-2]
-              ;; IF (WHERE(masked))[0] NE -1 THEN BEGIN
-              ;;    h2dTmp[WHERE(masked)] = !VALUES.F_NaN
-              ;; ENDIF
+              IF (WHERE(masked))[0] NE -1 THEN BEGIN
+                 ;; h2dTmp[WHERE(masked)] = 0.0D
+                 h2dTmp = h2dTmp[WHERE(~masked)]
+                 tmpLons = tmpLons[WHERE(~masked)]
+                 tmpLats = tmpLats[WHERE(~masked)]
+              ENDIF
 
               ;; tmpLons = centersMLT
               ;; tmpLats = centersILAT
