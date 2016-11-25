@@ -110,7 +110,7 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
 
   newell_nonzero_nEv_i  = WHERE(h2dFluxN GT 0)
   IF newell_nonzero_nEv_i[0] EQ -1 THEN BEGIN
-     PRINT,"Ummm.... There's no data here, according to GET_H2D_NEWELL."
+     PRINT,"Ummm.... There's no data here, according to GET_H2D_NEWELL_AND_MASK."
      STOP
   ENDIF
 
