@@ -86,12 +86,11 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
                                       NORESULT=-1,COUNT=nGood)
         ENDELSE
 
-        
-
-
      ENDIF ELSE BEGIN
         inlier_i = KEYWORD_SET(NORESULT) ? noResult : LINDGEN(N_ELEMENTS(dbStruct.(0)))
      ENDELSE
+
+     PRINT,FORMAT='(A0,T30,"Junked ",I0," outlier indices, keeping ",I0," ...")',opener,nBef-nGood,nGood
 
      RETURN,inlier_i
 
