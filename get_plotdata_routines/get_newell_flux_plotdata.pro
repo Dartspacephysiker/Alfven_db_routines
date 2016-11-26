@@ -9,6 +9,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              FLUXPLOTTYPE=fluxPlotType, $
                              PLOTRANGE=plotRange, $
                              PLOTAUTOSCALE=plotAutoscale, $
+                             REMOVE_OUTLIERS=remove_outliers, $
+                             REMOVE_LOG_OUTLIERS=remove_log_outliers, $
                              NOPOSFLUX=noPosFlux, $
                              NONEGFLUX=noNegFlux, $
                              ABSFLUX=absFlux, $
@@ -236,6 +238,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        FLUXPLOTTYPE=fluxPlotType, $
                        PLOTRANGE=plotRange, $
                        PLOTAUTOSCALE=plotAutoscale, $
+                       REMOVE_OUTLIERS=remove_outliers, $
+                       REMOVE_LOG_OUTLIERS=remove_log_outliers, $
                        NOPOSFLUX=noPosFlux, $
                        NONEGFLUX=noNegFlux, $
                        ABSFLUX=absFlux, $

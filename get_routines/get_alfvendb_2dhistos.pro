@@ -109,6 +109,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           NOPOSCHARIE=noPosCharie, $
                           CHARIEPLOTRANGE=ChariePlotRange, $
                           AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
+                          FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                          FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                           DIV_FLUXPLOTS_BY_ORBTOT=div_fluxPlots_by_orbTot, $
                           DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                           ORBCONTRIBPLOT=orbContribPlot, $
@@ -846,6 +848,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     FLUXPLOTTYPE=fluxPlotType, $
                                     PLOTRANGE=plotRange, $
                                     PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
+                                    REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                                    REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                                     NOPOSFLUX=noPosFlux, $
                                     NONEGFLUX=noNegFlux, $
                                     ABSFLUX=absFlux, $
@@ -926,6 +930,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              FLUXPLOTTYPE=fluxPlotType, $
                              PLOTRANGE=plotRange, $
                              PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
+                             REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                             REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                              NOPOSFLUX=noPosFlux, $
                              NONEGFLUX=noNegFlux, $
                              ABSFLUX=absFlux, $
@@ -1100,6 +1106,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     FLUXPLOTTYPE=fluxPlotType, $
                                     PLOTRANGE=plotRange, $
                                     PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
+                                    REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                                    REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                                     NOPOSFLUX=noPosFlux, $
                                     NONEGFLUX=noNegFlux, $
                                     ABSFLUX=absFlux, $
@@ -1178,6 +1186,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                              FLUXPLOTTYPE=fluxPlotType, $
                              PLOTRANGE=plotRange, $
                              PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
+                             REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                             REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                              NOPOSFLUX=noPosFlux, $
                              NONEGFLUX=noNegFlux, $
                              ABSFLUX=absFlux, $
@@ -1267,6 +1277,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        PLOTRANGE=PPlotRange, $
                        PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_pPlots), $
+                       REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                       REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                        NOPOSFLUX=noPosPflux, $
                        NONEGFLUX=noNegPflux, $
                        ABSFLUX=absPflux, $
@@ -1419,6 +1431,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           FLUXPLOTTYPE=fluxPlotType, $
                           PLOTRANGE=plotRange, $
                           PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ionPlots), $
+                          REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                          REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                           NOPOSFLUX=noPosFlux, $
                           NONEGFLUX=noNegFlux, $
                           ABSFLUX=absFlux, $
@@ -1508,6 +1522,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        FLUXPLOTTYPE=oxyFluxPlotType, $
                        PLOTRANGE=oxyPlotRange, $
                        PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_oxyPlots), $
+                       REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                       REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                        NOPOSFLUX=noPosOxyFlux, $
                        NONEGFLUX=noNegOxyflux, $
                        ABSFLUX=absOxyFlux, $
@@ -1608,6 +1624,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           FLUXPLOTTYPE=charEType, $
                           PLOTRANGE=plotRange, $
                           PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_charEPlots), $
+                          REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                          REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                           NOPOSFLUX=noPosCharE, $
                           NONEGFLUX=noNegCharE, $
                           ABSFLUX=absCharE, $
@@ -1686,6 +1704,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        PLOTRANGE=chariEPlotRange, $
                        PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_chariEPlots), $
+                       REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                       REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                        NOPOSFLUX=noPosChariE, $
                        NONEGFLUX=noNegChariE, $
                        ABSFLUX=absChariE, $
@@ -1841,6 +1861,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        PLOTRANGE=summed_eFlux_pFluxplotRange, $
                        PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ePlots), $
+                       REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                       REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                        FLUXPLOTTYPE=eFluxPlotType, $
                        NOPOSFLUX=noPoseflux, $
                        NONEGFLUX=noNegeflux, $

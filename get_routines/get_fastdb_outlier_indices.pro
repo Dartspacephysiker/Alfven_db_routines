@@ -3,6 +3,8 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
                                     REMOVE_OUTLIERS=remove_outliers, $
                                     REMOVAL__NORESULT=NORESULT, $
                                     FOR_ESPEC=for_eSpec, $
+                                    FOR_DATA_ARRAY=for_data_array, $
+                                    DATA_ARRAY__NAME=data_array__name, $
                                     USER_INDS=user_inds, $
                                     ONLY_UPPER=only_upper, $
                                     ONLY_LOWER=only_lower, $
@@ -14,7 +16,7 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
 
   COMPILE_OPT IDL2
 
-  IF ~KEYWORD_SET(for_eSpec) THEN BEGIN
+  IF ~( KEYWORD_SET(for_eSpec) OR KEYWORD_SET(for_data_array) ) THEN BEGIN
      PRINT,"Sorry"
      RETURN,-1
   ENDIF
@@ -23,6 +25,10 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
      KEYWORD_SET(for_eSpec): BEGIN
         structnames = ['Je','Jee']
         dbNavn = 'eSpec'
+     END
+     KEYWORD_SET(for_data_array): BEGIN
+        dbNavn = KEYWORD_SET(data_array__name) ? data_array__name : 'data array'
+        structnames = dbNavn
      END
      ELSE: BEGIN
 
@@ -34,27 +40,35 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
 
   outlier_i_list = LIST()
   FOR k=0,N_ELEMENTS(structNames)-1 DO BEGIN
-     STR_ELEMENT,dbStruct,structNames[k],INDEX=structInd
-     IF structInd LT 0 THEN BEGIN
-        PRINT,opener + "Can't find " + structNames[k] + '! Skipping ...'
-        CONTINUE
-     ENDIF
+
+     IF KEYWORD_SET(for_data_array) THEN BEGIN
+
+     ENDIF ELSE BEGIN
+        STR_ELEMENT,dbStruct,structNames[k],INDEX=structInd
+        IF structInd LT 0 THEN BEGIN
+           PRINT,opener + "Can't find " + structNames[k] + '! Skipping ...'
+           CONTINUE
+        ENDIF
+     ENDELSE
      
-     tmpOutlier_i = GET_OUTLIER_INDICES(dbStruct.(structInd), $
-                                        USER_INDS=user_inds, $
-                                        ONLY_UPPER=only_upper, $
-                                        ONLY_LOWER=only_lower, $
-                                        SUSPECTED_OUTLIER_I=susOut_i, $
-                                        ;; COMPLEMENT_INDICES=comp_i, $
-                                        LOG_OUTLIERS=log_outliers, $
-                                        LOG__ABS=log__abs, $
-                                        LOG__NEG=log__neg, $
-                                        /NULL, $
-                                        FINITE=finite, $
-                                        /DOUBLE, $
-                                        RETURN_STATISTICS=return_stats, $
-                                        OUT_STATISTICS=outStats, $
-                                        VERBOSE=verbose)
+     tmpOutlier_i = GET_OUTLIER_INDICES( $
+                    (KEYWORD_SET(for_data_array) ? $
+                     dbStruct : $
+                     dbStruct.(structInd)), $
+                    USER_INDS=user_inds, $
+                    ONLY_UPPER=only_upper, $
+                    ONLY_LOWER=only_lower, $
+                    SUSPECTED_OUTLIER_I=susOut_i, $
+                    ;; COMPLEMENT_INDICES=comp_i, $
+                    LOG_OUTLIERS=log_outliers, $
+                    LOG__ABS=log__abs, $
+                    LOG__NEG=log__neg, $
+                    /NULL, $
+                    FINITE=finite, $
+                    /DOUBLE, $
+                    RETURN_STATISTICS=return_stats, $
+                    OUT_STATISTICS=outStats, $
+                    VERBOSE=verbose)
 
      IF N_ELEMENTS(tmpOutlier_i) GT 0 THEN BEGIN
         outlier_i_list.Add,(KEYWORD_SET(add_suspected) ? $
@@ -90,7 +104,7 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
         inlier_i = KEYWORD_SET(NORESULT) ? noResult : LINDGEN(N_ELEMENTS(dbStruct.(0)))
      ENDELSE
 
-     PRINT,FORMAT='(A0,T30,"Junked ",I0," outlier indices, keeping ",I0," ...")',opener,nBef-nGood,nGood
+     PRINT,FORMAT='(A0,T40,"Junked ",I0," outlier indices, keeping ",I0," ...")',opener,nBef-nGood,nGood
 
      RETURN,inlier_i
 

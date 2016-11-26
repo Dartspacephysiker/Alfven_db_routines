@@ -20,6 +20,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       FLUXPLOTTYPE=fluxPlotType, $
                       PLOTRANGE=plotRange, $
                       PLOTAUTOSCALE=plotAutoscale, $
+                      REMOVE_OUTLIERS=remove_outliers, $
+                      REMOVE_LOG_OUTLIERS=remove_log_outliers, $
                       NOPOSFLUX=noPosFlux, $
                       NONEGFLUX=noNegFlux, $
                       ABSFLUX=absFlux, $
@@ -127,7 +129,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         tmp_i = plot_i
      END
   ENDCASE
-  ;; IF ~KEYWORD_SET(indices__nonAlfven_ion) AND ~KEYWORD_SET(indices__nonAlfven_eSpec) THEN tmp_i = plot_i
 
   ;; Flux plot safety
   IF KEYWORD_SET(logFluxPlot) AND NOT KEYWORD_SET(absFlux) AND NOT KEYWORD_SET(noNegFlux) AND NOT KEYWORD_SET(noPosFlux) THEN BEGIN 
@@ -171,7 +172,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      CASE 1 OF
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ"): BEGIN
            h2dStr.title     = title__alfDB_ind_09
-           ;; inData           = maximus.integ_elec_energy_flux[tmp_i] 
            inData           = maximus.integ_elec_energy_flux
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
@@ -181,7 +181,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("eflux_losscone_integ"): BEGIN
            h2dStr.title     = title__alfDB_ind_10
-           ;; inData           = maximus.eflux_losscone_integ[tmp_i] 
            inData           = maximus.eflux_losscone_integ
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
@@ -190,7 +189,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
                                     DO_DESPUNDB=maximus.info.despun
-              ;; magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
               h2dStr.grossFac  = 1e9
               h2dStr.gUnits    = 'GW'
@@ -218,7 +216,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("total_eflux_integ"): BEGIN
            h2dStr.title     = title__alfDB_ind_11
-           ;; inData           = maximus.total_eflux_integ[tmp_i] 
            inData           = maximus.total_eflux_integ
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
@@ -227,7 +224,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
                                     DO_DESPUNDB=maximus.info.despun
-              ;; magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
            ENDIF
 
@@ -252,7 +248,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Max"): BEGIN
            h2dStr.title     = title__alfDB_ind_08
-           ;; inData           = maximus.elec_energy_flux[tmp_i]
            inData           = maximus.elec_energy_flux
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
@@ -280,8 +275,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            h2dStr.title     = title__alfDB_ind_10__nonAlfvenic
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            nonAlfvenic      = 1
-           ;; tmp_i            = indices__nonAlfven_eSpec
-           ;; inData           = eFlux_nonAlfven_data[tmp_i]
            inData           = eFlux_nonAlfven_data
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
@@ -324,7 +317,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      CASE 1 OF
         STRUPCASE(fluxPlotType) EQ STRUPCASE("total_eflux_integ"): BEGIN
            h2dStr.title     = title__alfDB_ind_11
-           ;; inData           = maximus.total_eflux_integ[tmp_i] 
            inData           = maximus.total_eflux_integ
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
@@ -333,13 +325,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
                                     DO_DESPUNDB=maximus.info.despun
-              ;; magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Eflux_Losscone_Integ"): BEGIN
            h2dStr.title     = title__alfDB_ind_10
-           ;; inData           = maximus.eflux_losscone_integ[tmp_i]
            inData           = maximus.eflux_losscone_integ
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
@@ -352,10 +342,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
                                     DO_DESPUNDB=maximus.info.despun
-              ;; magFieldFactor = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
               magFieldFactor = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
 
-              ;; inData        = ((indata/magFieldFactor)/maximus.width_x[tmp_i])*mapRatio.ratio[tmp_i]
               inData        = ((indata/magFieldFactor)/maximus.width_x)*mapRatio.ratio
               already_divided_by_width_x = 1
 
@@ -366,7 +354,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                  IF nCheckIt GT 0 THEN BEGIN
                     fixMe_ii = WHERE(inData[tmpPos_i] GT maximus.elec_energy_flux[tmpPos_i],nFix)
                     IF fixMe_ii[0] NE -1 THEN BEGIN
-                       PRINT,'Correcting ' + STRCOMPRESS(nFix,/REMOVE_ALL) + ' inds where spatially averaged eFlux is greater than max eFlux ...'
+                       PRINT,'Correcting ' + $
+                             STRCOMPRESS(nFix,/REMOVE_ALL) + $
+                             ' inds where spatially averaged eFlux is greater than max eFlux'
                        inData[tmpPos_i[fixMe_ii]] = maximus.elec_energy_flux[tmpPos_i[fixMe_ii]]
                     ENDIF
                  ENDIF
@@ -378,7 +368,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                  IF nCheckIt GT 0 THEN BEGIN
                     fixMe_ii = WHERE(inData[tmpNeg_i] LT maximus.elec_energy_flux[tmpNeg_i],nFix)
                     IF fixMe_ii[0] NE -1 THEN BEGIN
-                       PRINT,'Correcting ' + STRCOMPRESS(nFix,/REMOVE_ALL) + ' inds where negative spatially averaged eFlux is lt than negative max eFlux ...'
+                       PRINT,'Correcting ' + $
+                             STRCOMPRESS(nFix,/REMOVE_ALL) + $
+                             ' inds where negative spatially averaged eFlux is lt than negative max eFlux ...'
                        inData[tmpNeg_i[fixMe_ii]] = maximus.elec_energy_flux[tmpNeg_i[fixMe_ii]]
                     ENDIF
                  ENDIF
@@ -411,7 +403,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            h2dStr.grossFac  = 1e25
            h2dStr.gUnits    = 'E+25'
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           ;; inData           = maximus.esa_current[tmp_i] * (DOUBLE(1. / 1.6e-9))
            ;; inData           = maximus.esa_current * (DOUBLE(1. / 1.6e-9))
 
            inData = maximus.ELEC_ENERGY_FLUX / maximus.MAX_CHARE_LOSSCONE * 6.242*1.0e11
@@ -425,7 +416,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                     DO_DESPUNDB=maximus.info.despun
               IF maximus.corrected_fluxes THEN BEGIN ;Assume that ESA current has been multiplied by mapRatio
                  PRINT,'Undoing a square-root factor of multiplication by magField ratio for ESA number flux...'
-                 ;; magFieldFactor        = 1.D/SQRT(mapRatio.ratio[tmp_i]) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
                  magFieldFactor        = 1.D/SQRT(mapRatio.ratio) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
               ENDIF ELSE BEGIN
                  magFieldFactor        = SQRT(mapRatio.ratio)
@@ -467,7 +457,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         STRUPCASE(fluxPlotType) EQ STRUPCASE("ESA_Current"): BEGIN
            h2dStr.title  = title__alfDB_ind_07
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           ;; inData           = maximus.esa_current[tmp_i]
            inData           = maximus.esa_current
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
@@ -478,7 +467,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            nonAlfvenic      = 1
            tmp_i            = indices__nonAlfven_eSpec
-           ;; inData           = eNumFlux_nonAlfven_data[tmp_i]
            inData           = eNumFlux_nonAlfven_data
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
@@ -573,19 +561,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         IF maximus.corrected_fluxes THEN BEGIN ;Assume that pFlux has been multiplied by mapRatio
            PRINT,'Undoing a square-root factor of multiplication by magField ratio for Poynting flux ...'
            IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
-              ;; magFieldFactor2    = 1.D/SQRT(mapRatio.ratio[tmp_i]) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
-              ;; magFieldFactor2    = 1.D/SQRT(mapRatio.ratio[tmp_i]) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
               magFieldFactor2    = 1.D/SQRT(mapRatio.ratio) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
            ENDIF ELSE BEGIN
-              ;; magFieldFactor     = 1.D/SQRT(mapRatio.ratio[tmp_i]) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
               magFieldFactor     = 1.D/SQRT(mapRatio.ratio) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
            ENDELSE
         ENDIF ELSE BEGIN
            IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
-              ;; magFieldFactor2    = SQRT(mapRatio.ratio[tmp_i])
               magFieldFactor2    = SQRT(mapRatio.ratio)
            ENDIF ELSE BEGIN
-              ;; magFieldFactor     = SQRT(mapRatio.ratio[tmp_i])
               magFieldFactor     = SQRT(mapRatio.ratio)
            ENDELSE
         ENDELSE
@@ -626,12 +609,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.do_midCBLabel   = PFlux_do_midCBLabel
 
      IF KEYWORD_SET(sum_eFlux_AND_pFlux) THEN BEGIN
-        ;; inData2             = maximus.pFluxEst[tmp_i]
         inData2             = maximus.pFluxEst
         can_div_by_w_x2     = 0
         can_mlt_by_w_x2     = 1
      ENDIF ELSE BEGIN
-        ;; inData              = maximus.pFluxEst[tmp_i]
         inData              = maximus.pFluxEst
         can_div_by_w_x      = 0
         can_mlt_by_w_x      = 1
@@ -653,7 +634,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      CASE 1 OF
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ"): BEGIN
            h2dStr.title     = title__alfDB_ind_17
-           ;; inData           = maximus.integ_ion_flux[tmp_i]
            inData           = maximus.integ_ion_flux
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
@@ -662,27 +642,23 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
                                     DO_DESPUNDB=maximus.info.despun
-              ;; magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
            ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Max"): BEGIN
            h2dStr.title     = title__alfDB_ind_15
-           ;; inData           = maximus.ion_flux[tmp_i]
            inData           = maximus.ion_flux
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Max_Up"): BEGIN
            h2dStr.title     = title__alfDB_ind_16
-           ;; inData           = maximus.ion_flux_up[tmp_i]
            inData           = maximus.ion_flux_up
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ_Up"): BEGIN
            h2dStr.title     = title__alfDB_ind_18
-           ;; inData           = maximus.integ_ion_flux_up[tmp_i]
            inData           = maximus.integ_ion_flux_up
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
@@ -692,10 +668,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
                                     DO_DESPUNDB=maximus.info.despun
-              ;; magFieldFactor        = SQRT(mapRatio.ratio[tmp_i]) ;This scales width_x to the ionosphere
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
 
-              ;; inData        = ((indata/magFieldFactor)/maximus.width_x[tmp_i])*mapRatio.ratio[tmp_i]
               inData        = ((indata/magFieldFactor)/maximus.width_x)*mapRatio.ratio
               already_divided_by_width_x = 1
 
@@ -740,7 +714,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            nonAlfvenic      = 1
            tmp_i            = indices__nonAlfven_ion
-           ;; inData           = iNumFlux_nonAlfven_data[tmp_i]
            inData           = iNumFlux_nonAlfven_data
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
@@ -773,7 +746,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            nonAlfvenic      = 1
            tmp_i            = indices__nonAlfven_ion
-           ;; inData           = iFlux_nonAlfven_data[tmp_i]
            inData           = iFlux_nonAlfven_data
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
@@ -788,7 +760,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Energy"): BEGIN
            h2dStr.title     = title__alfDB_ind_14
-           ;; inData           = maximus.ion_energy_flux[tmp_i]
            inData           = maximus.ion_energy_flux
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
@@ -817,12 +788,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      CASE 1 OF
         STRUPCASE(fluxplottype) EQ STRUPCASE("lossCone"): BEGIN
            h2dStr.title     = title__alfDB_ind_12
-           ;; inData           = maximus.max_chare_losscone[tmp_i] 
            inData           = maximus.max_chare_losscone
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Total"): BEGIN
            h2dStr.title     = title__alfDB_ind_13
-           ;; inData           = maximus.max_chare_total[tmp_i]
            inData           = maximus.max_chare_total
         END
      ENDCASE
@@ -837,7 +806,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.logLabels       = logChariLabels
      h2dStr.do_plotIntegral = Charie_do_plotIntegral
      h2dStr.do_midCBLabel   = Charie_do_midCBLabel
-     ;; inData                 = maximus.char_ion_energy[tmp_i] 
      inData                 = maximus.char_ion_energy
 
      can_div_by_w_x         = 0
@@ -937,6 +905,36 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                               (KEYWORD_SET(fluxPlotType) ? '_' + STRUPCASE(fluxplottype) : '')
   ;; h2dStr.title              = absnegslogStr + h2dStr.title
 
+  ;;This looks like a nice spot for outlier removal
+  killOutliers = KEYWORD_SET(remove_outliers) OR KEYWORD_SET(remove_log_outliers)
+  IF killOutliers THEN BEGIN
+     inlier_i = GET_FASTDB_OUTLIER_INDICES( $
+                inData, $
+                /FOR_DATA_ARRAY, $
+                DATA_ARRAY__NAME=dataName, $
+                /REMOVE_OUTLIERS, $
+                USER_INDS=tmp_i, $
+                ;; ONLY_UPPER=only_upper, $
+                ONLY_UPPER=only_upper, $
+                ONLY_LOWER=only_lower, $
+                LOG_OUTLIERS=KEYWORD_SET(remove_log_outliers) OR $
+                KEYWORD_SET(logAvgPlot), $
+                /DOUBLE, $
+                ;; /LOG_OUTLIERS, $
+                LOG__ABS=absFlux, $
+                LOG__NEG=noPosFlux, $
+                /ADD_SUSPECTED)
+     IF inlier_i[0] NE -1 THEN BEGIN
+        tmp_i = TEMPORARY(inlier_i)
+     ENDIF ELSE BEGIN
+        PRINT,"You're dead."
+        STOP
+     ENDELSE
+
+     dataName += '_rm' + ( KEYWORD_SET(remove_log_outliers) ? 'l' : '' ) + 'ol'
+  ENDIF
+
+
   IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
      IF can_div_by_w_x THEN BEGIN
         PRINT,'Dividing by WIDTH_X!'
@@ -949,7 +947,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         IF N_ELEMENTS(magFieldFactor) EQ 0 THEN magFieldFactor = 1.0D
 
         IF ~KEYWORD_SET(already_divided_by_width_x) THEN BEGIN
-           ;; inData                 = inData*factor*magFieldFactor/maximus.width_x[tmp_i]
            inData                 = inData*factor*magFieldFactor/maximus.width_x
         ENDIF ELSE BEGIN
            PRINT,'ALREADY DIVIDED ' + dataName + ', DUDE'
@@ -970,7 +967,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            IF N_ELEMENTS(factor2) EQ 0 THEN factor2 = 1.0D
            IF N_ELEMENTS(magFieldFactor2) EQ 0 THEN magFieldFactor2 = 1.0D
 
-           ;; inData2                 = inData2*factor2*magFieldFactor2/maximus.width_x[tmp_i]
            inData2                 = inData2*factor2*magFieldFactor2/maximus.width_x
         ENDIF ELSE BEGIN
            PRINTF,lun,"Can't divide " + dataName + " by width_x! Not in the cards."
@@ -989,7 +985,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         IF N_ELEMENTS(factor) EQ 0 THEN factor = 1.0D
         IF N_ELEMENTS(magFieldFactor) EQ 0 THEN magFieldFactor = 1.0D
         
-        ;; inData                 = inData*factor*magFieldFactor*maximus.width_x[tmp_i]
         inData                 = inData*factor*magFieldFactor*maximus.width_x
      ENDIF ELSE BEGIN
         PRINTF,lun,"Can't multiply " + dataName + " by width_x! Not in the cards."
@@ -1006,7 +1001,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            IF N_ELEMENTS(factor2) EQ 0 THEN factor2 = 1.0D
            IF N_ELEMENTS(magFieldFactor2) EQ 0 THEN magFieldFactor2 = 1.0D
            
-           ;; inData2                 = inData2*factor2*magFieldFactor2*maximus.width_x[tmp_i]
            inData2                 = inData2*factor2*magFieldFactor2*maximus.width_x
         ENDIF ELSE BEGIN
            PRINTF,lun,"Can't multiply " + dataName + " by width_x! Not in the cards."
@@ -1032,10 +1026,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ;;Is this going to be a time-averaged plot?
   IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
      IF KEYWORD_SET(nonAlfvenic) THEN BEGIN
-        ;; inData              = inData * nonAlfven_delta_t[tmp_i]
         inData              = inData * nonAlfven_delta_t
      ENDIF ELSE BEGIN
-        ;; inData              = inData * maximus.width_time[tmp_i]
         inData              = inData * maximus.width_time
         ;; h2dStr.title           = 'Time-averaged ' + h2dStr.title
      ENDELSE
@@ -1372,9 +1364,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.mask       = h2dMask
      h2dStr.hasMask    = 1
 
-     IF KEYWORD_SET(eSpec__Newell_2009_interp) THEN BEGIN
-        dataName      += '--2009_interp'
-     ENDIF
+     ;; IF KEYWORD_SET(eSpec__Newell_2009_interp) THEN BEGIN
+     ;;    dataName      += '--2009_interp'
+     ;; ENDIF
 
      IF KEYWORD_SET(eSpec__use_2000km_file) THEN BEGIN
         dataName      += '--2000kmFile'
