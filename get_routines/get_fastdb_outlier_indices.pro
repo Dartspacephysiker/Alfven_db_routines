@@ -2,10 +2,12 @@
 FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
                                     REMOVE_OUTLIERS=remove_outliers, $
                                     REMOVAL__NORESULT=NORESULT, $
+                                    FOR_ALFDB=for_alfDB, $
                                     FOR_ESPEC=for_eSpec, $
                                     FOR_DATA_ARRAY=for_data_array, $
                                     DATA_ARRAY__NAME=data_array__name, $
                                     USER_INDS=user_inds, $
+                                    USER_STRUCTNAMES=user_structNames, $
                                     ONLY_UPPER=only_upper, $
                                     ONLY_LOWER=only_lower, $
                                     LOG_OUTLIERS=log_outliers, $
@@ -18,12 +20,18 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
 
   COMPILE_OPT IDL2
 
-  IF ~( KEYWORD_SET(for_eSpec) OR KEYWORD_SET(for_data_array) ) THEN BEGIN
+  IF ~( KEYWORD_SET(for_eSpec) OR $
+        KEYWORD_SET(for_data_array) OR $
+        KEYWORD_SET(for_alfDB) ) THEN BEGIN
      PRINT,"Sorry"
      RETURN,-1
   ENDIF
 
   CASE 1 OF
+     KEYWORD_SET(for_alfDB): BEGIN
+        structnames = ['eflux_losscone_integ','pFluxEst']
+        dbNavn = 'alfDB'
+     END
      KEYWORD_SET(for_eSpec): BEGIN
         structnames = ['Je','Jee']
         dbNavn = 'eSpec'
@@ -36,6 +44,10 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
 
      END
   ENDCASE
+
+  IF KEYWORD_SET(user_structNames) THEN BEGIN
+     structNames = user_structNames
+  ENDIF
 
   PRINT,'GET_FASTDB_OUTLIER_INDICES (for ' + dbNavn + ')'
   opener = 'GET_FASTDB_OUTLIER_INDICES (for ' + dbNavn + '): '
@@ -73,8 +85,7 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
                     VERBOSE=verbose)
 
      IF N_ELEMENTS(tmpOutlier_i) GT 0 OR $
-        ( KEYWORD_SET(add_suspected) AND $
-          N_ELEMENTS(susOut_i) GT 0) $
+        ( KEYWORD_SET(add_suspected) AND N_ELEMENTS(susOut_i) GT 0 ) $
      THEN BEGIN
         outlier_i_list.Add,(KEYWORD_SET(add_suspected) ? $
                             CGSETUNION(tmpOutlier_i,susOut_i) : $
@@ -86,7 +97,7 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
   IF N_ELEMENTS(outlier_i_list) GT 0 THEN BEGIN
      outlier_i = LIST_TO_1DARRAY(TEMPORARY(outlier_i_list))
   ENDIF ELSE BEGIN
-     outlier_i = -1
+     outlier_i = KEYWORD_SET(noResult) ? noResult : -1
   ENDELSE
 
   IF KEYWORD_SET(remove_outliers) THEN BEGIN
@@ -105,14 +116,23 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
                                       NORESULT=-1,COUNT=nGood)
         ENDELSE
 
+           happened = "Junked "
+
      ENDIF ELSE BEGIN
         inlier_i = KEYWORD_SET(NORESULT) ? noResult : $
                    LINDGEN(N_ELEMENTS( (KEYWORD_SET(for_data_array) ? $
                                         dbStruct                    : $
                                         dbStruct.(0))))
+        nGood = N_ELEMENTS((KEYWORD_SET(for_data_array) ? $
+                                        dbStruct                    : $
+                                        dbStruct.(0)))
+        nBef  = nGood
+
+        happened = "failed to junk "
+
      ENDELSE
 
-     PRINT,FORMAT='(A0,T40,"Junked ",I0," outlier indices, keeping ",I0," ...")',opener,nBef-nGood,nGood
+     PRINT,FORMAT='(A0,T45,A0,I0," outlier indices, keeping ",I0," ...")',opener,happened,nBef-nGood,nGood
 
      RETURN,inlier_i
 

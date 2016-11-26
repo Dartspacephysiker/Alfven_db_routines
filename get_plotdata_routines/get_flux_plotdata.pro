@@ -921,10 +921,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                 KEYWORD_SET(logAvgPlot), $
                 /DOUBLE, $
                 ;; /LOG_OUTLIERS, $
+                REMOVAL__NORESULT=-1, $
                 LOG__ABS=absFlux, $
                 LOG__NEG=noPosFlux, $
+                ;; ADD_SUSPECTED=KEYWORD_SET(nonAlfvenic))
                 /ADD_SUSPECTED)
-     IF inlier_i[0] NE -1 THEN BEGIN
+     IF (inlier_i[0] NE -1) AND (inlier_i[0] NE 0) THEN BEGIN
         tmp_i = TEMPORARY(inlier_i)
      ENDIF ELSE BEGIN
         PRINT,"You're dead."

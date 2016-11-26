@@ -491,7 +491,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
      IF KEYWORD_SET (poyntRange) THEN BEGIN
         MIMC__poyntRange     = poyntRange
         IF N_ELEMENTS(poyntRange) EQ 2 THEN BEGIN
-           pFlux_i           = GET_PFLUX_INDS(dbStruct,MIMC__poyntRange[0],MIMC__poyntRange[1],LUN=lun)
+           pFlux_i           = GET_PFLUX_INDS(dbStruct, $
+                                              MIMC__poyntRange[0], $
+                                              MIMC__poyntRange[1], $
+                                              LUN=lun)
            region_i          = CGSETINTERSECTION(region_i,pFlux_i)
         ENDIF ELSE BEGIN
            PRINTF,lun,"Incorrect input for keyword 'poyntRange'!!"
@@ -500,53 +503,92 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
         ENDELSE
      ENDIF
 
-     ;; IF KEYWORD_SET(poyntRange) AND is_maximus THEN BEGIN
-     ;;    MIMC__poyntRange                       = poyntRange
-     ;;    IF N_ELEMENTS(poyntRange) NE 2 OR (MIMC__poyntRange[1] LE MIMC__poyntRange[0]) THEN BEGIN
-     ;;       PRINT,"Invalid Poynting range specified! poyntRange should be a two-element vector, [minPoynt maxPoynt]"
-     ;;       PRINT,"No Poynting range set..."
-     ;;       RETURN, -1
+     ;; IF KEYWORD_SET(remove_outliers) AND is_maximus THEN BEGIN
+     ;; IF 1 AND is_maximus THEN BEGIN
+     ;;    inlier_i = GET_FASTDB_OUTLIER_INDICES( $
+     ;;               dbStruct, $
+     ;;               /FOR_ALFDB, $
+     ;;               /REMOVE_OUTLIERS, $
+     ;;               USER_INDS=tmp_i, $
+     ;;               ;; ONLY_UPPER=only_upper, $
+     ;;               ONLY_UPPER=only_upper, $
+     ;;               ONLY_LOWER=only_lower, $
+     ;;               LOG_OUTLIERS=log_outliers, $
+     ;;               /DOUBLE, $
+     ;;               LOG__ABS=absFlux, $
+     ;;               LOG__NEG=noPosFlux, $
+     ;;               /ADD_SUSPECTED)
+
+     ;;    IF inlier_i[0] NE -1 THEN BEGIN
+     ;;       region_i = CGSETINTERSECTION(region_i,inlier_i,NORESULT=-1)
+     ;;       IF region_i[0] EQ -1 THEN BEGIN
+     ;;          PRINT,"You killed it!!"
+     ;;          STOP
+     ;;       ENDIF
      ;;    ENDIF ELSE BEGIN
-     ;;       region_i=CGSETINTERSECTION(region_i,where(dbStruct.pFluxEst GE MIMC__poyntRange[0] AND $
-     ;;                                             dbStruct.pFluxEst LE MIMC__poyntRange[1]))
-     ;;       PRINTF,lun,FORMAT='("Poynting flux limits (eV)     :",T35,G8.2,T45,G8.2)',MIMC__poyntRange[0],MIMC__poyntRange[1]
+     ;;       PRINT,"Dead man."
+     ;;       STOP
      ;;    ENDELSE
      ;; ENDIF
 
-
-     ;;gotta screen to make sure it's in ACE db too:
-     ;;Only so many are useable, since ACE data start in 1998
-     
-     ;; IF KEYWORD_SET(satellite) THEN BEGIN
-     ;;    sat_i                                     = GET_SATELLITE_INDS(dbStruct,satellite,LUN=lun)
-     ;;    good_i                                    = region_i[where(region_i GE sat_i,nGood,complement=lost,ncomplement=nlost)]
-     ;;    lost                                      = region_i[lost]
-     ;; ENDIF ELSE BEGIN
-     good_i                      = region_i
-     ;; ENDELSE
+     good_i                      = TEMPORARY(region_i)
 
      ;;Now, clear out all the garbage (NaNs & Co.)
      IF is_maximus THEN BEGIN
         IF N_ELEMENTS(MAXIMUS__cleaned_i) EQ 0 THEN BEGIN
-           MAXIMUS__cleaned_i       = ALFVEN_DB_CLEANER(dbStruct,LUN=lun, $
-                                                        IS_CHASTDB=chastDB, $
-                                                        SAMPLE_T_RESTRICTION=sample_t_restriction, $
-                                                        INCLUDE_32Hz=include_32Hz, $
-                                                        DISREGARD_SAMPLE_T=disregard_sample_t, $
-                                                        DO_LSHELL=DO_lshell, $
-                                                        USING_HEAVIES=using_heavies)
+           MAXIMUS__cleaned_i  = ALFVEN_DB_CLEANER( $
+                                 dbStruct,LUN=lun, $
+                                 IS_CHASTDB=chastDB, $
+                                 SAMPLE_T_RESTRICTION=sample_t_restriction, $
+                                 INCLUDE_32Hz=include_32Hz, $
+                                 DISREGARD_SAMPLE_T=disregard_sample_t, $
+                                 DO_LSHELL=DO_lshell, $
+                                 USING_HEAVIES=using_heavies)
            IF MAXIMUS__cleaned_i EQ !NULL THEN BEGIN
               PRINTF,lun,"Couldn't clean Alfvén DB! Sup with that?"
               STOP
            ENDIF ELSE BEGIN
            ENDELSE
         ENDIF
-        good_i                      = CGSETINTERSECTION(good_i,MAXIMUS__cleaned_i) 
+
+        good_i                 = CGSETINTERSECTION(good_i,MAXIMUS__cleaned_i) 
+
+        ;; IF KEYWORD_SET(remove_outliers) AND is_maximus THEN BEGIN
+        IF 0 AND is_maximus THEN BEGIN
+           user_structnames = ['eflux_losscone_integ','pFluxEst']
+
+           inlier_i            = GET_FASTDB_OUTLIER_INDICES( $
+                                 dbStruct, $
+                                 /FOR_ALFDB, $
+                                 /REMOVE_OUTLIERS, $
+                                 USER_INDS=good_i, $
+                                 USER_STRUCTNAMES=user_structNames, $
+                                 ;; ONLY_UPPER=only_upper, $
+                                 ONLY_UPPER=only_upper, $
+                                 ONLY_LOWER=only_lower, $
+                                 /LOG_OUTLIERS, $
+                                 /DOUBLE, $
+                                 LOG__ABS=absFlux, $
+                                 LOG__NEG=noPosFlux, $
+                                 /ADD_SUSPECTED)
+
+           IF inlier_i[0] NE -1 THEN BEGIN
+              good_i         = CGSETINTERSECTION(good_i,inlier_i,NORESULT=-1)
+              IF good_i[0] EQ -1 THEN BEGIN
+                 PRINT,"You killed it!!"
+                 STOP
+              ENDIF
+           ENDIF ELSE BEGIN
+              PRINT,"Dead man."
+              STOP
+           ENDELSE
+        ENDIF
+
      ENDIF ELSE BEGIN
         IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-           nClean                   = N_ELEMENTS(FASTLOC_E__cleaned_i)
+           nClean              = N_ELEMENTS(FASTLOC_E__cleaned_i)
         ENDIF ELSE BEGIN
-           nClean                   = N_ELEMENTS(FASTLOC__cleaned_i)
+           nClean              = N_ELEMENTS(FASTLOC__cleaned_i)
         ENDELSE
         IF nClean EQ 0 THEN BEGIN
            IF KEYWORD_SET(for_eSpec_DBS) THEN BEGIN

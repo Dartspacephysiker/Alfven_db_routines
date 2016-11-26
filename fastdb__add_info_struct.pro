@@ -38,6 +38,7 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                 despun           : 0B, $
                 is_chastDB       : 0B, $
                 coords           : 'SDT', $
+                rmOutliers       : 0B, $
                 corrected_fluxes : 0B, $
                 corrected_string : '', $
                 mapped           : {esa_current : 0B, $
