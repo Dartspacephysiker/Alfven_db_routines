@@ -11,6 +11,8 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
                                     LOG_OUTLIERS=log_outliers, $
                                     LOG__ABS=log__abs, $
                                     LOG__NEG=log__neg, $
+                                    ;; NULL=null, $
+                                    DOUBLE=double, $
                                     ADD_SUSPECTED=add_suspected
   
 
@@ -65,12 +67,15 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
                     LOG__NEG=log__neg, $
                     /NULL, $
                     FINITE=finite, $
-                    /DOUBLE, $
+                    DOUBLE=double, $
                     RETURN_STATISTICS=return_stats, $
                     OUT_STATISTICS=outStats, $
                     VERBOSE=verbose)
 
-     IF N_ELEMENTS(tmpOutlier_i) GT 0 THEN BEGIN
+     IF N_ELEMENTS(tmpOutlier_i) GT 0 OR $
+        ( KEYWORD_SET(add_suspected) AND $
+          N_ELEMENTS(susOut_i) GT 0) $
+     THEN BEGIN
         outlier_i_list.Add,(KEYWORD_SET(add_suspected) ? $
                             CGSETUNION(tmpOutlier_i,susOut_i) : $
                             TEMPORARY(tmpOutlier_i))
@@ -101,7 +106,10 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
         ENDELSE
 
      ENDIF ELSE BEGIN
-        inlier_i = KEYWORD_SET(NORESULT) ? noResult : LINDGEN(N_ELEMENTS(dbStruct.(0)))
+        inlier_i = KEYWORD_SET(NORESULT) ? noResult : $
+                   LINDGEN(N_ELEMENTS( (KEYWORD_SET(for_data_array) ? $
+                                        dbStruct                    : $
+                                        dbStruct.(0))))
      ENDELSE
 
      PRINT,FORMAT='(A0,T40,"Junked ",I0," outlier indices, keeping ",I0," ...")',opener,nBef-nGood,nGood
