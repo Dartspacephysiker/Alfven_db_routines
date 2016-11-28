@@ -106,6 +106,8 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      ;;    fastLoc = RESIZE_FASTLOC(fastLoc,fastLoc_inds,FASTLOC_TIMES=fastLoc_times,FASTLOC_DELTA_T=fastLoc_delta_t)
      ;; ENDIF
      
+     IF (WHERE(fastLoc_delta_t LT 0) )[0] NE -1 THEN STOP
+
      ;;fix MLTs
      fastLocMLTs   = SHIFT_MLTS_FOR_H2D(fastLoc,fastLoc_inds,shiftM)
 

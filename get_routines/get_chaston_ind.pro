@@ -38,6 +38,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                          SAMPLE_T_RESTRICTION=sample_t_restriction, $
                          INCLUDE_32HZ=include_32Hz, $
                          DISREGARD_SAMPLE_T=disregard_sample_t, $
+                         DONT_BLACKBALL_MAXIMUS=dont_blackball_maximus, $
+                         DONT_BLACKBALL_FASTLOC=dont_blackball_fastloc, $
                          DAYSIDE=dayside,NIGHTSIDE=nightside, $
                          USING_HEAVIES=using_heavies, $
                          NO_BURSTDATA=no_burstData, $
@@ -437,7 +439,14 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                                  MIMC__orbRange, $
                                                  POSITIONS=orb_i)
         ENDIF ELSE BEGIN
-           orb_i             = GET_ORBRANGE_INDS(dbStruct,MIMC__orbRange[0],MIMC__orbRange[1],LUN=lun)
+           orb_i             = GET_ORBRANGE_INDS( $
+                               dbStruct, $
+                               MIMC__orbRange[0], $
+                               MIMC__orbRange[1], $
+                               DONT_TRASH_BAD_ORBITS= $
+                               ((is_maximus) AND KEYWORD_SET(dont_blackball_maximus)) OR $
+                               (~(is_maximus) AND KEYWORD_SET(dont_blackball_fastloc)), $
+                               LUN=lun)
         ENDELSE
 
         IF orb_i[0] NE -1 THEN BEGIN
@@ -511,13 +520,15 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
      ;;               /REMOVE_OUTLIERS, $
      ;;               USER_INDS=tmp_i, $
      ;;               ;; ONLY_UPPER=only_upper, $
-     ;;               ONLY_UPPER=only_upper, $
+     ;;               /ONLY_UPPER, $
      ;;               ONLY_LOWER=only_lower, $
-     ;;               LOG_OUTLIERS=log_outliers, $
+     ;;               ;; LOG_OUTLIERS=log_outliers, $
+     ;;               /LOG_OUTLIERS, $
      ;;               /DOUBLE, $
      ;;               LOG__ABS=absFlux, $
      ;;               LOG__NEG=noPosFlux, $
-     ;;               /ADD_SUSPECTED)
+     ;;               ;; /ADD_SUSPECTED)
+     ;;               ADD_SUSPECTED=add_suspected)
 
      ;;    IF inlier_i[0] NE -1 THEN BEGIN
      ;;       region_i = CGSETINTERSECTION(region_i,inlier_i,NORESULT=-1)

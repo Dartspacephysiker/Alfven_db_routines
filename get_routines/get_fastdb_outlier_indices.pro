@@ -29,8 +29,10 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
 
   CASE 1 OF
      KEYWORD_SET(for_alfDB): BEGIN
-        structnames = ['eflux_losscone_integ','pFluxEst']
+        ;; structnames = ['eflux_losscone_integ','pFluxEst']
+        structnames = ['ELEC_ENERGY_FLUX','pFluxEst','delta_e','delta_b']
         dbNavn = 'alfDB'
+
      END
      KEYWORD_SET(for_eSpec): BEGIN
         structnames = ['Je','Jee']
@@ -104,14 +106,21 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
 
      IF outlier_i[0] NE -1 THEN BEGIN
 
+        nBef = N_ELEMENTS( (KEYWORD_SET(for_data_array) ? $
+                                        dbStruct                    : $
+                                        dbStruct.(0)))
+
         IF N_ELEMENTS(user_inds) GT 0 THEN BEGIN
            nBef = N_ELEMENTS(user_inds)
            inlier_i = CGSETDIFFERENCE(user_inds, $
                                       TEMPORARY(outlier_i), $
                                       NORESULT=-1,COUNT=nGood)
         ENDIF ELSE BEGIN
-           nBef = N_ELEMENTS(dbStruct.(0))
-           inlier_i = CGSETDIFFERENCE(LINDGEN(N_ELEMENTS(dbStruct.(0))), $
+           ;; nBef = N_ELEMENTS(dbStruct.(0))
+           ;; nBef = N_ELEMENTS( (KEYWORD_SET(for_data_array) ? $
+           ;;                              dbStruct                    : $
+           ;;                              dbStruct.(0)))
+           inlier_i = CGSETDIFFERENCE(LINDGEN(nBef), $
                                       TEMPORARY(outlier_i), $
                                       NORESULT=-1,COUNT=nGood)
         ENDELSE

@@ -231,6 +231,9 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
      ;;No currents above any absurd values
      good_i = CGSETINTERSECTION(good_i,WHERE(ABS(maximus.mag_current) LE magc_hcutOff,/NULL))
    
+     ;;NEW 20161128
+     good_i = CGSETINTERSECTION(good_i,WHERE(ABS(maximus.esa_current) LE esac_hcutOff,/NULL))
+   
      ;;No delta_Bs above any absurd values
      good_i = CGSETINTERSECTION(good_i,WHERE(maximus.delta_b LE dB_hcutOff AND maximus.delta_b GT dB_lcutoff,/NULL))
      

@@ -908,32 +908,34 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ;;This looks like a nice spot for outlier removal
   killOutliers = KEYWORD_SET(remove_outliers) OR KEYWORD_SET(remove_log_outliers)
   IF killOutliers THEN BEGIN
-     inlier_i = GET_FASTDB_OUTLIER_INDICES( $
-                inData, $
-                /FOR_DATA_ARRAY, $
-                DATA_ARRAY__NAME=dataName, $
-                /REMOVE_OUTLIERS, $
-                USER_INDS=tmp_i, $
-                ;; ONLY_UPPER=only_upper, $
-                ONLY_UPPER=only_upper, $
-                ONLY_LOWER=only_lower, $
-                LOG_OUTLIERS=KEYWORD_SET(remove_log_outliers) OR $
-                KEYWORD_SET(logAvgPlot), $
-                /DOUBLE, $
-                ;; /LOG_OUTLIERS, $
-                REMOVAL__NORESULT=-1, $
-                LOG__ABS=absFlux, $
-                LOG__NEG=noPosFlux, $
-                ;; ADD_SUSPECTED=KEYWORD_SET(nonAlfvenic))
-                /ADD_SUSPECTED)
-     IF (inlier_i[0] NE -1) AND (inlier_i[0] NE 0) THEN BEGIN
-        tmp_i = TEMPORARY(inlier_i)
-     ENDIF ELSE BEGIN
-        PRINT,"You're dead."
-        STOP
-     ENDELSE
+     ;; inlier_i = GET_FASTDB_OUTLIER_INDICES( $
+     ;;            inData, $
+     ;;            /FOR_DATA_ARRAY, $
+     ;;            DATA_ARRAY__NAME=dataName, $
+     ;;            /REMOVE_OUTLIERS, $
+     ;;            USER_INDS=tmp_i, $
+     ;;            ;; ONLY_UPPER=only_upper, $
+     ;;            ONLY_UPPER=only_upper, $
+     ;;            ONLY_LOWER=only_lower, $
+     ;;            LOG_OUTLIERS=KEYWORD_SET(remove_log_outliers) OR $
+     ;;            KEYWORD_SET(logAvgPlot), $
+     ;;            /DOUBLE, $
+     ;;            ;; /LOG_OUTLIERS, $
+     ;;            REMOVAL__NORESULT=-1, $
+     ;;            LOG__ABS=absFlux, $
+     ;;            LOG__NEG=noPosFlux, $
+     ;;            ;; ADD_SUSPECTED=KEYWORD_SET(nonAlfvenic))
+     ;;            /ADD_SUSPECTED)
+     ;; IF (inlier_i[0] NE -1) AND (inlier_i[0] NE 0) THEN BEGIN
+     ;;    tmp_i = TEMPORARY(inlier_i)
+     ;; ENDIF ELSE BEGIN
+     ;;    PRINT,"You're dead."
+     ;;    STOP
+     ;; ENDELSE
 
-     dataName += '_rm' + ( KEYWORD_SET(remove_log_outliers) ? 'l' : '' ) + 'ol'
+     ;;'igfpd' = 'in GET_FLUX_PLOTDATA'
+     ;; dataName += '_rm' + ( KEYWORD_SET(remove_log_outliers) ? 'l' : '' ) + 'ol_igfpd'
+     dataName += '_rm' + ( KEYWORD_SET(remove_log_outliers) ? 'l' : '' ) + 'ol--no_sus'
   ENDIF
 
 
