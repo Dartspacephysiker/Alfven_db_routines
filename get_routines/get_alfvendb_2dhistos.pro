@@ -56,6 +56,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                           NEWELL_ANALYZE_EFLUX=newell_analyze_eFlux, $
                           NEWELL_ANALYZE_MULTIPLY_BY_TYPE_PROBABILITY=newell_analyze_multiply_by_type_probability, $
                           NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
+                          NEWELL__COMBINE_ACCELERATED=Newell__comb_accelerated, $
                           EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
                           ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
                           IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
@@ -857,6 +858,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                                     NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                                     NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                                    COMBINE_ACCELERATED=Newell__comb_accelerated, $
                                     ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
                                     ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
                                     NONALFVEN_MLT=eSpec__mlts, $
