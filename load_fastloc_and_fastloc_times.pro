@@ -77,16 +77,17 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         is_128Hz      = 0
         is_noRestrict = 1
 
-        DefDBDir      = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals5/'
-        defDBFile     = 'fastLoc_intervals5--20161129--500-16361--Je_times.sav'
-        DB_date       = '20161129'
-        DB_version    = 'v0.0'
-        DB_extras     = 'no_TIME_tag/no_interval_startstop'
-        is_128Hz      = 0
-        is_noRestrict = 1
-        fastLoc_has_times = 1
+        ;;fastLoc 5--is it any better?
+        ;; DefDBDir      = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals5/'
+        ;; defDBFile     = 'fastLoc_intervals5--20161129--500-16361--Je_times.sav'
+        ;; DB_date       = '20161129'
+        ;; DB_version    = 'v0.0'
+        ;; DB_extras     = 'no_TIME_tag/no_interval_startstop'
+        ;; is_128Hz      = 0
+        ;; is_noRestrict = 1
+        ;; fastLoc_has_times = 1
 
-        defDB_tFile  = 'fastLoc_intervals5--20161129--500-16361--Je_times--time_and_delta_t.sav'
+        ;; defDB_tFile  = 'fastLoc_intervals5--20161129--500-16361--Je_times--time_and_delta_t.sav'
      END
      ELSE: BEGIN
         DefDBFile    = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01.sav'

@@ -22,6 +22,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              ;; INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $
                              NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                              NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                             COMBINE_ACCELERATED=comb_accelerated, $
                              ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
                              ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
                              NONALFVEN_MLT=nonAlfven_mlt, $
@@ -113,6 +114,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                    OUT_DATANAMESUFFS=out_datanamesuffs, $
                                    OUT_I_LIST=out_i_list, $
                                    SUMMARY=newell_analysis__output_summary, $
+                                   COMBINE_ACCELERATED=comb_accelerated, $
                                    SUM_LUN=sum_lun
 
      IF KEYWORD_SET(newell_analyze_multiply_by_type_probability) THEN BEGIN
@@ -131,6 +133,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                               NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                                               NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                               /NEWELLPLOT_PROBOCCURRENCE, $
+                                              COMBINE_ACCELERATED=comb_accelerated, $
                                               TMPLT_H2DSTR=tmplt_h2dStr, $
                                               H2DSTRS=h2dStrs, $
                                               ;; H2DMASKSTR=h2dMaskStr, $
@@ -172,6 +175,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                    NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                                    NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                    NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
+                                   COMBINE_ACCELERATED=comb_accelerated, $
                                    TMPLT_H2DSTR=tmplt_h2dStr, $
                                    H2DSTRS=h2dStrs, $
                                    ;; H2DMASKSTR=h2dMaskStr, $
@@ -186,6 +190,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                    LUN=lun
 
         H2DProboccurrenceList           = LIST(h2dStrs[0].data,h2dStrs[1].data,h2dStrs[2].data)
+        IF KEYWORD_SET(comb_accelerated) THEN BEGIN
+           H2DProboccurrenceList.Add,h2dStrs[3].data
+        ENDIF
         h2dStrs                         = !NULL
         dataRawPtrs                     = !NULL
      ENDIF
