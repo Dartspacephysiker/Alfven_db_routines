@@ -1,7 +1,7 @@
   ;; mag current cutoffs
-  magc_hcutOff = 5.0e2          ;junks 245 events above, 256 below
+  ;; magc_hcutOff = 5.0e2          ;junks 245 events above, 256 below
   ;; magc_hcutOff = 8.0e2
-  ;; magc_hcutOff = 1.0e4           ;junks 36 events with sample_freq restriction
+  magc_hcutOff = 1.0e4           ;junks 36 events with sample_freq restriction
   ;; magc_lcutOff = -1.0e3 ;
   
   ;; delta_B cutoffs
@@ -33,7 +33,7 @@
   ;; NOTE: For Dartmouth DBs, 'maximus.elec_energy_flux' only takes on absurd values for elec_energy_flux < 0
   ;; However, in the original Chaston DB, 'maximus.elec_energy_flux' takes on perfectly reasonable values and has a reasonable
   ;; distribution for elec_energy_flux < 0, generally ABS(maximus.elec_energy_flux) in ChastDB is < 10^2.
-  elec_ef_hcutoff = 1.5e2       ;junks 284 events. NOTE, units are ergs-cm^(-2)-s^(-1). 
+  elec_ef_hcutoff = 1e3         ;junks 284 events. NOTE, units are ergs-cm^(-2)-s^(-1). 
                                 ;1e3 ergs corresponds to ~6x10^14 eV, and Nakajima et al. [2008]
                                 ;  call FAST observations of eflux > 10^12 eV-cm^(-2)-s^(-1)
                                 ;  "remarkable"; in short this cutoff gives plenty of room for good data.
@@ -149,8 +149,8 @@
   ;; magc_hcutOff = 117.           ;junk 0.25%
   ;; esac_hcutOff = 112          ; junk 0.2%
 
-  magc_hcutOff = 159.           ;junk 0.1%
-  esac_hcutOff = 159.         ; junk 0.1%
+  ;; magc_hcutOff = 159.           ;junk 0.1%
+  ;; esac_hcutOff = 159.         ; junk 0.1%
 
   ;; magc_hcutOff = 87.3           ;junk 0.5%
   ;; esac_hcutOff = 75.12          ; junk 0.5%
@@ -163,4 +163,4 @@
   ;; iflux_hcutoff = 6.96e9        ;junk top 0.5%
   ;; ieflux_hcutoff = 0.178        ;Drops 0.5%
 
-  ef_lc_integ_hcutoff = 1.58e6   ;junks 0.1% of all events
+  ;; ef_lc_integ_hcutoff = 1.58e6   ;junks 0.1% of all events
