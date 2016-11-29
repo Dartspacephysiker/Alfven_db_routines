@@ -91,6 +91,8 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,dbInds, $
      IF KEYWORD_SET(grossConvFactorArr) THEN grossConvFactor = grossConvFactorArr[i]
 
      MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
+        FOR_MAXIMUS=for_maximus, $
+        FOR_ESPEC_DBS=for_eSpec_DBs, $
         DBTIMES=DBTimes, $
         DONT_USE_THESE_INDS=dont_use_these_inds, $
         /DO_LISTS_WITH_STATS, $

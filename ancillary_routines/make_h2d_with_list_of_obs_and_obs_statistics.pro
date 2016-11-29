@@ -1,6 +1,8 @@
 ;;2016/04/15 En route to Vienna from Istanbul. (Turkey rules, by the way, or at least Turkish Airlines does.)
 ;;Ripped off MAKE_TIMEHIST_DENOMINATOR for this action
 PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
+   FOR_MAXIMUS=for_maximus, $
+   FOR_ESPEC_DBS=for_eSpec_DBs, $
    DBTIMES=dbTimes, $
    DONT_USE_THESE_INDS=dont_use_these_inds, $
    DO_LISTS_WITH_STATS=do_lists_with_stats, $
@@ -63,6 +65,9 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   outFileName     = baseFilePrefix+'--'+dataName+(KEYWORD_SET(output__orb_avg_obs) ? '--orbAvg' : '')+'.txt'
 
   IF N_ELEMENTS(dataTitle) GT 0 THEN dTitle = dataTitle ELSE dTitle = 'Observation'
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     dTitle = 'eSpec_DB'
+  ENDIF
 
   IF KEYWORD_SET(output_textFile) THEN BEGIN
      PRINTF,lun,"Creating obs/orb file: " + outDir + outFileName
@@ -119,7 +124,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
            PRINTF,lun,"TempNRemoved: " + STRCOMPRESS(tempNRemoved,/REMOVE_ALL)
            IF tempNRemoved GT 0 THEN BEGIN
               tempH2D_lists_with_inds[j] = LIST(tempInds)
-              tempH2D_lists_with_orbs[j] = LIST(tempOrbs)
+              ;; tempH2D_lists_with_orbs[j] = LIST(tempOrbs)
               nRemoved            += tempNRemoved
            ENDIF
         ENDIF;;  ELSE BEGIN
@@ -195,8 +200,20 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                     CASE 1 OF
                        KEYWORD_SET(output__orb_avg_obs): BEGIN
                           tempUTC           = dbTimes[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                          tempChare         = dbStruct.max_chare_losscone[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                          tempeFlux         = dbStruct.elec_energy_flux[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                          CASE 1 OF
+                             KEYWORD_SET(for_maximus): BEGIN
+                                tempChare         = dbStruct.max_chare_losscone[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                                tempeFlux         = dbStruct.elec_energy_flux[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                             END
+                             KEYWORD_SET(for_eSpec_DBs): BEGIN
+                                tempeFlux         = NEWELL__eSpec.jee[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                                tempeNumFlux      = NEWELL__eSpec.je[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                                tempChare         = tempeFlux*tempeNumFlux*6.242*1.0e11
+                             END
+                             ELSE: BEGIN
+
+                             END
+                          ENDCASE
 
                           IMFinds           = VALUE_CLOSEST2(C_OMNI__mag_UTC,tempUTC)
                           tempIMFBx         = C_OMNI__Bx[IMFinds]
@@ -312,23 +329,6 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
         
      ENDFOR
   ENDFOR
-
-  ;; FOR j=0, N_ELEMENTS(HLOI__H2D_lists_with_inds)-1 DO BEGIN
-
-  ;;    tempObsList                           = LIST(dbStruct_obsArr[(tempH2D_lists_with_inds[j])[0]])
-  ;;    outH2D_lists_with_obs                 = [outH2D_lists_with_obs,tempObsList]
-
-  ;;    ;;handle stats, if requested
-  ;;    IF KEYWORD_SET(do_lists_with_stats) THEN BEGIN
-  ;;       IF N_ELEMENTS(tempObsList[0]) GT 0 THEN BEGIN
-  ;;          tempStats                       = MOMENT(tempObsList[0])
-  ;;       ENDIF ELSE BEGIN
-  ;;          tempStats                       = MAKE_ARRAY(4,VALUE=0)
-  ;;       ENDELSE
-  ;;       outH2D_stats                       = [outH2D_stats,tempStats]
-  ;;    ENDIF
-
-  ;; ENDFOR
 
   ;Now reform the sucker
   outH2D_lists_with_obs                    = REFORM(outH2D_lists_with_obs,HLOI__nMLT,HLOI__nILAT)
