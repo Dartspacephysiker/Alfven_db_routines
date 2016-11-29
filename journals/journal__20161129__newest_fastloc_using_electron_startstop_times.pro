@@ -13,6 +13,10 @@ PRO JOURNAL__20161129__NEWEST_FASTLOC_USING_ELECTRON_STARTSTOP_TIMES
                     GET_TODAY_STRING(/DO_YYYYMMDD_FMT), $
                     startOrb, $
                     stopOrb)
+  outTFile = STRING(FORMAT='("fastLoc_intervals5--",A0,"--",I0,"-",I0,"--Je_times--time_and_delta_t.sav")', $
+                    GET_TODAY_STRING(/DO_YYYYMMDD_FMT), $
+                    startOrb, $
+                    stopOrb)
   tmpFile  = "TMP--" + outFile
 
   ;;Assume an array of 16 million
@@ -101,7 +105,18 @@ PRO JOURNAL__20161129__NEWEST_FASTLOC_USING_ELECTRON_STARTSTOP_TIMES
         
   ENDFOR
 
+  ;;And where are we?
+  fastLoc        = {x      :   fastLoc.x[0:curElem-1], $
+                    orbit  :   fastLoc.orbit[0:curElem-1], $
+                    alt    :   fastLoc.alt[0:curElem-1], $
+                    MLT    :   fastLoc.mlt[0:curElem-1], $
+                    ILAT   :   fastLoc.ilat[0:curElem-1]}
+
   PRINT,"Saving fastLoc5 to " + outFile + '...'
   SAVE,fastLoc,FILENAME=outDir+outFile
 
+  fastLoc_times = fastLoc.x
+  fastLoc_delta_t = MAKE_ARRAY(N_ELEMENTS(fastLoc.x),/FLOAT,VALUE=2.5)
+  PRINT,"Saving fastLoc_times and fastLoc_delta_t to " + outTFile + '...'
+  SAVE,fastLoc_times,fastLoc_delta_t,FILENAME=outDir+outTFile
 END
