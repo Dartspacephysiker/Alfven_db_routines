@@ -1365,6 +1365,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   out_h2dMask          = h2dMask
 
   IF KEYWORD_SET(nonAlfvenic) THEN BEGIN
+     h2dStr.is_AlfDB   = 0B
      h2dStr.mask       = h2dMask
      h2dStr.hasMask    = 1
 

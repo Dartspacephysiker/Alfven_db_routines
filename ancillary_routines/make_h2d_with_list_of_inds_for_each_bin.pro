@@ -2,6 +2,9 @@
 ;;2016/04/15 En route to Vienna from Istanbul. (Turkey rules, by the way, or at least Turkish Airlines does.)
 ;;Ripped off MAKE_TIMEHIST_DENOMINATOR for this action
 PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
+   IN_INDS=in_inds, $
+   IN_MLTS=in_mlts, $
+   IN_ILATS=in_ilats, $
    OUTH2D_LISTS_WITH_INDS=outH2D_lists_with_inds, $
    MINMLT=minMLT, $
    MAXMLT=maxMLT, $
@@ -85,43 +88,50 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   mlts                                     = INDGEN(nXlines)*binMLT+minMLT
   ilats                                    = INDGEN(nYlines)*(KEYWORD_SET(do_lShell) ? binLshell : binILAT)+(KEYWORD_SET(do_lShell) ? minLshell : minILAT)
 
-  nMLT                                     = N_ELEMENTS(mlts)
-  nILAT                                    = N_ELEMENTS(ilats)
-  nInds                                    = 0
+  nMLT                       = N_ELEMENTS(mlts)
+  nILAT                      = N_ELEMENTS(ilats)
+  nInds                      = 0
 
-  ;; outH2D_lists_with_inds                = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
+  ;; outH2D_lists_with_inds  = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;fix MLTs, if need be
-  dbStructMLTS                             = SHIFT_MLTS_FOR_H2D(dbStruct,dbStruct_inds,shiftM)
-  dbStructILATS                            = (KEYWORD_SET(do_lShell) ? dbStruct.lShell : dbStruct.ILAT)[dbStruct_inds]
+  IF N_ELEMENTS(in_mlts) GT 0 THEN BEGIN
+     indices   = in_inds
+     DBMLTs    = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,shiftM,IN_MLTS=in_MLTs)
+     DBILATs   = in_ILATs
+  ENDIF ELSE BEGIN
+     indices   = dbStruct_inds
+     DBMLTs    = SHIFT_MLTS_FOR_H2D(dbStruct,indices,shiftM)
+     DBILATs   = (KEYWORD_SET(do_lShell) ? dbStruct.lShell : dbStruct.ILAT)[indices]
+  ENDELSE
 
-  IF KEYWORD_SET(both_hemis) THEN dbStructILATS = ABS(dbStructILATS)
+  IF KEYWORD_SET(both_hemis) THEN DBILATs = ABS(DBILATs)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;loop over MLTs and ILATs
   outH2D_lists_with_inds                   = MAKE_ARRAY(nMLT,nILAT,/OBJ)
   ;; outH2D_lists_with_obs                 = !NULL
   IF KEYWORD_SET(fill_with_indices_into_plot_i) THEN BEGIN
-     loopInds                              = INDGEN(N_ELEMENTS(dbStruct_inds),/LONG)
+     loopInds                              = INDGEN(N_ELEMENTS(indices),/LONG)
   ENDIF ELSE BEGIN
-     loopInds                              = dbStruct_inds
+     loopInds                              = indices
   ENDELSE
   IF DEBUG THEN finalInds                  = !NULL
   FOR j=0, nILAT-2 DO BEGIN
      FOR i=0, nMLT-2 DO BEGIN
-        ;; inds                               = dbStruct_inds[WHERE(dbStructMLTs GE mlts[i] AND $
-        inds                               = loopInds[WHERE(dbStructMLTs GE mlts[i] AND $
-                                                            dbStructMLTs LT mlts[i+1] AND $
-                                                            dbStructILATS GE ilats[j] AND $
-                                                            dbStructILATS LT ilats[j+1],nTemp,/NULL)]
+        ;; inds                               = indices[WHERE(DBMLTs GE mlts[i] AND $
+        inds                               = loopInds[WHERE(DBMLTs GE mlts[i] AND $
+                                                            DBMLTs LT mlts[i+1] AND $
+                                                            DBILATs GE ilats[j] AND $
+                                                            DBILATs LT ilats[j+1],nTemp,/NULL)]
         tempIndsList                       = LIST(inds)
 
 
-        ;; tempIndsList                       = LIST(WHERE(dbStructMLTs GE mlts[i] AND $
-        ;;                                                 dbStructMLTs LT mlts[i+1] AND $
-        ;;                                                 dbStructILATS GE ilats[j] AND $
-        ;;                                                 dbStructILATS LT ilats[j+1],nTemp,/NULL))
+        ;; tempIndsList                       = LIST(WHERE(DBMLTs GE mlts[i] AND $
+        ;;                                                 DBMLTs LT mlts[i+1] AND $
+        ;;                                                 DBILATs GE ilats[j] AND $
+        ;;                                                 DBILATs LT ilats[j+1],nTemp,/NULL))
 
         ;;Whether empty or not, add to the array of lists
         ;; outH2D_lists_with_inds             = [outH2D_lists_with_inds,tempIndsList]
