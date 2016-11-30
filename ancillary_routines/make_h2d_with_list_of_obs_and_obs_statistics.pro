@@ -53,18 +53,21 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Doing text output?
   todayStr         = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
-  ;; baseFilePrefix   = todayStr + '--H2D_str_list_of_obs' + (KEYWORD_SET(outFileString) ? '--' + outFileString : '')
-  baseFilePrefix   = 'H2D_str_list_of_obs--' + (KEYWORD_SET(outFileString) ? outFileString : '')
-  ;; defOutFilePrefix = ''
-  ;; defOutFileSuffix = ''
+
+  baseFilePrefix   = 'H2D_list_of_obs--' + (KEYWORD_SET(outFileString) ? outFileString : '')
 
   defOutDir = '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/txtOutput/'
 
-  ;; IF N_ELEMENTS(outFilePrefix) EQ 0 THEN outFilePrefix = defOutFilePrefix
-  ;; IF N_ELEMENTS(outFileSuffix) EQ 0 THEN outFileSuffix = defOutFileSuffix
   IF N_ELEMENTS(outDir) EQ 0 THEN outDir = defOutDir
 
   outFileName     = baseFilePrefix+'--'+dataName+(KEYWORD_SET(output__orb_avg_obs) ? '--orbAvg' : '')+'.txt'
+
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     outFileName = outFileName.Replace('eFlux','eSpecDB')
+     outFileName = outFileName.Replace('eNumFl','eSpecDB')
+     outFileName = outFileName.Replace('_ENUMFLUX_NONALFVEN','')
+     outFileName = outFileName.Replace('_EFLUX_NONALFVEN','')
+  ENDIF
 
   IF N_ELEMENTS(dataTitle) GT 0 THEN dTitle = dataTitle ELSE dTitle = 'Observation'
   IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
@@ -74,23 +77,14 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   IF KEYWORD_SET(output_textFile) THEN BEGIN
      PRINTF,lun,"Creating obs/orb file: " + outDir + outFileName
 
-     ;; IF FILE_TEST(outDir+outFileName) THEN BEGIN
-     ;;    PRINTF,lun,'H2D_list_with_obs file already exists: ' + outDir+outFileName
-     ;;    PRINTF,lun,"Restoring..."
-     ;;    RESTORE,outDir+outFileName
-     ;;    IF N_ELEMENTS(outH2D_lists_with_obs) EQ 0 THEN BEGIN
-     ;;       PRINTF,lun,"Error! No H2D_list_with_inds is in this file! Possibly corrupted/old file?"
-     ;;       STOP
-     ;;    ENDIF
-     ;; ENDIF ELSE BEGIN
+     IF FILE_TEST(outDir+outFileName) AND KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+        PRINTF,lun,'H2D_list_with_obs file already exists: ' + outDir+outFileName + '. Skipping ...'
+        skip = 1
+     ENDIF
 
-        ;;are we doing a text file?
-        ;; textFileName='txtoutput/'+fNameSansPref + ".txt"
-
+     IF ~KEYWORD_SET(skip) THEN BEGIN
         OPENW,textLun,outDir+outFileName,/GET_LUN
-        ;; PRINTF,textLun,"Output from make_fastloc_histo"
-        ;; PRINTF,textLun,"The filename gives {min,max,binsize}{MLT,(ILAT|lShell)}--{min,max}Orb"
-     ;; ENDELSE
+     ENDIF
   ENDIF
 
   ;;Doing any gross rate stuff?
@@ -145,7 +139,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   outH2D_stats                             = MAKE_ARRAY(4,HLOI__nMLT,HLOI__nILAT,/DOUBLE)
   outH2D_lists_with_obs                    = MAKE_ARRAY(HLOI__nMLT,HLOI__nILAT,/OBJ)
 
-  IF KEYWORD_SET(output_textFile) THEN BEGIN
+  IF KEYWORD_SET(output_textFile) AND ~KEYWORD_SET(skip) THEN BEGIN
      CASE 1 OF
         KEYWORD_SET(output__inc_IMF): BEGIN
            PRINTF,textLun,FORMAT='(A0,T9,A0,T19,A0,T46,A0,T54,A0,T64,' + $
@@ -357,7 +351,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   ENDIF
   
   ;;close output, if we've been doing ... it
-  IF KEYWORD_SET(output_textFile) THEN BEGIN
+  IF KEYWORD_SET(output_textFile) AND ~KEYWORD_SET(skip) THEN BEGIN
      PRINTF,lun,'Finished writing ' + outDir+outFileName
      CLOSE,textLun
      FREE_LUN,textLun
