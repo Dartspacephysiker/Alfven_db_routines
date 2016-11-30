@@ -203,20 +203,20 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                     CASE 1 OF
                        KEYWORD_SET(output__orb_avg_obs): BEGIN
                           tempUTC           = dbTimes[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                          CASE 1 OF
-                             KEYWORD_SET(for_maximus): BEGIN
+                          ;; CASE 1 OF
+                             ;; KEYWORD_SET(for_maximus): BEGIN
                                 tempChare         = dbStruct.max_chare_losscone[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
                                 tempeFlux         = dbStruct.elec_energy_flux[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                             END
-                             KEYWORD_SET(for_eSpec_DBs): BEGIN
-                                tempeFlux         = NEWELL__eSpec.jee[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                                tempeNumFlux      = NEWELL__eSpec.je[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                                tempChare         = tempeFlux*tempeNumFlux*6.242*1.0e11
-                             END
-                             ELSE: BEGIN
+                             ;; END
+                             ;; KEYWORD_SET(for_eSpec_DBs): BEGIN
+                             ;;    tempeFlux         = NEWELL__eSpec.jee[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                             ;;    tempeNumFlux      = NEWELL__eSpec.je[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                             ;;    tempChare         = tempeFlux*tempeNumFlux*6.242*1.0e11
+                             ;; END
+                          ;;    ELSE: BEGIN
 
-                             END
-                          ENDCASE
+                          ;;    END
+                          ;; ENDCASE
 
                           IMFinds           = VALUE_CLOSEST2(C_OMNI__mag_UTC,tempUTC)
                           tempIMFBx         = C_OMNI__Bx[IMFinds]

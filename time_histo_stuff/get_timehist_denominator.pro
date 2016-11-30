@@ -67,6 +67,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
                      EQUAL_AREA_BINNING=EA_binning, $
                      BOTH_HEMIS=KEYWORD_SET(tmplt_h2dStr.both_hemis), $
                      DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+                     FOR_ESPEC_DBS=for_eSpec_DBs, $
                      FASTLOCFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbFile : FASTLOC__dbFile, $
                      FASTLOCTIMEFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbTimesFile : FASTLOC__dbTimesFile
 

@@ -754,6 +754,8 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
   ;;########ELECTRON FLUX########
   IF KEYWORD_SET(eplots) THEN BEGIN
 
+     ;;Why ~KEYWORD_SET(no_maximus), you ask? Because if there's no maximus, we already have
+     ;;the proper H2DFluxN
      IF N_ELEMENTS(eFlux_nonAlfven_data) GT 0 AND ~KEYWORD_SET(no_maximus) THEN BEGIN
         GET_H2D_NEVENTS_AND_MASK,IN_MLTS=eSpec__mlts[indices__nonAlfven_eSpec], $
                                  IN_ILATS=eSpec__ilats[indices__nonAlfven_eSpec], $
@@ -1819,6 +1821,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                            NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                            /NEWELLPLOT_PROBOCCURRENCE, $
                                            NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
+                                           COMBINE_ACCELERATED=Newell__comb_accelerated, $
                                            TMPLT_H2DSTR=tmplt_h2dStr, $
                                            H2DSTRS=h2dStrs, $
                                            ;; H2DMASKSTR=h2dMaskStr, $

@@ -442,7 +442,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
            orb_i             = GET_ORBRANGE_INDS( $
                                dbStruct, $
                                MIMC__orbRange[0], $
-                               MIMC__orbRange[1], $
+                               MIMC__orbRange[1], $o
                                DONT_TRASH_BAD_ORBITS= $
                                ((is_maximus) AND KEYWORD_SET(dont_blackball_maximus)) OR $
                                (~(is_maximus) AND KEYWORD_SET(dont_blackball_fastloc)), $

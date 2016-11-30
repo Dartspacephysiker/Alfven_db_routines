@@ -14,8 +14,11 @@
 ;indices file by running get_fastloc_inds__IMF_conds with keyword /MAKE_OUTINDSFILE, then provide
 ;those indices as the keyword FASTLOC_INDS here.
 
-PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLOC_DELTA_T=fastloc_delta_t, $
-                       OUTTIMEHISTO=outTimeHisto, FASTLOC_INDS=fastLoc_inds, $
+PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc, $
+                       FASTLOC_TIMES=fastLoc_Times, $
+                       FASTLOC_DELTA_T=fastloc_delta_t, $
+                       OUTTIMEHISTO=outTimeHisto, $
+                       FASTLOC_INDS=fastLoc_inds, $
                        OUT_DELTA_TS=out_delta_ts, $
                        MINMLT=minMLT,MAXMLT=maxMLT, $
                        BINMLT=binMLT, $
@@ -23,10 +26,17 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
                        MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
                        EQUAL_AREA_BINNING=EA_binning, $
                        BOTH_HEMIS=both_hemis, $
-                       DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
+                       DO_LSHELL=do_lShell, $
+                       MINLSHELL=minLshell, $
+                       MAXLSHELL=maxLshell, $
+                       BINLSHELL=binLshell, $
+                       FOR_ESPEC_DBS=for_eSpec_DBs, $
                        MINALT=minAlt,MAXALT=maxAlt,BINALT=binAlt, $
-                       FASTLOCFILE=fastLocFile,FASTLOCTIMEFILE=fastLocTimeFile, $
-                       OUTFILEPREFIX=outFilePrefix,OUTFILESUFFIX=outFileSuffix, OUTDIR=outDir, $
+                       FASTLOCFILE=fastLocFile, $
+                       FASTLOCTIMEFILE=fastLocTimeFile, $
+                       OUTFILEPREFIX=outFilePrefix, $
+                       OUTFILESUFFIX=outFileSuffix, $
+                       OUTDIR=outDir, $
                        OUTPUT_TEXTFILE=output_textFile,LUN=lun
 
   COMPILE_OPT idl2
@@ -78,7 +88,10 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc,FASTLOC_TIMES=fastLoc_Times,FASTLO
      ;; ENDIF
      
   ;;Get these in memory
-  LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastLoc_times,fastLoc_delta_t
+  LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc, $
+                                 fastLoc_times, $
+                                 fastLoc_delta_t, $
+                                 FOR_ESPEC_DBS=for_eSpec_DBs
 
      ;;avoid any trickery
      nFastLoc = N_ELEMENTS(fastLoc.orbit)
