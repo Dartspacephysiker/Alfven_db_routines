@@ -166,15 +166,15 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ;;Hz32 only possible if we haven't manually set sample_t_restriction
   Hz32_string  = ''
   IF KEYWORD_SET(disregard_sample_t) THEN BEGIN
-     sample_t_string = '--no_sampT_restr'
+     sample_t_string = '--0sampT'
   ENDIF ELSE BEGIN
      IF N_ELEMENTS(sample_t_restriction) GT 0 THEN BEGIN
         CASE sample_t_restriction OF
            0: BEGIN
-              sample_t_string = '--no_sampT_restr'
+              sample_t_string = '--0sampT'
            END
            ELSE: BEGIN
-              sample_t_string  = STRING(FORMAT='("--sampT_restr_",F0.2,"s")',sample_t_restriction) 
+              sample_t_string  = STRING(FORMAT='(F0.2,"_sampT")',sample_t_restriction) 
            END
         ENDCASE
         IF KEYWORD_SET(include_32Hz) THEN BEGIN

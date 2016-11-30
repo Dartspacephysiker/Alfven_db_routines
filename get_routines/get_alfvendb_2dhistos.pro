@@ -795,45 +795,15 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
      FOR i=0,N_ELEMENTS(eFluxPlotType)-1 DO BEGIN
         fluxPlotType = eFluxPlotType[i]
 
-        CASE N_ELEMENTS(noPosEFlux) OF
-           0:   noPosFlux     = !NULL
-           1:   noPosFlux     = noPosEFlux
-           ELSE: noPosFlux    = noPosEFlux[i]
-        ENDCASE
-
-        CASE N_ELEMENTS(noNegEFlux) OF
-           0:   noNegFlux     = !NULL
-           1:   noNegFlux     = noNegEFlux
-           ELSE: noNegFlux    = noNegEFlux[i]
-        ENDCASE
-
-        CASE N_ELEMENTS(absEFlux) OF
-           0:   absFlux       = !NULL
-           1:   absFlux       = absEFlux
-           ELSE: absFlux      = absEFlux[i]
-        ENDCASE
-
-        CASE N_ELEMENTS(logEfPlot) OF
-           0:   logPlot       = !NULL
-           1:   logPlot       = logEfPlot
-           ELSE: logPlot      = logEfPlot[i]
-        ENDCASE
-
-        dims                  = SIZE(ePlotRange,/DIMENSIONS)
-        CASE N_ELEMENTS(dims) OF 
-           0:   plotRange     = !NULL
-           1: BEGIN
-              CASE dims OF
-                 0: plotRange = !NULL
-                 2: plotRange = ePlotRange
-                 ELSE: BEGIN
-                 END
-              ENDCASE
-           END
-           2:   plotRange     = ePlotRange[*,i]
-        ENDCASE
-
         IF KEYWORD_SET(newell_analyze_eFlux) THEN BEGIN
+
+           ;;pass all plot ranges to GET_NEWELL_FLUX_PLOTDATA
+           plotRange          = ePlotRange
+           noPosFlux          = N_ELEMENTS(noPosEFlux) GT 0 ? noPosEFlux : !NULL
+           noNegFlux          = N_ELEMENTS(noNegEFlux) GT 0 ? noNegEFlux : !NULL
+           absFlux            = N_ELEMENTS(absEFlux)   GT 0 ? absEFlux   : !NULL
+           logPlot            = N_ELEMENTS(logEfPlot)  GT 0 ? logEfPlot  : !NULL
+
            GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,/GET_EFLUX, $
                                     MINM=minM, $
                                     MAXM=maxM, $
@@ -917,6 +887,44 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     LUN=lun
 
         ENDIF ELSE BEGIN        ;No newell analysis, just regular
+
+           CASE N_ELEMENTS(noPosEFlux) OF
+              0:   noPosFlux     = !NULL
+              1:   noPosFlux     = noPosEFlux
+              ELSE: noPosFlux    = noPosEFlux[i]
+           ENDCASE
+
+           CASE N_ELEMENTS(noNegEFlux) OF
+              0:   noNegFlux     = !NULL
+              1:   noNegFlux     = noNegEFlux
+              ELSE: noNegFlux    = noNegEFlux[i]
+           ENDCASE
+
+           CASE N_ELEMENTS(absEFlux) OF
+              0:   absFlux       = !NULL
+              1:   absFlux       = absEFlux
+              ELSE: absFlux      = absEFlux[i]
+           ENDCASE
+
+           CASE N_ELEMENTS(logEfPlot) OF
+              0:   logPlot       = !NULL
+              1:   logPlot       = logEfPlot
+              ELSE: logPlot      = logEfPlot[i]
+           ENDCASE
+
+           dims                  = SIZE(ePlotRange,/DIMENSIONS)
+           CASE N_ELEMENTS(dims) OF 
+              0:   plotRange     = !NULL
+              1: BEGIN
+                 CASE dims OF
+                    0: plotRange = !NULL
+                    2: plotRange = ePlotRange
+                    ELSE: BEGIN
+                    END
+                 ENDCASE
+              END
+              2:   plotRange     = ePlotRange[*,i]
+           ENDCASE
 
            GET_FLUX_PLOTDATA,maximus,plot_i,/GET_EFLUX, $
                              MINM=minM, $
@@ -1050,51 +1058,19 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
      FOR i=0,N_ELEMENTS(eNumFlPlotType)-1 DO BEGIN
         fluxPlotType = eNumFlPlotType[i]
 
-        CASE N_ELEMENTS(noPosENumFl) OF
-           0:   noPosFlux     = !NULL
-           1:   noPosFlux     = noPosENumFl
-           ELSE: noPosFlux    = noPosENumFl[i]
-        ENDCASE
-
-        CASE N_ELEMENTS(noNegENumFl) OF
-           0:   noNegFlux     = !NULL
-           1:   noNegFlux     = noNegENumFl
-           ELSE: noNegFlux    = noNegENumFl[i]
-        ENDCASE
-
-        CASE N_ELEMENTS(absENumFl) OF
-           0:   absFlux       = !NULL
-           1:   absFlux       = absENumFl
-           ELSE: absFlux      = absENumFl[i]
-        ENDCASE
-
-        CASE N_ELEMENTS(logENumFlPlot) OF
-           0:   logPlot       = !NULL
-           1:   logPlot       = logENumFlPlot
-           ELSE: logPlot      = logENumFlPlot[i]
-        ENDCASE
-
-        dims                  = SIZE(eNumFlPlotRange,/DIMENSIONS)
-        CASE N_ELEMENTS(dims) OF 
-           0:   plotRange     = !NULL
-           1: BEGIN
-              CASE dims OF
-                 0: plotRange = !NULL
-                 2: plotRange = eNumFlPlotRange
-                 ELSE: BEGIN
-                 END
-              ENDCASE
-           END
-           2:   plotRange     = eNumFlPlotRange[*,i]
-        ENDCASE
-
         IF KEYWORD_SET(newell_analyze_eFlux) THEN BEGIN
-        ;;    IF (STRUPCASE(STRMID(fluxPlotType,0,4)) NE 'ESA_') AND $
-        ;;       (STRUPCASE(STRMID(fluxPlotType,0,4)) NE 'ESA_') AND $
            ;;A temporary kluge
-           IF N_ELEMENTS(eNumFlPlotRange) GT 2 THEN BEGIN
-              plotRange     = eNumFlPlotRange[*,1]
-           ENDIF
+           ;; IF N_ELEMENTS(eNumFlPlotRange) GT 2 THEN BEGIN
+           ;;    plotRange     = eNumFlPlotRange[*,1]
+           ;; ENDIF
+
+           ;;pass all plot ranges to GET_NEWELL_FLUX_PLOTDATA
+           plotRange          = eNumFlPlotRange
+           noPosFlux          = N_ELEMENTS(noPosENumFl)   GT 0 ? noPosENumFl : !NULL
+           noNegFlux          = N_ELEMENTS(noNegENumFl)   GT 0 ? noNegENumFl : !NULL
+           absFlux            = N_ELEMENTS(absENumFl)     GT 0 ? absENumFl   : !NULL
+           logPlot            = N_ELEMENTS(logENumFlPlot) GT 0 ? logENumFlPlot  : !NULL
+
            GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
                                     MINM=minM, $
                                     MAXM=maxM, $
@@ -1176,6 +1152,44 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     LUN=lun
 
         ENDIF ELSE BEGIN        ;No newell analysis, just regular
+
+           CASE N_ELEMENTS(noPosENumFl) OF
+              0:   noPosFlux     = !NULL
+              1:   noPosFlux     = noPosENumFl
+              ELSE: noPosFlux    = noPosENumFl[i]
+           ENDCASE
+
+           CASE N_ELEMENTS(noNegENumFl) OF
+              0:   noNegFlux     = !NULL
+              1:   noNegFlux     = noNegENumFl
+              ELSE: noNegFlux    = noNegENumFl[i]
+           ENDCASE
+
+           CASE N_ELEMENTS(absENumFl) OF
+              0:   absFlux       = !NULL
+              1:   absFlux       = absENumFl
+              ELSE: absFlux      = absENumFl[i]
+           ENDCASE
+
+           CASE N_ELEMENTS(logENumFlPlot) OF
+              0:   logPlot       = !NULL
+              1:   logPlot       = logENumFlPlot
+              ELSE: logPlot      = logENumFlPlot[i]
+           ENDCASE
+
+           dims                  = SIZE(eNumFlPlotRange,/DIMENSIONS)
+           CASE N_ELEMENTS(dims) OF 
+              0:   plotRange     = !NULL
+              1: BEGIN
+                 CASE dims OF
+                    0: plotRange = !NULL
+                    2: plotRange = eNumFlPlotRange
+                    ELSE: BEGIN
+                    END
+                 ENDCASE
+              END
+              2:   plotRange     = eNumFlPlotRange[*,i]
+           ENDCASE
 
            GET_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
                              MINM=minM, $

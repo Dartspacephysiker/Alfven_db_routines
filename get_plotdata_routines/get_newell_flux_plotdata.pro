@@ -214,6 +214,45 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
      IF tmp_i[0] EQ -1 THEN CONTINUE
 
+     CASE N_ELEMENTS(noPosFlux) OF
+        0:   noPosF     = !NULL
+        1:   noPosF     = noPosFlux
+        ELSE: noPosF    = noPosFlux[k]
+     ENDCASE
+
+     CASE N_ELEMENTS(noNegFlux) OF
+        0:   noNegF     = !NULL
+        1:   noNegF     = noNegFlux
+        ELSE: noNegF    = noNegFlux[k]
+     ENDCASE
+
+     CASE N_ELEMENTS(absFlux) OF
+        0:   absF       = !NULL
+        1:   absF       = absFlux
+        ELSE: absF      = absFlux[k]
+     ENDCASE
+
+     CASE N_ELEMENTS(logFluxPlot) OF
+        0:   logP       = !NULL
+        1:   logP       = logFluxPlot
+        ELSE: logP      = logFluxPlot[k]
+     ENDCASE
+
+     dims                  = SIZE(plotRange,/DIMENSIONS)
+     CASE N_ELEMENTS(dims) OF 
+        0:   plotR     = !NULL
+        1: BEGIN
+           CASE dims OF
+              0: plotR = !NULL
+              2: plotR = plotRange
+              ELSE: BEGIN
+              END
+           ENDCASE
+        END
+        2:   plotR     = plotRange[*,k]
+     ENDCASE
+
+
      ;;Need to provide a new h2dFluxN and a new mask for each of these
      GET_H2D_NEVENTS_AND_MASK,maximus,tmp_i, $
                               IN_MLTS=KEYWORD_SET(nonAlfven_mlt) ? nonAlfven_mlt[tmp_i] : !NULL, $
@@ -237,6 +276,10 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
      temph2dmask    = temph2dmaskstr.data
 
+
+
+
+
      GET_FLUX_PLOTDATA,maximus,tmp_i, $
                        MINM=minM,MAXM=maxM, $
                        BINM=binM, $
@@ -248,13 +291,13 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        OUTH2DBINSILAT=outH2DBinsILAT, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        FLUXPLOTTYPE=fluxPlotType, $
-                       PLOTRANGE=plotRange, $
+                       PLOTRANGE=plotR, $
                        PLOTAUTOSCALE=plotAutoscale, $
                        REMOVE_OUTLIERS=remove_outliers, $
                        REMOVE_LOG_OUTLIERS=remove_log_outliers, $
-                       NOPOSFLUX=noPosFlux, $
-                       NONEGFLUX=noNegFlux, $
-                       ABSFLUX=absFlux, $
+                       NOPOSFLUX=noPosF, $
+                       NONEGFLUX=noNegF, $
+                       ABSFLUX=absF, $
                        EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
                        ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
                        ;; IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
@@ -269,7 +312,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        NONALFVEN_DELTA_T=nonAlfven_delta_t, $
                        NONALFVEN_THISTDENOMINATOR=nonAlfven_tHistDenominator, $
                        OUT_REMOVED_II=out_removed_ii, $
-                       LOGFLUXPLOT=logFluxPlot, $
+                       LOGFLUXPLOT=logP, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                        MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                        MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $

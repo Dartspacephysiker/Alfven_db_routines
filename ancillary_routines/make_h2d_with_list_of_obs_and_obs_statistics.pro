@@ -54,7 +54,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   ;;Doing text output?
   todayStr         = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
 
-  baseFilePrefix   = 'H2D_list_of_obs--' + (KEYWORD_SET(outFileString) ? outFileString : '')
+  baseFilePrefix   = 'H2D--' + (KEYWORD_SET(outFileString) ? outFileString : '')
 
   defOutDir = '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/txtOutput/'
 
@@ -179,7 +179,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
            outH2D_lists_with_obs[i,j]  = tempObsList
 
            ;;Output to text file if requested
-           IF KEYWORD_SET(output_textFile) THEN BEGIN
+           IF (KEYWORD_SET(output_textFile) AND ~KEYWORD_SET(skip)) THEN BEGIN
               ;;Everyone want dat
 
               IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
