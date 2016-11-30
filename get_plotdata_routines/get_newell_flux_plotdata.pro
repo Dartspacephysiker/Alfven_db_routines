@@ -1,4 +1,8 @@
 ;2016/06/04 RUN IT!!
+;;2016/11/30 Added this weird varPlotIsKeepInds variable. 
+;;Because the eSpec DB is so gigantic, it is a real issue to keep track of removed_ii variables (there are always millions). Because of
+;;this, for the eSpec DB it makes way more sense to keep track of the indices that we have KEPT. So that's what is done here for
+;;"nonAlfvén" data.
 PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              BINM=binM, $
                              SHIFTM=shiftM, $
@@ -59,6 +63,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              VARPLOTH2DINDS=varPlotH2DInds, $
                              VARPLOTRAWINDS=varPlotRawInds, $
                              REMOVED_II_LISTARR=removed_ii_listArr, $
+                             ;; VARPLOTISKEEPINDS=varPlotIsKeepInds, $
                              MEDIANPLOT=medianplot, $
                              MEDHISTOUTDATA=medHistOutData, $
                              MEDHISTOUTTXT=medHistOutTxt, $
@@ -326,9 +331,26 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      IF keepMe THEN BEGIN
         dataNameArr       = [dataNameArr,dataName] 
         dataRawPtrArr     =[dataRawPtrArr,dataRawPtr] 
-        varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
-        varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-        removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
+        varPlotH2DInds    = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+        varPlotRawInds    = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+        ;; varPlotIsKeepInds = [varPlotIsKeepInds,KEYWORD_SET(nonAlfven)]
+
+        IF KEYWORD_SET(nonAlfven) THEN BEGIN
+           ;; junker         = MAKE_ARRAY(N_ELEMENTS(nonAlfven_mlt),VALUE=0B,/BYTE)
+           ;; junker[tmp_i]  = 1B
+           ;; out_removed_ii = WHERE(~TEMPORARY(junker))
+
+           junker         = MAKE_ARRAY(N_ELEMENTS(nonAlfven_mlt),VALUE=0B,/BYTE)
+           junker[CGSETDIFFERENCE(indices__nonAlfven_eSpec,tmp_i,COUNT=nJunked)]  = 1B
+           out_removed_ii = WHERE(TEMPORARY(junker))
+
+        ENDIF
+        ;;If nonAlfven, rather than being removed indices, tmp_i are the indices to KEEP
+        ;; IF KEYWORD_SET(nonAlfven) THEN BEGIN
+        ;;    removed_ii_listArr = [removed_ii_listArr,LIST(tmp_i)]
+        ;; ENDIF ELSE BEGIN
+        removed_ii_listArr = [removed_ii_listArr,LIST(TEMPORARY(out_removed_ii))]
+        ;; ENDELSE
      ENDIF 
 
      IF KEYWORD_SET(do_grossRate_fluxQuantities) $

@@ -42,35 +42,35 @@ PRO SPLIT_ALFDB_I_BY_ESPEC_TYPE,good_i,is_despun, $
   anomal_i      = WHERE(anomal)
 
   IF pure_b_i[0] NE -1 THEN BEGIN
-     pure_b_i   = CGSETINTERSECTION(good_i,pure_b_i,COUNT=nB)
+     pure_b_i   = CGSETINTERSECTION(good_i,pure_b_i,COUNT=nB,NORESULT=-1)
   ENDIF
 
   IF pure_d_i[0] NE -1 THEN BEGIN
-     pure_d_i   = CGSETINTERSECTION(good_i,pure_d_i,COUNT=nD)
+     pure_d_i   = CGSETINTERSECTION(good_i,pure_d_i,COUNT=nD,NORESULT=-1)
   ENDIF
 
   IF pure_m_i[0] NE -1 THEN BEGIN
-     pure_m_i   = CGSETINTERSECTION(good_i,pure_m_i,COUNT=nM)
+     pure_m_i   = CGSETINTERSECTION(good_i,pure_m_i,COUNT=nM,NORESULT=-1)
   ENDIF
 
   IF mix_bd_i[0] NE -1 THEN BEGIN
-     mix_bd_i   = CGSETINTERSECTION(good_i,mix_bd_i,COUNT=nBD)
+     mix_bd_i   = CGSETINTERSECTION(good_i,mix_bd_i,COUNT=nBD,NORESULT=-1)
   ENDIF
 
   IF mix_bm_i[0] NE -1 THEN BEGIN
-     mix_bm_i   = CGSETINTERSECTION(good_i,mix_bm_i,COUNT=nBM)
+     mix_bm_i   = CGSETINTERSECTION(good_i,mix_bm_i,COUNT=nBM,NORESULT=-1)
   ENDIF
 
   IF mix_dm_i[0] NE -1 THEN BEGIN
-     mix_dm_i   = CGSETINTERSECTION(good_i,mix_dm_i,COUNT=nDM)
+     mix_dm_i   = CGSETINTERSECTION(good_i,mix_dm_i,COUNT=nDM,NORESULT=-1)
   ENDIF
 
   IF mix_bdm_i[0] NE -1 THEN BEGIN
-     mix_bdm_i  = CGSETINTERSECTION(good_i,mix_bdm_i,COUNT=nBDM)
+     mix_bdm_i  = CGSETINTERSECTION(good_i,mix_bdm_i,COUNT=nBDM,NORESULT=-1)
   ENDIF
 
   IF anomal_i[0] NE -1 THEN BEGIN
-     anomal_i   = CGSETINTERSECTION(good_i,anomal_i,COUNT=nAnom)
+     anomal_i   = CGSETINTERSECTION(good_i,anomal_i,COUNT=nAnom,NORESULT=-1)
   ENDIF
   IF N_ELEMENTS(nAnom) EQ 0 THEN nAnom = 0
 

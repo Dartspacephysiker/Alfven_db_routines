@@ -43,67 +43,30 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   ENDIF
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;Doing text output?
-  ;; todayStr         = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
-  ;; baseFilePrefix   = todayStr + '--H2D_str_list_of_inds'
-  ;; defOutFilePrefix = ''
-  ;; defOutFileSuffix = ''
-
-  ;; defOutDir = '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/'
-
-  ;; IF N_ELEMENTS(outFilePrefix) EQ 0 THEN outFilePrefix = defOutFilePrefix
-  ;; IF N_ELEMENTS(outFileSuffix) EQ 0 THEN outFileSuffix = defOutFileSuffix
-  ;; IF N_ELEMENTS(outDir) EQ 0 THEN outDir = defOutDir
-
-  ;; outFileName     = todayStr+outFilePrefix+outFileSuffix+'.sav'
-
-
-  ;; IF FILE_TEST(outDir+outFileName) THEN BEGIN
-  ;;    PRINTF,lun,'H2D_list_with_inds file already exists: ' + outDir+outFileName
-  ;;    PRINTF,lun,"Restoring..."
-  ;;    RESTORE,outDir+outFileName
-  ;;    IF N_ELEMENTS(outH2D_lists_with_inds) EQ 0 THEN BEGIN
-  ;;       PRINTF,lun,"Error! No H2D_list_with_inds is in this file! Possibly corrupted/old file?"
-  ;;       STOP
-  ;;    ENDIF
-  ;; ENDIF ELSE BEGIN
-
-  ;;    ;;are we doing a text file?
-  ;;    IF KEYWORD_SET(output_textFile) THEN BEGIN
-  ;;       textFileName='txtoutput/'+fNameSansPref + ".txt"
-
-  ;;       OPENW,textLun,outDir+textFileName,/GET_LUN
-  ;;       PRINTF,textLun,"Output from make_fastloc_histo"
-  ;;       PRINTF,textLun,"The filename gives {min,max,binsize}{MLT,(ILAT|lShell)}--{min,max}Orb"
-  ;;       PRINTF,textLun,FORMAT='("MLT",T10,"(ILAT|lShell)",T25,"Time in bin (minutes)")'
-  ;;    ENDIF
-  ;; ENDELSE
-
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;SET UP GRID
-  nXlines                                  = (maxMLT-minMLT)/binMLT + 1
-  nYlines                                  = ((KEYWORD_SET(do_lShell) ? maxLshell : maxILAT)-(KEYWORD_SET(do_lShell) ? minLshell : minILAT))/(KEYWORD_SET(do_lShell) ? binLshell : binILAT) + 1
+  nXlines  = (maxMLT-minMLT)/binMLT + 1
+  nYlines  = ((KEYWORD_SET(do_lShell) ? maxLshell : maxILAT)-(KEYWORD_SET(do_lShell) ? minLshell : minILAT))/ $
+             (KEYWORD_SET(do_lShell) ? binLshell : binILAT) + 1
 
-  mlts                                     = INDGEN(nXlines)*binMLT+minMLT
-  ilats                                    = INDGEN(nYlines)*(KEYWORD_SET(do_lShell) ? binLshell : binILAT)+(KEYWORD_SET(do_lShell) ? minLshell : minILAT)
+  mlts     = INDGEN(nXlines)*binMLT+minMLT
+  ilats    = INDGEN(nYlines)*(KEYWORD_SET(do_lShell) ? binLshell : binILAT)+(KEYWORD_SET(do_lShell) ? minLshell : minILAT)
 
-  nMLT                       = N_ELEMENTS(mlts)
-  nILAT                      = N_ELEMENTS(ilats)
-  nInds                      = 0
+  nMLT    = N_ELEMENTS(mlts)
+  nILAT   = N_ELEMENTS(ilats)
+  nInds   = 0
 
   ;; outH2D_lists_with_inds  = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;fix MLTs, if need be
   IF N_ELEMENTS(in_mlts) GT 0 THEN BEGIN
-     indices   = in_inds
-     DBMLTs    = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,shiftM,IN_MLTS=in_MLTs)
-     DBILATs   = in_ILATs
+     ;; indices   = in_inds
+     DBMLTs    = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,shiftM,IN_MLTS=in_MLTs[in_inds])
+     DBILATs   = in_ILATs[in_inds]
   ENDIF ELSE BEGIN
      indices   = dbStruct_inds
-     DBMLTs    = SHIFT_MLTS_FOR_H2D(dbStruct,indices,shiftM)
-     DBILATs   = (KEYWORD_SET(do_lShell) ? dbStruct.lShell : dbStruct.ILAT)[indices]
+     DBMLTs    = SHIFT_MLTS_FOR_H2D(dbStruct,dbStruct_inds,shiftM)
+     DBILATs   = (KEYWORD_SET(do_lShell) ? dbStruct.lShell : dbStruct.ILAT)[dbStruct_inds]
   ENDELSE
 
   IF KEYWORD_SET(both_hemis) THEN DBILATs = ABS(DBILATs)
@@ -113,9 +76,9 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   outH2D_lists_with_inds                   = MAKE_ARRAY(nMLT,nILAT,/OBJ)
   ;; outH2D_lists_with_obs                 = !NULL
   IF KEYWORD_SET(fill_with_indices_into_plot_i) THEN BEGIN
-     loopInds                              = INDGEN(N_ELEMENTS(indices),/LONG)
+     loopInds                              = INDGEN(N_ELEMENTS(KEYWORD_SET(in_MLTs) ? in_inds : dbStruct_inds),/LONG)
   ENDIF ELSE BEGIN
-     loopInds                              = indices
+     loopInds                              = (KEYWORD_SET(in_mlts) ? in_inds : dbStruct_inds)
   ENDELSE
   IF DEBUG THEN finalInds                  = !NULL
   FOR j=0, nILAT-2 DO BEGIN

@@ -9,6 +9,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                           DATANAMEARR=dataNameArr, $
                           DATARAWPTRARR=dataRawPtrArr, $
                           REMOVED_II_LISTARR=removed_ii_listArr, $
+                          ;; VARPLOTISKEEPINDS=varPlotIsKeepInds, $
                           DO_VAR_PLOTS=doing_var_plots, $
                           VAR__PLOTRANGE=var__plotRange, $
                           VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
@@ -16,7 +17,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                           VAR__AUTOSCALE=var__autoscale, $
                           VARPLOTH2DINDS=varPlotH2DInds, $
                           DBTIMES=DBTimes, $
-                          DONT_USE_THESE_INDS=dont_use_these_inds, $
+                          ;; DONT_USE_THESE_INDS=dont_use_these_inds, $
                           DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                           GROSSRATE__H2D_AREAS=h2dAreas, $
                           DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
@@ -93,7 +94,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                                              LUN=lun
   ENDIF ELSE BEGIN
      dbInds = in_inds
-     MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbInds, $
+     MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,!NULL,!NULL, $
                                              OUTH2D_LISTS_WITH_INDS=outH2D_lists_with_inds,$
                                              IN_INDS=in_inds, $
                                              IN_MLTS=in_mlts, $
@@ -123,11 +124,16 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
 
   FOR i=0,N_ELEMENTS(varPlotRawInds)-1 DO BEGIN
      
-     dbStruct_obsArr               = *dataRawPtrArr[varPlotRawInds[i]]
+     dbStruct_obsArr                   = *dataRawPtrArr[varPlotRawInds[i]]
      IF N_ELEMENTS((removed_ii_listArr[i])[0]) GT 0 THEN BEGIN
-        dont_use_these_inds        = (removed_ii_listArr[i])[0]
+        dont_use_these_inds            = (removed_ii_listArr[i])[0]
+        ;; IF varPlotIsKeepInds[i] THEN BEGIN
+        ;;    junker                      = MAKE_ARRAY(N_ELEMENTS(in_mlts),VALUE=0B,/BYTE)
+        ;;    junker[dont_use_these_inds] = 1B
+        ;;    dont_use_these_inds         = WHERE(~TEMPORARY(junker))
+        ;; ENDIF
      ENDIF ELSE BEGIN 
-        dont_use_these_inds        = !NULL
+        dont_use_these_inds            = !NULL
      ENDELSE
 
      IF KEYWORD_SET(grossConvFactorArr) THEN grossConvFactor = grossConvFactorArr[i]

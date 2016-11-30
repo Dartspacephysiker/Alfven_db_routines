@@ -153,8 +153,10 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                   'A0)', $
                   "MLT","ILAT","Time","Orbit","Alt", $
                   ;; "pFlux","charE","eFlux","Bx","By", $
-                  dTitle,"charE","eFlux","Bx","By", $
-                  "Bz"
+                  (KEYWORD_SET(for_eSpec_DBs) ? "eFlux"    :  dTitle), $
+                  (KEYWORD_SET(for_eSpec_DBs) ? "eNumFlux" : "charE"), $
+                  (KEYWORD_SET(for_eSpec_DBs) ? "charE"    : "eFlux"), $
+                  "Bx","By","Bz"
 
            ;; PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T20,"Time",T47,"Orbit",T56,"Alt",T65,A0,T74,A0,T85,A0,T97,A0,T108)', $
            ;;        'pFlux', $
@@ -185,16 +187,20 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
            ;;Output to text file if requested
            IF KEYWORD_SET(output_textFile) THEN BEGIN
               ;;Everyone want dat
-              tempMLTs                 = dbStruct.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-              tempILATs                = dbStruct.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
 
               IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-                 tempTimes             = REPLICATE(1S,N_ELEMENTS(tempObs))
+                 tempMLTs              = NEWELL__eSpec.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                 tempILATs             = NEWELL__eSpec.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                 tempTimes             = NEWELL__eSpec.x[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                 tempOrbs              = NEWELL__eSpec.orbit[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                 tempAlts              = NEWELL__eSpec.alt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
               ENDIF ELSE BEGIN
+                 tempMLTs              = dbStruct.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                 tempILATs             = dbStruct.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
                  tempTimes             = dbStruct.time[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                 tempOrbs              = dbStruct.orbit[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                 tempAlts              = dbStruct.alt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
               ENDELSE
-              tempOrbs                 = dbStruct.orbit[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-              tempAlts                 = dbStruct.alt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
               ;; PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T25,"Orbit",T35,"Observation")'
               PRINTF,textLun,FORMAT='(F0.3,T10,F0.3)',HLOI__H2D_binCenters[0,i,j],HLOI__H2D_binCenters[1,i,j]
               PRINTF,textLun,'*************************'
@@ -204,21 +210,22 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                     
                     CASE 1 OF
                        KEYWORD_SET(output__orb_avg_obs): BEGIN
-                          tempUTC           = dbTimes[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                          ;; CASE 1 OF
-                             ;; KEYWORD_SET(for_maximus): BEGIN
+                          tempUTC           = (KEYWORD_SET(for_eSpec_DBs) ? NEWELL__eSpec.x : dbTimes) $
+                                              [dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                          CASE 1 OF
+                             KEYWORD_SET(for_maximus): BEGIN
                                 tempChare         = dbStruct.max_chare_losscone[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
                                 tempeFlux         = dbStruct.elec_energy_flux[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                             ;; END
-                             ;; KEYWORD_SET(for_eSpec_DBs): BEGIN
-                             ;;    tempeFlux         = NEWELL__eSpec.jee[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                             ;;    tempeNumFlux      = NEWELL__eSpec.je[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                             ;;    tempChare         = tempeFlux*tempeNumFlux*6.242*1.0e11
-                             ;; END
-                          ;;    ELSE: BEGIN
+                             END
+                             KEYWORD_SET(for_eSpec_DBs): BEGIN
+                                tempeFlux         = NEWELL__eSpec.jee[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                                tempeNumFlux      = NEWELL__eSpec.je[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                                tempChare         = tempeFlux*tempeNumFlux*6.242*1.0e11
+                             END
+                             ELSE: BEGIN
 
-                          ;;    END
-                          ;; ENDCASE
+                             END
+                          ENDCASE
 
                           IMFinds           = VALUE_CLOSEST2(C_OMNI__mag_UTC,tempUTC)
                           tempIMFBx         = C_OMNI__Bx[IMFinds]
@@ -243,6 +250,9 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                              tmpTempTimes   = tempTimes[tmpTmpInds[minInd]]
                              tmptempChare   = MEAN(tempChare[tmpTmpInds])        
                              tmptempeFlux   = 10.^(MEAN(ALOG10(tempeFlux[tmpTmpInds])))
+                             IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+                                tmptempeNumFlux = 10.^(MEAN(ALOG10(tempeNumFlux[tmpTmpInds])))
+                             ENDIF
 
                              tmpIMFinds          = IMFinds[tmpTmpInds]  
                              tmptempIMFBx        = MEAN(tempIMFBx       [tmpIMFinds]) 
@@ -252,11 +262,14 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                              tmptempIMFthetaCone = MEAN(tempIMFthetaCone[tmpIMFinds])
 
                              PRINTF,textLun,FORMAT='(F-5.2,T9,F-6.2,T19,A-0,T46,I-5,T54,F-8.1,T64,' + $
-                                    'G-9.3,T74,F-8.2,T85,F-7.3,T94,F-7.3,T103,F-7.3,T112,' + $
+                                    'G-9.3,T74,G-8.2,T85,G-8.2,T94,F-7.3,T103,F-7.3,T112,' + $
                                     'F-7.3,T125,I0)', $
                                     tmpTempMLTs,tmpTempILATs,tmpTempTimes,tmpTempOrb,tmpTempAlts, $
-                                    tmpTempObs,tmpTempChare,tmpTempeFlux,tmpTempIMFBx,tmpTempIMFBy, $
-                                    tmpTempIMFBz,N_ELEMENTS(tmpTmpInds)
+                                    (KEYWORD_SET(for_eSpec_DBs) ? tmptempeFlux     : tmpTempObs  ), $
+                                    (KEYWORD_SET(for_eSpec_DBs) ? tmptempeNumFlux  : tmpTempChare), $
+                                    (KEYWORD_SET(for_eSpec_DBs) ? tmptempChare     : tmpTempeFlux), $
+                                    tmpTempIMFBx,tmpTempIMFBy,tmpTempIMFBz, $
+                                    N_ELEMENTS(tmpTmpInds)
                           ENDFOR
 
                        END
