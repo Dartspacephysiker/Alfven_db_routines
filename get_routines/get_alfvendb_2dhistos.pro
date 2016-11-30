@@ -2088,7 +2088,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
      IF doing_var_plots THEN PRINTF,lun,"Getting variance plot data ..."
 
      GET_VARIANCE_PLOTDATA,maximus,plot_i, $
-                           FOR_MAXIMUS=for_maximus, $
+                           FOR_MAXIMUS=~KEYWORD_SET(no_maximus), $
                            FOR_ESPEC_DBS=KEYWORD_SET(no_maximus), $
                            IN_INDS=indices__nonAlfven_eSpec, $
                            IN_MLTS=eSpec__mlts, $
