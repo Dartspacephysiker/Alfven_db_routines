@@ -1,7 +1,10 @@
 ;;11/29/16
-PRO GET_VARIANCE_PLOTDATA,dbStruct,dbInds, $
+PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                           FOR_MAXIMUS=for_maximus, $
                           FOR_ESPEC_DBS=for_eSpec_DBs, $
+                          IN_INDS=in_inds, $
+                          IN_MLTS=in_mlts, $
+                          IN_ILATS=in_ilats, $
                           H2DSTRARR=h2dStrArr, $
                           DATANAMEARR=dataNameArr, $
                           DATARAWPTRARR=dataRawPtrArr, $
@@ -54,8 +57,21 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,dbInds, $
   var_h2dStrArr                  = !NULL
   var_dataNameArr                = !NULL
 
-  IF ~KEYWORD_SET(no_maximus) THEN BEGIN
+  CASE 1 OF
+     KEYWORD_SET(for_maximus): BEGIN
+        indices                  = WHERE(h2dStrArr[varploth2dinds].is_alfDB,nInd)
+     END
+     KEYWORD_SET(for_eSpec_DBs): BEGIN
+        indices                  = WHERE(~h2dStrArr[varploth2dinds].is_alfDB,nInd)
+     END
+     ELSE: BEGIN
+        nInd                     = N_ELEMENTS(h2dStrArr)
+        indices                  = INDGEN(nInd)
+     END
+  ENDCASE
 
+  IF KEYWORD_SET(for_maximus) THEN BEGIN
+     dbInds = maxInds
      MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbInds, $
                                              OUTH2D_LISTS_WITH_INDS=outH2D_lists_with_inds,$
                                              MINMLT=minM, $
@@ -75,7 +91,33 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,dbInds, $
                                              ;; RESET_H2D_LISTS_WITH_INDS=reset_h2d_lists_with_inds, $
                                              /RESET_H2D_LISTS_WITH_INDS, $
                                              LUN=lun
-  ENDIF
+  ENDIF ELSE BEGIN
+     dbInds = in_inds
+     MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbInds, $
+                                             OUTH2D_LISTS_WITH_INDS=outH2D_lists_with_inds,$
+                                             IN_INDS=in_inds, $
+                                             IN_MLTS=in_mlts, $
+                                             IN_ILATS=in_ilats, $
+                                             MINMLT=minM, $
+                                             MAXMLT=maxM, $
+                                             BINMLT=binM, $
+                                             SHIFTMLT=shiftM, $
+                                             MINILAT=minI, $
+                                             MAXILAT=maxI, $
+                                             BINILAT=binI, $
+                                             BOTH_HEMIS=KEYWORD_SET(tmplt_h2dStr.both_hemis), $
+                                             DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+                                             ;; OUTFILEPREFIX=outFilePrefix, $
+                                             ;; OUTFILESUFFIX=outFileSuffix, $
+                                             ;; OUTDIR=txtOutputDir, $
+                                             ;; OUTPUT_TEXTFILE=output_textFile, $
+                                             /FILL_WITH_INDICES_INTO_PLOT_I, $
+                                             ;; RESET_H2D_LISTS_WITH_INDS=reset_h2d_lists_with_inds, $
+                                             /RESET_H2D_LISTS_WITH_INDS, $
+                                             LUN=lun
+
+
+  ENDELSE
 
   
 

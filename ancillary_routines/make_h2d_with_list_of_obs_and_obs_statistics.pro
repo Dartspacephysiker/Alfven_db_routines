@@ -35,6 +35,8 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
      @common__omni_stability.pro
   ENDIF
 
+  @common__newell_espec.pro
+
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
   IF N_ELEMENTS(HLOI__H2D_lists_with_inds) EQ 0 THEN BEGIN

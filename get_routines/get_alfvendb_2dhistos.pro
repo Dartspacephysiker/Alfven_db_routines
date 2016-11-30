@@ -1118,6 +1118,7 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
                                     INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                                     NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
                                     NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                                    COMBINE_ACCELERATED=Newell__comb_accelerated, $
                                     ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
                                     NONALFVEN_MLT=eSpec__mlts, $
                                     NONALFVEN_ILAT=eSpec__ilats, $
@@ -2074,7 +2075,10 @@ PRO GET_ALFVENDB_2DHISTOS,maximus,plot_i,fastLocInterped_i, $
 
      GET_VARIANCE_PLOTDATA,maximus,plot_i, $
                            FOR_MAXIMUS=for_maximus, $
-                           FOR_ESPEC_DBS=for_eSpec_DBs, $
+                           FOR_ESPEC_DBS=KEYWORD_SET(no_maximus), $
+                           IN_INDS=indices__nonAlfven_eSpec, $
+                           IN_MLTS=eSpec__mlts, $
+                           IN_ILATS=eSpec__ilats, $
                            H2DSTRARR=h2dStrArr, $
                            DATANAMEARR=dataNameArr, $
                            DATARAWPTRARR=dataRawPtrArr, $
