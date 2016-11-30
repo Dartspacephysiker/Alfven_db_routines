@@ -220,7 +220,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                              KEYWORD_SET(for_eSpec_DBs): BEGIN
                                 tempeFlux         = NEWELL__eSpec.jee[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
                                 tempeNumFlux      = NEWELL__eSpec.je[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                                tempChare         = tempeFlux*tempeNumFlux*6.242*1.0e11
+                                tempChare         = tempeFlux/tempeNumFlux*6.242*1.0e11
                              END
                              ELSE: BEGIN
 
@@ -255,11 +255,11 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                              ENDIF
 
                              tmpIMFinds          = IMFinds[tmpTmpInds]  
-                             tmptempIMFBx        = MEAN(tempIMFBx       [tmpIMFinds]) 
-                             tmptempIMFBy        = MEAN(tempIMFBy       [tmpIMFinds]) 
-                             tmptempIMFBz        = MEAN(tempIMFBz       [tmpIMFinds]) 
-                             tmptempIMFphiClock  = MEAN(tempIMFphiClock [tmpIMFinds]) 
-                             tmptempIMFthetaCone = MEAN(tempIMFthetaCone[tmpIMFinds])
+                             tmptempIMFBx        = MEAN(tempIMFBx       [tmpTmpInds]) 
+                             tmptempIMFBy        = MEAN(tempIMFBy       [tmpTmpInds]) 
+                             tmptempIMFBz        = MEAN(tempIMFBz       [tmpTmpInds]) 
+                             tmptempIMFphiClock  = MEAN(tempIMFphiClock [tmpTmpInds]) 
+                             tmptempIMFthetaCone = MEAN(tempIMFthetaCone[tmpTmpInds])
 
                              PRINTF,textLun,FORMAT='(F-5.2,T9,F-6.2,T19,A-0,T46,I-5,T54,F-8.1,T64,' + $
                                     'G-9.3,T74,G-8.2,T85,G-8.2,T94,F-7.3,T103,F-7.3,T112,' + $
@@ -269,7 +269,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                                     (KEYWORD_SET(for_eSpec_DBs) ? tmptempeNumFlux  : tmpTempChare), $
                                     (KEYWORD_SET(for_eSpec_DBs) ? tmptempChare     : tmpTempeFlux), $
                                     tmpTempIMFBx,tmpTempIMFBy,tmpTempIMFBz, $
-                                    N_ELEMENTS(tmpTmpInds)
+                                    nTmpTmp
                           ENDFOR
 
                        END
