@@ -20,9 +20,9 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
      ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs)
   ENDIF
 
-  nBef        = N_ELEMENTS(ind_orbs)
-  ind_orbs    = CGSETDIFFERENCE(ind_orbs,WHERE(dbStruct.orbit EQ 9792),COUNT=nAft)
-  PRINT,'Removing anything to do with orbit 9792: lost ',nBef-nAft," inds"
+  ;; nBef        = N_ELEMENTS(ind_orbs)
+  ;; ind_orbs    = CGSETDIFFERENCE(ind_orbs,WHERE(dbStruct.orbit EQ 9792),COUNT=nAft)
+  ;; PRINT,'Removing anything to do with orbit 9792: lost ',nBef-nAft," inds"
 
   RETURN,ind_orbs
 

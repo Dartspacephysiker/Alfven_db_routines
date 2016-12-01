@@ -69,10 +69,14 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
      outFileName = outFileName.Replace('_EFLUX_NONALFVEN','')
   ENDIF
 
-  IF N_ELEMENTS(dataTitle) GT 0 THEN dTitle = dataTitle ELSE dTitle = 'Observation'
+  IF N_ELEMENTS(dataTitle) GT 0 THEN dTitle = dataName ELSE dTitle = 'Observation'
   IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
      dTitle = 'eSpec_DB'
   ENDIF
+
+  ;;No silly, extraneous info
+  dTitle = dTitle.Replace('Abs--','')
+  dTitle = dTitle.Replace('NoNegs--','')
 
   IF KEYWORD_SET(output_textFile) THEN BEGIN
      PRINTF,lun,"Creating obs/orb file: " + outDir + outFileName
@@ -235,7 +239,8 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                              tmpTmpInds     = WHERE(tempOrbs EQ tmpTempOrb,nTmpTmp)
                              IF tmpTmpInds[0] EQ -1 THEN STOP
 
-                             tmptempObs     = MEAN(tempObs  [tmpTmpInds])
+                             tmptempObs     = 10.^(MEAN(ALOG10(tempObs  [tmpTmpInds])))
+                             ;; tmptempObs     = MEAN(tempObs  [tmpTmpInds])
                              tmptempAlts    = MEAN(tempAlts [tmpTmpInds])
                              tmptempMLTs    = MEAN(tempMLTs [tmpTmpInds])
                              tmptempILATs   = MEAN(tempILATs[tmpTmpInds])
@@ -280,17 +285,9 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                           tempIMFthetaCone  = C_OMNI__thetaCone[IMFinds]
 
                           FOR iObs=0,N_ELEMENTS(tempObs)-1 DO BEGIN
-                             ;; PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T25,I0,T35,F0.2,T50,F0.2)', $
-                             ;;        HLOI__H2D_binCenters[0,i,j], $
-                             ;;        HLOI__H2D_binCenters[1,i,j], $
-                             ;;        tempOrbs[iObs], $
-                             ;;        tempAlts[iObs], $
-                             ;;        tempObs[iObs]
                              PRINTF,textLun,FORMAT='(F-5.2,T9,F-6.2,T19,A-0,T46,I-5,T54,F-8.1,T65,' + $
                                     'F-9.3,T74,F-8.2,T85,F-7.3,T94,F-7.3,T103,F-7.3,T112,' + $
                                     'F-7.3)', $
-                                    ;; HLOI__H2D_binCenters[0,i,j], $
-                                    ;; HLOI__H2D_binCenters[1,i,j], $
                                     tempMLTs[iObs],tempILATs[iObs],tempTimes[iObs],tempOrbs[iObs],tempAlts[iObs], $
                                     tempObs[iObs],tempChare[iObs],tempeFlux[iObs],tempIMFBx[iObs],tempIMFBy[iObs], $
                                     tempIMFBz[iObs]
@@ -303,15 +300,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                  END
                  ELSE: BEGIN
                     FOR iObs=0,N_ELEMENTS(tempObs)-1 DO BEGIN
-                       ;; PRINTF,textLun,FORMAT='(F0.2,T10,F0.2,T25,I0,T35,F0.2,T50,F0.2)', $
-                       ;;        HLOI__H2D_binCenters[0,i,j], $
-                       ;;        HLOI__H2D_binCenters[1,i,j], $
-                       ;;        tempOrbs[iObs], $
-                       ;;        tempAlts[iObs], $
-                       ;;        tempObs[iObs]
                        PRINTF,textLun,FORMAT='(F0.3,T10,F0.3,T20,A0,T47,I0,T56,F0.3,T67,F0.3)', $
-                              ;; HLOI__H2D_binCenters[0,i,j], $
-                              ;; HLOI__H2D_binCenters[1,i,j], $
                               tempMLTs[iObs], $
                               tempILATs[iObs], $
                               tempTimes[iObs], $

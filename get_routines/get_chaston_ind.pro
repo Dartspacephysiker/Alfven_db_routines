@@ -207,36 +207,47 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                        USE_AACGM_COORDS=use_aacgm, $
                                        USE_MAG_COORDS=use_mag, $
                                        FOR_ESPEC_DBS=for_eSpec_DBs
-        IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-           IF ~KEYWORD_SET(nonMem) THEN BEGIN
-              FL_eSpec__fastLoc       = dbStruct
-              FASTLOC_E__times        = dbTimes
-              FASTLOC_E__delta_t      = fastloc_delta_t
-              FASTLOC_E__dbFile       = dbFile
-              FASTLOC_E__dbTimesFile  = dbTimesFile
-           ENDIF
-        ENDIF ELSE BEGIN
-           FL__fastLoc                = dbStruct
-           FASTLOC__times             = dbTimes
-           FASTLOC__delta_t           = fastloc_delta_t
-           FASTLOC__dbFile            = dbFile
-           FASTLOC__dbTimesFile       = dbTimesFile
-        ENDELSE
+
+        ;;This will get handled by LOAD_FASTLOC_AND_FASTLOC_TIMES
+        ;;Don't worry about it here
+        ;; IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+        ;;    IF ~KEYWORD_SET(nonMem) THEN BEGIN
+        ;;       FL_eSpec__fastLoc       = dbStruct
+        ;;       FASTLOC_E__times        = dbTimes
+        ;;       FASTLOC_E__delta_t      = fastloc_delta_t
+        ;;       FASTLOC_E__dbFile       = dbFile
+        ;;       FASTLOC_E__dbTimesFile  = dbTimesFile
+        ;;    ENDIF
+        ;; ENDIF ELSE BEGIN
+        ;;    FL__fastLoc                = dbStruct
+        ;;    FASTLOC__times             = dbTimes
+        ;;    FASTLOC__delta_t           = fastloc_delta_t
+        ;;    FASTLOC__dbFile            = dbFile
+        ;;    FASTLOC__dbTimesFile       = dbTimesFile
+        ;; ENDELSE
      ENDIF ELSE BEGIN
      ENDELSE
   ENDELSE
 
   ;;Now check to see whether we have the appropriate vars for each guy
   IF ~is_maximus THEN BEGIN
-     have_good_i                         = KEYWORD_SET(for_eSpec_DBs) ? KEYWORD_SET(FASTLOC_E_HAVE_GOOD_I) : KEYWORD_SET(FASTLOC__HAVE_GOOD_I)
-     n_good_i                            = KEYWORD_SET(for_eSpec_DBs) ? N_ELEMENTS(FASTLOC_E_good_i) : N_ELEMENTS(FASTLOC__good_i)
+     have_good_i = KEYWORD_SET(for_eSpec_DBs) ? KEYWORD_SET(FASTLOC_E_HAVE_GOOD_I) : $
+                                                KEYWORD_SET(FASTLOC__HAVE_GOOD_I)
+     n_good_i    = KEYWORD_SET(for_eSpec_DBs) ? N_ELEMENTS(FASTLOC_E_good_i)       : $
+                                                N_ELEMENTS(FASTLOC__good_i)
+
      IF ~have_good_i OR KEYWORD_SET(reset_good_inds) THEN BEGIN
+
         IF KEYWORD_SET(reset_good_inds) THEN BEGIN
            PRINT,'Resetting good fastLoc inds...'
         ENDIF
+
         calculate                        = 1
+
      ENDIF ELSE BEGIN
+
         IF n_good_i NE 0 THEN BEGIN
+
            CHECK_FOR_NEW_IND_CONDS,is_maximus, $
                                    CHASTDB=chastDB, $
                                    DESPUNDB=despunDB, $
@@ -270,15 +281,24 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                    NIGHTSIDE=nightside, $
                                    HAVE_GOOD_I=have_good_i, $
                                    LUN=lun
+
            calculate                     = MIMC__RECALCULATE
            MAXIMUS__HAVE_GOOD_I          = have_good_i
+
            IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+
               IF ~KEYWORD_SET(nonMem) THEN BEGIN
+
                  FASTLOC_E__HAVE_GOOD_I  = have_good_i
+
               ENDIF
+
            ENDIF ELSE BEGIN
+
               FASTLOC__HAVE_GOOD_I       = have_good_i
+
            ENDELSE
+
         ENDIF ELSE BEGIN
            IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
               PRINT,'But you should already have FASTLOC_E__good_i!!'

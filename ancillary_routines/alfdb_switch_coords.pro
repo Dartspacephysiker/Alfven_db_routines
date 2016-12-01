@@ -1,7 +1,18 @@
-PRO ALFDB_SWITCH_COORDS,dbStruct,coordStr,coordName
+PRO ALFDB_SWITCH_COORDS,dbStruct,coordStr,coordName,SUCCESS=success
 
   COMPILE_OPT idl2
 
+
+  ;;Make sure it's not already a done deal
+  STR_ELEMENT,dbStruct.info,'COORDS',VALUE=coordVal,INDEX=coordInd
+  IF coordInd GT 0 THEN BEGIN
+     IF STRPOS(STRUPCASE(dbStruct.info.(coordInd)),STRUPCASE(coordName)) GE 0 THEN BEGIN
+        PRINT,'Already using ' + coordName + ' coords. Returning ...'
+        success = 0
+
+        RETURN
+     ENDIF
+  ENDIF
 
   possibilities = STRLOWCASE(['ALT','MLT','ILAT'])
   possPair      = STRLOWCASE(['ALT','MLT', 'LAT'])
@@ -40,6 +51,6 @@ PRO ALFDB_SWITCH_COORDS,dbStruct,coordStr,coordName
 
   ENDFOR
 
-
+  success = 1
 
 END

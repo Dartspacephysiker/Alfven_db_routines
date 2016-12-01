@@ -15,15 +15,34 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    ;; CHECK_DB=check_DB, $
                                    JUST_FASTLOC=just_fastLoc, $
                                    JUST_TIMES=just_times, $
-                                   ;; NO_MEMORY_LOAD=noMem, $
+                                   NO_MEMORY_LOAD=noMem, $
+                                   CLEAR_MEMORY=clear_memory, $
                                    LUN=lun
 
   ;;2016/11/21 As of right now there is no strong motivation to make this routine aware of the fastLoc common vars
-  ;; @common__fastloc_vars.pro
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     @common__fastloc_espec_vars.pro
 
-  ;; COMMON FL_VARS,fastLoc,FASTLOC__times,FASTLOC__delta_t, $
-  ;;    FASTLOC__good_i,FASTLOC__cleaned_i,FASTLOC__HAVE_GOOD_I, $
-  ;;    FASTLOC__dbFile,FASTLOC__dbTimesFile
+     ;;As of 2016/12/01, these are they:
+     ;; COMMON FL_ESPEC_VARS,FL_eSpec__fastLoc,FASTLOC_E__times,FASTLOC_E__delta_t, $
+     ;;    FASTLOC_E__good_i,FASTLOC_E__cleaned_i,FASTLOC_E__HAVE_GOOD_I, $
+     ;;    FASTLOC_E__dbFile,FASTLOC_E__dbTimesFile
+
+  ENDIF ELSE BEGIN
+     @common__fastloc_vars.pro
+
+     ;;As of 2016/12/01, these are they:
+     ;; COMMON FL_VARS, $
+     ;;    FL__fastLoc, $
+     ;;    FASTLOC__times, $
+     ;;    FASTLOC__delta_t, $
+     ;;    FASTLOC__good_i, $
+     ;;    FASTLOC__cleaned_i, $
+     ;;    FASTLOC__HAVE_GOOD_I, $
+     ;;    FASTLOC__dbFile, $
+     ;;    FASTLOC__dbTimesFile
+
+  ENDELSE
 
   COMPILE_OPT idl2
 
@@ -35,6 +54,10 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      force_load_times    = 1
   ENDIF
 
+  IF KEYWORD_SET(clear_memory) THEN BEGIN
+     CLEAR_FL_COMMON_VARS
+     CLEAR_FL_E_COMMON_VARS     
+  ENDIF
 
   ;; DefDBDir        = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals2/'
   ;; DefDBFile       = 'fastLoc_intervals2--500-16361_all--20150613.sav'
@@ -104,16 +127,6 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      END
   ENDCASE
 
-  ;; DefESpecDBFile  = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes.sav'
-  ;; DefESpecDBFile     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--smaller_datatypes--no_interval_startstop.sav'
-  ;; DefESpecDB_tFile   = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--times.sav'
-  ;; eSpecDB_date       = '20160505'
-  ;; eSpecDB_version    = 'v0.0'
-  ;; eSpecDB_extras     = 'smaller_dataTypes/no_interval_startstop'
-  ;; 
-  ;; eSpecDB_is_128Hz   = 0
-  ;; eSpecDB_noRestrict = 1
-
   ;; IF KEYWORD_SET(check_DB) THEN BEGIN
   ;;    out_maximus  = N_ELEMENTS(MAXIMUS__maximus)     GT 0 ? MAXIMUS__maximus     : !NULL
   ;;    out_cdbTime  = N_ELEMENTS(MAXIMUS__times)       GT 0 ? MAXIMUS__times       : !NULL
@@ -128,34 +141,72 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   ;; ENDIF
 
   IF N_ELEMENTS(DBDir) EQ 0 THEN BEGIN
-     DBDir                          = DefDBDir
+     DBDir     = DefDBDir
   ENDIF
 
   IF N_ELEMENTS(DBFile) EQ 0 THEN BEGIN
-     ;; IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-     ;;    PRINT,'Loading fastLoc for eSpec and ion DBs...'
-     ;;    DBFile                      = DefESpecDBFile
-     ;;    DB_date       = eSpecDB_date
-     ;;    DB_version    = eSpecDB_version
-     ;;    DB_extras     = eSpecDB_extras
-     ;;    is_noRestrict = eSpecDB_noRestrict
-     ;; ENDIF ELSE BEGIN
-        DBFile                      = DefDBFile
-     ;; ENDELSE
+     DBFile    = DefDBFile
   ENDIF
 
   IF N_ELEMENTS(DB_tFile) EQ 0 THEN BEGIN
-     ;; IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-     ;;    ;; PRINT,'Loading fastLoc times for eSpec and ion DBs...'
-     ;;    DB_tFile                    = DefESpecDB_tFile
-     ;; ENDIF ELSE BEGIN
-        DB_tFile                    = DefDB_tFile
-     ;; ENDELSE
+     DB_tFile  = DefDB_tFile
   ENDIF
   
   IF ~KEYWORD_SET(just_times) THEN BEGIN
 
-     IF N_ELEMENTS(fastLoc) EQ 0 OR KEYWORD_SET(force_load_fastLoc) THEN BEGIN
+     CASE 1 OF
+        KEYWORD_SET(for_eSpec_DBs): BEGIN
+           ;; IF ~KEYWORD_SET(noMem) THEN BEGIN
+           IF N_ELEMENTS(FL_eSpec__fastLoc) NE 0 AND $
+              N_ELEMENTS(FASTLOC_E__times)  NE 0 $
+           THEN BEGIN
+
+              IF KEYWORD_SET(noMem) THEN BEGIN
+                 PRINT,"Moving fastLoc (for eSpec) structs in mem to outputted variables ..."
+                 fastLoc          = TEMPORARY(FL_eSpec__fastLoc     )
+                 fastLoc_times    = TEMPORARY(FASTLOC_E__times      )
+                 fastloc_delta_t  = TEMPORARY(FASTLOC_E__delta_t    )
+                 dbFile           = TEMPORARY(FASTLOC_E__dbFile     )
+                 dbTimesFile      = TEMPORARY(FASTLOC_E__dbTimesFile)
+
+                 RETURN
+              ENDIF
+
+              loadFL        = 0
+
+           ENDIF ELSE BEGIN
+              loadFL        = 1
+           ENDELSE
+           ;; ENDIF ELSE BEGIN
+           ;;    loadFL           = 1
+           ;; ENDELSE
+        END
+        ELSE: BEGIN
+           IF N_ELEMENTS(FL__fastLoc) NE 0 AND $
+              N_ELEMENTS(FASTLOC__times) NE 0 AND $
+              N_ELEMENTS(FASTLOC__delta_t) NE 0 $
+           THEN BEGIN
+              IF KEYWORD_SET(noMem) THEN BEGIN
+                 PRINT,"Moving fastLoc structures in mem to outputted variables ..."
+                 fastLoc          = TEMPORARY(FL__fastLoc)
+                 fastLoc_times    = TEMPORARY(FASTLOC__times)
+                 fastloc_delta_t  = TEMPORARY(FASTLOC__delta_t)
+                 dbFile           = TEMPORARY(FASTLOC__dbFile)
+                 dbTimesFile      = TEMPORARY(FASTLOC__dbTimesFile)
+
+                 RETURN
+              ENDIF
+
+              loadFL           = 0
+
+           ENDIF ELSE BEGIN
+              loadFL           = 1
+           ENDELSE
+        END
+     ENDCASE
+
+     ;; IF N_ELEMENTS(fastLoc) EQ 0 OR KEYWORD_SET(force_load_fastLoc) THEN BEGIN
+     IF KEYWORD_SET(loadFL) OR KEYWORD_SET(force_load_fastLoc) THEN BEGIN
         IF KEYWORD_SET(force_load_fastLoc) THEN BEGIN
            PRINTF,lun,"Forcing load, whether or not we already have fastLoc..."
         ENDIF
@@ -175,6 +226,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         fastLoc.info.is_128Hz      = KEYWORD_SET(is_128Hz)
         fastLoc.info.is_noRestrict = KEYWORD_SET(is_noRestrict)
         fastLoc.info.for_eSpecDB   = KEYWORD_SET(for_eSpec_DBs)
+
      ENDIF ELSE BEGIN
         PRINTF,lun,"There is already a fastLoc struct loaded! Not loading " + DBFile
      ENDELSE
@@ -230,15 +282,19 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         STOP
      ENDIF
 
-
      IF KEYWORD_SET(use_aacgm) THEN BEGIN
         PRINT,'Using AACGM coords ...'
 
         RESTORE,defCoordDir+AACGM_file
 
-        ALFDB_SWITCH_COORDS,fastLoc,FL_AACGM,'AACGM'
+        ALFDB_SWITCH_COORDS, $
+           (KEYWORD_SET(loadFL) ? fastLoc                     : $
+            (KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : $
+             FL__fastLoc       ) ), $
+           FL_AACGM,'AACGM', $
+           SUCCESS=success
 
-        changedCoords = 1
+        changedCoords = KEYWORD_SET(success)
      ENDIF
 
      IF KEYWORD_SET(use_GEO) THEN BEGIN
@@ -246,9 +302,15 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
         RESTORE,defCoordDir+GEO_file
 
-        ALFDB_SWITCH_COORDS,fastLoc,FL_GEO,'GEO'
+        ALFDB_SWITCH_COORDS, $
+           (KEYWORD_SET(loadFL) ? fastLoc                     : $
+            (KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : $
+             FL__fastLoc       ) ), $
+           FL_GEO, $
+           'GEO', $
+           SUCCESS=success
 
-        changedCoords = 1
+        changedCoords = KEYWORD_SET(success)
      ENDIF
 
      IF KEYWORD_SET(use_MAG) THEN BEGIN
@@ -256,9 +318,15 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
         RESTORE,defCoordDir+MAG_file
 
-        ALFDB_SWITCH_COORDS,fastLoc,FL_MAG,'MAG'
+        ALFDB_SWITCH_COORDS, $
+           (KEYWORD_SET(loadFL) ? fastLoc                     : $
+            (KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : $
+             FL__fastLoc       ) ), $
+           FL_MAG, $
+           'MAG', $
+           SUCCESS=success
 
-        changedCoords = 1
+        changedCoords = KEYWORD_SET(success)
      ENDIF
 
 
@@ -281,6 +349,46 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      ENDIF
   ENDIF
   
+  ;;Now put 'em in
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     ;; IF ~KEYWORD_SET(noMem) THEN BEGIN
+     IF ~(KEYWORD_SET(noMem       )  OR  $
+          KEYWORD_SET(just_fastLoc)  OR  $
+          KEYWORD_SET(just_times  )) AND $
+        KEYWORD_SET(loadFL)              $
+     THEN BEGIN
+        FL_eSpec__fastLoc       = TEMPORARY(fastLoc        )
+        FASTLOC_E__times        = TEMPORARY(fastLoc_times  )
+        FASTLOC_E__delta_t      = TEMPORARY(fastloc_delta_t)
+        FASTLOC_E__dbFile       = TEMPORARY(dbFile         )
+        FASTLOC_E__dbTimesFile  = TEMPORARY(dbTimesFile    )
+
+        ;; FL_eSpec__fastLoc       = fastLoc
+        ;; FASTLOC_E__times        = fastLoc_times
+        ;; FASTLOC_E__delta_t      = fastloc_delta_t
+        ;; FASTLOC_E__dbFile       = dbFile
+        ;; FASTLOC_E__dbTimesFile  = dbTimesFile
+     ENDIF
+  ENDIF ELSE BEGIN
+     IF ~(KEYWORD_SET(noMem       )  OR  $
+          KEYWORD_SET(just_fastLoc)  OR  $
+          KEYWORD_SET(just_times  )) AND $
+        KEYWORD_SET(loadFL)              $
+     THEN BEGIN
+        FL__fastLoc             = TEMPORARY(fastLoc        )
+        FASTLOC__times          = TEMPORARY(fastLoc_times  )
+        FASTLOC__delta_t        = TEMPORARY(fastloc_delta_t)
+        FASTLOC__dbFile         = TEMPORARY(dbFile         )
+        FASTLOC__dbTimesFile    = TEMPORARY(dbTimesFile    )
+
+        ;; FL__fastLoc             = fastLoc
+        ;; FASTLOC__times          = fastLoc_times
+        ;; FASTLOC__delta_t        = fastloc_delta_t
+        ;; FASTLOC__dbFile         = dbFile
+        ;; FASTLOC__dbTimesFile    = dbTimesFile
+     ENDIF
+  ENDELSE
+
   ;;Not presently used ...
   ;; IF KEYWORD_SET(noMem) THEN BEGIN
   ;;    PRINT,"Unloading fastLoc & assoc. from memory ..." 

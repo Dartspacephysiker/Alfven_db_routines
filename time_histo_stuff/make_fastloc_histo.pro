@@ -25,12 +25,14 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc, $
                        SHIFTMLT=shiftM, $
                        MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
                        EQUAL_AREA_BINNING=EA_binning, $
+                       USE_AACGM_COORDS=use_AACGM, $
                        BOTH_HEMIS=both_hemis, $
                        DO_LSHELL=do_lShell, $
                        MINLSHELL=minLshell, $
                        MAXLSHELL=maxLshell, $
                        BINLSHELL=binLshell, $
                        FOR_ESPEC_DBS=for_eSpec_DBs, $
+                       ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
                        MINALT=minAlt,MAXALT=maxAlt,BINALT=binAlt, $
                        FASTLOCFILE=fastLocFile, $
                        FASTLOCTIMEFILE=fastLocTimeFile, $
@@ -88,10 +90,13 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc, $
      ;; ENDIF
      
   ;;Get these in memory
-  LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc, $
-                                 fastLoc_times, $
-                                 fastLoc_delta_t, $
-                                 FOR_ESPEC_DBS=for_eSpec_DBs
+  ;; LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc, $
+  ;;                                fastLoc_times, $
+  ;;                                fastLoc_delta_t, $
+  ;;                                USE_AACGM_COORDS=use_AACGM, $
+  ;;                                FOR_ESPEC_DBS=for_eSpec_DBs;; , $
+                                 ;; ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file
+
 
      ;;avoid any trickery
      nFastLoc = N_ELEMENTS(fastLoc.orbit)

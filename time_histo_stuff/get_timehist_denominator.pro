@@ -5,9 +5,10 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
                                   SHIFTM=shiftM, $
                                   MINI=minI,MAXI=maxI,BINI=binI, $
                                   EQUAL_AREA_BINNING=EA_binning, $
+                                  USE_AACGM_COORDS=use_AACGM, $
                                   DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                   HEMI=hemi, $
-                                  OUT_FASTLOC_STRUCT=out_fastLoc, $
+                                  ;; OUT_FASTLOC_STRUCT=out_fastLoc, $
                                   FASTLOCOUTPUTDIR=fastLocOutputDir, $
                                   MAKE_TIMEHIST_H2DSTR=make_timeHist_h2dStr, $
                                   THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
@@ -28,10 +29,35 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
                                   BURSTDATA_EXCLUDED=burstData_excluded, $
                                   DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                                   FOR_ESPEC_DBS=for_eSpec_DBs, $
-                                  DONT_LOAD_IN_MEMORY=nonMem, $
+                                  ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
+                                  ;; DONT_LOAD_IN_MEMORY=nonMem, $
                                   LUN=lun
 
   COMPILE_OPT idl2
+
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     @common__fastloc_espec_vars.pro
+
+     ;;As of 2016/12/01, these are they:
+     ;; COMMON FL_ESPEC_VARS,FL_eSpec__fastLoc,FASTLOC_E__times,FASTLOC_E__delta_t, $
+     ;;    FASTLOC_E__good_i,FASTLOC_E__cleaned_i,FASTLOC_E__HAVE_GOOD_I, $
+     ;;    FASTLOC_E__dbFile,FASTLOC_E__dbTimesFile
+
+  ENDIF ELSE BEGIN
+     @common__fastloc_vars.pro
+
+     ;;As of 2016/12/01, these are they:
+     ;; COMMON FL_VARS, $
+     ;;    FL__fastLoc, $
+     ;;    FASTLOC__times, $
+     ;;    FASTLOC__delta_t, $
+     ;;    FASTLOC__good_i, $
+     ;;    FASTLOC__cleaned_i, $
+     ;;    FASTLOC__HAVE_GOOD_I, $
+     ;;    FASTLOC__dbFile, $
+     ;;    FASTLOC__dbTimesFile
+
+  ENDELSE
 
   IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
   IF N_ELEMENTS(lun)         EQ 0 THEN lun         = -1 ;stdout
@@ -53,66 +79,104 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
 
   @orbplot_tplot_defaults.pro
 
-  MAKE_FASTLOC_HISTO,OUTTIMEHISTO=tHistDenominator, $
-                     FASTLOC_INDS=fastLocInterped_i, $
-                     OUT_DELTA_TS=out_delta_ts, $
-                     FASTLOC_STRUCT=KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL_fastLoc, $
-                     FASTLOC_TIMES=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times, $
-                     FASTLOC_DELTA_T=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__delta_t : FASTLOC__delta_t, $
-                     MINMLT=minM, $
-                     MAXMLT=maxM, $
-                     BINMLT=binM, $
-                     SHIFTMLT=shiftM, $
-                     MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
-                     EQUAL_AREA_BINNING=EA_binning, $
-                     BOTH_HEMIS=KEYWORD_SET(tmplt_h2dStr.both_hemis), $
-                     DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-                     FOR_ESPEC_DBS=for_eSpec_DBs, $
-                     FASTLOCFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbFile : FASTLOC__dbFile, $
-                     FASTLOCTIMEFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbTimesFile : FASTLOC__dbTimesFile
+  CASE 1 OF
+     KEYWORD_SET(for_eSpec_DBs): BEGIN
+        IF N_ELEMENTS(FL_eSpec__fastLoc) NE 0 AND $
+           N_ELEMENTS(FASTLOC_E__times)  NE 0 $
+        THEN BEGIN
+        ENDIF ELSE BEGIN
+           loadFL        = 1
+        ENDELSE
+     END
+     ELSE: BEGIN
+        IF N_ELEMENTS(FL__fastLoc) NE 0 AND $
+           N_ELEMENTS(FASTLOC__times) NE 0 AND $
+           N_ELEMENTS(FASTLOC__delta_t) NE 0 $
+        THEN BEGIN
+        ENDIF ELSE BEGIN
+           loadFL           = 1
+        ENDELSE
+     END
+  ENDCASE
 
-  PRINT_TIMEHISTO_SUMMARY,KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL_fastLoc, $
-                          fastLocInterped_i, $
-                          CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-                          ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                          minMLT=minM,maxMLT=maxM, $
-                          BINMLT=binM, $
-                          SHIFTMLT=shiftM, $
-                          MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
-                          EQUAL_AREA_BINNING=EA_binning, $
-                          DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-                          MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-                          HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                          BYMIN=byMin, $
-                          BYMAX=byMax, $
-                          BZMIN=bzMin, $
-                          BZMAX=bzMax, $
-                          BTMIN=btMin, $
-                          BTMAX=btMax, $
-                          BXMIN=bxMin, $
-                          BXMAX=bxMax, $
-                          DO_ABS_BYMIN=abs_byMin, $
-                          DO_ABS_BYMAX=abs_byMax, $
-                          DO_ABS_BZMIN=abs_bzMin, $
-                          DO_ABS_BZMAX=abs_bzMax, $
-                          DO_ABS_BTMIN=abs_btMin, $
-                          DO_ABS_BTMAX=abs_btMax, $
-                          DO_ABS_BXMIN=abs_bxMin, $
-                          DO_ABS_BXMAX=abs_bxMax, $
-                          BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
-                          ;; PARAMSTRING=paramString, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
-                          DO_UTC_RANGE=DO_UTC_range,T1_ARR=t1_arr,T2_ARR=t2_arr, $
-                          DO_IMF_CONDS=do_IMF_conds, $
-                          SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                          HEMI=hemi, $
-                          DELAY=delay, $
-                          MULTIPLE_DELAYS=multiple_delays, $
-                          STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
-                          HOYDIA=hoyDia,MASKMIN=maskMin,LUN=lun
+  IF KEYWORD_SET(loadFL) THEN BEGIN
+
+     LOAD_FASTLOC_AND_FASTLOC_TIMES,dbStruct,dbTimes,fastloc_delta_t, $
+                                    DBDIR=loaddataDir, $
+                                    DBFILE=dbFile, $
+                                    DB_TFILE=dbTimesFile, $
+                                    COORDINATE_SYSTEM=coordinate_system, $
+                                    INCLUDE_32HZ=include_32Hz, $
+                                    USE_AACGM_COORDS=use_aacgm, $
+                                    USE_MAG_COORDS=use_mag, $
+                                    FOR_ESPEC_DBS=for_eSpec_DBs
+  ENDIF
+
+  MAKE_FASTLOC_HISTO, $
+     OUTTIMEHISTO=tHistDenominator, $
+     FASTLOC_INDS=fastLocInterped_i, $
+     OUT_DELTA_TS=out_delta_ts, $
+     FASTLOC_STRUCT=KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL__fastLoc, $
+     FASTLOC_TIMES=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times, $
+     FASTLOC_DELTA_T=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__delta_t : FASTLOC__delta_t, $
+     MINMLT=minM, $
+     MAXMLT=maxM, $
+     BINMLT=binM, $
+     SHIFTMLT=shiftM, $
+     MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+     EQUAL_AREA_BINNING=EA_binning, $
+     ;; USE_AACGM_COORDS=use_AACGM, $
+     BOTH_HEMIS=KEYWORD_SET(tmplt_h2dStr.both_hemis), $
+     DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+     FOR_ESPEC_DBS=for_eSpec_DBs, $
+     ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
+     FASTLOCFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbFile : FASTLOC__dbFile, $
+     FASTLOCTIMEFILE=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__dbTimesFile : FASTLOC__dbTimesFile
+
+  PRINT_TIMEHISTO_SUMMARY, $
+     KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL__fastLoc, $
+     fastLocInterped_i, $
+     CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+     ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+     minMLT=minM,maxMLT=maxM, $
+     BINMLT=binM, $
+     SHIFTMLT=shiftM, $
+     MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+     EQUAL_AREA_BINNING=EA_binning, $
+     DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+     MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+     HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
+     BYMIN=byMin, $
+     BYMAX=byMax, $
+     BZMIN=bzMin, $
+     BZMAX=bzMax, $
+     BTMIN=btMin, $
+     BTMAX=btMax, $
+     BXMIN=bxMin, $
+     BXMAX=bxMax, $
+     DO_ABS_BYMIN=abs_byMin, $
+     DO_ABS_BYMAX=abs_byMax, $
+     DO_ABS_BZMIN=abs_bzMin, $
+     DO_ABS_BZMAX=abs_bzMax, $
+     DO_ABS_BTMIN=abs_btMin, $
+     DO_ABS_BTMAX=abs_btMax, $
+     DO_ABS_BXMIN=abs_bxMin, $
+     DO_ABS_BXMAX=abs_bxMax, $
+     BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+     ;; PARAMSTRING=paramString, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
+     DO_UTC_RANGE=DO_UTC_range,T1_ARR=t1_arr,T2_ARR=t2_arr, $
+     DO_IMF_CONDS=do_IMF_conds, $
+     SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
+     HEMI=hemi, $
+     DELAY=delay, $
+     MULTIPLE_DELAYS=multiple_delays, $
+     STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow, $
+     INCLUDENOCONSECDATA=includeNoConsecData, $
+     HOYDIA=hoyDia,MASKMIN=maskMin,LUN=lun
 
 
   ;;Out vars
-  out_fastLoc           = KEYWORD_SET(for_eSpec_DBs) ? TEMPORARY(FL_eSpec__fastLoc) : FL_fastLoc
+  ;; out_fastLoc = KEYWORD_SET(for_eSpec_DBs) ? TEMPORARY(FL_eSpec__fastLoc) : FL_fastLoc
 
   IF KEYWORD_SET(make_timeHist_h2dStr) THEN BEGIN
 
@@ -177,10 +241,10 @@ FUNCTION GET_TIMEHIST_DENOMINATOR,fastLocInterped_i, $
 
   ENDIF
 
-  IF KEYWORD_SET(nonMem) THEN BEGIN
-     CLEAR_FL_COMMON_VARS
-     CLEAR_FL_E_COMMON_VARS
-  ENDIF
+  ;; IF KEYWORD_SET(nonMem) THEN BEGIN
+  ;;    CLEAR_FL_COMMON_VARS
+  ;;    CLEAR_FL_E_COMMON_VARS
+  ;; ENDIF
 
   RETURN,tHistDenominator
 

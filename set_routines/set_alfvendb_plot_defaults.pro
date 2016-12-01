@@ -1,55 +1,56 @@
-PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
-                               ALTITUDERANGE=altitudeRange, $
-                               CHARERANGE=charERange, $
-                               POYNTRANGE=poyntRange, $
-                               SAMPLE_T_RESTRICTION=sample_t_restriction, $
-                               INCLUDE_32HZ=include_32Hz, $
-                               DISREGARD_SAMPLE_T=disregard_sample_t, $
-                               MINMLT=minMLT,MAXMLT=maxMLT, $
-                               BINMLT=binMLT, $
-                               SHIFTMLT=shiftMLT, $
-                               MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
-                               EQUAL_AREA_BINNING=EA_binning, $
-                               DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
-                               MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-                               HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                               MIN_NEVENTS=min_nEvents, $
-                               MASKMIN=maskMin, $
-                               THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
-                               DO_DESPUNDB=do_despunDB, $
-                               USE_AACGM_COORDS=use_aacgm, $
-                               USE_MAG_COORDS=use_MAG, $
-                               HEMI=hemi, $
-                               NORTH=north, $
-                               SOUTH=south, $
-                               BOTH_HEMIS=both_hemis, $
-                               NPLOTS=nPlots, $
-                               EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, $
-                               ENUMFLPLOTS=eNumFlPlots, ENUMFLPLOTTYPE=eNumFlPlotType, $
-                               PPLOTS=pPlots, $
-                               IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, $
-                               CHAREPLOTS=charEPlots, CHARETYPE=charEType, $
-                               CHARIEPLOTS=chariEPlots, $
-                               AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
-                               ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
-                               NEVENTPERORBPLOT=nEventPerOrbPlot, $
-                               NEVENTPERMINPLOT=nEventPerMinPlot, $
-                               PROBOCCURRENCEPLOT=probOccurrencePlot, $
-                               SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
-                               MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, PLOTMEDORAVG=plotMedOrAvg, $
-                               DATADIR=dataDir, NO_BURSTDATA=no_burstData, $
-                               WRITEASCII=writeASCII, WRITEHDF5=writeHDF5, WRITEPROCESSEDH2D=writeProcessedH2d, $
-                               SAVERAW=saveRaw, RAWDIR=rawDir, $
-                               SHOWPLOTSNOSAVE=showPlotsNoSave, $
-                               ;; PLOTDIR=plotDir, $
-                               MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
-                               OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
-                               KEEPME=keepMe, $
-                               PARAMSTRING=paramString,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
-                               PLOTH2D_CONTOUR=plotH2D_contour, $
-                               HOYDIA=hoyDia,LUN=lun, $
-                               DONT_CORRECT_ILATS=dont_correct_ilats, $
-                               DO_NOT_SET_DEFAULTS=do_not_set_defaults
+PRO SET_ALFVENDB_PLOT_DEFAULTS, $
+   ORBRANGE=orbRange, $
+   ALTITUDERANGE=altitudeRange, $
+   CHARERANGE=charERange, $
+   POYNTRANGE=poyntRange, $
+   SAMPLE_T_RESTRICTION=sample_t_restriction, $
+   INCLUDE_32HZ=include_32Hz, $
+   DISREGARD_SAMPLE_T=disregard_sample_t, $
+   MINMLT=minMLT,MAXMLT=maxMLT, $
+   BINMLT=binMLT, $
+   SHIFTMLT=shiftMLT, $
+   MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
+   EQUAL_AREA_BINNING=EA_binning, $
+   DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
+   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+   HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
+   MIN_NEVENTS=min_nEvents, $
+   MASKMIN=maskMin, $
+   THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
+   DO_DESPUNDB=do_despunDB, $
+   USE_AACGM_COORDS=use_aacgm, $
+   USE_MAG_COORDS=use_MAG, $
+   HEMI=hemi, $
+   NORTH=north, $
+   SOUTH=south, $
+   BOTH_HEMIS=both_hemis, $
+   NPLOTS=nPlots, $
+   EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, $
+   ENUMFLPLOTS=eNumFlPlots, ENUMFLPLOTTYPE=eNumFlPlotType, $
+   PPLOTS=pPlots, $
+   IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, $
+   CHAREPLOTS=charEPlots, CHARETYPE=charEType, $
+   CHARIEPLOTS=chariEPlots, $
+   AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
+   ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
+   NEVENTPERORBPLOT=nEventPerOrbPlot, $
+   NEVENTPERMINPLOT=nEventPerMinPlot, $
+   PROBOCCURRENCEPLOT=probOccurrencePlot, $
+   SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
+   MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, PLOTMEDORAVG=plotMedOrAvg, $
+   DATADIR=dataDir, NO_BURSTDATA=no_burstData, $
+   WRITEASCII=writeASCII, WRITEHDF5=writeHDF5, WRITEPROCESSEDH2D=writeProcessedH2d, $
+   SAVERAW=saveRaw, RAWDIR=rawDir, $
+   SHOWPLOTSNOSAVE=showPlotsNoSave, $
+   ;; PLOTDIR=plotDir, $
+   MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
+   OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
+   KEEPME=keepMe, $
+   PARAMSTRING=paramString,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
+   PLOTH2D_CONTOUR=plotH2D_contour, $
+   HOYDIA=hoyDia,LUN=lun, $
+   DONT_CORRECT_ILATS=dont_correct_ilats, $
+   DO_NOT_SET_DEFAULTS=do_not_set_defaults
 
 
   COMPILE_OPT idl2
@@ -60,7 +61,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   defHwMKpInd            = 7
 
   ;Aujour d'hui
-  hoyDia=GET_TODAY_STRING()
+  hoyDia                 = GET_TODAY_STRING()
 
   ; Handle MLT and ILAT ... and L-shell
   IF ~KEYWORD_SET(do_not_set_defaults) THEN BEGIN
@@ -151,13 +152,13 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
      medHistOutData = 1
   ENDIF
 
-  IF N_ELEMENTS(paramStrSuffix) EQ 0 THEN paramStrSuffix = "" ;; ELSE paramStrSuffix = "--" + paramStrSuffix
-  IF N_ELEMENTS(paramStrPrefix) EQ 0 THEN paramStrPrefix = "" ;; ELSE paramStrPrefix = paramStrPrefix + "--"
+  IF N_ELEMENTS(paramStrSuffix) EQ 0 THEN paramStrSuffix = "" ;; ELSE paramStrSuffix = "-" + paramStrSuffix
+  IF N_ELEMENTS(paramStrPrefix) EQ 0 THEN paramStrPrefix = "" ;; ELSE paramStrPrefix = paramStrPrefix + "-"
 
   lShellStr = ''
-  IF KEYWORD_SET(do_lShell) THEN lShellStr = '--lShell'
+  IF KEYWORD_SET(do_lShell) THEN lShellStr = '-lShell'
 
-  IF KEYWORD_SET(do_despundb) THEN despunStr  = '--despun' ELSE despunStr = ''
+  IF KEYWORD_SET(do_despundb) THEN despunStr  = '-despun' ELSE despunStr = ''
 
   IF KEYWORD_SET(use_AACGM)   THEN AACGMStr   = '_AACGM'   ELSE AACGMStr  = ''
 
@@ -166,12 +167,12 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ;;Hz32 only possible if we haven't manually set sample_t_restriction
   Hz32_string  = ''
   IF KEYWORD_SET(disregard_sample_t) THEN BEGIN
-     sample_t_string = '--0sampT'
+     sample_t_string = '-0sampT'
   ENDIF ELSE BEGIN
      IF N_ELEMENTS(sample_t_restriction) GT 0 THEN BEGIN
         CASE sample_t_restriction OF
            0: BEGIN
-              sample_t_string = '--0sampT'
+              sample_t_string = '-0sampT'
            END
            ELSE: BEGIN
               sample_t_string  = STRING(FORMAT='(F0.2,"_sampT")',sample_t_restriction) 
@@ -185,7 +186,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
         sample_t_string  = ''
 
         IF KEYWORD_SET(include_32Hz) THEN BEGIN
-           Hz32_string  = '--inc_32Hz'
+           Hz32_string  = '-inc_32Hz'
         ENDIF
      ENDELSE
   ENDELSE
@@ -194,10 +195,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ;;********************************************
   ;;A few other strings to tack on
   ;;tap DBs, and setup output
-  IF KEYWORD_SET(no_burstData) THEN inc_burstStr ='--burstData_excluded' ELSE inc_burstStr=''
+  IF KEYWORD_SET(no_burstData) THEN inc_burstStr ='-burstData_excluded' ELSE inc_burstStr=''
 
-  IF KEYWORD_SET(medianplot) THEN plotMedOrAvg = "--median" ELSE BEGIN
-     IF KEYWORD_SET(logAvgPlot) THEN plotMedOrAvg = "--logAvg" ELSE plotMedOrAvg = "--avg"
+  IF KEYWORD_SET(medianplot) THEN plotMedOrAvg = "-median" ELSE BEGIN
+     IF KEYWORD_SET(logAvgPlot) THEN plotMedOrAvg = "-logAvg" ELSE plotMedOrAvg = "-avg"
   ENDELSE
 
   ;;Set minimum allowable number of events for a histo bin to be displayed
@@ -206,7 +207,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
      maskMin = defMaskMin
   ENDIF
   IF maskMin GT 1 THEN BEGIN
-     maskStr = '--maskMin_' + STRING(FORMAT='(I0)',maskMin)
+     maskStr = '-maskMin_' + STRING(FORMAT='(I0)',maskMin)
   ENDIF
   
   ;;Set minimum # minutes that must be spent in each bin for inclusion
@@ -216,29 +217,29 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS,ORBRANGE=orbRange, $
   ;; ENDIF
   IF N_ELEMENTS(tHist_mask_bins_below_thresh) GT 0 THEN BEGIN
      IF tHist_mask_bins_below_thresh GT 1 THEN BEGIN
-        tMaskStr = '--tThresh_' + STRING(FORMAT='(I0)',tHist_mask_bins_below_thresh)
+        tMaskStr = '-tThresh_' + STRING(FORMAT='(I0)',tHist_mask_bins_below_thresh)
      ENDIF
   ENDIF
   
   EABinStr = ''
   IF KEYWORD_SET(EA_binning) THEN BEGIN
-     EABinStr = '--EA_bins'
+     EABinStr = '-EA_bins'
   ENDIF
 
   ;;current limits
   MCStr = ''
   IF (ABS(minMC-10) GT 0.1) OR (ABS(maxNegMC+10) GT 0.1) THEN BEGIN
-     MCStr = STRING(FORMAT='("--cur_",I0,"-",I0)',maxNegMC,minMC)
+     MCStr = STRING(FORMAT='("-cur_",I0,"-",I0)',maxNegMC,minMC)
   ENDIF
 
   ;;doing polar contour?
   polarContStr=''
   IF KEYWORD_SET(plotH2D_contour) THEN BEGIN
-     polarContStr='--cont'
+     polarContStr='-cont'
   ENDIF
 
-  ;; paramString=hoyDia+'--'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
-  paramString=paramStrPrefix+(paramStrPrefix EQ "" ? "" : '--') + $
+  ;; paramString=hoyDia+'-'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
+  paramString=paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
               hemi+despunStr+AACGMStr+MAGStr+MCStr+sample_t_string+Hz32_string+ $
               lShellStr+plotMedOrAvg+$
               maskStr+tMaskStr+EABinStr+inc_burstStr+polarContStr+paramStrSuffix

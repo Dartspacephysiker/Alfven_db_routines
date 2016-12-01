@@ -852,7 +852,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         integ_position[1], $
         ;; 'Integral: ' + string(integral,Format=dayNightIntegLabelFormat), $
         ;; STRING(integral,FORMAT=dayNightIntegLabelFormat), $
-        STRING(temp.grossIntegrals.day,FORMAT=dayNightIntegLabelFormat)+temp.gUnits, $
+        STRING(temp.grossIntegrals.day,FORMAT=dayNightIntegLabelFormat), $
         COLOR='RED', $
         /NORMAL, $
         CHARSIZE=defCharSize_grid*charScale
@@ -864,7 +864,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         integ_position[3], $
         ;; 'Integral: ' + string(integral,Format=dayNightIntegLabelFormat), $
         ;; STRING(integral,FORMAT=dayNightIntegLabelFormat), $
-        STRING(temp.grossIntegrals.night,FORMAT=dayNightIntegLabelFormat)+temp.gUnits, $
+        STRING(temp.grossIntegrals.night,FORMAT=dayNightIntegLabelFormat), $
         COLOR='BLUE', $
         /NORMAL, $
         CHARSIZE=defCharSize_grid*charScale
