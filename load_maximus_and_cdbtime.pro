@@ -262,7 +262,11 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
 
      RESTORE,defCoordDir+AACGM_file
 
-     ALFDB_SWITCH_COORDS,MAXIMUS__maximus,max_AACGM,'AACGM'
+     ALFDB_SWITCH_COORDS, $
+        MAXIMUS__maximus, $
+        max_AACGM, $
+        'AACGM', $
+        SUCCESS=success
 
   ENDIF
 
@@ -277,7 +281,10 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
 
      RESTORE,defCoordDir+GEO_file
 
-     ALFDB_SWITCH_COORDS,MAXIMUS__maximus,max_GEO,'GEO'
+     ALFDB_SWITCH_COORDS, $
+        MAXIMUS__maximus, $
+        max_GEO,'GEO', $
+        SUCCESS=success
 
   ENDIF
 
@@ -292,7 +299,11 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
 
      RESTORE,defCoordDir+MAG_file
 
-     ALFDB_SWITCH_COORDS,MAXIMUS__maximus,max_MAG,'MAG'
+     ALFDB_SWITCH_COORDS, $
+        MAXIMUS__maximus, $
+        max_MAG, $
+        'MAG', $
+        SUCCESS=success
 
   ENDIF
 
