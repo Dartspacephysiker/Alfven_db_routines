@@ -8,6 +8,7 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct, $
                                ORBRANGE=orbRange, $
                                ALTITUDERANGE=altitudeRange, $
                                CHARERANGE=charERange, $
+                               CHARE__NEWELL_THE_CUSP=charE__Newell_the_cusp, $
                                minMLT=minM,maxMLT=maxM, $
                                BINMLT=binM, $
                                SHIFTMLT=shiftM, $
