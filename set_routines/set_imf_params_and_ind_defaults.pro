@@ -14,11 +14,6 @@
 ;                                            'dawn-north', 'dawn-south', 'dusk-north', or 'dusk-south'.
 ;		     ANGLELIM1         :     
 ;		     ANGLELIM2         :     
-;		     ORBRANGE          :  Two-element vector, lower and upper limit on orbits to include   
-;		     ALTITUDERANGE     :  Two-element vector, lower and upper limit on altitudes to include   
-;                    CHARERANGE        :  Two-element vector, lower ahd upper limit on characteristic energy of electrons in 
-;                                            the LOSSCONE (could change it to total in get_chaston_ind.pro).
-;                    POYNTRANGE        :  Two-element vector, lower and upper limit Range of Poynting flux values to include.
 ; 		     MINMLT            :  MLT min  (Default: 9)
 ; 		     MAXMLT            :  MLT max  (Default: 15)
 ; 		     BINMLT            :  MLT binsize  (Default: 0.5)
@@ -73,7 +68,7 @@
 PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
                                     MULTIPLE_IMF_CLOCKANGLES=multiple_IMF_clockAngles, $
                                     DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
-                                    ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+                                    ;; ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                     BYMIN=byMin, $
                                     BYMAX=byMax, $
                                     BZMIN=bzMin, $
@@ -112,6 +107,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     LATEST_UTC=latest_UTC, $
                                     EARLIEST_JULDAY=earliest_julDay, $
                                     LATEST_JULDAY=latest_julDay, $
+                                    IMF_STRUCT=IMF_struct, $
+                                    RESET_STRUCT=reset, $
                                     LUN=lun
 
   COMPILE_OPT idl2
@@ -121,12 +118,6 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   ;;***********************************************
   ;;Tons of defaults
   
-  defOrbRange            = [0,12670]
-  ;; defCharERange          = [4.0,300]
-  ;; defAltRange            = [1000.0, 5000.0]
-  defCharERange          = [4.0,3.0e4]
-  defAltRange            = [0, 5000]
-
                                 ; satellite defaults
   defSatellite           = "OMNI" ;either "ACE", "wind", "wind_ACE", or "OMNI" (default, you see)
   defOmni_Coords         = "GSM"  ; either "GSE" or "GSM"
@@ -159,20 +150,6 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
   latest_julDay   = UTC_TO_JULDAY(STR_TO_TIME('1999-11-03/03:20:59.853'))
 
 
-  ;;***********************************************
-  ;;RESTRICTIONS ON DATA, SOME VARIABLES
-  IF N_ELEMENTS(orbRange            ) EQ 0 THEN BEGIN
-     orbRange               = defOrbRange ; 4,~300 eV in Strangeway
-  ENDIF
-
-  IF N_ELEMENTS(charERange          ) EQ 0 THEN BEGIN
-     charERange             = defCharERange ; 4,~300 eV in Strangeway
-  ENDIF
-
-  IF N_ELEMENTS(altitudeRange       ) EQ 0 THEN BEGIN 
-     altitudeRange          = defAltRange ;Rob Pfaff says no lower than 1000m
-  ENDIF
-  
   ;;********************************************
   ;;satellite data options
   
@@ -403,6 +380,199 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      ENDELSE
   ENDELSE
 
+  IF ARG_PRESENT(IMF_struct) THEN BEGIN
 
+     IF N_ELEMENTS(IMF_struct) GT 0 AND ~KEYWORD_SET(reset) THEN BEGIN
+        PRINT,'Already have IMF_struct! Returning ...'
+        RETURN
+     ENDIF
+     
+     ;; IMF_struct = BLANK_IMF_STRUCT()
+
+     IF N_ELEMENTS(clockStr) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'clockStr',clockStr,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(angleLim1) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'angleLim1',FLOAT(angleLim1),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(angleLim2) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'angleLim2',FLOAT(angleLim2),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(multiple_IMF_clockAngles) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'multiple_IMF_clockAngles',BYTE(multiple_IMF_clockAngles),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(dont_consider_clockAngles) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'dont_consider_clockAngles',BYTE(dont_consider_clockAngles),/ADD_REPLACE
+     ENDIF
+
+     ;; IF N_ELEMENTS(orbRange) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,IMF_struct,'orbRange',LONG(orbRange),/ADD_REPLACE
+     ;; ENDIF
+
+     ;; IF N_ELEMENTS(altitudeRange) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,IMF_struct,'altitudeRange',FLOAT(altitudeRange),/ADD_REPLACE
+     ;; ENDIF
+
+     ;; IF N_ELEMENTS(charERange) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,IMF_struct,'charERange',FLOAT(charERange),/ADD_REPLACE
+     ;; ENDIF
+
+     IF N_ELEMENTS(byMin) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'byMin',FLOAT(byMin),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(byMax) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'byMax',FLOAT(byMax),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(bzMin) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'bzMin',FLOAT(bzMin),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(bzMax) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'bzMax',FLOAT(bzMax),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(btMin) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'btMin',FLOAT(btMin),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(btMax) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'btMax',FLOAT(btMax),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(bxMin) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'bxMin',FLOAT(bxMin),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(bxMax) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'bxMax',FLOAT(bxMax),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(abs_byMin) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'abs_byMin',BYTE(abs_byMin),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(abs_byMax) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'abs_byMax',BYTE(abs_byMax),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(abs_bzMin) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'abs_bzMin',BYTE(abs_bzMin),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(abs_bzMax) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'abs_bzMax',BYTE(abs_bzMax),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(abs_btMin) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'abs_btMin',BYTE(abs_btMin),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(abs_btMax) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'abs_btMax',BYTE(abs_btMax),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(abs_bxMin) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'abs_bxMin',BYTE(abs_bxMin),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(abs_bxMax) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'abs_bxMax',BYTE(abs_bxMax),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(bx_over_by_ratio_max) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'bx_over_by_ratio_max',FLOAT(bx_over_by_ratio_max),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(bx_over_by_ratio_min) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'bx_over_by_ratio_min',FLOAT(bx_over_by_ratio_min),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(Bx_over_ByBz_Lim) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'Bx_over_ByBz_Lim',FLOAT(Bx_over_ByBz_Lim),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(do_not_consider_IMF) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'do_not_consider_IMF',BYTE(do_not_consider_IMF),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(paramString) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'paramString',paramString,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(paramString_list) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'paramString_list',paramString_list,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(satellite) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'satellite',satellite,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(omni_Coords) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'omni_Coords',omni_Coords,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(delay) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'delay',FLOAT(delay),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(multiple_delays) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'multiple_delays',multiple_delays,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(executing_multiples) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'executing_multiples',BYTE(executing_multiples),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(multiples) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'multiples',multiples,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(multiString) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'multiString',multiString,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(delay_res) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'delay_res',FLOAT(delay_res),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(binOffset_delay) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'binOffset_delay',FLOAT(binOffset_delay),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(stableIMF) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'stableIMF',FLOAT(stableIMF),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(smoothWindow) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'smoothWindow',FLOAT(smoothWindow),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(includeNoConsecData) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'includeNoConsecData',BYTE(includeNoConsecData),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(earliest_UTC) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'earliest_UTC',DOUBLE(earliest_UTC),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(latest_UTC) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'latest_UTC',DOUBLE(latest_UTC),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(earliest_julDay) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'earliest_julDay',DOUBLE(earliest_julDay),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(latest_julDay) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'latest_julDay',DOUBLE(latest_julDay),/ADD_REPLACE
+     ENDIF
+
+  ENDIF
 
 END

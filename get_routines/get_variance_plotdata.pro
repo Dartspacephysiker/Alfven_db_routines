@@ -44,7 +44,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                           MEDIANPLOT=medianPlot, $
                           LOGAVGPLOT=logAvgPlot, $
                           ALL_LOGPLOTS=all_logPlots, $
-                          NONALFVEN__NO_MAXIMUS=no_maximus, $
+                          ESPEC__NO_MAXIMUS=no_maximus, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=hEv_nz_i, $
                           DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $

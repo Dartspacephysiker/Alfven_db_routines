@@ -713,14 +713,14 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
      IF is_maximus THEN BEGIN
         good_i                        = MAXIMUS__good_i 
         MAXIMUS__HAVE_GOOD_I          = 1
-        IF ARG_PRESENT(out_maximus) THEN BEGIN
-           PRINT,'Giving you maximus...'
-           out_maximus                = MAXIMUS__maximus
-        ENDIF
-        IF ARG_PRESENT(out_cdbTime) THEN BEGIN
-           PRINT,'Giving you maximus...'
-           out_cdbTime                = MAXIMUS__times
-        ENDIF
+        ;; IF ARG_PRESENT(out_maximus) THEN BEGIN
+        ;;    PRINT,'Giving you maximus...'
+        ;;    out_maximus                = MAXIMUS__maximus
+        ;; ENDIF
+        ;; IF ARG_PRESENT(out_cdbTime) THEN BEGIN
+        ;;    PRINT,'Giving you maximus...'
+        ;;    out_cdbTime                = MAXIMUS__times
+        ;; ENDIF
      ENDIF ELSE BEGIN
         IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
            IF ~KEYWORD_SET(nonMem) THEN BEGIN
@@ -731,27 +731,40 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
            good_i                     = FASTLOC__good_i
            FASTLOC__HAVE_GOOD_I       = 1
         ENDELSE
-        IF ARG_PRESENT(out_fastLoc) AND N_ELEMENTS(out_fastLoc) EQ 0 THEN BEGIN
-           PRINT,'Giving you fastLoc...'
-           out_fastLoc                = KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL__fastLoc
-        ENDIF
-        IF ARG_PRESENT(out_times_fastLoc) AND N_ELEMENTS(out_times_fastLoc) EQ 0 THEN BEGIN
-           PRINT,'Giving you fastLoc_times...'
-           out_times_fastLoc          = KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times
-        ENDIF
-        IF ARG_PRESENT(out_delta_t_fastLoc) AND N_ELEMENTS(out_delta_t_fastLoc) EQ 0 THEN BEGIN
-           PRINT,'Giving you fastLoc_times...'
-           out_delta_t_fastLoc        = KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__delta_t : FASTLOC__delta_t
-        ENDIF
+        ;; IF ARG_PRESENT(out_fastLoc) AND N_ELEMENTS(out_fastLoc) EQ 0 THEN BEGIN
+        ;;    PRINT,'Giving you fastLoc...'
+        ;;    out_fastLoc                = KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL__fastLoc
+        ;; ENDIF
+        ;; IF ARG_PRESENT(out_times_fastLoc) AND N_ELEMENTS(out_times_fastLoc) EQ 0 THEN BEGIN
+        ;;    PRINT,'Giving you fastLoc_times...'
+        ;;    out_times_fastLoc          = KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times
+        ;; ENDIF
+        ;; IF ARG_PRESENT(out_delta_t_fastLoc) AND N_ELEMENTS(out_delta_t_fastLoc) EQ 0 THEN BEGIN
+        ;;    PRINT,'Giving you fastLoc_times...'
+        ;;    out_delta_t_fastLoc        = KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__delta_t : FASTLOC__delta_t
+        ;; ENDIF
      ENDELSE
   ENDELSE
 
   RETURN, good_i
 
   IF KEYWORD_SET(nonMem) THEN BEGIN
-     CLEAR_FL_E_COMMON_VARS
-     CLEAR_FL_COMMON_VARS
-     CLEAR_M_COMMON_VARS
+     IF KEYWORD_SET(is_maximus) THEN BEGIN
+
+        CLEAR_M_COMMON_VARS
+
+     ENDIF ELSE BEGIN
+
+        CASE 1 OF
+           KEYWORD_SET(for_eSpec_DBs): BEGIN
+              CLEAR_FL_E_COMMON_VARS
+           END
+           ELSE: BEGIN
+              CLEAR_FL_COMMON_VARS
+           END
+        ENDCASE
+
+     ENDELSE
   ENDIF
 
 END

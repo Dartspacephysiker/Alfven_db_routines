@@ -161,15 +161,15 @@ title__alfDB_ind_10__div_by_width_x  = alficStr + ' Loss-cone e!U-!N Flux (' + e
 title__alfDB_ind_18__div_by_width_x  = alficStr + ' Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
 title__alfDB_ind_49                  = alficStr + ' Poynting Flux (' + energyFluxStr + ')' + ionosphString
 
-title__alfDB_ind_10__nonAlfvenic     = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString ;"Eflux_Losscone_Integ"
-title__alfDB_esa_nFlux__nonAlfvenic  = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + numFluxStr + ')' + ionosphString    ;"ESA_Number_flux"
-title__alfDB_ind_18__nonAlfvenic     = 'Non-' + alficStr + ' Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
-title__alfDB_ion_energy__nonAlfvenic = 'Non-' + alficStr + ' Upward Ion Energy Flux (' + numFluxStr + ')' + ionosphString   ;Specialty
+title__alfDB_ind_10__for_eSpec     = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString ;"Eflux_Losscone_Integ"
+title__alfDB_esa_nFlux__for_eSpec  = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + numFluxStr + ')' + ionosphString    ;"ESA_Number_flux"
+title__alfDB_ind_18__for_eSpec     = 'Non-' + alficStr + ' Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
+title__alfDB_ion_energy__for_eSpec = 'Non-' + alficStr + ' Upward Ion Energy Flux (' + numFluxStr + ')' + ionosphString   ;Specialty
 
 ;;The non-Alfvens
-title__alfDB_ind_10__nonAlfvenic__grossRate = 'e!U-!N Energy Deposition, every type (' + energyGrossStr + ')' + ionosphString      ;"nonAlfvenic eSpec stuff
-title__alfDB_esa_nFlux__nonAlfvenic__grossRate = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + numGrossStr + ')' + ionosphString    ;"ESA_Number_flux"
-title__alfDB_ind_18__nonAlfvenic__grossRate = 'Non-' + alficStr + ' Upward Ion Flux (' + numGrossStr + ')' + ionosphString          ;"Integ_Up"
+title__alfDB_ind_10__for_eSpec__grossRate = 'e!U-!N Energy Deposition, every type (' + energyGrossStr + ')' + ionosphString      ;"for_eSpec eSpec stuff
+title__alfDB_esa_nFlux__for_eSpec__grossRate = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + numGrossStr + ')' + ionosphString    ;"ESA_Number_flux"
+title__alfDB_ind_18__for_eSpec__grossRate = 'Non-' + alficStr + ' Upward Ion Flux (' + numGrossStr + ')' + ionosphString          ;"Integ_Up"
 
 
 ;; use these for regexp additions: ^([[:alnum:]]+)

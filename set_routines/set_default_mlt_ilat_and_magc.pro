@@ -9,9 +9,26 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
                                   NORTH=north, $
                                   SOUTH=south, $
                                   BOTH_HEMIS=both_hemis, $
+                                  MIMC_STRUCT=MIMC_struct, $
                                   LUN=lun
 
   COMPILE_OPT idl2
+
+  IF N_ELEMENTS(MIMC_struct) GT 0 THEN BEGIN
+     PRINT,'Repopulating MLT/ILAT/MAGC variables using MIMC struct ...'
+     MIMC__REPOPULATE_WITH_STRUCT,MIMC_struct, $
+                                  MINMLT=minM,MAXMLT=maxM, $
+                                  BINM=binM, $
+                                  SHIFTMLT=shiftM, $
+                                  MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                                  MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                                  MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+                                  HEMI=hemi, $
+                                  NORTH=north, $
+                                  SOUTH=south, $
+                                  BOTH_HEMIS=both_hemis
+                                 
+  ENDIF
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; If no provided locations, then don't restrict based on ILAT, MLT
@@ -100,5 +117,81 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
   ;;Handle mag current
   IF N_ELEMENTS(minMC) EQ 0 THEN minMC = defMinMC                  ; Minimum current derived from mag data, in microA/m^2
   IF N_ELEMENTS(maxNegMC) EQ 0 THEN maxNegMC = defMaxNegMC         ; Current must be less than this, if it's going to make the cut
+
+  IF ARG_PRESENT(MIMC_struct) THEN BEGIN
+
+     IF N_ELEMENTS(MIMC_struct) GT 0 THEN BEGIN
+        PRINT,"Already have MIMC struct! Not refilling ..."
+        RETURN
+     ENDIF
+
+     ;; MIMC_struct = BLANK_MIMC_STRUCT()
+
+     IF KEYWORD_SET(minM) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,minM,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(maxM) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,maxM,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(binM) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,binM,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(shiftM) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,shiftM,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(minI) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,minI,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(maxI) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,maxI,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(binI) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,binI,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(minL) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,minL,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(maxL) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,maxL,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(binL) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,binL,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(minMC) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,minMC,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(maxNegMC) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,maxNegMC,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(hemi) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,hemi,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(north) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,north,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(south) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,south,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(both_hemis) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,both_hemis,/ADD_REPLACE
+     ENDIF
+
+
+  ENDIF
 
 END

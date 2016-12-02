@@ -70,20 +70,20 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       GET_OXYFLUX=get_oxyFlux, $
                       GET_CHAREE=get_ChareE, $
                       GET_CHARIE=get_chariE, $
-                      EFLUX_NONALFVEN_DATA=eFlux_nonAlfven_data, $
-                      ENUMFLUX_NONALFVEN_DATA=eNumFlux_nonAlfven_data, $
-                      IFLUX_NONALFVEN_DATA=iFlux_nonAlfven_data, $
-                      INUMFLUX_NONALFVEN_DATA=iNumFlux_nonAlfven_data, $
-                      INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
-                      INDICES__NONALFVEN_ION=indices__nonAlfven_ion, $
-                      NONALFVEN__JUNK_ALFVEN_CANDIDATES=nonAlfven__junk_alfven_candidates, $
-                      NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
+                      EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
+                      ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
+                      IFLUX_ESPEC_DATA=iFlux_eSpec_data, $
+                      INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
+                      INDICES__ESPEC=indices__eSpec, $
+                      INDICES__ION=indices__ion, $
+                      ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
+                      ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
                       ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
                       ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
-                      NONALFVEN_MLT=nonAlfven_mlt, $
-                      NONALFVEN_ILAT=nonAlfven_ilat, $
-                      NONALFVEN_DELTA_T=nonAlfven_delta_t, $
-                      NONALFVEN_THISTDENOMINATOR=nonAlfven_tHistDenominator, $
+                      ESPEC_MLT=eSpec_mlt, $
+                      ESPEC_ILAT=eSpec_ilat, $
+                      ESPEC_DELTA_T=eSpec_delta_t, $
+                      ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                       DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                       PRINT_MAX_AND_MIN=print_mandm, $
                       FANCY_PLOTNAMES=fancy_plotNames, $
@@ -124,11 +124,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
   ;;Don't mod everyone's plot indices
   CASE 1 OF
-     KEYWORD_SET(indices__nonAlfven_eSpec): BEGIN
-        tmp_i = indices__nonAlfven_eSpec
+     KEYWORD_SET(indices__eSpec): BEGIN
+        tmp_i = indices__eSpec
      END
-     KEYWORD_SET(indices__nonAlfven_ion): BEGIN
-        tmp_i = indices__nonAlfven_ion
+     KEYWORD_SET(indices__ion): BEGIN
+        tmp_i = indices__ion
      END
      ELSE: BEGIN
         tmp_i = plot_i
@@ -277,10 +277,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         END
         ((STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_eSpec")) OR $
            (STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_eSpec--2009"))): BEGIN
-           h2dStr.title     = title__alfDB_ind_10__nonAlfvenic
+           h2dStr.title     = title__alfDB_ind_10__for_eSpec
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           nonAlfvenic      = 1
-           inData           = eFlux_nonAlfven_data
+           for_eSpec      = 1
+           inData           = eFlux_eSpec_data
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
 
@@ -290,21 +290,21 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            IF KEYWORD_SET(grossRateMe) THEN BEGIN
               CASE 1 OF
                  KEYWORD_SET(do_grossRate_with_long_width): BEGIN
-                    h2dStr.title = title__alfDB_ind_10__nonAlfvenic__grossRate + '(long. wid.)'
+                    h2dStr.title = title__alfDB_ind_10__for_eSpec__grossRate + '(long. wid.)'
                     grossConvFactor = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
                  END
                  ELSE: BEGIN
                     IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
-                       h2dStr.title = title__alfDB_ind_10__nonAlfvenic__grossRate
+                       h2dStr.title = title__alfDB_ind_10__for_eSpec__grossRate
                     ENDIF
                     grossConvFactor = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
                  END
               ENDCASE
            ENDIF
-           IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
+           IF KEYWORD_SET(eSpec__junk_alfven_candidates) THEN BEGIN
               dataname += '--candidates_removed'
            ENDIF ELSE BEGIN
-              IF KEYWORD_SET(nonAlfven__all_fluxes) THEN BEGIN
+              IF KEYWORD_SET(eSpec__all_fluxes) THEN BEGIN
                  dataname += '--all_fluxes'
               ENDIF
            ENDELSE
@@ -468,21 +468,21 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         END
         ((STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_eSpec")) OR $
          (STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_eSpec--2009"))): BEGIN
-           h2dStr.title     = title__alfDB_esa_nFlux__nonAlfvenic
+           h2dStr.title     = title__alfDB_esa_nFlux__for_eSpec
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           nonAlfvenic      = 1
-           tmp_i            = indices__nonAlfven_eSpec
-           inData           = eNumFlux_nonAlfven_data
+           for_eSpec      = 1
+           tmp_i            = indices__eSpec
+           inData           = eNumFlux_eSpec_data
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
 
            h2dStr.grossFac  = 1e25
            h2dStr.gUnits    = 'E+25'
 
-           IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
+           IF KEYWORD_SET(eSpec__junk_alfven_candidates) THEN BEGIN
               dataname += '--candidates_removed'
            ENDIF ELSE BEGIN
-              IF KEYWORD_SET(nonAlfven__all_fluxes) THEN BEGIN
+              IF KEYWORD_SET(eSpec__all_fluxes) THEN BEGIN
                  dataname += '--all_fluxes'
               ENDIF
            ENDELSE
@@ -490,12 +490,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            IF KEYWORD_SET(grossRateMe) THEN BEGIN
               CASE 1 OF
                  KEYWORD_SET(do_grossRate_with_long_width): BEGIN
-                    h2dStr.title    = title__alfDB_esa_nFlux__nonAlfvenic__grossRate + '(long. wid.)'
+                    h2dStr.title    = title__alfDB_esa_nFlux__for_eSpec__grossRate + '(long. wid.)'
                     grossConvFactor = 1e5 ;Lengths given in km, but we need them in cm.
                  END
                  ELSE: BEGIN
                     IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
-                       h2dStr.title    = title__alfDB_esa_nFlux__nonAlfvenic__grossRate
+                       h2dStr.title    = title__alfDB_esa_nFlux__for_eSpec__grossRate
                     ENDIF
                     grossConvFactor = 1e10 ;Areas are given in km^2, but we need them in cm^2
                  END
@@ -715,18 +715,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Ji_nonAlfven"): BEGIN
-           h2dStr.title  = title__alfDB_ind_18__nonAlfvenic
+           h2dStr.title  = title__alfDB_ind_18__for_eSpec
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           nonAlfvenic      = 1
-           tmp_i            = indices__nonAlfven_ion
-           inData           = iNumFlux_nonAlfven_data
+           for_eSpec      = 1
+           tmp_i            = indices__ion
+           inData           = iNumFlux_eSpec_data
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
 
-           IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
+           IF KEYWORD_SET(eSpec__junk_alfven_candidates) THEN BEGIN
               dataname += '--candidates_removed'
            ENDIF ELSE BEGIN
-              IF KEYWORD_SET(nonAlfven__all_fluxes) THEN BEGIN
+              IF KEYWORD_SET(eSpec__all_fluxes) THEN BEGIN
                  dataname += '--all_fluxes'
               ENDIF
            ENDELSE
@@ -734,12 +734,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            IF KEYWORD_SET(grossRateMe) THEN BEGIN
               CASE 1 OF
                  KEYWORD_SET(do_grossRate_with_long_width): BEGIN
-                    h2dStr.title    = title__alfDB_ind_18__nonAlfvenic__grossRate + '(long. wid.)'
+                    h2dStr.title    = title__alfDB_ind_18__for_eSpec__grossRate + '(long. wid.)'
                     grossConvFactor = 1e5 ;Lengths given in km, but we need them in cm.
                  END
                  ELSE: BEGIN
                     IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
-                       h2dStr.title    = title__alfDB_ind_18__nonAlfvenic__grossRate
+                       h2dStr.title    = title__alfDB_ind_18__for_eSpec__grossRate
                     ENDIF
                     grossConvFactor = 1e10 ;Areas are given in km^2, but we need them in cm^2
                  END
@@ -749,16 +749,16 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Jei_nonAlfven"): BEGIN
            h2dStr.title  = 'Ion Energy Flux (non-' + alficStr + ')'
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           nonAlfvenic      = 1
-           tmp_i            = indices__nonAlfven_ion
-           inData           = iFlux_nonAlfven_data
+           for_eSpec      = 1
+           tmp_i            = indices__ion
+           inData           = iFlux_eSpec_data
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
 
-           IF KEYWORD_SET(nonAlfven__junk_alfven_candidates) THEN BEGIN
+           IF KEYWORD_SET(eSpec__junk_alfven_candidates) THEN BEGIN
               dataname += '--candidates_removed'
            ENDIF ELSE BEGIN
-              IF KEYWORD_SET(nonAlfven__all_fluxes) THEN BEGIN
+              IF KEYWORD_SET(eSpec__all_fluxes) THEN BEGIN
                  dataname += '--all_fluxes'
               ENDIF
            ENDELSE
@@ -929,7 +929,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      ;;            REMOVAL__NORESULT=-1, $
      ;;            LOG__ABS=absFlux, $
      ;;            LOG__NEG=noPosFlux, $
-     ;;            ;; ADD_SUSPECTED=KEYWORD_SET(nonAlfvenic))
+     ;;            ;; ADD_SUSPECTED=KEYWORD_SET(for_eSpec))
      ;;            /ADD_SUSPECTED)
      ;; IF (inlier_i[0] NE -1) AND (inlier_i[0] NE 0) THEN BEGIN
      ;;    tmp_i = TEMPORARY(inlier_i)
@@ -1034,8 +1034,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
   ;;Is this going to be a time-averaged plot?
   IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
-     IF KEYWORD_SET(nonAlfvenic) THEN BEGIN
-        inData        = inData * nonAlfven_delta_t
+     IF KEYWORD_SET(for_eSpec) THEN BEGIN
+        inData        = inData * eSpec_delta_t
      ENDIF ELSE BEGIN
         inData        = inData * maximus.width_time
      ENDELSE
@@ -1066,7 +1066,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      PRINT,'Newelling the cusp ...'
 
      CASE 1 OF
-        KEYWORD_SET(nonAlfvenic): BEGIN
+        KEYWORD_SET(for_eSpec): BEGIN
            tempChare  = NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11
            tmp_i      = CGSETDIFFERENCE( $
                         tmp_i, $
@@ -1093,14 +1093,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   inData              = inData[tmp_i]
 
   ;;fix MLTs
-  IF KEYWORD_SET(nonAlfven_mlt) THEN BEGIN
+  IF KEYWORD_SET(eSpec_mlt) THEN BEGIN
      mlts             = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,shiftM, $
-                                           IN_MLTS=nonAlfven_mlt[tmp_i])
+                                           IN_MLTS=eSpec_mlt[tmp_i])
   ENDIF ELSE BEGIN
      mlts             = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,shiftM)
   ENDELSE
-  IF KEYWORD_SET(nonAlfven_ilat) THEN BEGIN
-     ilats            = nonAlfven_ilat[tmp_i]
+  IF KEYWORD_SET(eSpec_ilat) THEN BEGIN
+     ilats            = eSpec_ilat[tmp_i]
   ENDIF ELSE BEGIN
      ilats            = (KEYWORD_SET(do_lShell) ? maximus.lshell : maximus.ilat)[tmp_i]
   ENDELSE
@@ -1161,7 +1161,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ENDIF
 
            PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr, $
-                                                   KEYWORD_SET(nonAlfvenic) ? nonAlfven_tHistDenominator : tHistDenominator, $
+                                                   KEYWORD_SET(for_eSpec) ? eSpec_tHistDenominator : tHistDenominator, $
                                                    outH2DBinsMLT, $
                                                    outH2DBinsILAT, $
                                                    H2DFluxN, $
@@ -1170,7 +1170,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
            ;;junked all those WHERE(h2dstr.data GT 0) as of 2016/04/23
            h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/ $
-                                                  (KEYWORD_SET(nonAlfvenic) ? nonAlfven_tHistDenominator : $
+                                                  (KEYWORD_SET(for_eSpec) ? eSpec_tHistDenominator : $
                                                    tHistDenominator)[WHERE(h2dstr.data GT 0)]
            ;; h2dStr.data[hEv_nz_i] = h2dStr.data[hEv_nz_i]/tHistDenominator[hEv_nz_i]
 
@@ -1396,7 +1396,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   h2dStr.name          = dataName
   out_h2dMask          = h2dMask
 
-  IF KEYWORD_SET(nonAlfvenic) THEN BEGIN
+  IF KEYWORD_SET(for_eSpec) THEN BEGIN
      h2dStr.is_AlfDB   = 0B
      h2dStr.mask       = h2dMask
      h2dStr.hasMask    = 1
