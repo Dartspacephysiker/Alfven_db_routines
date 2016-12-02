@@ -21,6 +21,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                          ORBRANGE=orbRange, $
                          ALTITUDERANGE=altitudeRange, $
                          CHARERANGE=charERange, $
+                         CHARE__NEWELL_THE_CUSP=charE__Newell_the_cusp, $
                          POYNTRANGE=poyntRange, $
                          BOTH_HEMIS=both_hemis, $
                          NORTH=north, $
@@ -254,6 +255,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                    ORBRANGE=orbRange, $
                                    ALTITUDERANGE=altitudeRange, $
                                    CHARERANGE=charERange, $
+                                   CHARE__NEWELL_THE_CUSP=charE__Newell_the_cusp, $
                                    POYNTRANGE=poyntRange, $
                                    BOTH_HEMIS=both_hemis, $
                                    NORTH=north, $
@@ -322,6 +324,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                                    ORBRANGE=orbRange, $
                                    ALTITUDERANGE=altitudeRange, $
                                    CHARERANGE=charERange, $
+                                   CHARE__NEWELL_THE_CUSP=charE__Newell_the_cusp, $
                                    POYNTRANGE=poyntRange, $
                                    BOTH_HEMIS=both_hemis, $
                                    NORTH=north, $
@@ -500,6 +503,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
            MIMC__charERange  = charERange
            
            chare_i           = GET_CHARE_INDS(dbStruct,charERange[0],charERange[1], $
+                                              NEWELL_THE_CUSP=charE__Newell_the_cusp, $
                                               CHASTDB=chastDB, $
                                               LUN=lun)
            ;; IF KEYWORD_SET(chastDB) THEN BEGIN

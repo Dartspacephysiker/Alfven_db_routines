@@ -16,7 +16,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       MINI=minI,MAXI=maxI,BINI=binI, $
                       EQUAL_AREA_BINNING=EA_binning, $
                       DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
-                      OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                      OUTH2DBINSMLT=outH2DBinsMLT, $
+                      OUTH2DBINSILAT=outH2DBinsILAT, $
+                      OUTH2DBINSLSHELL=outH2DBinsLShell, $
                       FLUXPLOTTYPE=fluxPlotType, $
                       PLOTRANGE=plotRange, $
                       PLOTAUTOSCALE=plotAutoscale, $
@@ -1033,12 +1035,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ;;Is this going to be a time-averaged plot?
   IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
      IF KEYWORD_SET(nonAlfvenic) THEN BEGIN
-        inData              = inData * nonAlfven_delta_t
+        inData        = inData * nonAlfven_delta_t
      ENDIF ELSE BEGIN
-        inData              = inData * maximus.width_time
-        ;; h2dStr.title           = 'Time-averaged ' + h2dStr.title
+        inData        = inData * maximus.width_time
      ENDELSE
-     dataName               = 'timeAvgd_' + dataName
+     dataName         = 'timeAvgd_' + dataName
   ENDIF
 
   ;;gross rates?
@@ -1046,62 +1047,62 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
      CASE 1 OF
         KEYWORD_SET(do_grossRate_with_long_width): BEGIN
-           dataName         = 'grossRate_longWid_' + dataName
+           dataName   = 'grossRate_longWid_' + dataName
         END
         ELSE: BEGIN
-           dataName         = 'grossRate_' + dataName
+           dataName   = 'grossRate_' + dataName
         END
      ENDCASE
   ENDIF
 
   ;;Averaging based on number of orbits passing through instead of nEvents, perhaps?
   IF KEYWORD_SET(div_fluxPlots_by_applicable_orbs) THEN BEGIN
-     h2dStr.title           = 'Orbit-averaged ' + h2dStr.title
-     dataName               = 'orbAvgd_' + dataName
+     h2dStr.title     = 'Orbit-averaged ' + h2dStr.title
+     dataName         = 'orbAvgd_' + dataName
   ENDIF
 
-  ;;According to the Newell et al. [2009] strategy, kill obs. with characteristic energy < 300 eV if they lie between 9 and 15 MLT
+  ;;According to the Newell et al. [2009] strategy, kill obs. with characteristic energy < 300 eV if they lie between 9.5 and 14.5 MLT
   IF KEYWORD_SET(Newell_the_cusp) THEN BEGIN
      PRINT,'Newelling the cusp ...'
+
      CASE 1 OF
         KEYWORD_SET(nonAlfvenic): BEGIN
-           tempChare = NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11
-           tmp_i = CGSETDIFFERENCE(tmp_i, $
-                                   WHERE((NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11) LT 300 ) AND $
-                                         (NEWELL__eSpec.MLT                                LT 15)   AND $
-                                         (NEWELL__eSpec.MLT                                GT 9), $
-                                   COUNT=nTmp, $
-                                   NORESULT=-1)
+           tempChare  = NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11
+           tmp_i      = CGSETDIFFERENCE( $
+                        tmp_i, $
+                        WHERE((NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11) LT 300 ) AND $
+                        (NEWELL__eSpec.MLT                                LT 14.5)   AND $
+                        (NEWELL__eSpec.MLT                                GT 9.5), $
+                        COUNT=nTmp, $
+                        NORESULT=-1)
            
         END
         ELSE: BEGIN
-           tmp_i = CGSETDIFFERENCE(tmp_i, $
-                                   WHERE((maximus.max_chare_losscone LT 300) AND $
-                                         (maximus.MLT                LT 15)  AND $
-                                         (maximus.MLT                GT 9)), $
-                                   COUNT=nTmp, $
-                                   NORESULT=-1)
+           tmp_i      = CGSETDIFFERENCE( $
+                        tmp_i, $
+                        WHERE((maximus.max_chare_losscone LT 300) AND $
+                              (maximus.MLT                LT 14.5)  AND $
+                              (maximus.MLT                GT 9.5)), $
+                        COUNT=nTmp, $
+                        NORESULT=-1)
         END
      ENDCASE
-  ENDIF ELSE BEGIN
-     PRINT,"WHOA"
-     STOP
-  ENDELSE
+  ENDIF
 
   ;;Update inData, others
-  inData                    = inData[tmp_i]
+  inData              = inData[tmp_i]
 
   ;;fix MLTs
   IF KEYWORD_SET(nonAlfven_mlt) THEN BEGIN
-     mlts                   = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,shiftM, $
-                                                 IN_MLTS=nonAlfven_mlt[tmp_i])
+     mlts             = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,shiftM, $
+                                           IN_MLTS=nonAlfven_mlt[tmp_i])
   ENDIF ELSE BEGIN
-     mlts                   = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,shiftM)
+     mlts             = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,shiftM)
   ENDELSE
   IF KEYWORD_SET(nonAlfven_ilat) THEN BEGIN
-     ilats                  = nonAlfven_ilat[tmp_i]
+     ilats            = nonAlfven_ilat[tmp_i]
   ENDIF ELSE BEGIN
-     ilats                  = (KEYWORD_SET(do_lShell) ? maximus.lshell : maximus.ilat)[tmp_i]
+     ilats            = (KEYWORD_SET(do_lShell) ? maximus.lshell : maximus.ilat)[tmp_i]
   ENDELSE
 
   IF KEYWORD_SET(h2dStr.both_hemis) THEN ilats = ABS(ilats)

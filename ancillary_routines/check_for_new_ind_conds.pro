@@ -5,6 +5,7 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
    ORBRANGE=orbRange, $
    ALTITUDERANGE=altitudeRange, $
    CHARERANGE=charERange, $
+   CHARE__NEWELL_THE_CUSP=charE__Newell_the_cusp, $
    POYNTRANGE=poyntRange, $
    BOTH_HEMIS=both_hemis, $
    NORTH=north, $
@@ -89,6 +90,16 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
      IF N_ELEMENTS(charERange) GT 0 THEN BEGIN
         IF N_ELEMENTS(MIMC__charERange) GT 0 THEN BEGIN
            IF ~ARRAY_EQUAL(MIMC__charERange,charERange) THEN BEGIN
+              MIMC__RECALCULATE = 1
+              have_good_i       = 0
+              RETURN
+           ENDIF
+        ENDIF
+     ENDIF
+
+     IF N_ELEMENTS(charE__Newell_the_cusp) GT 0 THEN BEGIN
+        IF N_ELEMENTS(MIMC__charE__Newell_the_cusp) GT 0 THEN BEGIN
+           IF ~ARRAY_EQUAL(MIMC__charE__Newell_the_cusp,charE__Newell_the_cusp) THEN BEGIN
               MIMC__RECALCULATE = 1
               have_good_i       = 0
               RETURN

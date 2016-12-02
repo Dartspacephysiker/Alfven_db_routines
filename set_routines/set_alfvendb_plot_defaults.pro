@@ -2,6 +2,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    ORBRANGE=orbRange, $
    ALTITUDERANGE=altitudeRange, $
    CHARERANGE=charERange, $
+   CHARE__NEWELL_THE_CUSP=charE__Newell_the_cusp, $
    POYNTRANGE=poyntRange, $
    SAMPLE_T_RESTRICTION=sample_t_restriction, $
    INCLUDE_32HZ=include_32Hz, $
@@ -161,22 +162,33 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
   IF KEYWORD_SET(do_despundb) THEN despunStr  = '-despun' ELSE despunStr = ''
 
-  IF KEYWORD_SET(use_AACGM)   THEN AACGMStr   = '_AACGM'   ELSE AACGMStr  = ''
-
-  IF KEYWORD_SET(use_MAG)   THEN MAGStr       = '_MAG'   ELSE MAGStr  = ''
+  IF KEYWORD_SET(use_AACGM) AND KEYWORD_SET(use_MAG) THEN STOP
+  CASE 1 OF
+     KEYWORD_SET(use_AACGM): BEGIN
+        coordStr = '__AACGM'
+     END
+     KEYWORD_SET(use_MAG): BEGIN
+        coordStr = '_MAG'
+     END
+     ELSE: BEGIN
+        coordStr = ''
+     END
+  ENDCASE
 
   ;;Hz32 only possible if we haven't manually set sample_t_restriction
-  Hz32_string  = ''
+  sampTStr  = ''
+  IF KEYWORD_SET(disregard_sample_t) AND KEYWORD_SET(include_32Hz) THEN STOP
+
   IF KEYWORD_SET(disregard_sample_t) THEN BEGIN
-     sample_t_string = '-0sampT'
+     sampTStr = '-0sampT'
   ENDIF ELSE BEGIN
      IF N_ELEMENTS(sample_t_restriction) GT 0 THEN BEGIN
         CASE sample_t_restriction OF
            0: BEGIN
-              sample_t_string = '-0sampT'
+              sampTStr = '-0sampT'
            END
            ELSE: BEGIN
-              sample_t_string  = STRING(FORMAT='(F0.2,"_sampT")',sample_t_restriction) 
+              sampTStr  = STRING(FORMAT='(F0.2,"_sampT")',sample_t_restriction) 
            END
         ENDCASE
         IF KEYWORD_SET(include_32Hz) THEN BEGIN
@@ -184,10 +196,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
            include_32Hz = 0
         ENDIF
      ENDIF ELSE BEGIN
-        sample_t_string  = ''
+        sampTStr  = ''
 
         IF KEYWORD_SET(include_32Hz) THEN BEGIN
-           Hz32_string  = '-inc_32Hz'
+           sampTStr  = '-inc_32Hz'
         ENDIF
      ENDELSE
   ENDELSE
@@ -224,19 +236,27 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   
   EABinStr = ''
   IF KEYWORD_SET(EA_binning) THEN BEGIN
-     EABinStr = '-EA_bins'
+     EABinStr      = '-EA_bins'
   ENDIF
 
   ;;current limits
-  MCStr = ''
+  MCStr            = ''
   IF (ABS(minMC-10) GT 0.1) OR (ABS(maxNegMC+10) GT 0.1) THEN BEGIN
-     MCStr = STRING(FORMAT='("-cur_",I0,"-",I0)',maxNegMC,minMC)
+     MCStr         = STRING(FORMAT='("-cur_",I0,"-",I0)', $
+                            maxNegMC, $
+                            minMC)
+  ENDIF
+
+  ;;bonus
+  bonusStr         = ''
+  IF KEYWORD_SET(charE__Newell_the_cusp) THEN BEGIN
+     bonusStr     += '-NC'
   ENDIF
 
   ;;doing polar contour?
   polarContStr=''
   IF KEYWORD_SET(plotH2D_contour) THEN BEGIN
-     polarContStr='-cont'
+     polarContStr  = '-cont'
   ENDIF
 
   IF KEYWORD_SET(plotH2D__kernel_density_unmask) THEN BEGIN
@@ -244,10 +264,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   ENDIF
   
   ;; paramString=hoyDia+'-'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
-  paramString=paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
-              hemi+despunStr+AACGMStr+MAGStr+MCStr+sample_t_string+Hz32_string+ $
-              lShellStr+plotMedOrAvg+$
-              maskStr+tMaskStr+EABinStr+inc_burstStr+polarContStr+paramStrSuffix
+  paramString = paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
+                hemi+despunStr+coordStr+MCStr+bonusStr+sampTStr+ $
+                lShellStr+plotMedOrAvg+$
+                maskStr+tMaskStr+EABinStr+inc_burstStr+polarContStr+paramStrSuffix
   
   ;;Shouldn't be leftover, unused params from batch call
   IF ISA(e) THEN BEGIN

@@ -1,7 +1,13 @@
 ;2015/10/19 Barnebarn
 
-PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,plot_i_list,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-                               ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
+PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct, $
+                               plot_i_list, $
+                               CLOCKSTR=clockStr, $
+                               ANGLELIM1=angleLim1, $
+                               ANGLELIM2=angleLim2, $
+                               ORBRANGE=orbRange, $
+                               ALTITUDERANGE=altitudeRange, $
+                               CHARERANGE=charERange, $
                                minMLT=minM,maxMLT=maxM, $
                                BINMLT=binM, $
                                SHIFTMLT=shiftM, $
@@ -70,6 +76,8 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,plot_i_list,CLOCKSTR=clockStr, ANGLELIM1
   IF KEYWORD_SET(altitudeRange) THEN PRINTF,lun,FORMAT='("Altitude",T30,":",T35,I8,T45,I8)',altitudeRange[0],altitudeRange[1]
   IF KEYWORD_SET(charERange)    THEN PRINTF,lun,FORMAT='("Char electron energy (eV)     :",T35,G8.2,T45,G8.2)',charERange[0],charERange[1]
   PRINTF,lun,FORMAT='("")'
+  IF KEYWORD_SET(charE__Newell_the_cusp) THEN PRINTF,lun,FORMAT='("CharE, Newelled cusp          :",T35,I0)',charE__Newell_the_cusp
+
   IF KEYWORD_SET(hemi)          THEN PRINTF,lun,FORMAT='("Hemisphere",T30,":",T35,A8)',hemi
   IF KEYWORD_SET(clockStr)      THEN PRINTF,lun,FORMAT='("IMF Predominance",T30,":",T35,A8)',clockStr
   IF KEYWORD_SET(angleLim1)     THEN PRINTF,lun,FORMAT='("Angle lim 1",T30,":",T35,I8)',angleLim1

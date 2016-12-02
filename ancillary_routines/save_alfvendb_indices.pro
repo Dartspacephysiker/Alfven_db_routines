@@ -7,6 +7,7 @@ PRO SAVE_ALFVENDB_INDICES,alfvendb_indices_filename, $
                           ORBRANGE=orbRange, $
                           ALTITUDERANGE=altitudeRange, $
                           CHARERANGE=charERange, $
+                          CHARE__NEWELL_THE_CUSP=charE__Newell_the_cusp, $
                           minMLT=minM, $
                           maxMLT=maxM, $
                           BINMLT=binM, $
@@ -115,6 +116,11 @@ PRO SAVE_ALFVENDB_INDICES,alfvendb_indices_filename, $
      ;;charERange
      IF N_ELEMENTS(charERange) GT 0 THEN BEGIN
         saveStr += ',charERange'
+     ENDIF
+
+     ;;charE__Newell_the_cusp
+     IF N_ELEMENTS(charE__Newell_the_cusp) GT 0 THEN BEGIN
+        saveStr += ',charE__Newell_the_cusp'
      ENDIF
 
      ;;minM
