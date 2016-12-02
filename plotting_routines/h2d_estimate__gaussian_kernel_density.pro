@@ -235,11 +235,20 @@ FUNCTION H2D_ESTIMATE__GAUSSIAN_KERNEL_DENSITY, $
         ENDCASE
 
         ;;Handle top row, if exists
+        IF N_ELEMENTS(uuRowInds) NE 0 THEN BEGIN
+           ;;No more than three neighbors
+           upDist      = GET_N_MAXIMA_IN_ARRAY(ABS(MLTguy[uuRowInds]-MLTguy[cur_i]), $
+                                               /DO_MINIMA, $
+                                               N=(5 < N_ELEMENTS(uuRowInds)), $
+                                               OUT_I=upNeighbor_ii)
+           neighbor_i  = [neighbor_i,uuRowInds[upNeighbor_ii]]
+        ENDIF
+
         IF N_ELEMENTS(upRowInds) NE 0 THEN BEGIN
            ;;No more than three neighbors
            upDist      = GET_N_MAXIMA_IN_ARRAY(ABS(MLTguy[upRowInds]-MLTguy[cur_i]), $
                                                /DO_MINIMA, $
-                                               N=(3 < N_ELEMENTS(upRowInds)), $
+                                               N=(5 < N_ELEMENTS(upRowInds)), $
                                                OUT_I=upNeighbor_ii)
            neighbor_i  = [neighbor_i,upRowInds[upNeighbor_ii]]
         ENDIF
@@ -248,17 +257,24 @@ FUNCTION H2D_ESTIMATE__GAUSSIAN_KERNEL_DENSITY, $
         IF N_ELEMENTS(loRowInds) NE 0 THEN BEGIN
            loDist      = GET_N_MAXIMA_IN_ARRAY(ABS(MLTguy[loRowInds]-MLTguy[cur_i]), $
                                                /DO_MINIMA, $
-                                               N=(3 < N_ELEMENTS(loRowInds)), $
+                                               N=(5 < N_ELEMENTS(loRowInds)), $
                                                OUT_I=loNeighbor_ii)
            neighbor_i  = [neighbor_i,loRowInds[loNeighbor_ii]]
         ENDIF
 
+        ;;Handle lowlow row, if exists
+        IF N_ELEMENTS(llRowInds) NE 0 THEN BEGIN
+           loDist      = GET_N_MAXIMA_IN_ARRAY(ABS(MLTguy[llRowInds]-MLTguy[cur_i]), $
+                                               /DO_MINIMA, $
+                                               N=(5 < N_ELEMENTS(llRowInds)), $
+                                               OUT_I=loNeighbor_ii)
+           neighbor_i  = [neighbor_i,llRowInds[loNeighbor_ii]]
+        ENDIF
+
         ;;For-real neighbors
-        ;; neighbor_i     = CGSETINTERSECTION(neighbor_i,WHERE(~masked),NORESULT=-1,COUNT=nNeigh)
+        neighbor_i     = CGSETINTERSECTION(neighbor_i,WHERE(~masked),NORESULT=-1,COUNT=nNeigh)
         nNeigh = N_ELEMENTS(neighbor_i)
         IF nNeigh GT 0 THEN BEGIN
-
-           
            
            ;;Ultra-verbose output
            IF KEYWORD_SET(ultra_verbose) THEN BEGIN
