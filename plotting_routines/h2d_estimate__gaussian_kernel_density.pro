@@ -1,6 +1,6 @@
 ;;12/01/16
 FUNCTION H2D_ESTIMATE__GAUSSIAN_KERNEL_DENSITY, $
-   data, $
+   data,masked, $
    CENTERSMLT=centersMLT, $
    CENTERSILAT=centersILAT, $
    MINMLT=minM, $
@@ -13,37 +13,39 @@ FUNCTION H2D_ESTIMATE__GAUSSIAN_KERNEL_DENSITY, $
    BINCENTER=binC, $
    BINLEFTLOWER=binLL, $
    BINRIGHTUPPER=binRU, $
-   NEW_VALS=new_vals, $
+   NEW_UNMASKED=new_unmasked, $
    ADJUST_STDDEV_FACTOR=multVal, $
    VERBOSE=verbose, $
-   ULTRA_VERBOSE=ultra_verbose
+   ULTRA_VERBOSE=ultra_verbose, $
+   EXAMPLE=example
 
   COMPILE_OPT IDL2
 
-  LOAD_EQUAL_AREA_BINNING_STRUCT
+  IF KEYWORD_SET(EA_binning) THEN BEGIN
+     @common__ea_binning.pro
 
-  @common__ea_binning.pro
+     LOAD_EQUAL_AREA_BINNING_STRUCT
+  ENDIF
 
   ;;EXPERIMENTAL
-  binm   = 1.0 *15.
-  bini   = 2.0 
-  minm   = 0 *15.
-  maxm   = 24. *15.
-  mini   = 60 
-  maxi   = 90 
-  shiftm = 0.0 
-  GET_H2D_BIN_AREAS,h2dAreas, $
-                    CENTERS1=centersMLT,CENTERS2=centersILAT, $
-                    BINSIZE1=binM,BINSIZE2=binI, $
-                    MAX1=maxM,MAX2=maxI, $
-                    MIN1=minM,MIN2=minI, $
-                    SHIFT1=shiftM*15.,SHIFT2=shiftI, $
-                    EQUAL_AREA_BINNING=EA_binning
+  IF KEYWORD_SET(example) THEN BEGIN
+     binm   = 1.0 *15.
+     bini   = 2.0 
+     minm   = 0 *15.
+     maxm   = 24. *15.
+     mini   = 60 
+     maxi   = 90 
+     shiftm = 0.0 
 
-  centersMLT  = (centersMLT [0:-2,*   ] + centersMLT [1:-1,*   ])/2.
-  centersILAT = (centersILAT[0:-2,*   ] + centersILAT[1:-1,*   ])/2.
-  centersMLT  = (centersMLT [*   ,0:-2] + centersMLT [*   ,1:-1])/2.
-  centersILAT = (centersILAT[*   ,0:-2] + centersILAT[*   ,1:-1])/2.
+     GET_H2D_BIN_AREAS,h2dAreas, $
+                       CENTERS1=centersMLT,CENTERS2=centersILAT, $
+                       BINSIZE1=binM,BINSIZE2=binI, $
+                       MAX1=maxM,MAX2=maxI, $
+                       MIN1=minM,MIN2=minI, $
+                       SHIFT1=shiftM*15.,SHIFT2=shiftI, $
+                       EQUAL_AREA_BINNING=EA_binning
+
+  ENDIF
 
   binType                            = -1
   IF KEYWORD_SET(binC ) THEN binType = 0
@@ -58,17 +60,25 @@ FUNCTION H2D_ESTIMATE__GAUSSIAN_KERNEL_DENSITY, $
   CASE KEYWORD_SET(EA_binning) OF
      0: BEGIN
 
-        MLTbinMin  = centersMLT - binM/2.
-        MLTbinMax  = centersMLT + binM/2.
+        ;; tmpCentersMLT  = (centersMLT [0:-2,*   ] + centersMLT [1:-1,*   ])/2.
+        ;; tmpCentersILAT = (centersILAT[0:-2,*   ] + centersILAT[1:-1,*   ])/2.
+        ;; tmpCentersMLT  = (centersMLT [*   ,0:-2] + centersMLT [*   ,1:-1])/2.
+        ;; tmpCentersILAT = (centersILAT[*   ,0:-2] + centersILAT[*   ,1:-1])/2.
+        tmpcentersmlt = centersmlt & tmpcentersilat = centersilat
+        ;; MLTbinMin  = tmpCentersMLT - binM/2.
+        ;; MLTbinMax  = tmpCentersMLT + binM/2.
 
-        ILATbinMin = centersILAT - binI/2.
-        ILATbinMax = centersILAT + binI/2.
+        MLTbinMin  = tmpCentersMLT
+        MLTbinMax  = tmpCentersMLT + binM
+
+        ILATbinMin = tmpCentersILAT - binI/2.
+        ILATbinMax = tmpCentersILAT + binI/2.
 
         ;;Get our bin type
         CASE binType OF
            0: BEGIN
-              MLTguy  = centersMLT
-              ILATguy = centersILAT
+              MLTguy  = tmpCentersMLT
+              ILATguy = tmpCentersILAT
            END
            1: BEGIN
               MLTguy  = MLTbinMin
@@ -83,27 +93,28 @@ FUNCTION H2D_ESTIMATE__GAUSSIAN_KERNEL_DENSITY, $
      END
      1: BEGIN
 
-        ;;Get our bin type
-        CASE binType OF
-           0: BEGIN
-              MLTguy  = ((EA__s.maxm+EA__s.minm)/2.)*15.
-              ILATguy = ((EA__s.maxi+EA__s.mini)/2.)
-           END
-           1: BEGIN
-              MLTguy  = EA__s.minm*15.
-              ILATguy = EA__s.mini
-           END
-           2: BEGIN
-              MLTguy  = EA__s.maxm*15.
-              ILATguy = EA__s.maxi
-           END
-        ENDCASE
-
         MLTbinMin  = EA__s.minm*15.
         MLTbinMax  = EA__s.maxm*15.
 
         ILATbinMin = EA__s.mini
         ILATbinMax = EA__s.maxi
+
+        ;;Get our bin type
+        CASE binType OF
+           0: BEGIN
+              MLTguy  = ((MLTbinMax+MLTbinMin)/2.)
+              ILATguy = ((ILATbinMax+ILATbinMin)/2.)
+           END
+           1: BEGIN
+              MLTguy  = MLTbinMin
+              ILATguy = ILATbinMin
+           END
+           2: BEGIN
+              MLTguy  = MLTbinMax
+              ILATguy = ILATbinMax
+           END
+        ENDCASE
+
      END
   ENDCASE
 
@@ -131,22 +142,28 @@ FUNCTION H2D_ESTIMATE__GAUSSIAN_KERNEL_DENSITY, $
   ;;So what exactly is masked here?
   ;; masked_i = WHERE(masked,nMasked)
   ;; nMasked = N_ELEMENTS(masked_i)
-  
-  masked           = MAKE_ARRAY(N_ELEMENTS(MLTbinMin),VALUE=0,/BYTE)
-  nMasked          = 3
-  masked_i         = INDGEN(nMasked)+5
-  masked[masked_i] = 255B
 
+  IF KEYWORD_SET(example) THEN BEGIN
+     masked           = MAKE_ARRAY(N_ELEMENTS(MLTbinMin),VALUE=0,/BYTE)
+     nMasked          = 3
+     masked_i         = INDGEN(nMasked)+5
+     masked[masked_i] = 255B
+  ENDIF
+  
+  tmpMasked  = masked
+  new_unmasked = tmpMasked
+  new_unmasked[*] = 0B
+  masked_i        = WHERE(masked,nMasked)
   ;;If we weren't given measurements, assume a Gaussian
-  meas         = N_ELEMENTS(data) GT 0 ? data : MAKE_ARRAY(N_ELEMENTS(masked),VALUE=1.0,/FLOAT)
+  meas         = N_ELEMENTS(data) GT 0 ? data : MAKE_ARRAY(N_ELEMENTS(tmpMasked),VALUE=1.0,/FLOAT)
 
   ;;Estimates based on our Gaussian kernel assumption
-  ests         = MAKE_ARRAY(N_ELEMENTS(masked),VALUE=0.0,/FLOAT)
+  ests         = MAKE_ARRAY(N_ELEMENTS(tmpMasked),VALUE=0.0,/FLOAT)
   nEsts        = 0
   noEstimate_i = !NULL
 
   ;;We treat the bin width in each dimension as one standard deviation
-  IF N_ELEMENTS(multVal) EQ 0 THEN multVal = 0.5
+  IF N_ELEMENTS(multVal) EQ 0 THEN multVal = 1.0
 
   sX   = GEO_DIST(MLTbinMin               ,(ILATbinMax+ILATbinMin)/2., $ ;longitudinal distance
                   MLTbinMax               ,(ILATbinMax+ILATbinMin)/2.)*multVal
@@ -310,8 +327,9 @@ FUNCTION H2D_ESTIMATE__GAUSSIAN_KERNEL_DENSITY, $
               ENDIF
 
            ENDFOR
-           ests[cur_i] = tmpVal
-           PRINT,tmpVal
+           ests[cur_i]         = tmpVal
+           new_unmasked[cur_i] = 1B     ;unmask him!
+           ;; PRINT,tmpVal
 
            IF KEYWORD_SET(ultra_verbose) THEN BEGIN
               PRINT,''

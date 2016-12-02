@@ -40,6 +40,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           CB_INFO=cb_info, $
                           EQ_SCALE_CT=eq_scale_ct, $
                           PLOTH2D_CONTOUR=plotH2D_contour, $
+                          PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
                           CENTERS_MLT=centersMLT, $
                           CENTERS_ILAT=centersILAT, $
                           SHOW_INTEGRALS=show_integrals, $
@@ -310,6 +311,34 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      END
   ENDCASE
 
+  ;;tmpData so we don't mess up the real thing
+  tmpData = temp.data
+
+  ;;Are we going to do kernel density estimation?
+  IF KEYWORD_SET(plotH2D__kernel_density_unmask) THEN BEGIN
+     estData = H2D_ESTIMATE__GAUSSIAN_KERNEL_DENSITY( $
+               tmpData,h2dMaskData, $
+               CENTERSMLT=centersMLT, $
+               CENTERSILAT=centersILAT, $
+               MINMLT=minM, $
+               MAXMLT=maxM, $
+               BINMLT=binM, $
+               MINILAT=minI, $
+               MAXILAT=maxI, $
+               BINILAT=binI, $
+               EQUAL_AREA_BINNING=EA_binning, $
+               /BINCENTER, $
+               BINLEFTLOWER=binLL, $
+               BINRIGHTUPPER=binRU, $
+               NEW_UNMASKED=new_unmasked, $
+               ADJUST_STDDEV_FACTOR=multVal) ;, $
+               ;; VERBOSE=verbose, $
+               ;; ULTRA_VERBOSE=ultra_verbose)
+     h2dMaskData[WHERE(new_unmasked,/NULL)] = 0B
+     tmpData[WHERE(new_unmasked,/NULL)]     = estData[WHERE(new_unmasked,/NULL)]
+
+  ENDIF
+
   IF temp.dont_mask_me THEN BEGIN
      masked          = (h2dMaskData GT 260.0) ;mask NO ONE!
   ENDIF ELSE BEGIN
@@ -322,7 +351,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDIF
   notMasked          = WHERE(~masked)
 
-  h2descl            = MAKE_ARRAY(SIZE(temp.data,/DIMENSIONS),VALUE=0)
+  h2descl            = MAKE_ARRAY(SIZE(tmpData,/DIMENSIONS),VALUE=0)
 
 
   ;;5 bar things per decade
@@ -334,7 +363,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;; IF temp.is_fluxData AND ~temp.is_logged THEN BEGIN
   IF ~temp.is_logged THEN BEGIN
 
-     IF N_ELEMENTS(WHERE(temp.data[notMasked] LT 0,/NULL)) EQ 0 AND ~temp.do_posNeg_cb THEN BEGIN
+     IF N_ELEMENTS(WHERE(tmpData[notMasked] LT 0,/NULL)) EQ 0 AND ~temp.do_posNeg_cb THEN BEGIN
         ;; RAINBOW_COLORS,N_COLORS=nLevels
         ;; LOADCT,76  ;Modded rainbow; drops purples at bottom
         ;; LOADCT,77 ;greenthing
@@ -408,8 +437,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;; and bytscl doesn't do things quite the way we need them done.
   is_OOBHigh              = 0
   is_OOBLow               = 0
-  OOB_HIGH_i              = WHERE(temp.data GT temp.lim[1] AND ~masked)
-  OOB_LOW_i               = WHERE(temp.data LT temp.lim[0] AND ~masked)
+  OOB_HIGH_i              = WHERE(tmpData GT temp.lim[1] AND ~masked)
+  OOB_LOW_i               = WHERE(tmpData LT temp.lim[0] AND ~masked)
 
   IF KEYWORD_SET(cb_force_oobHigh) THEN BEGIN
      temp.force_oobHigh   = 1
@@ -426,7 +455,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      is_OOBLow            = 1
   ENDIF
 
-  h2descl[notMasked]      = BYTSCL(temp.data[notMasked], $
+  h2descl[notMasked]      = BYTSCL(tmpData[notMasked], $
                                    TOP=nLevels-1-is_OOBHigh-is_OOBLow, $
                                    MAX=temp.lim[1], $
                                    MIN=temp.lim[0] ) + is_OOBLow
@@ -462,7 +491,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   CASE 1 OF
      KEYWORD_SET(plotH2D_contour): BEGIN
 
-        h2dTmp =  DOUBLE(temp.data)
+        h2dTmp =  DOUBLE(tmpData)
 
         CASE 1 OF
            KEYWORD_SET(EA_binning): BEGIN
@@ -910,9 +939,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   cbSpacingStr_low                = (nLevels-1)/2-is_OOBLow
   cbSpacingStr_high               = (nLevels-1)/2-is_OOBHigh
 
-  cbOOBLowVal                     = (MIN(temp.data[notMasked]) LT temp.lim[0] OR temp.force_oobLow) ? $
+  cbOOBLowVal                     = (MIN(tmpData[notMasked]) LT temp.lim[0] OR temp.force_oobLow) ? $
                                     0B : !NULL
-  cbOOBHighVal                    = (MAX(temp.data[notMasked]) GT temp.lim[1] OR temp.force_oobHigh) ? $
+  cbOOBHighVal                    = (MAX(tmpData[notMasked]) GT temp.lim[1] OR temp.force_oobHigh) ? $
                                     BYTE(nLevels-1) : !NULL
   cbRange                         = (temp.is_logged AND temp.logLabels) ? 10.^(ROUND(temp.lim*100.)/100.) : temp.lim
   cbTitle                         = KEYWORD_SET(suppress_titles) ? !NULL : plotTitle

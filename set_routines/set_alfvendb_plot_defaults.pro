@@ -48,6 +48,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    KEEPME=keepMe, $
    PARAMSTRING=paramString,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
    PLOTH2D_CONTOUR=plotH2D_contour, $
+   PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
    HOYDIA=hoyDia,LUN=lun, $
    DONT_CORRECT_ILATS=dont_correct_ilats, $
    DO_NOT_SET_DEFAULTS=do_not_set_defaults
@@ -238,6 +239,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      polarContStr='-cont'
   ENDIF
 
+  IF KEYWORD_SET(plotH2D__kernel_density_unmask) THEN BEGIN
+     polarContStr += '-kde'
+  ENDIF
+  
   ;; paramString=hoyDia+'-'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
   paramString=paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
               hemi+despunStr+AACGMStr+MAGStr+MCStr+sample_t_string+Hz32_string+ $
