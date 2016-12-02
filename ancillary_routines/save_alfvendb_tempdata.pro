@@ -1,4 +1,7 @@
-PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile,H2DSTRARR=h2dStrArr,DATANAMEARR=dataNameArr,$
+PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile, $
+                           H2DSTRARR=h2dStrArr, $
+                           DATANAMEARR=dataNameArr,$
+                           H2DMASKARR=h2dMaskArr, $
                            MAXM=maxM,MINM=minM,MAXI=maxI,MINI=minI, $
                            BINM=binM, $
                            SHIFTM=shiftM, $
@@ -23,6 +26,7 @@ PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile,H2DSTRARR=h2dStrArr,DATANAMEARR=dat
   saveStr = 'save'
   IF N_ELEMENTS(h2dStrArr)      GT 0 THEN saveStr += ',h2dStrArr'
   IF N_ELEMENTS(dataNameArr)    GT 0 THEN saveStr += ',dataNameArr'
+  IF N_ELEMENTS(H2DMaskArr)     GT 0 THEN saveStr += ',H2DMaskArr'
   IF N_ELEMENTS(maxM)           GT 0 THEN saveStr += ',maxM'
   IF N_ELEMENTS(minM)           GT 0 THEN saveStr += ',minM'
   IF N_ELEMENTS(maxI)           GT 0 THEN saveStr += ',maxI'

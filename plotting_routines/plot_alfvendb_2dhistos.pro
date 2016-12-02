@@ -37,6 +37,9 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                            ;; BLANK_TILE_POSITIONS=blank_tile_positions, $
                            PLOTH2D_CONTOUR=plotH2D_contour, $
                            PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
+                           ;; OVERPLOT_FILE=overplot_file, $
+                           ;; OVERPLOT_ARR=overplot_arr, $
+                           OVERPLOTSTR=oplotStr, $
                            CENTERS_MLT=centersMLT, $
                            CENTERS_ILAT=centersILAT, $
                            SHOW_INTEGRALS=show_integrals, $
@@ -76,7 +79,6 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
 
   ENDIF
 
-
   ;;if not saving plots and plots not turned off, do some stuff  ;; otherwise, make output
   IF KEYWORD_SET(showPlotsNoSave) THEN BEGIN 
      IF KEYWORD_SET(squarePlot) THEN BEGIN
@@ -113,10 +115,10 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
 
         interp_contplotmulti_str,h2dStrArr 
 
-        cgPS_Close 
+        CGPS_CLOSE 
 
         ;;Create a PNG file with a width of 800 pixels.
-        cgPS2Raster, plotDir + (KEYWORD_SET(org_plots_by_folder) ? dataNameArr[0] + '/' : '' ) + 'fluxplots_'+paramStr+'.ps', $
+        CGPS2RASTER, plotDir + (KEYWORD_SET(org_plots_by_folder) ? dataNameArr[0] + '/' : '' ) + 'fluxplots_'+paramStr+'.ps', $
                      /PNG, $
                      WIDTH=800, $
                      DELETE_PS=del_PS
@@ -473,6 +475,47 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        INTEGRALSAVFILE=integralSavFile, $
                                        INTLUN=intLun, $
                                        _EXTRA=e 
+
+                 IF KEYWORD_SET(oplotStr) THEN BEGIN
+                    oplotStr.H2DStrArr[j].has_mask = 1
+                    oplotStr.H2DStrArr[j].mask     = oplotStr.H2DMaskArr[j].data
+                    PLOTH2D_STEREOGRAPHIC,oplotStr.H2DStrArr[j],oplotStr.overplot_file, $
+                                          /OVERPLOT, $
+                                          EQUAL_AREA_BINNING=equal_area_binning, $
+                                          H2DMASK=h2dMask, $
+                                          NO_COLORBAR=no_cb, $
+                                          WINDOW_XSIZE=xSize, $
+                                          WINDOW_YSIZE=ySize, $
+                                          MAP_POSITION=map_position, $
+                                          CB_POSITION=cb_position, $
+                                          CB_INFO=cb_info, $
+                                          /NO_DISPLAY, $
+                                          SUPPRESS_THICKGRID=suppress_tg, $
+                                          SUPPRESS_GRIDLABELS=suppress_gl, $
+                                          SUPPRESS_MLT_LABELS=suppress_Ml, $
+                                          SUPPRESS_ILAT_LABELS=suppress_Il, $
+                                          SUPPRESS_MLT_NAME=suppress_Mn, $
+                                          SUPPRESS_ILAT_NAME=suppress_In, $
+                                          SUPPRESS_TITLES=suppress_t, $
+                                          LABELS_FOR_PRESENTATION=labels_for_presentation, $
+                                          MIRROR=STRUPCASE(hemi) EQ 'SOUTH', $
+                                          ;; PLOTH2D_CONTOUR=plotH2D_contour, $
+                                          ;; PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
+                                          /PLOTH2D_CONTOUR, $
+                                          /PLOTH2D__KERNEL_DENSITY_UNMASK, $
+                                          CENTERS_MLT=centersMLT, $
+                                          CENTERS_ILAT=centersILAT, $
+                                          SHOW_INTEGRALS=show_integrals, $
+                                          INTEG_POSITION=integ_position, $
+                                          INTEG_DELTA=integ_delta, $
+                                          DO_INTEGRAL_TXTFILE=KEYWORD_SET(make_integral_txtfile), $
+                                          DO_INTEGRAL_SAVFILE=KEYWORD_SET(make_integral_savfile), $
+                                          INTEGRALSAVFILE=integralSavFile, $
+                                          INTLUN=intLun, $
+                                          _EXTRA=e 
+                    
+
+                 ENDIF
               ENDFOR
 
               IF KEYWORD_SET(make_integral_txtfile) THEN BEGIN
@@ -710,5 +753,6 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
            
      ENDELSE
   ENDELSE
+
 
 END

@@ -126,69 +126,70 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
      ENDIF
 
      ;; MIMC_struct = BLANK_MIMC_STRUCT()
+     MIMC_struct = {minL: 0}
 
-     IF KEYWORD_SET(minM) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,minM,/ADD_REPLACE
+     IF N_ELEMENTS(minM) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'minM',minM,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(maxM) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,maxM,/ADD_REPLACE
+        STR_ELEMENT,MIMC_struct,'maxM',maxM,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(binM) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,binM,/ADD_REPLACE
+        STR_ELEMENT,MIMC_struct,'binM',binM,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(shiftM) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,shiftM,/ADD_REPLACE
+     IF N_ELEMENTS(shiftM) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'shiftM',shiftM,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(minI) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,minI,/ADD_REPLACE
+     IF N_ELEMENTS(minI) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'minI',minI,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(maxI) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,maxI,/ADD_REPLACE
+     IF N_ELEMENTS(maxI) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'maxI',maxI,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(binI) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,binI,/ADD_REPLACE
+     IF N_ELEMENTS(binI) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'binI',binI,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(minL) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,minL,/ADD_REPLACE
+     IF N_ELEMENTS(minL) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'minL',minL,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(maxL) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,maxL,/ADD_REPLACE
+     IF N_ELEMENTS(maxL) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'maxL',maxL,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(binL) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,binL,/ADD_REPLACE
+     IF N_ELEMENTS(binL) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'binL',binL,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(minMC) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,minMC,/ADD_REPLACE
+     IF N_ELEMENTS(minMC) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'minMC',minMC,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(maxNegMC) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,maxNegMC,/ADD_REPLACE
+     IF N_ELEMENTS(maxNegMC) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'maxNegMC',maxNegMC,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(hemi) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,hemi,/ADD_REPLACE
+     IF N_ELEMENTS(hemi) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'hemi',hemi,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(north) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,north,/ADD_REPLACE
+     IF N_ELEMENTS(north) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'north',north,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(south) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,south,/ADD_REPLACE
+     IF N_ELEMENTS(south) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'south',south,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(both_hemis) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,both_hemis,/ADD_REPLACE
+     IF N_ELEMENTS(both_hemis) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'both_hemis',both_hemis,/ADD_REPLACE
      ENDIF
 
 

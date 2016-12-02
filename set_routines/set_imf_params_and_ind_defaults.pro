@@ -387,7 +387,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
         RETURN
      ENDIF
      
-     ;; IMF_struct = BLANK_IMF_STRUCT()
+     IMF_struct = BLANK_IMF_STRUCT()
 
      IF N_ELEMENTS(clockStr) GT 0 THEN BEGIN
         STR_ELEMENT,IMF_struct,'clockStr',clockStr,/ADD_REPLACE
