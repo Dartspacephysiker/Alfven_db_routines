@@ -180,25 +180,60 @@ FUNCTION H2D_ESTIMATE__GAUSSIAN_KERNEL_DENSITY, $
         row = VALUE_LOCATE(rowstartstop[*,0],cur_i)
 
         ;;Handle row neighbors
-        CASE cur_i OF
-           rowstartstop[row,0]: BEGIN ;beginning of the row
-              neighbor_i = [rowstartstop[row,1],cur_i+1]
-              lBinEdge   = [1,0]
-              rBinEdge   = [0,0]
-           END
-           rowstartstop[row,1]: BEGIN ;end of the row
-              neighbor_i = [cur_i-1,rowstartstop[row,0]]
-              lBinEdge   = [0,0]
-              rBinEdge   = [0,1]
-           END
-           ELSE:                BEGIN ;neither
-              neighbor_i = [cur_i-1,cur_i+1]
-              lBinEdge   = [0,0]
-              rBinEdge   = [0,0]
-           END
-        ENDCASE
-        ;;First two are always side neighbors
-        ;; sideNeighbors_i = neighbor_i
+        double_side_neighbors = 1
+        IF KEYWORD_SET(double_side_neighbors) THEN BEGIN
+           CASE cur_i OF
+              rowstartstop[row,0]  : BEGIN ;beginning of the row
+                 neighbor_i = [rowstartstop[row,1]-1,rowstartstop[row,1],cur_i+1,cur_i+2]
+                 lBinEdge   = [0,0,0,0]
+                 rBinEdge   = [0,1,0,0]
+              END
+              rowstartstop[row,0]+1: BEGIN ;next to beginning of the row
+                 neighbor_i = [rowstartstop[row,1]  ,rowstartstop[row,0],cur_i+1,cur_i+2]
+                 lBinEdge   = [0,1,0,0]
+                 rBinEdge   = [1,0,0,0]
+              END
+              rowstartstop[row,1]  : BEGIN ;end of the row
+                 neighbor_i = [cur_i-2,cur_i-1,rowstartstop[row,0],rowstartstop[row,0]+1]
+                 lBinEdge   = [0,0,1,0]
+                 rBinEdge   = [0,0,0,0]
+              END
+              rowstartstop[row,1]-1: BEGIN ;next to end of the row
+                 neighbor_i = [cur_i-2,cur_i-1,rowstartstop[row,1],rowstartstop[row,0]]
+                 lBinEdge   = [0,0,0,1]
+                 rBinEdge   = [0,0,1,0]
+              END
+              ELSE:                BEGIN ;neither
+                 neighbor_i = [cur_i-2,cur_i-1,cur_i+1,cur_i+2]
+                 lBinEdge   = [0,0,0,0]
+                 rBinEdge   = [0,0,0,0]
+              END
+           ENDCASE
+
+        ENDIF ELSE BEGIN
+
+           CASE cur_i OF
+              rowstartstop[row,0]: BEGIN ;beginning of the row
+                 neighbor_i = [rowstartstop[row,1],cur_i+1]
+                 lBinEdge   = [1,0]
+                 rBinEdge   = [0,0]
+              END
+              rowstartstop[row,1]: BEGIN ;end of the row
+                 neighbor_i = [cur_i-1,rowstartstop[row,0]]
+                 lBinEdge   = [0,0]
+                 rBinEdge   = [0,1]
+              END
+              ELSE:                BEGIN ;neither
+                 neighbor_i = [cur_i-1,cur_i+1]
+                 lBinEdge   = [0,0]
+                 rBinEdge   = [0,0]
+              END
+           ENDCASE
+
+           ;;First two are always side neighbors
+           ;; sideNeighbors_i = neighbor_i
+        ENDELSE
+
 
         ;;Handle column neighbors
         CASE row OF
