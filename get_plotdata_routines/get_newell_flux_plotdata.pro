@@ -13,6 +13,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              FLUXPLOTTYPE=fluxPlotType, $
                              PLOTRANGE=plotRange, $
                              PLOTAUTOSCALE=plotAutoscale, $
+                             NEWELL_THE_CUSP=Newell_the_cusp, $
                              REMOVE_OUTLIERS=remove_outliers, $
                              REMOVE_LOG_OUTLIERS=remove_log_outliers, $
                              NOPOSFLUX=noPosFlux, $
@@ -293,6 +294,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        FLUXPLOTTYPE=fluxPlotType, $
                        PLOTRANGE=plotR, $
                        PLOTAUTOSCALE=plotAutoscale, $
+                       NEWELL_THE_CUSP=Newell_the_cusp, $
                        REMOVE_OUTLIERS=remove_outliers, $
                        REMOVE_LOG_OUTLIERS=remove_log_outliers, $
                        NOPOSFLUX=noPosF, $

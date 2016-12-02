@@ -114,6 +114,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
+   FLUXPLOTS__NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
    DIV_FLUXPLOTS_BY_ORBTOT=div_fluxPlots_by_orbTot, $
    DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
    ORBCONTRIBPLOT=orbContribPlot, $
@@ -832,6 +833,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     FLUXPLOTTYPE=fluxPlotType, $
                                     PLOTRANGE=plotRange, $
                                     PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
+                                    NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                                     REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                                     REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                                     NOPOSFLUX=noPosFlux, $
@@ -954,6 +956,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              FLUXPLOTTYPE=fluxPlotType, $
                              PLOTRANGE=plotRange, $
                              PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
+                             NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                              REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                              REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                              NOPOSFLUX=noPosFlux, $
@@ -1099,6 +1102,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     FLUXPLOTTYPE=fluxPlotType, $
                                     PLOTRANGE=plotRange, $
                                     PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
+                                    NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                                     REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                                     REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                                     NOPOSFLUX=noPosFlux, $
@@ -1219,6 +1223,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              FLUXPLOTTYPE=fluxPlotType, $
                              PLOTRANGE=plotRange, $
                              PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
+                             NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                              REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                              REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                              NOPOSFLUX=noPosFlux, $
@@ -1311,6 +1316,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        PLOTRANGE=PPlotRange, $
                        PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_pPlots), $
+                       NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                        REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                        REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                        NOPOSFLUX=noPosPflux, $
@@ -1466,6 +1472,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                           FLUXPLOTTYPE=fluxPlotType, $
                           PLOTRANGE=plotRange, $
                           PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ionPlots), $
+                          NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                           REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                           REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                           NOPOSFLUX=noPosFlux, $
@@ -1558,6 +1565,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        FLUXPLOTTYPE=oxyFluxPlotType, $
                        PLOTRANGE=oxyPlotRange, $
                        PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_oxyPlots), $
+                       NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                        REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                        REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                        NOPOSFLUX=noPosOxyFlux, $
@@ -1661,6 +1669,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                           FLUXPLOTTYPE=charEType, $
                           PLOTRANGE=plotRange, $
                           PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_charEPlots), $
+                          NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                           REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                           REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                           NOPOSFLUX=noPosCharE, $
@@ -1742,6 +1751,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        PLOTRANGE=chariEPlotRange, $
                        PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_chariEPlots), $
+                       NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                        REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                        REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                        NOPOSFLUX=noPosChariE, $
@@ -1901,6 +1911,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        PLOTRANGE=summed_eFlux_pFluxplotRange, $
                        PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ePlots), $
+                       NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                        REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                        REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
                        FLUXPLOTTYPE=eFluxPlotType, $
@@ -2035,6 +2046,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                    OUTH2DBINSLSHELL=outH2DBinsLShell, $
                                    PLOTRANGE=custom_range, $
                                    PLOTAUTOSCALE=custom_autoscale, $
+                                   ;; NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                                    NOPOSFLUX=noPosFlux, $
                                    NONEGFLUX=noNegFlux, $
                                    ABSFLUX=absFlux, $

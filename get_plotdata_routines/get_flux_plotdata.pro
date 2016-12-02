@@ -20,6 +20,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       FLUXPLOTTYPE=fluxPlotType, $
                       PLOTRANGE=plotRange, $
                       PLOTAUTOSCALE=plotAutoscale, $
+                      NEWELL_THE_CUSP=Newell_the_cusp, $
                       REMOVE_OUTLIERS=remove_outliers, $
                       REMOVE_LOG_OUTLIERS=remove_log_outliers, $
                       NOPOSFLUX=noPosFlux, $
@@ -92,6 +93,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
   ;;The loaded defaults take advantage of KEYWORD_SET(fancy_plotNames)
   @fluxplot_defaults.pro
+
+  @common__newell_espec.pro
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
   IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
@@ -1056,6 +1059,34 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.title           = 'Orbit-averaged ' + h2dStr.title
      dataName               = 'orbAvgd_' + dataName
   ENDIF
+
+  ;;According to the Newell et al. [2009] strategy, kill obs. with characteristic energy < 300 eV if they lie between 9 and 15 MLT
+  IF KEYWORD_SET(Newell_the_cusp) THEN BEGIN
+     PRINT,'Newelling the cusp ...'
+     CASE 1 OF
+        KEYWORD_SET(nonAlfvenic): BEGIN
+           tempChare = NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11
+           tmp_i = CGSETDIFFERENCE(tmp_i, $
+                                   WHERE((NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11) LT 300 ) AND $
+                                         (NEWELL__eSpec.MLT                                LT 15)   AND $
+                                         (NEWELL__eSpec.MLT                                GT 9), $
+                                   COUNT=nTmp, $
+                                   NORESULT=-1)
+           
+        END
+        ELSE: BEGIN
+           tmp_i = CGSETDIFFERENCE(tmp_i, $
+                                   WHERE((maximus.max_chare_losscone LT 300) AND $
+                                         (maximus.MLT                LT 15)  AND $
+                                         (maximus.MLT                GT 9)), $
+                                   COUNT=nTmp, $
+                                   NORESULT=-1)
+        END
+     ENDCASE
+  ENDIF ELSE BEGIN
+     PRINT,"WHOA"
+     STOP
+  ENDELSE
 
   ;;Update inData, others
   inData                    = inData[tmp_i]
