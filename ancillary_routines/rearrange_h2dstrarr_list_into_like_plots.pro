@@ -7,6 +7,8 @@ PRO REARRANGE_H2DSTRARR_LIST_INTO_LIKE_PLOTS,h2dStrArr_list,dataNameArr_list,dat
    DO_REARRANGE_DATARAWPTRARR_LIST=do_rearrange_dataRawPtrArr_list, $
    ADJ_UPPER_PLOTLIM_IF_NTH_MAX_IS_GREATER=adj_upper_plotlim_thresh, $
    ADJ_LOWER_PLOTLIM_IF_NTH_MIN_IS_GREATER=adj_lower_plotlim_thresh, $
+   DONT_ADJUST_PARAMSTRING_LIST=dont_adjust_paramString_list, $
+   OUT_NEW_PARAMSTRING_LIST=new_paramString_list, $
    OUT_MASK_H2DSTRARR=out_mask_h2dStrArr
 
   COMPILE_OPT idl2
@@ -165,7 +167,10 @@ PRO REARRANGE_H2DSTRARR_LIST_INTO_LIKE_PLOTS,h2dStrArr_list,dataNameArr_list,dat
   h2dStrArr_list           = new_h2dStrArr_list
   dataNameArr_list         = new_dataNameArr_list
   IF KEYWORD_SET(do_rearrange_dataRawPtrArr_list) THEN dataRawPtrArr_list = new_dataRawPtrArr_list
-  paramString_list         = new_paramString_list
+
+  IF ~KEYWORD_SET(dont_adjust_paramString_list) THEN BEGIN
+     paramString_list      = TEMPORARY(new_paramString_list)
+  ENDIF 
 
   HEAP_GC
 

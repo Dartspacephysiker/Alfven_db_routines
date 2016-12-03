@@ -42,6 +42,17 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    CHAREPLOTS=charEPlots, CHARETYPE=charEType, $
    CHARIEPLOTS=chariEPlots, $
    AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
+   FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+   FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
+   FLUXPLOTS__NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
+   DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+   FOR_ESPEC_DBS=for_eSpec_DBs, $
+   ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
+   ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
+   ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
+   ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
+   ESPEC__REMOVE_OUTLIERS=eSpec__remove_outliers, $
+   ESPEC__NEWELLPLOT_PROBOCCURRENCE=eSpec__newellPlot_probOccurrence, $
    ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
    NEVENTPERORBPLOT=nEventPerOrbPlot, $
    NEVENTPERMINPLOT=nEventPerMinPlot, $
@@ -160,6 +171,35 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   
   IF KEYWORD_SET(autoscale_fluxPlots) THEN PRINT,"Autoscaling flux plots..."
 
+
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     IF KEYWORD_SET(ePlots) OR KEYWORD_SET(eSpec__newellPlot_probOccurrence) THEN BEGIN
+        eFluxPlotType           = 'eFlux_eSpec' + $
+                                  ( KEYWORD_SET(eSpec__Newell_2009_interp) ? $
+                                    '--2009' : '' )
+     ENDIF
+
+     IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
+        eNumFlPlotType          = 'eNumFlux_eSpec' + $
+                                  ( KEYWORD_SET(eSpec__Newell_2009_interp) ? $
+                                    '--2009' : '' )
+     ENDIF
+
+     ;; IF KEYWORD_SET(ionPlots) THEN BEGIN
+     ;;    CASE 1 OF
+     ;;       STRUPCASE(iFluxPlotType) EQ 'ENERGY': BEGIN
+     ;;          iFluxPlotType     = 'JEi_eSpec' + $
+     ;;                              ( KEYWORD_SET(ion__Newell_2009_interp) ? $
+     ;;                                '--2009' : '' )
+     ;;       END
+     ;;       ELSE: BEGIN
+     ;;          iFluxPlotType     = 'Ji_eSpec' + $
+     ;;                              ( KEYWORD_SET(ion__Newell_2009_interp) ? $
+     ;;                                '--2009' : '' )
+     ;;       END
+     ;;    ENDCASE
+     ;; ENDIF
+  ENDIF
 
   IF (KEYWORD_SET(nEventPerOrbPlot) OR KEYWORD_SET(nEventPerMinPlot) ) AND NOT KEYWORD_SET(nPlots) THEN BEGIN
      print,"Can't do nEventPerOrbPlot without nPlots!!"
@@ -344,45 +384,56 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
      ;;Set one up with all of the binary values set
      alfDB_plot_struct = { $
-                            charE__Newell_the_cusp          : 0B, $
-                            include_32Hz                    : 0B, $
-                            disregard_sample_t              : 0B, $
-                            dont_blackball_maximus          : 0B, $
-                            dont_blackball_fastloc          : 0B, $
-                            EA_binning                      : 0B, $
-                            tHist_mask_bins_below_thresh    : 0B, $
-                            despunDB                        : 0B, $
-                            chastDB                         : 0B, $
-                         nPlots                          : 0B, $
-                         ePlots                          : 0B, $
-                         eNumFlPlots                     : 0B, $
-                         pPlots                          : 0B, $
-                         ionPlots                        : 0B, $
-                         charEPlots                      : 0B, $
-                         chariEPlots                     : 0B, $
-                         autoscale_fluxPlots             : 0B, $
-                         orbContribPlot                  : 0B, $
-                         orbTotPlot                      : 0B, $
-                         orbFreqPlot                     : 0B, $
-                         nEventPerOrbPlot                : 0B, $
-                         nEventPerMinPlot                : 0B, $
-                         probOccurrencePlot              : 0B, $
-                         squarePlot                      : 0B, $
-                         polarContour                    : 0B, $
-                         medianPlot                      : 0B, $
-                         logAvgPlot                      : 0B, $
-                         plotMedOrAvg                    : 0B, $
-                         no_burstData                    : 0B, $
-                         writeASCII                      : 0B, $
-                         writeHDF5                       : 0B, $
-                         writeProcessedH2d               : 0B, $
-                         saveRaw                         : 0B, $
-                         showPlotsNoSave                 : 0B, $
-                         outputPlotSummary               : 0B, $
-                         del_PS                          : 0B, $
-                         keepMe                          : 0B, $
-                         plotH2D_contour                 : 0B, $
-                         plotH2D__kernel_density_unmask  : 0B  }
+                         charE__Newell_the_cusp            : 0B, $
+                         include_32Hz                      : 0B, $
+                         disregard_sample_t                : 0B, $
+                         dont_blackball_maximus            : 0B, $
+                         dont_blackball_fastloc            : 0B, $
+                         EA_binning                        : 0B, $
+                         tHist_mask_bins_below_thresh      : 0B, $
+                         despunDB                          : 0B, $
+                         chastDB                           : 0B, $
+                         nPlots                            : 0B, $
+                         ePlots                            : 0B, $
+                         eNumFlPlots                       : 0B, $
+                         pPlots                            : 0B, $
+                         ionPlots                          : 0B, $
+                         charEPlots                        : 0B, $
+                         chariEPlots                       : 0B, $
+                         autoscale_fluxPlots               : 0B, $
+                         fluxPlots__remove_outliers        : 0B, $
+                         fluxPlots__remove_log_outliers    : 0B, $
+                         fluxPlots__Newell_the_cusp        : 0B, $
+                         do_timeAvg_fluxQuantities         : 0B, $
+                         for_eSpec_DBs                     : 0B, $
+                         eSpec__junk_alfven_candidates     : 0B, $
+                         eSpec__all_fluxes                 : 0B, $
+                         eSpec__Newell_2009_interp         : 0B, $
+                         eSpec__use_2000km_file            : 0B, $
+                         eSpec__remove_outliers            : 0B, $
+                         eSpec__newellPlot_probOccurrence  : 0B, $
+                         orbContribPlot                    : 0B, $
+                         orbTotPlot                        : 0B, $
+                         orbFreqPlot                       : 0B, $
+                         nEventPerOrbPlot                  : 0B, $
+                         nEventPerMinPlot                  : 0B, $
+                         probOccurrencePlot                : 0B, $
+                         squarePlot                        : 0B, $
+                         polarContour                      : 0B, $
+                         medianPlot                        : 0B, $
+                         logAvgPlot                        : 0B, $
+                         plotMedOrAvg                      : 0B, $
+                         no_burstData                      : 0B, $
+                         writeASCII                        : 0B, $
+                         writeHDF5                         : 0B, $
+                         writeProcessedH2d                 : 0B, $
+                         saveRaw                           : 0B, $
+                         showPlotsNoSave                   : 0B, $
+                         outputPlotSummary                 : 0B, $
+                         del_PS                            : 0B, $
+                         keepMe                            : 0B, $
+                         plotH2D_contour                   : 0B, $
+                         plotH2D__kernel_density_unmask    : 0B  }
 
      IF KEYWORD_SET(orbRange) THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'orbRange', $
@@ -516,6 +567,61 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(autoscale_fluxPlots) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'autoscale_fluxPlots', $
                     autoscale_fluxPlots,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(fluxPlots__remove_outliers) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'fluxPlots__remove_outliers', $
+                    fluxPlots__remove_outliers,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(fluxPlots__remove_log_outliers) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'fluxPlots__remove_log_outliers', $
+                    fluxPlots__remove_log_outliers,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(fluxPlots__Newell_the_cusp) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'fluxPlots__Newell_the_cusp', $
+                    fluxPlots__Newell_the_cusp,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(do_timeAvg_fluxQuantities) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'do_timeAvg_fluxQuantities', $
+                    do_timeAvg_fluxQuantities,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(for_eSpec_DBs) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'for_eSpec_DBs', $
+                    for_eSpec_DBs,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(eSpec__junk_alfven_candidates) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'eSpec__junk_alfven_candidates', $
+                    eSpec__junk_alfven_candidates,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(eSpec__all_fluxes) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'eSpec__all_fluxes', $
+                    eSpec__all_fluxes,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(eSpec__Newell_2009_interp) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'eSpec__Newell_2009_interp', $
+                    eSpec__Newell_2009_interp,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(eSpec__use_2000km_file) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'eSpec__use_2000km_file', $
+                    eSpec__use_2000km_file,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(eSpec__remove_outliers) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'eSpec__remove_outliers', $
+                    eSpec__remove_outliers,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(eSpec__newellPlot_probOccurrence) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'eSpec__newellPlot_probOccurrence', $
+                    eSpec__newellPlot_probOccurrence,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(orbContribPlot) GT 0 THEN BEGIN
