@@ -21,6 +21,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              USE_AACGM_COORDS=use_aacgm, $
                              USE_GEO_COORDS=use_geo, $
                              USE_MAG_COORDS=use_mag, $
+                             USE_SDT_COORDS=use_SDT, $
                              ;; GET_GOOD_I=get_good_i, $
                              HEMI__GOOD_I=hemi__good_i, $
                              USING_HEAVIES=using_heavies, $
@@ -237,16 +238,25 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
            use_aacgm = 1
            use_geo   = 0
            use_mag   = 0
+           use_SDT   = 0
         END
         'GEO'  : BEGIN
            use_aacgm = 0
            use_geo   = 1
            use_mag   = 0
+           use_SDT   = 0
         END
         'MAG'  : BEGIN
            use_aacgm = 0
            use_geo   = 0
            use_mag   = 1
+           use_SDT   = 0
+        END
+        'SDT'  : BEGIN
+           use_aacgm = 0
+           use_geo   = 0
+           use_mag   = 0
+           use_SDT   = 1
         END
      ENDCASE
   ENDIF
@@ -305,6 +315,18 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
         'MAG', $
         SUCCESS=success
 
+  ENDIF
+
+  IF KEYWORD_SET(use_SDT) THEN BEGIN
+     PRINT,'Using SDT ilat,mlt, and alt ...'
+
+     ;; ALFDB_SWITCH_COORDS, $
+     ;;    MAXIMUS__maximus, $
+     ;;    max_MAG, $
+     ;;    'MAG', $
+     ;;    SUCCESS=success
+
+     STOP
   ENDIF
 
   ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI='BOTH')
