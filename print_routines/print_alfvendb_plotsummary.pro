@@ -3,64 +3,25 @@
 PRO PRINT_ALFVENDB_PLOTSUMMARY, $
    dbStruct, $
    plot_i_list, $
-   ;; CLOCKSTR=clockStr, $
-   ;; ANGLELIM1=angleLim1, $
-   ;; ANGLELIM2=angleLim2, $
-   ;; ORBRANGE=orbRange, $
-   ;; ALTITUDERANGE=altitudeRange, $
-   ;; CHARERANGE=charERange, $
-   ;; CHARE__NEWELL_THE_CUSP=charE__Newell_the_cusp, $
-   ;; minMLT=minM,maxMLT=maxM, $
-   ;; BINMLT=binM, $
-   ;; SHIFTMLT=shiftM, $
-   ;; MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
-   ;; EQUAL_AREA_BINNING=EA_binning, $
-   ;; DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-   ;; MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-   ;; HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-   ;; BYMIN=byMin, $
-   ;; BYMAX=byMax, $
-   ;; BZMIN=bzMin, $
-   ;; BZMAX=bzMax, $
-   ;; BTMIN=btMin, $
-   ;; BTMAX=btMax, $
-   ;; BXMIN=bxMin, $
-   ;; BXMAX=bxMax, $
-   ;; DO_ABS_BYMIN=abs_byMin, $
-   ;; DO_ABS_BYMAX=abs_byMax, $
-   ;; DO_ABS_BZMIN=abs_bzMin, $
-   ;; DO_ABS_BZMAX=abs_bzMax, $
-   ;; DO_ABS_BTMIN=abs_btMin, $
-   ;; DO_ABS_BTMAX=abs_btMax, $
-   ;; DO_ABS_BXMIN=abs_bxMin, $
-   ;; DO_ABS_BXMAX=abs_bxMax, $
    IMF_STRUCT=IMF_struct, $
    MIMC_STRUCT=MIMC_struct, $
    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
-   ;; BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
    PARAMSTRING=paramString, $
    PARAMSTR_LIST=paramString_list, $
    PARAMSTRPREFIX=plotPrefix, $
    PARAMSTRSUFFIX=plotSuffix,$
-   ;; SATELLITE=satellite, $
-   ;; OMNI_COORDS=omni_Coords, $
-   ;; HEMI=hemi, $
-   ;; DELAY=delay, $
-   ;; MULTIPLE_DELAYS=multiple_delays, $
-   ;; MULTIPLE_IMF_CLOCKANGLES=multiple_IMF_clockAngles, $
-   ;; STABLEIMF=stableIMF, $
-   ;; SMOOTHWINDOW=smoothWindow, $
-   ;; INCLUDENOCONSECDATA=includeNoConsecData, $
-   ;; HOYDIA=hoyDia, $
-   MASKMIN=maskMin, $
    LUN=lun
   
   COMPILE_OPT idl2
 
   PRINTF,lun,""
   PRINTF,lun,"**********DATA SUMMARY**********"
-  IF TAG_EXIST(IMF_struct,'delay') THEN BEGIN
-     IF TAG_EXIST(IMF_struct,'multiple_delays') THEN BEGIN
+  test = 0
+  STR_ELEMENT,IMF_struct,'delay',test
+  IF test NE 0 THEN BEGIN
+     test = 0
+     STR_ELEMENT,IMF_struct,'multiple_delays',test
+     IF test NE 0 THEN BEGIN
         ;; PRINTF,lun,FORMAT='(A4, " sat delays (minutes)",T30,":")',satellite
         ;; PRINTF,lun,FORMAT='(6(I8, :, ", "))',delay
      ENDIF ELSE BEGIN
@@ -75,11 +36,11 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY, $
   PRINTF,lun,"************"
   PRINTF,lun,FORMAT='("Screening parameters",T30,":",T35,"   [Min]",T45,"   [Max]")'
   PRINTF,lun,FORMAT='("")'
-  IF N_ELEMENTS(minM) GT 0  AND N_ELEMENTS(maxM) GT 0 THEN $
+  ;; IF N_ELEMENTS(minM) GT 0  AND N_ELEMENTS(maxM) GT 0 THEN $
      PRINTF,lun,FORMAT='("MLT",T30,":",T35,I8,T45,I8)', $
             MIMC_struct.minM, $
             MIMC_struct.maxM
-  IF TAG_EXIST(MIMC_struct,'maxI')  AND TAG_EXIST(MIMC_struct,'maxI')     THEN $
+  IF TAG_EXIST(MIMC_struct,'minI')  AND TAG_EXIST(MIMC_struct,'maxI')     THEN $
      PRINTF,lun,FORMAT='("ILAT",T30,":",T35,I8,T45,I8)', $
             MIMC_struct.minI, $
             MIMC_struct.maxI
@@ -119,7 +80,9 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY, $
      PRINTF,lun,FORMAT='("Angle lim 2",T30,":",T35,I8)', $
             IMF_struct.angleLim2
 
-  IF TAG_EXIST(alfDB_plot_struct,'EA_binning')                THEN $
+  test = 0
+  STR_ELEMENT,IMF_struct,'EA_binning',test
+  IF test THEN $
      PRINTF,lun,FORMAT='(A0)',"Using equal-area binning (props, Ryan)"
   IF TAG_EXIST(alfDB_plot_struct,'maskMin')                   THEN $
      PRINTF,lun,FORMAT='("Events per bin req",T30,": >=",T35,I8)', $
@@ -128,8 +91,9 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY, $
 
   ;;Handle a few things that depend on whether or not there are multiple_delays
   nEvTot                        = N_ELEMENTS(dbStruct.orbit)
-  STR_ELEMENT,IMF_struct,'multiple_delays',INDEX=tmpInd
-  IF tmpInd GE 0 THEN BEGIN
+  test = 0
+  STR_ELEMENT,IMF_struct,'multiple_delays',test
+  IF test THEN BEGIN
      PRINTF,lun,FORMAT='("Delay (min)",T15,"N orbits",T30,"N Events",T45,"% DB used")'
      FOR iDel=0,N_ELEMENTS(plot_i_list)-1 DO BEGIN
         nEv                        = N_ELEMENTS(plot_i_list[iDel])
@@ -142,8 +106,9 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY, $
                IMF_struct.paramString_list[iDel]
      ENDFOR
   ENDIF ELSE BEGIN
-     STR_ELEMENT,IMF_struct,'multiple_IMF_clockAngles',INDEX=tmpInd
-     IF tmpInd GE 0 THEN BEGIN
+     test = 0
+     STR_ELEMENT,IMF_struct,'multiple_IMF_clockAngles',test
+     IF test THEN BEGIN
         PRINTF,lun,FORMAT='("clockAngle",T15,"N orbits",T30,"N Events",T45,"% DB used")'
         FOR iClock=0,N_ELEMENTS(plot_i_list)-1 DO BEGIN
            nEv                        = N_ELEMENTS(plot_i_list[iClock])

@@ -409,18 +409,6 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
         STR_ELEMENT,IMF_struct,'dont_consider_clockAngles',BYTE(dont_consider_clockAngles),/ADD_REPLACE
      ENDIF
 
-     ;; IF N_ELEMENTS(orbRange) GT 0 THEN BEGIN
-     ;;    STR_ELEMENT,IMF_struct,'orbRange',LONG(orbRange),/ADD_REPLACE
-     ;; ENDIF
-
-     ;; IF N_ELEMENTS(altitudeRange) GT 0 THEN BEGIN
-     ;;    STR_ELEMENT,IMF_struct,'altitudeRange',FLOAT(altitudeRange),/ADD_REPLACE
-     ;; ENDIF
-
-     ;; IF N_ELEMENTS(charERange) GT 0 THEN BEGIN
-     ;;    STR_ELEMENT,IMF_struct,'charERange',FLOAT(charERange),/ADD_REPLACE
-     ;; ENDIF
-
      IF N_ELEMENTS(byMin) GT 0 THEN BEGIN
         STR_ELEMENT,IMF_struct,'byMin',FLOAT(byMin),/ADD_REPLACE
      ENDIF

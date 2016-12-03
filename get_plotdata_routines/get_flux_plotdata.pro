@@ -193,7 +193,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.title  = title__alfDB_ind_10__div_by_width_x
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.info.despun
+                                    DESPUNDB=maximus.info.despun
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
               h2dStr.grossFac  = 1e9
               h2dStr.gUnits    = 'GW'
@@ -228,7 +228,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.title  = title__alfDB_ind_11__div_by_width_x
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.info.despun
+                                    DESPUNDB=maximus.info.despun
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
            ENDIF
 
@@ -280,7 +280,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            h2dStr.title     = title__alfDB_ind_10__for_eSpec
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            for_eSpec      = 1
-           inData           = eFlux_eSpec_data
+           ;; inData           = eFlux_eSpec_data
+           inData           = NEWELL__eSpec.jee
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
 
@@ -329,7 +330,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.title  = title__alfDB_ind_11__div_by_width_x
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.info.despun
+                                    DESPUNDB=maximus.info.despun
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
            ENDIF
         END
@@ -346,7 +347,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.info.despun
+                                    DESPUNDB=maximus.info.despun
               magFieldFactor = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
 
               inData        = ((indata/magFieldFactor)/maximus.width_x)*mapRatio.ratio
@@ -418,7 +419,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
               h2dStr.title     = title__alfDB_esa_nFlux_integ
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.info.despun
+                                    DESPUNDB=maximus.info.despun
               IF maximus.corrected_fluxes THEN BEGIN ;Assume that ESA current has been multiplied by mapRatio
                  PRINT,'Undoing a square-root factor of multiplication by magField ratio for ESA number flux...'
                  magFieldFactor        = 1.D/SQRT(mapRatio.ratio) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
@@ -472,7 +473,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            for_eSpec      = 1
            tmp_i            = indices__eSpec
-           inData           = eNumFlux_eSpec_data
+           ;; inData           = eNumFlux_eSpec_data
+           inData           = NEWELL__eSpec.je
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
 
@@ -562,7 +564,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      IF KEYWORD_SET(multiply_by_width_x) THEN BEGIN
         h2dStr.title     = title__alfDB_ind_49_integ
         LOAD_MAPPING_RATIO_DB,mapRatio, $
-                              DO_DESPUNDB=maximus.info.despun
+                              DESPUNDB=maximus.info.despun
         IF maximus.corrected_fluxes THEN BEGIN ;Assume that pFlux has been multiplied by mapRatio
            PRINT,'Undoing a square-root factor of multiplication by magField ratio for Poynting flux ...'
            IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
@@ -646,7 +648,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.title  = title__alfDB_ind_17__div_by_width_x
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.info.despun
+                                    DESPUNDB=maximus.info.despun
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
            ENDIF
         END
@@ -672,7 +674,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.title  = title__alfDB_ind_18__div_by_width_x
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DO_DESPUNDB=maximus.info.despun
+                                    DESPUNDB=maximus.info.despun
               magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
 
               inData        = ((indata/magFieldFactor)/maximus.width_x)*mapRatio.ratio

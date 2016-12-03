@@ -19,7 +19,9 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
    HEMI=hemi, $
    NORTH=north, $
    SOUTH=south, $
-   BOTH_HEMIS=both_hemis
+   BOTH_HEMIS=both_hemis, $
+   DAYSIDE=dayside, $
+   NIGHTSIDE=nightside
 
   COMPILE_OPT IDL2
 
@@ -116,6 +118,16 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
   STR_ELEMENT,MIMC_struct,'both_hemis',INDEX=tmpInd
   IF tmpInd GE 0 THEN BEGIN
      both_hemis = MIMC_struct.both_hemis
+  ENDIF
+
+  STR_ELEMENT,MIMC_struct,'dayside',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     dayside = MIMC_struct.dayside
+  ENDIF
+
+  STR_ELEMENT,MIMC_struct,'nightside',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     nightside = MIMC_struct.nightside
   ENDIF
 
 END

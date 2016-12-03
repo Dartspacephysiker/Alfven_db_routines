@@ -86,53 +86,49 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS,EPLOTRANGE=EPlotRange, $
      ENDIF
 
      IF KEYWORD_SET(EPlotRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plotLim_struct,EPlotRange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plotLim_struct,'ePlotRange',ePlotRange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(ENumFlPlotRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plotLim_struct,ENumFlPlotRange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plotLim_struct,'eNumFlPlotRange',eNumFlPlotRange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(PPlotRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plotLim_struct,PPlotRange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plotLim_struct,'pPlotRange',pPlotRange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(charePlotRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plotLim_struct,charePlotRange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plotLim_struct,'charePlotRange',charePlotRange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(charERange) THEN BEGIN
-        STR_ELEMENT,alfDB_plotLim_struct,charERange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plotLim_struct,'charERange',charERange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(chariEPlotRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plotLim_struct,chariEPlotRange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plotLim_struct,'chariEPlotRange',chariEPlotRange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(nEventPerMinRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plotLim_struct,nEventPerMinRange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plotLim_struct,'nEventPerMinRange',nEventPerMinRange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(nEventPerOrbRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plotLim_struct,nEventPerOrbRange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plotLim_struct,'nEventPerOrbRange',nEventPerOrbRange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(probOccurrenceRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plotLim_struct,probOccurrenceRange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plotLim_struct,'probOccurrenceRange',probOccurrenceRange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(tHistDenomPlotRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plotLim_struct,tHistDenomPlotRange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plotLim_struct,'tHistDenomPlotRange',tHistDenomPlotRange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(nowepco_range) THEN BEGIN
-        STR_ELEMENT,alfDB_plotLim_struct,nowepco_range,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plotLim_struct,'nowepco_range',nowepco_range,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(alfDB_plotLim_struct) THEN BEGIN
-        STR_ELEMENT,alfDB_plotLim_struct,alfDB_plotLim_struct,/ADD_REPLACE
-     ENDIF
-     
   ENDIF
 
 END

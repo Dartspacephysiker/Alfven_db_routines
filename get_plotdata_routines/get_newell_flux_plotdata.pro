@@ -9,7 +9,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              MINI=minI,MAXI=maxI,BINI=binI, $
                              EQUAL_AREA_BINNING=EA_binning, $
                              DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
-                             OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT,OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                             OUTH2DBINSMLT=outH2DBinsMLT, $
+                             OUTH2DBINSILAT=outH2DBinsILAT, $
+                             OUTH2DBINSLSHELL=outH2DBinsLShell, $
                              FLUXPLOTTYPE=fluxPlotType, $
                              PLOTRANGE=plotRange, $
                              PLOTAUTOSCALE=plotAutoscale, $

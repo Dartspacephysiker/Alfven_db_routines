@@ -217,6 +217,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
   
   COMPILE_OPT idl2
 
+  @common__newell_espec.pro
+
   ;;set up variance plot inds
   varPlotRawInds         = !NULL
   varPlotH2DInds         = !NULL
@@ -234,13 +236,13 @@ PRO GET_ALFVENDB_2DHISTOS, $
      CASE 1 OF
         ( (N_ELEMENTS(eFlux_eSpec_data) GT 0) OR $
           (N_ELEMENTS(eNumFlux_eSpec_data) GT 0) ): BEGIN
-           in_MLTS  = eSpec__mlts[indices__eSpec]
-           in_ILATS = eSpec__ilats[indices__eSpec]
+           in_MLTS  = NEWELL__eSpec.mlt[indices__eSpec]
+           in_ILATS = NEWELL__eSpec.ilat[indices__eSpec]
         END
         ( (N_ELEMENTS(iFlux_eSpec_data) GT 0) OR $
           (N_ELEMENTS(iNumFlux_eSpec_data) GT 0) ): BEGIN
-           in_MLTS  = ion__mlts[indices__ion]
-           in_ILATS = ion__ilats[indices__ion]
+           in_MLTS  = NEWELL_I__ion.mlt[indices__ion]
+           in_ILATS = NEWELL_I__ion.ilat[indices__ion]
         END
      ENDCASE
 
@@ -332,10 +334,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
                            INDSFILEPREFIX=paramStrPrefix, $
                            INDSFILESUFFIX=paramStrSuffix, $
                            DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
-                           ;; DONT_LOAD_IN_MEMORY=KEYWORD_SET(eFlux_eSpec_data) OR $
-                           ;; KEYWORD_SET(iFlux_eSpec_data) OR $
-                           ;; KEYWORD_SET(eNumFlux_eSpec_data) OR $
-                           ;; KEYWORD_SET(iNumFlux_eSpec_data), $
                            BURSTDATA_EXCLUDED=burstData_excluded)
 
         
@@ -767,9 +765,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
      ;;Why ~KEYWORD_SET(no_maximus), you ask? Because if there's no maximus, we already have
      ;;the proper H2DFluxN
-     IF N_ELEMENTS(eFlux_eSpec_data) GT 0 AND ~KEYWORD_SET(no_maximus) THEN BEGIN
-        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=eSpec__mlts[indices__eSpec], $
-                                 IN_ILATS=eSpec__ilats[indices__eSpec], $
+     IF KEYWORD_SET(eFlux_eSpec_data) AND ~KEYWORD_SET(no_maximus) THEN BEGIN
+        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=in_MLTs, $
+                                 IN_ILATS=in_ILATs, $
                                  MINM=minM, $
                                  MAXM=maxM, $
                                  BINM=binM, $
@@ -1033,9 +1031,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;;########ELECTRON NUMBER FLUX########
   IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
 
-     IF N_ELEMENTS(eNumFlux_eSpec_data) GT 0 THEN BEGIN
-        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=eSpec__mlts[indices__eSpec], $
-                                 IN_ILATS=eSpec__ilats[indices__eSpec], $
+     IF KEYWORD_SET(eNumFlux_eSpec_data) THEN BEGIN
+        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=in_MLTs, $
+                                 IN_ILATS=in_ILATs, $
                                  MINM=minM, $
                                  MAXM=maxM, $
                                  BINM=binM, $

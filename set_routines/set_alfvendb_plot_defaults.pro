@@ -22,7 +22,6 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
    MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
    HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-   ;; MIN_NEVENTS=min_nEvents, $
    MASKMIN=maskMin, $
    THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
    DESPUNDB=despunDB, $
@@ -33,6 +32,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    NORTH=north, $
    SOUTH=south, $
    BOTH_HEMIS=both_hemis, $
+   DAYSIDE=dayside, $
+   NIGHTSIDE=nightside, $
    NPLOTS=nPlots, $
    EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, $
    ENUMFLPLOTS=eNumFlPlots, ENUMFLPLOTTYPE=eNumFlPlotType, $
@@ -90,6 +91,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                                    NORTH=north, $
                                    SOUTH=south, $
                                    BOTH_HEMIS=both_hemis, $
+                                   DAYSIDE=dayside, $
+                                   NIGHTSIDE=nightside, $
                                    MIMC_STRUCT=MIMC_struct, $
                                    LUN=lun
      
@@ -339,238 +342,336 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         RETURN
      ENDIF
 
+     ;;Set one up with all of the binary values set
+     alfDB_plot_struct = { $
+                            charE__Newell_the_cusp          : 0B, $
+                            include_32Hz                    : 0B, $
+                            disregard_sample_t              : 0B, $
+                            dont_blackball_maximus          : 0B, $
+                            dont_blackball_fastloc          : 0B, $
+                            EA_binning                      : 0B, $
+                            tHist_mask_bins_below_thresh    : 0B, $
+                            despunDB                        : 0B, $
+                            chastDB                         : 0B, $
+                         nPlots                          : 0B, $
+                         ePlots                          : 0B, $
+                         eNumFlPlots                     : 0B, $
+                         pPlots                          : 0B, $
+                         ionPlots                        : 0B, $
+                         charEPlots                      : 0B, $
+                         chariEPlots                     : 0B, $
+                         autoscale_fluxPlots             : 0B, $
+                         orbContribPlot                  : 0B, $
+                         orbTotPlot                      : 0B, $
+                         orbFreqPlot                     : 0B, $
+                         nEventPerOrbPlot                : 0B, $
+                         nEventPerMinPlot                : 0B, $
+                         probOccurrencePlot              : 0B, $
+                         squarePlot                      : 0B, $
+                         polarContour                    : 0B, $
+                         medianPlot                      : 0B, $
+                         logAvgPlot                      : 0B, $
+                         plotMedOrAvg                    : 0B, $
+                         no_burstData                    : 0B, $
+                         writeASCII                      : 0B, $
+                         writeHDF5                       : 0B, $
+                         writeProcessedH2d               : 0B, $
+                         saveRaw                         : 0B, $
+                         showPlotsNoSave                 : 0B, $
+                         outputPlotSummary               : 0B, $
+                         del_PS                          : 0B, $
+                         keepMe                          : 0B, $
+                         plotH2D_contour                 : 0B, $
+                         plotH2D__kernel_density_unmask  : 0B  }
+
      IF KEYWORD_SET(orbRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'orbRange',orbRange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'orbRange', $
+                    orbRange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(altitudeRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'altitudeRange',altitudeRange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'altitudeRange', $
+                    altitudeRange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(charERange) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'charERange',charERange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'charERange', $
+                    charERange,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(charE__Newell_the_cusp) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'charE__Newell_the_cusp',charE__Newell_the_cusp,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'charE__Newell_the_cusp', $
+                    charE__Newell_the_cusp,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(poyntRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'poyntRange',poyntRange,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'poyntRange', $
+                    poyntRange,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(sample_t_restriction) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'sample_t_restriction',sample_t_restriction,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'sample_t_restriction', $
+                    sample_t_restriction,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(include_32Hz) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'include_32Hz',include_32Hz,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'include_32Hz', $
+                    include_32Hz,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(disregard_sample_t) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'disregard_sample_t',disregard_sample_t,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'disregard_sample_t', $
+                    disregard_sample_t,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(EA_binning) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'EA_binning',EA_binning,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'EA_binning', $
+                    EA_binning,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(HwMAurOval) GT 0 THEN BEGIN
-        STR_ELEMENT,AlfDB_Plot_Struct,'HwMAurOval',HwMAurOval,/ADD_REPLACE
+        STR_ELEMENT,AlfDB_Plot_Struct,'HwMAurOval', $
+                    HwMAurOval,/ADD_REPLACE
      ENDIF
      IF N_ELEMENTS(HwMKpInd) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'HwMKpInd',HwMKpInd,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'HwMKpInd', $
+                    HwMKpInd,/ADD_REPLACE
      ENDIF
 
-     ;; IF N_ELEMENTS(min_nEvents) GT 0 THEN BEGIN
-     ;;    STR_ELEMENT,alfDB_plot_struct,'min_nEvents',min_nEvents,/ADD_REPLACE
-     ;; ENDIF
-
      IF N_ELEMENTS(maskMin) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'maskMin',maskMin,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'maskMin', $
+                    maskMin,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(tHist_mask_bins_below_thresh) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'tHist_mask_bins_below_thresh',tHist_mask_bins_below_thresh,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'tHist_mask_bins_below_thresh', $
+                    tHist_mask_bins_below_thresh,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(despunDB) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'despunDB',despunDB,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'despunDB', $
+                    despunDB,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(chastDB) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'chastDB',chastDB,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'chastDB', $
+                    chastDB,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(nPlots) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'nPlots',nPlots,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'nPlots', $
+                    nPlots,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(ePlots) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'ePlots',ePlots,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'ePlots', $
+                    ePlots,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(eFluxPlotType) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'eFluxPlotType',eFluxPlotType,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'eFluxPlotType', $
+                    eFluxPlotType,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(eNumFlPlots) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'eNumFlPlots',eNumFlPlots,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'eNumFlPlots', $
+                    eNumFlPlots,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(eNumFlPlotType) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'eNumFlPlotType',eNumFlPlotType,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'eNumFlPlotType', $
+                    eNumFlPlotType,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(pPlots) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'pPlots',pPlots,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'pPlots', $
+                    pPlots,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(ionPlots) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'ionPlots',ionPlots,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'ionPlots', $
+                    ionPlots,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(ifluxPlotType) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'ifluxPlotType',ifluxPlotType,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'ifluxPlotType', $
+                    ifluxPlotType,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(charEPlots) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'charEPlots',charEPlots,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'charEPlots', $
+                    charEPlots,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(charEType) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'charEType',charEType,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'charEType', $
+                    charEType,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(chariEPlots) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'chariEPlots',chariEPlots,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'chariEPlots', $
+                    chariEPlots,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(autoscale_fluxPlots) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'autoscale_fluxPlots',autoscale_fluxPlots,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'autoscale_fluxPlots', $
+                    autoscale_fluxPlots,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(orbContribPlot) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'orbContribPlot',orbContribPlot,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'orbContribPlot', $
+                    orbContribPlot,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(orbTotPlot) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'orbTotPlot',orbTotPlot,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'orbTotPlot', $
+                    orbTotPlot,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(orbFreqPlot) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'orbFreqPlot',orbFreqPlot,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'orbFreqPlot', $
+                    orbFreqPlot,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(nEventPerOrbPlot) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'nEventPerOrbPlot',nEventPerOrbPlot,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'nEventPerOrbPlot', $
+                    nEventPerOrbPlot,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(nEventPerMinPlot) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'nEventPerMinPlot',nEventPerMinPlot,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'nEventPerMinPlot', $
+                    nEventPerMinPlot,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(probOccurrencePlot) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'probOccurrencePlot',probOccurrencePlot,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'probOccurrencePlot', $
+                    probOccurrencePlot,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(squarePlot) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'squarePlot',squarePlot,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'squarePlot', $
+                    squarePlot,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(polarContour) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'polarContour',polarContour,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'polarContour', $
+                    polarContour,/ADD_REPLACE
      ENDIF
      IF N_ELEMENTS(wholeCap) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'wholeCap',wholeCap,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'wholeCap', $
+                    wholeCap,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(medianPlot) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'medianPlot',medianPlot,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'medianPlot', $
+                    medianPlot,/ADD_REPLACE
      ENDIF
      IF N_ELEMENTS(logAvgPlot) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'logAvgPlot',logAvgPlot,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'logAvgPlot', $
+                    logAvgPlot,/ADD_REPLACE
      ENDIF
      IF N_ELEMENTS(plotMedOrAvg) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'plotMedOrAvg',plotMedOrAvg,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'plotMedOrAvg', $
+                    plotMedOrAvg,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(dataDir) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'dataDir',dataDir,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'dataDir', $
+                    dataDir,/ADD_REPLACE
      ENDIF
      IF N_ELEMENTS(no_burstData) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'no_burstData',no_burstData,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'no_burstData', $
+                    no_burstData,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(writeASCII) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'writeASCII',writeASCII,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'writeASCII', $
+                    writeASCII,/ADD_REPLACE
      ENDIF
      IF N_ELEMENTS(writeHDF5) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'writeHDF5',writeHDF5,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'writeHDF5', $
+                    writeHDF5,/ADD_REPLACE
      ENDIF
      IF N_ELEMENTS(writeProcessedH2d) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'writeProcessedH2d',writeProcessedH2d,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'writeProcessedH2d', $
+                    writeProcessedH2d,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(saveRaw) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'saveRaw',saveRaw,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'saveRaw', $
+                    saveRaw,/ADD_REPLACE
      ENDIF
      IF KEYWORD_SET(rawDir) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'rawDir',rawDir,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'rawDir', $
+                    rawDir,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(showPlotsNoSave) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'showPlotsNoSave',showPlotsNoSave,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'showPlotsNoSave', $
+                    showPlotsNoSave,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(plotDir) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'plotDir',plotDir,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'plotDir', $
+                    plotDir,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(medHistOutData) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'medHistOutData',medHistOutData,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'medHistOutData', $
+                    medHistOutData,/ADD_REPLACE
      ENDIF
      IF KEYWORD_SET(medHistOutTxt) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'medHistOutTxt',medHistOutTxt,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'medHistOutTxt', $
+                    medHistOutTxt,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(outputPlotSummary) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'outputPlotSummary',outputPlotSummary,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'outputPlotSummary', $
+                    outputPlotSummary,/ADD_REPLACE
      ENDIF
      IF N_ELEMENTS(del_PS) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'del_PS',del_PS,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'del_PS', $
+                    del_PS,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(keepMe) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'keepMe',keepMe,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'keepMe', $
+                    keepMe,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(paramString) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'paramString',paramString,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'paramString', $
+                    paramString,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(paramStrPrefix) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'paramStrPrefix',paramStrPrefix,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'paramStrPrefix', $
+                    paramStrPrefix,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(paramStrSuffix) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'paramStrSuffix',paramStrSuffix,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'paramStrSuffix', $
+                    paramStrSuffix,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(do_not_set_defaults) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'do_not_set_defaults',do_not_set_defaults,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'do_not_set_defaults', $
+                    do_not_set_defaults,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(plotH2D_contour) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'plotH2D_contour',plotH2D_contour,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'plotH2D_contour', $
+                    plotH2D_contour,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(plotH2D__kernel_density_unmask) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'plotH2D__kernel_density_unmask',plotH2D__kernel_density_unmask,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'plotH2D__kernel_density_unmask', $
+                    plotH2D__kernel_density_unmask,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(hoyDia) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'hoyDia',hoyDia,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'hoyDia', $
+                    hoyDia,/ADD_REPLACE
      ENDIF
 
   ENDIF

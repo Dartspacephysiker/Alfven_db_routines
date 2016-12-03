@@ -1,18 +1,26 @@
 ;2015/01/01 Added NORTH, SOUTH, BOTH_HEMIS keywords
-PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
+PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
+                                  MAXMLT=maxM, $
                                   BINM=binM, $
                                   SHIFTMLT=shiftM, $
-                                  MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                                  MINILAT=minI, $
+                                  MAXILAT=maxI, $
+                                  BINI=binI, $
                                   DONT_CORRECT_ILATS=dont_correct_ilats, $
                                   DO_LSHELL=do_lShell, $
-                                  MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                                  MINLSHELL=minL, $
+                                  MAXLSHELL=maxL, $
+                                  BINL=binL, $
                                   USE_AACGM_COORDS=use_AACGM, $
                                   USE_MAG_COORDS=use_MAG, $
-                                  MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+                                  MIN_MAGCURRENT=minMC, $
+                                  MAX_NEGMAGCURRENT=maxNegMC, $
                                   HEMI=hemi, $
                                   NORTH=north, $
                                   SOUTH=south, $
                                   BOTH_HEMIS=both_hemis, $
+                                  DAYSIDE=dayside, $
+                                  NIGHTSIDE=nightside, $
                                   MIMC_STRUCT=MIMC_struct, $
                                   LUN=lun
 
@@ -37,7 +45,10 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
                                   HEMI=hemi, $
                                   NORTH=north, $
                                   SOUTH=south, $
-                                  BOTH_HEMIS=both_hemis
+                                  BOTH_HEMIS=both_hemis, $
+                                  DAYSIDE=dayside, $
+                                  NIGHTSIDE=nightside
+
                                  
   ENDIF
 
@@ -137,7 +148,16 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
      ENDIF
 
      ;; MIMC_struct = BLANK_MIMC_STRUCT()
-     MIMC_struct = {minL: 0}
+     MIMC_struct = { $
+                   dont_correct_ilats  : 0B, $
+                   do_lShell           : 0B, $
+                   use_AACGM           : 0B, $
+                   use_MAG             : 0B, $
+                   north               : 0B, $
+                   south               : 0B, $
+                   both_hemis          : 0B, $
+                   dayside             : 0B, $
+                   nightside           : 0B  }
 
      IF N_ELEMENTS(minM) GT 0 THEN BEGIN
         STR_ELEMENT,MIMC_struct,'minM',minM,/ADD_REPLACE
@@ -219,6 +239,13 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
         STR_ELEMENT,MIMC_struct,'both_hemis',both_hemis,/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(dayside) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'dayside',dayside,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(nightside) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'nightside',nightside,/ADD_REPLACE
+     ENDIF
 
   ENDIF
 
