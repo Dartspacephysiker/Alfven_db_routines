@@ -510,7 +510,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
      ENDIF
 
      IF N_ELEMENTS(multiple_delays) GT 0 THEN BEGIN
-        STR_ELEMENT,IMF_struct,'multiple_delays',multiple_delays,/ADD_REPLACE
+        STR_ELEMENT,IMF_struct,'multiple_delays',BYTE(multiple_delays),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(executing_multiples) GT 0 THEN BEGIN
