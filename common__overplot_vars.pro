@@ -1,6 +1,7 @@
 ;;12/03/16
 COMMON OVPLT, $
    OP__HAVE_VARS, $
+   OP__overplot_file, $
    OP__h2dStrArr, $
    OP__dataNameArr, $
    OP__H2DMaskArr, $

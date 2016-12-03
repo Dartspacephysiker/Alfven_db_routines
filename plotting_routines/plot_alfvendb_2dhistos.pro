@@ -51,6 +51,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                            EPS_OUTPUT=eps_output, $
                            _EXTRA = e
   
+  @common__overplot_vars.pro
+
   defXSize                        = 5
   defYSize                        = 5
 

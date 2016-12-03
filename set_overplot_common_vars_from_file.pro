@@ -7,6 +7,8 @@ PRO SET_OVERPLOT_COMMON_VARS_FROM_FILE,overplot_file
   
   RESTORE,overplot_file
 
+  OP__overplot_file         = overplot_file
+
   IF N_ELEMENTS(dataNameArr) GT 0 THEN BEGIN
      OP__dataNameArr        = TEMPORARY(dataNameArr)
   ENDIF ELSE BEGIN
@@ -15,10 +17,18 @@ PRO SET_OVERPLOT_COMMON_VARS_FROM_FILE,overplot_file
      ENDIF
   ENDELSE
 
+  IF N_ELEMENTS(H2DStrArr) GT 0 THEN BEGIN
+     OP__H2DStrArr         = TEMPORARY(H2DStrArr)
+  ENDIF ELSE BEGIN
+     IF KEYWORD_SET(clear_unavail_Vars) THEN BEGIN
+        OP__H2DStrArr      = !NULL
+     ENDIF
+  ENDELSE
+
   IF N_ELEMENTS(H2DMaskArr) GT 0 THEN BEGIN
      OP__H2DMaskArr         = TEMPORARY(H2DMaskArr)
   ENDIF ELSE BEGIN
-     IF KEYWORD_SET(Clear_Unavail_Vars) THEN BEGIN
+     IF KEYWORD_SET(clear_unavail_Vars) THEN BEGIN
         OP__H2DMaskArr      = !NULL
      ENDIF
   ENDELSE
