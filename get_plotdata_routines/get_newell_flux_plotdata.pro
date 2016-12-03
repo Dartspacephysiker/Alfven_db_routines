@@ -95,6 +95,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   
   COMPILE_OPT idl2
 
+  @common__newell_espec.pro
+
   IF KEYWORD_SET(newell_analysis__output_summary) THEN BEGIN
 
      hamFile = "newell_event_info--"+GET_TODAY_STRING(/DO_YYYYMMDD_FMT)+".txt"
@@ -258,8 +260,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
      ;;Need to provide a new h2dFluxN and a new mask for each of these
      GET_H2D_NEVENTS_AND_MASK,maximus,tmp_i, $
-                              IN_MLTS=KEYWORD_SET(eSpec_mlt) ? eSpec_mlt[tmp_i] : !NULL, $
-                              IN_ILATS=KEYWORD_SET(eSpec_ilat) ? eSpec_ilat[tmp_i] : !NULL, $
+                              IN_MLTS=KEYWORD_SET(eSpec_mlt  ) ? NEWELL__eSpec.mlt [tmp_i] : !NULL, $
+                              IN_ILATS=KEYWORD_SET(eSpec_ilat) ? NEWELL__eSpec.ilat[tmp_i] : !NULL, $
                               MINM=minM,MAXM=maxM, $
                               BINM=binM, $
                               SHIFTM=shiftM, $

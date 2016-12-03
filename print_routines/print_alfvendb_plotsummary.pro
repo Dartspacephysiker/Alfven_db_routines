@@ -108,6 +108,7 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY, $
   ENDIF ELSE BEGIN
      test = 0
      STR_ELEMENT,IMF_struct,'multiple_IMF_clockAngles',test
+     test = test AND (SIZE(plot_i_list,/TYPE) EQ 11)
      IF test THEN BEGIN
         PRINTF,lun,FORMAT='("clockAngle",T15,"N orbits",T30,"N Events",T45,"% DB used")'
         FOR iClock=0,N_ELEMENTS(plot_i_list)-1 DO BEGIN
