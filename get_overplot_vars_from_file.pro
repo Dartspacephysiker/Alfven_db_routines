@@ -1,6 +1,6 @@
 ;;12/02/16
 FUNCTION GET_OVERPLOT_VARS_FROM_FILE,overplot_file
-                                
+  
   COMPILE_OPT IDL2
 
   RESTORE,overplot_file
@@ -96,7 +96,7 @@ FUNCTION GET_OVERPLOT_VARS_FROM_FILE,overplot_file
   IF N_ELEMENTS(hoyDia) GT 0 THEN BEGIN
      STR_ELEMENT,overplotStr,'hoyDia',hoyDia,/ADD_REPLACE
   ENDIF
- 
+  
   STR_ELEMENT,overplotStr,'overplot_file',overplot_file,/ADD_REPLACE
 
   RETURN,overplotStr

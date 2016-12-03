@@ -477,9 +477,11 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        _EXTRA=e 
 
                  IF KEYWORD_SET(oplotStr) THEN BEGIN
-                    oplotStr.H2DStrArr[j].has_mask = 1
-                    oplotStr.H2DStrArr[j].mask     = oplotStr.H2DMaskArr[j].data
-                    PLOTH2D_STEREOGRAPHIC,oplotStr.H2DStrArr[j],oplotStr.overplot_file, $
+                    ;; oplotStr.H2DStrArr[j].hasmask = 1
+                    ;; oplotStr.H2DStrArr[j].mask     = oplotStr.H2DMaskArr[j].data
+                    OP__H2DStrArr[j].hasmask  = 1
+                    OP__H2DStrArr[j].mask     = OP__H2DMaskArr[j].data
+                    PLOTH2D_STEREOGRAPHIC,OP__H2DStrArr[j],OP__overplot_file, $
                                           /OVERPLOT, $
                                           EQUAL_AREA_BINNING=equal_area_binning, $
                                           H2DMASK=h2dMask, $

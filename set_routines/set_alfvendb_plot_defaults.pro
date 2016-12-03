@@ -12,6 +12,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    SAMPLE_T_RESTRICTION=sample_t_restriction, $
    INCLUDE_32HZ=include_32Hz, $
    DISREGARD_SAMPLE_T=disregard_sample_t, $
+   DONT_BLACKBALL_MAXIMUS=dont_blackball_maximus, $
+   DONT_BLACKBALL_FASTLOC=dont_blackball_fastloc, $
    MINMLT=minMLT,MAXMLT=maxMLT, $
    BINMLT=binMLT, $
    SHIFTMLT=shiftMLT, $
@@ -20,10 +22,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
    MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
    HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-   MIN_NEVENTS=min_nEvents, $
+   ;; MIN_NEVENTS=min_nEvents, $
    MASKMIN=maskMin, $
    THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
-   DO_DESPUNDB=do_despunDB, $
+   DESPUNDB=despunDB, $
+   CHASTDB=chastDB, $
    USE_AACGM_COORDS=use_aacgm, $
    USE_MAG_COORDS=use_MAG, $
    HEMI=hemi, $
@@ -78,6 +81,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                                    BINM=binMLT, $
                                    SHIFTMLT=shiftMLT, $
                                    MINILAT=minILAT,MAXILAT=maxILAT,BINI=binILAT, $
+                                   DONT_CORRECT_ILATS=dont_correct_ilats, $
+                                   USE_AACGM_COORDS=use_AACGM, $
+                                   USE_MAG_COORDS=use_MAG, $
                                    MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
                                    MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                    HEMI=hemi, $
@@ -188,7 +194,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   lShellStr = ''
   IF KEYWORD_SET(do_lShell) THEN lShellStr = '-lShell'
 
-  IF KEYWORD_SET(do_despundb) THEN despunStr  = '-despun' ELSE despunStr = ''
+  IF KEYWORD_SET(despunDB) THEN despunStr  = '-despun' ELSE despunStr = ''
 
   IF KEYWORD_SET(use_AACGM) AND KEYWORD_SET(use_MAG) THEN STOP
   CASE 1 OF
@@ -269,10 +275,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
   ;;current limits
   MCStr            = ''
-  IF (ABS(minMC-10) GT 0.1) OR (ABS(maxNegMC+10) GT 0.1) THEN BEGIN
+  IF (ABS(MIMC_struct.minMC-10) GT 0.1) OR (ABS(MIMC_struct.maxNegMC+10) GT 0.1) THEN BEGIN
      MCStr         = STRING(FORMAT='("-cur_",I0,"-",I0)', $
-                            maxNegMC, $
-                            minMC)
+                            MIMC_struct.maxNegMC, $
+                            MIMC_struct.minMC)
   ENDIF
 
   ;;bonus
@@ -293,7 +299,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   
   ;; paramString=hoyDia+'-'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
   paramString = paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
-                hemi+despunStr+coordStr+MCStr+bonusStr+sampTStr+ $
+                MIMC_struct.hemi+despunStr+coordStr+MCStr+bonusStr+sampTStr+ $
                 lShellStr+plotMedOrAvg+$
                 maskStr+tMaskStr+EABinStr+inc_burstStr+polarContStr+paramStrSuffix
   
@@ -318,11 +324,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   ENDIF
   
   ;;Check on ILAT stuff; if I don't do this, all kinds of plots get boogered up
-  IF ( (maxILAT-minILAT) MOD binILAT ) NE 0 AND ~KEYWORD_SET(dont_correct_ilats) THEN BEGIN
-     IF STRUPCASE(hemi) EQ "NORTH" THEN BEGIN
-        minILAT += CEIL(maxILAT-minILAT) MOD binILAT
+  IF ( (MIMC_struct.maxI-MIMC_struct.minI) MOD MIMC_struct.binI ) NE 0 AND ~KEYWORD_SET(dont_correct_ilats) THEN BEGIN
+     IF STRUPCASE(MIMC_struct.hemi) EQ "NORTH" THEN BEGIN
+        MIMC_struct.minI += CEIL(MIMC_struct.maxI-MIMC_struct.minI) MOD binILAT
      ENDIF ELSE BEGIN
-        maxILAT -= CEIL(maxILAT-minILAT) MOD binILAT
+        MIMC_struct.maxI -= CEIL(MIMC_struct.maxI-MIMC_struct.minI) MOD binILAT
      ENDELSE
   ENDIF
 
@@ -345,7 +351,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'charERange',charERange,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(charE__Newell_the_cusp) THEN BEGIN
+     IF N_ELEMENTS(charE__Newell_the_cusp) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'charE__Newell_the_cusp',charE__Newell_the_cusp,/ADD_REPLACE
      ENDIF
 
@@ -353,225 +359,167 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'poyntRange',poyntRange,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(sample_t_restriction) THEN BEGIN
+     IF N_ELEMENTS(sample_t_restriction) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'sample_t_restriction',sample_t_restriction,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(include_32Hz) THEN BEGIN
+     IF N_ELEMENTS(include_32Hz) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'include_32Hz',include_32Hz,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(disregard_sample_t) THEN BEGIN
+     IF N_ELEMENTS(disregard_sample_t) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'disregard_sample_t',disregard_sample_t,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(minMLT) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'minMLT',minMLT,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(maxMLT) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'maxMLT',maxMLT,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(binMLT) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'binMLT',binMLT,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(shiftMLT) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'shiftMLT',shiftMLT,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(minILAT) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'minILAT',minILAT,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(maxILAT) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'maxILAT',maxILAT,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(binILAT) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'binILAT',binILAT,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(EA_binning) THEN BEGIN
+     IF N_ELEMENTS(EA_binning) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'EA_binning',EA_binning,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(do_lShell) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'do_lShell',do_lShell,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(minLshell) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'minLshell',minLshell,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(maxLshell) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'maxLshell',maxLshell,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(binLshell) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'binLshell',binLshell,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(minMC) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'minMC',minMC,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(maxNegMC) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'maxNegMC',maxNegMC,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(HwMAurOval) THEN BEGIN
+     IF N_ELEMENTS(HwMAurOval) GT 0 THEN BEGIN
         STR_ELEMENT,AlfDB_Plot_Struct,'HwMAurOval',HwMAurOval,/ADD_REPLACE
      ENDIF
-     IF KEYWORD_SET(HwMKpInd) THEN BEGIN
+     IF N_ELEMENTS(HwMKpInd) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'HwMKpInd',HwMKpInd,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(min_nEvents) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'min_nEvents',min_nEvents,/ADD_REPLACE
-     ENDIF
+     ;; IF N_ELEMENTS(min_nEvents) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,alfDB_plot_struct,'min_nEvents',min_nEvents,/ADD_REPLACE
+     ;; ENDIF
 
-     IF KEYWORD_SET(maskMin) THEN BEGIN
+     IF N_ELEMENTS(maskMin) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'maskMin',maskMin,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(tHist_mask_bins_below_thresh) THEN BEGIN
+     IF N_ELEMENTS(tHist_mask_bins_below_thresh) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'tHist_mask_bins_below_thresh',tHist_mask_bins_below_thresh,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(do_despunDB) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'do_despunDB',do_despunDB,/ADD_REPLACE
+     IF N_ELEMENTS(despunDB) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'despunDB',despunDB,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(use_aacgm) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'use_aacgm',use_aacgm,/ADD_REPLACE
+     IF N_ELEMENTS(chastDB) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'chastDB',chastDB,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(use_MAG) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'use_MAG',use_MAG,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(hemi) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'hemi',hemi,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(north) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'north',north,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(south) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'south',south,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(both_hemis) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'both_hemis',both_hemis,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(nPlots) THEN BEGIN
+     IF N_ELEMENTS(nPlots) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'nPlots',nPlots,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(ePlots) THEN BEGIN
+     IF N_ELEMENTS(ePlots) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'ePlots',ePlots,/ADD_REPLACE
      ENDIF
+
      IF KEYWORD_SET(eFluxPlotType) THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'eFluxPlotType',eFluxPlotType,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
+     IF N_ELEMENTS(eNumFlPlots) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'eNumFlPlots',eNumFlPlots,/ADD_REPLACE
      ENDIF
+
      IF KEYWORD_SET(eNumFlPlotType) THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'eNumFlPlotType',eNumFlPlotType,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(pPlots) THEN BEGIN
+     IF N_ELEMENTS(pPlots) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'pPlots',pPlots,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(ionPlots) THEN BEGIN
+     IF N_ELEMENTS(ionPlots) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'ionPlots',ionPlots,/ADD_REPLACE
      ENDIF
+
      IF KEYWORD_SET(ifluxPlotType) THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'ifluxPlotType',ifluxPlotType,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(charEPlots) THEN BEGIN
+     IF N_ELEMENTS(charEPlots) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'charEPlots',charEPlots,/ADD_REPLACE
      ENDIF
+
      IF KEYWORD_SET(charEType) THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'charEType',charEType,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(chariEPlots) THEN BEGIN
+     IF N_ELEMENTS(chariEPlots) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'chariEPlots',chariEPlots,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(autoscale_fluxPlots) THEN BEGIN
+     IF N_ELEMENTS(autoscale_fluxPlots) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'autoscale_fluxPlots',autoscale_fluxPlots,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(orbContribPlot) THEN BEGIN
+     IF N_ELEMENTS(orbContribPlot) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'orbContribPlot',orbContribPlot,/ADD_REPLACE
      ENDIF
-     IF KEYWORD_SET(orbTotPlot) THEN BEGIN
+
+     IF N_ELEMENTS(orbTotPlot) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'orbTotPlot',orbTotPlot,/ADD_REPLACE
      ENDIF
-     IF KEYWORD_SET(orbFreqPlot) THEN BEGIN
+
+     IF N_ELEMENTS(orbFreqPlot) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'orbFreqPlot',orbFreqPlot,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(nEventPerOrbPlot) THEN BEGIN
+     IF N_ELEMENTS(nEventPerOrbPlot) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'nEventPerOrbPlot',nEventPerOrbPlot,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(nEventPerMinPlot) THEN BEGIN
+     IF N_ELEMENTS(nEventPerMinPlot) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'nEventPerMinPlot',nEventPerMinPlot,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(probOccurrencePlot) THEN BEGIN
+     IF N_ELEMENTS(probOccurrencePlot) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'probOccurrencePlot',probOccurrencePlot,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(squarePlot) THEN BEGIN
+     IF N_ELEMENTS(squarePlot) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'squarePlot',squarePlot,/ADD_REPLACE
      ENDIF
-     IF KEYWORD_SET(polarContour) THEN BEGIN
+
+     IF N_ELEMENTS(polarContour) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'polarContour',polarContour,/ADD_REPLACE
      ENDIF
-     IF KEYWORD_SET(wholeCap) THEN BEGIN
+     IF N_ELEMENTS(wholeCap) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'wholeCap',wholeCap,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(medianPlot) THEN BEGIN
+     IF N_ELEMENTS(medianPlot) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'medianPlot',medianPlot,/ADD_REPLACE
      ENDIF
-     IF KEYWORD_SET(logAvgPlot) THEN BEGIN
+     IF N_ELEMENTS(logAvgPlot) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'logAvgPlot',logAvgPlot,/ADD_REPLACE
      ENDIF
-     IF KEYWORD_SET(plotMedOrAvg) THEN BEGIN
+     IF N_ELEMENTS(plotMedOrAvg) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'plotMedOrAvg',plotMedOrAvg,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(dataDir) THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'dataDir',dataDir,/ADD_REPLACE
      ENDIF
-     IF KEYWORD_SET(no_burstData) THEN BEGIN
+     IF N_ELEMENTS(no_burstData) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'no_burstData',no_burstData,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(writeASCII) THEN BEGIN
+     IF N_ELEMENTS(writeASCII) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'writeASCII',writeASCII,/ADD_REPLACE
      ENDIF
-     IF KEYWORD_SET(writeHDF5) THEN BEGIN
+     IF N_ELEMENTS(writeHDF5) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'writeHDF5',writeHDF5,/ADD_REPLACE
      ENDIF
-     IF KEYWORD_SET(writeProcessedH2d) THEN BEGIN
+     IF N_ELEMENTS(writeProcessedH2d) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'writeProcessedH2d',writeProcessedH2d,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(saveRaw) THEN BEGIN
+     IF N_ELEMENTS(saveRaw) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'saveRaw',saveRaw,/ADD_REPLACE
      ENDIF
      IF KEYWORD_SET(rawDir) THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'rawDir',rawDir,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(showPlotsNoSave) THEN BEGIN
+     IF N_ELEMENTS(showPlotsNoSave) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'showPlotsNoSave',showPlotsNoSave,/ADD_REPLACE
      ENDIF
 
@@ -586,14 +534,14 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'medHistOutTxt',medHistOutTxt,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(outputPlotSummary) THEN BEGIN
+     IF N_ELEMENTS(outputPlotSummary) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'outputPlotSummary',outputPlotSummary,/ADD_REPLACE
      ENDIF
-     IF KEYWORD_SET(del_PS) THEN BEGIN
+     IF N_ELEMENTS(del_PS) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'del_PS',del_PS,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(keepMe) THEN BEGIN
+     IF N_ELEMENTS(keepMe) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'keepMe',keepMe,/ADD_REPLACE
      ENDIF
 
@@ -609,296 +557,20 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'paramStrSuffix',paramStrSuffix,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(plotH2D_contour) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'plotH2D_contour',plotH2D_contour,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(plotH2D__kernel_density_unmask) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'plotH2D__kernel_density_unmask',plotH2D__kernel_density_unmask,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(hoyDia) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'hoyDia',hoyDia,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(dont_correct_ilats) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'dont_correct_ilats',dont_correct_ilats,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(MIMC_struct) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'MIMC_struct',MIMC_struct,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(alfDB_plot_struct) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'alfDB_plot_struct',alfDB_plot_struct,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(do_not_set_defaults) THEN BEGIN
+     IF N_ELEMENTS(do_not_set_defaults) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'do_not_set_defaults',do_not_set_defaults,/ADD_REPLACE
      ENDIF
 
-
-     IF KEYWORD_SET(orbRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'orbRange',orbRange,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(altitudeRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'altitudeRange',altitudeRange,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(charERange) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'charERange',charERange,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(charE__Newell_the_cusp) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'charE__Newell_the_cusp',charE__Newell_the_cusp,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(poyntRange) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'poyntRange',poyntRange,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(sample_t_restriction) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'sample_t_restriction',sample_t_restriction,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(include_32Hz) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'include_32Hz',include_32Hz,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(disregard_sample_t) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'disregard_sample_t',disregard_sample_t,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(shiftMLT) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'shiftMLT',shiftMLT,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(EA_binning) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'EA_binning',EA_binning,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(do_lShell) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'do_lShell',do_lShell,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(minMC) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'minMC',minMC,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(maxNegMC) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'maxNegMC',maxNegMC,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(HwMAurOval) THEN BEGIN
-        STR_ELEMENT,AlfDB_Plot_Struct,'HwMAurOval',HwMAurOval,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(HwMKpInd) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'HwMKpInd',HwMKpInd,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(min_nEvents) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'min_nEvents',min_nEvents,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(maskMin) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'maskMin',maskMin,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(tHist_mask_bins_below_thresh) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'tHist_mask_bins_below_thresh',tHist_mask_bins_below_thresh,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(do_despunDB) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'do_despunDB',do_despunDB,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(use_aacgm) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'use_aacgm',use_aacgm,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(use_MAG) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'use_MAG',use_MAG,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(hemi) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'hemi',hemi,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(north) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'north',north,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(south) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'south',south,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(both_hemis) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'both_hemis',both_hemis,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(nPlots) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'nPlots',nPlots,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(ePlots) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'ePlots',ePlots,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(eFluxPlotType) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'eFluxPlotType',eFluxPlotType,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'eNumFlPlots',eNumFlPlots,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(eNumFlPlotType) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'eNumFlPlotType',eNumFlPlotType,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(pPlots) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'pPlots',pPlots,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(ionPlots) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'ionPlots',ionPlots,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(ifluxPlotType) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'ifluxPlotType',ifluxPlotType,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(charEPlots) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'charEPlots',charEPlots,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(charEType) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'charEType',charEType,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(chariEPlots) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'chariEPlots',chariEPlots,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(autoscale_fluxPlots) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'autoscale_fluxPlots',autoscale_fluxPlots,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(orbContribPlot) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'orbContribPlot',orbContribPlot,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(orbTotPlot) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'orbTotPlot',orbTotPlot,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(orbFreqPlot) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'orbFreqPlot',orbFreqPlot,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(nEventPerOrbPlot) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'nEventPerOrbPlot',nEventPerOrbPlot,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(nEventPerMinPlot) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'nEventPerMinPlot',nEventPerMinPlot,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(probOccurrencePlot) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'probOccurrencePlot',probOccurrencePlot,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(squarePlot) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'squarePlot',squarePlot,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(polarContour) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'polarContour',polarContour,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(wholeCap) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'wholeCap',wholeCap,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(medianPlot) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'medianPlot',medianPlot,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(logAvgPlot) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'logAvgPlot',logAvgPlot,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(plotMedOrAvg) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'plotMedOrAvg',plotMedOrAvg,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(dataDir) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'dataDir',dataDir,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(no_burstData) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'no_burstData',no_burstData,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(writeASCII) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'writeASCII',writeASCII,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(writeHDF5) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'writeHDF5',writeHDF5,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(writeProcessedH2d) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'writeProcessedH2d',writeProcessedH2d,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(saveRaw) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'saveRaw',saveRaw,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(rawDir) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'rawDir',rawDir,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(showPlotsNoSave) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'showPlotsNoSave',showPlotsNoSave,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(medHistOutData) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'medHistOutData',medHistOutData,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(medHistOutTxt) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'medHistOutTxt',medHistOutTxt,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(outputPlotSummary) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'outputPlotSummary',outputPlotSummary,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(del_PS) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'del_PS',del_PS,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(keepMe) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'keepMe',keepMe,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(paramString) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'paramString',paramString,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(paramStrPrefix) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'paramStrPrefix',paramStrPrefix,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(paramStrSuffix) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'paramStrSuffix',paramStrSuffix,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(plotH2D_contour) THEN BEGIN
+     IF N_ELEMENTS(plotH2D_contour) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'plotH2D_contour',plotH2D_contour,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(plotH2D__kernel_density_unmask) THEN BEGIN
+     IF N_ELEMENTS(plotH2D__kernel_density_unmask) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'plotH2D__kernel_density_unmask',plotH2D__kernel_density_unmask,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(hoyDia) THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'hoyDia',hoyDia,/ADD_REPLACE
-     ENDIF
-     IF KEYWORD_SET(lun) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'lun',lun,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(dont_correct_ilats) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'dont_correct_ilats',dont_correct_ilats,/ADD_REPLACE
-     ENDIF
-
-     IF KEYWORD_SET(MIMC_struct) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'MIMC_struct',MIMC_struct,/ADD_REPLACE
      ENDIF
 
   ENDIF

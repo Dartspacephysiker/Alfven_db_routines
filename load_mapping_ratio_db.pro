@@ -2,8 +2,8 @@
 PRO LOAD_MAPPING_RATIO_DB,mapRatio, $
                           DBDir=DBDir, $
                           DBFile=DBFile, $
-                          DO_DESPUNDB=do_despunDB, $
-                          DO_CHASTDB=do_chastDB, $
+                          DESPUNDB=despunDB, $
+                          CHASTDB=chastDB, $
                           LUN=lun
   
   COMPILE_OPT idl2
@@ -21,11 +21,11 @@ PRO LOAD_MAPPING_RATIO_DB,mapRatio, $
 
   IF N_ELEMENTS(DBFile) EQ 0 THEN BEGIN
      CASE 1 OF
-        KEYWORD_SET(do_despunDB): BEGIN
+        KEYWORD_SET(despunDB): BEGIN
            DBFile      = defDespunDBFile
            dbName      = 'despun'
         END
-        KEYWORD_SET(do_chastDB): BEGIN
+        KEYWORD_SET(chastDB): BEGIN
            DBFile      = defChastDBFile
            dbName      = 'Chast'
         END

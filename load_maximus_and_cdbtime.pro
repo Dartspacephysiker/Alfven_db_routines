@@ -1,5 +1,5 @@
 ;2015/12/22 Added DO_NOT_MAP_PFLUX_keyword and FORCE_LOAD keywords
-;2016/01/07 Added DO_DESPUNDB keyword
+;2016/01/07 Added DESPUNDB keyword
 PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              GOOD_I=good_i, $
                              MIN_MAGCURRENT=minMC, $
@@ -15,8 +15,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              DO_NOT_MAP_HEAVIES=do_not_map_heavies, $
                              DO_NOT_MAP_WIDTH_X=do_not_map_width_x, $
                              DO_NOT_MAP_ANYTHING=no_mapping, $
-                             DO_CHASTDB=chastDB, $
-                             DO_DESPUNDB=despunDB, $
+                             CHASTDB=chastDB, $
+                             DESPUNDB=despunDB, $
                              COORDINATE_SYSTEM=coordinate_system, $
                              USE_AACGM_COORDS=use_aacgm, $
                              USE_GEO_COORDS=use_geo, $
@@ -221,8 +221,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              MAP_HEAVIES_TO_IONOS=~KEYWORD_SET(do_not_map_heavies) $
                              AND ~KEYWORD_SET(no_mapping), $
                              ;; MAP_WIDTH_X_TO_IONOS=~KEYWORD_SET(do_not_map_width_x), $
-                             DO_DESPUNDB=despunDB, $
-                             DO_CHASTDB=chastDB, $
+                             DESPUNDB=despunDB, $
+                             CHASTDB=chastDB, $
                              USING_HEAVIES=using_heavies, $
                              QUIET=quiet
 

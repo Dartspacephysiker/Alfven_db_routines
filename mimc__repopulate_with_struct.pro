@@ -8,9 +8,12 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
    MINILAT=minI, $
    MAXILAT=maxI, $
    BINI=binI, $
+   DO_LSHELL=do_lShell, $
    MINLSHELL=minL, $
    MAXLSHELL=maxL, $
    BINL=binL, $
+   USE_AACGM_COORDS=use_AACGM, $
+   USE_MAG_COORDS=use_MAG, $
    MIN_MAGCURRENT=minMC, $
    MAX_NEGMAGCURRENT=maxNegMC, $
    HEMI=hemi, $
@@ -55,6 +58,11 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
      binI = MIMC_struct.binI
   ENDIF
 
+  STR_ELEMENT,MIMC_struct,'do_lShell',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     do_lShell = MIMC_struct.do_lShell
+  ENDIF
+
   STR_ELEMENT,MIMC_struct,'minL',INDEX=tmpInd
   IF tmpInd GE 0 THEN BEGIN
      minL = MIMC_struct.minL
@@ -68,6 +76,16 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
   STR_ELEMENT,MIMC_struct,'binL',INDEX=tmpInd
   IF tmpInd GE 0 THEN BEGIN
      binL = MIMC_struct.binL
+  ENDIF
+
+  STR_ELEMENT,MIMC_struct,'use_AACGM',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     use_AACGM = MIMC_struct.use_AACGM
+  ENDIF
+
+  STR_ELEMENT,MIMC_struct,'use_MAG',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     use_MAG = MIMC_struct.use_MAG
   ENDIF
 
   STR_ELEMENT,MIMC_struct,'minMC',INDEX=tmpInd

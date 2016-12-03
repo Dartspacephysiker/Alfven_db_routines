@@ -3,7 +3,11 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
                                   BINM=binM, $
                                   SHIFTMLT=shiftM, $
                                   MINILAT=minI,MAXILAT=maxI,BINI=binI, $
+                                  DONT_CORRECT_ILATS=dont_correct_ilats, $
+                                  DO_LSHELL=do_lShell, $
                                   MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                                  USE_AACGM_COORDS=use_AACGM, $
+                                  USE_MAG_COORDS=use_MAG, $
                                   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                   HEMI=hemi, $
                                   NORTH=north, $
@@ -20,8 +24,15 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
                                   MINMLT=minM,MAXMLT=maxM, $
                                   BINM=binM, $
                                   SHIFTMLT=shiftM, $
-                                  MINILAT=minI,MAXILAT=maxI,BINI=binI, $
-                                  MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                                  MINILAT=minI, $
+                                  MAXILAT=maxI, $
+                                  BINI=binI, $
+                                  DO_LSHELL=do_lShell, $
+                                  MINLSHELL=minL, $
+                                  MAXLSHELL=maxL, $
+                                  BINL=binL, $
+                                  USE_AACGM_COORDS=use_AACGM, $
+                                  USE_MAG_COORDS=use_MAG, $
                                   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                   HEMI=hemi, $
                                   NORTH=north, $
@@ -156,6 +167,14 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
         STR_ELEMENT,MIMC_struct,'binI',binI,/ADD_REPLACE
      ENDIF
 
+     IF KEYWORD_SET(dont_correct_ilats) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'dont_correct_ilats',dont_correct_ilats,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(do_lShell) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'do_lShell',do_lShell,/ADD_REPLACE
+     ENDIF
+
      IF N_ELEMENTS(minL) GT 0 THEN BEGIN
         STR_ELEMENT,MIMC_struct,'minL',minL,/ADD_REPLACE
      ENDIF
@@ -166,6 +185,14 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM, $
 
      IF N_ELEMENTS(binL) GT 0 THEN BEGIN
         STR_ELEMENT,MIMC_struct,'binL',binL,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(use_AACGM) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'use_AACGM',use_AACGM,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(use_MAG) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'use_MAG',use_MAG,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(minMC) GT 0 THEN BEGIN

@@ -80,7 +80,7 @@
 ;Added MAP_PFLUX_TO_IONOS keyword, based on my recent work to collect mapping ratios.
 ;This is represented in pros such as LOAD_MAPPING_RATIO, and the SDT batch job in the folder
 ;map_Poyntingflux_20151217.
-;Added DO_DESPUNDB keyword.
+;Added DESPUNDB keyword.
 ;
 ;2016/01/13
 ;Adding stuff for heavy ions, since the new despun DB can do dat
@@ -94,8 +94,8 @@
 PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             MAP_ESA_CURRENT_TO_IONOS=map_esa_current, $
                             MAP_PFLUX_TO_IONOS=map_pflux, $
-                            DO_DESPUNDB=do_despunDB, $
-                            DO_CHASTDB=do_chastDB, $
+                            DESPUNDB=despunDB, $
+                            CHASTDB=chastDB, $
                             USING_HEAVIES=using_heavies, $
                             MAP_HEAVIES_TO_IONOS=map_heavies, $
                             MAP_IONFLUX_TO_IONOS=map_ionflux, $
@@ -166,7 +166,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'09-INTEG_ELEC_ENERGY_FLUX  (Earthward is positive per AS5)'
      correctStr += '09-INTEG_ELEC_ENERGY_FLUX  (Earthward is positive per AS5)' + STRING(10B)
 
-     IF ~KEYWORD_SET(do_chastDB) THEN BEGIN
+     IF ~KEYWORD_SET(chastDB) THEN BEGIN
 
         ;;10-EFLUX_LOSSCONE_INTEG
         ;;Truly integrated over Alfven interval, mapped to ionosphere
@@ -246,8 +246,8 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
 
      IF KEYWORD_SET(map_heavies) OR KEYWORD_SET(map_pflux) OR KEYWORD_SET(map_ionflux) THEN BEGIN
         LOAD_MAPPING_RATIO_DB,mapRatio, $
-                              DO_DESPUNDB=do_despunDB, $
-                              DO_CHASTDB=do_chastDB
+                              DESPUNDB=despunDB, $
+                              CHASTDB=chastDB
 
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"***Mapped the following to the ionosphere, multiplying by B_100km/B_alt"
         correctStr += "***Mapped the following to the ionosphere, multiplying by B_100km/B_alt" + STRING(10B)
@@ -300,7 +300,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      pfluxest                     = DOUBLE((maximus.delta_e)*(maximus.delta_b*1e-9))/(2.D*mu_0) ;rm factor of 1e-3 from E-field since we want mW/m^2
 
      CASE 1 OF
-        KEYWORD_SET(DO_chastDB): BEGIN
+        KEYWORD_SET(chastDB): BEGIN
            maximus                = CREATE_STRUCT(maximus,'pFluxEst',pFluxEst)
         END
         ELSE: BEGIN
