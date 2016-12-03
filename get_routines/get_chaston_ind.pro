@@ -676,20 +676,12 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
      ENDIF
 
      IF KEYWORD_SET(print_param_summary) THEN BEGIN
-        PRINT_ALFVENDB_PLOTSUMMARY,dbStruct,good_i,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
-                                   ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
-                                   minMLT=minM,maxMLT=maxM, $
-                                   BINMLT=binM, $
-                                   SHIFTMLT=shiftM, $
-                                   MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
-                                   DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-                                   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-                                   HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
-                                   BYMIN=byMin, BZMIN=bzMin, BYMAX=byMax, BZMAX=bzMax, BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
-                                   PARAMSTRING=paramString, PARAMSTRPREFIX=plotPrefix,PARAMSTRSUFFIX=plotSuffix,$
-                                   SATELLITE=satellite, OMNI_COORDS=omni_Coords, $
-                                   HEMI=hemi, DELAY=delay, STABLEIMF=stableIMF,SMOOTHWINDOW=smoothWindow,INCLUDENOCONSECDATA=includeNoConsecData, $
-                                   HOYDIA=hoyDia,MASKMIN=maskMin,LUN=lun
+        PRINT_ALFVENDB_PLOTSUMMARY, $
+           dbStruct,good_i, $
+           IMF_STRUCT=IMF_struct, $
+           MIMC_STRUCT=MIMC_struct, $
+           ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+           LUN=lun
      ENDIF
      
      PRINTF,lun,"There are " + strtrim(n_elements(good_i),2) + " total indices making the cut." 
