@@ -8,8 +8,6 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY, $
    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
    PARAMSTRING=paramString, $
    PARAMSTR_LIST=paramString_list, $
-   PARAMSTRPREFIX=plotPrefix, $
-   PARAMSTRSUFFIX=plotSuffix,$
    LUN=lun
   
   COMPILE_OPT idl2
