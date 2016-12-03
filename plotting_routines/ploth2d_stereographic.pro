@@ -41,6 +41,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           CB_INFO=cb_info, $
                           EQ_SCALE_CT=eq_scale_ct, $
                           PLOTH2D_CONTOUR=plotH2D_contour, $
+                          CONTOUR__LEVELS=contour__levels, $
+                          CONTOUR__PERCENT=contour__percent, $
                           PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
                           CENTERS_MLT=centersMLT, $
                           CENTERS_ILAT=centersILAT, $
@@ -601,8 +603,26 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                               MAX=temp.lim[1], $
                               MIN=temp.lim[0] ) + is_OOBLow
 
-        nCLevels = 9
-        cLevels  = [0,ROUND((FINDGEN(nCLevels-1)+1)*nLevels/(nCLevels-1))]
+        CASE 1 OF
+           KEYWORD_SET(contour__levels): BEGIN
+              nCLevels = N_ELEMENTS(contour__levels)
+
+              CASE 1 OF
+                 KEYWORD_SET(contour__percent): BEGIN
+                    cLevels = (contour__levels/100.)*(nLevels-1)
+                 END
+                 ELSE: BEGIN
+                    cLevels = contour__levels
+                 END
+              ENDCASE
+           END
+           ELSE: BEGIN
+              ;;Default
+              nCLevels = 9
+              cLevels  = [0,ROUND((FINDGEN(nCLevels-1)+1)*nLevels/(nCLevels-1))]
+           END
+        ENDCASE
+
         defgridcolor = 'black' 
         ;; CONTOUR,h2dTmp, $
         ;;         tmpLons, $

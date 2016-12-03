@@ -1097,12 +1097,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ;;fix MLTs
   IF KEYWORD_SET(eSpec_mlt) THEN BEGIN
      mlts             = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,shiftM, $
-                                           IN_MLTS=eSpec_mlt[tmp_i])
+                                           IN_MLTS=NEWELL__eSpec.mlt[tmp_i])
   ENDIF ELSE BEGIN
      mlts             = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,shiftM)
   ENDELSE
   IF KEYWORD_SET(eSpec_ilat) THEN BEGIN
-     ilats            = eSpec_ilat[tmp_i]
+     ilats            = NEWELL__eSpec.ilat[tmp_i]
   ENDIF ELSE BEGIN
      ilats            = (KEYWORD_SET(do_lShell) ? maximus.lshell : maximus.ilat)[tmp_i]
   ENDELSE
