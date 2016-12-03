@@ -57,6 +57,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
                          OUT_TIMES_FASTLOC=out_times_fastLoc, $
                          OUT_FASTLOC=out_fastloc, $
                          FOR_ESPEC_DBS=for_eSpec_DBs, $
+                         MIMC_STRUCT=MIMC_struct, $
+                         ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                         IMF_STRUCT=IMF_struct, $
                          DONT_LOAD_IN_MEMORY=nonMem
                          
   COMPILE_OPT idl2
@@ -160,8 +163,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
         MAXIMUS__times        = dbTimes
         MAXIMUS__dbFile       = dbFile
         MAXIMUS__dbTimesFile  = dbTimesFile
-        MIMC__despunDB        = KEYWORD_SET(despunDB)
-        MIMC__chastDB         = KEYWORD_SET(chastDB)
+        ;; MIMC__despunDB        = KEYWORD_SET(despunDB)
+        ;; MIMC__chastDB         = KEYWORD_SET(chastDB)
      ENDELSE
   ENDIF ELSE BEGIN
      CASE 1 OF

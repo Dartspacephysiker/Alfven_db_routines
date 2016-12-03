@@ -96,6 +96,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   COMPILE_OPT idl2
 
   @common__newell_espec.pro
+  @common__newell_alf.pro
 
   IF KEYWORD_SET(newell_analysis__output_summary) THEN BEGIN
 
@@ -107,17 +108,17 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
   IF KEYWORD_SET(eFlux_eSpec_data) OR KEYWORD_SET(eNumFlux_eSpec_data) $
   THEN BEGIN
-     nonAlfven       = 1
+     for_eSpec_DBs       = 1
      ;; nonAlf_inds     = indices__eSpec
   ENDIF;;  ELSE BEGIN
   ;;    IF KEYWORD_SET(iFlux_eSpec_data) OR KEYWORD_SET(iNumFlux_eSpec_data) $
   ;;    THEN BEGIN
-  ;;       nonAlfven    = 1
+  ;;       for_eSpec_DBs    = 1
   ;;       nonAlf_inds  = indices__ion
   ;;    ENDIF 
   ;; ENDELSE
 
-  IF KEYWORD_SET(nonAlfven) THEN BEGIN
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
 
      SPLIT_ESPECDB_I_BY_ESPEC_TYPE,indices__eSpec, $
                                    OUT_TITLES=out_titles, $
@@ -129,7 +130,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
      IF KEYWORD_SET(newell_analyze_multiply_by_type_probability) THEN BEGIN
 
-        GET_H2D_NEWELLS__EACH_TYPE__NONALFVEN,eSpec,indices__eSpec, $
+        GET_H2D_NEWELLS__EACH_TYPE__NONALFVEN,NEWELL__eSpec,indices__eSpec, $
                                               MINM=minM, $
                                               MAXM=maxM, $
                                               BINM=binM, $
@@ -174,7 +175,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
      IF KEYWORD_SET(newell_analyze_multiply_by_type_probability) THEN BEGIN
 
-        GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
+        GET_H2D_NEWELLS__EACH_TYPE,NWLL_ALF__eSpec,plot_i, $
                                    MINM=minM,MAXM=maxM, $
                                    BINM=binM, $
                                    SHIFTM=shiftM, $
@@ -281,10 +282,6 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
      temph2dmask    = temph2dmaskstr.data
 
-
-
-
-
      GET_FLUX_PLOTDATA,maximus,tmp_i, $
                        MINM=minM,MAXM=maxM, $
                        BINM=binM, $
@@ -308,7 +305,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                        ;; IFLUX_ESPEC_DATA=iFlux_eSpec_data, $
                        ;; INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
-                       INDICES__ESPEC=KEYWORD_SET(nonAlfven) ? tmp_i : indices__eSpec, $
+                       INDICES__ESPEC=KEYWORD_SET(for_eSpec_DBs) ? tmp_i : indices__eSpec, $
                        ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
                        ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
                        ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
@@ -382,9 +379,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
         dataRawPtrArr     =[dataRawPtrArr,dataRawPtr] 
         varPlotH2DInds    = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
         varPlotRawInds    = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-        ;; varPlotIsKeepInds = [varPlotIsKeepInds,KEYWORD_SET(nonAlfven)]
+        ;; varPlotIsKeepInds = [varPlotIsKeepInds,KEYWORD_SET(for_eSpec_DBs)]
 
-        IF KEYWORD_SET(nonAlfven) THEN BEGIN
+        IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
            ;; junker         = MAKE_ARRAY(N_ELEMENTS(eSpec_mlt),VALUE=0B,/BYTE)
            ;; junker[tmp_i]  = 1B
            ;; out_removed_ii = WHERE(~TEMPORARY(junker))
@@ -394,8 +391,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            out_removed_ii = WHERE(TEMPORARY(junker))
 
         ENDIF
-        ;;If nonAlfven, rather than being removed indices, tmp_i are the indices to KEEP
-        ;; IF KEYWORD_SET(nonAlfven) THEN BEGIN
+        ;;If for_eSpec_DBs, rather than being removed indices, tmp_i are the indices to KEEP
+        ;; IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
         ;;    removed_ii_listArr = [removed_ii_listArr,LIST(tmp_i)]
         ;; ENDIF ELSE BEGIN
         removed_ii_listArr = [removed_ii_listArr,LIST(TEMPORARY(out_removed_ii))]

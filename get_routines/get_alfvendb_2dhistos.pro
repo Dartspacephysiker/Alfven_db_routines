@@ -1061,7 +1061,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
         
      ENDIF ELSE BEGIN
         tmpH2DFluxN           = H2DFluxN
-        tmphEv_nz_i  = hEv_nz_i
+        tmphEv_nz_i           = hEv_nz_i
         tmpH2DMask            = h2dStrArr[KEYWORD_SET(nPlots)].data
      ENDELSE
 
@@ -1378,8 +1378,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;;########ION FLUX########
   IF KEYWORD_SET(ionPlots) THEN BEGIN
      IF N_ELEMENTS(iFlux_eSpec_data) GT 0 OR N_ELEMENTS(iNumFlux_eSpec_data) GT 0 THEN BEGIN
-        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=ion__mlts[indices__ion], $
-                                 IN_ILATS=ion__ilats[indices__ion], $
+        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=in_MLTs, $
+                                 IN_ILATS=in_MLTs, $
                                  MINM=minM, $
                                  MAXM=maxM, $
                                  BINM=binM, $
