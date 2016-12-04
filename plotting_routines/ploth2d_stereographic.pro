@@ -1001,8 +1001,10 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;;             CHARSIZE=cbTCharSize,$
   ;;             TICKNAMES=cbTickNames
 
-  ;;Want this in any case
-  CB_Info                         = {NCOLORS:nCBColors, $
+  ;;Want this if we aren't overplotting
+  CB_Info                         = { $
+                                    ;; NCOLORS:KEYWORD_SET(plotH2D_contour) ? nCLevels : nCBColors, $
+                                    NCOLORS:nCBColors, $
                                      XLOG:(temp.is_logged AND temp.logLabels), $
                                      BOTTOM:cbBottom, $
                                      OOB_Low:KEYWORD_SET(cbOOBLowVal) ? cbOOBLowVal : -9, $

@@ -165,6 +165,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
            defCBPos               = [0.10 , 0.90, 0.90 , 0.92]
            ;; vertCBPos              = [0.92 , 0.05, 0.95 , 0.95]
            vertCBPos              = [0.11 , 0.05, 0.14 , 0.95]
+           oPltCBPos              = [0.86 , 0.05, 0.89 , 0.95]
 
            IF KEYWORD_SET(tile__cb_in_center_panel) THEN BEGIN
               defIntegPos         = [0.07 , 0.93, 0.82 , 0.07]
@@ -268,6 +269,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  defMapNoCBPos[2]   = defMapNoCBPos[2]*xRatio + (1.-xRatio)/2.
                  vertCBPos[0]       = vertCBPos[0]*xRatio + (1.-xRatio)/2.
                  vertCBPos[2]       = vertCBPos[2]*xRatio + (1.-xRatio)/2.
+                 oPltCBPos[0]       = oPltCBPos[0]*xRatio + (1.-xRatio)/2.
+                 oPltCBPos[2]       = oPltCBPos[2]*xRatio + (1.-xRatio)/2.
 
                  ;; defMapPos[1] = defMapPos[1]*yRatio + (1.-yRatio)/2.
                  ;; defMapPos[3] = defMapPos[3]*yRatio + (1.-yRatio)/2.
@@ -285,6 +288,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  defMapNoCBPos[3]   = defMapNoCBPos[3]*yRatio
                  vertCBPos[1]       = vertCBPos[1]*yRatio
                  vertCBPos[3]       = vertCBPos[3]*yRatio
+                 oPltCBPos[1]       = oPltCBPos[1]*yRatio
+                 oPltCBPos[3]       = oPltCBPos[3]*yRatio
               ENDIF ELSE BEGIN
                  xSize              = defXSize*n_tile_columns
                  ySize              = defYSize*n_tile_rows
@@ -496,7 +501,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                           WINDOW_YSIZE=ySize, $
                                           MAP_POSITION=map_position, $
                                           CB_POSITION=cb_position, $
-                                          CB_INFO=cb_info, $
+                                          CB_INFO=op_cb_info, $
                                           /NO_DISPLAY, $
                                           SUPPRESS_THICKGRID=suppress_tg, $
                                           SUPPRESS_GRIDLABELS=suppress_gl, $
@@ -595,6 +600,35 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                             VERTICAL=cb_info.VERTICAL, $
                             CHARSIZE=cb_info.CHARSIZE, $
                             TICKLEN=cb_info.TICKLEN
+
+                 IF KEYWORD_SET(oplotStr) THEN BEGIN
+                    ;;handle cb position
+                    op_cb_position      = position
+                    op_cb_position[0]   = (position[2]-position[0])*oPltCBPos[0]+position[0]
+                    op_cb_position[1]   = (position[3]-position[1])*oPltCBPos[1]+position[1]
+                    op_cb_position[2]   = (position[2]-position[0])*oPltCBPos[2]+position[0]
+                    op_cb_position[3]   = (position[3]-position[1])*oPltCBPos[3]+position[1]
+
+                    op_cb_info.vertical = 1
+                    op_cb_info.position = op_cb_position
+                    op_cb_info.charsize = 0.75
+
+                    CGCOLORBAR,NCOLORS=op_cb_info.NCOLORS, $
+                               XLOG=op_cb_info.XLOG, $
+                               BOTTOM=op_cb_info.BOTTOM, $
+                               OOB_LOW=op_cb_info.OOB_Low EQ -9 ? !NULL : op_cb_info.OOB_Low, $
+                               OOB_HIGH=op_cb_info.OOB_High EQ -9 ? !NULL : op_cb_info.OOB_High, $
+                               RANGE=op_cb_info.RANGE, $
+                               TITLE=!NULL, $ ;op_cb_info.TITLE, $
+                               TLOCATION=op_cb_info.TLOCATION, $
+                               TCHARSIZE=op_cb_info.TCHARSIZE, $
+                               POSITION=op_cb_info.POSITION, $
+                               TEXTTHICK=op_cb_info.TEXTTHICK, $
+                               VERTICAL=op_cb_info.VERTICAL, $
+                               CHARSIZE=op_cb_info.CHARSIZE, $
+                               TICKLEN=op_cb_info.TICKLEN
+
+                 ENDIF
               ENDIF
 
               CGPS_Close 
