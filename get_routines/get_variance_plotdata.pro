@@ -44,7 +44,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                           LUN=lun
   
   COMPILE_OPT IDL2
-
+  @common__newell_espec.pro
   ;;some temp vars
   var_h2dStrArr    = !NULL
   var_dataNameArr  = !NULL
@@ -88,9 +88,9 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
         (send_DB ? dbStruct : !NULL), $
         (send_DB ? dbInds   : !NULL), $
         OUTH2D_LISTS_WITH_INDS=outH2D_lists_with_inds,$
-        IN_INDS=(send_DB ? !NULL : in_inds), $
-        IN_MLTS=(send_DB ? !NULL : in_mlts), $
-        IN_ILATS=(send_DB ? !NULL : in_ilats), $
+        IN_INDS=( send_DB ? !NULL : in_inds), $
+        IN_MLTS=( send_DB ? !NULL : (loopType EQ 1 ? NEWELL__eSpec.mlt[in_inds]  : in_mlts )), $
+        IN_ILATS=(send_DB ? !NULL : (loopType EQ 1 ? NEWELL__eSpec.ilat[in_inds] : in_ilats)), $
         ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
         IMF_STRUCT=IMF_struct, $
         MIMC_STRUCT=MIMC_struct, $
@@ -102,7 +102,14 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
         
         dbStruct_obsArr                   = *dataRawPtrArr[tmpVarRaw_i[i]]
         IF N_ELEMENTS((removed_ii_listArr[i])[0]) GT 0 THEN BEGIN
-           dont_use_these_inds            = (removed_ii_listArr[tmpVarRaw_i[i]])[0]
+           CASE loopType OF
+              0: BEGIN
+                 dont_use_these_inds      = (removed_ii_listArr[tmpVarRaw_i[i]])[0]
+              END
+              1: BEGIN
+                 dont_use_these_inds      = CGSETINTERSECTION(in_inds,(removed_ii_listArr[tmpVarRaw_i[i]])[0],COUNT=dontDoIt)
+              END
+           ENDCASE
         ENDIF ELSE BEGIN 
            dont_use_these_inds            = !NULL
         ENDELSE

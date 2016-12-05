@@ -1138,7 +1138,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
               KEYWORD_SET(EA_binning): BEGIN
                  h2dStr.data = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                           ilats,$
-                                                          (KEYWORD_SET(do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
+                                                          (KEYWORD_SET(alfDB_plot_struct.do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
                                                           MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(do_lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
                                                           MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                                           OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
@@ -1146,7 +1146,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
               ELSE: BEGIN
                  h2dStr.data = HIST2D(mlts, $
                                       ilats,$
-                                      (KEYWORD_SET(do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
+                                      (KEYWORD_SET(alfDB_plot_struct.do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
                                       MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(do_lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
                                       MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                       BINSIZE1=MIMC_struct.binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$

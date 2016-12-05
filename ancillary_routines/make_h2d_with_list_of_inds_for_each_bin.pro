@@ -39,11 +39,12 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;SET UP GRID
   nXlines  = (MIMC_struct.maxM-MIMC_struct.minM)/MIMC_struct.binM + 1
-  nYlines  = ((KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxLshell : MIMC_struct.maxI)-(KEYWORD_SET(do_lShell) ? MIMC_struct.minLshell : MIMC_struct.minI))/ $
+  nYlines  = ((KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxLshell : MIMC_struct.maxI)-(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minLshell : MIMC_struct.minI))/ $
              (KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binLshell : MIMC_struct.binI) + 1
 
   mlts     = INDGEN(nXlines)*MIMC_struct.binM+MIMC_struct.minM
-  is    = INDGEN(nYlines)*(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binLshell : MIMC_struct.binI)+(KEYWORD_SET(do_lShell) ? MIMC_struct.minLshell : MIMC_struct.minI)
+  ilats    = INDGEN(nYlines)*(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binLshell : MIMC_struct.binI) + $
+                             (KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minLshell : MIMC_struct.minI)
 
   nMLT    = N_ELEMENTS(mlts)
   nILAT   = N_ELEMENTS(ilats)
@@ -63,7 +64,7 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
      DBILATs   = (KEYWORD_SET(MIMC_struct.do_lShell) ? dbStruct.lShell : dbStruct.ILAT)[dbStruct_inds]
   ENDELSE
 
-  IF KEYWORD_SET(both_hemis) THEN DBILATs = ABS(DBILATs)
+  IF KEYWORD_SET(MIMC_struct.both_hemis) THEN DBILATs = ABS(DBILATs)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;loop over MLTs and ILATs

@@ -8,6 +8,7 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
    MINILAT=minI, $
    MAXILAT=maxI, $
    BINI=binI, $
+   SHIFTILAT=shiftI, $
    DO_LSHELL=do_lShell, $
    MINLSHELL=minL, $
    MAXLSHELL=maxL, $
@@ -60,6 +61,11 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
   STR_ELEMENT,MIMC_struct,'binI',INDEX=tmpInd
   IF tmpInd GE 0 THEN BEGIN
      binI = MIMC_struct.binI
+  ENDIF
+
+  STR_ELEMENT,MIMC_struct,'shiftI',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     shiftI = MIMC_struct.shiftI
   ENDIF
 
   STR_ELEMENT,MIMC_struct,'do_lShell',INDEX=tmpInd

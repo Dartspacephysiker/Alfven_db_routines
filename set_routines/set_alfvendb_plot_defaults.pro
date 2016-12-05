@@ -55,6 +55,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
    ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
    ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
+   ESPEC__NOMAPTO100KM=eSpec__noMap, $
    ESPEC__REMOVE_OUTLIERS=eSpec__remove_outliers, $
    ESPEC__NEWELLPLOT_PROBOCCURRENCE=eSpec__newellPlot_probOccurrence, $
    ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
@@ -423,6 +424,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          eSpec__all_fluxes                 : 0B, $
                          eSpec__Newell_2009_interp         : 0B, $
                          eSpec__use_2000km_file            : 0B, $
+                         eSpec__noMap                      : 0B, $
                          eSpec__remove_outliers            : 0B, $
                          eSpec__newellPlot_probOccurrence  : 0B, $
                          orbContribPlot                    : 0B, $
@@ -645,6 +647,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(eSpec__use_2000km_file) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'eSpec__use_2000km_file', $
                     BYTE(eSpec__use_2000km_file),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(eSpec__noMap) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'eSpec__noMap', $
+                    BYTE(eSpec__noMap),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(eSpec__remove_outliers) GT 0 THEN BEGIN

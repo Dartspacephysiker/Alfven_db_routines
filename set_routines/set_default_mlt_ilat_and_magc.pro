@@ -6,6 +6,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   MINILAT=minI, $
                                   MAXILAT=maxI, $
                                   BINI=binI, $
+                                  SHIFTILAT=shiftI, $
                                   DONT_CORRECT_ILATS=dont_correct_ilats, $
                                   DO_LSHELL=do_lShell, $
                                   MINLSHELL=minL, $
@@ -37,6 +38,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   MINILAT=minI, $
                                   MAXILAT=maxI, $
                                   BINI=binI, $
+                                  SHIFTILAT=shiftI, $
                                   DO_LSHELL=do_lShell, $
                                   MINLSHELL=minL, $
                                   MAXLSHELL=maxL, $
@@ -67,6 +69,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
   defMinI     = 60
   defMaxI     = 90
   defBinI     = 2.5
+  defShiftI   = 0.0
 
   ;; defMinL     = (cos(defMinI*!PI/180.))^(-2)
   ;; defMaxL     = (cos(defMaxI*!PI/180.))^(-2)
@@ -84,6 +87,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
   IF N_ELEMENTS(maxM   ) EQ 0 THEN maxM   = defMaxM
   IF N_ELEMENTS(binM   ) EQ 0 THEN binM   = defBinM
   IF N_ELEMENTS(shiftM ) EQ 0 THEN shiftM = defShiftM
+  IF N_ELEMENTS(shiftI ) EQ 0 THEN shiftI = defShiftI
 
   ;;Handle ILATs
   IF N_ELEMENTS(hemi) EQ 0 THEN BEGIN
@@ -196,6 +200,10 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
 
      IF N_ELEMENTS(binI) GT 0 THEN BEGIN
         STR_ELEMENT,MIMC_struct,'binI',binI,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(shiftI) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'shiftI',shiftI,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(dont_correct_ilats) THEN BEGIN

@@ -24,6 +24,7 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                 is_32Hz          : 0B, $
                 is_128Hz         : 0B, $
                 is_noRestrict    : 0B, $
+                is_mapped        : 0B, $
                 for_eSpecDB      : 0B, $
                 coords           : 'SDT'}
      END

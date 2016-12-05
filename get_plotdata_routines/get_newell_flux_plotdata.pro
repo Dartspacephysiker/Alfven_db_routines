@@ -357,9 +357,14 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
            ;; junker[tmp_i]  = 1B
            ;; out_removed_ii = WHERE(~TEMPORARY(junker))
 
-           junker         = MAKE_ARRAY(N_ELEMENTS(eSpec_mlt),VALUE=0B,/BYTE)
-           junker[CGSETDIFFERENCE(indices__eSpec,tmp_i,COUNT=nJunked)]  = 1B
-           out_removed_ii = WHERE(TEMPORARY(junker))
+           junker                      = MAKE_ARRAY(N_ELEMENTS(NEWELL__eSpec.mlt),VALUE=0B,/BYTE)
+           tmpJunk                     = CGSETDIFFERENCE(indices__eSpec, $
+                                                         tmp_i, $
+                                                         COUNT=nJunked, $
+                                                         NORESULT=-1)
+           junker[TEMPORARY(tmpJunk)]  = 1B
+           out_removed_ii              = WHERE(TEMPORARY(junker))
+           ;; out_removed_ii   = WHERE(TEMPORARY(junker))
 
         ENDIF
         ;;If for_eSpec_DBs, rather than being removed indices, tmp_i are the indices to KEEP

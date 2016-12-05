@@ -15,6 +15,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    ;; CHECK_DB=check_DB, $
                                    JUST_FASTLOC=just_fastLoc, $
                                    JUST_TIMES=just_times, $
+                                   DO_NOT_MAP_DELTA_T=do_not_map_delta_t, $
                                    NO_MEMORY_LOAD=noMem, $
                                    CLEAR_MEMORY=clear_memory, $
                                    LUN=lun
@@ -124,6 +125,8 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         GEO_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--GEO_coords.sav'
         MAG_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--MAG_coords.sav'
 
+        mapRatDir    = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
+        mapRatFile   = 'mapratio_for_fastLoc_intervals4--500-16361--below_aur_oval--20160213--times--noDupes--sample_freq_le_0.01.dat'
      END
   ENDCASE
 
@@ -248,6 +251,19 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
               STOP
            ENDELSE
         ENDIF
+
+        IF KEYWORD_SET(do_not_map_delta_t) THEN BEGIN
+           PRINT,'Not mapping delta t for fastLoc ...'
+        ENDIF ELSE BEGIN
+           IF N_ELEMENTS(mapRatDir) GT 0 THEN BEGIN
+              PRINT,"Mapping fastLoc delta-ts to 100 km ..."
+              RESTORE,mapRatDir+mapRatFile
+              fastLoc_delta_t        = SQRT((TEMPORARY(mapRatio)).ratio)*fastLoc_delta_t
+              fastLoc.info.is_mapped = 1B
+           ENDIF ELSE BEGIN
+              PRINT,"Can't map fastLoc delta-ts to 100 km! mapRatio DB doesn't exist .."
+           ENDELSE
+        ENDELSE
      ENDIF ELSE BEGIN
         PRINTF,lun,"There is already a fastloc_times struct loaded! Not loading " + DB_tFile
      ENDELSE
