@@ -3,12 +3,10 @@
 ;;Because the eSpec DB is so gigantic, it is a real issue to keep track of removed_ii variables (there are always millions). Because of
 ;;this, for the eSpec DB it makes way more sense to keep track of the indices that we have KEPT. So that's what is done here for
 ;;"nonAlfvén" data.
-PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
-                             BINM=binM, $
-                             SHIFTM=shiftM, $
-                             MINI=minI,MAXI=maxI,BINI=binI, $
-                             EQUAL_AREA_BINNING=EA_binning, $
-                             DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
+PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
+                             ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                             IMF_STRUCT=IMF_struct, $
+                             MIMC_STRUCT=MIMC_struct, $
                              OUTH2DBINSMLT=outH2DBinsMLT, $
                              OUTH2DBINSILAT=outH2DBinsILAT, $
                              OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -27,11 +25,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              ;; INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
                              INDICES__ESPEC=indices__eSpec, $
                              ;; INDICES__ION=indices__ion, $
-                             ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
-                             ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
                              COMBINE_ACCELERATED=comb_accelerated, $
-                             ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
-                             ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
                              ESPEC_MLT=eSpec_mlt, $
                              ESPEC_ILAT=eSpec_ilat, $
                              ESPEC_DELTA_T=eSpec_delta_t, $
@@ -67,11 +61,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                              VARPLOTRAWINDS=varPlotRawInds, $
                              REMOVED_II_LISTARR=removed_ii_listArr, $
                              ;; VARPLOTISKEEPINDS=varPlotIsKeepInds, $
-                             MEDIANPLOT=medianplot, $
                              MEDHISTOUTDATA=medHistOutData, $
                              MEDHISTOUTTXT=medHistOutTxt, $
                              MEDHISTDATADIR=medHistDataDir, $
-                             LOGAVGPLOT=logAvgPlot, $
                              DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                              ORBCONTRIB_H2DSTR_FOR_DIVISION=orbContrib_h2dStr_for_division, $
                              GET_EFLUX=get_eflux, $
@@ -131,14 +123,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      IF KEYWORD_SET(newell_analyze_multiply_by_type_probability) THEN BEGIN
 
         GET_H2D_NEWELLS__EACH_TYPE__NONALFVEN,NEWELL__eSpec,indices__eSpec, $
-                                              MINM=minM, $
-                                              MAXM=maxM, $
-                                              BINM=binM, $
-                                              SHIFTM=shiftM, $
-                                              MINI=minI, $
-                                              MAXI=maxI, $
-                                              BINI=binI, $
-                                              EQUAL_AREA_BINNING=EA_binning, $
+                                              ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                              IMF_STRUCT=IMF_struct, $
+                                              MIMC_STRUCT=MIMC_struct, $
                                               NEWELL_PLOTRANGE=newell_plotRange, $
                                               LOG_NEWELLPLOT=log_newellPlot, $
                                               NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
@@ -176,11 +163,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      IF KEYWORD_SET(newell_analyze_multiply_by_type_probability) THEN BEGIN
 
         GET_H2D_NEWELLS__EACH_TYPE,NWLL_ALF__eSpec,plot_i, $
-                                   MINM=minM,MAXM=maxM, $
-                                   BINM=binM, $
-                                   SHIFTM=shiftM, $
-                                   MINI=minI,MAXI=maxI,BINI=binI, $
-                                   EQUAL_AREA_BINNING=EA_binning, $
+                                   ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                   IMF_STRUCT=IMF_struct, $
+                                   MIMC_STRUCT=MIMC_struct, $
                                    NEWELL_PLOTRANGE=newell_plotRange, $
                                    LOG_NEWELLPLOT=log_newellPlot, $
                                    NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
@@ -189,10 +174,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                    COMBINE_ACCELERATED=comb_accelerated, $
                                    TMPLT_H2DSTR=tmplt_h2dStr, $
                                    H2DSTRS=h2dStrs, $
-                                   ;; H2DMASKSTR=h2dMaskStr, $
                                    H2DFLUXN=junk_h2dFluxN, $
                                    NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
-                                   ;; MASKMIN=maskMin, $
                                    DATANAMES=dataNames, $
                                    DATARAWPTRS=dataRawPtrs, $
                                    CB_FORCE_OOBHIGH=cb_force_oobHigh, $
@@ -263,12 +246,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      GET_H2D_NEVENTS_AND_MASK,maximus,tmp_i, $
                               IN_MLTS=KEYWORD_SET(eSpec_mlt  ) ? NEWELL__eSpec.mlt [tmp_i] : !NULL, $
                               IN_ILATS=KEYWORD_SET(eSpec_ilat) ? NEWELL__eSpec.ilat[tmp_i] : !NULL, $
-                              MINM=minM,MAXM=maxM, $
-                              BINM=binM, $
-                              SHIFTM=shiftM, $
-                              MINI=minI,MAXI=maxI,BINI=binI, $
-                              EQUAL_AREA_BINNING=EA_binning, $
-                              DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
+                              ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                              IMF_STRUCT=IMF_struct, $
+                              MIMC_STRUCT=MIMC_struct, $
                               NEVENTSPLOTRANGE=nEventsPlotRange, $
                               TMPLT_H2DSTR=tmplt_h2dStr, $
                               H2DSTR=tempNh2dStr,H2DMASKSTR=temph2dMaskStr, $
@@ -283,12 +263,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      temph2dmask    = temph2dmaskstr.data
 
      GET_FLUX_PLOTDATA,maximus,tmp_i, $
-                       MINM=minM,MAXM=maxM, $
-                       BINM=binM, $
-                       SHIFTM=shiftM, $
-                       MINI=minI,MAXI=maxI,BINI=binI, $
-                       EQUAL_AREA_BINNING=EA_binning, $
-                       DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
+                       ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                       IMF_STRUCT=IMF_struct, $
+                       MIMC_STRUCT=MIMC_struct, $
                        OUTH2DBINSMLT=outH2DBinsMLT, $
                        OUTH2DBINSILAT=outH2DBinsILAT, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -306,10 +283,6 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        ;; IFLUX_ESPEC_DATA=iFlux_eSpec_data, $
                        ;; INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
                        INDICES__ESPEC=KEYWORD_SET(for_eSpec_DBs) ? tmp_i : indices__eSpec, $
-                       ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
-                       ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
-                       ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
-                       ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
                        ESPEC_MLT=eSpec_mlt, $
                        ESPEC_ILAT=eSpec_ilat, $
                        ESPEC_DELTA_T=eSpec_delta_t, $
@@ -341,11 +314,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                        UPDATE_H2D_MASK=update_h2d_mask, $
                        OUT_H2DMASK=out_h2dMask, $
                        DATANAME=dataName,DATARAWPTR=dataRawPtr, $
-                       MEDIANPLOT=medianplot, $
                        MEDHISTOUTDATA=medHistOutData, $
                        MEDHISTOUTTXT=medHistOutTxt, $
                        MEDHISTDATADIR=medHistDataDir, $
-                       LOGAVGPLOT=logAvgPlot, $
                        DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                        ORBCONTRIB_H2DSTR_FOR_DIVISION=orbContrib_h2dStr_for_division, $
                        GET_EFLUX=get_eflux, $

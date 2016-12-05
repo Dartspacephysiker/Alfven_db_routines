@@ -1,14 +1,11 @@
 ;2016/04/20 For customizing
 
 PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
-                               MINM=minM,MAXM=maxM, $
+                               ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                               IMF_STRUCT=IMF_struct, $
+                               MIMC_STRUCT=MIMC_struct, $
                                CUSTOM_DATANAME=custom_dataname, $
                                CUSTOM_TITLE=custom_title, $
-                               BINM=binM, $
-                               SHIFTM=shiftM, $
-                               MINI=minI,MAXI=maxI,BINI=binI, $
-                               EQUAL_AREA_BINNING=EA_binning, $
-                               DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                                OUTH2DBINSMLT=outH2DBinsMLT, $
                                OUTH2DBINSILAT=outH2DBinsILAT, $
                                OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -78,11 +75,11 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
   IF KEYWORD_SET(noPosFlux) AND KEYWORD_SET (logPlot) THEN absFlux = 1
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
-     tmplt_h2dStr  = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
-                                       MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                                       MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
-                                       SHIFT1=shiftM,SHIFT2=shiftI, $
-                                       EQUAL_AREA_BINNING=EA_binning, $
+     tmplt_h2dStr  = MAKE_H2DSTR_TMPLT(BIN1=MIMC_struct.binM,BIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
+                                       MIN1=MIMC_struct.MINM,MIN2=(KEYWORD_SET(MIMC_STRUCT.DO_LSHELL) ? MIMC_struct.MINL : MIMC_struct.MINI),$
+                                       MAX1=MIMC_struct.MAXM,MAX2=(KEYWORD_SET(MIMC_STRUCT.DO_LSHELL) ? MIMC_struct.MAXL : MIMC_struct.MAXI), $
+                                       SHIFT1=MIMC_struct.shiftM,SHIFT2=shiftI, $
+                                       EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                                        DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                                        ;; PLOT_I=plot_i, $
                                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -224,8 +221,8 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
   ENDIF
 
   ;;fix MLTs
-  mlts                      = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,shiftM)
-  ilats                     = (KEYWORD_SET(DO_lShell) ? maximus.lshell : maximus.ilat)[tmp_i]
+  mlts                      = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,MIMC_struct.shiftM)
+  ilats                     = (KEYWORD_SET(MIMC_struct.do_Lshell) ? maximus.lshell : maximus.ilat)[tmp_i]
   IF KEYWORD_SET(h2dStr.both_hemis) THEN ilats = ABS(ilats)
 
   IF KEYWORD_SET(do_plot_i_instead_of_histos) THEN BEGIN
@@ -242,35 +239,35 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
            h2dStr.data = MEDIAN_HIST(mlts, $
                                      ilats,$
                                      inData,$
-                                     MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                                     MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI),$
-                                     BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
-                                     OBIN1=outH2DBinsMLT,OBIN2=(KEYWORD_SET(do_lshell) ? outH2DBinsLShell : outH2DBinsILAT),$
+                                     MIN1=MIMC_struct.MINM,MIN2=(KEYWORD_SET(MIMC_STRUCT.DO_LSHELL) ? MIMC_struct.MINL : MIMC_struct.MINI),$
+                                     MAX1=MIMC_struct.MAXM,MAX2=(KEYWORD_SET(MIMC_STRUCT.DO_LSHELL) ? MIMC_struct.MAXL : MIMC_struct.MAXI),$
+                                     BINSIZE1=MIMC_struct.binM,BINSIZE2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
+                                     OBIN1=outH2DBinsMLT,OBIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? outH2DBinsLShell : outH2DBinsILAT),$
                                      ABSMED=absFlux, $
                                      OUTFILE=medHistDatFile, $
                                      PLOT_I=tmp_i, $
-                                     EQUAL_AREA_BINNING=EA_binning) 
+                                     EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning) 
            
            IF KEYWORD_SET(medHistOutTxt) THEN MEDHISTANALYZER,INFILE=medHistDatFile,outFile=medHistDataDir + dataName + "medhist.txt"
         END
         KEYWORD_SET(do_timeAvg_fluxQuantities): BEGIN
 
            CASE 1 OF
-              KEYWORD_SET(EA_binning): BEGIN
+              KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
                  h2dStr.data = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                           ilats,$
                                                           (KEYWORD_SET(do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
-                                                          MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
-                                                          MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
+                                                          MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                                          MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                                           OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
               END
               ELSE: BEGIN
                  h2dStr.data = HIST2D(mlts, $
                                       ilats,$
                                       (KEYWORD_SET(do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
-                                      MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
-                                      MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
-                                      BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                                      MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                      MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+                                      BINSIZE1=MIMC_struct.binM,BINSIZE2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
                                       OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
               END
            ENDCASE
@@ -301,21 +298,21 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
         END
         ELSE: BEGIN
            CASE 1 OF
-              KEYWORD_SET(EA_binning): BEGIN
+              KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
                  h2dStr.data  = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                            ilats,$
                                                            (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
-                                                           MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
-                                                           MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI),$
+                                                           MIN1=MIMC_struct.MINM,MIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                                           MAX1=MIMC_struct.MAXM,MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                                            OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
               END
               ELSE: BEGIN
                  h2dStr.data  = HIST2D(mlts, $
                                        ilats,$
                                        (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
-                                       MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
-                                       MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI),$
-                                       BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                                       MIN1=MIMC_struct.MINM,MIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                       MAX1=MIMC_struct.MAXM,MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+                                       BINSIZE1=MIMC_struct.binM,BINSIZE2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
                                        OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
               END
            ENDCASE
@@ -422,11 +419,11 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
      ;;KLUGE IT
      GET_H2D_BIN_AREAS,h2dAreas, $
                        CENTERS1=centersMLT,CENTERS2=centersILAT, $
-                       BINSIZE1=binM*15.,BINSIZE2=binI, $
-                       MAX1=maxM*15.,MAX2=maxI, $
-                       MIN1=minM*15.,MIN2=minI, $
-                       SHIFT1=shiftM*15.,SHIFT2=shiftI, $
-                       EQUAL_AREA_BINNING=EA_binning
+                       BINSIZE1=MIMC_struct.binM*15.,BINSIZE2=MIMC_struct.binI, $
+                       MAX1=MIMC_struct.maxM*15.,MAX2=MIMC_struct.maxI, $
+                       MIN1=MIMC_struct.minM*15.,MIN2=MIMC_struct.minI, $
+                       SHIFT1=MIMC_struct.shiftM*15.,SHIFT2=shiftI, $
+                       EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning
      ;; dayInds    = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
      ;; nightInds  = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
      dayInds    = WHERE(centersMLT GE 11*15 AND centersMLT LT 15*15 AND ~h2dMask)

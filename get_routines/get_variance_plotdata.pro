@@ -34,20 +34,13 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                           OUTPUT__ORB_AVG_OBS=write_obsArr__orb_avg_obs, $
                           VARPLOTRAWINDS=varPlotRawInds, $
                           OUTH2D_LISTS_WITH_INDS=outH2D_lists_with_inds,$
-                          MINMLT=minM, $
-                          MAXMLT=maxM, $
-                          BINMLT=binM, $
-                          SHIFTMLT=shiftM, $
-                          MINILAT=minI, $
-                          MAXILAT=maxI, $
-                          BINILAT=binI, $
-                          MEDIANPLOT=medianPlot, $
-                          LOGAVGPLOT=logAvgPlot, $
+                          ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                          IMF_STRUCT=IMF_struct, $
+                          MIMC_STRUCT=MIMC_struct, $
                           ALL_LOGPLOTS=all_logPlots, $
                           ESPEC__NO_MAXIMUS=no_maximus, $
                           TMPLT_H2DSTR=tmplt_h2dStr, $
                           H2D_NONZERO_NEV_I=hEv_nz_i, $
-                          DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                           LUN=lun
   
   COMPILE_OPT IDL2
@@ -98,15 +91,9 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
         IN_INDS=(send_DB ? !NULL : in_inds), $
         IN_MLTS=(send_DB ? !NULL : in_mlts), $
         IN_ILATS=(send_DB ? !NULL : in_ilats), $
-        MINMLT=minM, $
-        MAXMLT=maxM, $
-        BINMLT=binM, $
-        SHIFTMLT=shiftM, $
-        MINILAT=minI, $
-        MAXILAT=maxI, $
-        BINILAT=binI, $
-        BOTH_HEMIS=KEYWORD_SET(tmplt_h2dStr.both_hemis), $
-        DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+        ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+        IMF_STRUCT=IMF_struct, $
+        MIMC_STRUCT=MIMC_struct, $
         /FILL_WITH_INDICES_INTO_PLOT_I, $
         /RESET_H2D_LISTS_WITH_INDS, $
         LUN=lun
@@ -215,7 +202,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
 
            ;;Show us
            IF KEYWORD_SET(print_mandm) THEN BEGIN
-              IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
+              IF KEYWORD_SET(alfDB_plot_struct.medianPlot) OR ~KEYWORD_SET(alfDB_plot_struct.logAvgPlot) THEN BEGIN
                  fmt    = 'G10.4' 
                  maxh2d = MAX(h2dStrTemp.data[hEv_nz_i])
                  minh2d = MIN(h2dStrTemp.data[hEv_nz_i])

@@ -10,12 +10,10 @@
 ; I've added this information to CORRECT_ALFVENDB_FLUXES
 
 
-PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
-                      BINM=binM, $
-                      SHIFTM=shiftM, $
-                      MINI=minI,MAXI=maxI,BINI=binI, $
-                      EQUAL_AREA_BINNING=EA_binning, $
-                      DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
+PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
+                      ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                      IMF_STRUCT=IMF_struct, $
+                      MIMC_STRUCT=MIMC_struct, $
                       OUTH2DBINSMLT=outH2DBinsMLT, $
                       OUTH2DBINSILAT=outH2DBinsILAT, $
                       OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -76,10 +74,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                       INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
                       INDICES__ESPEC=indices__eSpec, $
                       INDICES__ION=indices__ion, $
-                      ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
-                      ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
-                      ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
-                      ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
                       ESPEC_MLT=eSpec_mlt, $
                       ESPEC_ILAT=eSpec_ilat, $
                       ESPEC_DELTA_T=eSpec_delta_t, $
@@ -146,14 +140,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   IF KEYWORD_SET(noPosFlux) AND KEYWORD_SET (logFluxPlot) THEN absFlux = 1
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
-     tmplt_h2dStr  = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
-                                       MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
-                                       MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI), $
-                                       SHIFT1=shiftM,SHIFT2=shiftI, $
-                                       EQUAL_AREA_BINNING=EA_binning, $
+     tmplt_h2dStr  = MAKE_H2DSTR_TMPLT(BIN1=MIMC_struct.binM,BIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
+                                       MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                       MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI), $
+                                       SHIFT1=MIMC_struct.shiftM,SHIFT2=shiftI, $
+                                       EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                                        DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                                        ;; PLOT_I=plot_i, $
-                                       DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                                       DO_TIMEAVG_FLUXQUANTITIES=alfDB_plot_struct.do_timeAvg_fluxQuantities, $
                                        CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                        CB_FORCE_OOBLOW=cb_force_oobLow)
   ENDIF
@@ -302,10 +296,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                  END
               ENDCASE
            ENDIF
-           IF KEYWORD_SET(eSpec__junk_alfven_candidates) THEN BEGIN
+           IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
               dataname += '--candidates_removed'
            ENDIF ELSE BEGIN
-              IF KEYWORD_SET(eSpec__all_fluxes) THEN BEGIN
+              IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
                  dataname += '--all_fluxes'
               ENDIF
            ENDELSE
@@ -481,10 +475,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            h2dStr.grossFac  = 1e25
            h2dStr.gUnits    = 'E+25'
 
-           IF KEYWORD_SET(eSpec__junk_alfven_candidates) THEN BEGIN
+           IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
               dataname += '--candidates_removed'
            ENDIF ELSE BEGIN
-              IF KEYWORD_SET(eSpec__all_fluxes) THEN BEGIN
+              IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
                  dataname += '--all_fluxes'
               ENDIF
            ENDELSE
@@ -725,10 +719,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
 
-           IF KEYWORD_SET(eSpec__junk_alfven_candidates) THEN BEGIN
+           IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
               dataname += '--candidates_removed'
            ENDIF ELSE BEGIN
-              IF KEYWORD_SET(eSpec__all_fluxes) THEN BEGIN
+              IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
                  dataname += '--all_fluxes'
               ENDIF
            ENDELSE
@@ -757,10 +751,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
 
-           IF KEYWORD_SET(eSpec__junk_alfven_candidates) THEN BEGIN
+           IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
               dataname += '--candidates_removed'
            ENDIF ELSE BEGIN
-              IF KEYWORD_SET(eSpec__all_fluxes) THEN BEGIN
+              IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
                  dataname += '--all_fluxes'
               ENDIF
            ENDELSE
@@ -925,7 +919,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      ;;            ONLY_UPPER=only_upper, $
      ;;            ONLY_LOWER=only_lower, $
      ;;            LOG_OUTLIERS=KEYWORD_SET(remove_log_outliers) OR $
-     ;;            KEYWORD_SET(logAvgPlot), $
+     ;;            KEYWORD_SET(alfDB_plot_struct.logAvgPlot), $
      ;;            /DOUBLE, $
      ;;            ;; /LOG_OUTLIERS, $
      ;;            REMOVAL__NORESULT=-1, $
@@ -1096,15 +1090,15 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
 
   ;;fix MLTs
   IF KEYWORD_SET(eSpec_mlt) THEN BEGIN
-     mlts             = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,shiftM, $
+     mlts             = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,MIMC_struct.shiftM, $
                                            IN_MLTS=NEWELL__eSpec.mlt[tmp_i])
   ENDIF ELSE BEGIN
-     mlts             = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,shiftM)
+     mlts             = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,MIMC_struct.shiftM)
   ENDELSE
   IF KEYWORD_SET(eSpec_ilat) THEN BEGIN
      ilats            = NEWELL__eSpec.ilat[tmp_i]
   ENDIF ELSE BEGIN
-     ilats            = (KEYWORD_SET(do_lShell) ? maximus.lshell : maximus.ilat)[tmp_i]
+     ilats            = (KEYWORD_SET(MIMC_struct.do_lShell) ? maximus.lshell : maximus.ilat)[tmp_i]
   ENDELSE
 
   IF KEYWORD_SET(h2dStr.both_hemis) THEN ilats = ABS(ilats)
@@ -1114,7 +1108,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      hEv_nz_i      = LINDGEN(N_ELEMENTS(inData))
   ENDIF ELSE BEGIN
      CASE 1 OF
-        KEYWORD_SET(medianplot): BEGIN 
+        KEYWORD_SET(alfDB_plot_struct.medianPlot): BEGIN 
 
            IF KEYWORD_SET(medHistOutData) THEN BEGIN
               medHistDatFile      = medHistDataDir + dataName+"medhist_data.sav"
@@ -1123,15 +1117,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
            h2dStr.data = MEDIAN_HIST(mlts, $
                                      ilats,$
                                      inData,$
-                                     MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
-                                     MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI),$
-                                     BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                                     MIN1=MIMC_struct.minM, $
+                                     MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI), $
+                                     BINSIZE1=MIMC_struct.binM, $
+                                     MAX1=MIMC_struct.maxM, $
+                                     MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI), $
+                                     BINSIZE2=(KEYWORD_SET(MIMC_struct.do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
                                      OBIN1=outH2DBinsMLT, $
-                                     OBIN2=(KEYWORD_SET(do_lshell) ? outH2DBinsLShell : outH2DBinsILAT),$
+                                     OBIN2=(KEYWORD_SET(MIMC_struct.do_lshell) ? outH2DBinsLShell : outH2DBinsILAT),$
                                      ABSMED=absFlux, $
                                      OUTFILE=medHistDatFile, $
                                      PLOT_I=tmp_i, $
-                                     EQUAL_AREA_BINNING=EA_binning) 
+                                     EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning) 
            
            IF KEYWORD_SET(medHistOutTxt) THEN MEDHISTANALYZER,INFILE=medHistDatFile,outFile=medHistDataDir + dataName + "medhist.txt"
         END
@@ -1142,24 +1139,24 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                  h2dStr.data = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                           ilats,$
                                                           (KEYWORD_SET(do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
-                                                          MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
-                                                          MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
+                                                          MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(do_lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                                          MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                                           OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
               END
               ELSE: BEGIN
                  h2dStr.data = HIST2D(mlts, $
                                       ilats,$
                                       (KEYWORD_SET(do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
-                                      MIN1=minM,MIN2=(KEYWORD_SET(do_lshell) ? minL : minI),$
-                                      MAX1=maxM,MAX2=(KEYWORD_SET(do_lshell) ? maxL : maxI),$
-                                      BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                                      MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(do_lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                      MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+                                      BINSIZE1=MIMC_struct.binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
                                       OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
               END
            ENDCASE
 
-           IF KEYWORD_SET(do_logAvg_the_timeAvg) THEN BEGIN
+           IF KEYWORD_SET(alfDB_plot_struct.do_logAvg_the_timeAvg) THEN BEGIN
               h2dStr.data[hEv_nz_i]=h2dStr.data[hEv_nz_i]/h2dFluxN[hEv_nz_i] 
-              h2dStr.data[where(h2dFluxN GT 0,/NULL)] = 10^(h2dStr.data[where(h2dFluxN GT 0,/NULL)])
+              h2dStr.data[WHERE(h2dFluxN GT 0,/NULL)] = 10^(h2dStr.data[WHERE(h2dFluxN GT 0,/NULL)])
            ENDIF
 
            PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,h2dStr, $
@@ -1182,18 +1179,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               KEYWORD_SET(EA_binning): BEGIN
                  h2dStr.data  = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                            ilats,$
-                                                           (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
-                                                           MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
-                                                           MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI),$
+                                                           (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) ? ALOG10(inData) : inData),$
+                                                           MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                                           MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                                            OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
               END
               ELSE: BEGIN
                  h2dStr.data  = HIST2D(mlts, $
                                        ilats,$
-                                       (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
-                                       MIN1=MINM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
-                                       MAX1=MAXM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI),$
-                                       BINSIZE1=binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? binL : binI),$
+                                       (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) ? ALOG10(inData) : inData),$
+                                       MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                       MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+                                       BINSIZE1=MIMC_struct.binM,BINSIZE2=(KEYWORD_SET(MIMC_struct.do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
                                        OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
               END
            ENDCASE
@@ -1218,7 +1215,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
               h2dStr.data[hEv_nz_i]   = h2dStr.data[hEv_nz_i]/h2dFluxN[hEv_nz_i] 
            ENDELSE
            
-           IF KEYWORD_SET(logAvgPlot) THEN BEGIN
+           IF KEYWORD_SET(alfDB_plot_struct.logAvgPlot) THEN BEGIN
               h2dStr.data[where(h2dFluxN NE 0,/NULL)] = 10.^(h2dStr.data[where(h2dFluxN NE 0,/NULL)])
            ENDIF
            
@@ -1264,7 +1261,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
   ENDELSE
 
   IF KEYWORD_SET(print_mandm) THEN BEGIN
-     IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
+     IF KEYWORD_SET(alfDB_plot_struct.medianPlot) OR ~KEYWORD_SET(alfDB_plot_struct.logAvgPlot) THEN BEGIN
         fmt    = 'G10.4' 
         maxh2d = MAX(h2dStr.data[hEv_nz_i])
         minh2d = MIN(h2dStr.data[hEv_nz_i])
@@ -1302,27 +1299,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
             medh2d            
 
      ;;KLUGE IT
-     ;; GET_H2D_BIN_AREAS,h2dAreas, $
-     ;;                   CENTERS1=centersMLT,CENTERS2=centersILAT, $
-     ;;                   BINSIZE1=binM*15.,BINSIZE2=binI, $
-     ;;                   MAX1=maxM*15.,MAX2=maxI, $
-     ;;                   MIN1=minM*15.,MIN2=minI, $
-     ;;                   SHIFT1=shiftM*15.,SHIFT2=shiftI, $
-     ;;                   EQUAL_AREA_BINNING=EA_binning
-     ;; dayInds    = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
-     ;; nightInds  = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
      IF N_ELEMENTS(centersMLT) GT 0 THEN BEGIN
         dayInds    = WHERE(centersMLT GE 11*15 AND centersMLT LT 15*15 AND ~h2dMask)
         nightInds  = WHERE((centersMLT GE 21*15 OR centersMLT LT 1*15) AND ~h2dMask)
-
-     ;; nightMaxes = GET_N_MAXIMA_IN_ARRAY(h2dstr.data[nightinds], $
-     ;;                                   N=10, $
-     ;;                                   OUT_I=nightMax_ii)
-     ;; dayMaxes = GET_N_MAXIMA_IN_ARRAY(h2dstr.data[dayinds], $
-     ;;                                   N=10, $
-     ;;                                   OUT_I=dayMax_ii)
-     
-     ;; dayMaxes   = MAX(h2dstr.data[dayinds],maxdayindii)
 
         dayMax   = MAX(h2dstr.data[dayinds],maxdayindii)
         nightMax = MAX(h2dstr.data[nightinds],maxnightindii)
@@ -1403,11 +1382,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
      h2dStr.mask       = h2dMask
      h2dStr.hasMask    = 1
 
-     ;; IF KEYWORD_SET(eSpec__Newell_2009_interp) THEN BEGIN
+     ;; IF KEYWORD_SET(alfDB_plot_struct.eSpec__Newell_2009_interp) THEN BEGIN
      ;;    dataName      += '--2009'
      ;; ENDIF
 
-     IF KEYWORD_SET(eSpec__use_2000km_file) THEN BEGIN
+     IF KEYWORD_SET(alfDB_plot_struct.eSpec__use_2000km_file) THEN BEGIN
         dataName      += '--2000kmFile'
      ENDIF
   ENDIF

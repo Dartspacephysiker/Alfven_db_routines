@@ -9,19 +9,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
    IMF_STRUCT=IMF_struct, $
    MIMC_STRUCT=MIMC_struct, $
-   MINMLT=minM, $
-   MAXMLT=maxM, $
-   BINMLT=binM, $
-   SHIFTMLT=shiftM, $
-   MINILAT=minI, $
-   MAXILAT=maxI, $
-   BINILAT=binI, $
-   EQUAL_AREA_BINNING=EA_binning, $
-   DO_LSHELL=do_lShell, $
-   MINLSHELL=minL, $
-   MAXLSHELL=maxL, $
-   BINLSHELL=binL, $
-   ORBRANGE=orbRange, $
    NUMORBLIM=numOrbLim, $
    MASKMIN=maskMin, $
    THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
@@ -58,10 +45,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
    INDICES__ESPEC=indices__eSpec, $
    INDICES__ION=indices__ion, $
    ESPEC__NO_MAXIMUS=no_maximus, $
-   ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
-   ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
-   ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
-   ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
    ;; FOR_ESPEC_DB=for_eSpec_DB, $
    ESPEC__MLTS=eSpec__mlts, $
    ESPEC__ILATS=eSpec__ilats, $
@@ -418,18 +401,18 @@ PRO GET_ALFVENDB_2DHISTOS, $
      GET_CONTRIBUTING_ORBITS_PLOTDATA, $
         (KEYWORD_SET(orbContrib__reference_alfvenDB) ? maximus : fastLoc), $
         (KEYWORD_SET(orbContrib__reference_alfvenDB) ? alfRef_i : fastLocInterped_i), $
-        MINM=minM, $
-        MAXM=maxM, $
-        BINM=binM, $
-        SHIFTM=shiftM, $
-        MINI=minI, $
-        MAXI=maxI, $
-        BINI=binI, $
-        EQUAL_AREA_BINNING=EA_binning, $
-        DO_LSHELL=do_lShell, $
-        MINL=minL, $
-        MAXL=maxL, $
-        BINL=binL, $
+        MINM=MIMC_struct.minM, $
+        MAXM=MIMC_struct.maxM, $
+        BINM=MIMC_struct.binM, $
+        SHIFTM=MIMC_struct.shiftM, $
+        MINI=MIMC_struct.minI, $
+        MAXI=MIMC_struct.maxI, $
+        BINI=MIMC_struct.binI, $
+        EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
+        DO_LSHELL=MIMC_struct.do_lShell, $
+        MINL=MIMC_struct.minL, $
+        MAXL=MIMC_struct.maxL, $
+        BINL=MIMC_struct.binL, $
         LOGORBCONTRIBPLOT=logOrbContribPlot, $
         ORBCONTRIBRANGE=orbContribRange, $
         ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
@@ -488,18 +471,18 @@ PRO GET_ALFVENDB_2DHISTOS, $
   IF KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) THEN BEGIN
 
      GET_CONTRIBUTING_ORBITS_PLOTDATA,maximus,plot_i, $
-                                      MINM=minM, $
-                                      MAXM=maxM, $
-                                      BINM=binM, $
-                                      SHIFTM=shiftM, $
-                                      MINI=minI, $
-                                      MAXI=maxI, $
-                                      BINI=binI, $
-                                      EQUAL_AREA_BINNING=EA_binning, $
-                                      DO_LSHELL=do_lShell, $
-                                      MINL=minL, $
-                                      MAXL=maxL, $
-                                      BINL=binL, $
+                                      MINM=MIMC_struct.minM, $
+                                      MAXM=MIMC_struct.maxM, $
+                                      BINM=MIMC_struct.binM, $
+                                      SHIFTM=MIMC_struct.shiftM, $
+                                      MINI=MIMC_struct.minI, $
+                                      MAXI=MIMC_struct.maxI, $
+                                      BINI=MIMC_struct.binI, $
+                                      EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
+                                      DO_LSHELL=MIMC_struct.do_lShell, $
+                                      MINL=MIMC_struct.minL, $
+                                      MAXL=MIMC_struct.maxL, $
+                                      BINL=MIMC_struct.binL, $
                                       LOGORBCONTRIBPLOT=log_nowepcoPlot, $
                                       ORBCONTRIBRANGE=nowepco_range, $
                                       ORBCONTRIBAUTOSCALE=nowepco_autoscale, $
@@ -521,18 +504,18 @@ PRO GET_ALFVENDB_2DHISTOS, $
   IF KEYWORD_SET(orbtotplot) OR KEYWORD_SET(orbfreqplot) $
      OR (KEYWORD_SET(nEventPerOrbPlot) AND KEYWORD_SET(divNEvByTotal)) THEN BEGIN
      GET_TOTAL_ORBITS_PLOTDATA,maximus, $
-                               MINM=minM, $
-                               MAXM=maxM, $
-                               BINM=binM, $
-                               SHIFTM=shiftM, $
-                               MINI=minI, $
-                               MAXI=maxI, $
-                               BINI=binI, $
-                               EQUAL_AREA_BINNING=EA_binning, $
-                               DO_LSHELL=do_lshell, $
-                               MINL=minL, $
-                               MAXL=maxL, $
-                               BINL=binL, $
+                               MINM=MIMC_struct.minM, $
+                               MAXM=MIMC_struct.maxM, $
+                               BINM=MIMC_struct.binM, $
+                               SHIFTM=MIMC_struct.shiftM, $
+                               MINI=MIMC_struct.minI, $
+                               MAXI=MIMC_struct.maxI, $
+                               BINI=MIMC_struct.binI, $
+                               EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
+                               DO_LSHELL=MIMC_struct.do_lshell, $
+                               MINL=MIMC_struct.minL, $
+                               MAXL=MIMC_struct.maxL, $
+                               BINL=MIMC_struct.binL, $
                                ORBTOTRANGE=orbTotRange, $
                                H2DSTR=h2dTotOrbStr, $
                                TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -552,14 +535,14 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;;########Orbit FREQUENCY########
   IF KEYWORD_SET(orbfreqplot) THEN BEGIN
      GET_ORBIT_FREQUENCY_PLOTDATA,maximus, $
-                                  MINM=minM, $
-                                  MAXM=maxM, $
-                                  BINM=binM, $
-                                  SHIFTM=shiftM, $
-                                  MINI=minI, $
-                                  MAXI=maxI, $
-                                  BINI=binI, $
-                                  EQUAL_AREA_BINNING=EA_binning, $
+                                  MINM=MIMC_struct.minM, $
+                                  MAXM=MIMC_struct.maxM, $
+                                  BINM=MIMC_struct.binM, $
+                                  SHIFTM=MIMC_struct.shiftM, $
+                                  MINI=MIMC_struct.minI, $
+                                  MAXI=MIMC_struct.maxI, $
+                                  BINI=MIMC_struct.binI, $
+                                  EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                                   ORBFREQRANGE=orbFreqRange, $
                                   H2DSTR=h2dStr, $
                                   TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -577,18 +560,18 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;;########NEvents/orbit########
   IF KEYWORD_SET(nEventPerOrbPlot) THEN BEGIN 
      GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i, $
-                                    MINM=minM, $
-                                    MAXM=maxM, $
-                                    BINM=binM, $
-                                    SHIFTM=shiftM, $
-                                    MINI=minI, $
-                                    MAXI=maxI, $
-                                    BINI=binI, $
-                                    EQUAL_AREA_BINNING=EA_binning, $
-                                    DO_LSHELL=do_lshell, $
-                                    MINL=minL, $
-                                    MAXL=maxL, $
-                                    BINL=binL, $
+                                    MINM=MIMC_struct.minM, $
+                                    MAXM=MIMC_struct.maxM, $
+                                    BINM=MIMC_struct.binM, $
+                                    SHIFTM=MIMC_struct.shiftM, $
+                                    MINI=MIMC_struct.minI, $
+                                    MAXI=MIMC_struct.maxI, $
+                                    BINI=MIMC_struct.binI, $
+                                    EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
+                                    DO_LSHELL=MIMC_struct.do_lshell, $
+                                    MINL=MIMC_struct.minL, $
+                                    MAXL=MIMC_struct.maxL, $
+                                    BINL=MIMC_struct.binL, $
                                     NEVENTPERORBRANGE=nEventPerOrbRange, $
                                     NEVENTPERORBAUTOSCALE=nEventPerOrbAutoscale, $
                                     LOGNEVENTPERORB=logNEventPerOrb, $
@@ -626,18 +609,18 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
 
         GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
-                                  MINM=minM, $
-                                  MAXM=maxM, $
-                                  BINM=binM, $
-                                  SHIFTM=shiftM, $
-                                  MINI=minI, $
-                                  MAXI=maxI, $
-                                  BINI=binI, $
-                                  EQUAL_AREA_BINNING=EA_binning, $
-                                  DO_LSHELL=do_lshell, $
-                                  MINL=minL, $
-                                  MAXL=maxL, $
-                                  BINL=binL, $
+                                  MINM=MIMC_struct.minM, $
+                                  MAXM=MIMC_struct.maxM, $
+                                  BINM=MIMC_struct.binM, $
+                                  SHIFTM=MIMC_struct.shiftM, $
+                                  MINI=MIMC_struct.minI, $
+                                  MAXI=MIMC_struct.maxI, $
+                                  BINI=MIMC_struct.binI, $
+                                  EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
+                                  DO_LSHELL=MIMC_struct.do_lshell, $
+                                  MINL=MIMC_struct.minL, $
+                                  MAXL=MIMC_struct.maxL, $
+                                  BINL=MIMC_struct.binL, $
                                   LOGNEVENTPERMIN=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logNEvPM)), $
                                   NEVENTPERMINRANGE=nEvPMRange, $
                                   NEVENTPERMINAUTOSCALE=nEvPMAutoscale, $
@@ -664,18 +647,18 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                   PROBOCCURRENCERANGE=probOccurrenceRange, $
                                   PROBOCCURRENCEAUTOSCALE=probOccurrenceAutoscale, $
                                   DO_WIDTH_X=do_width_x, $
-                                  MINM=minM, $
-                                  MAXM=maxM, $
-                                  BINM=binM, $
-                                  SHIFTM=shiftM, $
-                                  MINI=minI, $
-                                  MAXI=maxI, $
-                                  BINI=binI, $
-                                  EQUAL_AREA_BINNING=EA_binning, $
-                                  DO_LSHELL=do_lshell, $
-                                  MINL=minL, $
-                                  MAXL=maxL, $
-                                  BINL=binL, $
+                                  MINM=MIMC_struct.minM, $
+                                  MAXM=MIMC_struct.maxM, $
+                                  BINM=MIMC_struct.binM, $
+                                  SHIFTM=MIMC_struct.shiftM, $
+                                  MINI=MIMC_struct.minI, $
+                                  MAXI=MIMC_struct.maxI, $
+                                  BINI=MIMC_struct.binI, $
+                                  EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
+                                  DO_LSHELL=MIMC_struct.do_lshell, $
+                                  MINL=MIMC_struct.minL, $
+                                  MAXL=MIMC_struct.maxL, $
+                                  BINL=MIMC_struct.binL, $
                                   OUTH2DBINSMLT=outH2DBinsMLT, $
                                   OUTH2DBINSILAT=outH2DBinsILAT, $
                                   OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -747,18 +730,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
            logPlot            = N_ELEMENTS(logEfPlot)  GT 0 ? logEfPlot  : !NULL
 
            GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,/GET_EFLUX, $
-                                    MINM=minM, $
-                                    MAXM=maxM, $
-                                    BINM=binM, $
-                                    SHIFTM=shiftM, $
-                                    MINI=minI, $
-                                    MAXI=maxI, $
-                                    BINI=binI, $
-                                    EQUAL_AREA_BINNING=EA_binning, $
-                                    DO_LSHELL=do_lshell, $
-                                    MINL=minL, $
-                                    MAXL=maxL, $
-                                    BINL=binL, $
+                                    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                    IMF_STRUCT=IMF_struct, $
+                                    MIMC_STRUCT=MIMC_struct, $
                                     OUTH2DBINSMLT=outH2DBinsMLT, $
                                     OUTH2DBINSILAT=outH2DBinsILAT, $
                                     OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -773,11 +747,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     ABSFLUX=absFlux, $
                                     EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                                     INDICES__ESPEC=indices__eSpec, $
-                                    ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
-                                    ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
                                     COMBINE_ACCELERATED=Newell__comb_accelerated, $
-                                    ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
-                                    ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
                                     ESPEC_MLT=eSpec__mlts, $
                                     ESPEC_ILAT=eSpec__ilats, $
                                     ESPEC_DELTA_T=eSpec_delta_t, $
@@ -870,18 +840,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
            ENDCASE
 
            GET_FLUX_PLOTDATA,maximus,plot_i,/GET_EFLUX, $
-                             MINM=minM, $
-                             MAXM=maxM, $
-                             BINM=binM, $
-                             SHIFTM=shiftM, $
-                             MINI=minI, $
-                             MAXI=maxI, $
-                             BINI=binI, $
-                             EQUAL_AREA_BINNING=EA_binning, $
-                             DO_LSHELL=do_lshell, $
-                             MINL=minL, $
-                             MAXL=maxL, $
-                             BINL=binL, $
                              OUTH2DBINSMLT=outH2DBinsMLT, $
                              OUTH2DBINSILAT=outH2DBinsILAT, $
                              OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -896,9 +854,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              ABSFLUX=absFlux, $
                              EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                              INDICES__ESPEC=indices__eSpec, $
-                             ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
-                             ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
-                             ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
                              ESPEC_MLT=eSpec__mlts, $
                              ESPEC_ILAT=eSpec__ilats, $
                              ESPEC_DELTA_T=eSpec_delta_t, $
@@ -1007,18 +962,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
            logPlot            = N_ELEMENTS(logENumFlPlot) GT 0 ? logENumFlPlot  : !NULL
 
            GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
-                                    MINM=minM, $
-                                    MAXM=maxM, $
-                                    BINM=binM, $
-                                    SHIFTM=shiftM, $
-                                    MINI=minI, $
-                                    MAXI=maxI, $
-                                    BINI=binI, $
-                                    EQUAL_AREA_BINNING=EA_binning, $
-                                    DO_LSHELL=do_lshell, $
-                                    MINL=minL, $
-                                    MAXL=maxL, $
-                                    BINL=binL, $
+                                    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                    IMF_STRUCT=IMF_struct, $
+                                    MIMC_STRUCT=MIMC_struct, $
                                     OUTH2DBINSMLT=outH2DBinsMLT, $
                                     OUTH2DBINSILAT=outH2DBinsILAT, $
                                     OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -1033,10 +979,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     ABSFLUX=absFlux, $
                                     ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                                     INDICES__ESPEC=indices__eSpec, $
-                                    ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
-                                    ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
                                     COMBINE_ACCELERATED=Newell__comb_accelerated, $
-                                    ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
                                     ESPEC_MLT=eSpec__mlts, $
                                     ESPEC_ILAT=eSpec__ilats, $
                                     ESPEC_DELTA_T=eSpec_delta_t, $
@@ -1072,11 +1015,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     VARPLOTRAWINDS=varPlotRawInds, $
                                     REMOVED_II_LISTARR=removed_ii_listArr, $
                                     ;;VARPLOTISKEEPINDS=varPlotIsKeepInds, $
-                                    MEDIANPLOT=medianplot, $
                                     MEDHISTOUTDATA=medHistOutData, $
                                     MEDHISTOUTTXT=medHistOutTxt, $
                                     MEDHISTDATADIR=txtOutputDir, $
-                                    LOGAVGPLOT=logAvgPlot, $
                                     DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                                     ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
                                     NEWELL_ANALYZE_MULTIPLY_BY_TYPE_PROBABILITY=newell_analyze_multiply_by_type_probability, $
@@ -1128,18 +1069,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
            ENDCASE
 
            GET_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
-                             MINM=minM, $
-                             MAXM=maxM, $
-                             BINM=binM, $
-                             SHIFTM=shiftM, $
-                             MINI=minI, $
-                             MAXI=maxI, $
-                             BINI=binI, $
-                             EQUAL_AREA_BINNING=EA_binning, $
-                             DO_LSHELL=do_lshell, $
-                             MINL=minL, $
-                             MAXL=maxL, $
-                             BINL=binL, $
+                             ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                             IMF_STRUCT=IMF_struct, $
+                             MIMC_STRUCT=MIMC_struct, $
                              OUTH2DBINSMLT=outH2DBinsMLT, $
                              OUTH2DBINSILAT=outH2DBinsILAT, $
                              OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -1154,9 +1086,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              ABSFLUX=absFlux, $
                              ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                              INDICES__ESPEC=indices__eSpec, $
-                             ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
-                             ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
-                             ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
                              ESPEC_MLT=eSpec__mlts, $
                              ESPEC_ILAT=eSpec__ilats, $
                              ESPEC_DELTA_T=eSpec_delta_t, $
@@ -1222,18 +1151,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
   IF KEYWORD_SET(pplots) THEN BEGIN
      GET_FLUX_PLOTDATA,maximus,plot_i,$
                        /GET_PFLUX, $
-                       MINM=minM, $
-                       MAXM=maxM, $
-                       BINM=binM, $
-                       SHIFTM=shiftM, $
-                       MINI=minI, $
-                       MAXI=maxI, $
-                       BINI=binI, $
-                       EQUAL_AREA_BINNING=EA_binning, $
-                       DO_LSHELL=do_lshell, $
-                       MINL=minL, $
-                       MAXL=maxL, $
-                       BINL=binL, $
+                       ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                       IMF_STRUCT=IMF_struct, $
+                       MIMC_STRUCT=MIMC_struct, $
                        OUTH2DBINSMLT=outH2DBinsMLT, $
                        OUTH2DBINSILAT=outH2DBinsILAT, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -1368,18 +1288,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
            2:   plotRange     = iPlotRange[*,i]
         ENDCASE
         GET_FLUX_PLOTDATA,maximus,plot_i,/GET_IFLUX, $
-                          MINM=minM, $
-                          MAXM=maxM, $
-                          BINM=binM, $
-                          SHIFTM=shiftM, $
-                          MINI=minI, $
-                          MAXI=maxI, $
-                          BINI=binI, $
-                          EQUAL_AREA_BINNING=EA_binning, $
-                          DO_LSHELL=do_lshell, $
-                          MINL=minL, $
-                          MAXL=maxL, $
-                          BINL=binL, $
+                          ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                          IMF_STRUCT=IMF_struct, $
+                          MIMC_STRUCT=MIMC_struct, $
                           OUTH2DBINSMLT=outH2DBinsMLT, $
                           OUTH2DBINSILAT=outH2DBinsILAT, $
                           OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -1395,9 +1306,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
                           IFLUX_ESPEC_DATA=iFlux_eSpec_data, $
                           INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
                           INDICES__ION=indices__ion, $
-                          ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
-                          ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
-                          ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
                           ESPEC_MLT=ion__mlts, $
                           ESPEC_ILAT=ion__ilats, $
                           ESPEC_DELTA_T=ion_delta_t, $
@@ -1461,18 +1369,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;;########OXY FLUX########
   IF KEYWORD_SET(oxyPlots) THEN BEGIN
      GET_FLUX_PLOTDATA,maximus,plot_i,/GET_OXYFLUX, $
-                       MINM=minM, $
-                       MAXM=maxM, $
-                       BINM=binM, $
-                       SHIFTM=shiftM, $
-                       MINI=minI, $
-                       MAXI=maxI, $
-                       BINI=binI, $
-                       EQUAL_AREA_BINNING=EA_binning, $
-                       DO_LSHELL=do_lshell, $
-                       MINL=minL, $
-                       MAXL=maxL, $
-                       BINL=binL, $
+                       ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                       IMF_STRUCT=IMF_struct, $
+                       MIMC_STRUCT=MIMC_struct, $
                        OUTH2DBINSMLT=outH2DBinsMLT, $
                        OUTH2DBINSILAT=outH2DBinsILAT, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -1565,18 +1464,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
            2:   plotRange     = charEPlotRange[*,i]
         ENDCASE
         GET_FLUX_PLOTDATA,maximus,plot_i,/GET_CHAREE, $
-                          MINM=minM, $
-                          MAXM=maxM, $
-                          BINM=binM, $
-                          SHIFTM=shiftM, $
-                          MINI=minI, $
-                          MAXI=maxI, $
-                          BINI=binI, $
-                          EQUAL_AREA_BINNING=EA_binning, $
-                          DO_LSHELL=do_lshell, $
-                          MINL=minL, $
-                          MAXL=maxL, $
-                          BINL=binL, $
+                          ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                          IMF_STRUCT=IMF_struct, $
+                          MIMC_STRUCT=MIMC_struct, $
                           OUTH2DBINSMLT=outH2DBinsMLT, $
                           OUTH2DBINSILAT=outH2DBinsILAT, $
                           OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -1648,18 +1538,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;;########CHARACTERISTIC ION ENERGY########
   IF KEYWORD_SET(chariEPlots) THEN BEGIN
      GET_FLUX_PLOTDATA,maximus,plot_i,/GET_CHARIE, $
-                       MINM=minM, $
-                       MAXM=maxM, $
-                       BINM=binM, $
-                       SHIFTM=shiftM, $
-                       MINI=minI, $
-                       MAXI=maxI, $
-                       BINI=binI, $
-                       EQUAL_AREA_BINNING=EA_binning, $
-                       DO_LSHELL=do_lshell, $
-                       MINL=minL, $
-                       MAXL=maxL, $
-                       BINL=binL, $
+                       ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                       IMF_STRUCT=IMF_struct, $
+                       MIMC_STRUCT=MIMC_struct, $
                        OUTH2DBINSMLT=outH2DBinsMLT, $
                        OUTH2DBINSILAT=outH2DBinsILAT, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -1728,51 +1609,44 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   ;;NEWELL PLOTS
   IF KEYWORD_SET(newellPlots) AND ~KEYWORD_SET(no_maximus) THEN BEGIN
-        GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
-                                   MINM=minM,MAXM=maxM, $
-                                   BINM=binM, $
-                                   SHIFTM=shiftM, $
-                                   MINI=minI,MAXI=maxI,BINI=binI, $
-                                   EQUAL_AREA_BINNING=EA_binning, $
-                                   NEWELL_PLOTRANGE=newell_plotRange, $
-                                   LOG_NEWELLPLOT=log_newellPlot, $
-                                   NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
-                                   NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
-                                   NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
-                                   ESPEC__NO_MAXIMUS=no_maximus, $
-                                   ;; ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
-                                   INDICES__ESPEC=indices__eSpec, $
-                                   TMPLT_H2DSTR=tmplt_h2dStr, $
-                                   H2DSTRS=h2dStrs, $
-                                   H2DFLUXN=h2dFluxN, $
-                                   NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
-                                   ;; MASKMIN=maskMin, $
-                                   DATANAMES=dataNames, $
-                                   DATARAWPTRS=dataRawPtrs, $
-                                   CB_FORCE_OOBHIGH=cb_force_oobHigh, $
-                                   CB_FORCE_OOBLOW=cb_force_oobLow, $
-                                   PRINT_MANDM=print_mAndM, $
-                                   LUN=lun
+     GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
+                                ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                IMF_STRUCT=IMF_struct, $
+                                MIMC_STRUCT=MIMC_struct, $
+                                NEWELL_PLOTRANGE=newell_plotRange, $
+                                LOG_NEWELLPLOT=log_newellPlot, $
+                                NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
+                                NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
+                                NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
+                                ESPEC__NO_MAXIMUS=no_maximus, $
+                                ;; ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
+                                INDICES__ESPEC=indices__eSpec, $
+                                TMPLT_H2DSTR=tmplt_h2dStr, $
+                                H2DSTRS=h2dStrs, $
+                                H2DFLUXN=h2dFluxN, $
+                                NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
+                                ;; MASKMIN=maskMin, $
+                                DATANAMES=dataNames, $
+                                DATARAWPTRS=dataRawPtrs, $
+                                CB_FORCE_OOBHIGH=cb_force_oobHigh, $
+                                CB_FORCE_OOBLOW=cb_force_oobLow, $
+                                PRINT_MANDM=print_mAndM, $
+                                LUN=lun
 
-        h2dStrArr            = [h2dStrArr,h2dStrs]
-        IF keepMe THEN BEGIN 
-           dataNameArr       = [dataNameArr,dataNames] 
-           dataRawPtrArr     = [dataRawPtrArr,dataRawPtrs] 
-        ENDIF
+     h2dStrArr            = [h2dStrArr,h2dStrs]
+     IF keepMe THEN BEGIN 
+        dataNameArr       = [dataNameArr,dataNames] 
+        dataRawPtrArr     = [dataRawPtrArr,dataRawPtrs] 
+     ENDIF
 
   ENDIF
 
   IF KEYWORD_SET(eSpec__newellPlot_probOccurrence) THEN BEGIN
 
      GET_H2D_NEWELLS__EACH_TYPE__NONALFVEN,eSpec,indices__eSpec, $
-                                           MINM=minM, $
-                                           MAXM=maxM, $
-                                           BINM=binM, $
-                                           SHIFTM=shiftM, $
-                                           MINI=minI, $
-                                           MAXI=maxI, $
-                                           BINI=binI, $
-                                           EQUAL_AREA_BINNING=EA_binning, $
+                                           ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                           IMF_STRUCT=IMF_struct, $
+                                           MIMC_STRUCT=MIMC_struct, $
                                            NEWELL_PLOTRANGE=eSpec__newell_plotRange, $
                                            LOG_NEWELLPLOT=log_newellPlot, $
                                            NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
@@ -1808,18 +1682,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
      GET_FLUX_PLOTDATA,maximus,plot_i,$
                        /GET_PFLUX, $
                        /GET_EFLUX, $
-                       MINM=minM, $
-                       MAXM=maxM, $
-                       BINM=binM, $
-                       SHIFTM=shiftM, $
-                       MINI=minI, $
-                       MAXI=maxI, $
-                       BINI=binI, $
-                       EQUAL_AREA_BINNING=EA_binning, $
-                       DO_LSHELL=do_lshell, $
-                       MINL=minL, $
-                       MAXL=maxL, $
-                       BINL=binL, $
+                       ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                       IMF_STRUCT=IMF_struct, $
+                       MIMC_STRUCT=MIMC_struct, $
                        OUTH2DBINSMLT=outH2DBinsMLT, $
                        OUTH2DBINSILAT=outH2DBinsILAT, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
@@ -1950,12 +1815,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
         GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInds[i], $
                                    CUSTOM_DATANAME=custom_dataname, $
                                    CUSTOM_TITLE=custom_title, $
-                                   MINM=minM,MAXM=maxM, $
-                                   BINM=binM, $
-                                   SHIFTM=shiftM, $
-                                   MINI=minI,MAXI=maxI,BINI=binI, $
-                                   EQUAL_AREA_BINNING=EA_binning, $
-                                   DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
+                                   ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                   IMF_STRUCT=IMF_struct, $
+                                   MIMC_STRUCT=MIMC_struct, $
                                    OUTH2DBINSMLT=outH2DBinsMLT,OUTH2DBINSILAT=outH2DBinsILAT, $
                                    OUTH2DBINSLSHELL=outH2DBinsLShell, $
                                    PLOTRANGE=custom_range, $
@@ -2073,20 +1935,13 @@ PRO GET_ALFVENDB_2DHISTOS, $
                            OUTPUT__ORB_AVG_OBS=write_obsArr__orb_avg_obs, $
                            VARPLOTRAWINDS=varPlotRawInds, $
                            OUTH2D_LISTS_WITH_INDS=outH2D_lists_with_inds,$
-                           MINMLT=minM, $
-                           MAXMLT=maxM, $
-                           BINMLT=binM, $
-                           SHIFTMLT=shiftM, $
-                           MINILAT=minI, $
-                           MAXILAT=maxI, $
-                           BINILAT=binI, $
-                           MEDIANPLOT=medianPlot, $
-                           LOGAVGPLOT=logAvgPlot, $
                            ALL_LOGPLOTS=all_logPlots, $
+                           ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                           IMF_STRUCT=IMF_struct, $
+                           MIMC_STRUCT=MIMC_struct, $
                            ESPEC__NO_MAXIMUS=no_maximus, $
                            TMPLT_H2DSTR=tmplt_h2dStr, $
                            H2D_NONZERO_NEV_I=hEv_nz_i, $
-                           DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                            LUN=lun
 
 

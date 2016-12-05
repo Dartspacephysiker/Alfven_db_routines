@@ -1,10 +1,8 @@
 ;2016/06/02
 PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
-                               MINM=minM,MAXM=maxM, $
-                               BINM=binM, $
-                               SHIFTM=shiftM, $
-                               MINI=minI,MAXI=maxI,BINI=binI, $
-                               EQUAL_AREA_BINNING=EA_binning, $
+                               ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                               IMF_STRUCT=IMF_struct, $
+                               MIMC_STRUCT=MIMC_struct, $
                                NEWELL_PLOTRANGE=newell_plotRange, $
                                LOG_NEWELLPLOT=log_newellPlot, $
                                NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
@@ -12,15 +10,11 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                                NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
                                COMBINE_ACCELERATED=comb_accelerated, $
                                NONALFVEN__NO_MAXIMUS=no_maximus, $
-                               ;; ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
-                               ;; NONALFVEN__ALL_FLUXES=nonalfven__all_fluxes, $
                                INDICES__NONALFVEN_ESPEC=indices__nonAlfven_eSpec, $
                                TMPLT_H2DSTR=tmplt_h2dStr, $
                                H2DSTRS=h2dStrs, $
-                               ;; H2DMASKSTR=h2dMaskStr, $
                                H2DFLUXN=h2dFluxN, $
                                NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
-                               ;; MASKMIN=maskMin, $
                                DATANAMES=dataNames, $
                                DATARAWPTRS=dataRawPtrs, $
                                CB_FORCE_OOBHIGH=cb_force_oobHigh, $
@@ -80,14 +74,9 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
 
   ;;The main body
   GET_H2D_NEWELLS__BODY,tmp_eSpec, $
-                        MINM=minM, $
-                        MAXM=maxM, $
-                        BINM=binM, $
-                        SHIFTM=shiftM, $
-                        MINI=minI, $
-                        MAXI=maxI, $
-                        BINI=binI, $
-                        EQUAL_AREA_BINNING=EA_binning, $
+                        ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                        IMF_STRUCT=IMF_struct, $
+                        MIMC_STRUCT=MIMC_struct, $
                         NEWELL_PLOTRANGE=newell_plotRange, $
                         LOG_NEWELLPLOT=log_newellPlot, $
                         NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
@@ -96,10 +85,8 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                         COMBINE_ACCELERATED=comb_accelerated, $
                         TMPLT_H2DSTR=tmplt_h2dStr, $
                         H2DSTRS=h2dStrs, $
-                        ;; H2DMASKSTR=h2dMaskStr, $
                         H2DFLUXN=h2dFluxN, $
                         NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
-                        ;; MASKMIN=maskMin, $
                         DATANAMES=dataNames, $
                         DATARAWPTRS=dataRawPtrs, $
                         CB_FORCE_OOBHIGH=cb_force_oobHigh, $

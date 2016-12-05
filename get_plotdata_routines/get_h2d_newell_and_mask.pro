@@ -3,12 +3,9 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
                             TITLE=title, $
                             IN_MLTS=in_mlts, $
                             IN_ILATS=in_ilats, $
-                            MINM=minM,MAXM=maxM, $
-                            BINM=binM, $
-                            SHIFTM=shiftM, $
-                            MINI=minI,MAXI=maxI,BINI=binI, $
-                            EQUAL_AREA_BINNING=EA_binning, $
-                            DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
+                            ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                            IMF_STRUCT=IMF_struct, $
+                            MIMC_STRUCT=MIMC_struct, $
                             NEWELL_PLOTRANGE=newell_plotRange, $
                             LOG_NEWELLPLOT=log_newellPlot, $
                             NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
@@ -16,10 +13,8 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
                             NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
                             TMPLT_H2DSTR=tmplt_h2dStr, $
                             H2DSTR=h2dStr, $
-                            ;; H2DMASKSTR=h2dMaskStr, $
                             H2DFLUXN=h2dFluxN, $
                             NEWELL_NONZERO_NEV_I=newell_nonzero_nEv_i, $
-                            ;; MASKMIN=maskMin, $
                             DATANAME=dataName, $
                             DATARAWPTR=dataRawPtr, $
                             CB_FORCE_OOBHIGH=cb_force_oobHigh, $
@@ -36,11 +31,11 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
   ENDIF
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
-     tmplt_h2dStr                   = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
-                                                        MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
-                                                        MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI), $
-                                                        SHIFT1=shiftM,SHIFT2=shiftI, $
-                                                        EQUAL_AREA_BINNING=EA_binning, $
+     tmplt_h2dStr                   = MAKE_H2DSTR_TMPLT(BIN1=MIMC_struct.binM,BIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binL : MIMC_struct.binI),$
+                                                        MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                                        MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.maxL : MIMC_struct.maxI), $
+                                                        SHIFT1=MIMC_struct.shiftM,SHIFT2=shiftI, $
+                                                        EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                                                         CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                                         CB_FORCE_OOBLOW=cb_force_oobLow)
      
@@ -57,26 +52,26 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
   ;;########Flux_N########
   ;;First, histo to show where events are
   ;;shift MLTs backwards, because we want to shift the binning FORWARD
-  mlts                    = KEYWORD_SET(in_MLTS) ? in_MLTs : eSpec.mlt[eSpec_i]-shiftM
+  mlts                    = KEYWORD_SET(in_MLTS) ? in_MLTs : eSpec.mlt[eSpec_i]-MIMC_struct.shiftM
   mlts[WHERE(mlts LT 0)]  = mlts[WHERE(mlts LT 0)] + 24
   horiz                   = KEYWORD_SET(in_ILATs) ? in_ILATs : eSpec.ilat[eSpec_i]
 
   IF KEYWORD_SET(h2dStr.both_hemis) THEN horiz = ABS(horiz)
 
   CASE 1 OF
-     KEYWORD_SET(EA_binning): BEGIN
+     KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
         h2dFluxN       = HIST2D__EQUAL_AREA_BINNING(mlts,$
                                                     horiz,$
-                                                    MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
-                                                    MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
+                                                    MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                                    MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.maxL : MIMC_struct.maxI))
 
      END
      ELSE: BEGIN
         h2dFluxN       = HIST_2D(mlts,$
                                  horiz,$
-                                 BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
-                                 MIN1=minM,MIN2=(KEYWORD_SET(DO_LSHELL) ? minL : minI),$
-                                 MAX1=maxM,MAX2=(KEYWORD_SET(DO_LSHELL) ? maxL : maxI))
+                                 BIN1=MIMC_struct.binM,BIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binL : MIMC_struct.binI),$
+                                 MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                 MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.maxL : MIMC_struct.maxI))
      END
   ENDCASE
   

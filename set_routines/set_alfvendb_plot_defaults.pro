@@ -48,6 +48,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
    FLUXPLOTS__NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
    DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+   DO_LOGAVG_THE_TIMEAVG=do_logAvg_the_timeAvg, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
    ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
    ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
@@ -414,6 +415,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          fluxPlots__add_suspect_outliers   : 0B, $
                          fluxPlots__Newell_the_cusp        : 0B, $
                          do_timeAvg_fluxQuantities         : 0B, $
+                         do_logAvg_the_timeAvg             : 0B, $
                          for_eSpec_DBs                     : 0B, $
                          eSpec__junk_alfven_candidates     : 0B, $
                          eSpec__all_fluxes                 : 0B, $
@@ -601,6 +603,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(do_timeAvg_fluxQuantities) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'do_timeAvg_fluxQuantities', $
                     BYTE(do_timeAvg_fluxQuantities),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(do_logAvg_the_timeAvg) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'do_logAvg_the_timeAvg', $
+                    BYTE(do_logAvg_the_timeAvg),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(for_eSpec_DBs) GT 0 THEN BEGIN

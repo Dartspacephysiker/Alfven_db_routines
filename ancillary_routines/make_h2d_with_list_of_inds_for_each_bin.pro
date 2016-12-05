@@ -6,15 +6,9 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
    IN_MLTS=in_mlts, $
    IN_ILATS=in_ilats, $
    OUTH2D_LISTS_WITH_INDS=outH2D_lists_with_inds, $
-   MINMLT=minMLT, $
-   MAXMLT=maxMLT, $
-   BINMLT=binMLT, $
-   SHIFTMLT=shiftM, $
-   MINILAT=minILAT, $
-   MAXILAT=maxILAT, $
-   BINILAT=binILAT, $
-   BOTH_HEMIS=both_hemis, $
-   DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
+   ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+   IMF_STRUCT=IMF_struct, $
+   MIMC_STRUCT=MIMC_struct, $
    ;; OUTFILEPREFIX=outFilePrefix, $
    ;; OUTFILESUFFIX=outFileSuffix, $
    ;; OUTDIR=outDir, $
@@ -44,12 +38,12 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;SET UP GRID
-  nXlines  = (maxMLT-minMLT)/binMLT + 1
-  nYlines  = ((KEYWORD_SET(do_lShell) ? maxLshell : maxILAT)-(KEYWORD_SET(do_lShell) ? minLshell : minILAT))/ $
-             (KEYWORD_SET(do_lShell) ? binLshell : binILAT) + 1
+  nXlines  = (MIMC_struct.maxM-MIMC_struct.minM)/MIMC_struct.binM + 1
+  nYlines  = ((KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxLshell : MIMC_struct.maxI)-(KEYWORD_SET(do_lShell) ? MIMC_struct.minLshell : MIMC_struct.minI))/ $
+             (KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binLshell : MIMC_struct.binI) + 1
 
-  mlts     = INDGEN(nXlines)*binMLT+minMLT
-  ilats    = INDGEN(nYlines)*(KEYWORD_SET(do_lShell) ? binLshell : binILAT)+(KEYWORD_SET(do_lShell) ? minLshell : minILAT)
+  mlts     = INDGEN(nXlines)*MIMC_struct.binM+MIMC_struct.minM
+  is    = INDGEN(nYlines)*(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binLshell : MIMC_struct.binI)+(KEYWORD_SET(do_lShell) ? MIMC_struct.minLshell : MIMC_struct.minI)
 
   nMLT    = N_ELEMENTS(mlts)
   nILAT   = N_ELEMENTS(ilats)
@@ -61,12 +55,12 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   ;;fix MLTs, if need be
   IF N_ELEMENTS(in_mlts) GT 0 THEN BEGIN
      ;; indices   = in_inds
-     DBMLTs    = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,shiftM,IN_MLTS=in_MLTs[in_inds])
+     DBMLTs    = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,MIMC_struct.shiftM,IN_MLTS=in_MLTs[in_inds])
      DBILATs   = in_ILATs[in_inds]
   ENDIF ELSE BEGIN
      indices   = dbStruct_inds
-     DBMLTs    = SHIFT_MLTS_FOR_H2D(dbStruct,dbStruct_inds,shiftM)
-     DBILATs   = (KEYWORD_SET(do_lShell) ? dbStruct.lShell : dbStruct.ILAT)[dbStruct_inds]
+     DBMLTs    = SHIFT_MLTS_FOR_H2D(dbStruct,dbStruct_inds,MIMC_struct.shiftM)
+     DBILATs   = (KEYWORD_SET(MIMC_struct.do_lShell) ? dbStruct.lShell : dbStruct.ILAT)[dbStruct_inds]
   ENDELSE
 
   IF KEYWORD_SET(both_hemis) THEN DBILATs = ABS(DBILATs)
@@ -108,10 +102,10 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
 
   ;;Get bin centers
   GET_H2D_BIN_CENTERS_OR_EDGES,HLOI__H2D_binCenters, $
-                               BINSIZE1=binMLT, BINSIZE2=binILAT, $
-                               MIN1=minMLT, MIN2=minILAT,$
-                               MAX1=maxMLT, MAX2=maxILAT,  $
-                               SHIFT1=shiftMLT,SHIFT2=shiftILAT, $
+                               BINSIZE1=MIMC_struct.binM, BINSIZE2=MIMC_struct.binI, $
+                               MIN1=MIMC_struct.minM, MIN2=MIMC_struct.minI,$
+                               MAX1=MIMC_struct.maxM, MAX2=MIMC_struct.maxI,  $
+                               SHIFT1=MIMC_struct.shiftM,SHIFT2=MIMC_struct.shiftI, $
                                OMIN1=Omin1, OMIN2=Omin2, $
                                OMAX1=Omax1, OMAX2=Omax2,  $
                                OBIN1=Obin1, OBIN2=Obin2, $
