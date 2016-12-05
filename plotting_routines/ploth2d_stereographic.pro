@@ -422,7 +422,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;; RAINBOW_COLORS,N_COLORS=nLevels
   ;; LOADCT,81  ;Modded rainbow; drops purples at bottom
   ;; LOADCT,84  ;Attempt to recreate (sort of) Bin's color bar
-  LOADCT,78,FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl'  ;Attempt to recreate (sort of) Bin's color bar
+  LOADCT,78, $
+         NCOLORS=(KEYWORD_SET(plotH2D_contour) ? 10 : !NULL), $
+         FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl' ;Attempt to recreate (sort of) Bin's color bar
   ;; LOADCT,33
   ;; LOADCT,77 ;greenthing
   ;; LOADCT2,39 ;FAST rainbow table
@@ -635,6 +637,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                 LEVELS=cLevels, $
                 CELL_FILL=~KEYWORD_SET(overplot), $
                 C_COLORS=cLevels, $
+                THICK=KEYWORD_SET(overplot) ? 6.0 : !NULL, $
                 /OVERPLOT
 
         ;; lat = REPLICATE(10., 37) # FINDGEN(19) - 90.
@@ -1004,12 +1007,12 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   ;;Want this if we aren't overplotting
   CB_Info                         = { $
-                                    ;; NCOLORS:KEYWORD_SET(plotH2D_contour) ? nCLevels : nCBColors, $
-                                    NCOLORS:nCBColors, $
+                                    NCOLORS:KEYWORD_SET(plotH2D_contour) ? 10 : nCBColors, $
+                                    ;; NCOLORS:nCBColors, $
                                      XLOG:(temp.is_logged AND temp.logLabels), $
                                      BOTTOM:cbBottom, $
-                                     OOB_Low:KEYWORD_SET(cbOOBLowVal) ? cbOOBLowVal : -9, $
-                                     OOB_High:KEYWORD_SET(cbOOBHighVal) ? cbOOBHighVal : -9, $
+                                     ;; OOB_Low:KEYWORD_SET(plotH2D_contour) ? -9 : (KEYWORD_SET(cbOOBLowVal) ? cbOOBLowVal : -9), $
+                                     ;; OOB_High:KEYWORD_SET(plotH2D_contour) ? -9 : (KEYWORD_SET(cbOOBHighVal) ? cbOOBHighVal : -9), $
                                      RANGE:cbRange, $
                                      TITLE:N_ELEMENTS(cbTitle) GT 0 ? cbTitle : '', $
                                      TLOCATION:cbTLocation, $
@@ -1020,6 +1023,14 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                                      VERTICAL:cbVertical, $
                                      CHARSIZE:KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : cbTCharSize*charScale,$
                                      TICKLEN:0.5}
+
+  IF N_ELEMENTS(cbOOBHighVal) GT 0 AND ~KEYWORD_SET(plotH2D_contour) THEN BEGIN
+     STR_ELEMENT,cb_info,'OOB_high',cbOOBHighVal,/ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(cbOOBLowVal) GT 0 AND ~KEYWORD_SET(plotH2D_contour) THEN BEGIN
+     STR_ELEMENT,cb_info,'OOB_low',cbOOBLowVal,/ADD_REPLACE
+  ENDIF
 
   IF ~(KEYWORD_SET(no_colorBar) OR KEYWORD_SET(overplot)) THEN BEGIN
      cgColorbar, NCOLORS=nCBColors, $

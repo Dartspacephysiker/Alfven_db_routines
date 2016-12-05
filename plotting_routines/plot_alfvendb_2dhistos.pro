@@ -589,8 +589,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  CGCOLORBAR,NCOLORS=cb_info.NCOLORS, $
                             XLOG=cb_info.XLOG, $
                             BOTTOM=cb_info.BOTTOM, $
-                            OOB_LOW=cb_info.OOB_Low EQ -9 ? !NULL : cb_info.OOB_Low, $
-                            OOB_HIGH=cb_info.OOB_High EQ -9 ? !NULL : cb_info.OOB_High, $
+                            OOB_LOW=TAG_EXIST(cb_info,'OOB_Low'  ) ? cb_info.OOB_Low  : !NULL, $
+                            OOB_HIGH=TAG_EXIST(cb_info,'OOB_High') ? cb_info.OOB_High : !NULL, $
                             RANGE=cb_info.RANGE, $
                             TITLE=!NULL, $ ;cb_info.TITLE, $
                             TLOCATION=cb_info.TLOCATION, $
@@ -616,8 +616,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                     CGCOLORBAR,NCOLORS=op_cb_info.NCOLORS, $
                                XLOG=op_cb_info.XLOG, $
                                BOTTOM=op_cb_info.BOTTOM, $
-                               OOB_LOW=op_cb_info.OOB_Low EQ -9 ? !NULL : op_cb_info.OOB_Low, $
-                               OOB_HIGH=op_cb_info.OOB_High EQ -9 ? !NULL : op_cb_info.OOB_High, $
+                               OOB_LOW=TAG_EXIST(op_cb_info,'OOB_Low'  ) ? op_cb_info.OOB_Low  : !NULL, $ ;OOB_LOW=op_cb_info.OOB_Low EQ -9 ? !NULL : op_cb_info.OOB_Low, $   
+                               OOB_HIGH=TAG_EXIST(op_cb_info,'OOB_High') ? op_cb_info.OOB_High : !NULL, $ ;OOB_HIGH=op_cb_info.OOB_High EQ -9 ? !NULL : op_cb_info.OOB_High, $
                                RANGE=op_cb_info.RANGE, $
                                TITLE=!NULL, $ ;op_cb_info.TITLE, $
                                TLOCATION=op_cb_info.TLOCATION, $
