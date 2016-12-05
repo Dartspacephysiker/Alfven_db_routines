@@ -258,7 +258,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
            IF N_ELEMENTS(mapRatDir) GT 0 AND ~fastLoc.info.is_mapped THEN BEGIN
               PRINT,"Mapping fastLoc delta-ts to 100 km ..."
               RESTORE,mapRatDir+mapRatFile
-              fastLoc_delta_t        = SQRT((TEMPORARY(mapRatio)).ratio)*fastLoc_delta_t
+              fastLoc_delta_t        = fastLoc_delta_t/SQRT((TEMPORARY(mapRatio)).ratio)
               fastLoc.info.is_mapped = 1B
            ENDIF ELSE BEGIN
               PRINT,"Can't map fastLoc delta-ts to 100 km! mapRatio DB doesn't exist .."

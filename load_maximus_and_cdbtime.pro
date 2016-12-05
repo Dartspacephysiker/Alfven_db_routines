@@ -14,7 +14,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              DO_NOT_MAP_IONFLUX=do_not_map_ionflux, $
                              DO_NOT_MAP_HEAVIES=do_not_map_heavies, $
                              DO_NOT_MAP_WIDTH_X=do_not_map_width_x, $
-                             DO_NOT_MAP_SAMP_T=do_not_map_samp_t, $
+                             DO_NOT_MAP_WIDTH_T=do_not_map_width_t, $
                              DO_NOT_MAP_ANYTHING=no_mapping, $
                              CHASTDB=chastDB, $
                              DESPUNDB=despunDB, $
@@ -222,7 +222,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              AND ~KEYWORD_SET(no_mapping), $
                              MAP_HEAVIES_TO_IONOS=~KEYWORD_SET(do_not_map_heavies) $
                              AND ~KEYWORD_SET(no_mapping), $
-                             MAP_SAMPLE_T_TO_IONOS=~KEYWORD_SET(do_not_map_sampT) $
+                             MAP_WIDTH_T_TO_IONOS=~KEYWORD_SET(do_not_map_width_t) $
                              AND ~KEYWORD_SET(no_mapping), $
                              ;; MAP_WIDTH_X_TO_IONOS=~KEYWORD_SET(do_not_map_width_x), $
                              DESPUNDB=despunDB, $

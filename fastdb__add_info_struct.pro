@@ -47,7 +47,7 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                                     pFlux       : 0B, $
                                     ion_flux    : 0B, $
                                     heavies     : 0B, $
-                                    sampT       : 0B}}
+                                    width_t     : 0B}}
      END
   ENDCASE
 
