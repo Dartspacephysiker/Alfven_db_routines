@@ -12,6 +12,7 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
    MINLSHELL=minL, $
    MAXLSHELL=maxL, $
    BINL=binL, $
+   REVERSE_LSHELL=reverse_lShell, $
    COORDINATE_SYSTEM=coordinate_system, $
    USE_AACGM_COORDS=use_AACGM, $
    USE_MAG_COORDS=use_MAG, $
@@ -79,6 +80,11 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
   STR_ELEMENT,MIMC_struct,'binL',INDEX=tmpInd
   IF tmpInd GE 0 THEN BEGIN
      binL = MIMC_struct.binL
+  ENDIF
+
+  STR_ELEMENT,MIMC_struct,'reverse_Lshell',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     reverse_Lshell = MIMC_struct.reverse_Lshell
   ENDIF
 
   STR_ELEMENT,MIMC_struct,'coordinate_system',INDEX=tmpInd

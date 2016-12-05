@@ -20,6 +20,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
    EQUAL_AREA_BINNING=EA_binning, $
    DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
+   REVERSE_LSHELL=reverse_lShell, $
    MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
    HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
    MASKMIN=maskMin, $
@@ -102,6 +103,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         USE_AACGM_COORDS=use_AACGM, $
         USE_MAG_COORDS=use_MAG, $
         MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
+        REVERSE_LSHELL=reverse_lShell, $
         MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
         HEMI=hemi, $
         NORTH=north, $
