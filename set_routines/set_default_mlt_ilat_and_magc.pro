@@ -11,6 +11,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   MINLSHELL=minL, $
                                   MAXLSHELL=maxL, $
                                   BINL=binL, $
+                                  COORDINATE_SYSTEM=coordinate_system, $
                                   USE_AACGM_COORDS=use_AACGM, $
                                   USE_MAG_COORDS=use_MAG, $
                                   MIN_MAGCURRENT=minMC, $
@@ -39,6 +40,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   MINLSHELL=minL, $
                                   MAXLSHELL=maxL, $
                                   BINL=binL, $
+                                  COORDINATE_SYSTEM=coordinate_system, $
                                   USE_AACGM_COORDS=use_AACGM, $
                                   USE_MAG_COORDS=use_MAG, $
                                   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
@@ -61,7 +63,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
 
   defHemi     = 'North'
   defMinI     = 60
-  defMaxI     = 85
+  defMaxI     = 90
   defBinI     = 2.5
 
   ;; defMinL     = (cos(defMinI*!PI/180.))^(-2)
@@ -76,70 +78,75 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
   ;;Handle MLTs
-  IF N_ELEMENTS(minM) EQ 0 THEN minM=defMinM
-  IF N_ELEMENTS(maxM) EQ 0 THEN maxM=defMaxM
-  IF N_ELEMENTS(binM) EQ 0 THEN binM=defBinM
-  IF N_ELEMENTS(shiftM) EQ 0 THEN shiftM=defShiftM
-  minM=FLOOR(minM*20.0)*0.05  ;to 1/20 precision
-  maxM=FLOOR(maxM*20.0)*0.05
+  IF N_ELEMENTS(minM   ) EQ 0 THEN minM   = defMinM
+  IF N_ELEMENTS(maxM   ) EQ 0 THEN maxM   = defMaxM
+  IF N_ELEMENTS(binM   ) EQ 0 THEN binM   = defBinM
+  IF N_ELEMENTS(shiftM ) EQ 0 THEN shiftM = defShiftM
 
   ;;Handle ILATs
   IF N_ELEMENTS(hemi) EQ 0 THEN BEGIN
      IF KEYWORD_SET(both_hemis) THEN BEGIN
         PRINTF,lun,"hemi set to 'BOTH' via keyword /BOTH_HEMIS"
-        hemi="BOTH"
+        hemi        = "BOTH"
      ENDIF ELSE BEGIN
         IF KEYWORD_SET(north) THEN BEGIN
            PRINTF,lun,"hemi set to 'NORTH' via keyword /NORTH"
-           hemi="NORTH"
+           hemi     = "NORTH"
         ENDIF ELSE BEGIN
            IF KEYWORD_SET(south) THEN BEGIN
               PRINTF,lun,"hemi set to 'SOUTH' via keyword /SOUTH"
               hemi="SOUTH"
            ENDIF ELSE BEGIN
-              hemi = defHemi
-              hemi = STRUPCASE(hemi)
+              hemi  = defHemi
+              hemi  = STRUPCASE(hemi)
               PRINTF,lun,"No hemisphere specified! Set to default: " + hemi + "..."
            ENDELSE
         ENDELSE
      ENDELSE
   ENDIF ELSE BEGIN
-     hemi = STRUPCASE(hemi)
+     hemi           = STRUPCASE(hemi)
   ENDELSE
   
   IF STRUPCASE(hemi) EQ "NORTH" THEN BEGIN
-     IF N_ELEMENTS(minI) EQ 0 THEN minI = defMinI
-     IF N_ELEMENTS(maxI) EQ 0 THEN maxI = defMaxI
+     IF N_ELEMENTS(minI)       EQ 0 THEN minI  = defMinI
+     IF N_ELEMENTS(maxI)       EQ 0 THEN maxI  = defMaxI
   ENDIF ELSE BEGIN
      IF STRUPCASE(hemi) EQ "SOUTH" THEN BEGIN
-        IF N_ELEMENTS(minI) EQ 0 THEN minI = -defMaxI
-        IF N_ELEMENTS(maxI) EQ 0 THEN maxI = -defMinI
+        IF N_ELEMENTS(minI)    EQ 0 THEN minI  = -defMaxI
+        IF N_ELEMENTS(maxI)    EQ 0 THEN maxI  = -defMinI
      ENDIF ELSE BEGIN
         IF STRUPCASE(hemi) EQ "BOTH" THEN BEGIN     ;;Other routines will handle this situation
-           IF N_ELEMENTS(minI) EQ 0 THEN minI = defMinI
-           IF N_ELEMENTS(maxI) EQ 0 THEN maxI = defMaxI
+           IF N_ELEMENTS(minI) EQ 0 THEN minI  = defMinI
+           IF N_ELEMENTS(maxI) EQ 0 THEN maxI  = defMaxI
         ENDIF ELSE BEGIN
            PRINTF,lun,"Invalid hemisphere name provided! Should be 'North' or 'South'."
            PRINTF,lun,"Defaulting to 'North'."
-           hemi="North"
+           hemi                                = "North"
            STOP
         ENDELSE
      ENDELSE
   ENDELSE
+
   IF N_ELEMENTS(binI) EQ 0 THEN binI = defBinI
 
+  ;;min/maxM to 1/20 precision
+  minM = FLOOR(minM*20.0)*0.05
+  maxM = FLOOR(maxM*20.0)*0.05
+
+  ;;min/maxI to 1/4 precision
   minI = FLOOR(minI*4.0D)*0.25D
   maxI = FLOOR(maxI*4.0D)*0.25D
 
   ;;Handle L-shells
-  IF N_ELEMENTS(minL) EQ 0 THEN minL=defMinL
-  IF N_ELEMENTS(maxL) EQ 0 THEN maxL=defMaxL
-  IF N_ELEMENTS(binL) EQ 0 THEN binL=defBinL
+  IF N_ELEMENTS(minL) EQ 0 THEN minL = defMinL
+  IF N_ELEMENTS(maxL) EQ 0 THEN maxL = defMaxL
+  IF N_ELEMENTS(binL) EQ 0 THEN binL = defBinL
 
   ;;Handle mag current
-  IF N_ELEMENTS(minMC) EQ 0 THEN minMC = defMinMC                  ; Minimum current derived from mag data, in microA/m^2
-  IF N_ELEMENTS(maxNegMC) EQ 0 THEN maxNegMC = defMaxNegMC         ; Current must be less than this, if it's going to make the cut
+  IF N_ELEMENTS(minMC   ) EQ 0 THEN minMC    = defMinMC    ; Minimum current derived from mag data, in microA/m^2
+  IF N_ELEMENTS(maxNegMC) EQ 0 THEN maxNegMC = defMaxNegMC ; Current must be less than this, if it's going to make the cut
 
+  ;;Make struct
   IF ARG_PRESENT(MIMC_struct) THEN BEGIN
 
      IF N_ELEMENTS(MIMC_struct) GT 0 THEN BEGIN
@@ -149,14 +156,15 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
 
      ;; MIMC_struct = BLANK_MIMC_STRUCT()
      MIMC_struct = { $
-                   dont_correct_ilats  : 0B, $
-                   do_lShell           : 0B, $
-                   use_AACGM           : 0B, $
-                   use_MAG             : 0B, $
-                   north               : 0B, $
-                   south               : 0B, $
-                   both_hemis          : 0B, $
-                   dayside             : 0B, $
+                   dont_correct_ilats  : 0B    , $
+                   do_lShell           : 0B    , $
+                   coordinate_system   : ''    , $
+                   use_AACGM           : 0B    , $
+                   use_MAG             : 0B    , $
+                   north               : 0B    , $
+                   south               : 0B    , $
+                   both_hemis          : 0B    , $
+                   dayside             : 0B    , $
                    nightside           : 0B  }
 
      IF N_ELEMENTS(minM) GT 0 THEN BEGIN
@@ -205,6 +213,29 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
 
      IF N_ELEMENTS(binL) GT 0 THEN BEGIN
         STR_ELEMENT,MIMC_struct,'binL',binL,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(coordinate_system) THEN BEGIN
+        CASE STRUPCASE(coordinate_system) OF
+           'AACGM': BEGIN
+              use_aacgm = 1
+              use_geo   = 0
+              use_mag   = 0
+           END
+           'GEO'  : BEGIN
+              use_aacgm = 0
+              use_geo   = 1
+              use_mag   = 0
+           END
+           'MAG'  : BEGIN
+              use_aacgm = 0
+              use_geo   = 0
+              use_mag   = 1
+           END
+           ELSE: BEGIN
+              STOP
+           END
+        ENDCASE
      ENDIF
 
      IF KEYWORD_SET(use_AACGM) THEN BEGIN

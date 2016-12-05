@@ -37,6 +37,7 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                 ;; is_AlfNewell     : BYTE(KEYWORD_SET(is_AlfNewell)), $
                 despun           : 0B, $
                 is_chastDB       : 0B, $
+                using_heavies    : 0B, $
                 coords           : 'SDT', $
                 rmOutliers       : 0B, $
                 corrected_fluxes : 0B, $

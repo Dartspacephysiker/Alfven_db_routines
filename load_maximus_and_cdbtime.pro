@@ -160,16 +160,16 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                                    DB_VERSION=DB_version, $
                                    DB_EXTRAS=DB_extras
 
-           maximus.info.despun     = KEYWORD_SET(despunDB)
-           maximus.info.is_chastDB = MAXIMUS__is_chastDB
+           maximus.info.despun         = KEYWORD_SET(despunDB)
+           maximus.info.is_chastDB     = MAXIMUS__is_chastDB
+           maximus.info.using_heavies  = KEYWORD_SET(using_heavies)
 
-           MAXIMUS__maximus = maximus
-           ;; MAXIMUS__maximus = CREATE_STRUCT(MAXIMUS__maximus,'DESPUN',KEYWORD_SET(despunDB))     
-           MAXIMUS__despun  = KEYWORD_SET(despunDB)
+           MAXIMUS__maximus            = maximus
+           MAXIMUS__despun             = KEYWORD_SET(despunDB)
 
         ENDIF
-        MAXIMUS__dbFile  = DBFile
-        MAXIMUS__dbDir   = DBDir
+        MAXIMUS__dbFile                = DBFile
+        MAXIMUS__dbDir                 = DBDir
      ENDIF
      IF maximus EQ !NULL AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
         PRINT,"Couldn't load maximus!"

@@ -6,6 +6,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
    KEEPME=keepMe, $
    DATARAWPTRARR=dataRawPtrArr, $
    DATANAMEARR=dataNameArr, $
+   ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+   IMF_STRUCT=IMF_struct, $
+   MIMC_STRUCT=MIMC_struct, $
    MINMLT=minM, $
    MAXMLT=maxM, $
    BINMLT=binM, $
@@ -302,20 +305,23 @@ PRO GET_ALFVENDB_2DHISTOS, $
         tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
                            fastLocInterped_i, $
                            HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
-                           MINM=minM, $
-                           MAXM=maxM, $
-                           BINM=binM, $
-                           SHIFTM=shiftM, $
-                           MINI=minI, $
-                           MAXI=maxI, $
-                           BINI=binI, $
+                           ;; MINM=minM, $
+                           ;; MAXM=maxM, $
+                           ;; BINM=binM, $
+                           ;; SHIFTM=shiftM, $
+                           ;; MINI=minI, $
+                           ;; MAXI=maxI, $
+                           ;; BINI=binI, $
                            EQUAL_AREA_BINNING=EA_binning, $
+                           ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                           IMF_STRUCT=IMF_struct, $
+                           MIMC_STRUCT=MIMC_struct, $
                            USE_AACGM_COORDS=use_AACGM, $
-                           DO_LSHELL=do_lshell, $
-                           MINL=minL, $
-                           MAXL=maxL, $
-                           BINL=binL, $
-                           HEMI=hemi, $
+                           ;; DO_LSHELL=do_lshell, $
+                           ;; MINL=minL, $
+                           ;; MAXL=maxL, $
+                           ;; BINL=binL, $
+                           ;; HEMI=hemi, $
                            ;; OUT_FASTLOC_STRUCT=fastLoc, $
                            FASTLOCOUTPUTDIR=txtOutputDir, $
                            MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
@@ -374,20 +380,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
         eSpec_tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
                                      fastLocInterped_i, $
                                      HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
-                                     MINM=minM, $
-                                     MAXM=maxM, $
-                                     BINM=binM, $
-                                     SHIFTM=shiftM, $
-                                     MINI=minI, $
-                                     MAXI=maxI, $
-                                     BINI=binI, $
-                                     EQUAL_AREA_BINNING=EA_binning, $
-                                     USE_AACGM_COORDS=use_AACGM, $
-                                     DO_LSHELL=do_lshell, $
-                                     MINL=minL, $
-                                     MAXL=maxL, $
-                                     BINL=binL, $
-                                     HEMI=hemi, $
+                                 ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                 IMF_STRUCT=IMF_struct, $
+                                 MIMC_STRUCT=MIMC_struct, $
                                      FASTLOCOUTPUTDIR=txtOutputDir, $
                                      MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
                                      THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
@@ -406,7 +401,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                      INDSFILESUFFIX=paramStrSuffix, $
                                      DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
                                      /FOR_ESPEC_DBS, $
-                                     ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
                                      ;; /DONT_LOAD_IN_MEMORY, $
                                      BURSTDATA_EXCLUDED=burstData_excluded)
         

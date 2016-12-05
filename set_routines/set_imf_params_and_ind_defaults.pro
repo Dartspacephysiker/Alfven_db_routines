@@ -65,10 +65,11 @@
 ;                       2015/10/15 : Adding L-shell stuff
 ;                       2016/02/10 : Added DO_NOT_CONSIDER_IMF keyword
 ;-
-PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGLELIM2=angleLim2, $
+PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, $
+                                    ANGLELIM1=angleLim1,  $
+                                    ANGLELIM2=angleLim2, $
                                     MULTIPLE_IMF_CLOCKANGLES=multiple_IMF_clockAngles, $
                                     DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
-                                    ;; ORBRANGE=orbRange, ALTITUDERANGE=altitudeRange, CHARERANGE=charERange, $
                                     BYMIN=byMin, $
                                     BYMAX=byMax, $
                                     BZMIN=bzMin, $
@@ -105,6 +106,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, ANGLELIM1=angleLim1, ANGL
                                     INCLUDENOCONSECDATA=includeNoConsecData, $
                                     EARLIEST_UTC=earliest_UTC, $
                                     LATEST_UTC=latest_UTC, $
+                                    USE_JULDAY_NOT_UTC=use_julDay_not_UTC, $
                                     EARLIEST_JULDAY=earliest_julDay, $
                                     LATEST_JULDAY=latest_julDay, $
                                     IMF_STRUCT=IMF_struct, $

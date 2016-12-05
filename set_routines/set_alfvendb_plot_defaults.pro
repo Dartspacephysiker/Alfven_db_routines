@@ -26,6 +26,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
    DESPUNDB=despunDB, $
    CHASTDB=chastDB, $
+   COORDINATE_SYSTEM=coordinate_system, $
    USE_AACGM_COORDS=use_aacgm, $
    USE_MAG_COORDS=use_MAG, $
    HEMI=hemi, $
@@ -44,6 +45,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
+   FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
    FLUXPLOTS__NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
    DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
@@ -89,23 +91,25 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
   ; Handle MLT and ILAT ... and L-shell
   IF ~KEYWORD_SET(do_not_set_defaults) THEN BEGIN
-     SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minMLT,MAXMLT=maxMLT, $
-                                   BINM=binMLT, $
-                                   SHIFTMLT=shiftMLT, $
-                                   MINILAT=minILAT,MAXILAT=maxILAT,BINI=binILAT, $
-                                   DONT_CORRECT_ILATS=dont_correct_ilats, $
-                                   USE_AACGM_COORDS=use_AACGM, $
-                                   USE_MAG_COORDS=use_MAG, $
-                                   MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
-                                   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-                                   HEMI=hemi, $
-                                   NORTH=north, $
-                                   SOUTH=south, $
-                                   BOTH_HEMIS=both_hemis, $
-                                   DAYSIDE=dayside, $
-                                   NIGHTSIDE=nightside, $
-                                   MIMC_STRUCT=MIMC_struct, $
-                                   LUN=lun
+     SET_DEFAULT_MLT_ILAT_AND_MAGC, $
+        MINMLT=minMLT,MAXMLT=maxMLT, $
+        BINM=binMLT, $
+        SHIFTMLT=shiftMLT, $
+        MINILAT=minILAT,MAXILAT=maxILAT,BINI=binILAT, $
+        DONT_CORRECT_ILATS=dont_correct_ilats, $
+        COORDINATE_SYSTEM=coordinate_system, $
+        USE_AACGM_COORDS=use_AACGM, $
+        USE_MAG_COORDS=use_MAG, $
+        MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
+        MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
+        HEMI=hemi, $
+        NORTH=north, $
+        SOUTH=south, $
+        BOTH_HEMIS=both_hemis, $
+        DAYSIDE=dayside, $
+        NIGHTSIDE=nightside, $
+        MIMC_STRUCT=MIMC_struct, $
+        LUN=lun
      
   ENDIF
 
@@ -150,7 +154,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   
   ;Auroral oval
   IF N_ELEMENTS(HwMAurOval) EQ 0 THEN HwMAurOval = defHwMAurOval
-  IF N_ELEMENTS(HwMKpInd) EQ 0 THEN HwMKpInd = defHwMKpInd
+  IF N_ELEMENTS(HwMKpInd) EQ 0 THEN HwMKpInd     = defHwMKpInd
 
   IF N_ELEMENTS(nPlots) EQ 0 THEN nPlots = 0                              ; do num events plots?
   IF N_ELEMENTS(ePlots) EQ 0 THEN ePlots =  0                             ;electron energy flux plots?
@@ -285,10 +289,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   ;;********************************************
   ;;A few other strings to tack on
   ;;tap DBs, and setup output
-  IF KEYWORD_SET(no_burstData) THEN inc_burstStr ='-burstData_excluded' ELSE inc_burstStr=''
+  IF KEYWORD_SET(no_burstData) THEN inc_burstStr ='-noBurst' ELSE inc_burstStr=''
 
-  IF KEYWORD_SET(medianplot) THEN plotMedOrAvg = "-median" ELSE BEGIN
-     IF KEYWORD_SET(logAvgPlot) THEN plotMedOrAvg = "-logAvg" ELSE plotMedOrAvg = "-avg"
+  IF KEYWORD_SET(medianplot) THEN plotMedOrAvg = "-med" ELSE BEGIN
+     IF KEYWORD_SET(logAvgPlot) THEN plotMedOrAvg = "-lgAvg" ELSE plotMedOrAvg = "-avg"
   ENDELSE
 
   ;;Set minimum allowable number of events for a histo bin to be displayed
@@ -297,7 +301,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      maskMin = defMaskMin
   ENDIF
   IF maskMin GT 1 THEN BEGIN
-     maskStr = '-maskMin_' + STRING(FORMAT='(I0)',maskMin)
+     maskStr = '-mskMin_' + STRING(FORMAT='(I0)',maskMin)
   ENDIF
   
   ;;Set minimum # minutes that must be spent in each bin for inclusion
@@ -313,7 +317,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   
   EABinStr = ''
   IF KEYWORD_SET(EA_binning) THEN BEGIN
-     EABinStr      = '-EA_bins'
+     EABinStr      = '-EA'
   ENDIF
 
   ;;current limits
@@ -349,17 +353,18 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   ;;Shouldn't be leftover, unused params from batch call
   IF ISA(e) THEN BEGIN
      IF $
-        NOT tag_exist(e,"mirror") AND NOT tag_exist(e,"plottitle") AND NOT tag_exist(e,"midnight") $ ;keywords for interp_polar2dhist
+        NOT tag_exist(e,"mirror") AND $
+        ~(TAG_EXIST(e,"plottitle") OR TAG_EXIST(e,"midnight")) $ ;keywords for interp_polar2dhist
      THEN BEGIN                 ;Check for passed variables here
-        help,e
-        print,e
-        print,"Why the extra parameters? They have no home..."
+        HELP,e
+        PRINT,e
+        PRINT,"Why the extra parameters? They have no home..."
         RETURN
      ENDIF ELSE BEGIN
-        IF tag_exist(e,"wholecap") THEN BEGIN
+        IF TAG_EXIST(e,"wholecap") THEN BEGIN
            IF e.wholecap GT 0 THEN BEGIN
-              minM=0.0
-              maxM=24.0
+              MIMC_struct.minM = 0.0
+              MIMC_struct.maxM = 24.0
            ENDIF
         ENDIF
      ENDELSE
@@ -367,7 +372,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   ENDIF
   
   ;;Check on ILAT stuff; if I don't do this, all kinds of plots get boogered up
-  IF ( (MIMC_struct.maxI-MIMC_struct.minI) MOD MIMC_struct.binI ) NE 0 AND ~KEYWORD_SET(dont_correct_ilats) THEN BEGIN
+  IF ( (MIMC_struct.maxI-MIMC_struct.minI) MOD MIMC_struct.binI ) NE 0 AND $
+     ~KEYWORD_SET(MIMC_struct.dont_correct_ilats) THEN BEGIN
      IF STRUPCASE(MIMC_struct.hemi) EQ "NORTH" THEN BEGIN
         MIMC_struct.minI += CEIL(MIMC_struct.maxI-MIMC_struct.minI) MOD binILAT
      ENDIF ELSE BEGIN
@@ -387,9 +393,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          charE__Newell_the_cusp            : 0B, $
                          include_32Hz                      : 0B, $
                          disregard_sample_t                : 0B, $
+                         sample_t_restriction              : 0B, $
                          dont_blackball_maximus            : 0B, $
                          dont_blackball_fastloc            : 0B, $
                          EA_binning                        : 0B, $
+                         HwMAurOval                        : 0B, $
                          tHist_mask_bins_below_thresh      : 0B, $
                          despunDB                          : 0B, $
                          chastDB                           : 0B, $
@@ -403,6 +411,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          autoscale_fluxPlots               : 0B, $
                          fluxPlots__remove_outliers        : 0B, $
                          fluxPlots__remove_log_outliers    : 0B, $
+                         fluxPlots__add_suspect_outliers   : 0B, $
                          fluxPlots__Newell_the_cusp        : 0B, $
                          do_timeAvg_fluxQuantities         : 0B, $
                          for_eSpec_DBs                     : 0B, $
@@ -577,6 +586,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(fluxPlots__remove_log_outliers) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'fluxPlots__remove_log_outliers', $
                     BYTE(fluxPlots__remove_log_outliers),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(fluxPlots__add_suspect_outliers) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'fluxPlots__add_suspect_outliers', $
+                    BYTE(fluxPlots__add_suspect_outliers),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(fluxPlots__Newell_the_cusp) GT 0 THEN BEGIN
