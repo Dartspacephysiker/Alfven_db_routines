@@ -255,7 +255,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         IF KEYWORD_SET(do_not_map_delta_t) THEN BEGIN
            PRINT,'Not mapping delta t for fastLoc ...'
         ENDIF ELSE BEGIN
-           IF N_ELEMENTS(mapRatDir) GT 0 THEN BEGIN
+           IF N_ELEMENTS(mapRatDir) GT 0 AND ~fastLoc.info.is_mapped THEN BEGIN
               PRINT,"Mapping fastLoc delta-ts to 100 km ..."
               RESTORE,mapRatDir+mapRatFile
               fastLoc_delta_t        = SQRT((TEMPORARY(mapRatio)).ratio)*fastLoc_delta_t

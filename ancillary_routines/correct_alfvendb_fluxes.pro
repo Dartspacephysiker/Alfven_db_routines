@@ -99,6 +99,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             USING_HEAVIES=using_heavies, $
                             MAP_HEAVIES_TO_IONOS=map_heavies, $
                             MAP_IONFLUX_TO_IONOS=map_ionflux, $
+                            MAP_SAMPLE_T_TO_IONOS=map_sampT, $
                             ;; MAP_WIDTH_X_TO_IONOS=map_width_x, $
                             QUIET=quiet, $
                             LUN=lun
@@ -117,6 +118,10 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      map_heavies                   = 1
   ENDIF
 
+  IF N_ELEMENTS(map_sampT) EQ 0 THEN BEGIN
+     map_sampT                     = 1
+  ENDIF
+  
   IS_STRUCT_ALFVENDB_OR_FASTLOC,maximus,is_maximus
 
   ;;Find out if correction is applicable
@@ -326,6 +331,14 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         correctStr += '-->16-ION_FLUX_UP' + STRING(10B)
 
         maximus.info.mapped.ion_flux = 1
+     ENDIF
+
+     IF KEYWORD_SET(map_sampT) THEN BEGIN
+        maximus.sample_t          = maximus.sample_t         * SQRT(mapRatio.ratio)
+        IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->24-SAMPT'
+        correctStr += '-->24-SAMPT' + STRING(10B)
+
+        maximus.info.mapped.sampT = 1
      ENDIF
 
      ;; IF KEYWORD_SET(map_width_x) THEN BEGIN

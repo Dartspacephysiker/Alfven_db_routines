@@ -46,7 +46,8 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                 mapped           : {esa_current : 0B, $
                                     pFlux       : 0B, $
                                     ion_flux    : 0B, $
-                                    heavies     : 0B}}
+                                    heavies     : 0B, $
+                                    sampT       : 0B}}
      END
   ENDCASE
 
