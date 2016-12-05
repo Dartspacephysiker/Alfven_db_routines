@@ -11,6 +11,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   MINLSHELL=minL, $
                                   MAXLSHELL=maxL, $
                                   BINL=binL, $
+                                  REVERSE_LSHELL=reverse_lShell, $
                                   COORDINATE_SYSTEM=coordinate_system, $
                                   USE_AACGM_COORDS=use_AACGM, $
                                   USE_MAG_COORDS=use_MAG, $
@@ -40,6 +41,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   MINLSHELL=minL, $
                                   MAXLSHELL=maxL, $
                                   BINL=binL, $
+                                  REVERSE_LSHELL=reverse_lShell, $
                                   COORDINATE_SYSTEM=coordinate_system, $
                                   USE_AACGM_COORDS=use_AACGM, $
                                   USE_MAG_COORDS=use_MAG, $
@@ -158,6 +160,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
      MIMC_struct = { $
                    dont_correct_ilats  : 0B    , $
                    do_lShell           : 0B    , $
+                   reverse_Lshell      : 0B    , $
                    coordinate_system   : ''    , $
                    use_AACGM           : 0B    , $
                    use_MAG             : 0B    , $
@@ -213,6 +216,10 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
 
      IF N_ELEMENTS(binL) GT 0 THEN BEGIN
         STR_ELEMENT,MIMC_struct,'binL',binL,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(reverse_Lshell) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'reverse_Lshell',reverse_Lshell,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(coordinate_system) THEN BEGIN
