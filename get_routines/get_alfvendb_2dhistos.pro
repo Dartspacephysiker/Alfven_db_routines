@@ -17,26 +17,15 @@ PRO GET_ALFVENDB_2DHISTOS, $
    MAXILAT=maxI, $
    BINILAT=binI, $
    EQUAL_AREA_BINNING=EA_binning, $
-   USE_AACGM_COORDS=use_AACGM, $
    DO_LSHELL=do_lShell, $
    MINLSHELL=minL, $
    MAXLSHELL=maxL, $
    BINLSHELL=binL, $
    ORBRANGE=orbRange, $
-   ALTITUDERANGE=altitudeRange, $
-   CHARERANGE=charERange, $
-   POYNTRANGE=poyntRange, $
-   SAMPLE_T_RESTRICTION=sample_t_restriction, $
-   INCLUDE_32HZ=include_32Hz, $
-   DISREGARD_SAMPLE_T=disregard_sample_t, $
    NUMORBLIM=numOrbLim, $
    MASKMIN=maskMin, $
    THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
-   SATELLITE=satellite, $
-   OMNI_COORDS=omni_Coords, $
-   HEMI=hemi, $
    HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
-   INCLUDENOCONSECDATA=includeNoConsecData, $
    NPLOTS=nPlots, $
    NEVENTSPLOTRANGE=nEventsPlotRange, $
    NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
@@ -254,18 +243,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
   GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
                            IN_MLTS=in_MLTs, $
                            IN_ILATS=in_ILATs, $
-                           MINM=minM, $
-                           MAXM=maxM, $
-                           BINM=binM, $
-                           SHIFTM=shiftM, $
-                           MINI=minI, $
-                           MAXI=maxI, $
-                           BINI=binI, $
-                           EQUAL_AREA_BINNING=EA_binning, $
-                           DO_LSHELL=do_lshell, $
-                           MINL=minL, $
-                           MAXL=maxL, $
-                           BINL=binL, $
+                           ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                           IMF_STRUCT=IMF_struct, $
+                           MIMC_STRUCT=MIMC_struct, $
                            NEVENTSPLOTRANGE=nEventsPlotRange, $
                            NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
                            TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -305,24 +285,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
         tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
                            fastLocInterped_i, $
                            HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
-                           ;; MINM=minM, $
-                           ;; MAXM=maxM, $
-                           ;; BINM=binM, $
-                           ;; SHIFTM=shiftM, $
-                           ;; MINI=minI, $
-                           ;; MAXI=maxI, $
-                           ;; BINI=binI, $
-                           EQUAL_AREA_BINNING=EA_binning, $
                            ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                            IMF_STRUCT=IMF_struct, $
                            MIMC_STRUCT=MIMC_struct, $
-                           USE_AACGM_COORDS=use_AACGM, $
-                           ;; DO_LSHELL=do_lshell, $
-                           ;; MINL=minL, $
-                           ;; MAXL=maxL, $
-                           ;; BINL=binL, $
-                           ;; HEMI=hemi, $
-                           ;; OUT_FASTLOC_STRUCT=fastLoc, $
                            FASTLOCOUTPUTDIR=txtOutputDir, $
                            MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
                            THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
@@ -339,8 +304,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                            IND_FILEDIR=ind_fileDir, $
                            INDSFILEPREFIX=paramStrPrefix, $
                            INDSFILESUFFIX=paramStrSuffix, $
-                           DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
-                           BURSTDATA_EXCLUDED=burstData_excluded)
+                           DO_NOT_SET_DEFAULTS=do_not_set_defaults)
 
         
         IF KEYWORD_SET(tHist_mask_bins_below_thresh) THEN BEGIN
@@ -378,8 +342,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
      IF KEYWORD_SET(eFlux_eSpec_data) OR KEYWORD_SET(iFlux_eSpec_data) THEN BEGIN
         eSpec_tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
-                                     fastLocInterped_i, $
-                                     HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
+                                 fastLocInterped_i, $
+                                 HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
                                  ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                                  IMF_STRUCT=IMF_struct, $
                                  MIMC_STRUCT=MIMC_struct, $
@@ -400,9 +364,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                      INDSFILEPREFIX=paramStrPrefix, $
                                      INDSFILESUFFIX=paramStrSuffix, $
                                      DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
-                                     /FOR_ESPEC_DBS, $
-                                     ;; /DONT_LOAD_IN_MEMORY, $
-                                     BURSTDATA_EXCLUDED=burstData_excluded)
+                                     /FOR_ESPEC_DBS)
         
 
         IF keepMe THEN BEGIN 
@@ -436,27 +398,14 @@ PRO GET_ALFVENDB_2DHISTOS, $
      
      IF KEYWORD_SET(orbContrib__reference_alfvenDB) THEN BEGIN
         alfRef_i = GET_CHASTON_IND( $
-                   maximus,satellite, $
+                   maximus, $
                    DBFILE=dbfile, $
                    DBTIMES=dbTimes, $
-                   DESPUNDB=maximus.despun, $
-                   ORBRANGE=orbRange, $
-                   ALTITUDERANGE=altitudeRange, $
-                   CHARERANGE=charERange, $
-                   POYNTRANGE=poyntRange, $
-                   HEMI=hemi, $
-                   MINMLT=minM,MAXMLT=maxM,BINM=binM, $
-                   MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
-                   EQUAL_AREA_BINNING=EA_binning, $
-                   DO_LSHELL=do_lshell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-                   MIN_MAGCURRENT=0, $
-                   MAX_NEGMAGCURRENT=0, $
-                   SAMPLE_T_RESTRICTION=sample_t_restriction, $
-                   INCLUDE_32HZ=include_32Hz, $
-                   DISREGARD_SAMPLE_T=disregard_sample_t, $
                    /GET_ALFVENDB_I, $
                    /RESET_GOOD_INDS, $
-                   ;; /DO_NOT_SET_DEFAULTS, $ ;unfortunately we have to set defaults in order to get these indices
+                   ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                   IMF_STRUCT=IMF_struct, $
+                   MIMC_STRUCT=MIMC_struct, $
                    /PRINT_PARAM_SUMMARY)
 
 
@@ -762,18 +711,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
      IF KEYWORD_SET(eFlux_eSpec_data) AND ~KEYWORD_SET(no_maximus) THEN BEGIN
         GET_H2D_NEVENTS_AND_MASK,IN_MLTS=in_MLTs, $
                                  IN_ILATS=in_ILATs, $
-                                 MINM=minM, $
-                                 MAXM=maxM, $
-                                 BINM=binM, $
-                                 SHIFTM=shiftM, $
-                                 MINI=minI, $
-                                 MAXI=maxI, $
-                                 BINI=binI, $
-                                 EQUAL_AREA_BINNING=EA_binning, $
-                                 DO_LSHELL=do_lshell, $
-                                 MINL=minL, $
-                                 MAXL=maxL, $
-                                 BINL=binL, $
+                                 ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                 IMF_STRUCT=IMF_struct, $
+                                 MIMC_STRUCT=MIMC_struct, $
                                  NEVENTSPLOTRANGE=nEventsPlotRange, $
                                  NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
                                  TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -1028,18 +968,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
      IF KEYWORD_SET(eNumFlux_eSpec_data) THEN BEGIN
         GET_H2D_NEVENTS_AND_MASK,IN_MLTS=in_MLTs, $
                                  IN_ILATS=in_ILATs, $
-                                 MINM=minM, $
-                                 MAXM=maxM, $
-                                 BINM=binM, $
-                                 SHIFTM=shiftM, $
-                                 MINI=minI, $
-                                 MAXI=maxI, $
-                                 BINI=binI, $
-                                 EQUAL_AREA_BINNING=EA_binning, $
-                                 DO_LSHELL=do_lshell, $
-                                 MINL=minL, $
-                                 MAXL=maxL, $
-                                 BINL=binL, $
+                                 ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                 IMF_STRUCT=IMF_struct, $
+                                 MIMC_STRUCT=MIMC_struct, $
                                  NEVENTSPLOTRANGE=nEventsPlotRange, $
                                  NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
                                  TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -1374,18 +1305,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
      IF N_ELEMENTS(iFlux_eSpec_data) GT 0 OR N_ELEMENTS(iNumFlux_eSpec_data) GT 0 THEN BEGIN
         GET_H2D_NEVENTS_AND_MASK,IN_MLTS=in_MLTs, $
                                  IN_ILATS=in_MLTs, $
-                                 MINM=minM, $
-                                 MAXM=maxM, $
-                                 BINM=binM, $
-                                 SHIFTM=shiftM, $
-                                 MINI=minI, $
-                                 MAXI=maxI, $
-                                 BINI=binI, $
-                                 EQUAL_AREA_BINNING=EA_binning, $
-                                 DO_LSHELL=do_lshell, $
-                                 MINL=minL, $
-                                 MAXL=maxL, $
-                                 BINL=binL, $
+                                 ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                 IMF_STRUCT=IMF_struct, $
+                                 MIMC_STRUCT=MIMC_struct, $
                                  NEVENTSPLOTRANGE=nEventsPlotRange, $
                                  NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
                                  TMPLT_H2DSTR=tmplt_h2dStr, $

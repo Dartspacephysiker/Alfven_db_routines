@@ -1,21 +1,9 @@
 FUNCTION GET_TIMEHIST_DENOMINATOR, $
    fastLocInterped_i, $
    HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
-   ;; MINM=minM,MAXM=maxM, $
-   ;; BINM=binM, $
-   ;; SHIFTM=shiftM, $
-   ;; MINI=minI,MAXI=maxI,BINI=binI, $
-   ;; EQUAL_AREA_BINNING=EA_binning, $
    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
    IMF_STRUCT=IMF_struct, $
    MIMC_STRUCT=MIMC_struct, $
-   ;; USE_AACGM_COORDS=use_AACGM, $
-   ;; DO_LSHELL=do_Lshell, $
-   ;; MINL=minL, $
-   ;; MAXL=maxL, $
-   ;; BINL=binL, $
-   ;; HEMI=hemi, $
-   ;; OUT_FASTLOC_STRUCT=out_fastLoc, $
    FASTLOCOUTPUTDIR=fastLocOutputDir, $
    MAKE_TIMEHIST_H2DSTR=make_timeHist_h2dStr, $
    THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
@@ -35,7 +23,6 @@ FUNCTION GET_TIMEHIST_DENOMINATOR, $
    IND_FILEDIR=ind_fileDir, $
    DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
-   ;; DONT_LOAD_IN_MEMORY=nonMem, $
    LUN=lun
 
   COMPILE_OPT idl2
@@ -75,7 +62,6 @@ FUNCTION GET_TIMEHIST_DENOMINATOR, $
                                           SHIFT2=shiftI, $
                                           EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                                           DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i, $
-                                          ;; PLOT_I=plot_i, $
                                           DO_TIMEAVG_FLUXQUANTITIES=alfDB_plot_struct.do_timeAvg_fluxQuantities, $
                                           CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                           CB_FORCE_OOBLOW=cb_force_oobLow)
