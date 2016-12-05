@@ -476,6 +476,16 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     sample_t_restriction,/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(dont_blackball_maximus) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'dont_blackball_maximus', $
+                    dont_blackball_maximus,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(dont_blackball_fastloc) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'dont_blackball_fastloc', $
+                    dont_blackball_fastloc,/ADD_REPLACE
+     ENDIF
+
      IF N_ELEMENTS(include_32Hz) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'include_32Hz', $
                     BYTE(include_32Hz),/ADD_REPLACE

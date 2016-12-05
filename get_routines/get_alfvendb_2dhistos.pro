@@ -840,6 +840,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
            ENDCASE
 
            GET_FLUX_PLOTDATA,maximus,plot_i,/GET_EFLUX, $
+                             ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                             IMF_STRUCT=IMF_struct, $
+                             MIMC_STRUCT=MIMC_struct, $
                              OUTH2DBINSMLT=outH2DBinsMLT, $
                              OUTH2DBINSILAT=outH2DBinsILAT, $
                              OUTH2DBINSLSHELL=outH2DBinsLShell, $
