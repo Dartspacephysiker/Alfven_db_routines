@@ -1,6 +1,7 @@
-
 PRO GET_ALFVENDB_2DHISTOS, $
-   maximus,plot_i,fastLocInterped_i, $
+   ;; maximus, $
+   plot_i, $
+   fastLocInterped_i, $
    CDBTIME=cdbTime, $
    H2DSTRARR=h2dStrArr, $
    KEEPME=keepMe, $
@@ -192,6 +193,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
   
   COMPILE_OPT idl2
 
+  @common__maximus_vars.pro
+  @common__fastloc_vars.pro
   @common__newell_espec.pro
 
   ;;set up variance plot inds
@@ -223,7 +226,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   ENDIF
 
-  GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
+  GET_H2D_NEVENTS_AND_MASK,MAXIMUS__maximus,plot_i, $
                            IN_MLTS=in_MLTs, $
                            IN_ILATS=in_ILATs, $
                            ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -330,24 +333,24 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                  ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                                  IMF_STRUCT=IMF_struct, $
                                  MIMC_STRUCT=MIMC_struct, $
-                                     FASTLOCOUTPUTDIR=txtOutputDir, $
-                                     MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
-                                     THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
-                                     THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
-                                     THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
-                                     THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
-                                     TMPLT_H2DSTR=tmplt_h2dStr, $
-                                     H2DSTR=h2dStr, $
-                                     DATANAME=dataName, $
-                                     DATARAWPTR=dataRawPtr, $
-                                     H2D_NONZERO_NEV_I=hEv_nz_i__nonAlfven, $
-                                     SAVE_FASTLOC_INDS=save_fastLoc_inds, $
-                                     PARAMSTR_FOR_SAVING=paramStr, $
-                                     IND_FILEDIR=ind_fileDir, $
-                                     INDSFILEPREFIX=paramStrPrefix, $
-                                     INDSFILESUFFIX=paramStrSuffix, $
-                                     DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
-                                     /FOR_ESPEC_DBS)
+                                 FASTLOCOUTPUTDIR=txtOutputDir, $
+                                 MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
+                                 THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                                 THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
+                                 THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
+                                 THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
+                                 TMPLT_H2DSTR=tmplt_h2dStr, $
+                                 H2DSTR=h2dStr, $
+                                 DATANAME=dataName, $
+                                 DATARAWPTR=dataRawPtr, $
+                                 H2D_NONZERO_NEV_I=hEv_nz_i__nonAlfven, $
+                                 SAVE_FASTLOC_INDS=save_fastLoc_inds, $
+                                 PARAMSTR_FOR_SAVING=paramStr, $
+                                 IND_FILEDIR=ind_fileDir, $
+                                 INDSFILEPREFIX=paramStrPrefix, $
+                                 INDSFILESUFFIX=paramStrSuffix, $
+                                 DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+                                 /FOR_ESPEC_DBS)
         
 
         IF keepMe THEN BEGIN 
@@ -381,7 +384,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      
      IF KEYWORD_SET(orbContrib__reference_alfvenDB) THEN BEGIN
         alfRef_i = GET_CHASTON_IND( $
-                   maximus, $
+                   MAXIMUS__maximus, $
                    DBFILE=dbfile, $
                    DBTIMES=dbTimes, $
                    /GET_ALFVENDB_I, $
@@ -399,7 +402,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      ;; ENDCASE
 
      GET_CONTRIBUTING_ORBITS_PLOTDATA, $
-        (KEYWORD_SET(orbContrib__reference_alfvenDB) ? maximus : fastLoc), $
+        (KEYWORD_SET(orbContrib__reference_alfvenDB) ? MAXIMUS__maximus : FL__fastLoc), $
         (KEYWORD_SET(orbContrib__reference_alfvenDB) ? alfRef_i : fastLocInterped_i), $
         MINM=MIMC_struct.minM, $
         MAXM=MIMC_struct.maxM, $
@@ -470,7 +473,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;;########Probability of occurrence à la Chaston et al. [2007]########
   IF KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) THEN BEGIN
 
-     GET_CONTRIBUTING_ORBITS_PLOTDATA,maximus,plot_i, $
+     GET_CONTRIBUTING_ORBITS_PLOTDATA,MAXIMUS__maximus,plot_i, $
                                       MINM=MIMC_struct.minM, $
                                       MAXM=MIMC_struct.maxM, $
                                       BINM=MIMC_struct.binM, $
@@ -503,7 +506,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;;########TOTAL Orbits########
   IF KEYWORD_SET(orbtotplot) OR KEYWORD_SET(orbfreqplot) $
      OR (KEYWORD_SET(nEventPerOrbPlot) AND KEYWORD_SET(divNEvByTotal)) THEN BEGIN
-     GET_TOTAL_ORBITS_PLOTDATA,maximus, $
+     GET_TOTAL_ORBITS_PLOTDATA,MAXIMUS__maximus, $
                                MINM=MIMC_struct.minM, $
                                MAXM=MIMC_struct.maxM, $
                                BINM=MIMC_struct.binM, $
@@ -534,7 +537,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   ;;########Orbit FREQUENCY########
   IF KEYWORD_SET(orbfreqplot) THEN BEGIN
-     GET_ORBIT_FREQUENCY_PLOTDATA,maximus, $
+     GET_ORBIT_FREQUENCY_PLOTDATA,MAXIMUS__maximus, $
                                   MINM=MIMC_struct.minM, $
                                   MAXM=MIMC_struct.maxM, $
                                   BINM=MIMC_struct.binM, $
@@ -559,7 +562,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   
   ;;########NEvents/orbit########
   IF KEYWORD_SET(nEventPerOrbPlot) THEN BEGIN 
-     GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i, $
+     GET_NEVENTS_PER_ORBIT_PLOTDATA,MAXIMUS__maximus,plot_i, $
                                     MINM=MIMC_struct.minM, $
                                     MAXM=MIMC_struct.maxM, $
                                     BINM=MIMC_struct.binM, $
@@ -642,7 +645,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   
   ;;########Event probability########
   IF KEYWORD_SET(probOccurrencePlot) OR KEYWORD_SET(multiply_fluxes_by_probOccurrence) THEN BEGIN
-     GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
+     GET_PROB_OCCURRENCE_PLOTDATA,MAXIMUS__maximus,plot_i,tHistDenominator, $
                                   LOGPROBOCCURRENCE=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logProbOccurrence)), $
                                   PROBOCCURRENCERANGE=probOccurrenceRange, $
                                   PROBOCCURRENCEAUTOSCALE=probOccurrenceAutoscale, $
@@ -729,7 +732,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
            absFlux            = N_ELEMENTS(absEFlux)   GT 0 ? absEFlux   : !NULL
            logPlot            = N_ELEMENTS(logEfPlot)  GT 0 ? logEfPlot  : !NULL
 
-           GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,/GET_EFLUX, $
+           GET_NEWELL_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_EFLUX, $
                                     ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                                     IMF_STRUCT=IMF_struct, $
                                     MIMC_STRUCT=MIMC_struct, $
@@ -839,7 +842,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
               2:   plotRange     = ePlotRange[*,i]
            ENDCASE
 
-           GET_FLUX_PLOTDATA,maximus,plot_i,/GET_EFLUX, $
+           GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_EFLUX, $
                              ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                              IMF_STRUCT=IMF_struct, $
                              MIMC_STRUCT=MIMC_struct, $
@@ -964,7 +967,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
            absFlux            = N_ELEMENTS(absENumFl)     GT 0 ? absENumFl   : !NULL
            logPlot            = N_ELEMENTS(logENumFlPlot) GT 0 ? logENumFlPlot  : !NULL
 
-           GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
+           GET_NEWELL_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_ENUMFLUX, $
                                     ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                                     IMF_STRUCT=IMF_struct, $
                                     MIMC_STRUCT=MIMC_struct, $
@@ -1071,7 +1074,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
               2:   plotRange     = eNumFlPlotRange[*,i]
            ENDCASE
 
-           GET_FLUX_PLOTDATA,maximus,plot_i,/GET_ENUMFLUX, $
+           GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_ENUMFLUX, $
                              ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                              IMF_STRUCT=IMF_struct, $
                              MIMC_STRUCT=MIMC_struct, $
@@ -1152,7 +1155,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   
   ;;########Poynting Flux########
   IF KEYWORD_SET(pplots) THEN BEGIN
-     GET_FLUX_PLOTDATA,maximus,plot_i,$
+     GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,$
                        /GET_PFLUX, $
                        ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                        IMF_STRUCT=IMF_struct, $
@@ -1290,7 +1293,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
            END
            2:   plotRange     = iPlotRange[*,i]
         ENDCASE
-        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_IFLUX, $
+        GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_IFLUX, $
                           ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                           IMF_STRUCT=IMF_struct, $
                           MIMC_STRUCT=MIMC_struct, $
@@ -1371,7 +1374,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   ;;########OXY FLUX########
   IF KEYWORD_SET(oxyPlots) THEN BEGIN
-     GET_FLUX_PLOTDATA,maximus,plot_i,/GET_OXYFLUX, $
+     GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_OXYFLUX, $
                        ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                        IMF_STRUCT=IMF_struct, $
                        MIMC_STRUCT=MIMC_struct, $
@@ -1466,7 +1469,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
            END
            2:   plotRange     = charEPlotRange[*,i]
         ENDCASE
-        GET_FLUX_PLOTDATA,maximus,plot_i,/GET_CHAREE, $
+        GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_CHAREE, $
                           ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                           IMF_STRUCT=IMF_struct, $
                           MIMC_STRUCT=MIMC_struct, $
@@ -1540,7 +1543,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   
   ;;########CHARACTERISTIC ION ENERGY########
   IF KEYWORD_SET(chariEPlots) THEN BEGIN
-     GET_FLUX_PLOTDATA,maximus,plot_i,/GET_CHARIE, $
+     GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_CHARIE, $
                        ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                        IMF_STRUCT=IMF_struct, $
                        MIMC_STRUCT=MIMC_struct, $
@@ -1682,7 +1685,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;;########BONUS########
   IF KEYWORD_SET(sum_electron_and_poyntingflux) THEN BEGIN
      
-     GET_FLUX_PLOTDATA,maximus,plot_i,$
+     GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,$
                        /GET_PFLUX, $
                        /GET_EFLUX, $
                        ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -1815,7 +1818,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
            ENDELSE
         ENDIF
 
-        GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInds[i], $
+        GET_CUSTOM_MAXIND_PLOTDATA,MAXIMUS__maximus,plot_i,custom_maxInds[i], $
                                    CUSTOM_DATANAME=custom_dataname, $
                                    CUSTOM_TITLE=custom_title, $
                                    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -1901,7 +1904,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      IF KEYWORD_SET(add_variance_plots) OR KEYWORD_SET(only_variance_plots) THEN doing_var_plots = 1 ELSE doing_var_plots = 0
      IF doing_var_plots THEN PRINTF,lun,"Getting variance plot data ..."
 
-     GET_VARIANCE_PLOTDATA,maximus,plot_i, $
+     GET_VARIANCE_PLOTDATA,MAXIMUS__maximus,plot_i, $
                            FOR_MAXIMUS=~KEYWORD_SET(no_maximus), $
                            FOR_ESPEC_DBS=KEYWORD_SET(no_maximus), $
                            IN_INDS=indices__eSpec, $

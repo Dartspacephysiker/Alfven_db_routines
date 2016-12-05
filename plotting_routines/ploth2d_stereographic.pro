@@ -340,6 +340,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                MINMLT=minM, $
                MAXMLT=maxM, $
                BINMLT=binM, $
+               SHIFTMLT=shiftM, $
                MINILAT=minI, $
                MAXILAT=maxI, $
                BINILAT=binI, $
@@ -544,7 +545,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
               h2dTmp  = h2dTmp[0:-2,*   ]
               h2dTmp  = h2dTmp[   *,0:-2]
-              tmpLons = (KEYWORD_SET(overplot) ? oCentersMLT  : centersMLT  ) + binM/2.*15.
+              tmpLons = (KEYWORD_SET(overplot) ? oCentersMLT  : centersMLT  ) + (binM/2. + temp.shift1)*15.
               tmpLats = (KEYWORD_SET(overplot) ? oCentersILAT : centersILAT ) + binI/2
 
               tmpLons  = tmpLons[0:-2,*   ]

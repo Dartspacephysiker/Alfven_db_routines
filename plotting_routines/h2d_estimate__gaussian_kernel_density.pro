@@ -6,6 +6,7 @@ FUNCTION H2D_ESTIMATE__GAUSSIAN_KERNEL_DENSITY, $
    MINMLT=minM, $
    MAXMLT=maxM, $
    BINMLT=binM, $
+   SHIFTMLT=shiftM, $
    MINILAT=minI, $
    MAXILAT=maxI, $
    BINILAT=binI, $
@@ -64,12 +65,13 @@ FUNCTION H2D_ESTIMATE__GAUSSIAN_KERNEL_DENSITY, $
         ;; tmpCentersILAT = (centersILAT[0:-2,*   ] + centersILAT[1:-1,*   ])/2.
         ;; tmpCentersMLT  = (centersMLT [*   ,0:-2] + centersMLT [*   ,1:-1])/2.
         ;; tmpCentersILAT = (centersILAT[*   ,0:-2] + centersILAT[*   ,1:-1])/2.
-        tmpcentersmlt = centersmlt & tmpcentersilat = centersilat
+        tmpcentersmlt = centersmlt + shiftM
+        tmpcentersilat = centersilat
         ;; MLTbinMin  = tmpCentersMLT - binM/2.
         ;; MLTbinMax  = tmpCentersMLT + binM/2.
 
-        MLTbinMin  = tmpCentersMLT
-        MLTbinMax  = tmpCentersMLT + binM
+        MLTbinMin  = tmpCentersMLT ;+ shiftM
+        MLTbinMax  = tmpCentersMLT + binM ;+ shiftM
 
         ILATbinMin = tmpCentersILAT - binI/2.
         ILATbinMax = tmpCentersILAT + binI/2.
