@@ -132,6 +132,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
    ESPEC__NEWELLPLOT_PROBOCCURRENCE=eSpec__newellPlot_probOccurrence, $
    ESPEC__NEWELL_PLOTRANGE=eSpec__newell_plotRange, $
+   ESPEC__T_PROBOCCURRENCE=eSpec__t_probOccurrence, $
+   ESPEC__T_PROBOCC_PLOTRANGE=eSpec__t_probOcc_plotRange, $
    TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
    TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
    LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -264,6 +266,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      OR KEYWORD_SET(div_fluxPlots_by_applicable_orbs) $
      OR KEYWORD_SET(tHist_mask_bins_below_thresh) $
      OR KEYWORD_SET(numOrbLim) $
+     OR KEYWORD_SET(eSpec__t_probOccurrence) $
   THEN BEGIN 
 
      IF ~KEYWORD_SET(no_maximus) THEN BEGIN
@@ -685,7 +688,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
      ENDIF
 
   ENDIF
-
 
   ;;#####FLUX QUANTITIES#########
   ;;########ELECTRON FLUX########
@@ -1626,7 +1628,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   ENDIF
 
-  IF KEYWORD_SET(eSpec__newellPlot_probOccurrence) THEN BEGIN
+  IF KEYWORD_SET(eSpec__newellPlot_probOccurrence) OR KEYWORD_SET(eSpec__t_probOccurrence) THEN BEGIN
 
      GET_H2D_NEWELLS__EACH_TYPE__NONALFVEN,eSpec,indices__eSpec, $
                                            ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -1636,7 +1638,10 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                            LOG_NEWELLPLOT=log_newellPlot, $
                                            NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                                            NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
-                                           /NEWELLPLOT_PROBOCCURRENCE, $
+                                           NEWELLPLOT_PROBOCCURRENCE=eSpec__newellPlot_probOccurrence, $
+                                           T_PROBOCCURRENCE=eSpec__t_ProbOccurrence, $
+                                           T_PROBOCC_PLOTRANGE=eSpec__t_probOcc_plotRange, $
+                                           THISTDENOMINATOR=eSpec_tHistDenominator, $
                                            NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
                                            COMBINE_ACCELERATED=Newell__comb_accelerated, $
                                            TMPLT_H2DSTR=tmplt_h2dStr, $

@@ -58,6 +58,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    ESPEC__NOMAPTO100KM=eSpec__noMap, $
    ESPEC__REMOVE_OUTLIERS=eSpec__remove_outliers, $
    ESPEC__NEWELLPLOT_PROBOCCURRENCE=eSpec__newellPlot_probOccurrence, $
+   ESPEC__T_PROBOCCURRENCE=t_ProbOccurrence, $
    USE_STORM_STUFF=use_storm_stuff, $
    NONSTORM=nonStorm, $
    RECOVERYPHASE=recoveryPhase, $
@@ -446,6 +447,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          eSpec__noMap                      : 0B, $
                          eSpec__remove_outliers            : 0B, $
                          eSpec__newellPlot_probOccurrence  : 0B, $
+                         eSpec__t_probOccurrence           : 0B, $
                          orbContribPlot                    : 0B, $
                          orbTotPlot                        : 0B, $
                          orbFreqPlot                       : 0B, $
@@ -802,6 +804,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(eSpec__newellPlot_probOccurrence) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'eSpec__newellPlot_probOccurrence', $
                     BYTE(eSpec__newellPlot_probOccurrence),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(eSpec__t_probOccurrence) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'eSpec__t_probOccurrence', $
+                    BYTE(eSpec__t_probOccurrence),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(orbContribPlot) GT 0 THEN BEGIN

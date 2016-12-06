@@ -1,7 +1,8 @@
 ;;2015/10/12 Created
 ;;2016/02/20 Added DO_TIMEAVGD_PFLUX keyword to get, well, time-averaged Poynting flux!
 ;;The DO_WIDTH_X keyword allows one to use spatial width of the current filaments instead of temporal, if so desired
-PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
+PRO GET_PROB_OCCURRENCE_PLOTDATA,dbStruct,plot_i,tHistDenominator, $
+                                 FOR_ESPEC_DBS=for_eSpec_DBs, $
                                  LOGPROBOCCURRENCE=logProbOccurrence, $
                                  PROBOCCURRENCERANGE=probOccurrenceRange, $
                                  PROBOCCURRENCEAUTOSCALE=probOccurrenceAutoscale, $
@@ -53,12 +54,12 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
 
   CASE 1 OF 
      KEYWORD_SET(do_width_x): BEGIN
-        widthData                  = maximus.width_x[plot_i]
+        widthData                  = dbStruct.width_x[plot_i]
         dataName                   = "probOccurrence_width_x"
         h2dStr.title               = "Event width/Time in bin (m/s)"  ;;but what even is this quantity, bro?
      END                           
      KEYWORD_SET(do_timeavgd_pflux): BEGIN
-        widthData                  = maximus.width_time[plot_i]*maximus.pFluxEst[plot_i]
+        widthData                  = dbStruct.width_time[plot_i]*dbStruct.pFluxEst[plot_i]
         dataName                   = name__timeAvgd_pFlux
         h2dStr.title               = title__timeAvgd_pFlux
         h2dStr.lim                 = timeAvgd_pFluxRange
@@ -72,7 +73,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
         h2dStr.do_midCBLabel       = defTimeAvgd_PFlux_do_midCBLabel
      END                           
      KEYWORD_SET(do_timeAvgd_eFluxMax): BEGIN
-        widthData                  = maximus.width_time[plot_i]*maximus.elec_energy_flux[plot_i]
+        widthData                  = dbStruct.width_time[plot_i]*dbStruct.elec_energy_flux[plot_i]
         dataName                   = name__timeAvgd_eFluxMax
         h2dStr.title               = title__timeAvgd_eFluxMax
         h2dStr.lim                 = timeAvgd_eFluxMaxRange
@@ -86,7 +87,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
         h2dStr.do_midCBLabel       = defTimeAvgd_EFluxMax_do_midCBLabel
      END
      ELSE: BEGIN                   
-        widthData                  = maximus.width_time[plot_i]
+        widthData                  = KEYWORD_SET(for_eSpec_DBs) ? dbStruct.delta_t[plot_i] : dbStruct.width_time[plot_i]
         dataName                   = name__probOccurrence
         h2dStr.title               = title__probOccurrence
 
@@ -123,8 +124,8 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,maximus,plot_i,tHistDenominator, $
   ENDCASE
 
   ;;fix MLTs
-  mlts                      = SHIFT_MLTS_FOR_H2D(maximus,plot_i,shiftM)
-  ilats                     = (KEYWORD_SET(do_lshell) ? maximus.lshell : maximus.ilat)[plot_i]
+  mlts                      = SHIFT_MLTS_FOR_H2D(dbStruct,plot_i,shiftM)
+  ilats                     = (KEYWORD_SET(do_lshell) ? dbStruct.lshell : dbStruct.ilat)[plot_i]
   IF KEYWORD_SET(h2dStr.both_hemis) THEN ilats = ABS(ilats)
 
   CASE 1 OF

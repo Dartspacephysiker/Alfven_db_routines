@@ -419,15 +419,21 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   ;; ENDELSE
 
-  nLevels = 255
-  nColors = KEYWORD_SET(plotH2D_contour) ? 10 : nLevels
+  nLevels        = 255
+  nContourColors = 10
+  nColors        = KEYWORD_SET(plotH2D_contour) ? nContourColors : nLevels
 
+  IF KEYWORD_SET(overplot) THEN BEGIN
+     PRINT,"I am Marshall Island"
+  ENDIF
   CASE 1 OF
      (KEYWORD_SET(plotH2D_contour) AND KEYWORD_SET(overplot)): BEGIN
+        PRINT,"Marshall"
         LOADCT,3, $
                NCOLORS=nColors
      END
      ELSE: BEGIN
+        PRINT,"Island"
         LOADCT,78, $
          NCOLORS=nColors, $
          FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl' ;Attempt to recreate (sort of) Bin's color bar
@@ -978,14 +984,30 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   cbSpacingStr_low                = (nLevels-1)/2-is_OOBLow
   cbSpacingStr_high               = (nLevels-1)/2-is_OOBHigh
 
-  cbOOBLowVal                     = (MIN(tmpData[notMasked]) LT pltR[0] OR temp.force_oobLow) ? $
-                                    0B : !NULL
-  cbOOBHighVal                    = (MAX(tmpData[notMasked]) GT pltR[1] OR temp.force_oobHigh) ? $
-                                    BYTE(nLevels-1) : !NULL
   cbRange                         = (temp.is_logged AND temp.logLabels) ? 10.^(ROUND(temp.lim*100.)/100.) : temp.lim
   cbTitle                         = KEYWORD_SET(suppress_titles) OR KEYWORD_SET(overplot) ? !NULL : plotTitle
-  nCBColors                       = nlevels-is_OOBHigh-is_OOBLow
-  cbBottom                        = BYTE(is_OOBLow)
+
+
+  IF KEYWORD_SET(plotH2D_contour) THEN BEGIN
+     cbOOBLowVal                  = !NULL
+     cbOOBHighVal                 = !NULL
+
+     IF KEYWORD_SET(contour__percent) THEN BEGIN
+        cbNDivisions              = 9
+        cbTickNames               = REPLICATE('',cbNDivisions+1)
+        markem                    = VALUE_CLOSEST2(INDGEN(cbNDivisions+1)/FLOAT(cbNDivisions+1)*100,contour__levels)
+        cbTickNames[markem]       = STRING(FORMAT='(G0.2)',(cbRange[1]*INDGEN(cbNDivisions+1)/FLOAT(cbNDivisions+1))[markem])
+     ENDIF
+
+  ENDIF ELSE BEGIN
+     cbOOBLowVal                  = (MIN(tmpData[notMasked]) LT pltR[0] OR temp.force_oobLow) ? $
+                                    0B : !NULL
+     cbOOBHighVal                 = (MAX(tmpData[notMasked]) GT pltR[1] OR temp.force_oobHigh) ? $
+                                    BYTE(nLevels-1) : !NULL
+  ENDELSE
+
+  nCBColors                       = KEYWORD_SET(plotH2D_contour) ? nContourColors : nLevels-is_OOBHigh-is_OOBLow
+  cbBottom                        = KEYWORD_SET(plotH2D_contour) ? 0              : BYTE(is_OOBLow)
 
   ;; cbTickNames                  = [String(lowerLab, Format=temp.labelFormat), $
   ;;                      REPLICATE("",cbSpacingStr_Low),$
@@ -1006,7 +1028,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   ;;Want this if we aren't overplotting
   CB_Info                         = { $
-                                    NCOLORS:KEYWORD_SET(plotH2D_contour) ? 10 : nCBColors, $
+                                    NCOLORS:nCBColors, $
                                     ;; NCOLORS:nCBColors, $
                                     XLOG:(temp.is_logged AND temp.logLabels), $
                                     BOTTOM:cbBottom, $
@@ -1023,13 +1045,28 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                                     CHARSIZE:KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : cbTCharSize*charScale,$
                                     TICKLEN:0.5}
 
-  IF N_ELEMENTS(cbOOBHighVal) GT 0 AND ~KEYWORD_SET(plotH2D_contour) THEN BEGIN
-     STR_ELEMENT,cb_info,'OOB_high',cbOOBHighVal,/ADD_REPLACE
-  ENDIF
+  IF KEYWORD_SET(plotH2D_contour) THEN BEGIN
 
-  IF N_ELEMENTS(cbOOBLowVal) GT 0 AND ~KEYWORD_SET(plotH2D_contour) THEN BEGIN
-     STR_ELEMENT,cb_info,'OOB_low',cbOOBLowVal,/ADD_REPLACE
-  ENDIF
+     IF N_ELEMENTS(cbNDivisions) GT 0 THEN BEGIN
+        STR_ELEMENT,cb_info,'cbNDivisions',cbNDivisions,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(cbTickNames) GT 0 THEN BEGIN
+        STR_ELEMENT,cb_info,'cbTickNames',cbTickNames,/ADD_REPLACE
+     ENDIF
+
+  ENDIF ELSE BEGIN
+
+     IF N_ELEMENTS(cbOOBHighVal) GT 0 THEN BEGIN
+        STR_ELEMENT,cb_info,'OOB_high',cbOOBHighVal,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(cbOOBLowVal) GT 0 THEN BEGIN
+        STR_ELEMENT,cb_info,'OOB_low',cbOOBLowVal,/ADD_REPLACE
+     ENDIF
+
+  ENDELSE
+
 
   IF ~(KEYWORD_SET(no_colorBar) OR KEYWORD_SET(overplot)) THEN BEGIN
      cgColorbar, NCOLORS=nCBColors, $
