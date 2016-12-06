@@ -186,9 +186,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
               h2dStr.title  = title__alfDB_ind_10__div_by_width_x
               ;; dataName     += '__div_by_width_x'
-              LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DESPUNDB=maximus.info.despun
-              magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
+              ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
+              ;;                       DESPUNDB=maximus.info.despun
+              ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
               h2dStr.grossFac  = 1e9
               h2dStr.gUnits    = 'GW'
 
@@ -221,9 +221,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
               h2dStr.title  = title__alfDB_ind_11__div_by_width_x
               ;; dataName     += '__div_by_width_x'
-              LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DESPUNDB=maximus.info.despun
-              magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
+              ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
+              ;;                       DESPUNDB=maximus.info.despun
+              ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
            ENDIF
 
            IF KEYWORD_SET(do_timeAvg_fluxQuantities) AND ~KEYWORD_SET(for_pres) THEN BEGIN
@@ -323,9 +323,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
               h2dStr.title  = title__alfDB_ind_11__div_by_width_x
               ;; dataName     += '__div_by_width_x'
-              LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DESPUNDB=maximus.info.despun
-              magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
+              ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
+              ;;                       DESPUNDB=maximus.info.despun
+              ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Eflux_Losscone_Integ"): BEGIN
@@ -342,7 +342,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
               ;; dataName     += '__div_by_width_x'
               LOAD_MAPPING_RATIO_DB,mapRatio, $
                                     DESPUNDB=maximus.info.despun
-              magFieldFactor = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
+              ;; magFieldFactor = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
+              magFieldFactor = 1.0D
 
               inData        = ((indata/magFieldFactor)/maximus.width_x)*mapRatio.ratio
               already_divided_by_width_x = 1
@@ -412,15 +413,16 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
               ;; STOP
 
               h2dStr.title     = title__alfDB_esa_nFlux_integ
-              LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DESPUNDB=maximus.info.despun
-              IF maximus.corrected_fluxes THEN BEGIN ;Assume that ESA current has been multiplied by mapRatio
-                 PRINT,'Undoing a square-root factor of multiplication by magField ratio for ESA number flux...'
-                 magFieldFactor        = 1.D/SQRT(mapRatio.ratio) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
-              ENDIF ELSE BEGIN
-                 magFieldFactor        = SQRT(mapRatio.ratio)
-                 magFieldFactor        = SQRT(mapRatio.ratio)
-              ENDELSE
+              ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
+              ;;                       DESPUNDB=maximus.info.despun
+              ;; IF maximus.info.mapped.esa_current THEN BEGIN 
+              ;;    ;; PRINT,'Undoing a square-root factor of multiplication by magField ratio for ESA number flux...'
+              ;;    ;; magFieldFactor        = 1.D/SQRT(mapRatio.ratio) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
+              ;; ENDIF ELSE BEGIN
+              ;;    ;; magFieldFactor        = SQRT(mapRatio.ratio)
+              ;;    ;; magFieldFactor        = SQRT(mapRatio.ratio)
+              ;; ENDELSE
+              magFieldFactor              = 1.0D
            ENDIF
 
            CASE 1 OF 
@@ -557,22 +559,24 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
      IF KEYWORD_SET(multiply_by_width_x) THEN BEGIN
         h2dStr.title     = title__alfDB_ind_49_integ
-        LOAD_MAPPING_RATIO_DB,mapRatio, $
-                              DESPUNDB=maximus.info.despun
-        IF maximus.corrected_fluxes THEN BEGIN ;Assume that pFlux has been multiplied by mapRatio
-           PRINT,'Undoing a square-root factor of multiplication by magField ratio for Poynting flux ...'
-           IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
-              magFieldFactor2    = 1.D/SQRT(mapRatio.ratio) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
-           ENDIF ELSE BEGIN
-              magFieldFactor     = 1.D/SQRT(mapRatio.ratio) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
-           ENDELSE
-        ENDIF ELSE BEGIN
-           IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
-              magFieldFactor2    = SQRT(mapRatio.ratio)
-           ENDIF ELSE BEGIN
-              magFieldFactor     = SQRT(mapRatio.ratio)
-           ENDELSE
-        ENDELSE
+        ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
+        ;;                       DESPUNDB=maximus.info.despun
+        ;; IF maximus.mapped.pFlux THEN BEGIN ;Assume that pFlux has been multiplied by mapRatio
+        ;;    PRINT,'Undoing a square-root factor of multiplication by magField ratio for Poynting flux ...'
+        ;;    IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
+        ;;       magFieldFactor2    = 1.D/SQRT(mapRatio.ratio) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
+        ;;    ENDIF ELSE BEGIN
+        ;;       magFieldFactor     = 1.D/SQRT(mapRatio.ratio) ;This undoes the full multiplication by mapRatio performed in CORRECT_ALFVENDB_FLUXES
+        ;;    ENDELSE
+        ;; ENDIF ELSE BEGIN
+        ;;    IF KEYWORD_SET(sum_eFlux_and_pFlux) THEN BEGIN
+        ;;       magFieldFactor2    = SQRT(mapRatio.ratio)
+        ;;    ENDIF ELSE BEGIN
+        ;;       magFieldFactor     = SQRT(mapRatio.ratio)
+        ;;    ENDELSE
+        ;; ENDELSE
+        magFieldFactor2      = 1.0D
+        magFieldFactor       = 1.0D
      ENDIF
 
      IF KEYWORD_SET(grossRateMe) THEN BEGIN
@@ -641,9 +645,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
               h2dStr.title  = title__alfDB_ind_17__div_by_width_x
               ;; dataName     += '__div_by_width_x'
-              LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DESPUNDB=maximus.info.despun
-              magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
+              ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
+              ;;                       DESPUNDB=maximus.info.despun
+              ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
            ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Max"): BEGIN
@@ -667,11 +671,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
               h2dStr.title  = title__alfDB_ind_18__div_by_width_x
               ;; dataName     += '__div_by_width_x'
-              LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DESPUNDB=maximus.info.despun
-              magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
+              ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
+              ;;                       DESPUNDB=maximus.info.despun
+              ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
+              magFieldFactor = 1.0D
 
-              inData        = ((indata/magFieldFactor)/maximus.width_x)*mapRatio.ratio
+              ;; inData         = ((indata/magFieldFactor)/maximus.width_x)*mapRatio.ratio
+              inData         = ((indata/magFieldFactor)/maximus.width_x)
               already_divided_by_width_x = 1
 
            ENDIF

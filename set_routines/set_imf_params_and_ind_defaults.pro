@@ -65,53 +65,55 @@
 ;                       2015/10/15 : Adding L-shell stuff
 ;                       2016/02/10 : Added DO_NOT_CONSIDER_IMF keyword
 ;-
-PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, $
-                                    ANGLELIM1=angleLim1,  $
-                                    ANGLELIM2=angleLim2, $
-                                    MULTIPLE_IMF_CLOCKANGLES=multiple_IMF_clockAngles, $
-                                    DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
-                                    BYMIN=byMin, $
-                                    BYMAX=byMax, $
-                                    BZMIN=bzMin, $
-                                    BZMAX=bzMax, $
-                                    BTMIN=btMin, $
-                                    BTMAX=btMax, $
-                                    BXMIN=bxMin, $
-                                    BXMAX=bxMax, $
-                                    DO_ABS_BYMIN=abs_byMin, $
-                                    DO_ABS_BYMAX=abs_byMax, $
-                                    DO_ABS_BZMIN=abs_bzMin, $
-                                    DO_ABS_BZMAX=abs_bzMax, $
-                                    DO_ABS_BTMIN=abs_btMin, $
-                                    DO_ABS_BTMAX=abs_btMax, $
-                                    DO_ABS_BXMIN=abs_bxMin, $
-                                    DO_ABS_BXMAX=abs_bxMax, $
-                                    BX_OVER_BY_RATIO_MAX=bx_over_by_ratio_max, $
-                                    BX_OVER_BY_RATIO_MIN=bx_over_by_ratio_min, $
-                                    BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
-                                    DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
-                                    PARAMSTRING=paramString, $
-                                    PARAMSTR_LIST=paramString_list, $
-                                    SATELLITE=satellite, $
-                                    OMNI_COORDS=omni_Coords, $
-                                    DELAY=delay, $
-                                    MULTIPLE_DELAYS=multiple_delays, $
-                                    OUT_EXECUTING_MULTIPLES=executing_multiples, $
-                                    OUT_MULTIPLES=multiples, $
-                                    OUT_MULTISTRING=multiString, $
-                                    RESOLUTION_DELAY=delay_res, $
-                                    BINOFFSET_DELAY=binOffset_delay, $
-                                    STABLEIMF=stableIMF, $
-                                    SMOOTHWINDOW=smoothWindow, $
-                                    INCLUDENOCONSECDATA=includeNoConsecData, $
-                                    EARLIEST_UTC=earliest_UTC, $
-                                    LATEST_UTC=latest_UTC, $
-                                    USE_JULDAY_NOT_UTC=use_julDay_not_UTC, $
-                                    EARLIEST_JULDAY=earliest_julDay, $
-                                    LATEST_JULDAY=latest_julDay, $
-                                    IMF_STRUCT=IMF_struct, $
-                                    RESET_STRUCT=reset, $
-                                    LUN=lun
+PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
+   CLOCKSTR=clockStr, $
+   ANGLELIM1=angleLim1,  $
+   ANGLELIM2=angleLim2, $
+   MULTIPLE_IMF_CLOCKANGLES=multiple_IMF_clockAngles, $
+   DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
+   BYMIN=byMin, $
+   BYMAX=byMax, $
+   BZMIN=bzMin, $
+   BZMAX=bzMax, $
+   BTMIN=btMin, $
+   BTMAX=btMax, $
+   BXMIN=bxMin, $
+   BXMAX=bxMax, $
+   DO_ABS_BYMIN=abs_byMin, $
+   DO_ABS_BYMAX=abs_byMax, $
+   DO_ABS_BZMIN=abs_bzMin, $
+   DO_ABS_BZMAX=abs_bzMax, $
+   DO_ABS_BTMIN=abs_btMin, $
+   DO_ABS_BTMAX=abs_btMax, $
+   DO_ABS_BXMIN=abs_bxMin, $
+   DO_ABS_BXMAX=abs_bxMax, $
+   BX_OVER_BY_RATIO_MAX=bx_over_by_ratio_max, $
+   BX_OVER_BY_RATIO_MIN=bx_over_by_ratio_min, $
+   BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+   DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
+   PARAMSTRING=paramString, $
+   PARAMSTR_LIST=paramString_list, $
+   SATELLITE=satellite, $
+   OMNI_COORDS=omni_Coords, $
+   DELAY=delay, $
+   MULTIPLE_DELAYS=multiple_delays, $
+   OUT_EXECUTING_MULTIPLES=executing_multiples, $
+   OUT_MULTIPLES=multiples, $
+   OUT_MULTISTRING=multiString, $
+   RESOLUTION_DELAY=delay_res, $
+   BINOFFSET_DELAY=binOffset_delay, $
+   STABLEIMF=stableIMF, $
+   SMOOTHWINDOW=smoothWindow, $
+   INCLUDENOCONSECDATA=includeNoConsecData, $
+   EARLIEST_UTC=earliest_UTC, $
+   LATEST_UTC=latest_UTC, $
+   USE_JULDAY_NOT_UTC=use_julDay_not_UTC, $
+   EARLIEST_JULDAY=earliest_julDay, $
+   LATEST_JULDAY=latest_julDay, $
+   IMF_STRUCT=IMF_struct, $
+   ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+   RESET_STRUCT=reset, $
+   LUN=lun
 
   COMPILE_OPT idl2
   IF N_ELEMENTS(lun) EQ 0 THEN BEGIN
@@ -404,11 +406,13 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, $
      ENDIF
 
      IF N_ELEMENTS(multiple_IMF_clockAngles) GT 0 THEN BEGIN
-        STR_ELEMENT,IMF_struct,'multiple_IMF_clockAngles',BYTE(multiple_IMF_clockAngles),/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'multiple_IMF_clockAngles', $
+                    BYTE(multiple_IMF_clockAngles),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(dont_consider_clockAngles) GT 0 THEN BEGIN
-        STR_ELEMENT,IMF_struct,'dont_consider_clockAngles',BYTE(dont_consider_clockAngles),/ADD_REPLACE
+        STR_ELEMENT,IMF_struct,'dont_consider_clockAngles', $
+                    BYTE(dont_consider_clockAngles),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(byMin) GT 0 THEN BEGIN
@@ -492,11 +496,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, $
      ENDIF
 
      IF N_ELEMENTS(paramString) GT 0 THEN BEGIN
-        STR_ELEMENT,IMF_struct,'paramString',paramString,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'paramString',paramString,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(paramString_list) GT 0 THEN BEGIN
-        STR_ELEMENT,IMF_struct,'paramString_list',paramString_list,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'paramString_list',paramString_list,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(satellite) GT 0 THEN BEGIN
@@ -512,19 +516,22 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS,CLOCKSTR=clockStr, $
      ENDIF
 
      IF N_ELEMENTS(multiple_delays) GT 0 THEN BEGIN
-        STR_ELEMENT,IMF_struct,'multiple_delays',BYTE(multiple_delays),/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'multiple_delays',BYTE(multiple_delays),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(executing_multiples) GT 0 THEN BEGIN
-        STR_ELEMENT,IMF_struct,'executing_multiples',BYTE(executing_multiples),/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct, $
+                    'executing_multiples', $
+                    BYTE(executing_multiples), $
+                    /ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(multiples) GT 0 THEN BEGIN
-        STR_ELEMENT,IMF_struct,'multiples',multiples,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'multiples',multiples,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(multiString) GT 0 THEN BEGIN
-        STR_ELEMENT,IMF_struct,'multiString',multiString,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'multiString',multiString,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(delay_res) GT 0 THEN BEGIN

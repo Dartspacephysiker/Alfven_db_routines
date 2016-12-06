@@ -468,7 +468,16 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          keepMe                            : 0B, $
                          plotH2D_contour                   : 0B, $
                          plotH2D__kernel_density_unmask    : 0B, $
-                         executing_multiples               : 0B}
+                         paramString                       : ''      , $
+                         paramString_list                  : LIST()  , $
+                         executing_multiples               : 0B, $
+                         multiString                       : '', $
+                         multiples                         : '', $
+                         multiple_IMF_clockAngles          : 0B, $
+                         multiple_delays                   : 0B, $
+                         multiple_storm                    : 0B, $
+                         multiple_AE                       : 0B  $
+                         }
 
      IF KEYWORD_SET(use_storm_stuff) THEN BEGIN
         storm_opt = { $

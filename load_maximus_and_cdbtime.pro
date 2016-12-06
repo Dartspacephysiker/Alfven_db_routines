@@ -224,7 +224,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              AND ~KEYWORD_SET(no_mapping), $
                              MAP_WIDTH_T_TO_IONOS=~KEYWORD_SET(do_not_map_width_t) $
                              AND ~KEYWORD_SET(no_mapping), $
-                             ;; MAP_WIDTH_X_TO_IONOS=~KEYWORD_SET(do_not_map_width_x), $
+                             MAP_WIDTH_X_TO_IONOS=~KEYWORD_SET(do_not_map_width_x) $
+                             AND ~KEYWORD_SET(no_mapping), $
                              DESPUNDB=despunDB, $
                              CHASTDB=chastDB, $
                              USING_HEAVIES=using_heavies, $
