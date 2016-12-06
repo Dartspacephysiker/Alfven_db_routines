@@ -28,7 +28,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                              COMBINE_ACCELERATED=comb_accelerated, $
                              ESPEC_MLT=eSpec_mlt, $
                              ESPEC_ILAT=eSpec_ilat, $
-                             ESPEC_DELTA_T=eSpec_delta_t, $
+
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=logFluxPlot, $
@@ -285,7 +285,6 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                        INDICES__ESPEC=KEYWORD_SET(for_eSpec_DBs) ? tmp_i : indices__eSpec, $
                        ESPEC_MLT=eSpec_mlt, $
                        ESPEC_ILAT=eSpec_ilat, $
-                       ESPEC_DELTA_T=eSpec_delta_t, $
                        ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=logP, $

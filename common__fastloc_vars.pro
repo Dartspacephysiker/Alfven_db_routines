@@ -1,4 +1,6 @@
 ;;2016/08/19 Common vars for fastLoc/FAST ephemeris data
+
+;;Don't forget to update CLEAR_FL_COMMON_VARS if you change this!!
 COMMON FL_VARS, $
    FL__fastLoc, $
    FASTLOC__times, $

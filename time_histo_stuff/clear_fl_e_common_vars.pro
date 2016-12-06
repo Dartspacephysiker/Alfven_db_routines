@@ -4,6 +4,8 @@ PRO CLEAR_FL_E_COMMON_VARS
 
   @common__fastloc_espec_vars.pro
 
+  PRINT,'Clearing fastLoc (for eSpec) COMMON vars in memory ...'
+
   FL_eSpec__fastLoc       = !NULL
   FASTLOC_E__times        = !NULL
   FASTLOC_E__delta_t      = !NULL

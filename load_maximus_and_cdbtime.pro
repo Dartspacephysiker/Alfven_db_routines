@@ -1,6 +1,6 @@
 ;2015/12/22 Added DO_NOT_MAP_PFLUX_keyword and FORCE_LOAD keywords
 ;2016/01/07 Added DESPUNDB keyword
-PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
+PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              GOOD_I=good_i, $
                              MIN_MAGCURRENT=minMC, $
                              MAX_NEGMAGCURRENT=maxNegMC, $
@@ -33,6 +33,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                              JUST_CDBTIME=just_cdbTime, $
                              CHECK_DB=check_DB, $
                              QUIET=quiet, $
+                             CLEAR_MEMORY=clear_memory, $
                              NO_MEMORY_LOAD=noMem, $
                              LUN=lun
 
@@ -45,6 +46,11 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
 
   IF N_ELEMENTS(correct_fluxes) EQ 0 THEN correct_fluxes = 1
   ;; correct_fluxes = 0
+
+  IF KEYWORD_SET(clear_memory) THEN BEGIN
+     CLEAR_M_COMMON_VARS
+     RETURN
+  ENDIF
 
   IF KEYWORD_SET(force_load_both) THEN BEGIN
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"Forcing load of maximus and cdbTime..."
@@ -80,8 +86,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   MAG_file__despun     = 'Dartdb_20160508--502-16361_despun--maximus--MAG_coords.sav'
 
   IF KEYWORD_SET(check_DB) THEN BEGIN
-     out_maximus  = N_ELEMENTS(MAXIMUS__maximus)     GT 0 ? MAXIMUS__maximus     : !NULL
-     out_cdbTime  = N_ELEMENTS(MAXIMUS__times)       GT 0 ? MAXIMUS__times       : !NULL
+     maximus      = N_ELEMENTS(MAXIMUS__maximus)     GT 0 ? MAXIMUS__maximus     : !NULL
+     cdbTime      = N_ELEMENTS(MAXIMUS__times)       GT 0 ? MAXIMUS__times       : !NULL
      good_i       = N_ELEMENTS(MAXIMUS__good_i)      GT 0 ? MAXIMUS__good_i      : !NULL
      DBFile       = N_ELEMENTS(MAXIMUS__dbFile)      GT 0 ? MAXIMUS__dbFile      : !NULL
      DB_tFile     = N_ELEMENTS(MAXIMUS__dbTimesFile) GT 0 ? MAXIMUS__dbTimesFile : !NULL
@@ -162,15 +168,11 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                                    DB_EXTRAS=DB_extras
 
            maximus.info.despun         = KEYWORD_SET(despunDB)
-           maximus.info.is_chastDB     = MAXIMUS__is_chastDB
+           maximus.info.is_chastDB     = KEYWORD_SET(chastDB) ;MAXIMUS__is_chastDB
            maximus.info.using_heavies  = KEYWORD_SET(using_heavies)
 
-           MAXIMUS__maximus            = maximus
-           MAXIMUS__despun             = KEYWORD_SET(despunDB)
 
         ENDIF
-        MAXIMUS__dbFile                = DBFile
-        MAXIMUS__dbDir                 = DBDir
      ENDIF
      IF maximus EQ !NULL AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
         PRINT,"Couldn't load maximus!"
@@ -202,8 +204,6 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
         PRINT,"Couldn't load cdbTime!"
         STOP
      ENDIF
-     MAXIMUS__times       = N_ELEMENTS(cdbTime)  GT 0 ? cdbTime  : !NULL
-     MAXIMUS__dbTimesFile = N_ELEMENTS(DB_tFile) GT 0 ? DB_tFile : !NULL
   ENDIF ELSE BEGIN
      IF ~KEYWORD_SET(quiet) THEN BEGIN
         PRINTF,lun,"There is already a cdbTime struct loaded! Not loading " + DB_tFile
@@ -213,7 +213,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
   ENDELSE
 
   IF correct_fluxes AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
-     CORRECT_ALFVENDB_FLUXES,MAXIMUS__maximus, $
+     CORRECT_ALFVENDB_FLUXES,maximus, $
                              MAP_ESA_CURRENT_TO_IONOS=~KEYWORD_SET(do_not_map_esa_current) $
                              AND ~KEYWORD_SET(no_mapping), $
                              MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux) $
@@ -276,7 +276,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      RESTORE,defCoordDir+AACGM_file
 
      ALFDB_SWITCH_COORDS, $
-        MAXIMUS__maximus, $
+        maximus, $
         max_AACGM, $
         'AACGM', $
         SUCCESS=success
@@ -295,7 +295,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      RESTORE,defCoordDir+GEO_file
 
      ALFDB_SWITCH_COORDS, $
-        MAXIMUS__maximus, $
+        maximus, $
         max_GEO,'GEO', $
         SUCCESS=success
 
@@ -313,7 +313,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      RESTORE,defCoordDir+MAG_file
 
      ALFDB_SWITCH_COORDS, $
-        MAXIMUS__maximus, $
+        maximus, $
         max_MAG, $
         'MAG', $
         SUCCESS=success
@@ -324,7 +324,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      PRINT,'Using SDT ilat,mlt, and alt ...'
 
      ;; ALFDB_SWITCH_COORDS, $
-     ;;    MAXIMUS__maximus, $
+     ;;    maximus, $
      ;;    max_MAG, $
      ;;    'MAG', $
      ;;    SUCCESS=success
@@ -332,9 +332,9 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
      STOP
   ENDIF
 
-  ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND(MAXIMUS__maximus,HEMI='BOTH')
+  ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND(maximus,HEMI='BOTH')
   IF ARG_PRESENT(good_i) THEN good_i = GET_CHASTON_IND( $
-                                       MAXIMUS__maximus, $
+                                       maximus, $
                                        MIN_MAGCURRENT=minMC, $
                                        MAX_NEGMAGCURRENT=maxNegMC, $
                                        INCLUDE_32HZ=include_32Hz, $
@@ -342,15 +342,13 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,out_maximus,out_cdbTime, $
                                        DESPUNDB=despunDB, $
                                        RESET_GOOD_INDS=KEYWORD_SET(swap_DBs))
 
-  IF ~KEYWORD_SET(just_cdbTime) THEN out_maximus = MAXIMUS__maximus
-  IF ~KEYWORD_SET(just_maximus) THEN out_cdbTime = MAXIMUS__times
-
-  IF KEYWORD_SET(noMem) THEN BEGIN
-     PRINT,"Unloading maximus & assoc. from memory ..." 
-
-     CLEAR_M_COMMON_VARS
-
+  IF ~KEYWORD_SET(noMem) THEN BEGIN
+     MAXIMUS__maximus               = TEMPORARY(maximus   )
+     MAXIMUS__times                 = N_ELEMENTS(cdbTime)  GT 0 ? cdbTime  : !NULL
+     MAXIMUS__dbTimesFile           = N_ELEMENTS(DB_tFile) GT 0 ? DB_tFile : !NULL
+     MAXIMUS__despun                = KEYWORD_SET(despunDB)
+     MAXIMUS__dbFile                = TEMPORARY(DBFile    )
+     MAXIMUS__dbDir                 = TEMPORARY(DBDir     )
   ENDIF
-   
-     
+
 END

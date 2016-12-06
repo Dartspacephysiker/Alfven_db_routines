@@ -52,7 +52,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
    ;; FOR_ION_DB=for_ion_DB, $
    ION__MLTS=ion__mlts, $
    ION__ILATS=ion__ilats, $
-   ESPEC_DELTA_T=eSpec_delta_t, $
    ION_DELTA_T=ion_delta_t, $
    PPLOTS=pPlots, $
    LOGPFPLOT=logPfPlot, $
@@ -753,7 +752,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     COMBINE_ACCELERATED=Newell__comb_accelerated, $
                                     ESPEC_MLT=eSpec__mlts, $
                                     ESPEC_ILAT=eSpec__ilats, $
-                                    ESPEC_DELTA_T=eSpec_delta_t, $
                                     ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -862,7 +860,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              INDICES__ESPEC=indices__eSpec, $
                              ESPEC_MLT=eSpec__mlts, $
                              ESPEC_ILAT=eSpec__ilats, $
-                             ESPEC_DELTA_T=eSpec_delta_t, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -988,7 +985,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     COMBINE_ACCELERATED=Newell__comb_accelerated, $
                                     ESPEC_MLT=eSpec__mlts, $
                                     ESPEC_ILAT=eSpec__ilats, $
-                                    ESPEC_DELTA_T=eSpec_delta_t, $
                                     ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -1094,7 +1090,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              INDICES__ESPEC=indices__eSpec, $
                              ESPEC_MLT=eSpec__mlts, $
                              ESPEC_ILAT=eSpec__ilats, $
-                             ESPEC_DELTA_T=eSpec_delta_t, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -1312,9 +1307,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
                           IFLUX_ESPEC_DATA=iFlux_eSpec_data, $
                           INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
                           INDICES__ION=indices__ion, $
+                          ION_DELTA_T=ion_delta_t, $
                           ESPEC_MLT=ion__mlts, $
                           ESPEC_ILAT=ion__ilats, $
-                          ESPEC_DELTA_T=ion_delta_t, $
                           ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                           OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $

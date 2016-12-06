@@ -74,9 +74,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                       INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
                       INDICES__ESPEC=indices__eSpec, $
                       INDICES__ION=indices__ion, $
+                      ION_DELTA_T=ion_delta_t, $
                       ESPEC_MLT=eSpec_mlt, $
                       ESPEC_ILAT=eSpec_ilat, $
-                      ESPEC_DELTA_T=eSpec_delta_t, $
                       ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                       DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                       PRINT_MAX_AND_MIN=print_mandm, $
@@ -1031,7 +1031,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
   ;;Is this going to be a time-averaged plot?
   IF KEYWORD_SET(do_timeAvg_fluxQuantities) THEN BEGIN
      IF KEYWORD_SET(for_eSpec) THEN BEGIN
-        inData        = inData * eSpec_delta_t
+        inData        = inData * NEWELL__delta_t
      ENDIF ELSE BEGIN
         inData        = inData * maximus.width_time
      ENDELSE

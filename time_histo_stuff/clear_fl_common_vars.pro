@@ -5,6 +5,8 @@ PRO CLEAR_FL_COMMON_VARS
   @common__fastloc_vars.pro
   ;; COMMON FL_VARS
 
+  PRINT,'Clearing fastLoc COMMON vars in memory ...'
+
   FL__fastLoc           = !NULL
   FASTLOC__times        = !NULL
   FASTLOC__delta_t      = !NULL

@@ -56,8 +56,10 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   ENDIF
 
   IF KEYWORD_SET(clear_memory) THEN BEGIN
+     PRINT,'Clearing all fastLoc vars in memory ...'
      CLEAR_FL_COMMON_VARS
      CLEAR_FL_E_COMMON_VARS     
+     RETURN
   ENDIF
 
   ;; DefDBDir        = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals2/'
@@ -112,6 +114,9 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         fastLoc_has_times = 1
 
         defDB_tFile  = 'fastLoc_intervals5--20161129--500-16361--Je_times--time_and_delta_t.sav'
+
+        mapRatDir    = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
+        mapRatFile   = 'mapratio_for_fastLoc_intervals5--20161129--500-16361--Je_times.sav'
      END
      ELSE: BEGIN
         DefDBFile    = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01.sav'
@@ -236,7 +241,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      
   ENDIF
 
-  IF ~KEYWORD_SET(just_fastLoc) THEN BEGIN
+  IF ~KEYWORD_SET(just_fastLoc) AND KEYWORD_SET(loadFL) THEN BEGIN
 
      IF N_ELEMENTS(fastloc_times) EQ 0 OR KEYWORD_SET(force_load_times) THEN BEGIN
         IF KEYWORD_SET(force_load_times) THEN BEGIN
