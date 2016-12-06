@@ -1139,7 +1139,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         KEYWORD_SET(do_timeAvg_fluxQuantities): BEGIN
 
            CASE 1 OF
-              KEYWORD_SET(EA_binning): BEGIN
+              KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
                  h2dStr.data = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                           ilats,$
                                                           (KEYWORD_SET(alfDB_plot_struct.do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
@@ -1180,7 +1180,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         END
         ELSE: BEGIN
            CASE 1 OF
-              KEYWORD_SET(EA_binning): BEGIN
+              KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
                  h2dStr.data  = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                            ilats,$
                                                            (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) ? ALOG10(inData) : inData),$

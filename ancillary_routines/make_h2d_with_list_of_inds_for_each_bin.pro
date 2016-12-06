@@ -19,7 +19,7 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
 
   COMPILE_OPT idl2
 
-  DEBUG = 0
+  DEBUG = 1
 
   ;;Because MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS wants to use 'em too
   COMMON H2D_LIST_OF_INDS,HLOI__H2D_lists_with_inds,HLOI__nInds,HLOI__nMLT,HLOI__nILAT,HLOI__H2D_binCenters
@@ -55,7 +55,7 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;fix MLTs, if need be
   IF N_ELEMENTS(in_mlts) GT 0 THEN BEGIN
-     ;; indices   = in_inds
+     indices   = in_inds
      DBMLTs    = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,MIMC_struct.shiftM,IN_MLTS=in_MLTs[in_inds])
      DBILATs   = in_ILATs[in_inds]
   ENDIF ELSE BEGIN
@@ -79,10 +79,36 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   FOR j=0, nILAT-2 DO BEGIN
      FOR i=0, nMLT-2 DO BEGIN
         ;; inds                               = indices[WHERE(DBMLTs GE mlts[i] AND $
-        inds                               = loopInds[WHERE(DBMLTs GE mlts[i] AND $
-                                                            DBMLTs LT mlts[i+1] AND $
-                                                            DBILATs GE ilats[j] AND $
-                                                            DBILATs LT ilats[j+1],nTemp,/NULL)]
+        inds = loopInds[ $
+               WHERE( $
+               DBMLTs GE mlts[i] AND $
+               (mlts[i+1] EQ MAX(mlts) ? (DBMLTs LE mlts[i+1]) : (DBMLTs LT mlts[i+1])) AND $
+               DBILATs GE ilats[j] AND $
+               (ilats[j+1] EQ MAX(ilats) ? (DBILATs LT ilats[j+1]) : (DBILATs LT ilats[j+1])), $
+               nTemp,/NULL)]
+
+        ;;Handle edges
+        ;; CASE 1 OF
+        ;;    ( (i EQ (nMLT - 1)) AND (j EQ (nILAT - 1))): BEGIN
+        ;;       inds = [inds,WHERE(DBMLTs EQ mlts[i+1] AND $
+        ;;                          DBILATs EQ ilats[j+i],nBonus,/NULL)]
+        ;;       nTemp += nBonus
+        ;;    END
+        ;;    (i EQ (nMLT - 1)): BEGIN
+        ;;       inds = [inds,WHERE(DBMLTs EQ mlts[i+1] AND $
+        ;;                          DBILATs GE ilats[j] AND $
+        ;;                          DBILATs LT ilats[j+i],nBonus,/NULL)]
+        ;;       nTemp += nBonus
+        ;;    END
+        ;;    (j EQ (nILAT - 1)): BEGIN
+        ;;       inds = [inds,WHERE(DBILATs EQ ilats[j+1] AND $
+        ;;                          DBMLTs GE mlts[i] AND $
+        ;;                          DBMLTs LT mlts[i+i],nBonus,/NULL)]
+        ;;       nTemp += nBonus
+        ;;    END
+        ;;    ELSE: 
+        ;; ENDCASE
+
         tempIndsList                       = LIST(inds)
 
 
@@ -118,9 +144,21 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   ;Now reform the sucker
   ;; outH2D_lists_with_inds                   = REFORM(outH2D_lists_with_inds,nMLT,nILAT)
   
+  ;; IF ~ARRAY_EQUAL(LIST_TO_1DARRAY(tempIndsList),indices[SORT(indices)]) THEN STOP
   IF DEBUG THEN BEGIN
-     PRINTF,lun,"Check to make sure you've got 'em all."
-     STOP
+     IF KEYWORD_SET(fill_with_indices_into_plot_i) THEN BEGIN
+        compInds  = ((KEYWORD_SET(in_mlts) ? in_inds : dbStruct_inds))[finalInds]
+     ENDIF ELSE BEGIN
+        compInds  = (INDGEN(N_ELEMENTS(KEYWORD_SET(in_MLTs) ? in_inds : dbStruct_inds),/LONG))[finalInds]
+     ENDELSE
+
+     IF ~ARRAY_EQUAL(compInds[SORT(compInds)],indices[SORT(indices)]) THEN BEGIN
+
+        why = CGSETDIFFERENCE(indices,compInds,POSITIONS=baaad)
+        PRINTF,lun,"Check to see why you can't graduate."
+        STOP
+     ENDIF
+
   ENDIF
 
   HLOI__H2D_lists_with_inds                = outH2D_lists_with_inds

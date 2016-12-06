@@ -29,7 +29,7 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
                           MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
                           MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI), $
                           SHIFT1=MIMC_struct.shiftM,SHIFT2=shiftI, $
-                          EQUAL_AREA_BINNING=MIMC_struct.EA_binning, $
+                          EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                           CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                           CB_FORCE_OOBLOW=cb_force_oobLow)
      
@@ -60,7 +60,7 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
 
   IF KEYWORD_SET(h2dStr.both_hemis) THEN horiz = ABS(horiz)
 
-  IF KEYWORD_SET(EA_binning) THEN BEGIN
+  IF KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN
      h2dFluxN       = HIST2D__EQUAL_AREA_BINNING(mlts,$
                                                  horiz,$
                                                  ;; BIN1=binM,BIN2=(KEYWORD_SET(do_lShell) ? binL : binI),$
