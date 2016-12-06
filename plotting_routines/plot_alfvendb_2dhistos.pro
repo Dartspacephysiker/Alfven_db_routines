@@ -589,7 +589,12 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  cb_info.position = cb_position
                  cb_info.charsize = 0.75
 
-                 CGCOLORBAR,NCOLORS=cb_info.NCOLORS, $
+                 LOADCT, $
+                    78, $
+                    NCOLORS=cb_info.nColors, $
+                    FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl' ;Attempt to recreate (sort of) Bin's color bar
+
+                 CGCOLORBAR,NCOLORS=cb_info.nColors, $
                             XLOG=cb_info.XLOG, $
                             BOTTOM=cb_info.BOTTOM, $
                             OOB_LOW=TAG_EXIST(cb_info,'OOB_Low'  ) ? cb_info.OOB_Low  : !NULL, $
@@ -616,13 +621,22 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                     op_cb_info.position = op_cb_position
                     op_cb_info.charsize = 0.75
 
-                    CGCOLORBAR,NCOLORS=op_cb_info.NCOLORS, $
+                    LOADCT, $
+                       3, $
+                       NCOLORS=op_cb_info.nColors+op_cb_info.bottom
+
+                    CGCOLORBAR,NCOLORS=op_cb_info.nColors, $
                                XLOG=op_cb_info.XLOG, $
-                               BOTTOM=op_cb_info.BOTTOM, $
-                               OOB_LOW=TAG_EXIST(op_cb_info,'OOB_Low'  ) ? op_cb_info.OOB_Low  : !NULL, $ ;OOB_LOW=op_cb_info.OOB_Low EQ -9 ? !NULL : op_cb_info.OOB_Low, $   
-                               OOB_HIGH=TAG_EXIST(op_cb_info,'OOB_High') ? op_cb_info.OOB_High : !NULL, $ ;OOB_HIGH=op_cb_info.OOB_High EQ -9 ? !NULL : op_cb_info.OOB_High, $
+                               BOTTOM=op_cb_info.bottom, $
+                               ;; BOTTOM=, $
+                               OOB_LOW=TAG_EXIST(op_cb_info,'OOB_Low'  ) ? $
+                               op_cb_info.OOB_Low  : !NULL, $ ;OOB_LOW=op_cb_info.OOB_Low EQ -9 ? !NULL : op_cb_info.OOB_Low, $   
+                               OOB_HIGH=TAG_EXIST(op_cb_info,'OOB_High') ? $
+                               op_cb_info.OOB_High : !NULL, $ ;OOB_HIGH=op_cb_info.OOB_High EQ -9 ? !NULL : op_cb_info.OOB_High, $
                                RANGE=op_cb_info.RANGE, $
                                TITLE=!NULL, $ ;op_cb_info.TITLE, $
+                               DIVISIONS=op_cb_info.cbNDivisions, $
+                               TICKNAMES=op_cb_info.cbTickNames, $
                                TLOCATION=op_cb_info.TLOCATION, $
                                TCHARSIZE=op_cb_info.TCHARSIZE, $
                                POSITION=op_cb_info.POSITION, $
