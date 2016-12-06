@@ -100,7 +100,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             MAP_HEAVIES_TO_IONOS=map_heavies, $
                             MAP_IONFLUX_TO_IONOS=map_ionflux, $
                             MAP_WIDTH_T_TO_IONOS=map_width_t, $
-                            ;; MAP_WIDTH_X_TO_IONOS=map_width_x, $
+                            MAP_WIDTH_X_TO_IONOS=map_width_x, $
                             QUIET=quiet, $
                             LUN=lun
 
@@ -334,18 +334,20 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ENDIF
 
      IF KEYWORD_SET(map_width_t) THEN BEGIN
-        maximus.width_time             = maximus.width_time   / SQRT(mapRatio.ratio)
+        maximus.width_time             = maximus.width_time / SQRT(mapRatio.ratio)
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->20-WIDTH_TIME'
         correctStr += '-->20-WIDTH_TIME' + STRING(10B)
 
         maximus.info.mapped.width_time = 1
      ENDIF
 
-     ;; IF KEYWORD_SET(map_width_x) THEN BEGIN
-     ;;    maximus.width_x           = maximus.width_x * mapRatio.ratio
-     ;;    IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->21-WIDTH_X'
-     ;;    correctStr += '-->21-WIDTH_X' + STRING(10B)
-     ;; ENDIF
+     IF KEYWORD_SET(map_width_x) THEN BEGIN
+        maximus.width_x           = maximus.width_x / SQRT(mapRatio.ratio)
+        IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->21-WIDTH_X'
+        correctStr += '-->21-WIDTH_X' + STRING(10B)
+
+        maximus.info.mapped.width_x    = 1
+     ENDIF
 
      ;;Now add the CORRECTED_FLUXES tag to maximus
      ;; maximus=CREATE_STRUCT(NAME='maximus',maximus,'CORRECTED_FLUXES',1)     

@@ -101,7 +101,7 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY, $
                nEv, $
                (FLOAT(nEv)/FLOAT(nEvTot)*100.0)               
         PRINTF,lun,FORMAT='("Parameter string",T30,":",T35,A0)', $
-               IMF_struct.paramString_list[iDel]
+               alfDB_plot_struct.paramString_list[iDel]
      ENDFOR
   ENDIF ELSE BEGIN
      test = 0
@@ -117,7 +117,7 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY, $
                   nEv, $
                   (FLOAT(nEv)/FLOAT(nEvTot)*100.0)               
            PRINTF,lun,FORMAT='("Parameter string",T30,":",T35,A0)', $
-                  IMF_struct.paramString_list[iClock]
+                  alfDB_plot_struct.paramString_list[iClock]
         ENDFOR
      ENDIF ELSE BEGIN
         CASE SIZE(plot_i_list,/TYPE) OF
@@ -142,7 +142,7 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY, $
               PRINTF,lun,''
               IF TAG_EXIST(IMF_struct,'paramString') THEN $
                  PRINTF,lun,FORMAT='("Parameter string",T30,":",T35,A0)', $
-                        IMF_struct.paramString
+                        alfDB_plot_struct.paramString
            END
         ENDCASE
      ENDELSE

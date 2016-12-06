@@ -13,7 +13,7 @@
 ;2016/01/07 Added DESPUNDB keyword to let us get dat despun database
 ;2016/01/13 Added USING_HEAVIES keyword for those magical times when personen wants to use TEAMS data
 ;2016/06/13 Added FOR_ESPEC_DBS keywords so we can use this routine for the eSpec and ion DBs
-FUNCTION GET_CHASTON_IND,dbStruct,satellite,lun, $
+FUNCTION GET_CHASTON_IND,dbStruct,lun, $
                          DBFILE=dbfile, $
                          DBTIMES=dbTimes, $
                          GET_TIME_I_NOT_ALFVENDB_I=get_time_i, $
