@@ -43,6 +43,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           PLOTH2D_CONTOUR=plotH2D_contour, $
                           CONTOUR__LEVELS=contour__levels, $
                           CONTOUR__PERCENT=contour__percent, $
+                          PLOTRANGE=plotRange, $
                           PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
                           CENTERS_MLT=centersMLT, $
                           CENTERS_ILAT=centersILAT, $
@@ -422,9 +423,18 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;; RAINBOW_COLORS,N_COLORS=nLevels
   ;; LOADCT,81  ;Modded rainbow; drops purples at bottom
   ;; LOADCT,84  ;Attempt to recreate (sort of) Bin's color bar
-  LOADCT,78, $
-         NCOLORS=(KEYWORD_SET(plotH2D_contour) ? 10 : !NULL), $
+  nColors = KEYWORD_SET(plotH2D_contour) ? 10 : nLevels
+  CASE 1 OF
+     (KEYWORD_SET(plotH2D_contour) AND KEYWORD_SET(overplot)): BEGIN
+        LOADCT,3, $
+               NCOLORS=nColors
+     END
+     ELSE: BEGIN
+        LOADCT,78, $
+         NCOLORS=nColors, $
          FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl' ;Attempt to recreate (sort of) Bin's color bar
+     END
+  ENDCASE
   ;; LOADCT,33
   ;; LOADCT,77 ;greenthing
   ;; LOADCT2,39 ;FAST rainbow table
@@ -452,13 +462,19 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ;;    TVLCT,r,g,b
      ;; ENDIF
 
+  IF KEYWORD_SET(plotRange) THEN BEGIN
+     pltR     = plotRange
+  ENDIF ELSE BEGIN
+     pltR     = temp.lim
+  ENDELSE
+
   ;;Scale this stuff
   ;;The reason for all the trickery is that we want to know what values are out of bounds,
   ;; and bytscl doesn't do things quite the way we need them done.
   is_OOBHigh              = 0
   is_OOBLow               = 0
-  OOB_HIGH_i              = WHERE(tmpData GT temp.lim[1] AND ~masked)
-  OOB_LOW_i               = WHERE(tmpData LT temp.lim[0] AND ~masked)
+  OOB_HIGH_i              = WHERE(tmpData GT pltR[1] AND ~masked)
+  OOB_LOW_i               = WHERE(tmpData LT pltR[0] AND ~masked)
 
   IF KEYWORD_SET(cb_force_oobHigh) THEN BEGIN
      temp.force_oobHigh   = 1
@@ -477,8 +493,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   h2descl[notMasked]      = BYTSCL(tmpData[notMasked], $
                                    TOP=nLevels-1-is_OOBHigh-is_OOBLow, $
-                                   MAX=temp.lim[1], $
-                                   MIN=temp.lim[0] ) + is_OOBLow
+                                   MAX=pltR[1], $
+                                   MIN=pltR[0] ) + is_OOBLow
 
   IF OOB_HIGH_i[0] NE -1 THEN BEGIN
      h2descl[OOB_HIGH_i]  = BYTE(nLevels-1)
@@ -603,8 +619,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
         newescl      = BYTSCL(newescl, $
                               TOP=nLevels-1-is_OOBHigh-is_OOBLow, $
-                              MAX=temp.lim[1], $
-                              MIN=temp.lim[0] ) + is_OOBLow
+                              MAX=pltR[1], $
+                              MIN=pltR[0] ) + is_OOBLow
 
         CASE 1 OF
            KEYWORD_SET(contour__levels): BEGIN
@@ -963,12 +979,12 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      temp.labelFormat             = defLabelFormat
   ENDIF
   lowerLab                       =(temp.is_logged AND temp.logLabels) ? $
-                                  10.^(temp.lim[0]) : temp.lim[0]
+                                  10.^(pltR[0]) : pltR[0]
   UpperLab                       =(temp.is_logged AND temp.logLabels) ? $
-                                  10.^temp.lim[1] : temp.lim[1]
+                                  10.^pltR[1] : pltR[1]
 
   IF temp.do_midCBLabel THEN BEGIN
-     midLab                       = (temp.lim[1] + temp.lim[0])/2.0
+     midLab                       = (pltR[1] + pltR[0])/2.0
      IF temp.logLabels THEN BEGIN
         midLab                    = 10.^midLab
      ENDIF
@@ -979,9 +995,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   cbSpacingStr_low                = (nLevels-1)/2-is_OOBLow
   cbSpacingStr_high               = (nLevels-1)/2-is_OOBHigh
 
-  cbOOBLowVal                     = (MIN(tmpData[notMasked]) LT temp.lim[0] OR temp.force_oobLow) ? $
+  cbOOBLowVal                     = (MIN(tmpData[notMasked]) LT pltR[0] OR temp.force_oobLow) ? $
                                     0B : !NULL
-  cbOOBHighVal                    = (MAX(tmpData[notMasked]) GT temp.lim[1] OR temp.force_oobHigh) ? $
+  cbOOBHighVal                    = (MAX(tmpData[notMasked]) GT pltR[1] OR temp.force_oobHigh) ? $
                                     BYTE(nLevels-1) : !NULL
   cbRange                         = (temp.is_logged AND temp.logLabels) ? 10.^(ROUND(temp.lim*100.)/100.) : temp.lim
   cbTitle                         = KEYWORD_SET(suppress_titles) OR KEYWORD_SET(overplot) ? !NULL : plotTitle
@@ -1009,20 +1025,20 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   CB_Info                         = { $
                                     NCOLORS:KEYWORD_SET(plotH2D_contour) ? 10 : nCBColors, $
                                     ;; NCOLORS:nCBColors, $
-                                     XLOG:(temp.is_logged AND temp.logLabels), $
-                                     BOTTOM:cbBottom, $
-                                     ;; OOB_Low:KEYWORD_SET(plotH2D_contour) ? -9 : (KEYWORD_SET(cbOOBLowVal) ? cbOOBLowVal : -9), $
-                                     ;; OOB_High:KEYWORD_SET(plotH2D_contour) ? -9 : (KEYWORD_SET(cbOOBHighVal) ? cbOOBHighVal : -9), $
-                                     RANGE:cbRange, $
-                                     TITLE:N_ELEMENTS(cbTitle) GT 0 ? cbTitle : '', $
-                                     TLOCATION:cbTLocation, $
-                                     TCHARSIZE:KEYWORD_SET(labels_for_presentation) ? charSize_plotTitle_pres : cbTCharSize*charScale,$
-                                     POSITION:KEYWORD_SET(cb_position) ? cb_position : $
-                                     (KEYWORD_SET(labels_for_presentation) ? cbPosition_pres : cbPosition), $
-                                     TEXTTHICK:cbTextThick, $
-                                     VERTICAL:cbVertical, $
-                                     CHARSIZE:KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : cbTCharSize*charScale,$
-                                     TICKLEN:0.5}
+                                    XLOG:(temp.is_logged AND temp.logLabels), $
+                                    BOTTOM:cbBottom, $
+                                    ;; OOB_Low:KEYWORD_SET(plotH2D_contour) ? -9 : (KEYWORD_SET(cbOOBLowVal) ? cbOOBLowVal : -9), $
+                                    ;; OOB_High:KEYWORD_SET(plotH2D_contour) ? -9 : (KEYWORD_SET(cbOOBHighVal) ? cbOOBHighVal : -9), $
+                                    RANGE:cbRange, $
+                                    TITLE:N_ELEMENTS(cbTitle) GT 0 ? cbTitle : '', $
+                                    TLOCATION:cbTLocation, $
+                                    TCHARSIZE:KEYWORD_SET(labels_for_presentation) ? charSize_plotTitle_pres : cbTCharSize*charScale,$
+                                    POSITION:KEYWORD_SET(cb_position) ? cb_position : $
+                                    (KEYWORD_SET(labels_for_presentation) ? cbPosition_pres : cbPosition), $
+                                    TEXTTHICK:cbTextThick, $
+                                    VERTICAL:cbVertical, $
+                                    CHARSIZE:KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : cbTCharSize*charScale,$
+                                    TICKLEN:0.5}
 
   IF N_ELEMENTS(cbOOBHighVal) GT 0 AND ~KEYWORD_SET(plotH2D_contour) THEN BEGIN
      STR_ELEMENT,cb_info,'OOB_high',cbOOBHighVal,/ADD_REPLACE
