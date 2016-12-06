@@ -54,11 +54,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                       UPDATE_H2D_MASK=update_h2d_mask, $
                       OUT_H2DMASK=out_h2dMask, $
                       DATANAME=dataName,DATARAWPTR=dataRawPtr, $
-                      MEDIANPLOT=medianplot, $
                       MEDHISTOUTDATA=medHistOutData, $
                       MEDHISTOUTTXT=medHistOutTxt, $
                       MEDHISTDATADIR=medHistDataDir, $
-                      LOGAVGPLOT=logAvgPlot, $
                       DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                       ORBCONTRIB_H2DSTR_FOR_DIVISION=orbContrib_h2dStr_for_division, $
                       GET_EFLUX=get_eflux, $

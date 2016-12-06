@@ -41,11 +41,9 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
                                H2DMASK=h2dMask, $
                                OUT_H2DMASK=out_h2dMask, $
                                DATANAME=dataName,DATARAWPTR=dataRawPtr, $
-                               MEDIANPLOT=medianplot, $
                                MEDHISTOUTDATA=medHistOutData, $
                                MEDHISTOUTTXT=medHistOutTxt, $
                                MEDHISTDATADIR=medHistDataDir, $
-                               LOGAVGPLOT=logAvgPlot, $
                                DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
                                ORBCONTRIB_H2DSTR_FOR_DIVISION=orbContrib_h2dStr_for_division, $
                                DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
@@ -230,7 +228,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
      hEv_nz_i      = INDGEN(N_ELEMENTS(inData))
   ENDIF ELSE BEGIN
      CASE 1 OF
-        KEYWORD_SET(medianplot): BEGIN 
+        KEYWORD_SET(alfDB_plot_struct.medianplot): BEGIN 
 
            IF KEYWORD_SET(medHistOutData) THEN BEGIN
               medHistDatFile  = medHistDataDir + dataName+"medhist_data.sav"
@@ -301,7 +299,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
               KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
                  h2dStr.data  = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                            ilats,$
-                                                           (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
+                                                           (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) ? ALOG10(inData) : inData),$
                                                            MIN1=MIMC_struct.MINM,MIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
                                                            MAX1=MIMC_struct.MAXM,MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                                            OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
@@ -309,7 +307,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
               ELSE: BEGIN
                  h2dStr.data  = HIST2D(mlts, $
                                        ilats,$
-                                       (KEYWORD_SET(logAvgPlot) ? ALOG10(inData) : inData),$
+                                       (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) ? ALOG10(inData) : inData),$
                                        MIN1=MIMC_struct.MINM,MIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
                                        MAX1=MIMC_struct.MAXM,MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                        BINSIZE1=MIMC_struct.binM,BINSIZE2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
@@ -330,7 +328,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
               h2dStr.data[hEv_nz_i]   = h2dStr.data[hEv_nz_i]/h2dFluxN[hEv_nz_i] 
            ENDELSE
            
-           IF KEYWORD_SET(logAvgPlot) THEN h2dStr.data[where(h2dFluxN NE 0,/NULL)] = 10^(h2dStr.data[where(h2dFluxN NE 0,/NULL)])
+           IF KEYWORD_SET(alfDB_plot_struct.logAvgPlot) THEN h2dStr.data[where(h2dFluxN NE 0,/NULL)] = 10^(h2dStr.data[where(h2dFluxN NE 0,/NULL)])
            
         END
      ENDCASE
@@ -379,7 +377,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
   ENDELSE
 
   IF KEYWORD_SET(print_mandm) THEN BEGIN
-     IF KEYWORD_SET(medianPlot) OR ~KEYWORD_SET(logAvgPlot) THEN BEGIN
+     IF KEYWORD_SET(alfDB_plot_struct.medianPlot) OR ~KEYWORD_SET(alfDB_plot_struct.logAvgPlot) THEN BEGIN
         fmt    = 'G10.4' 
         maxh2d = MAX(h2dStr.data[hEv_nz_i])
         minh2d = MIN(h2dStr.data[hEv_nz_i])
