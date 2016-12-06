@@ -334,7 +334,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ENDIF
 
      IF KEYWORD_SET(map_width_t) THEN BEGIN
-        maximus.sample_t          = maximus.width_time   / SQRT(mapRatio.ratio)
+        maximus.width_time             = maximus.width_time   / SQRT(mapRatio.ratio)
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->20-WIDTH_TIME'
         correctStr += '-->20-WIDTH_TIME' + STRING(10B)
 

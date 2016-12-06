@@ -58,6 +58,25 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    ESPEC__NOMAPTO100KM=eSpec__noMap, $
    ESPEC__REMOVE_OUTLIERS=eSpec__remove_outliers, $
    ESPEC__NEWELLPLOT_PROBOCCURRENCE=eSpec__newellPlot_probOccurrence, $
+   USE_STORM_STUFF=use_storm_stuff, $
+   NONSTORM=nonStorm, $
+   RECOVERYPHASE=recoveryPhase, $
+   MAINPHASE=mainPhase, $
+   ALL_STORM_PHASES=all_storm_phases, $
+   DSTCUTOFF=dstCutoff, $
+   SMOOTH_DST=smooth_dst, $
+   USE_MOSTRECENT_DST_FILES=use_mostRecent_Dst_files, $
+   AE_STUFF=ae_stuff, $
+   USE_AE=use_ae, $
+   USE_AU=use_au, $
+   USE_AL=use_al, $
+   USE_AO=use_ao, $
+   AECUTOFF=AEcutoff, $
+   SMOOTH_AE=smooth_AE, $
+   AE_HIGH=AE_high, $
+   AE_LOW=AE_low, $
+   AE_BOTH=AE_both, $
+   USE_MOSTRECENT_AE_FILES=use_mostRecent_AE_files, $
    ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
    NEVENTPERORBPLOT=nEventPerOrbPlot, $
    NEVENTPERMINPLOT=nEventPerMinPlot, $
@@ -448,7 +467,119 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          del_PS                            : 0B, $
                          keepMe                            : 0B, $
                          plotH2D_contour                   : 0B, $
-                         plotH2D__kernel_density_unmask    : 0B  }
+                         plotH2D__kernel_density_unmask    : 0B, $
+                         executing_multiples               : 0B}
+
+     IF KEYWORD_SET(use_storm_stuff) THEN BEGIN
+        storm_opt = { $
+                   nonStorm                  : 0B  , $
+                   recoveryPhase             : 0B  , $
+                   mainPhase                 : 0B  , $
+                   all_storm_phases          : 0B  , $
+                   dstCutoff                 : -20 , $
+                   smooth_dst                : 0B  , $
+                   use_mostRecent_Dst_files  : 0B}
+
+        IF N_ELEMENTS(use_storm_stuff) GT 0 THEN BEGIN
+           STR_ELEMENT,storm_opt,'use_storm_stuff',use_storm_stuff,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(nonStorm) GT 0 THEN BEGIN
+           STR_ELEMENT,storm_opt,'nonStorm',nonStorm,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(recoveryPhase) GT 0 THEN BEGIN
+           STR_ELEMENT,storm_opt,'recoveryPhase',recoveryPhase,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(mainPhase) GT 0 THEN BEGIN
+           STR_ELEMENT,storm_opt,'mainPhase',mainPhase,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(all_storm_phases) GT 0 THEN BEGIN
+           STR_ELEMENT,storm_opt,'all_storm_phases',all_storm_phases,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(dstCutoff) GT 0 THEN BEGIN
+           STR_ELEMENT,storm_opt,'dstCutoff',dstCutoff,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(smooth_dst) GT 0 THEN BEGIN
+           STR_ELEMENT,storm_opt,'smooth_dst',smooth_dst,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(use_mostRecent_Dst_files) GT 0 THEN BEGIN
+           STR_ELEMENT,storm_opt,'use_mostRecent_Dst_files', $
+                       use_mostRecent_Dst_files,/ADD_REPLACE
+        ENDIF
+
+        STR_ELEMENT,alfDB_plot_struct,'storm_opt',storm_opt,/ADD_REPLACE
+
+        IF KEYWORD_SET(all_storm_phases) THEN BEGIN
+           alfDB_plot_struct.executing_multiples = 1
+        ENDIF
+     ENDIF
+
+     IF KEYWORD_SET(ae_stuff) THEN BEGIN
+        ae_opt = { $
+                 use_ae                   : 0B  , $
+                 use_au                   : 0B  , $
+                 use_al                   : 0B  , $
+                 use_ao                   : 0B  , $
+                 AEcutoff                 : 100 , $
+                 smooth_AE                : 0B  , $
+                 AE_high                  : 0B  , $
+                 AE_low                   : 0B  , $
+                 AE_both                  : 0B  , $
+                 use_mostRecent_AE_files  : 0B}
+
+        IF N_ELEMENTS(use_ae) GT 0 THEN BEGIN
+           STR_ELEMENT,ae_opt,'use_ae',use_ae,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(use_au) GT 0 THEN BEGIN
+           STR_ELEMENT,ae_opt,'use_au',use_au,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(use_al) GT 0 THEN BEGIN
+           STR_ELEMENT,ae_opt,'use_al',use_al,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(use_ao) GT 0 THEN BEGIN
+           STR_ELEMENT,ae_opt,'use_ao',use_ao,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(AEcutoff) GT 0 THEN BEGIN
+           STR_ELEMENT,ae_opt,'AEcutoff',AEcutoff,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(smooth_AE) GT 0 THEN BEGIN
+           STR_ELEMENT,ae_opt,'smooth_AE',smooth_AE,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(AE_high) GT 0 THEN BEGIN
+           STR_ELEMENT,ae_opt,'AE_high',AE_high,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(AE_low) GT 0 THEN BEGIN
+           STR_ELEMENT,ae_opt,'AE_low',AE_low,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(AE_both) GT 0 THEN BEGIN
+           STR_ELEMENT,ae_opt,'AE_both',AE_both,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(use_mostRecent_AE_files) GT 0 THEN BEGIN
+           STR_ELEMENT,ae_opt,'use_mostRecent_AE_files', $
+                       use_mostRecent_AE_files,/ADD_REPLACE
+        ENDIF
+
+        STR_ELEMENT,alfDB_plot_struct,'ae_opt',ae_opt,/ADD_REPLACE
+
+        IF KEYWORD_SET(AE_both) THEN BEGIN
+           alfDB_plot_struct.executing_multiples = 1
+        ENDIF
+     ENDIF
 
      IF KEYWORD_SET(orbRange) THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'orbRange', $
