@@ -105,16 +105,16 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
                                  DBFILE=dbFile, $
                                  DB_TFILE=dbTimesFile, $
                                  ;; DO_NOT_MAP_ANYTHING=no_mapping, $
-                                 DO_CHASTDB=alfDB_plot_struct.chastDB, $
-                                 DO_DESPUNDB=alfDB_plot_struct.despunDB, $
-                                 COORDINATE_SYSTEM=alfDB_plot_struct.coordinate_system, $
+                                 CHASTDB=alfDB_plot_struct.chastDB, $
+                                 DESPUNDB=alfDB_plot_struct.despunDB, $
+                                 COORDINATE_SYSTEM=MIMC_struct.coordinate_system, $
                                  USE_AACGM_COORDS=MIMC_struct.use_aacgm, $
                                  USE_MAG_COORDS=MIMC_struct.use_mag, $
                                  CORRECT_FLUXES=correct_fluxes
-        MAXIMUS__maximus      = dbStruct
-        MAXIMUS__times        = dbTimes
-        MAXIMUS__dbFile       = dbFile
-        MAXIMUS__dbTimesFile  = dbTimesFile
+        ;; MAXIMUS__maximus      = dbStruct
+        ;; MAXIMUS__times        = dbTimes
+        ;; MAXIMUS__dbFile       = dbFile
+        ;; MAXIMUS__dbTimesFile  = dbTimesFile
      ENDELSE
   ENDIF ELSE BEGIN
      CASE 1 OF
