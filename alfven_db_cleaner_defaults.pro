@@ -47,8 +47,8 @@
   
   ;; ion flux cutoffs
   iflux_hcutoff = 8.0e11
-  ;; iflux_lcutoff = -8.0e11
-  iflux_lcutoff = 0.
+  iflux_lcutoff = -8.0e11
+  ;; iflux_lcutoff = 0.
   
   ;; ion energy flux cutoffs
   ieflux_hcutoff = 5.0e1

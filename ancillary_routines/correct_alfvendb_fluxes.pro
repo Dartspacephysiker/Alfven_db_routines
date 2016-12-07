@@ -275,7 +275,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'30-HELIUM_FLUX_UP             (Flip sign in N Hemi)'
         correctStr += '30-HELIUM_FLUX_UP             (Flip sign in N Hemi)' + STRING(10B)
 
-        IF KEYWORD_SET(map_heavies) THEN BEGIN
+        IF KEYWORD_SET(map_heavies) AND ~maximus.info.mapped.heavies THEN BEGIN
            maximus.proton_flux_up = maximus.proton_flux_up  * mapRatio.ratio
            maximus.oxy_flux_up    = maximus.oxy_flux_up     * mapRatio.ratio
            maximus.helium_flux_up = maximus.helium_flux_up  * mapRatio.ratio
@@ -291,7 +291,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ENDIF
 
      ;;Added 2016/04/23
-     IF KEYWORD_SET(map_esa_current) THEN BEGIN
+     IF KEYWORD_SET(map_esa_current) AND ~maximus.info.mapped.esa_current THEN BEGIN
         maximus.esa_current       = maximus.esa_current * mapRatio.ratio
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->07-ESA_CURRENT'
         correctStr += '-->07-ESA_CURRENT' + STRING(10B)
@@ -313,7 +313,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         END
      ENDCASE
 
-     IF KEYWORD_SET(map_pflux) THEN BEGIN
+     IF KEYWORD_SET(map_pflux) AND ~maximus.info.mapped.pFlux THEN BEGIN
         maximus.pFluxEst          = maximus.pFluxEst         * mapRatio.ratio
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->49-PFLUXEST'
         correctStr += '-->49-PFLUXEST' + STRING(10B)
@@ -321,7 +321,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         maximus.info.mapped.pFlux = 1
      ENDIF
 
-     IF KEYWORD_SET(map_ionflux) THEN BEGIN
+     IF KEYWORD_SET(map_ionflux) AND ~maximus.info.mapped.ion_flux THEN BEGIN
         maximus.ion_energy_flux   = maximus.ion_energy_flux  * mapRatio.ratio
         maximus.ion_flux          = maximus.ion_flux         * mapRatio.ratio
         maximus.ion_flux_up       = maximus.ion_flux_up      * mapRatio.ratio
@@ -333,7 +333,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         maximus.info.mapped.ion_flux = 1
      ENDIF
 
-     IF KEYWORD_SET(map_width_t) THEN BEGIN
+     IF KEYWORD_SET(map_width_t) AND ~maximus.info.mapped.width_time THEN BEGIN
         maximus.width_time             = maximus.width_time / SQRT(mapRatio.ratio)
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->20-WIDTH_TIME'
         correctStr += '-->20-WIDTH_TIME' + STRING(10B)
@@ -341,7 +341,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         maximus.info.mapped.width_time = 1
      ENDIF
 
-     IF KEYWORD_SET(map_width_x) THEN BEGIN
+     IF KEYWORD_SET(map_width_x) AND ~maximus.info.mapped.width_x THEN BEGIN
         maximus.width_x           = maximus.width_x / SQRT(mapRatio.ratio)
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->21-WIDTH_X'
         correctStr += '-->21-WIDTH_X' + STRING(10B)

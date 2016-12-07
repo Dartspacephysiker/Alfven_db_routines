@@ -334,9 +334,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   ;;    maskMin = defMaskMin
   ;; ENDIF
   IF N_ELEMENTS(tHist_mask_bins_below_thresh) GT 0 THEN BEGIN
-     IF tHist_mask_bins_below_thresh GT 1 THEN BEGIN
+     ;; IF tHist_mask_bins_below_thresh GT 1 THEN BEGIN
         tMaskStr = '-tThresh_' + STRING(FORMAT='(I0)',tHist_mask_bins_below_thresh)
-     ENDIF
+     ;; ENDIF
   ENDIF
   
   EABinStr = ''

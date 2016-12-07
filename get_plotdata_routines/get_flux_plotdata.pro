@@ -1037,7 +1037,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      IF KEYWORD_SET(for_eSpec) THEN BEGIN
         inData        = inData * NEWELL__delta_t
      ENDIF ELSE BEGIN
-        inData        = inData * maximus.width_time
+        inData        = inData * maximus.width_time 
      ENDELSE
      dataName         = 'timeAvgd_' + dataName
   ENDIF

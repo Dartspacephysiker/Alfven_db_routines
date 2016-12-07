@@ -510,7 +510,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                  mlts,ilats, $
                  EQUAL_AREA_BINNING=EA_binning, $
                  BINSIZE_LON=binM, $
-                 SHIFT_LON=temp.shift1, $
+                 SHIFT_LON=KEYWORD_SET(EA_binning) ? 0.0  : (temp.shift1), $
                  BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
                  /CONVERT_MLT_TO_LON, $
                  /MOREPOINTS, $

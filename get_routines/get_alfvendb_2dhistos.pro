@@ -1,8 +1,6 @@
 PRO GET_ALFVENDB_2DHISTOS, $
-   ;; maximus, $
    plot_i, $
    fastLocInterped_i, $
-   CDBTIME=cdbTime, $
    H2DSTRARR=h2dStrArr, $
    KEEPME=keepMe, $
    DATARAWPTRARR=dataRawPtrArr, $
@@ -328,7 +326,11 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
      ENDIF
 
-     IF KEYWORD_SET(eFlux_eSpec_data) OR KEYWORD_SET(iFlux_eSpec_data) THEN BEGIN
+     IF KEYWORD_SET(eFlux_eSpec_data   ) OR $
+        KEYWORD_SET(eNumFlux_eSpec_data) OR $
+        KEYWORD_SET(iFlux_eSpec_data   ) OR $
+        KEYWORD_SET(iNumFlux_eSpec_data)    $
+     THEN BEGIN
         eSpec_tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
                                  fastLocInterped_i, $
                                  HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
@@ -1901,7 +1903,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                            VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
                            VAR__AUTOSCALE=var__autoscale, $
                            VARPLOTH2DINDS=varPlotH2DInds, $
-                           DBTIMES=cdbTime, $
+                           DBTIMES=KEYWORD_SET(no_maximus) ? MAXIMUS__times : !NULL, $
                            ;; DONT_USE_THESE_INDS=dont_use_these_inds, $
                            DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                            GROSSRATE__H2D_AREAS=h2dAreas, $

@@ -4,7 +4,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                            DATANAMEARR=dataNameArr, $
                            H2DMASKARR=h2dMaskArr, $
                            TEMPFILE=tempFile, $
-                           EQUAL_AREA_BINNING=equal_area_binning, $
+                           EQUAL_AREA_BINNING=EA_binning, $
                            SQUAREPLOT=squarePlot, $
                            POLARCONTOUR=polarContour, $ 
                            SHOWPLOTSNOSAVE=showPlotsNoSave, $
@@ -455,7 +455,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  ENDIF
 
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[j],tempFile, $
-                                       EQUAL_AREA_BINNING=equal_area_binning, $
+                                       EQUAL_AREA_BINNING=EA_binning, $
                                        H2DMASK=h2dMask, $
                                        NO_COLORBAR=no_cb, $
                                        WINDOW_XSIZE=xSize, $
@@ -496,7 +496,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                     OP__H2DStrArr[j].mask     = OP__H2DMaskArr[j].data
                     PLOTH2D_STEREOGRAPHIC,OP__H2DStrArr[j],OP__overplot_file, $
                                           /OVERPLOT, $
-                                          EQUAL_AREA_BINNING=equal_area_binning, $
+                                          EQUAL_AREA_BINNING=EA_binning, $
                                           H2DMASK=h2dMask, $
                                           NO_COLORBAR=no_cb, $
                                           WINDOW_XSIZE=xSize, $
@@ -765,7 +765,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  ENDIF
 
                  PLOTH2D_STEREOGRAPHIC,h2dStrArr[i],tempFile, $
-                                       EQUAL_AREA_BINNING=equal_area_binning, $
+                                       EQUAL_AREA_BINNING=EA_binning, $
                                        NO_COLORBAR=no_cb, $
                                        WINDOW_XSIZE=xSize, $
                                        WINDOW_YSIZE=ySize, $

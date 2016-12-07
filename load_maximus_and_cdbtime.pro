@@ -179,9 +179,18 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
         STOP
      ENDIF
   ENDIF ELSE BEGIN
-     IF ~KEYWORD_SET(quiet) THEN BEGIN
-        PRINTF,lun,"There is already a maximus struct loaded! Not loading " + DBFile
-     ENDIF
+
+     IF KEYWORD_SET(noMem) THEN BEGIN
+        PRINT,"Sending maximus from vars loaded in memory ..."
+        maximus  = TEMPORARY(MAXIMUS__maximus)
+        cdbTime  = TEMPORARY(MAXIMUS__times)
+        DBFile   = TEMPORARY(MAXIMUS__DBFile)
+        DB_tFile = TEMPORARY(MAXIMUS__DB_tFile)
+     ENDIF ELSE BEGIN
+        IF ~KEYWORD_SET(quiet) THEN BEGIN
+           PRINTF,lun,"There is already a maximus struct loaded! Not loading " + DBFile
+        ENDIF
+     ENDELSE
 
      DBFile    = N_ELEMENTS(MAXIMUS__dbFile)      GT 0 ? MAXIMUS__dbFile      : '(blank)'
      DB_tFile  = N_ELEMENTS(MAXIMUS__dbTimesFile) GT 0 ? MAXIMUS__dbTimesFile : '(blank)'
