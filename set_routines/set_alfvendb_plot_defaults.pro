@@ -14,15 +14,23 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    DISREGARD_SAMPLE_T=disregard_sample_t, $
    DONT_BLACKBALL_MAXIMUS=dont_blackball_maximus, $
    DONT_BLACKBALL_FASTLOC=dont_blackball_fastloc, $
-   MINMLT=minMLT,MAXMLT=maxMLT, $
+   MINMLT=minMLT, $
+   MAXMLT=maxMLT, $
    BINMLT=binMLT, $
    SHIFTMLT=shiftMLT, $
-   MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
+   MINILAT=minILAT, $
+   MAXILAT=maxILAT, $
+   BINILAT=binILAT, $
    EQUAL_AREA_BINNING=EA_binning, $
-   DO_LSHELL=do_lShell,MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
+   DO_LSHELL=do_lShell, $
+   MINLSHELL=minLshell, $
+   MAXLSHELL=maxLshell, $
+   BINLSHELL=binLshell, $
    REVERSE_LSHELL=reverse_lShell, $
-   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
-   HWMAUROVAL=HwMAurOval,HWMKPIND=HwMKpInd, $
+   MIN_MAGCURRENT=minMC, $
+   MAX_NEGMAGCURRENT=maxNegMC, $
+   HWMAUROVAL=HwMAurOval, $
+   HWMKPIND=HwMKpInd, $
    MASKMIN=maskMin, $
    THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
    DESPUNDB=despunDB, $
@@ -37,11 +45,15 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    DAYSIDE=dayside, $
    NIGHTSIDE=nightside, $
    NPLOTS=nPlots, $
-   EPLOTS=ePlots, EFLUXPLOTTYPE=eFluxPlotType, $
-   ENUMFLPLOTS=eNumFlPlots, ENUMFLPLOTTYPE=eNumFlPlotType, $
+   EPLOTS=ePlots, $
+   EFLUXPLOTTYPE=eFluxPlotType, $
+   ENUMFLPLOTS=eNumFlPlots, $
+   ENUMFLPLOTTYPE=eNumFlPlotType, $
    PPLOTS=pPlots, $
-   IONPLOTS=ionPlots, IFLUXPLOTTYPE=ifluxPlotType, $
-   CHAREPLOTS=charEPlots, CHARETYPE=charEType, $
+   IONPLOTS=ionPlots, $
+   IFLUXPLOTTYPE=ifluxPlotType, $
+   CHAREPLOTS=charEPlots, $
+   CHARETYPE=charEType, $
    CHARIEPLOTS=chariEPlots, $
    AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
@@ -78,20 +90,30 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    AE_LOW=AE_low, $
    AE_BOTH=AE_both, $
    USE_MOSTRECENT_AE_FILES=use_mostRecent_AE_files, $
-   ORBCONTRIBPLOT=orbContribPlot, ORBTOTPLOT=orbTotPlot, ORBFREQPLOT=orbFreqPlot, $
+   ORBCONTRIBPLOT=orbContribPlot, $
+   ORBTOTPLOT=orbTotPlot, $
+   ORBFREQPLOT=orbFreqPlot, $
    NEVENTPERORBPLOT=nEventPerOrbPlot, $
    NEVENTPERMINPLOT=nEventPerMinPlot, $
    PROBOCCURRENCEPLOT=probOccurrencePlot, $
-   SQUAREPLOT=squarePlot, POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
-   MEDIANPLOT=medianPlot, LOGAVGPLOT=logAvgPlot, PLOTMEDORAVG=plotMedOrAvg, $
-   DATADIR=dataDir, NO_BURSTDATA=no_burstData, $
-   WRITEASCII=writeASCII, WRITEHDF5=writeHDF5, WRITEPROCESSEDH2D=writeProcessedH2d, $
+   SQUAREPLOT=squarePlot, $
+   POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
+   MEDIANPLOT=medianPlot, $
+   LOGAVGPLOT=logAvgPlot, $
+   PLOTMEDORAVG=plotMedOrAvg, $
+   DATADIR=dataDir, $
+   NO_BURSTDATA=no_burstData, $
+   WRITEASCII=writeASCII, $
+   WRITEHDF5=writeHDF5, $
+   WRITEPROCESSEDH2D=writeProcessedH2d, $
    SAVERAW=saveRaw, RAWDIR=rawDir, $
    SHOWPLOTSNOSAVE=showPlotsNoSave, $
    MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
    OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
    KEEPME=keepMe, $
-   PARAMSTRING=paramString,PARAMSTRPREFIX=paramStrPrefix,PARAMSTRSUFFIX=paramStrSuffix,$
+   PARAMSTRING=paramString, $
+   PARAMSTRPREFIX=paramStrPrefix, $
+   PARAMSTRSUFFIX=paramStrSuffix,$
    PLOTH2D_CONTOUR=plotH2D_contour, $
    PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
    HOYDIA=hoyDia,LUN=lun, $

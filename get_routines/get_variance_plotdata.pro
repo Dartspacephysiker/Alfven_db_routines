@@ -54,16 +54,20 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
 
   nLoops           = 0
   loopType         = !NULL
+  ;; nThisLoop        = !NULL
   IF nAlfDB GT 0 THEN BEGIN
-     nLoops++
+     ;; nThisLoop    = [nThisLoop,nAlfDB]
      loopType     = [loopType,0]
+     nLoops++
   ENDIF
 
   IF nESpec GT 0 THEN BEGIN
-     nLoops++
+     ;; nThisLoop    = [nThisLoop,nESpec]
      loopType     = [loopType,1]
+     nLoops++
   ENDIF
 
+  ;; FOR kj=0,nLoops-1 DO BEGIN
   FOR k=0,nLoops-1 DO BEGIN
 
      ;;Maximus or eSpec?
@@ -98,16 +102,18 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
         /RESET_H2D_LISTS_WITH_INDS, $
         LUN=lun
 
-     FOR i=0,N_ELEMENTS(nVarInds)-1 DO BEGIN
+     FOR i=0,nVarInds-1 DO BEGIN
         
         dbStruct_obsArr                   = *dataRawPtrArr[tmpVarRaw_i[i]]
         IF N_ELEMENTS((removed_ii_listArr[i])[0]) GT 0 THEN BEGIN
            CASE loopType OF
               0: BEGIN
-                 dont_use_these_inds      = (removed_ii_listArr[tmpVarRaw_i[i]])[0]
+                 ;; dont_use_these_inds      = (removed_ii_listArr[tmpVarRaw_i[i]])[0]
+                 dont_use_these_inds      = (removed_ii_listArr[i])[0]
               END
               1: BEGIN
-                 dont_use_these_inds      = CGSETINTERSECTION(in_inds,(removed_ii_listArr[tmpVarRaw_i[i]])[0],COUNT=dontDoIt)
+                 ;; dont_use_these_inds      = CGSETINTERSECTION(in_inds,(removed_ii_listArr[tmpVarRaw_i[i]])[0],COUNT=dontDoIt)
+                 dont_use_these_inds      = CGSETINTERSECTION(in_inds,(removed_ii_listArr[i])[0],COUNT=dontDoIt)
               END
            ENDCASE
         ENDIF ELSE BEGIN 
@@ -238,6 +244,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
      ENDFOR
 
   ENDFOR
+  ;; ENDFOR
 
 
 

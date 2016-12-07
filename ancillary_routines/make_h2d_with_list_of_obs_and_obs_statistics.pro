@@ -341,7 +341,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   
   ;;close output, if we've been doing ... it
   IF KEYWORD_SET(output_textFile) AND ~KEYWORD_SET(skip) THEN BEGIN
-     PRINTF,lun,'Finished writing ' + outDir+outFileName
+     ;; PRINTF,lun,'Finished writing ' + outDir+outFileName
      CLOSE,textLun
      FREE_LUN,textLun
   ENDIF

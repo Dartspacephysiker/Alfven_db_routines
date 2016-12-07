@@ -2,7 +2,7 @@ PRO CLEAR_ALF_NEWELL_COMMON_VARS
 
   COMPILE_OPT idl2 
 
-  COMMON NWLL_ALF
+  @common__newell_alf.pro
 
   PRINT,'Clearing NWLL_ALF COMMON vars ...'
 

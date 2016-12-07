@@ -1903,7 +1903,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                            VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
                            VAR__AUTOSCALE=var__autoscale, $
                            VARPLOTH2DINDS=varPlotH2DInds, $
-                           DBTIMES=KEYWORD_SET(no_maximus) ? MAXIMUS__times : !NULL, $
+                           DBTIMES=KEYWORD_SET(no_maximus) ?  !NULL : MAXIMUS__times, $
                            ;; DONT_USE_THESE_INDS=dont_use_these_inds, $
                            DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                            GROSSRATE__H2D_AREAS=h2dAreas, $
