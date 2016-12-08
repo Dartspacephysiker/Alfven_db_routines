@@ -26,6 +26,7 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                 is_noRestrict    : 0B, $
                 is_mapped        : 0B, $
                 dILAT_not_dt     : 0B, $
+                dAngle_not_dt    : 0B, $
                 dx_not_dt        : 0B, $
                 for_eSpecDB      : 0B, $
                 coords           : 'SDT'}
@@ -52,6 +53,7 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                                     width_time  : 0B, $
                                     width_x     : 0B}, $
                 dILAT_not_dt     : 0B, $
+                dAngle_not_dt    : 0B, $
                 dx_not_dt        : 0B}
      END
   ENDCASE

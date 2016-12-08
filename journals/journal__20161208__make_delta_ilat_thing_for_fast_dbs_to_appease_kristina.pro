@@ -4,16 +4,16 @@ PRO JOURNAL__20161208__MAKE_DELTA_ILAT_THING_FOR_FAST_DBS_TO_APPEASE_KRISTINA
 
   COMPILE_OPT IDL2
 
-  do_eSpecDB       = 0
-
+  do_eSpecDB       = 1
   do_alfDB         = 0
 
-  do_fastLocDB     = 1
+  do_fastLocDB     = 0
   FL_for_eSpec_DBs = 0
 
   bad = KEYWORD_SET(do_eSpecDB) + KEYWORD_SET(do_alfDB) + KEYWORD_SET(do_fastLocDB)
   IF bad GT 2 THEN STOP
 
+  stdOutSuff = '-delta_ilats.sav'
   CASE 1 OF
      KEYWORD_SET(do_alfDB): BEGIN
         PRINT,"Alfvén DB ..."
@@ -23,17 +23,19 @@ PRO JOURNAL__20161208__MAKE_DELTA_ILAT_THING_FOR_FAST_DBS_TO_APPEASE_KRISTINA
         dbStruct_delta_t = dbStruct.width_time
 
         outDir  = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
-        outFile = GET_FAST_DB_STRING(dbStruct,/FOR_ALFDB) + 'delta_ilats.sav'
+        outFile = GET_FAST_DB_STRING(dbStruct,/FOR_ALFDB) 
      END
      KEYWORD_SET(do_eSpecDB): BEGIN
         PRINT,"eSpec DB ..."
-        LOAD_NEWELL_ESPEC_DB,dbStruct,timeArr,dbStruct_delta_t, $
+        LOAD_NEWELL_ESPEC_DB,dbStruct,!NULL,dbStruct_delta_t, $
                              /DONT_MAP_TO_100KM, $
                              /LOAD_DELTA_T, $
                              /NO_MEMORY_LOAD
 
-        outDir = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/fully_parsed/'
-        outFile = GET_FAST_DB_STRING(dbStruct,/FOR_ESPEC_DB) + 'delta_ilats.sav'
+        timeArr = dbStruct.x
+
+        outDir  = '/SPENCEdata/Research/database/FAST/dartdb/electron_Newell_db/fully_parsed/'
+        outFile = GET_FAST_DB_STRING(dbStruct,/FOR_ESPEC_DB) 
 
      END
      ELSE: BEGIN
@@ -43,15 +45,18 @@ PRO JOURNAL__20161208__MAKE_DELTA_ILAT_THING_FOR_FAST_DBS_TO_APPEASE_KRISTINA
                                        FOR_ESPEC_DBS=FL_for_eSpec_DBs, $
                                        /DO_NOT_MAP_DELTA_T
 
-        outDir  = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals4/'
+        outDir     = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals4/'
         IF KEYWORD_SET(FL_for_eSpec_DBs) THEN BEGIN
            outDir  = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals5/'
         ENDIF
 
-        outFile = GET_FAST_DB_STRING(dbStruct,/FOR_FASTLOC_DB) + 'delta_ilats.sav'
+        outFile    = GET_FAST_DB_STRING(dbStruct,/FOR_FASTLOC_DB) 
 
      END
   ENDCASE
+
+  outFile += stdOutSuff
+  dbInfo  = (TEMPORARY(dbStruct)).info
 
   PRINT,'Creating delta-ILAT file: ' + outFile
   PRINT,'Output dir              : ' + outDir
@@ -62,7 +67,7 @@ PRO JOURNAL__20161208__MAKE_DELTA_ILAT_THING_FOR_FAST_DBS_TO_APPEASE_KRISTINA
      IF ABS(total(dbStruct_delta_t[this])) GT 0.1 THEN STOP
   ENDIF
 
-  nEvents = N_ELEMENTS(dbStruct.ilat)
+  nEvents = N_ELEMENTS(dbStruct_delta_t)
   tStart  = TEMPORARY(timeArr)
   tStop   = tStart + DOUBLE(dbStruct_delta_t)
 
