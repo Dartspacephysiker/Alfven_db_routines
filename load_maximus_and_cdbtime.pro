@@ -226,12 +226,12 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
 
      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;What type of delta do you want?
-  bad = KEYWORD_SET(load_dILAT) + KEYWORD_SET(load_dx) + KEYWORD_SET(load_dAngle)
-  IF bad GT 1 THEN BEGIN
+  delta_stuff = KEYWORD_SET(load_dILAT) + KEYWORD_SET(load_dx) + KEYWORD_SET(load_dAngle)
+  IF delta_stuff GT 1 THEN BEGIN
      PRINT,"Can't have it all."
      STOP
   ENDIF ELSE BEGIN
-     dILAT_file         = GET_FAST_DB_STRING(maximus,/FOR_ALFDB) + '-delta_ilats.sav'
+     dILAT_file         = GET_FAST_DB_STRING(maximus,/FOR_ALFDB) + 'delta_ilats.sav'
      RESTORE,DBDir+dILAT_file
   ENDELSE
 

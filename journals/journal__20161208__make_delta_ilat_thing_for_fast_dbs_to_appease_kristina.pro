@@ -130,7 +130,7 @@ PRO JOURNAL__20161208__MAKE_DELTA_ILAT_THING_FOR_FAST_DBS_TO_APPEASE_KRISTINA
 
   dILAT_info = {routine_name : 'JOURNAL__20161208__MAKE_DELTA_ILAT_THING_FOR_FASTLOC_TO_APPEASE_KRISTINA', $
                 routine_dir  : '/SPENCEdata/Research/Satellites/FAST/Alfven_db_routines/journals/', $
-                dbInfo       : dbStruct.info}
+                dbInfo       : dbInfo}
 
   PRINT,'Done! Saving to ' + outFile + ' ...'
   SAVE,width_x, $

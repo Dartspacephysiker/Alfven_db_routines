@@ -39,6 +39,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    USE_AACGM_COORDS=use_aacgm, $
    USE_MAG_COORDS=use_MAG, $
    LOAD_DELTA_ILAT_FOR_WIDTH_TIME=load_dILAT, $
+   LOAD_DELTA_ANGLE_FOR_WIDTH_TIME=load_dAngle, $
+   LOAD_DELTA_X_FOR_WIDTH_TIME=load_dx, $
    HEMI=hemi, $
    NORTH=north, $
    SOUTH=south, $
@@ -303,7 +305,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      END
   ENDCASE
 
-  IF KEYWORD_SET(load_dILAT) THEN coordStr += '_dI'
+  IF KEYWORD_SET(load_dILAT ) THEN coordStr += '_dI'
+  IF KEYWORD_SET(load_dAngle) THEN coordStr += '_dA'
+  IF KEYWORD_SET(load_dx    ) THEN coordStr += '_dx'
 
   ;;Hz32 only possible if we haven't manually set sample_t_restriction
   sampTStr  = ''
@@ -451,6 +455,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          despunDB                          : 0B, $
                          chastDB                           : 0B, $
                          load_dILAT                        : 0B, $
+                         load_dAngle                       : 0B, $
+                         load_dx                           : 0B, $
                          nPlots                            : 0B, $
                          ePlots                            : 0B, $
                          eNumFlPlots                       : 0B, $
@@ -700,6 +706,16 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(load_dILAT) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'load_dILAT', $
                     BYTE(load_dILAT),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(load_dAngle) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'load_dAngle', $
+                    BYTE(load_dAngle),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(load_dx) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'load_dx', $
+                    BYTE(load_dx),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(chastDB) GT 0 THEN BEGIN

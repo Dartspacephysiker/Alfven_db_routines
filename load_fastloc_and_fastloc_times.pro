@@ -261,8 +261,8 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
         ENDIF
 
-        bad = KEYWORD_SET(load_dILAT) + KEYWORD_SET(load_dx) + KEYWORD_SET(load_dAngle)
-        IF bad GT 1 THEN BEGIN
+        delta_stuff = KEYWORD_SET(load_dILAT) + KEYWORD_SET(load_dx) + KEYWORD_SET(load_dAngle)
+        IF delta_stuff GT 1 THEN BEGIN
            PRINT,"Can't have it all."
            STOP
         ENDIF ELSE BEGIN
@@ -286,7 +286,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
            fastLoc.info.dAngle_not_dt = 1
         ENDIF
 
-        IF KEYWORD_SET(load_dAngle) THEN BEGIN
+        IF KEYWORD_SET(load_dx) THEN BEGIN
            PRINT,"Replacing fastLoc_delta_t with dx ..."
 
            fastLoc_delta_t           = TEMPORARY(ABS(FLOAT(width_x)))
