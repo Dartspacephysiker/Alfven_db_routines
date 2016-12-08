@@ -31,6 +31,9 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              FORCE_LOAD_BOTH=force_load_BOTH, $
                              JUST_MAXIMUS=just_maximus, $
                              JUST_CDBTIME=just_cdbTime, $
+                             LOAD_DELTA_ILAT_FOR_WIDTH_TIME=load_dILAT, $
+                             ;; LOAD_DELTA_ANGLE_FOR_WIDTH_TIME=load_dAngle, $
+                             LOAD_DELTA_X_FOR_WIDTH_TIME=load_dx, $
                              CHECK_DB=check_DB, $
                              QUIET=quiet, $
                              CLEAR_MEMORY=clear_memory, $
@@ -220,6 +223,38 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
 
      DB_tFile = MAXIMUS__dbTimesFile
   ENDELSE
+
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;What type of delta do you want?
+  bad = KEYWORD_SET(load_dILAT) + KEYWORD_SET(load_dx) + KEYWORD_SET(load_dAngle)
+  IF bad GT 1 THEN BEGIN
+     PRINT,"Can't have it all."
+     STOP
+  ENDIF
+
+  IF KEYWORD_SET(load_dILAT) THEN BEGIN
+     PRINT,"Not mapping anything, and replacing width_time with dILAT ..."
+
+     no_mapping = 1
+
+     dILAT_file         = GET_FAST_DB_STRING(maximus,/FOR_ALFDB) + 'delta_ilats.sav'
+     RESTORE,DBDir+dILAT_file
+
+     maximus.width_time        = ABS(FLOAT(width_ILAT))
+     maximus.info.dILAT_not_dt = 1B
+  ENDIF
+  
+  IF KEYWORD_SET(load_dx) THEN BEGIN
+     PRINT,"Not mapping anything, and replacing width_time with dx ..."
+
+     no_mapping          = 1
+
+     dILAT_file         = GET_FAST_DB_STRING(maximus,/FOR_ALFDB) + 'delta_ilats.sav'
+     RESTORE,DBDir+dILAT_file
+
+     maximus.width_time        = ABS(FLOAT(width_x))
+     maximus.info.dx_not_dt    = 1B
+  ENDIF
 
   IF correct_fluxes AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
      CORRECT_ALFVENDB_FLUXES,maximus, $

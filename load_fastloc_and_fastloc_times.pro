@@ -15,6 +15,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    ;; CHECK_DB=check_DB, $
                                    JUST_FASTLOC=just_fastLoc, $
                                    JUST_TIMES=just_times, $
+                                   LOAD_DELTA_ILAT_NOT_DELTA_T=load_dILAT, $
                                    DO_NOT_MAP_DELTA_T=do_not_map_delta_t, $
                                    NO_MEMORY_LOAD=noMem, $
                                    CLEAR_MEMORY=clear_memory, $
@@ -115,6 +116,8 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
         defDB_tFile  = 'fastLoc_intervals5--20161129--500-16361--Je_times--time_and_delta_t.sav'
 
+        dILAT_file   = 'fastLocDB-20161129_v0_0--no_TIME_tag--no_interval_startstopdelta_ilats.sav'
+
         mapRatDir    = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
         mapRatFile   = 'mapratio_for_fastLoc_intervals5--20161129--500-16361--Je_times.sav'
      END
@@ -129,6 +132,8 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         AACGM_file   = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_coords.sav'
         GEO_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--GEO_coords.sav'
         MAG_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--MAG_coords.sav'
+
+        dILAT_file   = 'fastLocDB-20160505_v0_0--samp_t_le_0.01delta_ilats.sav'
 
         mapRatDir    = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
         mapRatFile   = 'mapratio_for_fastLoc_intervals4--500-16361--below_aur_oval--20160213--times--noDupes--sample_freq_le_0.01.dat'
@@ -255,6 +260,15 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
               PRINT,"Couldn't load fastloc_times!"
               STOP
            ENDELSE
+
+        ENDIF
+
+        IF KEYWORD_SET(load_dILAT) THEN BEGIN
+           PRINT,"Replacing fastLoc_delta_t with delta_ILAT ..."
+           RESTORE,DBDir+dILAT_file
+           fastLoc_delta_t           = TEMPORARY(ABS(FLOAT(width_ILAT)))
+           do_not_map_delta_t        = 1
+           fastLoc.info.dILAT_not_dt = 1
         ENDIF
 
         IF KEYWORD_SET(do_not_map_delta_t) THEN BEGIN

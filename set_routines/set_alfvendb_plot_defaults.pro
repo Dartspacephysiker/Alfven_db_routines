@@ -38,6 +38,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    COORDINATE_SYSTEM=coordinate_system, $
    USE_AACGM_COORDS=use_aacgm, $
    USE_MAG_COORDS=use_MAG, $
+   LOAD_DELTA_ILAT_FOR_WIDTH_TIME=load_dILAT, $
    HEMI=hemi, $
    NORTH=north, $
    SOUTH=south, $
@@ -302,6 +303,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      END
   ENDCASE
 
+  IF KEYWORD_SET(load_dILAT) THEN coordStr += '_dI'
+
   ;;Hz32 only possible if we haven't manually set sample_t_restriction
   sampTStr  = ''
   IF KEYWORD_SET(disregard_sample_t) AND KEYWORD_SET(include_32Hz) THEN STOP
@@ -447,6 +450,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          tHist_mask_bins_below_thresh      : 0B, $
                          despunDB                          : 0B, $
                          chastDB                           : 0B, $
+                         load_dILAT                        : 0B, $
                          nPlots                            : 0B, $
                          ePlots                            : 0B, $
                          eNumFlPlots                       : 0B, $
@@ -469,7 +473,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          eSpec__noMap                      : 0B, $
                          eSpec__remove_outliers            : 0B, $
                          eSpec__newellPlot_probOccurrence  : 0B, $
-                         eSpec__t_probOccurrence           : 0B, $
+                         t_probOccurrence                  : 0B, $
                          orbContribPlot                    : 0B, $
                          orbTotPlot                        : 0B, $
                          orbFreqPlot                       : 0B, $
@@ -693,6 +697,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(despunDB),/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(load_dILAT) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'load_dILAT', $
+                    BYTE(load_dILAT),/ADD_REPLACE
+     ENDIF
+
      IF N_ELEMENTS(chastDB) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'chastDB', $
                     BYTE(chastDB),/ADD_REPLACE
@@ -828,9 +837,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(eSpec__newellPlot_probOccurrence),/ADD_REPLACE
      ENDIF
 
-     IF N_ELEMENTS(eSpec__t_probOccurrence) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'eSpec__t_probOccurrence', $
-                    BYTE(eSpec__t_probOccurrence),/ADD_REPLACE
+     IF N_ELEMENTS(t_probOccurrence) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'t_probOccurrence', $
+                    BYTE(t_probOccurrence),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(orbContribPlot) GT 0 THEN BEGIN

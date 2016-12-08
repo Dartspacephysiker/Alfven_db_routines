@@ -294,6 +294,11 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
               widthTDat *= SQRT((TEMPORARY(mapRatio)).ratio)
            ENDIF
 
+           IF maximus.info.dILAT_not_dt THEN BEGIN
+              PRINT,"Screening maximus filament widths based on dILAT, not dt"
+              width_t_cutoff = 2.
+           ENDIF
+
            good_i = CGSETINTERSECTION(good_i, $
                                       WHERE(widthTDat LE width_t_cutoff,/NULL), $
                                       COUNT=nKept,NORESULT=-1)
