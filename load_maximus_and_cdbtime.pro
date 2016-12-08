@@ -238,7 +238,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   IF KEYWORD_SET(load_dILAT) THEN BEGIN
      PRINT,"Not mapping anything, and replacing width_time with dILAT ..."
 
-     no_mapping = 1
+     ;; no_mapping                 = 1
+     do_not_map_width_t        = 1
 
      maximus.width_time        = ABS(FLOAT(width_ILAT))
      maximus.info.dILAT_not_dt = 1B
@@ -247,7 +248,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   IF KEYWORD_SET(load_dAngle) THEN BEGIN
      PRINT,"Not mapping anything, and replacing width_time with dAngle ..."
 
-     no_mapping                 = 1
+     ;; no_mapping                 = 1
+     do_not_map_width_t         = 1
 
      maximus.width_time         = ABS(FLOAT(width_angle))
      maximus.info.dAngle_not_dt = 1B
@@ -256,7 +258,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   IF KEYWORD_SET(load_dx) THEN BEGIN
      PRINT,"Not mapping anything, and replacing width_time with dx ..."
 
-     no_mapping                = 1
+     ;; no_mapping                = 1
 
      maximus.width_time        = ABS(FLOAT(width_x))
      maximus.info.dx_not_dt    = 1B

@@ -1,5 +1,7 @@
 ;;12/07/16
-PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1,alfDB_plot_struct2,RESET=reset
+PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
+                              alfDB_plot_struct2, $
+                              RESET=reset
 
   COMPILE_OPT IDL2
 
@@ -50,6 +52,8 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1,alfDB_plot_struct2,RESET=reset
                  "plotH2D_contour"                , $
                  "plotH2D__kernel_density_unmask" , $
                  "hoyDia"                         ]
+
+  ;; dbs__except_list = [
 
   ;; except_list = ["NPLOTS", $
   ;;                "EPLOTS", $

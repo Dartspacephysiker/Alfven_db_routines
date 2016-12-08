@@ -290,7 +290,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
            PRINT,"Replacing fastLoc_delta_t with dx ..."
 
            fastLoc_delta_t           = TEMPORARY(ABS(FLOAT(width_x)))
-           do_not_map_delta_t        = 1
+           ;; do_not_map_delta_t        = 0
            fastLoc.info.dx_not_dt    = 1
         ENDIF
 
