@@ -406,7 +406,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  ENDCASE
 
                  ;;handle map position
-                 IF KEYWORD_SET(no_cb) THEN BEGIN
+                 IF KEYWORD_SET(no_cb) AND (nBlanks GT 0) THEN BEGIN
                     map_position     = position
                     map_position[0]  = (position[2]-position[0])*defMapNoCBPos[0]+position[0]
                     map_position[1]  = (position[3]-position[1])*defMapNoCBPos[1]+position[1]

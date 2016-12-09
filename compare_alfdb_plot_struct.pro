@@ -1,9 +1,11 @@
 ;;12/07/16
 PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
                               alfDB_plot_struct2, $
-                              RESET=reset
+                              INDS_RESET=inds_reset
 
   COMPILE_OPT IDL2
+
+  inds_reset  = 0B
 
   except_list = ["maskMin"                        , $
                  "tHist_mask_bins_below_thresh"   , $
@@ -40,7 +42,7 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
                  "writeHDF5"                      , $
                  "writeProcessedH2d"              , $
                  "saveRaw"                        , $
-                 "rawDir"                         , $
+                 "saveDir"                        , $
                  "showPlotsNoSave"                , $
                  "medHistOutData"                 , $
                  "medHistOutTxt"                  , $
@@ -51,6 +53,7 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
                  "paramStrSuffix"                 , $
                  "plotH2D_contour"                , $
                  "plotH2D__kernel_density_unmask" , $
+                 "executing_multiples"            , $
                  "hoyDia"                         ]
 
   ;; dbs__except_list = [
@@ -94,11 +97,18 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
   ;;                "IFLUXPLOTTYPE", $
   ;;                "CHARETYPE", $
   ;;                "DATADIR", $
-  ;;                "RAWDIR", $
+  ;;                "SAVEDIR", $
   ;;                "PARAMSTRPREFIX", $
   ;;                "PARAMSTRSUFFIX", $
   ;;                "HOYDIA"]
 
-  reset = (COMPARE_STRUCT(alfDB_plot_struct1,alfDB_plot_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)).nDiff GT 0
+  ;; inds_reset = (COMPARE_STRUCT(alfDB_plot_struct1,alfDB_plot_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)).nDiff GT 0
+  comp = COMPARE_STRUCT(alfDB_plot_struct1,alfDB_plot_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)
+
+  IF comp.nDiff GT 0 THEN BEGIN
+
+     
+     STOP
+  ENDIF
 
 END

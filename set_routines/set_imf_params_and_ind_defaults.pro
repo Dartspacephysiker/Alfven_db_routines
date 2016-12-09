@@ -91,6 +91,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
    BX_OVER_BY_RATIO_MIN=bx_over_by_ratio_min, $
    BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
    DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
+   SKIP_IMF_STRING=skip_IMF_string, $
    PARAMSTRING=paramString, $
    PARAMSTR_LIST=paramString_list, $
    SATELLITE=satellite, $
@@ -197,7 +198,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
   ;;Which IMF clock angle are we doing?
   ;;options are 'duskward', 'dawnward', 'bzNorth', 'bzSouth', and 'all_IMF'
   IF KEYWORD_SET(do_not_consider_imf) THEN BEGIN
-     clockStr                   = 'NO_IMF_CONSID'
+     clockStr                   = KEYWORD_SET(skip_IMF_string) ? '' : 'NO_IMF_CONSID'
      paramString                = paramString + '--' + clockStr
      paramString_list           = LIST(paramString)
   ENDIF ELSE BEGIN

@@ -8,7 +8,8 @@ PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile, $
                            BINI=binI, $
                            DO_LSHELL=do_lShell,REVERSE_LSHELL=reverse_lShell, $
                            MINL=minL,MAXL=maxL,BINL=binL,$
-                           RAWDIR=rawDir,PARAMSTR=paramStr,$
+                           SAVEDIR=saveDir, $
+                           PARAMSTR=paramStr,$
                            CLOCKSTR=clockStr,PLOTMEDORAVG=plotMedOrAvg, $
                            STABLEIMF=stableIMF, $
                            SMOOTH_IMF=smooth_IMF, $
@@ -41,7 +42,7 @@ PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile, $
   IF N_ELEMENTS(binL)           GT 0 THEN saveStr += ',binL'
   IF N_ELEMENTS(hemi)           GT 0 THEN saveStr += ',hemi'
   IF N_ELEMENTS(paramStr)       GT 0 THEN saveStr += ',paramStr'
-  IF N_ELEMENTS(rawDir)         GT 0 THEN saveStr += ',rawDir'
+  IF N_ELEMENTS(saveDir)        GT 0 THEN saveStr += ',saveDir'
   IF N_ELEMENTS(clockStr)       GT 0 THEN saveStr += ',clockStr'
   IF N_ELEMENTS(plotMedOrAvg)   GT 0 THEN saveStr += ',plotMedOrAvg'
   IF N_ELEMENTS(stableIMF)      GT 0 THEN saveStr += ',stableIMF'
@@ -56,7 +57,7 @@ PRO SAVE_ALFVENDB_TEMPDATA,TEMPFILE=tempFile, $
   out_tempFile                 = tempFile
 
   ;; save,h2dStrArr,dataNameArr,maxM,minM,maxI,minI,binM,binI,do_lShell,reverse_lShell,minL,maxL,binL,$
-  ;;      rawDir,clockStr,plotMedOrAvg,stableIMF,hoyDia,hemi,paramStr$
+  ;;      saveDir,clockStr,plotMedOrAvg,stableIMF,hoyDia,hemi,paramStr,saveDir$
   ;;      filename=tempFile
   
 

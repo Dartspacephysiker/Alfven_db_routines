@@ -309,6 +309,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
                  STOP
                  width_t_cutoff = 2.
               END
+              ELSE:
            ENDCASE
 
            good_i = CGSETINTERSECTION(good_i, $

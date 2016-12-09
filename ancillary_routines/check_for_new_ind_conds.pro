@@ -23,7 +23,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
               have_good_i       = 0
               RETURN
            ENDIF
-        ENDIF
+        ENDIF ELSE BEGIN
+           MIMC__RECALCULATE    = 1
+           have_good_i          = 0
+           RETURN
+        ENDELSE
      ENDIF
 
      test = !NULL
@@ -35,7 +39,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
               have_good_i       = 0
               RETURN
            ENDIF
-        ENDIF
+        ENDIF ELSE BEGIN
+           MIMC__RECALCULATE    = 1
+           have_good_i          = 0
+           RETURN
+        ENDELSE
      ENDIF
 
      test = !NULL
@@ -47,7 +55,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
               have_good_i       = 0
               RETURN
            ENDIF
-        ENDIF
+        ENDIF ELSE BEGIN
+           MIMC__RECALCULATE    = 1
+           have_good_i          = 0
+           RETURN
+        ENDELSE
      ENDIF
 
      test = !NULL
@@ -67,12 +79,16 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
      IF SIZE(test,/TYPE) NE 0 THEN BEGIN
 
         IF N_ELEMENTS(MIMC__charERange) GT 0 THEN BEGIN
-           IF ~ARRAY_EQUAL(MIMC__charERange,charERange) THEN BEGIN
+           IF ~ARRAY_EQUAL(MIMC__charERange,alfDB_plot_struct.charERange) THEN BEGIN
               MIMC__RECALCULATE = 1
               have_good_i       = 0
               RETURN
            ENDIF
-        ENDIF
+        ENDIF ELSE BEGIN
+           MIMC__RECALCULATE    = 1
+           have_good_i          = 0
+           RETURN
+        ENDELSE
      ENDIF
 
      test = !NULL
@@ -84,7 +100,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
               have_good_i       = 0
               RETURN
            ENDIF
-        ENDIF
+        ENDIF ELSE BEGIN
+           MIMC__RECALCULATE    = 1
+           have_good_i          = 0
+           RETURN
+        ENDELSE
      ENDIF
 
      test = !NULL
@@ -96,7 +116,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
               have_good_i       = 0
               RETURN
            ENDIF
-        ENDIF
+        ENDIF ELSE BEGIN
+           MIMC__RECALCULATE    = 1
+           have_good_i          = 0
+           RETURN
+        ENDELSE
      ENDIF
 
      test = !NULL
@@ -112,6 +136,7 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
         ENDIF ELSE BEGIN
            MIMC__RECALCULATE     = 1
            have_good_i           = 0
+           RETURN
         ENDELSE
      ENDIF
 
@@ -128,6 +153,7 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
         ENDIF ELSE BEGIN
            MIMC__RECALCULATE     = 1
            have_good_i           = 0
+           RETURN
         ENDELSE
      ENDIF
 
@@ -144,6 +170,7 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
         ENDIF ELSE BEGIN
            MIMC__RECALCULATE     = 1
            have_good_i           = 0
+           RETURN
         ENDELSE
      ENDIF
 
@@ -158,7 +185,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -170,7 +201,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
 
@@ -183,7 +218,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -195,7 +234,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -207,7 +250,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -219,7 +266,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF 
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE 
   ENDIF
 
   test = !NULL
@@ -231,7 +282,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF 
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE 
   ENDIF
 
   test = !NULL
@@ -243,7 +298,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF 
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE 
   ENDIF
 
   test = !NULL
@@ -255,7 +314,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -267,7 +330,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -279,7 +346,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -291,7 +362,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -303,7 +378,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -315,7 +394,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -327,7 +410,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -339,7 +426,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -351,7 +442,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -363,7 +458,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -375,7 +474,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -387,7 +490,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -399,7 +506,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -411,7 +522,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   test = !NULL
@@ -423,7 +538,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF 
 
   test = !NULL
@@ -435,7 +554,11 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
            have_good_i       = 0
            RETURN
         ENDIF
-     ENDIF
+     ENDIF ELSE BEGIN
+        MIMC__RECALCULATE    = 1
+        have_good_i          = 0
+        RETURN
+     ENDELSE
   ENDIF
 
   MIMC__RECALCULATE          = 0

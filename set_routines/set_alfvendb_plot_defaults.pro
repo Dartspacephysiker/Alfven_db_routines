@@ -109,7 +109,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    WRITEASCII=writeASCII, $
    WRITEHDF5=writeHDF5, $
    WRITEPROCESSEDH2D=writeProcessedH2d, $
-   SAVERAW=saveRaw, RAWDIR=rawDir, $
+   SAVERAW=saveRaw, $
+   SAVEDIR=saveDir, $
    SHOWPLOTSNOSAVE=showPlotsNoSave, $
    MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
    OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
@@ -180,7 +181,6 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   defMaskMin = 1
 
   ;; defPlotDir = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/plots/'
-  defRawDir = 'rawsaves/'
 
   defOutSummary = 1 ;for output plot summary
 
@@ -261,7 +261,6 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   ENDIF
 
   ;; IF N_ELEMENTS(plotDir) EQ 0 THEN plotDir = defPlotDir ;;Directory stuff
-  IF N_ELEMENTS(rawDir) EQ 0 THEN rawDir=defRawDir
   IF N_ELEMENTS(dataDir) EQ 0 THEN dataDir = defDataDir
 
   IF N_ELEMENTS(del_ps) EQ 0 THEN del_ps = 1            ;;not-directory stuff
@@ -941,9 +940,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'saveRaw', $
                     BYTE(saveRaw),/ADD_REPLACE
      ENDIF
-     IF KEYWORD_SET(rawDir) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'rawDir', $
-                    rawDir,/ADD_REPLACE
+     IF KEYWORD_SET(saveDir) THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'saveDir', $
+                    saveDir,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(showPlotsNoSave) GT 0 THEN BEGIN
