@@ -1,5 +1,5 @@
 ;;12/07/16
-PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset;,DBS_RESET=DBs_reset
+PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESET=DBs_reset
 
   COMPILE_OPT IDL2
 
@@ -59,5 +59,24 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset;,DBS_RES
            MIMC_struct1.do_lShell,MIMC_struct2.do_lShell
      inds_reset = 1B
   ENDIF
+
+  IF MIMC_struct1.use_AACGM NE MIMC_struct2.use_AACGM THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"use_AACGM", $
+           MIMC_struct1.use_AACGM,MIMC_struct2.use_AACGM
+     DBs_reset  = 1B
+  ENDIF
+
+  IF MIMC_struct1.use_MAG NE MIMC_struct2.use_MAG THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"use_MAG", $
+           MIMC_struct1.use_MAG,MIMC_struct2.use_MAG
+     DBs_reset  = 1B
+  ENDIF
+
+  IF MIMC_struct1.coordinate_system NE MIMC_struct2.coordinate_system THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"coordinate_system", $
+           MIMC_struct1.coordinate_system,MIMC_struct2.coordinate_system
+     DBs_reset  = 1B
+  ENDIF
+
 
 END

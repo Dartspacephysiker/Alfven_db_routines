@@ -83,6 +83,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   AACGM_file           = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--AACGM_coords.sav'
   GEO_file             = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--GEO_coords.sav'
   MAG_file             = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--MAG_coords.sav'
+  SDT_file             = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--SDT_coords.sav'
 
   AACGM_file__despun   = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_coords--every_tstamp--20160824.sav'
   GEO_file__despun     = 'Dartdb_20160508--502-16361_despun--maximus--GEO_coords.sav'
@@ -102,8 +103,10 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   ENDIF
 
   ;;Make sure we're not switching between despun and not-despun
-  IF  (  KEYWORD_SET(MAXIMUS__despun) AND ~KEYWORD_SET(despunDB) ) OR $
-      ( ~KEYWORD_SET(MAXIMUS__despun) AND  KEYWORD_SET(despunDB) ) $
+  IF (  KEYWORD_SET(MAXIMUS__despun)     AND ~KEYWORD_SET(despunDB) ) OR $
+     ( ~KEYWORD_SET(MAXIMUS__despun)     AND  KEYWORD_SET(despunDB) ) $ ;OR $
+     ;; (  KEYWORD_SET(MAXIMUS__is_chastDB) AND ~KEYWORD_SET(chastDB)  ) OR $
+     ;; ( ~KEYWORD_SET(MAXIMUS__is_chastDB) AND  KEYWORD_SET(chastDB)  )    $
   THEN BEGIN
      IF N_ELEMENTS(MAXIMUS__maximus) NE 0 THEN BEGIN
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'Swapping DBs!'
@@ -113,7 +116,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      swap_DBs = 0
   ENDELSE
 
-  ;;Make sure we're not switching between despun and not-despun
+  ;;Make sure we're not switching between chastDB and not-chastDB
   IF ~KEYWORD_SET(swap_DBs) THEN BEGIN
      IF  (  KEYWORD_SET(MAXIMUS__is_chastDB) AND ~KEYWORD_SET(chastDB) ) OR $
         ( ~KEYWORD_SET(MAXIMUS__is_chastDB) AND  KEYWORD_SET(chastDB) ) $
@@ -174,13 +177,15 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
            maximus.info.is_chastDB     = KEYWORD_SET(chastDB) ;MAXIMUS__is_chastDB
            maximus.info.using_heavies  = KEYWORD_SET(using_heavies)
 
-
         ENDIF
      ENDIF
      IF maximus EQ !NULL AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
         PRINT,"Couldn't load maximus!"
         STOP
      ENDIF
+
+     pDBStruct                         = PTR_NEW(maximus) 
+
   ENDIF ELSE BEGIN
 
      IF KEYWORD_SET(noMem) THEN BEGIN
@@ -197,7 +202,10 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
 
      DBFile    = N_ELEMENTS(MAXIMUS__dbFile)      GT 0 ? MAXIMUS__dbFile      : '(blank)'
      DB_tFile  = N_ELEMENTS(MAXIMUS__dbTimesFile) GT 0 ? MAXIMUS__dbTimesFile : '(blank)'
-     despunDB = N_ELEMENTS(MAXIMUS__despun)       GT 0 ? MAXIMUS__despun      : !NULL
+     despunDB  = N_ELEMENTS(MAXIMUS__despun)       GT 0 ? MAXIMUS__despun      : !NULL
+
+     pDBStruct = PTR_NEW(MAXIMUS__maximus) 
+
   ENDELSE
 
   IF N_ELEMENTS(MAXIMUS__times) EQ 0 OR $
@@ -227,47 +235,58 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;What type of delta do you want?
   delta_stuff = KEYWORD_SET(load_dILAT) + KEYWORD_SET(load_dx) + KEYWORD_SET(load_dAngle)
-  IF delta_stuff GT 1 THEN BEGIN
-     PRINT,"Can't have it all."
-     STOP
-  ENDIF ELSE BEGIN
-     dILAT_file         = GET_FAST_DB_STRING(maximus,/FOR_ALFDB) + 'delta_ilats.sav'
-     RESTORE,DBDir+dILAT_file
-  ENDELSE
+  CASE delta_stuff OF
+     0: 
+     1: BEGIN
 
-  IF KEYWORD_SET(load_dILAT) THEN BEGIN
-     ;; PRINT,"Not mapping anything, and replacing width_time with dILAT ..."
-     PRINT,"Replacing width_t with dILAT, and mapping fluxes with SQRT(ratio) ..."
+        IF (*pDBStruct).info.corrected_fluxes THEN BEGIN
+           PRINT,"You need to reset corrected fluxes. Otherwise you're going to get junk."
+           PRINT,"However you got here, make sure that FORCE_LOAD_ALL gets called instead of cruising through."
+           STOP
+        ENDIF
 
-     ;; no_mapping                 = 1
-     do_not_map_width_t        = 1
-     map_sqrt_fluxes           = 1
-     maximus.width_time        = ABS(FLOAT(width_ILAT))
-     maximus.info.dILAT_not_dt = 1B
-  ENDIF
-  
-  IF KEYWORD_SET(load_dAngle) THEN BEGIN
-     PRINT,"Replacing width_t with dAngle, and mapping fluxes with SQRT(ratio) ..."
+        dILAT_file         = GET_FAST_DB_STRING(*pDBStruct,/FOR_ALFDB) + 'delta_ilats.sav'
+        RESTORE,DBDir+dILAT_file
 
-     ;; no_mapping                 = 1
-     do_not_map_width_t         = 1
-     map_sqrt_fluxes            = 1
-     maximus.width_time         = ABS(FLOAT(width_angle))
-     maximus.info.dAngle_not_dt = 1B
-  ENDIF
+        CASE 1 OF
+           KEYWORD_SET(load_dILAT): BEGIN
+              ;; PRINT,"Not mapping anything, and replacing width_time with dILAT ..."
+              PRINT,"Replacing width_t with dILAT, and mapping fluxes with SQRT(ratio) ..."
 
-  IF KEYWORD_SET(load_dx) THEN BEGIN
-     PRINT,"Replacing width_t with dx, and mapping fluxes with SQRT(ratio) ..."
+              ;; no_mapping                 = 1
+              do_not_map_width_t             = 1
+              map_sqrt_fluxes                = 1
+              (*pDBStruct).width_time        = ABS(FLOAT(width_ILAT))
+              (*pDBStruct).info.dILAT_not_dt = 1B
+           END
+           KEYWORD_SET(load_dAngle): BEGIN
+              PRINT,"Replacing width_t with dAngle, and mapping fluxes with SQRT(ratio) ..."
 
-     ;; no_mapping                = 1
+              ;; no_mapping                 = 1
+              do_not_map_width_t              = 1
+              map_sqrt_fluxes                 = 1
+              (*pDBStruct).width_time         = ABS(FLOAT(width_angle))
+              (*pDBStruct).info.dAngle_not_dt = 1B
+           END
+           KEYWORD_SET(load_dx):BEGIN
+              PRINT,"Replacing width_t with dx, and mapping fluxes with SQRT(ratio) ..."
 
-     map_sqrt_fluxes           = 1
-     maximus.width_time        = ABS(FLOAT(width_x))
-     maximus.info.dx_not_dt    = 1B
-  ENDIF
+              ;; no_mapping                = 1
+
+              map_sqrt_fluxes               = 1
+              (*pDBStruct).width_time       = ABS(FLOAT(width_x))
+              (*pDBStruct).info.dx_not_dt   = 1B
+           END
+        ENDCASE
+     END
+     ELSE: BEGIN
+        PRINT,"Can't have it all."
+        STOP
+     END
+  ENDCASE
 
   IF correct_fluxes AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
-     CORRECT_ALFVENDB_FLUXES,maximus, $
+     CORRECT_ALFVENDB_FLUXES,(*pDBStruct), $
                              MAP_ESA_CURRENT_TO_IONOS=~KEYWORD_SET(do_not_map_esa_current) $
                              AND ~KEYWORD_SET(no_mapping), $
                              MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux) $
@@ -327,34 +346,24 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
         AACGM_file = AACGM_file__despun
      ENDIF;;  ELSE BEGIN
         
-     ;; ENDELSE
-
      RESTORE,defCoordDir+AACGM_file
 
-     ALFDB_SWITCH_COORDS, $
-        maximus, $
-        max_AACGM, $
-        'AACGM', $
-        SUCCESS=success
-
+     coordName = 'AACGM'
+     coordStr  = TEMPORARY(max_AACGM)
   ENDIF
+
 
   IF KEYWORD_SET(use_geo) THEN BEGIN
      PRINT,'Using GEO lat and alt ...'
 
      IF KEYWORD_SET(despunDB) THEN BEGIN
         GEO_file = GEO_file__despun
-     ENDIF;;  ELSE BEGIN
+     ENDIF
         
-     ;; ENDELSE
-
      RESTORE,defCoordDir+GEO_file
 
-     ALFDB_SWITCH_COORDS, $
-        maximus, $
-        max_GEO,'GEO', $
-        SUCCESS=success
-
+     coordName = 'GEO'
+     coordStr  = TEMPORARY(max_GEO)
   ENDIF
 
   IF KEYWORD_SET(use_mag) THEN BEGIN
@@ -362,35 +371,42 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
 
      IF KEYWORD_SET(despunDB) THEN BEGIN
         MAG_file = MAG_file__despun
-     ENDIF;;  ELSE BEGIN
+     ENDIF
         
-     ;; ENDELSE
-
      RESTORE,defCoordDir+MAG_file
 
-     ALFDB_SWITCH_COORDS, $
-        maximus, $
-        max_MAG, $
-        'MAG', $
-        SUCCESS=success
+     coordStr  = TEMPORARY(max_MAG)
+     coordName = 'MAG'
+  ENDIF
 
+  ;;Make sure we have SDT coords loaded if nothing else has been requested
+  IF ~(KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_MAG) OR KEYWORD_SET(use_GEO)) THEN BEGIN
+     IF STRUPCASE((*pDBStruct).info.coords) NE 'SDT' THEN BEGIN
+        use_SDT = 1
+     ENDIF 
   ENDIF
 
   IF KEYWORD_SET(use_SDT) THEN BEGIN
      PRINT,'Using SDT ilat,mlt, and alt ...'
 
-     ;; ALFDB_SWITCH_COORDS, $
-     ;;    maximus, $
-     ;;    max_MAG, $
-     ;;    'MAG', $
-     ;;    SUCCESS=success
+     RESTORE,defCoordDir+SDT_file
 
-     STOP
+     coordName = 'SDT'
+     coordStr  = TEMPORARY(max_SDT)
+
   ENDIF
 
-  ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND(maximus,HEMI='BOTH')
+  IF N_ELEMENTS(coordName) GT 0 THEN BEGIN
+     ALFDB_SWITCH_COORDS, $
+        (*pDBStruct), $
+        coordStr, $
+        coordName, $
+        SUCCESS=success
+  ENDIF
+
+  ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND((*pDBStruct),HEMI='BOTH')
   IF ARG_PRESENT(good_i) THEN good_i = GET_CHASTON_IND( $
-                                       maximus, $
+                                       (*pDBStruct), $
                                        MIN_MAGCURRENT=minMC, $
                                        MAX_NEGMAGCURRENT=maxNegMC, $
                                        INCLUDE_32HZ=include_32Hz, $
@@ -399,12 +415,14 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                                        RESET_GOOD_INDS=KEYWORD_SET(swap_DBs))
 
   IF ~KEYWORD_SET(noMem) THEN BEGIN
-     MAXIMUS__maximus               = TEMPORARY(maximus   )
+     MAXIMUS__maximus               = TEMPORARY(*pDBStruct)
      MAXIMUS__times                 = N_ELEMENTS(cdbTime)  GT 0 ? cdbTime  : !NULL
      MAXIMUS__dbTimesFile           = N_ELEMENTS(DB_tFile) GT 0 ? DB_tFile : !NULL
      MAXIMUS__despun                = KEYWORD_SET(despunDB)
      MAXIMUS__dbFile                = TEMPORARY(DBFile    )
      MAXIMUS__dbDir                 = TEMPORARY(DBDir     )
   ENDIF
+
+  PTR_FREE,pDBStruct
 
 END

@@ -11,6 +11,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    USE_AACGM_COORDS=use_aacgm, $
                                    USE_GEO_COORDS=use_geo, $
                                    USE_MAG_COORDS=use_mag, $
+                                   USE_MAG_COORDS=use_sdt, $
                                    FOR_ESPEC_DBS=for_eSpec_DBs, $
                                    ;; CHECK_DB=check_DB, $
                                    JUST_FASTLOC=just_fastLoc, $
@@ -94,6 +95,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         AACGM_file   = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--AACGM_coords.sav'
         GEO_file     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--GEO_coords.sav'
         MAG_file     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--MAG_coords.sav'
+        SDT_file     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--SDT_coords.sav'
 
      END
      KEYWORD_SET(for_eSpec_DBs): BEGIN
@@ -116,6 +118,8 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         is_noRestrict = 1
         fastLoc_has_times = 1
 
+        SDT_file     = 'fastLoc_intervals5--20161129--500-16361--Je_times--SDT_coords.sav'
+
         defDB_tFile  = 'fastLoc_intervals5--20161129--500-16361--Je_times--time_and_delta_t.sav'
 
         mapRatDir    = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
@@ -132,7 +136,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         AACGM_file   = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_coords.sav'
         GEO_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--GEO_coords.sav'
         MAG_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--MAG_coords.sav'
-
+        SDT_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--SDT_coords.sav'
         mapRatDir    = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
         mapRatFile   = 'mapratio_for_fastLoc_intervals4--500-16361--below_aur_oval--20160213--times--noDupes--sample_freq_le_0.01.dat'
      END
@@ -168,8 +172,9 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      CASE 1 OF
         KEYWORD_SET(for_eSpec_DBs): BEGIN
            ;; IF ~KEYWORD_SET(noMem) THEN BEGIN
-           IF N_ELEMENTS(FL_eSpec__fastLoc) NE 0 AND $
-              N_ELEMENTS(FASTLOC_E__times)  NE 0 $
+           IF N_ELEMENTS(FL_eSpec__fastLoc)  NE 0 AND $
+              N_ELEMENTS(FASTLOC_E__times)   NE 0 AND $
+              N_ELEMENTS(FASTLOC_E__delta_t) NE 0 $
            THEN BEGIN
 
               IF KEYWORD_SET(noMem) THEN BEGIN
@@ -182,6 +187,9 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
                  RETURN
               ENDIF
+
+              pDBStruct     = PTR_NEW(FL_eSpec__fastLoc)
+              pDB__delta_t  = PTR_NEW(FASTLOC_E__delta_t)
 
               loadFL        = 0
 
@@ -207,6 +215,9 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
                  RETURN
               ENDIF
+
+              pDBStruct        = PTR_NEW(FL__fastLoc)
+              pDB__delta_t     = PTR_NEW(FASTLOC__delta_t)
 
               loadFL           = 0
 
@@ -238,6 +249,8 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         fastLoc.info.is_noRestrict = KEYWORD_SET(is_noRestrict)
         fastLoc.info.for_eSpecDB   = KEYWORD_SET(for_eSpec_DBs)
 
+        pDBStruct                  = PTR_NEW(fastLoc)
+
      ENDIF ELSE BEGIN
         PRINTF,lun,"There is already a fastLoc struct loaded! Not loading " + DBFile
      ENDELSE
@@ -261,19 +274,23 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
         ENDIF
 
+        pDB__delta_t = PTR_NEW(fastLoc_delta_t)
+
+
         delta_stuff = KEYWORD_SET(load_dILAT) + KEYWORD_SET(load_dx) + KEYWORD_SET(load_dAngle)
         IF delta_stuff GT 1 THEN BEGIN
            PRINT,"Can't have it all."
            STOP
         ENDIF ELSE BEGIN
-           dILAT_file         = GET_FAST_DB_STRING(fastLoc,/FOR_FASTLOC_DB) + '-delta_ilats.sav'
+           dILAT_file         = GET_FAST_DB_STRING((*pDBStruct),/FOR_FASTLOC_DB) + '-delta_ilats.sav'
            RESTORE,DBDir+dILAT_file
         ENDELSE
 
         IF KEYWORD_SET(load_dILAT) THEN BEGIN
            PRINT,"Replacing fastLoc_delta_t with dILAT ..."
 
-           fastLoc_delta_t           = TEMPORARY(ABS(FLOAT(width_ILAT)))
+           ;; fastLoc_delta_t           = TEMPORARY(ABS(FLOAT(width_ILAT)))
+           pDB__delta_t              = PTR_NEW(TEMPORARY(ABS(FLOAT(width_ILAT))))
            do_not_map_delta_t        = 1
            fastLoc.info.dILAT_not_dt = 1
         ENDIF
@@ -281,7 +298,8 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         IF KEYWORD_SET(load_dAngle) THEN BEGIN
            PRINT,"Replacing fastLoc_delta_t with dAngle ..."
 
-           fastLoc_delta_t            = TEMPORARY(ABS(FLOAT(width_angle)))
+           ;; fastLoc_delta_t            = TEMPORARY(ABS(FLOAT(width_angle)))
+           pDB__delta_t               = PTR_NEW(TEMPORARY(ABS(FLOAT(width_angle))))
            do_not_map_delta_t         = 1
            fastLoc.info.dAngle_not_dt = 1
         ENDIF
@@ -290,6 +308,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
            PRINT,"Replacing fastLoc_delta_t with dx ..."
 
            fastLoc_delta_t           = TEMPORARY(ABS(FLOAT(width_x)))
+           pDB__delta_t              = PTR_NEW(TEMPORARY(ABS(FLOAT(width_x))))
            ;; do_not_map_delta_t        = 0
            fastLoc.info.dx_not_dt    = 1
         ENDIF
@@ -300,7 +319,8 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
            IF N_ELEMENTS(mapRatDir) GT 0 AND ~fastLoc.info.is_mapped THEN BEGIN
               PRINT,"Mapping fastLoc delta-ts to 100 km ..."
               RESTORE,mapRatDir+mapRatFile
-              fastLoc_delta_t        = fastLoc_delta_t/SQRT((TEMPORARY(mapRatio)).ratio)
+              ;; fastLoc_delta_t        = fastLoc_delta_t/SQRT((TEMPORARY(mapRatio)).ratio)
+              (*pDB__delta_t)        = (*pDB__delta_t)/SQRT((TEMPORARY(mapRatio)).ratio)
               fastLoc.info.is_mapped = 1B
            ENDIF ELSE BEGIN
               PRINT,"Can't map fastLoc delta-ts to 100 km! mapRatio DB doesn't exist .."
@@ -319,82 +339,117 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
               use_aacgm = 1
               use_geo   = 0
               use_mag   = 0
+              use_SDT   = 0
            END
            'GEO'  : BEGIN
               use_aacgm = 0
               use_geo   = 1
               use_mag   = 0
+              use_SDT   = 0
            END
            'MAG'  : BEGIN
               use_aacgm = 0
               use_geo   = 0
               use_mag   = 1
+              use_SDT   = 0
+           END
+           'SDT'  : BEGIN
+              use_aacgm = 0
+              use_geo   = 0
+              use_mag   = 0
+              use_SDT   = 1
            END
         ENDCASE
      ENDIF
 
      IF KEYWORD_SET(for_eSpec_DBs) AND $
-        KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_GEO) OR KEYWORD_SET(use_MAG) $
+        (KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_GEO) OR KEYWORD_SET(use_MAG)) $
      THEN BEGIN
         PRINT,'Not set up for this!!' 
         STOP
      ENDIF
 
+     changeCoords = 0B
+
      IF KEYWORD_SET(use_aacgm) THEN BEGIN
-        PRINT,'Using AACGM coords ...'
 
         RESTORE,defCoordDir+AACGM_file
 
-        ALFDB_SWITCH_COORDS, $
-           (KEYWORD_SET(loadFL) ? fastLoc                     : $
-            (KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : $
-             FL__fastLoc       ) ), $
-           FL_AACGM,'AACGM', $
-           SUCCESS=success
+        coordName = 'AACGM'
+        coordStr  = TEMPORARY(FL_AACGM)
 
-        changedCoords = KEYWORD_SET(success)
+        changeCoords = 1B
      ENDIF
 
      IF KEYWORD_SET(use_GEO) THEN BEGIN
-        PRINT,'Using GEO coords ...'
 
         RESTORE,defCoordDir+GEO_file
 
-        ALFDB_SWITCH_COORDS, $
-           (KEYWORD_SET(loadFL) ? fastLoc                     : $
-            (KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : $
-             FL__fastLoc       ) ), $
-           FL_GEO, $
-           'GEO', $
-           SUCCESS=success
+        coordStr  = TEMPORARY(FL_GEO)
+        coordName = 'GEO'
 
-        changedCoords = KEYWORD_SET(success)
+        changeCoords = 1B
      ENDIF
 
      IF KEYWORD_SET(use_MAG) THEN BEGIN
-        PRINT,'Using MAG coords ...'
 
         RESTORE,defCoordDir+MAG_file
 
+        coordName = 'MAG'
+        coordStr  = TEMPORARY(FL_MAG)
+
+        changeCoords = 1B
+     ENDIF
+
+     ;;Make sure we have SDT coords loaded if nothing else has been requested
+     IF ~(KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_MAG) OR KEYWORD_SET(use_GEO)) THEN BEGIN
+        IF STRUPCASE((*pDBStruct).info.coords) NE 'SDT' THEN BEGIN
+           use_SDT = 1
+        ENDIF 
+     ENDIF
+
+     IF KEYWORD_SET(use_SDT) THEN BEGIN
+
+        RESTORE,defCoordDir+SDT_file
+
+        coordName = 'SDT'
+        coordStr  = TEMPORARY(FL_SDT)
+
+        changeCoords = 1B
+     ENDIF
+
+     IF changeCoords THEN BEGIN
         ALFDB_SWITCH_COORDS, $
-           (KEYWORD_SET(loadFL) ? fastLoc                     : $
-            (KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : $
-             FL__fastLoc       ) ), $
-           FL_MAG, $
-           'MAG', $
+           (*pDBStruct), $
+           coordStr,coordName, $
            SUCCESS=success
 
         changedCoords = KEYWORD_SET(success)
      ENDIF
 
+     IF KEYWORD_SET(changeCoords) AND ~KEYWORD_SET(changedCoords) THEN STOP
 
      IF KEYWORD_SET(changedCoords) THEN BEGIN
-        LOAD_MAXIMUS_AND_CDBTIME,maximus,/CHECK_DB
-        IF N_ELEMENTS(maximus) GT 0 THEN BEGIN
+        ;; LOAD_MAXIMUS_AND_CDBTIME,maximus,/CHECK_DB
+        @common__maximus_vars.pro
+        IF N_ELEMENTS(MAXIMUS__maximus) GT 0 THEN BEGIN
            CASE 1 OF
-              TAG_EXIST(maximus,'coords'): BEGIN
-                 IF STRLOWCASE((KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL__fastLoc).info.coords) NE $
-                    STRLOWCASE(maximus.info.coords) $
+              TAG_EXIST(MAXIMUS__maximus,'coords'): BEGIN
+
+                 ;;Get coords from the proper DB
+                 ;; IF KEYWORD_SET(loadFL) THEN BEGIN
+                 ;;    flCoords    = fastLoc.info.coords
+                 ;; ENDIF ELSE BEGIN
+                 ;;    IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+                 ;;       flCoords = FL_eSpec__fastLoc.info.coords
+                 ;;    ENDIF ELSE BEGIN
+                 ;;       flCoords = FL__fastLoc.info.coords
+                 ;;    ENDELSE
+                 ;; ENDELSE
+                 flCoords = (*pDBStruct).info.coords
+
+                 IF STRLOWCASE(flCoords) NE $
+                    STRLOWCASE(MAXIMUS__maximus.info.coords) $
                  THEN BEGIN
                     PRINT,'Mismatched coordinate systems!'
                     STOP
@@ -414,12 +469,12 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      ;; IF ~KEYWORD_SET(noMem) THEN BEGIN
      IF ~(KEYWORD_SET(noMem       )  OR  $
           KEYWORD_SET(just_fastLoc)  OR  $
-          KEYWORD_SET(just_times  )) AND $
-        KEYWORD_SET(loadFL)              $
+          KEYWORD_SET(just_times  ))     $ ;AND $
+        ;; KEYWORD_SET(loadFL)              $
      THEN BEGIN
-        FL_eSpec__fastLoc       = TEMPORARY(fastLoc        )
+        FL_eSpec__fastLoc       = TEMPORARY(*pDBStruct    )
         FASTLOC_E__times        = TEMPORARY(fastLoc_times  )
-        FASTLOC_E__delta_t      = TEMPORARY(fastloc_delta_t)
+        FASTLOC_E__delta_t      = TEMPORARY(*pDB__delta_t  )
         FASTLOC_E__dbFile       = TEMPORARY(dbFile         )
         FASTLOC_E__dbTimesFile  = TEMPORARY(dbTimesFile    )
 
@@ -432,12 +487,11 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   ENDIF ELSE BEGIN
      IF ~(KEYWORD_SET(noMem       )  OR  $
           KEYWORD_SET(just_fastLoc)  OR  $
-          KEYWORD_SET(just_times  )) AND $
-        KEYWORD_SET(loadFL)              $
+          KEYWORD_SET(just_times  ))     $
      THEN BEGIN
-        FL__fastLoc             = TEMPORARY(fastLoc        )
+        FL__fastLoc             = TEMPORARY(*pDBStruct     )
         FASTLOC__times          = TEMPORARY(fastLoc_times  )
-        FASTLOC__delta_t        = TEMPORARY(fastloc_delta_t)
+        FASTLOC__delta_t        = TEMPORARY(*pDB__delta_t  )
         FASTLOC__dbFile         = TEMPORARY(dbFile         )
         FASTLOC__dbTimesFile    = TEMPORARY(dbTimesFile    )
 

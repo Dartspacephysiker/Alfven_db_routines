@@ -3,15 +3,18 @@ PRO ALFDB_SWITCH_COORDS,dbStruct,coordStr,coordName,SUCCESS=success
   COMPILE_OPT idl2
 
 
+  success = 0B
+
   ;;Make sure it's not already a done deal
   STR_ELEMENT,dbStruct.info,'COORDS',VALUE=coordVal,INDEX=coordInd
   IF coordInd GT 0 THEN BEGIN
      IF STRPOS(STRUPCASE(dbStruct.info.(coordInd)),STRUPCASE(coordName)) GE 0 THEN BEGIN
         PRINT,'Already using ' + coordName + ' coords. Returning ...'
-        success = 0
-
+        success = 1B
         RETURN
-     ENDIF
+     ENDIF ELSE BEGIN
+        PRINT,"Switching to " + coordName + ' coords ...'
+     ENDELSE
   ENDIF
 
   possibilities = STRLOWCASE(['ALT','MLT','ILAT'])
@@ -42,15 +45,17 @@ PRO ALFDB_SWITCH_COORDS,dbStruct,coordStr,coordName,SUCCESS=success
      IF TAG_EXIST(dbStruct,'info') THEN BEGIN
         dbStruct.info.coords = coordString
      ENDIF ELSE BEGIN
-        IF TAG_EXIST(dbStruct,'coords') THEN BEGIN
-           dbStruct.coords = coordString
-        ENDIF ELSE BEGIN
-           dbStruct        = CREATE_STRUCT(dbStruct,'COORDS',coordString)
-        ENDELSE
+        ;; IF TAG_EXIST(dbStruct,'coords') THEN BEGIN
+        ;;    dbStruct.coords = coordString
+        ;; ENDIF ELSE BEGIN
+        ;;    dbStruct        = CREATE_STRUCT(dbStruct,'COORDS',coordString)
+        ;; ENDELSE
+        PRINT,'FIX'
+        STOP
      ENDELSE
 
   ENDFOR
 
-  success = 1
+  success = 1B
 
 END
