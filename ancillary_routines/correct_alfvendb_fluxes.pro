@@ -101,6 +101,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             MAP_IONFLUX_TO_IONOS=map_ionflux, $
                             MAP_WIDTH_T_TO_IONOS=map_width_t, $
                             MAP_WIDTH_X_TO_IONOS=map_width_x, $
+                            MAP_SQRT_FLUXES=map_sqrt_fluxes, $
                             QUIET=quiet, $
                             LUN=lun
 
@@ -161,26 +162,26 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      
      ;;08-ELEC_ENERGY_FLUX 
      ;;Max energy flux from losscone
-     ;;Mapped to the ionosphere
+     ;;Already mapped to the ionosphere per AS5
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'08-ELEC_ENERGY_FLUX        (Earthward is positive per AS5)'
      correctStr += '08-ELEC_ENERGY_FLUX        (Earthward is positive per AS5)' + STRING(10B)
 
      ;;09-INTEG_ELEC_ENERGY_FLUX ALREADY HANDLED BY AS5
      ;;Not really integrated--just max energy flux from all angles as opposed to losscone
-     ;;Mapped to ionosphere
+     ;;Already mapped to ionosphere per AS5
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'09-INTEG_ELEC_ENERGY_FLUX  (Earthward is positive per AS5)'
      correctStr += '09-INTEG_ELEC_ENERGY_FLUX  (Earthward is positive per AS5)' + STRING(10B)
 
      IF ~KEYWORD_SET(chastDB) THEN BEGIN
 
         ;;10-EFLUX_LOSSCONE_INTEG
-        ;;Truly integrated over Alfven interval, mapped to ionosphere
+        ;;Truly integrated over Alfven interval, already mapped to ionosphere per AS5
         maximus.eflux_losscone_integ[south_i] = -1 * maximus.eflux_losscone_integ[south_i]
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'10-EFLUX_LOSSCONE_INTEG    (Flip sign in S Hemi)'
         correctStr += '10-EFLUX_LOSSCONE_INTEG    (Flip sign in S Hemi)' + STRING(10B)
 
      ;;11-TOTAL_EFLUX_INTEG
-     ;;Field-aligned energy flux (with contrib. from ALL angles) that is then mapped to ionosphere
+     ;;Field-aligned energy flux (with contrib. from ALL angles) that is already mapped to ionosphere per AS5
      maximus.total_eflux_integ[south_i] = -1 * maximus.total_eflux_integ[south_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'11-TOTAL_EFLUX_INTEG       (Flip sign in S Hemi)'
      correctStr += '11-TOTAL_EFLUX_INTEG       (Flip sign in S Hemi)' + STRING(10B)
@@ -191,8 +192,6 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;;    IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'10-EFLUX_LOSSCONE_INTEG    (Flip sign in S Hemi)'
      ;;    correctStr += '10-INTEG_ELEC_ENERGY_FLUX  (Flip sign in S Hemi)' + STRING(10B)
      ;; ENDELSE
-
-
 
      ;;12-MAX_CHARE_LOSSCONE
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'12-MAX_CHARE_LOSSCONE      (All positive because AS5 uses MAX)'
@@ -276,9 +275,18 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
         correctStr += '30-HELIUM_FLUX_UP             (Flip sign in N Hemi)' + STRING(10B)
 
         IF KEYWORD_SET(map_heavies) AND ~maximus.info.mapped.heavies THEN BEGIN
-           maximus.proton_flux_up = maximus.proton_flux_up  * mapRatio.ratio
-           maximus.oxy_flux_up    = maximus.oxy_flux_up     * mapRatio.ratio
-           maximus.helium_flux_up = maximus.helium_flux_up  * mapRatio.ratio
+
+           IF KEYWORD_SET(map_sqrt_fluxes) THEN BEGIN
+              maximus.proton_flux_up   = maximus.proton_flux_up  * SQRT(mapRatio.ratio)
+              maximus.oxy_flux_up      = maximus.oxy_flux_up     * SQRT(mapRatio.ratio)
+              maximus.helium_flux_up   = maximus.helium_flux_up  * SQRT(mapRatio.ratio)
+              maximus.info.mapped.sqrt = 1B
+           ENDIF ELSE BEGIN
+              maximus.proton_flux_up = maximus.proton_flux_up  * mapRatio.ratio
+              maximus.oxy_flux_up    = maximus.oxy_flux_up     * mapRatio.ratio
+              maximus.helium_flux_up = maximus.helium_flux_up  * mapRatio.ratio
+           ENDELSE
+
            IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->26-PROTON_FLUX_UP'
            IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->28-OXY_FLUX_UP'
            IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->30-HELIUM_FLUX_UP'
@@ -286,17 +294,23 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
            correctStr += '-->28-OXY_FLUX_UP' + STRING(10B)
            correctStr += '-->30-HELIUM_FLUX_UP' + STRING(10B)
 
-           maximus.info.mapped.heavies = 1
+           maximus.info.mapped.heavies = 1B
         ENDIF
      ENDIF
 
      ;;Added 2016/04/23
      IF KEYWORD_SET(map_esa_current) AND ~maximus.info.mapped.esa_current THEN BEGIN
-        maximus.esa_current       = maximus.esa_current * mapRatio.ratio
+        IF KEYWORD_SET(map_sqrt_fluxes) THEN BEGIN
+           maximus.esa_current       = maximus.esa_current * SQRT(mapRatio.ratio)
+           maximus.info.mapped.sqrt  = 1B
+        ENDIF ELSE BEGIN
+           maximus.esa_current       = maximus.esa_current * mapRatio.ratio
+        ENDELSE
+
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->07-ESA_CURRENT'
         correctStr += '-->07-ESA_CURRENT' + STRING(10B)
 
-        maximus.info.mapped.esa_current = 1
+        maximus.info.mapped.esa_current = 1B
      ENDIF
 
      ;;Added 2015/12/22
@@ -314,7 +328,12 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ENDCASE
 
      IF KEYWORD_SET(map_pflux) AND ~maximus.info.mapped.pFlux THEN BEGIN
-        maximus.pFluxEst          = maximus.pFluxEst         * mapRatio.ratio
+        IF KEYWORD_SET(map_sqrt_fluxes) THEN BEGIN
+           maximus.pFluxEst          = maximus.pFluxEst         * SQRT(mapRatio.ratio)
+           maximus.info.mapped.sqrt  = 1B
+        ENDIF ELSE BEGIN
+           maximus.pFluxEst          = maximus.pFluxEst         * mapRatio.ratio
+        ENDELSE
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->49-PFLUXEST'
         correctStr += '-->49-PFLUXEST' + STRING(10B)
 
@@ -322,31 +341,48 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ENDIF
 
      IF KEYWORD_SET(map_ionflux) AND ~maximus.info.mapped.ion_flux THEN BEGIN
-        maximus.ion_energy_flux   = maximus.ion_energy_flux  * mapRatio.ratio
-        maximus.ion_flux          = maximus.ion_flux         * mapRatio.ratio
-        maximus.ion_flux_up       = maximus.ion_flux_up      * mapRatio.ratio
+
+           IF KEYWORD_SET(map_sqrt_fluxes) THEN BEGIN
+              maximus.ion_energy_flux  = maximus.ion_energy_flux  * mapRatio.ratio
+              maximus.ion_flux         = maximus.ion_flux         * mapRatio.ratio
+              maximus.ion_flux_up      = maximus.ion_flux_up      * mapRatio.ratio
+              maximus.info.mapped.sqrt = 1B
+           ENDIF ELSE BEGIN
+              maximus.ion_energy_flux  = maximus.ion_energy_flux  * mapRatio.ratio
+              maximus.ion_flux         = maximus.ion_flux         * mapRatio.ratio
+              maximus.ion_flux_up      = maximus.ion_flux_up      * mapRatio.ratio
+           ENDELSE
+
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->15-ION_FLUX'
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->16-ION_FLUX_UP'
         correctStr += '-->15-ION_FLUX' + STRING(10B)
         correctStr += '-->16-ION_FLUX_UP' + STRING(10B)
 
-        maximus.info.mapped.ion_flux = 1
+        maximus.info.mapped.ion_flux   = 1
      ENDIF
 
      IF KEYWORD_SET(map_width_t) AND ~maximus.info.mapped.width_time THEN BEGIN
-        maximus.width_time             = maximus.width_time / SQRT(mapRatio.ratio)
-        IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->20-WIDTH_TIME'
-        correctStr += '-->20-WIDTH_TIME' + STRING(10B)
 
-        maximus.info.mapped.width_time = 1
+        IF KEYWORD_SET(map_sqrt_fluxes) THEN BEGIN
+        ENDIF ELSE BEGIN
+           maximus.width_time          = maximus.width_time / SQRT(mapRatio.ratio)
+           IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->20-WIDTH_TIME'
+           correctStr += '-->20-WIDTH_TIME' + STRING(10B)
+
+           maximus.info.mapped.width_time = 1
+        ENDELSE
+
      ENDIF
 
      IF KEYWORD_SET(map_width_x) AND ~maximus.info.mapped.width_x THEN BEGIN
-        maximus.width_x           = maximus.width_x / SQRT(mapRatio.ratio)
-        IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->21-WIDTH_X'
-        correctStr += '-->21-WIDTH_X' + STRING(10B)
+        IF KEYWORD_SET(map_sqrt_fluxes) THEN BEGIN
+        ENDIF ELSE BEGIN
+           maximus.width_x           = maximus.width_x / SQRT(mapRatio.ratio)
+           IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->21-WIDTH_X'
+           correctStr += '-->21-WIDTH_X' + STRING(10B)
 
-        maximus.info.mapped.width_x    = 1
+           maximus.info.mapped.width_x    = 1
+        ENDELSE
      ENDIF
 
      ;;Now add the CORRECTED_FLUXES tag to maximus

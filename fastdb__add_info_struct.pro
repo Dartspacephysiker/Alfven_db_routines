@@ -51,7 +51,8 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                                     ion_flux    : 0B, $
                                     heavies     : 0B, $
                                     width_time  : 0B, $
-                                    width_x     : 0B}, $
+                                    width_x     : 0B, $
+                                    sqrt        : 0B}, $
                 dILAT_not_dt     : 0B, $
                 dAngle_not_dt    : 0B, $
                 dx_not_dt        : 0B}

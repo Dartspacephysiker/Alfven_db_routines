@@ -236,30 +236,32 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   ENDELSE
 
   IF KEYWORD_SET(load_dILAT) THEN BEGIN
-     PRINT,"Not mapping anything, and replacing width_time with dILAT ..."
+     ;; PRINT,"Not mapping anything, and replacing width_time with dILAT ..."
+     PRINT,"Replacing width_t with dILAT, and mapping fluxes with SQRT(ratio) ..."
 
      ;; no_mapping                 = 1
      do_not_map_width_t        = 1
-
+     map_sqrt_fluxes           = 1
      maximus.width_time        = ABS(FLOAT(width_ILAT))
      maximus.info.dILAT_not_dt = 1B
   ENDIF
   
   IF KEYWORD_SET(load_dAngle) THEN BEGIN
-     PRINT,"Not mapping anything, and replacing width_time with dAngle ..."
+     PRINT,"Replacing width_t with dAngle, and mapping fluxes with SQRT(ratio) ..."
 
      ;; no_mapping                 = 1
      do_not_map_width_t         = 1
-
+     map_sqrt_fluxes            = 1
      maximus.width_time         = ABS(FLOAT(width_angle))
      maximus.info.dAngle_not_dt = 1B
   ENDIF
 
   IF KEYWORD_SET(load_dx) THEN BEGIN
-     PRINT,"Not mapping anything, and replacing width_time with dx ..."
+     PRINT,"Replacing width_t with dx, and mapping fluxes with SQRT(ratio) ..."
 
      ;; no_mapping                = 1
 
+     map_sqrt_fluxes           = 1
      maximus.width_time        = ABS(FLOAT(width_x))
      maximus.info.dx_not_dt    = 1B
   ENDIF
@@ -278,6 +280,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              AND ~KEYWORD_SET(no_mapping), $
                              MAP_WIDTH_X_TO_IONOS=~KEYWORD_SET(do_not_map_width_x) $
                              AND ~KEYWORD_SET(no_mapping), $
+                             MAP_SQRT_FLUXES=map_sqrt_fluxes, $
                              DESPUNDB=despunDB, $
                              CHASTDB=chastDB, $
                              USING_HEAVIES=using_heavies, $

@@ -393,7 +393,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         IF N_ELEMENTS(maximus) GT 0 THEN BEGIN
            CASE 1 OF
               TAG_EXIST(maximus,'coords'): BEGIN
-                 IF STRLOWCASE((KEYWORD_SET(FOR_eSpec_DBs) ? FL_eSpec__fastLoc : FL__fastLoc).info.coords) NE $
+                 IF STRLOWCASE((KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL__fastLoc).info.coords) NE $
                     STRLOWCASE(maximus.info.coords) $
                  THEN BEGIN
                     PRINT,'Mismatched coordinate systems!'
