@@ -513,9 +513,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      IF N_ELEMENTS(OMNIparamStr_list) GT 0 THEN BEGIN
         IF N_ELEMENTS(alfDB_plot_struct.paramString_list) EQ 0 THEN BEGIN
            STR_ELEMENT,alfDB_plot_struct,'paramString_list',OMNIparamStr_list,/ADD_REPLACE
-           FOR k=0,N_ELEMENTS(alfDB_plot_struct.paramString_list)-1 DO BEGIN
-              alfDB_plot_struct.paramString_list[k] = alfDB_plot_struct.paramString+alfDB_plot_struct.paramString_list[k]
-           ENDFOR
+           IF KEYWORD_SET(alfDB_plot_struct.executing_multiples) THEN BEGIN
+              FOR k=0,N_ELEMENTS(alfDB_plot_struct.paramString_list)-1 DO BEGIN
+                 alfDB_plot_struct.paramString_list[k] = alfDB_plot_struct.paramString+alfDB_plot_struct.paramString_list[k]
+              ENDFOR
+           ENDIF
         ENDIF ELSE BEGIN
            FOR k=0,N_ELEMENTS(OMNIparamStr_list)-1 DO BEGIN
               alfDB_plot_struct.paramString_list.Add,OMNIparamStr_list[k]
