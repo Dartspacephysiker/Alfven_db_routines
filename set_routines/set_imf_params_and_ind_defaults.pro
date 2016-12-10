@@ -520,7 +520,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            ENDIF
         ENDIF ELSE BEGIN
            FOR k=0,N_ELEMENTS(OMNIparamStr_list)-1 DO BEGIN
-              alfDB_plot_struct.paramString_list.Add,OMNIparamStr_list[k]
+              alfDB_plot_struct.paramString_list[k] = alfDB_plot_struct.paramString_list[k] + OMNIparamStr_list[k]
            ENDFOR
         ENDELSE
      ENDIF
