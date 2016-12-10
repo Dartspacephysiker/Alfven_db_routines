@@ -4,7 +4,7 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
   COMPILE_OPT IDL2
 
   inds_reset = 0B
-  ;; DBS_reset  = 0B
+  DBS_reset  = 0B
 
   IF MIMC_struct1.minMC NE MIMC_struct2.minMC THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"minMC", $
@@ -77,6 +77,39 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
            MIMC_struct1.coordinate_system,MIMC_struct2.coordinate_system
      DBs_reset  = 1B
   ENDIF
+
+  except_list = ['minMC', $
+                 'maxNegMC', $
+                 'hemi', $
+                 'north', $
+                 'south', $
+                 'both_hemis', $
+                 'dayside', $
+                 'nightside', $
+                 'do_lShell', $
+                 'use_AACGM', $
+                 'use_MAG', $
+                 'coordinate_system']
+
+  comp = COMPARE_STRUCT(MIMC_struct1,MIMC_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)
+
+  FOR k=0,N_ELEMENTS(comp)-1 DO BEGIN
+     tmpComp  = comp[k]
+
+     dontstop = 0
+     IF tmpComp.nDiff GT 0 THEN BEGIN
+
+        IF KEYWORD_SET(dontStop) THEN BEGIN
+           PRINT,'Not stopping!'
+        ENDIF ELSE BEGIN
+           HELP,tmpComp
+           PRINT,'MIMC__struct1 : ',MIMC__struct1.(tmpComp.tag_num_A)
+           PRINT,'MIMC__struct2 : ',MIMC__struct2.(tmpComp.tag_num_B)
+           STOP
+        ENDELSE
+     ENDIF
+
+  ENDFOR
 
 
 END

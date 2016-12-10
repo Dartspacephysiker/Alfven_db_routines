@@ -92,8 +92,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
    BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
    DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
    SKIP_IMF_STRING=skip_IMF_string, $
-   PARAMSTRING=paramString, $
-   PARAMSTR_LIST=paramString_list, $
+   OMNIPARAMSTR=OMNIparamStr, $
+   OMNI_PARAMSTR_LIST=OMNIparamStr_list, $
    SATELLITE=satellite, $
    OMNI_COORDS=omni_Coords, $
    DELAY=delay, $
@@ -195,12 +195,17 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      Bx_over_ByBz_Lim       = defBx_over_ByBz_Lim ;Set this to the max ratio of Bx / SQRT(By*By + Bz*Bz)
   ENDIF
 
+  IF N_ELEMENTS(OMNIparamStr) EQ 0 THEN BEGIN
+     OMNIparamStr             = ''
+  ENDIF
+
+
   ;;Which IMF clock angle are we doing?
   ;;options are 'duskward', 'dawnward', 'bzNorth', 'bzSouth', and 'all_IMF'
   IF KEYWORD_SET(do_not_consider_imf) THEN BEGIN
      clockStr                   = KEYWORD_SET(skip_IMF_string) ? '' : 'NO_IMF_CONSID'
-     paramString                = paramString + '--' + clockStr
-     paramString_list           = LIST(paramString)
+     OMNIparamStr                = OMNIparamStr + '--' + clockStr
+     OMNIparamStr_list           = LIST(OMNIparamStr)
   ENDIF ELSE BEGIN
 
      IF ~KEYWORD_SET(dont_consider_clockAngles) THEN BEGIN
@@ -332,16 +337,12 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      ENDELSE
      
      ;;parameter string
-     paramString_list           = LIST()
+     OMNIparamStr_list           = LIST()
      IF clockStr[0] EQ '' THEN BEGIN
         clockOutStr             = '' 
      ENDIF ELSE BEGIN
         clockOutStr             = '--' + clockStr
      ENDELSE
-
-     IF N_ELEMENTS(paramString) EQ 0 THEN BEGIN
-        paramString             = ''
-     ENDIF
 
      IF KEYWORD_SET(multiple_delays) OR KEYWORD_SET(multiple_IMF_clockAngles) THEN BEGIN
         executing_multiples     = 1
@@ -349,7 +350,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            multiples            = delay
            multiString          = "IMF_delays"
            FOR iDel=0,N_ELEMENTS(multiples)-1 DO BEGIN
-              paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
+              OMNIparamStr_list.add,OMNIparamStr+'--'+satellite+omniStr+clockOutStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
            ENDFOR
         ENDIF
@@ -357,7 +358,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         IF KEYWORD_SET(multiple_IMF_clockAngles) THEN BEGIN
            multiples            = clockStr
            ;; multiString       = "IMF_clock angles"
-           multiString          = paramString+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
+           multiString          = OMNIparamStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
                                   byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
            IF N_ELEMENTS(clockStr) EQ 8 THEN BEGIN
               multiString_suff  = '--Ring'
@@ -367,7 +368,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            ENDIF
 
            FOR iClock=0,N_ELEMENTS(multiples)-1 DO BEGIN
-              paramString_list.add,paramString+'--'+satellite+omniStr+clockOutStr[iClock]+"_"+ $
+              OMNIparamStr_list.add,OMNIparamStr+'--'+satellite+omniStr+clockOutStr[iClock]+"_"+ $
                  strtrim(stableIMF,2)+"stable"+smoothStr+delayStr+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
 
@@ -378,10 +379,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         ENDIF
      ENDIF ELSE BEGIN
         executing_multiples     = 0
-        paramString             = paramString+'--'+satellite+omniStr+clockOutStr+"_"+ $
+        OMNIparamStr             = OMNIparamStr+'--'+satellite+omniStr+clockOutStr+"_"+ $
                                   strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
                                   byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
-        paramString_list.add,paramString
+        OMNIparamStr_list.add,OMNIparamStr
      ENDELSE
   ENDELSE
 
@@ -496,12 +497,22 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         STR_ELEMENT,IMF_struct,'do_not_consider_IMF',BYTE(do_not_consider_IMF),/ADD_REPLACE
      ENDIF
 
-     IF N_ELEMENTS(paramString) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'paramString',paramString,/ADD_REPLACE
+     IF N_ELEMENTS(OMNIparamStr) GT 0 THEN BEGIN
+        IF alfDB_plot_struct.paramString EQ '' THEN BEGIN
+           STR_ELEMENT,alfDB_plot_struct,'paramString',OMNIparamStr,/ADD_REPLACE
+        ENDIF ELSE BEGIN
+           alfDB_plot_struct.paramString += OMNIparamStr
+        ENDELSE
      ENDIF
 
-     IF N_ELEMENTS(paramString_list) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'paramString_list',paramString_list,/ADD_REPLACE
+     IF N_ELEMENTS(OMNIparamStr_list) GT 0 THEN BEGIN
+        IF N_ELEMENTS(alfDB_plot_struct.paramString_list) EQ 0 THEN BEGIN
+           STR_ELEMENT,alfDB_plot_struct,'paramString_list',OMNIparamStr_list,/ADD_REPLACE
+        ENDIF ELSE BEGIN
+           FOR k=0,N_ELEMENTS(OMNIparamStr_list)-1 DO BEGIN
+              alfDB_plot_struct.paramString_list.Add,OMNIparamStr_list[k]
+           ENDFOR
+        ENDELSE
      ENDIF
 
      IF N_ELEMENTS(satellite) GT 0 THEN BEGIN

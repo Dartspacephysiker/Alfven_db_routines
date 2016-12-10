@@ -528,18 +528,27 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
         IF N_ELEMENTS(nonStorm) GT 0 THEN BEGIN
            STR_ELEMENT,storm_opt,'nonStorm',nonStorm,/ADD_REPLACE
+           IF KEYWORD_SET(nonStorm) THEN BEGIN
+              paramString = paramString + 'quiescent'
+           ENDIF
         ENDIF
 
         IF N_ELEMENTS(recoveryPhase) GT 0 THEN BEGIN
            STR_ELEMENT,storm_opt,'recoveryPhase',recoveryPhase,/ADD_REPLACE
+           IF KEYWORD_SET(recoveryPhase) THEN BEGIN
+              paramString = paramString + 'recoveryPhase'
+           ENDIF
         ENDIF
 
         IF N_ELEMENTS(mainPhase) GT 0 THEN BEGIN
            STR_ELEMENT,storm_opt,'mainPhase',mainPhase,/ADD_REPLACE
+           IF KEYWORD_SET(mainPhase) THEN BEGIN
+              paramString = paramString + 'mainPhase'
+           ENDIF
         ENDIF
 
         IF N_ELEMENTS(all_storm_phases) GT 0 THEN BEGIN
-           STR_ELEMENT,storm_opt,'all_storm_phases',all_storm_phases,/ADD_REPLACE
+           STR_ELEMENT,storm_opt,'all_storm_phases',all_storm_phases,/ADD_REPLACE              
         ENDIF
 
         IF N_ELEMENTS(dstCutoff) GT 0 THEN BEGIN
@@ -558,7 +567,12 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'storm_opt',storm_opt,/ADD_REPLACE
 
         IF KEYWORD_SET(all_storm_phases) THEN BEGIN
+           multiples           = ["quiescent","mainphase","recoveryphase"]
+           multiString         = "-all_storm_phases"
+           executing_multiples = 1
            alfDB_plot_struct.executing_multiples = 1
+           alfDB_plot_struct.multiString         = multiString
+           STR_ELEMENT,alfDB_plot_struct,'multiples',multiples,/ADD_REPLACE
         ENDIF
      ENDIF
 
@@ -577,18 +591,22 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
         IF N_ELEMENTS(use_ae) GT 0 THEN BEGIN
            STR_ELEMENT,ae_opt,'use_ae',use_ae,/ADD_REPLACE
+           navn = 'AE'
         ENDIF
 
         IF N_ELEMENTS(use_au) GT 0 THEN BEGIN
            STR_ELEMENT,ae_opt,'use_au',use_au,/ADD_REPLACE
+           navn = 'AU'
         ENDIF
 
         IF N_ELEMENTS(use_al) GT 0 THEN BEGIN
            STR_ELEMENT,ae_opt,'use_al',use_al,/ADD_REPLACE
+           navn = 'AL'
         ENDIF
 
         IF N_ELEMENTS(use_ao) GT 0 THEN BEGIN
            STR_ELEMENT,ae_opt,'use_ao',use_ao,/ADD_REPLACE
+           navn = 'AO'
         ENDIF
 
         IF N_ELEMENTS(AEcutoff) GT 0 THEN BEGIN
@@ -601,10 +619,16 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
         IF N_ELEMENTS(AE_high) GT 0 THEN BEGIN
            STR_ELEMENT,ae_opt,'AE_high',AE_high,/ADD_REPLACE
+           IF KEYWORD_SET(AE_high) THEN BEGIN
+              paramString = paramString + 'high_' + navn
+           ENDIF
         ENDIF
 
         IF N_ELEMENTS(AE_low) GT 0 THEN BEGIN
            STR_ELEMENT,ae_opt,'AE_low',AE_low,/ADD_REPLACE
+           IF KEYWORD_SET(AE_low) THEN BEGIN
+              paramString = paramString + 'low_' + navn
+           ENDIF
         ENDIF
 
         IF N_ELEMENTS(AE_both) GT 0 THEN BEGIN
@@ -619,7 +643,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'ae_opt',ae_opt,/ADD_REPLACE
 
         IF KEYWORD_SET(AE_both) THEN BEGIN
+           multiples             = ['high_','low_'] + navn
+           executing_multiples   = 1
+           multiString           = '-' + navn+'_both'
            alfDB_plot_struct.executing_multiples = 1
+           STR_ELEMENT,alfDB_plot_struct,'multiples',multiples,/ADD_REPLACE
         ENDIF
      ENDIF
 
@@ -991,6 +1019,15 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF KEYWORD_SET(paramStrSuffix) THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'paramStrSuffix', $
                     paramStrSuffix,/ADD_REPLACE
+     ENDIF
+
+     IF alfDB_plot_struct.executing_multiples THEN BEGIN
+        alfDB_plot_struct.multiString      = alfDB_plot_struct.paramString + alfDB_plot_struct.multiString
+        alfDB_plot_struct.paramString      = alfDB_plot_struct.multiString
+        ;; alfDB_plot_struct.paramString_list.Add,alfDB_plot_struct.paramString + '-' + multiples[0]
+        FOR k=0,N_ELEMENTS(alfDB_plot_struct.multiples)-1 DO BEGIN
+           alfDB_plot_struct.paramString_list.Add,alfDB_plot_struct.paramString + '-' + multiples[k]
+        ENDFOR
      ENDIF
 
      IF N_ELEMENTS(do_not_set_defaults) GT 0 THEN BEGIN

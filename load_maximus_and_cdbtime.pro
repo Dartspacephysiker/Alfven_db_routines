@@ -340,7 +340,6 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   ENDIF
 
   IF KEYWORD_SET(use_aacgm) THEN BEGIN
-     PRINT,'Using AACGM lat, MLT, and alt ...'
 
      IF KEYWORD_SET(despunDB) THEN BEGIN
         AACGM_file = AACGM_file__despun
@@ -354,7 +353,6 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
 
 
   IF KEYWORD_SET(use_geo) THEN BEGIN
-     PRINT,'Using GEO lat and alt ...'
 
      IF KEYWORD_SET(despunDB) THEN BEGIN
         GEO_file = GEO_file__despun
@@ -367,7 +365,6 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   ENDIF
 
   IF KEYWORD_SET(use_mag) THEN BEGIN
-     PRINT,'Using MAG lat and alt ...'
 
      IF KEYWORD_SET(despunDB) THEN BEGIN
         MAG_file = MAG_file__despun
@@ -387,7 +384,6 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   ENDIF
 
   IF KEYWORD_SET(use_SDT) THEN BEGIN
-     PRINT,'Using SDT ilat,mlt, and alt ...'
 
      RESTORE,defCoordDir+SDT_file
 

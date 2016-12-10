@@ -11,7 +11,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    USE_AACGM_COORDS=use_aacgm, $
                                    USE_GEO_COORDS=use_geo, $
                                    USE_MAG_COORDS=use_mag, $
-                                   USE_MAG_COORDS=use_sdt, $
+                                   USE_SDT_COORDS=use_sdt, $
                                    FOR_ESPEC_DBS=for_eSpec_DBs, $
                                    ;; CHECK_DB=check_DB, $
                                    JUST_FASTLOC=just_fastLoc, $

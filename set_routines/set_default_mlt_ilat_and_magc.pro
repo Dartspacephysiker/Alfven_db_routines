@@ -165,7 +165,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                    dont_correct_ilats  : 0B    , $
                    do_lShell           : 0B    , $
                    reverse_Lshell      : 0B    , $
-                   coordinate_system   : ''    , $
+                   coordinate_system   : 'SDT' , $
                    use_AACGM           : 0B    , $
                    use_MAG             : 0B    , $
                    north               : 0B    , $
@@ -255,10 +255,20 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
 
      IF KEYWORD_SET(use_AACGM) THEN BEGIN
         STR_ELEMENT,MIMC_struct,'use_AACGM',use_AACGM,/ADD_REPLACE
+        coordinate_system             = 'AACGM'
+        MIMC_struct.coordinate_system = coordinate_system
      ENDIF
 
      IF KEYWORD_SET(use_MAG) THEN BEGIN
         STR_ELEMENT,MIMC_struct,'use_MAG',use_MAG,/ADD_REPLACE
+        coordinate_system             = 'MAG'
+        MIMC_struct.coordinate_system = coordinate_system
+     ENDIF
+
+     IF KEYWORD_SET(use_GEO) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'use_GEO',use_GEO,/ADD_REPLACE
+        coordinate_system             = 'GEO'
+        MIMC_struct.coordinate_system = coordinate_system
      ENDIF
 
      IF N_ELEMENTS(minMC) GT 0 THEN BEGIN
