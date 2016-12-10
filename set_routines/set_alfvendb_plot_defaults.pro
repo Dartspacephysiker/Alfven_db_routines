@@ -1028,7 +1028,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         FOR k=0,N_ELEMENTS(alfDB_plot_struct.multiples)-1 DO BEGIN
            alfDB_plot_struct.paramString_list.Add,alfDB_plot_struct.paramString + '-' + multiples[k]
         ENDFOR
-     ENDIF
+     ENDIF ELSE BEGIN
+        alfDB_plot_struct.paramString_list.Add,alfDB_plot_struct.paramString
+     ENDELSE
 
      IF N_ELEMENTS(do_not_set_defaults) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'do_not_set_defaults', $

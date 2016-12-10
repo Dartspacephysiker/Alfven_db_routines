@@ -311,7 +311,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      ENDIF
 
      IF N_ELEMENTS(delay) GT 0 THEN BEGIN
-        delayStr                = STRING(FORMAT='("_",F0.1,"Delay")',delay/60.) 
+        delayStr                = STRING(FORMAT='("_",F0.1,"Del")',delay/60.) 
      ENDIF ELSE BEGIN
         delayStr                = ""
      ENDELSE
@@ -322,7 +322,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      ENDELSE
 
      IF N_ELEMENTS(binOffset_delay) GT 0 THEN BEGIN
-        delBinOffStr            = STRING(FORMAT='("_",F0.1,"Offset")',binOffset_delay/60.) 
+        delBinOffStr            = STRING(FORMAT='("_",F0.1,"Ofst")',binOffset_delay/60.) 
         ;; delBinOffStr            = ""
      ENDIF ELSE BEGIN
         delBinOffStr            = ""
@@ -331,7 +331,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      delayStr                   = delayStr + delayResStr + delBinOffStr
 
      IF KEYWORD_SET(smoothWindow) THEN BEGIN
-        smoothStr               = '_' + strtrim(smoothWindow,2)+"smooth" 
+        smoothStr               = '_' + strtrim(smoothWindow,2)+"sm" 
      ENDIF ELSE BEGIN
         smoothStr               = ""
      ENDELSE
