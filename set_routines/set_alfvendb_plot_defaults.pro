@@ -229,13 +229,13 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF KEYWORD_SET(ePlots) OR KEYWORD_SET(eSpec__newellPlot_probOccurrence) THEN BEGIN
         eFluxPlotType           = 'eFlux_eSpec' + $
                                   ( KEYWORD_SET(eSpec__Newell_2009_interp) ? $
-                                    '--2009' : '' )
+                                    '-2009' : '' )
      ENDIF
 
      IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
         eNumFlPlotType          = 'eNumFlux_eSpec' + $
                                   ( KEYWORD_SET(eSpec__Newell_2009_interp) ? $
-                                    '--2009' : '' )
+                                    '-2009' : '' )
      ENDIF
 
      ;; IF KEYWORD_SET(ionPlots) THEN BEGIN
@@ -243,12 +243,12 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      ;;       STRUPCASE(iFluxPlotType) EQ 'ENERGY': BEGIN
      ;;          iFluxPlotType     = 'JEi_eSpec' + $
      ;;                              ( KEYWORD_SET(ion__Newell_2009_interp) ? $
-     ;;                                '--2009' : '' )
+     ;;                                '-2009' : '' )
      ;;       END
      ;;       ELSE: BEGIN
      ;;          iFluxPlotType     = 'Ji_eSpec' + $
      ;;                              ( KEYWORD_SET(ion__Newell_2009_interp) ? $
-     ;;                                '--2009' : '' )
+     ;;                                '-2009' : '' )
      ;;       END
      ;;    ENDCASE
      ;; ENDIF

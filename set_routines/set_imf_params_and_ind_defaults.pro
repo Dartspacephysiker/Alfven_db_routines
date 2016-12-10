@@ -53,7 +53,7 @@
 ; EXAMPLE: 
 ;     Use Chaston's original (ALFVEN_STATS_3) database, only including orbits falling in the range 1000-4230
 ;     plot_alfven_stats_imf_screening,clockstr="duskward",/do_chastdb,$
-;                                          plotpref='NESSF2014_reproduction_Jan2015--orbs1000-4230',ORBRANGE=[1000,4230]
+;                                          plotpref='NESSF2014_reproduction_Jan2015-orbs1000-4230',ORBRANGE=[1000,4230]
 ;
 ;
 ;
@@ -204,7 +204,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
   ;;options are 'duskward', 'dawnward', 'bzNorth', 'bzSouth', and 'all_IMF'
   IF KEYWORD_SET(do_not_consider_imf) THEN BEGIN
      clockStr                   = KEYWORD_SET(skip_IMF_string) ? '' : 'NO_IMF_CONSID'
-     OMNIparamStr                = OMNIparamStr + '--' + clockStr
+     OMNIparamStr                = OMNIparamStr + '-' + clockStr
      OMNIparamStr_list           = LIST(OMNIparamStr)
   ENDIF ELSE BEGIN
 
@@ -307,7 +307,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      ;;satellite string
      omniStr                    = ""
      IF satellite EQ "OMNI" THEN BEGIN
-        omniStr                 = "--" + omni_Coords 
+        omniStr                 = "-" + omni_Coords 
      ENDIF
 
      IF N_ELEMENTS(delay) GT 0 THEN BEGIN
@@ -341,7 +341,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      IF clockStr[0] EQ '' THEN BEGIN
         clockOutStr             = '' 
      ENDIF ELSE BEGIN
-        clockOutStr             = '--' + clockStr
+        clockOutStr             = '-' + clockStr
      ENDELSE
 
      IF KEYWORD_SET(multiple_delays) OR KEYWORD_SET(multiple_IMF_clockAngles) THEN BEGIN
@@ -350,7 +350,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            multiples            = delay
            multiString          = "IMF_delays"
            FOR iDel=0,N_ELEMENTS(multiples)-1 DO BEGIN
-              OMNIparamStr_list.add,OMNIparamStr+'--'+satellite+omniStr+clockOutStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
+              OMNIparamStr_list.add,OMNIparamStr+'-'+satellite+omniStr+clockOutStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
            ENDFOR
         ENDIF
@@ -361,14 +361,14 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            multiString          = OMNIparamStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
                                   byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
            IF N_ELEMENTS(clockStr) EQ 8 THEN BEGIN
-              multiString_suff  = '--Ring'
+              multiString_suff  = '-Ring'
            ENDIF
            IF KEYWORD_SET(multiString_suff) THEN BEGIN
               multiString       = multiString + multiString_suff
            ENDIF
 
            FOR iClock=0,N_ELEMENTS(multiples)-1 DO BEGIN
-              OMNIparamStr_list.add,OMNIparamStr+'--'+satellite+omniStr+clockOutStr[iClock]+"_"+ $
+              OMNIparamStr_list.add,OMNIparamStr+'-'+satellite+omniStr+clockOutStr[iClock]+"_"+ $
                  strtrim(stableIMF,2)+"stable"+smoothStr+delayStr+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
 
@@ -379,7 +379,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         ENDIF
      ENDIF ELSE BEGIN
         executing_multiples     = 0
-        OMNIparamStr             = OMNIparamStr+'--'+satellite+omniStr+clockOutStr+"_"+ $
+        OMNIparamStr             = OMNIparamStr+'-'+satellite+omniStr+clockOutStr+"_"+ $
                                   strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
                                   byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
         OMNIparamStr_list.add,OMNIparamStr
@@ -503,11 +503,17 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         ENDIF ELSE BEGIN
            alfDB_plot_struct.paramString += OMNIparamStr
         ENDELSE
+        IF alfDB_plot_struct.multiString EQ '' THEN BEGIN
+           alfDB_plot_struct.multiString = alfDB_plot_struct.paramString + OMNIparamStr
+        ENDIF
      ENDIF
 
      IF N_ELEMENTS(OMNIparamStr_list) GT 0 THEN BEGIN
         IF N_ELEMENTS(alfDB_plot_struct.paramString_list) EQ 0 THEN BEGIN
            STR_ELEMENT,alfDB_plot_struct,'paramString_list',OMNIparamStr_list,/ADD_REPLACE
+           FOR k=0,N_ELEMENTS(alfDB_plot_struct.paramString_list)-1 DO BEGIN
+              alfDB_plot_struct.paramString_list[k] = alfDB_plot_struct.paramString+alfDB_plot_struct.paramString_list[k]
+           ENDFOR
         ENDIF ELSE BEGIN
            FOR k=0,N_ELEMENTS(OMNIparamStr_list)-1 DO BEGIN
               alfDB_plot_struct.paramString_list.Add,OMNIparamStr_list[k]
@@ -540,10 +546,6 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
 
      IF N_ELEMENTS(multiples) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'multiples',multiples,/ADD_REPLACE
-     ENDIF
-
-     IF N_ELEMENTS(multiString) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'multiString',multiString,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(delay_res) GT 0 THEN BEGIN

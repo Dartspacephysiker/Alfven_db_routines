@@ -149,6 +149,11 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
            dontstop        = 1
         ENDIF
 
+        IF STRMATCH(tmpComp.field,STRUPCASE('*dstcutoff*')) THEN BEGIN
+           inds_reset     += 1
+           dontstop        = 1
+        ENDIF
+
         IF STRMATCH(tmpComp.field,STRUPCASE('*multistring*')) THEN BEGIN
            ;; inds_reset     += 1
            dontstop        = 1
