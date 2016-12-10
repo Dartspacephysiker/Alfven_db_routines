@@ -18,6 +18,18 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
      inds_reset = 1B
   ENDIF
 
+  IF MIMC_struct1.minI NE MIMC_struct2.minI THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"minI", $
+           MIMC_struct1.minI,MIMC_struct2.minI
+     inds_reset = 1B
+  ENDIF
+
+  IF MIMC_struct1.maxI NE MIMC_struct2.maxI THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"maxI", $
+           MIMC_struct1.maxI,MIMC_struct2.maxI
+     inds_reset = 1B
+  ENDIF
+
   IF MIMC_struct1.hemi NE MIMC_struct2.hemi THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"hemi", $
            MIMC_struct1.hemi,MIMC_struct2.hemi
@@ -81,6 +93,8 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
   except_list = ['minMC', $
                  'maxNegMC', $
                  'shiftM', $
+                 'minI', $
+                 'maxI', $
                  'hemi', $
                  'north', $
                  'south', $
