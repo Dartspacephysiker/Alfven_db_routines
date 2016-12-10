@@ -503,7 +503,9 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         ENDIF ELSE BEGIN
            alfDB_plot_struct.paramString += OMNIparamStr
         ENDELSE
-        IF alfDB_plot_struct.multiString EQ '' THEN BEGIN
+        IF alfDB_plot_struct.multiString EQ '' AND $
+           alfDB_plot_struct.executing_multiples   $
+        THEN BEGIN
            alfDB_plot_struct.multiString = alfDB_plot_struct.paramString + OMNIparamStr
         ENDIF
      ENDIF
