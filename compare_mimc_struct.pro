@@ -80,6 +80,7 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
 
   except_list = ['minMC', $
                  'maxNegMC', $
+                 'shiftM', $
                  'hemi', $
                  'north', $
                  'south', $
@@ -103,8 +104,8 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
            PRINT,'Not stopping!'
         ENDIF ELSE BEGIN
            HELP,tmpComp
-           PRINT,'MIMC__struct1 : ',MIMC__struct1.(tmpComp.tag_num_A)
-           PRINT,'MIMC__struct2 : ',MIMC__struct2.(tmpComp.tag_num_B)
+           PRINT,'MIMC__struct1 : ',MIMC_struct1.(tmpComp.tag_num_A)
+           PRINT,'MIMC__struct2 : ',MIMC_struct2.(tmpComp.tag_num_B)
            STOP
         ENDELSE
      ENDIF

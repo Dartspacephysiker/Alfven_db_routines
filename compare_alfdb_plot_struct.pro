@@ -1,13 +1,21 @@
 ;;12/07/16
 PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
                               alfDB_plot_struct2, $
-                              INDS_RESET=inds_reset
+                              INDS_RESET=inds_reset, $
+                              DBS_RESET=DBs_reset
 
   COMPILE_OPT IDL2
 
   inds_reset  = 0B
+  DBs_reset   = 0B
 
-  except_list = ["maskMin"                        , $
+  except_list = ["dont_blackball_fastLoc"         , $
+                 "dont_blackball_maximus"         , $
+                 "for_eSpec_DBs"                  , $
+                 "eSpec__all_fluxes"              , $
+                 "eSpec__Newell_2009_interp"      , $
+                 "disregard_sample_t"             , $
+                 "maskMin"                        , $
                  "tHist_mask_bins_below_thresh"   , $
                  "nPlots"                         , $
                  "ePlots"                         , $
@@ -102,6 +110,42 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
   ;;                "PARAMSTRPREFIX", $
   ;;                "PARAMSTRSUFFIX", $
   ;;                "HOYDIA"]
+
+  IF alfDB_plot_struct1.disregard_sample_t NE alfDB_plot_struct2.disregard_sample_t THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"disregard_sample_t", $
+           alfDB_plot_struct1.disregard_sample_t,alfDB_plot_struct2.disregard_sample_t
+     DBs_reset += 1B
+  ENDIF
+  
+  IF alfDB_plot_struct1.dont_blackball_maximus NE alfDB_plot_struct2.dont_blackball_maximus THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"dont_blackball_maximus", $
+           alfDB_plot_struct1.dont_blackball_maximus,alfDB_plot_struct2.dont_blackball_maximus
+     inds_reset += 1B
+  ENDIF
+
+  IF alfDB_plot_struct1.dont_blackball_fastLoc NE alfDB_plot_struct2.dont_blackball_fastLoc THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"dont_blackball_fastLoc", $
+           alfDB_plot_struct1.dont_blackball_fastLoc,alfDB_plot_struct2.dont_blackball_fastLoc
+     inds_reset += 1B
+  ENDIF
+
+  IF alfDB_plot_struct1.for_eSpec_DBs NE alfDB_plot_struct2.for_eSpec_DBs THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"for_eSpec_DBs", $
+           alfDB_plot_struct1.for_eSpec_DBs,alfDB_plot_struct2.for_eSpec_DBs
+     DBs_reset  += 1B
+  ENDIF
+
+  IF alfDB_plot_struct1.eSpec__all_fluxes NE alfDB_plot_struct2.eSpec__all_fluxes THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"eSpec__all_fluxes", $
+           alfDB_plot_struct1.eSpec__all_fluxes,alfDB_plot_struct2.eSpec__all_fluxes
+     inds_reset += 1B
+  ENDIF
+
+  IF alfDB_plot_struct1.eSpec__Newell_2009_interp NE alfDB_plot_struct2.eSpec__Newell_2009_interp THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"eSpec__Newell_2009_interp", $
+           alfDB_plot_struct1.eSpec__Newell_2009_interp,alfDB_plot_struct2.eSpec__Newell_2009_interp
+     DBs_reset  += 1B
+  ENDIF
 
   ;; inds_reset = (COMPARE_STRUCT(alfDB_plot_struct1,alfDB_plot_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)).nDiff GT 0
   comp = COMPARE_STRUCT(alfDB_plot_struct1,alfDB_plot_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)

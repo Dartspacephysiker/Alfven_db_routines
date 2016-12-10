@@ -268,7 +268,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            ENDIF
         END
         ((STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_eSpec")) OR $
-           (STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_eSpec--2009"))): BEGIN
+           (STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_eSpec-2009"))): BEGIN
            h2dStr.title     = title__alfDB_ind_10__for_eSpec
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            for_eSpec      = 1
@@ -462,7 +462,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            can_mlt_by_w_x   = 1
         END
         ((STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_eSpec")) OR $
-         (STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_eSpec--2009"))): BEGIN
+         (STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_eSpec-2009"))): BEGIN
            h2dStr.title     = title__alfDB_esa_nFlux__for_eSpec
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            for_eSpec      = 1

@@ -18,7 +18,9 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
 
   IF ~KEYWORD_SET(keepJunk) THEN BEGIN
      ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs)
-  ENDIF
+  ENDIF ELSE BEGIN
+     ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs,CUSTOM_ORBS_TO_KILL=8276)
+  ENDELSE
 
   ;; nBef        = N_ELEMENTS(ind_orbs)
   ;; ind_orbs    = CGSETDIFFERENCE(ind_orbs,WHERE(dbStruct.orbit EQ 9792),COUNT=nAft)

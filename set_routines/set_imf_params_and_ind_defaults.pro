@@ -377,6 +377,21 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
               ENDIF
            ENDFOR
         ENDIF
+
+        alfDB_plot_struct.multiString = alfDB_plot_struct.paramString + multiString
+
+        ;; IF alfDB_plot_struct.multiString EQ '' AND $
+        ;;    alfDB_plot_struct.executing_multiples   $
+        ;; THEN BEGIN
+        ;;    alfDB_plot_struct.multiString = alfDB_plot_struct.paramString + OMNIparamStr
+        ;; ENDIF ELSE BEGIN
+        ;;    IF STRUPCASE(alfDB_plot_struct.multiString) EQ STRUPCASE(OMNIparamStr) THEN BEGIN
+        ;;       alfDB_plot_struct.multiString = alfDB_plot_struct.paramString + OMNIparamStr
+        ;;    ENDIF ELSE BEGIN
+        ;;       STOP
+        ;;    ENDELSE
+        ;; ENDELSE
+
      ENDIF ELSE BEGIN
         executing_multiples     = 0
         OMNIparamStr             = OMNIparamStr+'-'+omniStr+clockOutStr+"_"+ $
@@ -497,17 +512,12 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         STR_ELEMENT,IMF_struct,'do_not_consider_IMF',BYTE(do_not_consider_IMF),/ADD_REPLACE
      ENDIF
 
-     IF N_ELEMENTS(OMNIparamStr) GT 0 THEN BEGIN
+     IF OMNIparamStr NE '' THEN BEGIN
         IF alfDB_plot_struct.paramString EQ '' THEN BEGIN
            STR_ELEMENT,alfDB_plot_struct,'paramString',OMNIparamStr,/ADD_REPLACE
         ENDIF ELSE BEGIN
            alfDB_plot_struct.paramString += OMNIparamStr
         ENDELSE
-        IF alfDB_plot_struct.multiString EQ '' AND $
-           alfDB_plot_struct.executing_multiples   $
-        THEN BEGIN
-           alfDB_plot_struct.multiString = alfDB_plot_struct.paramString + OMNIparamStr
-        ENDIF
      ENDIF
 
      IF N_ELEMENTS(OMNIparamStr_list) GT 0 THEN BEGIN
@@ -519,9 +529,20 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
               ENDFOR
            ENDIF
         ENDIF ELSE BEGIN
-           FOR k=0,N_ELEMENTS(OMNIparamStr_list)-1 DO BEGIN
-              alfDB_plot_struct.paramString_list[k] = alfDB_plot_struct.paramString_list[k] + OMNIparamStr_list[k]
-           ENDFOR
+           CASE N_ELEMENTS(alfDB_plot_struct.paramString_list) OF
+              N_ELEMENTS(OMNIparamStr_list): BEGIN
+                 FOR k=0,N_ELEMENTS(OMNIparamStr_list)-1 DO BEGIN
+                    alfDB_plot_struct.paramString_list[k] = alfDB_plot_struct.paramString_list[k] + OMNIparamStr_list[k]
+                 ENDFOR
+              END
+              1: BEGIN
+                 alfDB_plot_struct.paramString_list[0] = alfDB_plot_struct.paramString+OMNIparamStr_list[0]
+                 FOR k=1,N_ELEMENTS(OMNIparamStr_list)-1 DO BEGIN
+                    alfDB_plot_struct.paramString_list.Add,alfDB_plot_struct.paramString+OMNIparamStr_list[k]
+                 ENDFOR
+              END
+           ENDCASE
+
         ENDELSE
      ENDIF
 
