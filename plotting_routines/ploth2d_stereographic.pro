@@ -427,10 +427,16 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;; nColors        = KEYWORD_SET(plotH2D_contour) ? nContourColors : nLevels
 
   CASE 1 OF
-     (KEYWORD_SET(plotH2D_contour) AND KEYWORD_SET(overplot)): BEGIN
-        LOADCT, $
-           3, $
-           NCOLORS=nLevels
+     KEYWORD_SET(plotH2D_contour): BEGIN
+        IF KEYWORD_SET(overplot) THEN BEGIN
+           LOADCT, $
+              3, $
+              NCOLORS=nLevels
+        ENDIF ELSE BEGIN
+           LOADCT, $
+              1, $
+              NCOLORS=nLevels
+        ENDELSE
      END
      ELSE: BEGIN
         LOADCT, $

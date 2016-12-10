@@ -589,10 +589,16 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  cb_info.position = cb_position
                  cb_info.charsize = 0.75
 
-                 LOADCT, $
-                    78, $
-                    NCOLORS=cb_info.nColors, $
-                    FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl' ;Attempt to recreate (sort of) Bin's color bar
+                 IF KEYWORD_SET(plotH2D_contour) THEN BEGIN
+                    LOADCT, $
+                       1, $
+                       NCOLORS=cb_info.nColors+cb_info.bottom
+                 ENDIF ELSE BEGIN
+                    LOADCT, $
+                       78, $
+                       NCOLORS=cb_info.nColors+cb_info.bottom, $
+                       FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl' ;Attempt to recreate (sort of) Bin's color bar
+                 ENDELSE
 
                  CGCOLORBAR,NCOLORS=cb_info.nColors, $
                             XLOG=cb_info.XLOG, $
