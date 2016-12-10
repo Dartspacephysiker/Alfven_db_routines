@@ -213,7 +213,7 @@ PRO JOURNAL__20160413__PLOT_ALL_AVG_TYPES_FOR_AVG_LC_EFLUX_AT_LOW_ALTITUDE_FOR_C
         DBFILE=dbfile, $
         NO_BURSTDATA=no_burstData, $
         DATADIR=dataDir, $
-        DO_CHASTDB=do_chastDB, $
+        CHASTDB=chastDB, $
         DO_DESPUNDB=do_despunDB, $
         NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
         NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $

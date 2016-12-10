@@ -192,7 +192,7 @@ PRO JOURNAL__20160708__GET_INDS_IN_EACH_MLT_ILAT_BIN_SO_WE_CAN_INSPECT_PFLUX_DIS
         NO_BURSTDATA=no_burstData, $
         RESET_GOOD_INDS=reset_good_inds, $
         DATADIR=dataDir, $
-        DO_CHASTDB=do_chastDB, $
+        CHASTDB=chastDB, $
         DO_DESPUNDB=do_despun, $
         NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
         NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $

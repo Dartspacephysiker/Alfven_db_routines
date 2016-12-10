@@ -233,11 +233,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      byMaxStr                   = ''
      
      IF N_ELEMENTS(byMin) GT 0 THEN BEGIN
-        byMinStr                = '_' + (KEYWORD_SET(abs_byMin) ? 'ABS_' : '') $
+        byMinStr                = '_' + (KEYWORD_SET(abs_byMin) ? 'ABS' : '') $
                                   + 'byMin' + String(byMin,FORMAT='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
      ENDIF
      IF N_ELEMENTS(byMax) GT 0 THEN BEGIN
-        byMaxStr                = '_' + (KEYWORD_SET(abs_byMax) ? 'ABS_' : '') $
+        byMaxStr                = '_' + (KEYWORD_SET(abs_byMax) ? 'ABS' : '') $
                                   + 'byMax' + String(byMax,FORMAT='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
      ENDIF
      
@@ -246,11 +246,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      bzMaxStr                   = ''
      
      IF N_ELEMENTS(bzMin) GT 0 THEN BEGIN
-        bzMinStr                = '_' + (KEYWORD_SET(abs_bzMin) ? 'ABS_' : '') $
+        bzMinStr                = '_' + (KEYWORD_SET(abs_bzMin) ? 'ABS' : '') $
                                   + 'bzMin' + String(bzMin,FORMAT='(D0.1)')
      ENDIF
      IF N_ELEMENTS(bzMax) GT 0 THEN BEGIN
-        bzMaxStr                = '_' + (KEYWORD_SET(abs_bzMax) ? 'ABS_' : '') $
+        bzMaxStr                = '_' + (KEYWORD_SET(abs_bzMax) ? 'ABS' : '') $
                                   + 'bzMax' + String(bzMax,FORMAT='(D0.1)')
      ENDIF
      
@@ -263,7 +263,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            PRINT,'btMin shouldn''t be less than zero!'
            STOP
         ENDIF
-        btMinStr                = '_' + (KEYWORD_SET(abs_btMin) ? 'ABS_' : '') $
+        btMinStr                = '_' + (KEYWORD_SET(abs_btMin) ? 'ABS' : '') $
                                   + 'btMin' + String(btMin,FORMAT='(D0.1)')
      ENDIF
      IF N_ELEMENTS(btMax) GT 0 THEN BEGIN
@@ -271,7 +271,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            PRINT,'btMax shouldn''t be less than zero!'
            STOP
         ENDIF
-        btMaxStr                = '_' + (KEYWORD_SET(abs_btMax) ? 'ABS_' : '') $
+        btMaxStr                = '_' + (KEYWORD_SET(abs_btMax) ? 'ABS' : '') $
                                   + 'btMax' + String(btMax,FORMAT='(D0.1)')
      ENDIF
      
@@ -280,11 +280,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      bxMaxStr                   = ''
      
      IF N_ELEMENTS(bxMin) GT 0 THEN BEGIN
-        bxMinStr                = '_' + (KEYWORD_SET(abs_bxMin) ? 'ABS_' : '') $
+        bxMinStr                = '_' + (KEYWORD_SET(abs_bxMin) ? 'ABS' : '') $
                                   + 'bxMin' + String(bxMin,FORMAT='(D0.1)')
      ENDIF
      IF N_ELEMENTS(bxMax) GT 0 THEN BEGIN
-        bxMaxStr                = '_' + (KEYWORD_SET(abs_bxMax) ? 'ABS_' : '') $
+        bxMaxStr                = '_' + (KEYWORD_SET(abs_bxMax) ? 'ABS' : '') $
                                   + 'bxMax' + String(bxMax,FORMAT='(D0.1)')
      ENDIF
      
@@ -293,12 +293,12 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      bx_over_by_ratio_maxStr    = ''
      
      IF N_ELEMENTS(bx_over_by_ratio_min) GT 0 THEN BEGIN
-        bx_over_by_ratio_minStr = '_' + (KEYWORD_SET(abs_bx_over_by_ratio_min) ? 'ABS_' : '') $
-                                  + 'bxy_ratMin' + String(bx_over_by_ratio_min,FORMAT='(D0.1)')
+        bx_over_by_ratio_minStr = '_' + (KEYWORD_SET(abs_bx_over_by_ratio_min) ? 'ABS' : '') $
+                                  + 'bxy_rMn' + String(bx_over_by_ratio_min,FORMAT='(D0.1)')
      ENDIF
      IF N_ELEMENTS(bx_over_by_ratio_max) GT 0 THEN BEGIN
-        bx_over_by_ratio_maxStr = '_' + (KEYWORD_SET(abs_bx_over_by_ratio_max) ? 'ABS_' : '') $
-                                  + 'bxy_ratMax' + String(bx_over_by_ratio_max,FORMAT='(D0.1)')
+        bx_over_by_ratio_maxStr = '_' + (KEYWORD_SET(abs_bx_over_by_ratio_max) ? 'ABS' : '') $
+                                  + 'bxy_rMx' + String(bx_over_by_ratio_max,FORMAT='(D0.1)')
      ENDIF
 
      ;;********************************************
@@ -350,7 +350,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            multiples            = delay
            multiString          = "IMF_delays"
            FOR iDel=0,N_ELEMENTS(multiples)-1 DO BEGIN
-              OMNIparamStr_list.add,OMNIparamStr+'-'+satellite+omniStr+clockOutStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
+              OMNIparamStr_list.add,OMNIparamStr+'-'+omniStr+clockOutStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
            ENDFOR
         ENDIF
@@ -368,7 +368,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            ENDIF
 
            FOR iClock=0,N_ELEMENTS(multiples)-1 DO BEGIN
-              OMNIparamStr_list.add,OMNIparamStr+'-'+satellite+omniStr+clockOutStr[iClock]+"_"+ $
+              OMNIparamStr_list.add,OMNIparamStr+'-'+omniStr+clockOutStr[iClock]+"_"+ $
                  strtrim(stableIMF,2)+"stable"+smoothStr+delayStr+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
 
@@ -379,7 +379,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         ENDIF
      ENDIF ELSE BEGIN
         executing_multiples     = 0
-        OMNIparamStr             = OMNIparamStr+'-'+satellite+omniStr+clockOutStr+"_"+ $
+        OMNIparamStr             = OMNIparamStr+'-'+omniStr+clockOutStr+"_"+ $
                                   strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
                                   byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
         OMNIparamStr_list.add,OMNIparamStr

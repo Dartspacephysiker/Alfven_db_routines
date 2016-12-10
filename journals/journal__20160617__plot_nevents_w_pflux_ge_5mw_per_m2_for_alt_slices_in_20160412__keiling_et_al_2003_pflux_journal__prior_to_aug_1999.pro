@@ -198,7 +198,7 @@ PRO JOURNAL__20160617__PLOT_NEVENTS_W_PFLUX_GE_5MW_PER_M2_FOR_ALT_SLICES_IN_2016
         DBFILE=dbfile, $
         NO_BURSTDATA=no_burstData, $
         DATADIR=dataDir, $
-        DO_CHASTDB=do_chastDB, $
+        CHASTDB=chastDB, $
         DO_DESPUNDB=do_despunDB, $
         NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
         NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $

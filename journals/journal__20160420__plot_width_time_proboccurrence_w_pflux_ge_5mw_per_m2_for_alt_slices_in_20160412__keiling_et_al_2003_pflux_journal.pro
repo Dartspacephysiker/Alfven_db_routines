@@ -212,7 +212,7 @@ PRO JOURNAL__20160420__PLOT_WIDTH_TIME_PROBOCCURRENCE_W_PFLUX_GE_5MW_PER_M2_FOR_
         DBFILE=dbfile, $
         NO_BURSTDATA=no_burstData, $
         DATADIR=dataDir, $
-        DO_CHASTDB=do_chastDB, $
+        CHASTDB=chastDB, $
         DO_DESPUNDB=do_despunDB, $
         NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
         NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $

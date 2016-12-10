@@ -201,7 +201,7 @@ PRO JOURNAL__20160413__PLOT_NEVENTS_AND_5_OTHER_MEASURES_W_E_ENERGYFLUX_GE_POINT
         DBFILE=dbfile, $
         NO_BURSTDATA=no_burstData, $
         DATADIR=dataDir, $
-        DO_CHASTDB=do_chastDB, $
+        CHASTDB=chastDB, $
         DO_DESPUNDB=do_despunDB, $
         NEVENTSPLOTRANGE=nEventsPlotRange, LOGNEVENTSPLOT=logNEventsPlot, $
         NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $
