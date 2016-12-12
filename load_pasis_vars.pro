@@ -14,32 +14,31 @@ FUNCTION LOAD_PASIS_VARS, $
      checkAgainst = 1
   ENDELSE
 
-  saveDir = KEYWORD_SET(dir)      ? dir      : '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/temps/'
+  saveDir = KEYWORD_SET(dir)      ? dir      : '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/temp/'
   fName   = KEYWORD_SET(fileName) ? fileName : GET_PASIS_VARS_FNAME()
 
   IF KEYWORD_SET(verbose) THEN BEGIN 
      PRINT,"Loading PASIS vars from " + saveDir + fName + ' ...'
   ENDIF
 
-  ;;Setup temps for comparison
-  IF KEYWORD_SET(checkAgainst) THEN BEGIN
-
-     alfDB_plot_struct         = PASIS__alfDB_plot_struct     
-     MIMC_struct               = MIMC_struct     
-     IMF_struct                = IMF_struct     
-
-     compare_alfDB_plot_struct = 1
-
-     compare_MIMC_struct       = 1
-
-     compare_IMF_struct        = 1
-
-     inds_reset = 0B
-     DBs_reset  = 0B
-
-  ENDIF
 
   IF FILE_TEST(saveDir+fName) THEN BEGIN
+
+     ;;Setup temps for comparison
+     IF KEYWORD_SET(checkAgainst) THEN BEGIN
+        compare_alfDB_plot_struct = 1
+        compare_MIMC_struct       = 1
+        compare_IMF_struct        = 1
+
+        inds_reset = 0B
+        DBs_reset  = 0B
+        plot_reset = 0B 
+
+        alfDB_plot_struct = TEMPORARY(PASIS__alfDB_plot_struct)
+        MIMC_struct       = TEMPORARY(PASIS__MIMC_struct)
+        IMF_struct        = TEMPORARY(PASIS__IMF_struct)
+     ENDIF
+
      RESTORE,saveDir+fName
   ENDIF ELSE BEGIN
      PRINT,"Couldn't get PASIS vars file! exiting ..."
@@ -52,15 +51,15 @@ FUNCTION LOAD_PASIS_VARS, $
      N_ELEMENTS(PASIS__fastLocInterped_i_list ) EQ 0 OR $
      ;; N_ELEMENTS(PASIS__indices__eSpec_list ) EQ 0 OR $
      ;; N_ELEMENTS(PASIS__indices__ion_list   ) EQ 0 OR $
-     N_ELEMENTS(PASIS__eFlux_eSpec_data       ) EQ 0 OR $
-     N_ELEMENTS(PASIS__eNumFlux_eSpec_data    ) EQ 0 OR $
+     ;; N_ELEMENTS(PASIS__eFlux_eSpec_data       ) EQ 0 OR $
+     ;; N_ELEMENTS(PASIS__eNumFlux_eSpec_data    ) EQ 0 OR $
      ;; N_ELEMENTS(PASIS__eSpec__MLTs         ) EQ 0 OR $
      ;; N_ELEMENTS(PASIS__eSpec__ILATs        ) EQ 0 OR $
-     N_ELEMENTS(PASIS__iFlux_eSpec_data       ) EQ 0 OR $
-     N_ELEMENTS(PASIS__iNumFlux_eSpec_data    ) EQ 0 OR $
-     N_ELEMENTS(PASIS__ion_delta_t            ) EQ 0 OR $
-     N_ELEMENTS(PASIS__ion__MLTs              ) EQ 0 OR $
-     N_ELEMENTS(PASIS__ion__ILATs             ) EQ 0 OR $
+     ;; N_ELEMENTS(PASIS__iFlux_eSpec_data       ) EQ 0 OR $
+     ;; N_ELEMENTS(PASIS__iNumFlux_eSpec_data    ) EQ 0 OR $
+     ;; N_ELEMENTS(PASIS__ion_delta_t            ) EQ 0 OR $
+     ;; N_ELEMENTS(PASIS__ion__MLTs              ) EQ 0 OR $
+     ;; N_ELEMENTS(PASIS__ion__ILATs             ) EQ 0 OR $
      N_ELEMENTS(PASIS__alfDB_plot_struct      ) EQ 0 OR $
      N_ELEMENTS(PASIS__IMF_struct             ) EQ 0 OR $
      N_ELEMENTS(PASIS__MIMC_struct            ) EQ 0 $
@@ -98,12 +97,19 @@ FUNCTION LOAD_PASIS_VARS, $
 
      ENDIF
 
+     IF KEYWORD_SET(inds_reset) OR $
+        KEYWORD_SET(plot_reset) OR $
+        KEYWORD_SET(DBs_reset) $
+     THEN BEGIN
+        PRINT,"Deleting PASIS vars file; it doesn't match ..."
+        SPAWN,'rm ' + saveDir + fName
+     ENDIF
+
      CLEAR_PASIS_VARS,INDS_RESET=inds_reset, $
                       PLOTS_RESET=plots_reset, $
                       DBS_RESET=DBs_reset
 
      IF N_ELEMENTS(PASIS__plot_i_list) GT 0 THEN BEGIN
-
         get_plot_i              = 0
      ENDIF ELSE BEGIN
         get_plot_i              = 1

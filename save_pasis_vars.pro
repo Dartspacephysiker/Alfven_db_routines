@@ -8,7 +8,7 @@ PRO SAVE_PASIS_VARS, $
 
   @common__pasis_lists.pro
 
-  saveDir = KEYWORD_SET(dir)      ? dir      : '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/temps/'
+  saveDir = KEYWORD_SET(dir)      ? dir      : '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/temp/'
   fName   = KEYWORD_SET(fileName) ? fileName : GET_PASIS_VARS_FNAME()
 
   IF KEYWORD_SET(verbose) THEN BEGIN 
