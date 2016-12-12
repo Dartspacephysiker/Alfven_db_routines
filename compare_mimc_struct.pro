@@ -92,6 +92,7 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
 
   except_list = ['minMC', $
                  'maxNegMC', $
+                 'binM', $
                  'shiftM', $
                  'minI', $
                  'maxI', $
