@@ -58,11 +58,11 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY, $
      PRINTF,lun,FORMAT='("Altitude",T30,":",T35,I8,T45,I8)', $
             alfDB_plot_struct.altitudeRange[0],alfDB_plot_struct.altitudeRange[1]
   IF TAG_EXIST(alfDB_plot_struct,'charERange')    THEN $
-     PRINTF,lun,FORMAT='("Char electron energy (eV)     :",T35,G8.2,T45,G8.2)', $
+     PRINTF,lun,FORMAT='("Char electron energy (eV)    :",T35,G8.2,T45,G8.2)', $
             alfDB_plot_struct.charERange[0],alfDB_plot_struct.charERange[1]
   PRINTF,lun,FORMAT='("")'
   IF TAG_EXIST(alfDB_plot_struct,'charE__Newell_the_cusp')    THEN $
-     PRINTF,lun,FORMAT='("CharE, Newelled cusp          :",T35,I0)', $
+     PRINTF,lun,FORMAT='("CharE, Newelled cusp         :",T35,I0)', $
             alfDB_plot_struct.charE__Newell_the_cusp
 
   IF TAG_EXIST(MIMC_struct,'hemi')          THEN $

@@ -190,10 +190,13 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
 
      IF KEYWORD_SET(noMem) THEN BEGIN
         PRINT,"Sending maximus from vars loaded in memory ..."
-        maximus  = TEMPORARY(MAXIMUS__maximus)
-        cdbTime  = TEMPORARY(MAXIMUS__times)
-        DBFile   = TEMPORARY(MAXIMUS__DBFile)
-        DB_tFile = TEMPORARY(MAXIMUS__DB_tFile)
+        maximus   = TEMPORARY(MAXIMUS__maximus)
+        cdbTime   = TEMPORARY(MAXIMUS__times)
+        DBFile    = TEMPORARY(MAXIMUS__DBFile)
+        DB_tFile  = TEMPORARY(MAXIMUS__DB_tFile)
+
+        pDBStruct = PTR_NEW(maximus) 
+
      ENDIF ELSE BEGIN
         IF ~KEYWORD_SET(quiet) THEN BEGIN
            PRINTF,lun,"There is already a maximus struct loaded! Not loading " + DBFile

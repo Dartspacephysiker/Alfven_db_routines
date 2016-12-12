@@ -204,7 +204,9 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
   ;;options are 'duskward', 'dawnward', 'bzNorth', 'bzSouth', and 'all_IMF'
   IF KEYWORD_SET(do_not_consider_imf) THEN BEGIN
      clockStr                   = KEYWORD_SET(skip_IMF_string) ? '' : 'NO_IMF_CONSID'
-     OMNIparamStr                = OMNIparamStr + '-' + clockStr
+     IF (clockStr NE '') AND (OMNIparamStr NE '') THEN BEGIN
+        OMNIparamStr                = OMNIparamStr + '-' + clockStr
+     ENDIF
      OMNIparamStr_list           = LIST(OMNIparamStr)
   ENDIF ELSE BEGIN
 
@@ -541,6 +543,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
                     alfDB_plot_struct.paramString_list.Add,alfDB_plot_struct.paramString+OMNIparamStr_list[k]
                  ENDFOR
               END
+              ELSE:
            ENDCASE
 
         ENDELSE

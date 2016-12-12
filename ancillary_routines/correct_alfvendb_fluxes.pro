@@ -231,8 +231,8 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;;new
      maximus.integ_ion_flux             =  100 * maximus.integ_ion_flux
      maximus.integ_ion_flux[north_i]    =   -1 * maximus.integ_ion_flux[north_i]
-     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'17-INTEG_ION_FLUX          (Flip sign in N Hemi, scale to #/cm-s)'
-     correctStr += '17-INTEG_ION_FLUX          (Flip sign in N Hemi, scale to #/cm-s)' + STRING(10B)
+     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'17-INTEG_ION_FLUX          (Flip sign in N Hemi, units to #/cm-s)'
+     correctStr += '17-INTEG_ION_FLUX          (Flip sign in N Hemi, units to #/cm-s)' + STRING(10B)
 
      ;;18-INTEG_ION_FLUX_UP
      ;;old
