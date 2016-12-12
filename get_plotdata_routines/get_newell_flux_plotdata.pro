@@ -110,7 +110,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
   ;;    ENDIF 
   ;; ENDELSE
 
-  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+  IF KEYWORD_SET(alfDB_plot_struct.for_eSpec_DBs) THEN BEGIN
 
      SPLIT_ESPECDB_I_BY_ESPEC_TYPE,indices__eSpec, $
                                    OUT_TITLES=out_titles, $

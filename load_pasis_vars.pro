@@ -45,28 +45,78 @@ FUNCTION LOAD_PASIS_VARS, $
      RETURN,0
   ENDELSE
 
-  IF N_ELEMENTS(PASIS__paramString_list       ) EQ 0 OR $
-     N_ELEMENTS(PASIS__paramString            ) EQ 0 OR $
-     N_ELEMENTS(PASIS__plot_i_list            ) EQ 0 OR $
-     N_ELEMENTS(PASIS__fastLocInterped_i_list ) EQ 0 OR $
-     ;; N_ELEMENTS(PASIS__indices__eSpec_list ) EQ 0 OR $
-     ;; N_ELEMENTS(PASIS__indices__ion_list   ) EQ 0 OR $
-     ;; N_ELEMENTS(PASIS__eFlux_eSpec_data       ) EQ 0 OR $
-     ;; N_ELEMENTS(PASIS__eNumFlux_eSpec_data    ) EQ 0 OR $
-     ;; N_ELEMENTS(PASIS__eSpec__MLTs         ) EQ 0 OR $
-     ;; N_ELEMENTS(PASIS__eSpec__ILATs        ) EQ 0 OR $
-     ;; N_ELEMENTS(PASIS__iFlux_eSpec_data       ) EQ 0 OR $
-     ;; N_ELEMENTS(PASIS__iNumFlux_eSpec_data    ) EQ 0 OR $
-     ;; N_ELEMENTS(PASIS__ion_delta_t            ) EQ 0 OR $
-     ;; N_ELEMENTS(PASIS__ion__MLTs              ) EQ 0 OR $
-     ;; N_ELEMENTS(PASIS__ion__ILATs             ) EQ 0 OR $
-     N_ELEMENTS(PASIS__alfDB_plot_struct      ) EQ 0 OR $
-     N_ELEMENTS(PASIS__IMF_struct             ) EQ 0 OR $
-     N_ELEMENTS(PASIS__MIMC_struct            ) EQ 0 $
-  THEN BEGIN
-     PRINT,"BROOOOOO!"
-     STOP
-  ENDIF
+  CASE 1 OF
+     KEYWORD_SET(alfdb_plot_struct.for_eSpec_DBs): BEGIN
+        IF N_ELEMENTS(PASIS__paramString_list       ) EQ 0 OR $
+           N_ELEMENTS(PASIS__paramString            ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__plot_i_list            ) EQ 0 OR $
+           N_ELEMENTS(PASIS__fastLocInterped_i_list ) EQ 0 OR $
+           N_ELEMENTS(PASIS__indices__eSpec_list ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__indices__ion_list   ) EQ 0 OR $
+           (N_ELEMENTS(PASIS__eFlux_eSpec_data       ) EQ 0 AND $
+           N_ELEMENTS(PASIS__eNumFlux_eSpec_data    ) EQ 0) OR $
+           N_ELEMENTS(PASIS__eSpec__MLTs         ) EQ 0 OR $
+           N_ELEMENTS(PASIS__eSpec__ILATs        ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__iFlux_eSpec_data       ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__iNumFlux_eSpec_data    ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__ion_delta_t            ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__ion__MLTs              ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__ion__ILATs             ) EQ 0 OR $
+           N_ELEMENTS(PASIS__alfDB_plot_struct      ) EQ 0 OR $
+           N_ELEMENTS(PASIS__IMF_struct             ) EQ 0 OR $
+           N_ELEMENTS(PASIS__MIMC_struct            ) EQ 0 $
+        THEN BEGIN
+           PRINT,"BROOOOOO!"
+           STOP
+        ENDIF
+     END
+     ELSE: BEGIN
+        IF N_ELEMENTS(PASIS__paramString_list       ) EQ 0 OR $
+           N_ELEMENTS(PASIS__paramString            ) EQ 0 OR $
+           N_ELEMENTS(PASIS__plot_i_list            ) EQ 0 OR $
+           N_ELEMENTS(PASIS__fastLocInterped_i_list ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__indices__eSpec_list ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__indices__ion_list   ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__eFlux_eSpec_data       ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__eNumFlux_eSpec_data    ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__eSpec__MLTs         ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__eSpec__ILATs        ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__iFlux_eSpec_data       ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__iNumFlux_eSpec_data    ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__ion_delta_t            ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__ion__MLTs              ) EQ 0 OR $
+           ;; N_ELEMENTS(PASIS__ion__ILATs             ) EQ 0 OR $
+           N_ELEMENTS(PASIS__alfDB_plot_struct      ) EQ 0 OR $
+           N_ELEMENTS(PASIS__IMF_struct             ) EQ 0 OR $
+           N_ELEMENTS(PASIS__MIMC_struct            ) EQ 0 $
+        THEN BEGIN
+           PRINT,"BROOOOOO!"
+           STOP
+        ENDIF
+     END
+  ENDCASE
+  ;; IF N_ELEMENTS(PASIS__paramString_list       ) EQ 0 OR $
+  ;;    N_ELEMENTS(PASIS__paramString            ) EQ 0 OR $
+  ;;    N_ELEMENTS(PASIS__plot_i_list            ) EQ 0 OR $
+  ;;    N_ELEMENTS(PASIS__fastLocInterped_i_list ) EQ 0 OR $
+  ;;    ;; N_ELEMENTS(PASIS__indices__eSpec_list ) EQ 0 OR $
+  ;;    ;; N_ELEMENTS(PASIS__indices__ion_list   ) EQ 0 OR $
+  ;;    ;; N_ELEMENTS(PASIS__eFlux_eSpec_data       ) EQ 0 OR $
+  ;;    ;; N_ELEMENTS(PASIS__eNumFlux_eSpec_data    ) EQ 0 OR $
+  ;;    ;; N_ELEMENTS(PASIS__eSpec__MLTs         ) EQ 0 OR $
+  ;;    ;; N_ELEMENTS(PASIS__eSpec__ILATs        ) EQ 0 OR $
+  ;;    ;; N_ELEMENTS(PASIS__iFlux_eSpec_data       ) EQ 0 OR $
+  ;;    ;; N_ELEMENTS(PASIS__iNumFlux_eSpec_data    ) EQ 0 OR $
+  ;;    ;; N_ELEMENTS(PASIS__ion_delta_t            ) EQ 0 OR $
+  ;;    ;; N_ELEMENTS(PASIS__ion__MLTs              ) EQ 0 OR $
+  ;;    ;; N_ELEMENTS(PASIS__ion__ILATs             ) EQ 0 OR $
+  ;;    N_ELEMENTS(PASIS__alfDB_plot_struct      ) EQ 0 OR $
+  ;;    N_ELEMENTS(PASIS__IMF_struct             ) EQ 0 OR $
+  ;;    N_ELEMENTS(PASIS__MIMC_struct            ) EQ 0 $
+  ;; THEN BEGIN
+  ;;    PRINT,"BROOOOOO!"
+  ;;    STOP
+  ;; ENDIF
 
   IF KEYWORD_SET(checkAgainst) THEN BEGIN
 
