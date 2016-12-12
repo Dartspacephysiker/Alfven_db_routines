@@ -193,6 +193,11 @@ FUNCTION LOAD_PASIS_VARS, $
 
   ENDIF
 
+  PASIS__alfDB_plot_struct = TEMPORARY(alfDB_plot_struct)
+  PASIS__MIMC_struct       = TEMPORARY(MIMC_struct)
+  PASIS__IMF_struct        = TEMPORARY(IMF_struct)
+
+
   RETURN,1
   
 END
