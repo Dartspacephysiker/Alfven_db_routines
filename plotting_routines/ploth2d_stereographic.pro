@@ -136,6 +136,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   charScale        = (xScale*yScale)^(1./2.)
   gridScale        = (xScale*yScale)^(1./1.)
 
+  presentationBLOWITUP = 1.3
+
   IF mirror THEN BEGIN
      IF minI GT 0 THEN BEGIN
         centerLat  = -90
@@ -838,7 +840,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                       ALIGNMENT=1.0, $
                       ORIENTATION=0, $
                       COLOR=defGridTextColor, $
-                      CHARSIZE=defCharSize_grid*charScale
+                      ;; CHARSIZE=defCharSize_grid*charScale
+                      CHARSIZE=(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : defCharSize_grid)*charScale
            ENDFOR
         ENDIF
      ENDIF ELSE BEGIN
@@ -886,7 +889,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                     ;; LONS=(1*INDGEN(12)*30),$
                     LONS=(1*INDGEN(nLons)*360/nLons),$
                     LONNAMES=lonNames, $
-                    CHARSIZE=defCharSize_grid*charScale
+                    CHARSIZE=(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : defCharSize_grid)*charScale
      ENDELSE
   ENDIF
 
@@ -926,6 +929,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ;;         CHARSIZE=defCharSize_grid*charScale
      ;; CGTEXT,lTexPos1, $
      ;;        bTexPos1, $
+
      CGTEXT, $
         integ_position[0], $
         integ_position[1], $
@@ -933,33 +937,40 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ;; STRING(integral,FORMAT=fullIntegLabelFormat), $
         STRING(temp.grossIntegrals.total,FORMAT=fullIntegLabelFormat)+temp.gUnits, $
         /NORMAL, $
-        CHARSIZE=defCharSize_grid*charScale
-
-     CGTEXT, $
-        ;; integ_position[0], $
-        ;; integ_position[1]-integ_delta, $
-        integ_position[2], $
-        integ_position[1], $
-        ;; 'Integral: ' + string(integral,Format=dayNightIntegLabelFormat), $
-        ;; STRING(integral,FORMAT=dayNightIntegLabelFormat), $
-        STRING(temp.grossIntegrals.day,FORMAT=dayNightIntegLabelFormat), $
-        COLOR='RED', $
-        /NORMAL, $
-        CHARSIZE=defCharSize_grid*charScale
-
-     CGTEXT, $
-        ;; integ_position[0], $
-        ;; integ_position[1]-integ_delta*2, $
-        integ_position[2], $
-        integ_position[3], $
-        ;; 'Integral: ' + string(integral,Format=dayNightIntegLabelFormat), $
-        ;; STRING(integral,FORMAT=dayNightIntegLabelFormat), $
-        STRING(temp.grossIntegrals.night,FORMAT=dayNightIntegLabelFormat), $
-        COLOR='BLUE', $
-        /NORMAL, $
-        CHARSIZE=defCharSize_grid*charScale
+        CHARSIZE=((KEYWORD_SET(labels_for_presentation) ? $
+                              charSize_cbLabel_pres :     $
+                              defCharSize_grid)           $
+                  * charScale)
 
      IF KEYWORD_SET(show_daynight_integrals) THEN BEGIN
+
+        CGTEXT, $
+           ;; integ_position[0], $
+           ;; integ_position[1]-integ_delta, $
+           integ_position[2], $
+           integ_position[1], $
+           ;; 'Integral: ' + string(integral,Format=dayNightIntegLabelFormat), $
+           ;; STRING(integral,FORMAT=dayNightIntegLabelFormat), $
+           STRING(temp.grossIntegrals.day,FORMAT=dayNightIntegLabelFormat), $
+           COLOR='RED', $
+           /NORMAL, $
+           CHARSIZE=defCharSize_grid*charScale
+
+        CGTEXT, $
+           ;; integ_position[0], $
+           ;; integ_position[1]-integ_delta*2, $
+           integ_position[2], $
+           integ_position[3], $
+           ;; 'Integral: ' + string(integral,Format=dayNightIntegLabelFormat), $
+           ;; STRING(integral,FORMAT=dayNightIntegLabelFormat), $
+           STRING(temp.grossIntegrals.night,FORMAT=dayNightIntegLabelFormat), $
+           COLOR='BLUE', $
+           /NORMAL, $
+           CHARSIZE=defCharSize_grid*charScale
+
+     ENDIF
+
+     IF KEYWORD_SET(show_dawndusk_integrals) THEN BEGIN
         CGTEXT,lTexPos2, $
                bTexPos1, $
                'Dawnward: ' + STRING(dawnIntegral,FORMAT=integralLabelFormat), $
@@ -1043,7 +1054,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                                     (KEYWORD_SET(labels_for_presentation) ? cbPosition_pres : cbPosition), $
                                     TEXTTHICK:cbTextThick, $
                                     VERTICAL:cbVertical, $
-                                    CHARSIZE:KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : cbTCharSize*charScale,$
+                                    CHARSIZE:(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : cbTCharSize)*charScale,$
                                     TICKLEN:0.5}
 
   IF KEYWORD_SET(plotH2D_contour) THEN BEGIN

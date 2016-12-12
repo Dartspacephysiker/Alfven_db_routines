@@ -169,7 +169,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
            oPltCBPos              = [0.86 , 0.05, 0.89 , 0.95]
 
            IF KEYWORD_SET(tile__cb_in_center_panel) THEN BEGIN
-              defIntegPos         = [0.07 , 0.93, 0.82 , 0.07]
+              ;; defIntegPos         = [0.07 , 0.93, 0.82 , 0.07]
+              defIntegPos         = [0.03 , 0.03, 0.82 , 0.07]
            ENDIF ELSE BEGIN
               defIntegPos         = [0.11 , 0.78, 0.68 , 0.74]
            ENDELSE
@@ -612,7 +613,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                             POSITION=cb_info.POSITION, $
                             TEXTTHICK=cb_info.TEXTTHICK, $
                             VERTICAL=cb_info.VERTICAL, $
-                            CHARSIZE=cb_info.CHARSIZE, $
+                            CHARSIZE=cb_info.CHARSIZE*1.3, $
                             TICKLEN=cb_info.TICKLEN
 
                  IF KEYWORD_SET(oplotStr) THEN BEGIN

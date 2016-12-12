@@ -21,7 +21,8 @@ FUNCTION GET_PASIS_VARS_FNAME
      KEYWORD_SET(PASIS__alfDB_plot_struct.for_eSpec_DBs): BEGIN
         PASISpref    += 'eSpec-'
      END
-     ELSE:           += 'alfDB-'
+     ELSE: BEGIN
+        PASISpref    += 'alfDB-'
      END
   ENDCASE
 
