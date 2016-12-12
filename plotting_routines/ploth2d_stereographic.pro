@@ -817,14 +817,34 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
            zeroMLTName                   = KEYWORD_SET(suppress_MLT_name) ? '0' : '0 MLT'
 
            MLTColor                      = 'black'
-           CGTEXT,MEAN([map_position[2],map_position[0]]), map_position[1]-0.035*yScale,zeroMLTName,/NORMAL, $
-                  COLOR=MLTColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
-           CGTEXT,MEAN([map_position[2],map_position[0]]), map_position[3]+0.005*yScale,'12',/NORMAL, $
-                  COLOR=MLTColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
-           CGTEXT,map_position[2]+0.02*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'6',/NORMAL, $
-                  COLOR=MLTColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
-           CGTEXT,map_position[0]-0.03*xScale, MEAN([map_position[3],map_position[1]])-0.015*yScale,'18',/NORMAL, $
-                  COLOR=MLTColor,ALIGNMENT=0.5,CHARSIZE=defCharSize_grid*charScale
+           CGTEXT,MEAN([map_position[2],map_position[0]]), $
+                  map_position[1]-0.035*yScale, $
+                  zeroMLTName, $
+                  /NORMAL, $
+                  COLOR=MLTColor, $
+                  ALIGNMENT=0.5, $
+                  CHARSIZE=(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : defCharSize_grid)*charScale
+           CGTEXT,MEAN([map_position[2],map_position[0]]), $
+                  map_position[3]-0.005*yScale, $
+                  '12',/NORMAL, $
+                  COLOR=MLTColor, $
+                  ALIGNMENT=0.5, $
+                  CHARSIZE=(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : defCharSize_grid)*charScale
+           CGTEXT,map_position[2]+0.02*xScale, $
+                  MEAN([map_position[3],map_position[1]])-0.015*yScale, $
+                  '6', $
+                  /NORMAL, $
+                  COLOR=MLTColor, $
+                  ALIGNMENT=0.5, $
+                  CHARSIZE=(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : defCharSize_grid)*charScale
+           ;; CGTEXT,map_position[0]-0.03*xScale, $
+           CGTEXT,map_position[0]-0.015*xScale, $
+                  MEAN([map_position[3],map_position[1]])-0.015*yScale, $
+                  '18', $
+                  /NORMAL, $
+                  COLOR=MLTColor, $
+                  ALIGNMENT=0.5, $
+                  CHARSIZE=(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : defCharSize_grid)*charScale
         ENDIF
 
         ;;ILATs
