@@ -421,12 +421,26 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   ;; ENDELSE
 
-  contourBottom  = 3
-  nContourColors = 10
+  CASE 1 OF
+     KEYWORD_SET(overplot): BEGIN
+        contourBottom  = 6
+        nContourColors = 10
+        nLevels        = 255
+        nLevelBottom   = nLevels*contourBottom/nContourColors
+     END
+     ELSE: BEGIN
+        contourBottom  = 3
+        nContourColors = 10
+        nLevels        = 255
+        nLevelBottom   = nLevels*contourBottom/nContourColors
+     END
+  ENDCASE
 
-  nLevels        = 255
-  nLevelBottom   = nLevels*contourBottom/nContourColors
-  ;; nColors        = KEYWORD_SET(plotH2D_contour) ? nContourColors : nLevels
+  ;;For overplotting
+  ;; contourBottom_op  = 6
+  ;; nContourColors_op = 10
+  ;; nLevels_op        = 255
+  ;; nLevelBottom_op   = nLevels*contourBottom/nContourColors
 
   CASE 1 OF
      KEYWORD_SET(plotH2D_contour): BEGIN
