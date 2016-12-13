@@ -429,7 +429,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         nLevelBottom   = nLevels*contourBottom/nContourColors
      END
      ELSE: BEGIN
-        contourBottom  = 3
+        contourBottom  = 5
         nContourColors = 10
         nLevels        = 255
         nLevelBottom   = nLevels*contourBottom/nContourColors

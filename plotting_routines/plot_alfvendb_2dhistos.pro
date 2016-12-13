@@ -608,12 +608,13 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                             OOB_HIGH=TAG_EXIST(cb_info,'OOB_High') ? cb_info.OOB_High : !NULL, $
                             RANGE=cb_info.RANGE, $
                             TITLE=!NULL, $ ;cb_info.TITLE, $
-                            TLOCATION=cb_info.TLOCATION, $
+                            TICKNAMES=(TAG_EXIST(cb_info,'cbTickNames') ? cb_info.cbTickNames : !NULL), $
+                            TLOCATION=(TAG_EXIST(cb_info,'tLocation') ? cb_info.tLocation : !NULL), $
                             TCHARSIZE=cb_info.TCHARSIZE, $
                             POSITION=cb_info.POSITION, $
                             TEXTTHICK=cb_info.TEXTTHICK, $
                             VERTICAL=cb_info.VERTICAL, $
-                            CHARSIZE=cb_info.CHARSIZE*1.3, $
+                            CHARSIZE=cb_info.CHARSIZE*1.0, $
                             TICKLEN=cb_info.TICKLEN
 
                  IF KEYWORD_SET(oplotStr) THEN BEGIN
@@ -644,8 +645,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                TITLE=!NULL, $ ;op_cb_info.TITLE, $
                                DIVISIONS=op_cb_info.cbNDivisions, $
                                TICKNAMES=op_cb_info.cbTickNames, $
-                               TLOCATION=op_cb_info.TLOCATION, $
-                               TCHARSIZE=op_cb_info.TCHARSIZE, $
+                               TICKNAMES=(TAG_EXIST(op_cb_info,'cbTickNames') ? op_cb_info.cbTickNames : !NULL), $
+                               TLOCATION=(TAG_EXIST(op_cb_info,'tLocation') ? op_cb_info.tLocation : !NULL), $
                                POSITION=op_cb_info.POSITION, $
                                TEXTTHICK=op_cb_info.TEXTTHICK, $
                                VERTICAL=op_cb_info.VERTICAL, $
