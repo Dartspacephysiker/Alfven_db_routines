@@ -509,6 +509,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          multiString                       : '', $
                          multiples                         : '', $
                          multiple_IMF_clockAngles          : 0B, $
+                         multiple_B_conds                  : 0B, $
                          multiple_delays                   : 0B, $
                          multiple_storm                    : 0B, $
                          multiple_AE                       : 0B  $
