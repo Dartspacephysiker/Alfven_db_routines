@@ -423,13 +423,13 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   CASE 1 OF
      KEYWORD_SET(overplot): BEGIN
-        contourBottom  = 6
+        contourBottom  = 4
         nContourColors = 10
         nLevels        = 255
         nLevelBottom   = nLevels*contourBottom/nContourColors
      END
      ELSE: BEGIN
-        contourBottom  = 5
+        contourBottom  = 4
         nContourColors = 10
         nLevels        = 255
         nLevelBottom   = nLevels*contourBottom/nContourColors
