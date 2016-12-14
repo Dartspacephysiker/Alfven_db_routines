@@ -210,9 +210,20 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      OMNIparamStr_list           = LIST(OMNIparamStr)
   ENDIF ELSE BEGIN
 
+     ;;How many?
+     nB_conds                    = 1 > $
+                                   N_ELEMENTS(byMin) > N_ELEMENTS(byMax) > $
+                                   N_ELEMENTS(bzMin) > N_ELEMENTS(bzMax) > $
+                                   N_ELEMENTS(btMin) > N_ELEMENTS(btMax) > $
+                                   N_ELEMENTS(bxMin) > N_ELEMENTS(bxMax) > $
+                                   N_ELEMENTS(bx_over_by_ratio_min) > $
+                                   N_ELEMENTS(bx_over_by_ratio_max)
+
+     multiple_B_conds            = nB_conds GT 1
+
      IF ~KEYWORD_SET(dont_consider_clockAngles) THEN BEGIN
         IF N_ELEMENTS(clockStr) EQ 0 THEN BEGIN
-           clockStr             = defClockStr
+           clockStr              = defClockStr
         ENDIF
         
         ;;How to set angles? Note, clock angle is measured with
@@ -220,87 +231,182 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         ;;Setting angle limits 45 and 135, for example, gives a 90-deg
         ;;window for dawnward and duskward plots
         IF clockStr[0] NE "all_IMF" THEN BEGIN
-           angleLim1            = N_ELEMENTS(angleLim1) GT 0 ? angleLim1 : defAngleLim1 ;in degrees
-           angleLim2            = N_ELEMENTS(angleLim2) GT 0 ? angleLim2 : defAngleLim2 ;in degrees
+           angleLim1             = N_ELEMENTS(angleLim1) GT 0 ? angleLim1 : defAngleLim1 ;in degrees
+           angleLim2             = N_ELEMENTS(angleLim2) GT 0 ? angleLim2 : defAngleLim2 ;in degrees
         ENDIF ELSE BEGIN 
-           angleLim1            = N_ELEMENTS(angleLim1) GT 0 ? angleLim1 : 180 ;for doing all IMF
-           angleLim2            = N_ELEMENTS(angleLim2) GT 0 ? angleLim2 : 180
+           angleLim1             = N_ELEMENTS(angleLim1) GT 0 ? angleLim1 : 180 ;for doing all IMF
+           angleLim2             = N_ELEMENTS(angleLim2) GT 0 ? angleLim2 : 180
         ENDELSE
      ENDIF ELSE BEGIN
-        clockStr                = ''
+        clockStr                 = ''
      ENDELSE
 
      ;;Requirement for IMF By magnitude?
-     byMinStr                   = ''
-     byMaxStr                   = ''
+     byMinStr                    = ''
+     byMaxStr                    = ''
      
-     IF N_ELEMENTS(byMin) GT 0 THEN BEGIN
-        byMinStr                = '_' + (KEYWORD_SET(abs_byMin) ? 'ABS' : '') $
-                                  + 'byMin' + String(byMin,FORMAT='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
+     nByMin                      = N_ELEMENTS(byMin)
+     IF (nByMin GE 1) AND (nB_conds GT 1) THEN BEGIN
+        IF (nByMin GT 1) AND (nB_conds NE nByMin) THEN BEGIN
+           PRINT,"Unequal number of B conds provided!"
+           STOP
+        ENDIF ELSE BEGIN
+           byMin                 = REPLICATE(byMin,nB_conds)
+        ENDELSE
      ENDIF
-     IF N_ELEMENTS(byMax) GT 0 THEN BEGIN
-        byMaxStr                = '_' + (KEYWORD_SET(abs_byMax) ? 'ABS' : '') $
-                                  + 'byMax' + String(byMax,FORMAT='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
+     IF nByMin GT 0 THEN BEGIN
+        byMinStr                 = '_' + (KEYWORD_SET(abs_byMin) ? 'ABS' : '') $
+                                   + 'byMin' + STRING(byMin,FORMAT='(D0.1)') ;STRCOMPRESS(byMin,/REMOVE_ALL)
+     ENDIF
+
+     nByMax                      = N_ELEMENTS(byMax)
+     IF (nByMax GE 1) AND (nB_conds GT 1) THEN BEGIN
+        IF (nByMax GT 1) AND (nB_conds NE nByMax) THEN BEGIN
+           PRINT,"Unequal number of B conds provided!"
+           STOP
+        ENDIF ELSE BEGIN
+           ByMax                 = REPLICATE(ByMax,nB_conds)
+        ENDELSE
+     ENDIF
+     IF nByMax GT 0 THEN BEGIN
+        byMaxStr                 = '_' + (KEYWORD_SET(abs_byMax) ? 'ABS' : '') $
+                                   + 'byMax' + STRING(byMax,FORMAT='(D0.1)') ;STRCOMPRESS(byMax,/REMOVE_ALL)
      ENDIF
      
      ;;Requirement for IMF Bz magnitude?
-     bzMinStr                   = ''
-     bzMaxStr                   = ''
+     bzMinStr                    = ''
+     bzMaxStr                    = ''
      
-     IF N_ELEMENTS(bzMin) GT 0 THEN BEGIN
-        bzMinStr                = '_' + (KEYWORD_SET(abs_bzMin) ? 'ABS' : '') $
-                                  + 'bzMin' + String(bzMin,FORMAT='(D0.1)')
+     nBzMin                      = N_ELEMENTS(bzMin)
+     IF (nBzMin GE 1) AND (nB_conds GT 1) THEN BEGIN
+        IF (nBzMin GT 1) AND (nB_conds NE nBzMin) THEN BEGIN
+           PRINT,"Unequal number of B conds provided!"
+           STOP
+        ENDIF ELSE BEGIN
+           BzMin                 = REPLICATE(BzMin,nB_conds)
+        ENDELSE
      ENDIF
-     IF N_ELEMENTS(bzMax) GT 0 THEN BEGIN
-        bzMaxStr                = '_' + (KEYWORD_SET(abs_bzMax) ? 'ABS' : '') $
-                                  + 'bzMax' + String(bzMax,FORMAT='(D0.1)')
+     IF nBzMin GT 0 THEN BEGIN
+        bzMinStr                 = '_' + (KEYWORD_SET(abs_bzMin) ? 'ABS' : '') $
+                                   + 'bzMin' + STRING(bzMin,FORMAT='(D0.1)')
+     ENDIF
+
+     nBzMax                      = N_ELEMENTS(bzMax)
+     IF (nBzMax GE 1) AND (nB_conds GT 1) THEN BEGIN
+        IF (nBzMax GT 1) AND (nB_conds NE nBzMax) THEN BEGIN
+           PRINT,"Unequal number of B conds provided!"
+           STOP
+        ENDIF ELSE BEGIN
+           BzMax                 = REPLICATE(BzMax,nB_conds)
+        ENDELSE
+     ENDIF
+     IF nBzMax GT 0 THEN BEGIN
+        bzMaxStr                 = '_' + (KEYWORD_SET(abs_bzMax) ? 'ABS' : '') $
+                                   + 'bzMax' + STRING(bzMax,FORMAT='(D0.1)')
      ENDIF
      
      ;;Requirement for IMF Bt magnitude?
-     btMinStr                   = ''
-     btMaxStr                   = ''
+     btMinStr                    = ''
+     btMaxStr                    = ''
      
-     IF N_ELEMENTS(btMin) GT 0 THEN BEGIN
+     nBtMin                      = N_ELEMENTS(btMin)
+     IF (nBtMin GE 1) AND (nB_conds GT 1) THEN BEGIN
+        IF (nBtMin GT 1) AND (nB_conds NE nBtMin) THEN BEGIN
+           PRINT,"Unequal number of B conds provided!"
+           STOP
+        ENDIF ELSE BEGIN
+           BtMin                 = REPLICATE(BtMin,nB_conds)
+        ENDELSE
+     ENDIF
+     IF nBtMin GT 0 THEN BEGIN
         IF btMin LT 0 THEN BEGIN
            PRINT,'btMin shouldn''t be less than zero!'
            STOP
         ENDIF
-        btMinStr                = '_' + (KEYWORD_SET(abs_btMin) ? 'ABS' : '') $
-                                  + 'btMin' + String(btMin,FORMAT='(D0.1)')
+        btMinStr                 = '_' + (KEYWORD_SET(abs_btMin) ? 'ABS' : '') $
+                                   + 'btMin' + STRING(btMin,FORMAT='(D0.1)')
      ENDIF
-     IF N_ELEMENTS(btMax) GT 0 THEN BEGIN
+
+     nBtMax                      = N_ELEMENTS(btMax)
+     IF (nBtMax GE 1) AND (nB_conds GT 1) THEN BEGIN
+        IF (nBtMax GT 1) AND (nB_conds NE nBtMax) THEN BEGIN
+           PRINT,"Unequal number of B conds provided!"
+           STOP
+        ENDIF ELSE BEGIN
+           BtMax                 = REPLICATE(BtMax,nB_conds)
+        ENDELSE
+     ENDIF
+     IF nBtMax GT 0 THEN BEGIN
         IF btMax LT 0 THEN BEGIN
            PRINT,'btMax shouldn''t be less than zero!'
            STOP
         ENDIF
-        btMaxStr                = '_' + (KEYWORD_SET(abs_btMax) ? 'ABS' : '') $
-                                  + 'btMax' + String(btMax,FORMAT='(D0.1)')
+        btMaxStr                 = '_' + (KEYWORD_SET(abs_btMax) ? 'ABS' : '') $
+                                   + 'btMax' + STRING(btMax,FORMAT='(D0.1)')
      ENDIF
      
      ;;Requirement for IMF Bx magnitude?
-     bxMinStr                   = ''
-     bxMaxStr                   = ''
+     bxMinStr                    = ''
+     bxMaxStr                    = ''
      
-     IF N_ELEMENTS(bxMin) GT 0 THEN BEGIN
-        bxMinStr                = '_' + (KEYWORD_SET(abs_bxMin) ? 'ABS' : '') $
-                                  + 'bxMin' + String(bxMin,FORMAT='(D0.1)')
+     nBxMin                      = N_ELEMENTS(bxMin)
+     IF (nBxMin GE 1) AND (nB_conds GT 1) THEN BEGIN
+        IF (nBxMin GT 1) AND (nB_conds NE nBxMin) THEN BEGIN
+           PRINT,"Unequal number of B conds provided!"
+           STOP
+        ENDIF ELSE BEGIN
+           BxMin                 = REPLICATE(BxMin,nB_conds)
+        ENDELSE
      ENDIF
-     IF N_ELEMENTS(bxMax) GT 0 THEN BEGIN
-        bxMaxStr                = '_' + (KEYWORD_SET(abs_bxMax) ? 'ABS' : '') $
-                                  + 'bxMax' + String(bxMax,FORMAT='(D0.1)')
+     IF nBxMin GT 0 THEN BEGIN
+        bxMinStr                 = '_' + (KEYWORD_SET(abs_bxMin) ? 'ABS' : '') $
+                                   + 'bxMin' + STRING(bxMin,FORMAT='(D0.1)')
+     ENDIF
+
+     nBxMax                      = N_ELEMENTS(bxMax)
+     IF (nBxMax GE 1) AND (nB_conds GT 1) THEN BEGIN
+        IF (nBxMax GT 1) AND (nB_conds NE nBxMax) THEN BEGIN
+           PRINT,"Unequal number of B conds provided!"
+           STOP
+        ENDIF ELSE BEGIN
+           BxMax                 = REPLICATE(BxMax,nB_conds)
+        ENDELSE
+     ENDIF
+     IF nBxMax GT 0 THEN BEGIN
+        bxMaxStr                 = '_' + (KEYWORD_SET(abs_bxMax) ? 'ABS' : '') $
+                                   + 'bxMax' + STRING(bxMax,FORMAT='(D0.1)')
      ENDIF
      
      ;;Requirement for IMF Bx magnitude?
-     bx_over_by_ratio_minStr    = ''
-     bx_over_by_ratio_maxStr    = ''
+     bx_over_by_ratio_minStr     = ''
+     bx_over_by_ratio_maxStr     = ''
      
-     IF N_ELEMENTS(bx_over_by_ratio_min) GT 0 THEN BEGIN
-        bx_over_by_ratio_minStr = '_' + (KEYWORD_SET(abs_bx_over_by_ratio_min) ? 'ABS' : '') $
-                                  + 'bxy_rMn' + String(bx_over_by_ratio_min,FORMAT='(D0.1)')
+     nBx_over_by_ratio_min       = N_ELEMENTS(bx_over_by_ratio_min)
+     IF (nBx_over_by_ratio_min GE 1) AND (nB_conds GT 1) THEN BEGIN
+        IF (nBx_over_by_ratio_min GT 1) AND (nB_conds NE nBx_over_by_ratio_min) THEN BEGIN
+           PRINT,"Unequal number of B conds provided!"
+           STOP
+        ENDIF ELSE BEGIN
+           Bx_over_by_ratio_min                 = REPLICATE(Bx_over_by_ratio_min,nB_conds)
+        ENDELSE
      ENDIF
-     IF N_ELEMENTS(bx_over_by_ratio_max) GT 0 THEN BEGIN
-        bx_over_by_ratio_maxStr = '_' + (KEYWORD_SET(abs_bx_over_by_ratio_max) ? 'ABS' : '') $
-                                  + 'bxy_rMx' + String(bx_over_by_ratio_max,FORMAT='(D0.1)')
+     IF nBx_over_by_ratio_min GT 0 THEN BEGIN
+        bx_over_by_ratio_minStr  = '_' + (KEYWORD_SET(abs_bx_over_by_ratio_min) ? 'ABS' : '') $
+                                   + 'bxy_rMn' + STRING(bx_over_by_ratio_min,FORMAT='(D0.1)')
+     ENDIF
+
+     nBx_over_by_ratio_max       = N_ELEMENTS(bx_over_by_ratio_max)
+     IF (nBx_over_by_ratio_max GE 1) AND (nB_conds GT 1) THEN BEGIN
+        IF (nBx_over_by_ratio_max GT 1) AND (nB_conds NE nBx_over_by_ratio_max) THEN BEGIN
+           PRINT,"Unequal number of B conds provided!"
+           STOP
+        ENDIF ELSE BEGIN
+           Bx_over_by_ratio_max                 = REPLICATE(Bx_over_by_ratio_max,nB_conds)
+        ENDELSE
+     ENDIF
+     IF nBx_over_by_ratio_max GT 0 THEN BEGIN
+        bx_over_by_ratio_maxStr  = '_' + (KEYWORD_SET(abs_bx_over_by_ratio_max) ? 'ABS' : '') $
+                                   + 'bxy_rMx' + STRING(bx_over_by_ratio_max,FORMAT='(D0.1)')
      ENDIF
 
      ;;********************************************
@@ -346,7 +452,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         clockOutStr             = '-' + clockStr
      ENDELSE
 
-     IF KEYWORD_SET(multiple_delays) OR KEYWORD_SET(multiple_IMF_clockAngles) THEN BEGIN
+     haveMulti = KEYWORD_SET(multiple_delays) + KEYWORD_SET(multiple_IMF_clockAngles) + KEYWORD_SET(multiple_B_conds)
+     IF haveMulti GT 1 THEN STOP
+
+     IF (haveMulti GT 0) THEN BEGIN
         executing_multiples     = 1
         IF KEYWORD_SET(multiple_delays) THEN BEGIN
            multiples            = delay
@@ -373,6 +482,26 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
               OMNIparamStr_list.add,OMNIparamStr+'-'+omniStr+clockOutStr[iClock]+"_"+ $
                  strtrim(stableIMF,2)+"stable"+smoothStr+delayStr+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
+
+              IF ~KEYWORD_SET(multiString_suff) THEN BEGIN
+                 multiString    = multiString+'_'+clockStr[iClock]
+              ENDIF
+           ENDFOR
+        ENDIF
+
+        IF KEYWORD_SET(multiple_B_conds) THEN BEGIN
+           multiples            = byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
+           multiString          = OMNIparamStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]
+           IF KEYWORD_SET(multiString_suff) THEN BEGIN
+              multiString       = multiString + multiString_suff
+           ENDIF ELSE BEGIN
+              multiString       = multiString + 'multiple_B_conds'
+           ENDELSE
+
+           FOR iClock=0,N_ELEMENTS(multiples)-1 DO BEGIN
+              OMNIparamStr_list.add,OMNIparamStr+'-'+omniStr+clockOutStr[iClock]+"_"+ $
+                 STRTRIM(stableIMF,2)+"stable"+smoothStr+delayStr+$
+                 byMinStr[iClock]+byMaxStr[iClock]+bzMinStr[iClock]+bzMaxStr[iClock]+btMinStr[iClock]+btMaxStr[iClock]+bxMinStr[iClock]+bxMaxStr[iClock]+bx_over_by_ratio_minStr[iClock]+bx_over_by_ratio_maxStr[iClock]
 
               IF ~KEYWORD_SET(multiString_suff) THEN BEGIN
                  multiString    = multiString+'_'+clockStr[iClock]
@@ -427,6 +556,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      IF N_ELEMENTS(multiple_IMF_clockAngles) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'multiple_IMF_clockAngles', $
                     BYTE(multiple_IMF_clockAngles),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(multiple_B_conds) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'multiple_B_conds', $
+                    BYTE(multiple_B_conds),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(dont_consider_clockAngles) GT 0 THEN BEGIN
