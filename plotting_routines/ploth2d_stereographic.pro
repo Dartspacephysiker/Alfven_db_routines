@@ -974,7 +974,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         CHARSIZE=((KEYWORD_SET(labels_for_presentation) ? $
                               charSize_cbLabel_pres :     $
                               defCharSize_grid)           $
-                  * charScale*1.3)
+                  * charScale)
 
      show_daynight_integrals = 0
      IF KEYWORD_SET(show_daynight_integrals) THEN BEGIN
