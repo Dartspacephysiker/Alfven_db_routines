@@ -615,7 +615,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                             POSITION=cb_info.POSITION, $
                             TEXTTHICK=cb_info.TEXTTHICK, $
                             VERTICAL=cb_info.VERTICAL, $
-                            CHARSIZE=cb_info.CHARSIZE*1.0, $
+                            CHARSIZE=cb_info.CHARSIZE*1.3, $
                             TICKLEN=cb_info.TICKLEN
 
                  IF KEYWORD_SET(oplotStr) THEN BEGIN
@@ -650,7 +650,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                POSITION=op_cb_info.POSITION, $
                                TEXTTHICK=op_cb_info.TEXTTHICK, $
                                VERTICAL=op_cb_info.VERTICAL, $
-                               CHARSIZE=op_cb_info.CHARSIZE, $
+                               CHARSIZE=op_cb_info.CHARSIZE*1.3, $
                                TICKLEN=op_cb_info.TICKLEN
 
                  ENDIF

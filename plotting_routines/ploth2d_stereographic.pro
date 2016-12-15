@@ -974,9 +974,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         CHARSIZE=((KEYWORD_SET(labels_for_presentation) ? $
                               charSize_cbLabel_pres :     $
                               defCharSize_grid)           $
-                  * charScale)
+                  * charScale*1.3)
 
-     show_daynight_integrals = 1
+     show_daynight_integrals = 0
      IF KEYWORD_SET(show_daynight_integrals) THEN BEGIN
 
         CGTEXT, $
@@ -1057,8 +1057,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      IF KEYWORD_SET(contour__percent) THEN BEGIN
         cbNDivisions              = 10
         cbTickNames               = REPLICATE(' ',cbNDivisions+1)
-        markem                    = VALUE_CLOSEST2(INDGEN(cbNDivisions)/FLOAT(cbNDivisions)*100,contour__levels)
-        cbTickNames[markem]       = STRING(FORMAT='(G0.2)',(cbRange[1]*INDGEN(cbNDivisions)/FLOAT(cbNDivisions))[markem])
+        markem                    = VALUE_CLOSEST2(INDGEN(cbNDivisions+1)/FLOAT(cbNDivisions)*100,contour__levels)
+        cbTickNames[markem]       = STRING(FORMAT='(G0.2)',(cbRange[1]*INDGEN(cbNDivisions+1)/FLOAT(cbNDivisions))[markem])
      ENDIF
 
      nCBColors                    = nContourColors
