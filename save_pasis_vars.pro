@@ -2,6 +2,7 @@
 PRO SAVE_PASIS_VARS, $
    FILENAME=fileName, $
    SAVEDIR=dir, $
+   NEED_FASTLOC_I=need_fastLoc_i, $
    VERBOSE=verbose
 
   COMPILE_OPT IDL2
@@ -9,7 +10,7 @@ PRO SAVE_PASIS_VARS, $
   @common__pasis_lists.pro
 
   saveDir = KEYWORD_SET(dir)      ? dir      : '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/temp/'
-  fName   = KEYWORD_SET(fileName) ? fileName : GET_PASIS_VARS_FNAME()
+  fName   = KEYWORD_SET(fileName) ? fileName : GET_PASIS_VARS_FNAME(NEED_FASTLOC_I=need_fastLoc_i)
 
   IF KEYWORD_SET(verbose) THEN BEGIN 
      IF FILE_TEST(saveDir+fName) THEN BEGIN
