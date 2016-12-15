@@ -58,7 +58,7 @@ FUNCTION GET_MLT_INDS,maximus,minM,maxM, $
      END
      KEYWORD_SET(duskSector): BEGIN
 
-        dawnDuskStr       = 'duskSector'
+        mltStr            = 'duskSector'
 
         dminM             = duskMinM
         dmaxM             = duskMaxM
