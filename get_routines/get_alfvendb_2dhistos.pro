@@ -6,9 +6,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
    DATARAWPTRARR=dataRawPtrArr, $
    DATANAMEARR=dataNameArr, $
    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+   ALFDB_PLOTLIM_STRUCT=alfDB_plotLim_struct, $
    IMF_STRUCT=IMF_struct, $
    MIMC_STRUCT=MIMC_struct, $
-   NUMORBLIM=numOrbLim, $
    MASKMIN=maskMin, $
    THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
    HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
@@ -263,7 +263,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      OR KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) $
      OR KEYWORD_SET(div_fluxPlots_by_applicable_orbs) $
      OR KEYWORD_SET(tHist_mask_bins_below_thresh) $
-     OR KEYWORD_SET(numOrbLim) $
+     OR KEYWORD_SET(alfDB_plot_struct.numOrbLim) $
      OR KEYWORD_SET(eSpec__t_probOccurrence) $
   THEN BEGIN 
 
@@ -382,7 +382,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   
   ;;Get orbs Contrib in case other routines want it
   IF KEYWORD_SET(orbContribPlot) OR KEYWORD_SET(orbfreqplot) $
-     OR KEYWORD_SET(nEventPerOrbPlot) OR KEYWORD_SET(numOrbLim) $
+     OR KEYWORD_SET(nEventPerOrbPlot) OR KEYWORD_SET(alfDB_plot_struct.numOrbLim) $
      OR KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) $
      OR KEYWORD_SET(div_fluxPlots_by_applicable_orbs) THEN BEGIN
      
@@ -442,10 +442,10 @@ PRO GET_ALFVENDB_2DHISTOS, $
      ENDIF
      
      ;;Mask all bins that don't have requisite number of orbits passing through
-     IF KEYWORD_SET(numOrbLim) THEN BEGIN 
-        PRINT,'Applying orb threshold (' + STRCOMPRESS(numOrbLim,/REMOVE_ALL) + $
+     IF KEYWORD_SET(alfDB_plot_struct.numOrbLim) THEN BEGIN 
+        PRINT,'Applying orb threshold (' + STRCOMPRESS(alfDB_plot_struct.numOrbLim,/REMOVE_ALL) + $
               ' orbits) to mask based on nContribOrbs ...'
-        belowThresh_i = WHERE(h2dContribOrbStr.data LT numOrbLim,nBelow)
+        belowThresh_i = WHERE(h2dContribOrbStr.data LT alfDB_plot_struct.numOrbLim,nBelow)
         IF nBelow GT 0 THEN BEGIN
            
            new_i = CGSETDIFFERENCE(belowThresh_i, $
@@ -462,11 +462,11 @@ PRO GET_ALFVENDB_2DHISTOS, $
            ENDELSE
         ENDIF
 
-        ;; exc_orb_i = WHERE(h2dContribOrbStr.data LT numOrbLim,nOrbLimExcl)
+        ;; exc_orb_i = WHERE(h2dContribOrbStr.data LT alfDB_plot_struct.numOrbLim,nOrbLimExcl)
         ;; masked_i = WHERE(h2dStrArr[KEYWORD_SET(nPlots)].data GT 255,nAlreadyMasked)
         ;; PRINT,N_ELEMENTS(nOrbLimExcl) - N_ELEMENTS(CGSETINTERSECTION(exc_orb_i,masked_i))
 
-        ;; h2dStrArr[KEYWORD_SET(nPlots)].data[WHERE(h2dContribOrbStr.data LT numOrbLim)] = 255 ;mask 'em!
+        ;; h2dStrArr[KEYWORD_SET(nPlots)].data[WHERE(h2dContribOrbStr.data LT alfDB_plot_struct.numOrbLim)] = 255 ;mask 'em!
 
         ;;little check to see how many more elements are getting masked
         ;;8
@@ -744,7 +744,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     OUTH2DBINSLSHELL=outH2DBinsLShell, $
                                     FLUXPLOTTYPE=fluxPlotType, $
                                     PLOTRANGE=plotRange, $
-                                    PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
+                                    PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
                                     NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                                     REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                                     REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -851,7 +851,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              OUTH2DBINSLSHELL=outH2DBinsLShell, $
                              FLUXPLOTTYPE=fluxPlotType, $
                              PLOTRANGE=plotRange, $
-                             PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
+                             PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
                              NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                              REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                              REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -973,7 +973,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     OUTH2DBINSLSHELL=outH2DBinsLShell, $
                                     FLUXPLOTTYPE=fluxPlotType, $
                                     PLOTRANGE=plotRange, $
-                                    PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
+                                    PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
                                     NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                                     REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                                     REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -1079,7 +1079,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              OUTH2DBINSLSHELL=outH2DBinsLShell, $
                              FLUXPLOTTYPE=fluxPlotType, $
                              PLOTRANGE=plotRange, $
-                             PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
+                             PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eNumFlplots), $
                              NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                              REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                              REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -1157,7 +1157,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        OUTH2DBINSILAT=outH2DBinsILAT, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        PLOTRANGE=PPlotRange, $
-                       PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_pPlots), $
+                       PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_pPlots), $
                        NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                        REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                        REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -1293,7 +1293,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                           OUTH2DBINSLSHELL=outH2DBinsLShell, $
                           FLUXPLOTTYPE=fluxPlotType, $
                           PLOTRANGE=plotRange, $
-                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ionPlots), $
+                          PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ionPlots), $
                           NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                           REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                           REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -1372,7 +1372,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        FLUXPLOTTYPE=oxyFluxPlotType, $
                        PLOTRANGE=oxyPlotRange, $
-                       PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_oxyPlots), $
+                       PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_oxyPlots), $
                        NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                        REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                        REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -1465,7 +1465,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                           OUTH2DBINSLSHELL=outH2DBinsLShell, $
                           FLUXPLOTTYPE=charEType, $
                           PLOTRANGE=plotRange, $
-                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_charEPlots), $
+                          PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_charEPlots), $
                           NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                           REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                           REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -1536,7 +1536,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        OUTH2DBINSILAT=outH2DBinsILAT, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        PLOTRANGE=chariEPlotRange, $
-                       PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_chariEPlots), $
+                       PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_chariEPlots), $
                        NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                        REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                        REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -1681,7 +1681,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      ;;                   OUTH2DBINSILAT=outH2DBinsILAT, $
      ;;                   OUTH2DBINSLSHELL=outH2DBinsLShell, $
      ;;                   PLOTRANGE=summed_eFlux_pFluxplotRange, $
-     ;;                   PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ePlots), $
+     ;;                   PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ePlots), $
      ;;                   NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
      ;;                   REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
      ;;                   REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -1734,7 +1734,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        OUTH2DBINSILAT=outH2DBinsILAT, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        PLOTRANGE=summed_eFlux_pFluxplotRange, $
-                       PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ePlots), $
+                       PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ePlots), $
                        NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                        REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                        REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -1787,7 +1787,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        OUTH2DBINSILAT=outH2DBinsILAT, $
                        OUTH2DBINSLSHELL=outH2DBinsLShell, $
                        PLOTRANGE=summed_eFlux_pFluxplotRange, $
-                       PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ePlots), $
+                       PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_ePlots), $
                        NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                        REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                        REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $

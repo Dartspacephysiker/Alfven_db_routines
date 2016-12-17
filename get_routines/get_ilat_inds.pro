@@ -9,6 +9,8 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi, $
                        N_ILAT=n_ilat, $
                        N_NOT_ILAT=n_not_ilat, $
                        DIRECT_LATITUDES=direct_lats, $
+                       AURORAL_OVAL=auroral_oval, $
+                       DIRECT_MLTS=direct_MLTs, $
                        LUN=lun
 
   COMPILE_OPT idl2
@@ -28,10 +30,10 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi, $
   ENDELSE
 
   IF STRUPCASE(hemi) EQ "BOTH" THEN BEGIN
-     ilat_i=cgsetunion( $
-                where(lats GE minI AND lats LE maxI), $
-                where(lats GE -ABS(maxI) AND lats LE -ABS(minI)))
-     n_ilat = N_ELEMENTS(ilat_i)
+     ilat_i     = CGSETUNION( $
+                  WHERE(lats GE minI AND lats LE maxI), $
+                  WHERE(lats GE -ABS(maxI) AND lats LE -ABS(minI)))
+     n_ilat     = N_ELEMENTS(ilat_i)
      n_not_ilat = N_ELEMENTS(lats)-n_ilat
 
      PRINTF,lun,'Hemisphere: Northern AND Southern'
@@ -42,11 +44,11 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi, $
      ;; STOP
   ENDIF ELSE BEGIN
      IF STRUPCASE(hemi) EQ "SOUTH" THEN BEGIN
-        ilat_i=where(lats GE minI AND lats LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT)
+        ilat_i = WHERE(lats GE minI AND lats LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT)
         PRINTF,lun,'Hemisphere: Southern'
      ENDIF ELSE BEGIN
         IF STRUPCASE(hemi) EQ "NORTH" THEN BEGIN
-           ilat_i=where(lats GE minI AND lats LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT) 
+           ilat_i = WHERE(lats GE minI AND lats LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT) 
            PRINTF,lun,'Hemisphere: Northern'
         ENDIF ELSE BEGIN
            PRINTF,lun,"Invalid hemisphere provided! Can't get ILAT indices..."
@@ -54,6 +56,31 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi, $
         ENDELSE
      ENDELSE
   ENDELSE
+
+  IF KEYWORD_SET(auroral_oval) THEN BEGIN
+     PRINT,'Restricting ILATs with auroral oval boundaries ...'
+     CASE 1 OF
+        N_ELEMENTS(maximus) GT 0: BEGIN
+           mlts = maximus.mlt
+        END
+        N_ELEMENTS(direct_MLTs) GT 0: BEGIN
+           mlts = direct_MLTs
+        END
+        ELSE: BEGIN
+           PRINT,"Have to provide either maximus or direct_MLTs ..."
+           RETURN,-1
+        END
+     ENDCASE
+
+     IF N_ELEMENTS(lats) NE N_ELEMENTS(mlts) THEN BEGIN
+        PRINT,"You're about to enter a world of suffering. Unequal # of MLTs and ILATs."
+     ENDIF
+
+     keep = WHERE(ABS(lats) GT AURORAL_ZONE(mlts,7,/LAT)/(!DPI)*180.)
+
+     ilat_i = CGSETINTERSECTION(ilat_i,keep,NORESULT=-1)
+
+  ENDIF      
 
   IF ilat_i[0] EQ -1 THEN BEGIN
      PRINTF,lun,'No ILAT entries found for the specified ILAT range!'

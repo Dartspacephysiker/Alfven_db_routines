@@ -12,6 +12,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    SAMPLE_T_RESTRICTION=sample_t_restriction, $
    INCLUDE_32HZ=include_32Hz, $
    DISREGARD_SAMPLE_T=disregard_sample_t, $
+   NUMORBLIM=numOrbLim, $
    DONT_BLACKBALL_MAXIMUS=dont_blackball_maximus, $
    DONT_BLACKBALL_FASTLOC=dont_blackball_fastloc, $
    MINMLT=minMLT, $
@@ -67,6 +68,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    DO_LOGAVG_THE_TIMEAVG=do_logAvg_the_timeAvg, $
    NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
+   ESPEC__NO_MAXIMUS=no_maximus, $
+   ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
    ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
    ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
    ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
@@ -112,6 +115,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    WRITEPROCESSEDH2D=writeProcessedH2d, $
    SAVERAW=saveRaw, $
    SAVEDIR=saveDir, $
+   JUSTDATA=justData, $
+   JUSTINDS_THENQUIT=justInds, $
+   JUSTINDS_SAVETOFILE=justInds_saveToFile, $
    SHOWPLOTSNOSAVE=showPlotsNoSave, $
    MEDHISTOUTDATA=medHistOutData, MEDHISTOUTTXT=medHistOutTxt, $
    OUTPUTPLOTSUMMARY=outputPlotSummary, DEL_PS=del_PS, $
@@ -120,7 +126,14 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    PARAMSTRPREFIX=paramStrPrefix, $
    PARAMSTRSUFFIX=paramStrSuffix,$
    PLOTH2D_CONTOUR=plotH2D_contour, $
+   CONTOUR__LEVELS=contour__levels, $
+   CONTOUR__PERCENT=contour__percent, $
    PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
+   OVERPLOT_FILE=overplot_file, $
+   OVERPLOT_ARR=overplot_arr, $
+   OVERPLOT_CONTOUR__LEVELS=op_contour__levels, $
+   OVERPLOT_CONTOUR__PERCENT=op_contour__percent, $
+   OVERPLOT_PLOTRANGE=op_plotRange, $
    HOYDIA=hoyDia,LUN=lun, $
    DONT_CORRECT_ILATS=dont_correct_ilats, $
    MIMC_STRUCT=MIMC_struct, $
@@ -447,6 +460,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          include_32Hz                      : 0B, $
                          disregard_sample_t                : 0B, $
                          sample_t_restriction              : 0B, $
+                         numOrbLim                         : 0B, $
                          dont_blackball_maximus            : 0B, $
                          dont_blackball_fastloc            : 0B, $
                          EA_binning                        : 0B, $
@@ -473,6 +487,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          do_logAvg_the_timeAvg             : 0B, $
                          Newell_analyze_eFlux              : 0B, $
                          for_eSpec_DBs                     : 0B, $
+                         no_maximus                        : 0B, $
+                         eSpec_flux_plots                  : 0B, $
                          eSpec__junk_alfven_candidates     : 0B, $
                          eSpec__all_fluxes                 : 0B, $
                          eSpec__Newell_2009_interp         : 0B, $
@@ -496,13 +512,24 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          writeASCII                        : 0B, $
                          writeHDF5                         : 0B, $
                          writeProcessedH2d                 : 0B, $
+                         justData                          : 0B, $
+                         justInds                          : 0B, $
+                         justInds_saveToFile               : 0B, $
                          saveRaw                           : 0B, $
+                         saveDir                           : '', $
                          showPlotsNoSave                   : 0B, $
                          outputPlotSummary                 : 0B, $
                          del_PS                            : 0B, $
                          keepMe                            : 0B, $
                          plotH2D_contour                   : 0B, $
+                         contour__levels                   : 0B, $
+                         contour__percent                  : 0B, $
                          plotH2D__kernel_density_unmask    : 0B, $
+                         overplot_file                     : '', $
+                         overplot_arr                      : 0B, $
+                         op_contour__levels                : 0B, $
+                         op_contour__percent               : 0B, $
+                         op_plotRange                      : 0B, $
                          paramString                       : ''      , $
                          paramString_list                  : LIST()  , $
                          executing_multiples               : 0B, $
@@ -512,10 +539,15 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          multiple_B_conds                  : 0B, $
                          multiple_delays                   : 0B, $
                          multiple_storm                    : 0B, $
-                         multiple_AE                       : 0B  $
+                         multiple_AE                       : 0B, $
+                         ae_stuff                          : 0B, $
+                         use_storm_stuff                   : 0B  $
                          }
 
      IF KEYWORD_SET(use_storm_stuff) THEN BEGIN
+
+        STR_ELEMENT,alfDB_plot_struct,'use_storm_stuff',use_storm_stuff,/ADD_REPLACE
+
         storm_opt = { $
                    nonStorm                  : 0B  , $
                    recoveryPhase             : 0B  , $
@@ -525,9 +557,6 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                    smooth_dst                : 0B  , $
                    use_mostRecent_Dst_files  : 0B}
 
-        IF N_ELEMENTS(use_storm_stuff) GT 0 THEN BEGIN
-           STR_ELEMENT,storm_opt,'use_storm_stuff',use_storm_stuff,/ADD_REPLACE
-        ENDIF
 
         IF N_ELEMENTS(nonStorm) GT 0 THEN BEGIN
            STR_ELEMENT,storm_opt,'nonStorm',nonStorm,/ADD_REPLACE
@@ -580,6 +609,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      ENDIF
 
      IF KEYWORD_SET(ae_stuff) THEN BEGIN
+
+        STR_ELEMENT,alfDB_plot_struct,'ae_stuff',ae_stuff,/ADD_REPLACE
+        
         ae_opt = { $
                  use_ae                   : 0B  , $
                  use_au                   : 0B  , $
@@ -682,6 +714,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(sample_t_restriction) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'sample_t_restriction', $
                     sample_t_restriction,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(numOrbLim) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'numOrbLim', $
+                    numOrbLim,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(dont_blackball_maximus) GT 0 THEN BEGIN
@@ -853,6 +890,16 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(for_eSpec_DBs),/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(no_maximus) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'no_maximus', $
+                    BYTE(no_maximus),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(eSpec_flux_plots) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'eSpec_flux_plots', $
+                    BYTE(eSpec_flux_plots),/ADD_REPLACE
+     ENDIF
+
      IF N_ELEMENTS(eSpec__junk_alfven_candidates) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'eSpec__junk_alfven_candidates', $
                     BYTE(eSpec__junk_alfven_candidates),/ADD_REPLACE
@@ -976,9 +1023,25 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'saveRaw', $
                     BYTE(saveRaw),/ADD_REPLACE
      ENDIF
+
      IF KEYWORD_SET(saveDir) THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'saveDir', $
                     saveDir,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(justData) THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'justData', $
+                    justData,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(justInds) THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'justInds', $
+                    justInds,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(justInds_saveToFile) THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'justInds_saveToFile', $
+                    justInds_saveToFile,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(showPlotsNoSave) GT 0 THEN BEGIN
@@ -1050,9 +1113,44 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(plotH2D_contour),/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(contour__levels) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'contour__levels', $
+                    contour__levels,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(contour__percent) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'contour__percent', $
+                    BYTE(contour__percent),/ADD_REPLACE
+     ENDIF
+
      IF N_ELEMENTS(plotH2D__kernel_density_unmask) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'plotH2D__kernel_density_unmask', $
                     BYTE(plotH2D__kernel_density_unmask),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(overplot_file) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'overplot_file', $
+                    overplot_file,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(overplot_arr) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'overplot_arr', $
+                    overplot_arr,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(op_contour__levels) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'op_contour__levels', $
+                    op_contour__levels,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(op_contour__percent) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'op_contour__percent', $
+                    BYTE(op_contour__percent),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(op_plotRange) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'op_plotRange', $
+                    op_plotRange,/ADD_REPLACE
      ENDIF
 
      IF KEYWORD_SET(hoyDia) THEN BEGIN

@@ -135,10 +135,11 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
         IF KEYWORD_SET(polarContour) THEN BEGIN
            ;; The NAME field of the !D system variable contains the name of the
            ;; current plotting device.
+
            mydevice = !D.NAME
            
            ;; Set plotting to PostScript:
-           SET_PLOT, 'PS'
+           SET_PLOT,'PS'
            
            FOR i=0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN  
               
