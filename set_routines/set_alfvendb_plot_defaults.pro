@@ -59,7 +59,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    CHAREPLOTS=charEPlots, $
    CHARETYPE=charEType, $
    CHARIEPLOTS=chariEPlots, $
-   AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
+   ;; AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
    FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
@@ -236,7 +236,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   IF N_ELEMENTS(nEventPerOrbPlot) EQ 0 THEN nEventPerOrbPlot =  0         ;N Events/orbit plot?
   IF N_ELEMENTS(nEventPerMinPlot) EQ 0 THEN nEventPerMinPlot =  0         ;N Events/min plot?
   
-  IF KEYWORD_SET(autoscale_fluxPlots) THEN PRINT,"Autoscaling flux plots..."
+  ;; IF KEYWORD_SET(autoscale_fluxPlots) THEN PRINT,"Autoscaling flux plots..."
 
 
   IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
@@ -478,7 +478,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          ionPlots                          : 0B, $
                          charEPlots                        : 0B, $
                          chariEPlots                       : 0B, $
-                         autoscale_fluxPlots               : 0B, $
+                         ;; autoscale_fluxPlots               : 0B, $
                          fluxPlots__remove_outliers        : 0B, $
                          fluxPlots__remove_log_outliers    : 0B, $
                          fluxPlots__add_suspect_outliers   : 0B, $
@@ -845,10 +845,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(chariEPlots),/ADD_REPLACE
      ENDIF
 
-     IF N_ELEMENTS(autoscale_fluxPlots) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'autoscale_fluxPlots', $
-                    BYTE(autoscale_fluxPlots),/ADD_REPLACE
-     ENDIF
+     ;; IF N_ELEMENTS(autoscale_fluxPlots) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,alfDB_plot_struct,'autoscale_fluxPlots', $
+     ;;                BYTE(autoscale_fluxPlots),/ADD_REPLACE
+     ;; ENDIF
 
      IF N_ELEMENTS(fluxPlots__remove_outliers) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'fluxPlots__remove_outliers', $

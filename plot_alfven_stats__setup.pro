@@ -5,6 +5,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    USE_STORM_STUFF=use_storm_stuff, $
    AE_STUFF=ae_stuff, $    
    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+   ALFDB_PLOTLIM_STRUCT=alfDB_plotLim_struct, $
    IMF_STRUCT=IMF_struct, $
    MIMC_STRUCT=MIMC_struct, $
    ORBRANGE=orbRange, $
@@ -54,7 +55,6 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    CHAREPLOTS=charEPlots, $
    CHARETYPE=charEType, $
    CHARIEPLOTS=chariEPlots, $
-   AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
    FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
@@ -166,6 +166,58 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    LATEST_UTC=latest_UTC, $
    EARLIEST_JULDAY=earliest_julDay, $
    LATEST_JULDAY=latest_julDay, $
+   NEVENTSPLOTRANGE=nEventsPlotRange, $
+   LOGNEVENTSPLOT=logNEventsPlot, $
+   NEVENTSPLOTAUTOSCALE=nEventsPlotAutoscale, $
+   NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $
+   EPLOTRANGE=EPlotRange, $
+   LOGEFPLOT=logEfPlot, $
+   ENUMFLPLOTRANGE=ENumFlPlotRange, $
+   LOGENUMFLPLOT=logENumFlPlot, $
+   AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
+   PPLOTRANGE=PPlotRange, $
+   LOGIFPLOT=logIfPlot, $
+   IPLOTRANGE=IPlotRange, $
+   LOGOXYFPLOT=logOxyfPlot, $
+   OXYPLOTRANGE=oxyPlotRange, $
+   LOGCHAREPLOT=logCharEPlot, $
+   CHAREPLOTRANGE=charePlotRange, $
+   LOGCHARIEPLOT=logChariePlot, $
+   CHARIEPLOTRANGE=chariEPlotRange, $
+   AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
+   ORBCONTRIBRANGE=orbContribRange, $
+   ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
+   LOGORBCONTRIBPLOT=logOrbContribPlot, $
+   ORBCONTRIB_NOMASK=orbContrib_noMask, $
+   ORBTOTRANGE=orbTotRange, $
+   ORBFREQRANGE=orbFreqRange, $
+   LOGNEVENTPERORB=logNEventPerOrb, $
+   NEVENTPERORBRANGE=nEventPerOrbRange, $
+   NEVENTPERORBAUTOSCALE=nEventPerOrbAutoscale, $
+   NEVENTPERMINRANGE=nEventPerMinRange, $
+   LOGNEVENTPERMIN=logNEventPerMin, $
+   NEVENTPERMINAUTOSCALE=nEventPerMinAutoscale, $
+   NOWEPCO_RANGE=nowepco_range, $
+   NOWEPCO_AUTOSCALE=nowepco_autoscale, $
+   LOG_NOWEPCOPLOT=log_nowepcoPlot, $
+   PROBOCCURRENCEAUTOSCALE=probOccurrenceAutoscale, $
+   PROBOCCURRENCERANGE=probOccurrenceRange, $
+   LOGPROBOCCURRENCE=logProbOccurrence, $
+   THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+   THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
+   THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
+   THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
+   NEWELL_PLOTRANGE=newell_plotRange, $
+   LOG_NEWELLPLOT=log_newellPlot, $
+   NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
+   NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
+   ESPEC__NEWELL_PLOTRANGE=eSpec__newell_plotRange, $
+   ESPEC__T_PROBOCC_PLOTRANGE=eSpec__t_probOcc_plotRange, $
+   TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
+   LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
+   TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
+   LOGTIMEAVGD_EFLUXMAX=logTimeAvgd_EFluxMax, $
+   ALL_LOGPLOTS=all_logPlots,$
    RESET_STRUCT=reset
 
   COMPILE_OPT IDL2
@@ -249,7 +301,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      CHAREPLOTS=charEPlots, $
      CHARETYPE=charEType, $
      CHARIEPLOTS=chariEPlots, $
-     AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
+     ;; AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
      FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
      FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
      FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
@@ -375,6 +427,66 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
      RESET_STRUCT=reset, $
      LUN=lun
+
+
+  ;;;;;;;;;;;;;;;;;;;;;;
+  ;;Plot lims
+  SET_ALFVEN_STATS_PLOT_LIMS, $
+     NEVENTSPLOTRANGE=nEventsPlotRange, $
+     LOGNEVENTSPLOT=logNEventsPlot, $
+     NEVENTSPLOTAUTOSCALE=nEventsPlotAutoscale, $
+     NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $
+     EPLOTRANGE=EPlotRange, $
+     LOGEFPLOT=logEfPlot, $
+     ENUMFLPLOTRANGE=ENumFlPlotRange, $
+     LOGENUMFLPLOT=logENumFlPlot, $
+     AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
+     PPLOTRANGE=PPlotRange, $
+     LOGIFPLOT=logIfPlot, $
+     IPLOTRANGE=IPlotRange, $
+     LOGOXYFPLOT=logOxyfPlot, $
+     OXYPLOTRANGE=oxyPlotRange, $
+     LOGCHAREPLOT=logCharEPlot, $
+     CHAREPLOTRANGE=charePlotRange, $
+     LOGCHARIEPLOT=logChariePlot, $
+     CHARIEPLOTRANGE=chariEPlotRange, $
+     AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
+     ORBCONTRIBRANGE=orbContribRange, $
+     ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
+     LOGORBCONTRIBPLOT=logOrbContribPlot, $
+     ORBCONTRIB_NOMASK=orbContrib_noMask, $
+     ORBTOTRANGE=orbTotRange, $
+     ORBFREQRANGE=orbFreqRange, $
+     LOGNEVENTPERORB=logNEventPerOrb, $
+     NEVENTPERORBRANGE=nEventPerOrbRange, $
+     NEVENTPERORBAUTOSCALE=nEventPerOrbAutoscale, $
+     NEVENTPERMINRANGE=nEventPerMinRange, $
+     LOGNEVENTPERMIN=logNEventPerMin, $
+     NEVENTPERMINAUTOSCALE=nEventPerMinAutoscale, $
+     NOWEPCO_RANGE=nowepco_range, $
+     NOWEPCO_AUTOSCALE=nowepco_autoscale, $
+     LOG_NOWEPCOPLOT=log_nowepcoPlot, $
+     PROBOCCURRENCEAUTOSCALE=probOccurrenceAutoscale, $
+     PROBOCCURRENCERANGE=probOccurrenceRange, $
+     LOGPROBOCCURRENCE=logProbOccurrence, $
+     THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+     THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
+     THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
+     THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
+     NEWELL_PLOTRANGE=newell_plotRange, $
+     LOG_NEWELLPLOT=log_newellPlot, $
+     NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
+     NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
+     ESPEC__NEWELL_PLOTRANGE=eSpec__newell_plotRange, $
+     ESPEC__T_PROBOCC_PLOTRANGE=eSpec__t_probOcc_plotRange, $
+     TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
+     LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
+     TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
+     LOGTIMEAVGD_EFLUXMAX=logTimeAvgd_EFluxMax, $
+     ALL_LOGPLOTS=all_logPlots,$
+     ALFDB_PLOTLIM_STRUCT=alfDB_plotLim_struct
+
+
 
 
 END

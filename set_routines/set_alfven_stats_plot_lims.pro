@@ -233,12 +233,10 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          all_logPlots                : defall_logPlots		  $ 
                          }
 
-
-
-  IF N_ELEMENTS(alfDB_plotLim_struct) GT 0 AND ~KEYWORD_SET(reset) THEN BEGIN
-     PRINT,"Already have an alfDB_plotLim_struct! Returning ..."
-     RETURN
-  ENDIF
+  ;; IF N_ELEMENTS(alfDB_plotLim_struct) GT 0 AND ~KEYWORD_SET(reset) THEN BEGIN
+  ;;    PRINT,"Already have an alfDB_plotLim_struct! Returning ..."
+  ;;    RETURN
+  ;; ENDIF
 
   IF KEYWORD_SET(ENumFlPlotRange) THEN BEGIN
      STR_ELEMENT,AlfDB_PlotLim_Struct, $
