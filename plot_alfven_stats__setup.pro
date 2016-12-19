@@ -76,7 +76,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    NO_BURSTDATA=no_burstData, $
    WRITEASCII=writeASCII, $
    WRITEHDF5=writeHDF5, $
-   WRITEPROCESSEDH2D=writeProcessedH2d, $
+   WRITEPROCESSEDH2D=writeProcessedH2D, $
    SAVERAW=saveRaw, $
    SAVEDIR=saveDir, $
    JUSTDATA=justData, $
@@ -324,7 +324,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      NO_BURSTDATA=no_burstData, $
      WRITEASCII=writeASCII, $
      WRITEHDF5=writeHDF5, $
-     WRITEPROCESSEDH2D=writeProcessedH2d, $
+     WRITEPROCESSEDH2D=writeProcessedH2D, $
      SAVERAW=saveRaw, $
      SAVEDIR=saveDir, $
      JUSTDATA=justData, $

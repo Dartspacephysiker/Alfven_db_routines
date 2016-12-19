@@ -156,6 +156,7 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
   ;; inds_reset = (COMPARE_STRUCT(alfDB_plot_struct1,alfDB_plot_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)).nDiff GT 0
   comp = COMPARE_STRUCT(alfDB_plot_struct1,alfDB_plot_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)
 
+  matchArr = !NULL
   FOR k=0,N_ELEMENTS(comp)-1 DO BEGIN
      tmpComp  = comp[k]
 
@@ -166,66 +167,84 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
            inds_reset     += 1
            dontstop        = 1
            tmpComp.nDiff  -= N_ELEMENTS(alfDB_plot_struct1.multiples)
+           matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
         IF STRMATCH(tmpComp.field,STRUPCASE('*use_mostrecent_dst*')) THEN BEGIN
            ;; inds_reset      = 0
            dontstop        = 1
            tmpComp.nDiff  -= N_ELEMENTS(alfDB_plot_struct1.multiples)
+           matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
         IF STRMATCH(tmpComp.field,STRUPCASE('*altituderange*')) THEN BEGIN
            inds_reset     += 1
            dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
         IF STRMATCH(tmpComp.field,STRUPCASE('*orbrange*')) THEN BEGIN
            inds_reset     += 1
            dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
         IF STRMATCH(tmpComp.field,STRUPCASE('*charerange*')) THEN BEGIN
            inds_reset     += 1
            dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
         IF STRMATCH(tmpComp.field,STRUPCASE('*chare__newell_the_cusp*')) THEN BEGIN
            inds_reset     += 1
            dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
         IF STRMATCH(tmpComp.field,STRUPCASE('*poyntrange*')) THEN BEGIN
            inds_reset     += 1
            dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
         IF STRMATCH(tmpComp.field,STRUPCASE('*dstcutoff*')) THEN BEGIN
            inds_reset     += 1
            dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
         IF STRMATCH(tmpComp.field,STRUPCASE('*multistring*')) THEN BEGIN
            ;; inds_reset     += 1
            dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
         IF STRMATCH(tmpComp.field,STRUPCASE('*paramstring*')) THEN BEGIN
            ;; inds_reset     += 1
            dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
         IF STRMATCH(tmpComp.field,STRUPCASE('*Newell_analyze_eFlux*')) THEN BEGIN
            ;; inds_reset     += 1
            dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
         IF STRMATCH(tmpComp.field,STRUPCASE('*use_storm_stuff*')) THEN BEGIN
            inds_reset     += 1
            dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
+        IF STRMATCH(tmpComp.field,STRUPCASE('*justData*')) THEN BEGIN
+           ;; inds_reset     += 0
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
         IF KEYWORD_SET(dontStop) THEN BEGIN
-           PRINT,'Not stopping!'
+           ;; PRINT,'Not stopping!'
         ENDIF ELSE BEGIN
            HELP,tmpComp
            PRINT,'alfDB_plot_struct1 : ',alfDB_plot_struct1.(tmpComp.tag_num_A)

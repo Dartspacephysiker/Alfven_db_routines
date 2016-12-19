@@ -148,13 +148,13 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
         KEYWORD_SET(output__inc_IMF): BEGIN
            PRINTF,textLun,FORMAT='(A0,T9,A0,T19,A0,T46,A0,T54,A0,T64,' + $
                   'A0,T75,A0,T85,A0,T94,A0,T103,A0,T112,' + $
-                  'A0)', $
+                  'A0,T121,A0)', $
                   "MLT","ILAT","Time","Orbit","Alt", $
                   ;; "pFlux","charE","eFlux","Bx","By", $
                   (KEYWORD_SET(for_eSpec_DBs) ? "eFlux"    :  dTitle), $
                   (KEYWORD_SET(for_eSpec_DBs) ? "eNumFlux" : "charE"), $
                   (KEYWORD_SET(for_eSpec_DBs) ? "charE"    : "eFlux"), $
-                  "Bx","By","Bz"
+                  "Bx","By","Bz","Dst"
 
            ;; PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T20,"Time",T47,"Orbit",T56,"Alt",T65,A0,T74,A0,T85,A0,T97,A0,T108)', $
            ;;        'pFlux', $
@@ -259,10 +259,11 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                              tmptempIMFBz        = MEAN(tempIMFBz       [tmpTmpInds]) 
                              tmptempIMFphiClock  = MEAN(tempIMFphiClock [tmpTmpInds]) 
                              tmptempIMFthetaCone = MEAN(tempIMFthetaCone[tmpTmpInds])
+                             tmpTempDst          = MEAN(tempDst[tmpTmpInds])
 
                              PRINTF,textLun,FORMAT='(F-5.2,T9,F-6.2,T19,A-0,T46,I-5,T54,F-8.1,T64,' + $
                                     'G-9.3,T74,G-8.2,T85,G-8.2,T94,F-7.3,T103,F-7.3,T112,' + $
-                                    'F-7.3,T125,I0)', $
+                                    'F-7.3,T121,F-7.3,T130,I0)', $
                                     tmpTempMLTs,tmpTempILATs,tmpTempTimes,tmpTempOrb,tmpTempAlts, $
                                     (KEYWORD_SET(for_eSpec_DBs) ? tmptempeFlux     : tmpTempObs  ), $
                                     (KEYWORD_SET(for_eSpec_DBs) ? tmptempeNumFlux  : tmpTempChare), $

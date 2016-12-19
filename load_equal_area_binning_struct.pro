@@ -16,7 +16,26 @@ PRO LOAD_EQUAL_AREA_BINNING_STRUCT,EA, $
 
   IF KEYWORD_SET(hemi) THEN BEGIN
      CASE STRUPCASE(hemi) OF
-        'NORTH':
+        'NORTH': BEGIN
+           IF STRUPCASE(EA__s.hemi) EQ 'SOUTH' THEN BEGIN
+              tmpMinI    = (-1.)*REVERSE(EA__s.maxI)
+              tmpMaxI    = (-1.)*REVERSE(EA__s.minI)
+
+              ;; tmpMinM    = REVERSE(EA__s.maxM)
+              ;; tmpMaxM    = REVERSE(EA__s.minM)
+
+              tmpMinM    = REVERSE(EA__s.minM)
+              tmpMaxM    = REVERSE(EA__s.maxM)
+
+              EA__s.minI = TEMPORARY(tmpMinI)
+              EA__s.maxI = TEMPORARY(tmpMaxI)
+
+              EA__s.minM = tmpMinM
+              EA__s.maxM = tmpMaxM
+
+              EA__s.hemi = 'NORTH'
+           ENDIF
+        END
         'SOUTH': BEGIN
            IF STRUPCASE(EA__s.hemi) EQ 'NORTH' THEN BEGIN
               tmpMinI    = (-1.)*REVERSE(EA__s.maxI)
@@ -37,7 +56,7 @@ PRO LOAD_EQUAL_AREA_BINNING_STRUCT,EA, $
               EA__s.hemi = 'SOUTH'
            ENDIF
         END
-        ELSE:
+        ELSE: STOP
      ENDCASE
   ENDIF
 

@@ -39,6 +39,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    COORDINATE_SYSTEM=coordinate_system, $
    USE_AACGM_COORDS=use_aacgm, $
    USE_MAG_COORDS=use_MAG, $
+   USE_GEO_COORDS=use_GEO, $
+   USE_SDT_COORDS=use_SDT, $
    LOAD_DELTA_ILAT_FOR_WIDTH_TIME=load_dILAT, $
    LOAD_DELTA_ANGLE_FOR_WIDTH_TIME=load_dAngle, $
    LOAD_DELTA_X_FOR_WIDTH_TIME=load_dx, $
@@ -113,7 +115,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    NO_BURSTDATA=no_burstData, $
    WRITEASCII=writeASCII, $
    WRITEHDF5=writeHDF5, $
-   WRITEPROCESSEDH2D=writeProcessedH2d, $
+   WRITEPROCESSEDH2D=writeProcessedH2D, $
    SAVERAW=saveRaw, $
    SAVEDIR=saveDir, $
    JUSTDATA=justData, $
@@ -164,6 +166,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         COORDINATE_SYSTEM=coordinate_system, $
         USE_AACGM_COORDS=use_AACGM, $
         USE_MAG_COORDS=use_MAG, $
+        USE_GEO_COORDS=use_GEO, $
+        USE_SDT_COORDS=use_SDT, $
         MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
         REVERSE_LSHELL=reverse_lShell, $
         MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
@@ -519,7 +523,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          no_burstData                      : 0B, $
                          writeASCII                        : 0B, $
                          writeHDF5                         : 0B, $
-                         writeProcessedH2d                 : 0B, $
+                         writeProcessedH2D                 : 0B, $
                          justData                          : 0B, $
                          justInds                          : 0B, $
                          justInds_saveToFile               : 0B, $
@@ -1027,9 +1031,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'writeHDF5', $
                     BYTE(writeHDF5),/ADD_REPLACE
      ENDIF
-     IF N_ELEMENTS(writeProcessedH2d) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'writeProcessedH2d', $
-                    BYTE(writeProcessedH2d),/ADD_REPLACE
+     IF N_ELEMENTS(writeProcessedH2D) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'writeProcessedH2D', $
+                    BYTE(writeProcessedH2D),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(saveRaw) GT 0 THEN BEGIN

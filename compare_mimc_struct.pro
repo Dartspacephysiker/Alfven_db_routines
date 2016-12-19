@@ -31,7 +31,7 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
   ENDIF
 
   IF MIMC_struct1.hemi NE MIMC_struct2.hemi THEN BEGIN
-     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"hemi", $
+     PRINT,FORMAT='("Different values for ",A-20," : ",A0,", ",A0,"! Resetting ...")',"hemi", $
            MIMC_struct1.hemi,MIMC_struct2.hemi
      inds_reset = 1B
   ENDIF
@@ -84,8 +84,20 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
      DBs_reset  = 1B
   ENDIF
 
+  IF MIMC_struct1.use_GEO NE MIMC_struct2.use_GEO THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"use_GEO", $
+           MIMC_struct1.use_GEO,MIMC_struct2.use_GEO
+     DBs_reset  = 1B
+  ENDIF
+
+  IF MIMC_struct1.use_SDT NE MIMC_struct2.use_SDT THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"use_SDT", $
+           MIMC_struct1.use_SDT,MIMC_struct2.use_SDT
+     DBs_reset  = 1B
+  ENDIF
+
   IF MIMC_struct1.coordinate_system NE MIMC_struct2.coordinate_system THEN BEGIN
-     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"coordinate_system", $
+     PRINT,FORMAT='("Different values for ",A-20," : ",A0,", ",A0,"! Resetting ...")',"coordinate_system", $
            MIMC_struct1.coordinate_system,MIMC_struct2.coordinate_system
      DBs_reset  = 1B
   ENDIF
@@ -105,6 +117,8 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
                  'do_lShell', $
                  'use_AACGM', $
                  'use_MAG', $
+                 'use_GEO', $
+                 'use_SDT', $
                  'coordinate_system']
 
   comp = COMPARE_STRUCT(MIMC_struct1,MIMC_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)
