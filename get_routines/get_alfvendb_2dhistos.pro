@@ -1434,94 +1434,205 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   ;;########CHARACTERISTIC ELECTRON ENERGY########
   IF KEYWORD_SET(charEPlots) THEN BEGIN
+
+     ;;Why ~KEYWORD_SET(no_maximus), you ask? Because if there's no maximus, we already have
+     ;;the proper H2DFluxN
+     IF KEYWORD_SET(eFlux_eSpec_data) AND ~KEYWORD_SET(no_maximus) THEN BEGIN
+        GET_H2D_NEVENTS_AND_MASK,IN_MLTS=in_MLTs, $
+                                 IN_ILATS=in_ILATs, $
+                                 ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                 IMF_STRUCT=IMF_struct, $
+                                 MIMC_STRUCT=MIMC_struct, $
+                                 NEVENTSPLOTRANGE=nEventsPlotRange, $
+                                 NEVENTSPLOT__NOMASK=nEventsPlot__noMask, $
+                                 TMPLT_H2DSTR=tmplt_h2dStr, $
+                                 H2DSTR=tmpH2DStr, $
+                                 H2DMASKSTR=tmpH2DMaskStr, $
+                                 H2DFLUXN=tmpH2DFluxN, $
+                                 H2D_NONZERO_NEV_I=tmphEv_nz_i, $
+                                 MASKMIN=maskMin, $
+                                 DATANAME=dataName, $
+                                 DATARAWPTR=dataRawPtr
+
+        tmpH2DMask            = tmpH2DMaskStr.data
+
+     ENDIF ELSE BEGIN
+        tmpH2DFluxN           = H2DFluxN
+        tmphEv_nz_i  = hEv_nz_i
+        tmpH2DMask            = h2dStrArr[KEYWORD_SET(nPlots)].data
+     ENDELSE
+
+
+
      FOR i=0,N_ELEMENTS(charEType)-1 DO BEGIN
         fluxPlotType = charEType[i]
 
-        CASE N_ELEMENTS(logCharEPlot) OF
-           0:   logPlot       = !NULL
-           1:   logPlot       = logCharEPlot
-           ELSE: logPlot      = logCharEPlot[i]
-        ENDCASE
+        IF KEYWORD_SET(newell_analyze_eFlux) THEN BEGIN
 
-        dims                  = SIZE(charEPlotRange,/DIMENSIONS)
-        CASE N_ELEMENTS(dims) OF 
-           0:   plotRange     = !NULL
-           1: BEGIN
-              CASE dims OF
-                 0: plotRange = !NULL
-                 2: plotRange = charEPlotRange
-                 ELSE: BEGIN
-                 END
-              ENDCASE
-           END
-           2:   plotRange     = charEPlotRange[*,i]
-        ENDCASE
-        GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_CHAREE, $
-                          ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
-                          IMF_STRUCT=IMF_struct, $
-                          MIMC_STRUCT=MIMC_struct, $
-                          OUTH2DBINSMLT=outH2DBinsMLT, $
-                          OUTH2DBINSILAT=outH2DBinsILAT, $
-                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                          FLUXPLOTTYPE=charEType, $
-                          PLOTRANGE=plotRange, $
-                          PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_charEPlots), $
-                          NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
-                          REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
-                          REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
-                          NOPOSFLUX=noPosCharE, $
-                          NONEGFLUX=noNegCharE, $
-                          ABSFLUX=absCharE, $
-                          OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
-                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
-                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
-                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
-                          GROSSRATE__H2D_AREAS=h2dAreas, $
-                          DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
-                          GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
-                          GROSSRATE__CENTERS_MLT=centersMLT, $
-                          GROSSRATE__CENTERS_ILAT=centersILAT, $
-                          GROSSCONVFACTOR=grossConvFactor, $
-                          WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
-                          GROSSLUN=grossLun, $
-                          SHOW_INTEGRALS=show_integrals, $
-                          THISTDENOMINATOR=tHistDenominator, $
-                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
-                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
-                          MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
-                          H2DPROBOCC=H2DProbOcc, $
-                          H2DSTR=h2dStr, $
-                          TMPLT_H2DSTR=tmplt_h2dStr, $
-                          H2D_NONZERO_NEV_I=hEv_nz_i, $
-                          H2DFLUXN=h2dFluxN, $
-                          H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
-                          OUT_H2DMASK=out_h2dMask, $
-                          DATANAME=dataName, $
-                          DATARAWPTR=dataRawPtr, $
-                          MEDHISTOUTDATA=medHistOutData, $
-                          MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=txtOutputDir, $
-                          DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
-                          ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
-                          FANCY_PLOTNAMES=fancy_plotNames
+           ;;pass all plot ranges to GET_NEWELL_FLUX_PLOTDATA
+           plotRange          = charEPlotRange
+           noPosFlux          = N_ELEMENTS(noPosCharE)   GT 0 ? noPosCharE   : !NULL
+           noNegFlux          = N_ELEMENTS(noNegCharE)   GT 0 ? noNegCharE   : !NULL
+           absFlux            = N_ELEMENTS(absCharE)     GT 0 ? absCharE     : !NULL
+           logPlot            = N_ELEMENTS(logCharEPlot) GT 0 ? logCharEPlot : !NULL
 
-        h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+           GET_NEWELL_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_CHAREE, $
+                                    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                    IMF_STRUCT=IMF_struct, $
+                                    MIMC_STRUCT=MIMC_struct, $
+                                    OUTH2DBINSMLT=outH2DBinsMLT, $
+                                    OUTH2DBINSILAT=outH2DBinsILAT, $
+                                    OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                                    FLUXPLOTTYPE=fluxPlotType, $
+                                    PLOTRANGE=plotRange, $
+                                    PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_eplots), $
+                                    NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
+                                    REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                                    REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
+                                    NOPOSFLUX=noPosFlux, $
+                                    NONEGFLUX=noNegFlux, $
+                                    ABSFLUX=absFlux, $
+                                    EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
+                                    INDICES__ESPEC=indices__eSpec, $
+                                    COMBINE_ACCELERATED=Newell__comb_accelerated, $
+                                    ESPEC_MLT=eSpec__mlts, $
+                                    ESPEC_ILAT=eSpec__ilats, $
+                                    ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
+                                    OUT_REMOVED_II=out_removed_ii, $
+                                    LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
+                                    DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                                    DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                                    DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                                    GROSSRATE__H2D_AREAS=h2dAreas, $
+                                    DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                                    GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+                                    GROSSRATE__CENTERS_MLT=centersMLT, $
+                                    GROSSRATE__CENTERS_ILAT=centersILAT, $
+                                    GROSSCONVFACTORARR=grossConvFactorArr, $
+                                    WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
+                                    GROSSLUN=grossLun, $
+                                    SHOW_INTEGRALS=show_integrals, $
+                                    THISTDENOMINATOR=tHistDenominator, $
+                                    DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                                    MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                                    MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                                    H2DPROBOCC=H2DProbOcc, $
+                                    H2DSTRARR=h2dStrArr, $
+                                    TMPLT_H2DSTR=tmplt_h2dStr, $
+                                    H2D_NONZERO_NEV_I=tmphEv_nz_i, $
+                                    H2DFLUXN=tmpH2DFluxN, $
+                                    H2DMASK=tmpH2DMask, $
+                                    OUT_H2DMASK=out_h2dMask, $
+                                    DATANAMEARR=dataNameArr, $
+                                    DATARAWPTRARR=dataRawPtrArr, $
+                                    VARPLOTH2DINDS=varPlotH2DInds, $
+                                    VARPLOTRAWINDS=varPlotRawInds, $
+                                    REMOVED_II_LISTARR=removed_ii_listArr, $
+                                    ;;VARPLOTISKEEPINDS=varPlotIsKeepInds, $
+                                    MEDHISTOUTDATA=medHistOutData, $
+                                    MEDHISTOUTTXT=medHistOutTxt, $
+                                    MEDHISTDATADIR=txtOutputDir, $
+                                    DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                                    ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                                    NEWELL_ANALYZE_MULTIPLY_BY_TYPE_PROBABILITY=newell_analyze_multiply_by_type_probability, $
+                                    NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
+                                    TXTOUTPUTDIR=txtOutputDir, $
+                                    FANCY_PLOTNAMES=fancy_plotNames, $
+                                    NPLOTS=nPlots, $
+                                    MASKMIN=maskMin, $
+                                    KEEPME=keepMe, $
+                                    LUN=lun
 
-        h2dStrArr              = [h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
-           dataNameArr         = [dataNameArr,dataName] 
-           dataRawPtrArr       = [dataRawPtrArr,dataRawPtr] 
-           varPlotH2DInds      = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
-           varPlotRawInds      = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
-           removed_ii_listArr  = [removed_ii_listArr,LIST(out_removed_ii)]
-           ;;varplotiskeepInds   = [varPlotIsKeepInds,0]
-        ENDIF  
-        
-        IF KEYWORD_SET(do_grossRate_fluxQuantities) $
-           OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
-           grossConvFactorArr  = [grossConvFactorArr,grossConvFactor]
-        ENDIF
+        ENDIF ELSE BEGIN        ;No newell analysis, just regular
+
+
+           CASE N_ELEMENTS(logCharEPlot) OF
+              0:   logPlot       = !NULL
+              1:   logPlot       = logCharEPlot
+              ELSE: logPlot      = logCharEPlot[i]
+           ENDCASE
+
+           dims                  = SIZE(charEPlotRange,/DIMENSIONS)
+           CASE N_ELEMENTS(dims) OF 
+              0:   plotRange     = !NULL
+              1: BEGIN
+                 CASE dims OF
+                    0: plotRange = !NULL
+                    2: plotRange = charEPlotRange
+                    ELSE: BEGIN
+                    END
+                 ENDCASE
+              END
+              2:   plotRange     = charEPlotRange[*,i]
+           ENDCASE
+           GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_CHAREE, $
+                             ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                             IMF_STRUCT=IMF_struct, $
+                             MIMC_STRUCT=MIMC_struct, $
+                             OUTH2DBINSMLT=outH2DBinsMLT, $
+                             OUTH2DBINSILAT=outH2DBinsILAT, $
+                             OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                             FLUXPLOTTYPE=charEType, $
+                             PLOTRANGE=plotRange, $
+                             PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_charEPlots), $
+                             NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
+                             REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                             REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
+                             NOPOSFLUX=noPosCharE, $
+                             NONEGFLUX=noNegCharE, $
+                             ABSFLUX=absCharE, $
+                             OUT_REMOVED_II=out_removed_ii, $
+                             LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
+                             DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                             DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                             DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                             GROSSRATE__H2D_AREAS=h2dAreas, $
+                             DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                             GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+                             GROSSRATE__CENTERS_MLT=centersMLT, $
+                             GROSSRATE__CENTERS_ILAT=centersILAT, $
+                             GROSSCONVFACTOR=grossConvFactor, $
+                             WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
+                             GROSSLUN=grossLun, $
+                             SHOW_INTEGRALS=show_integrals, $
+                             THISTDENOMINATOR=tHistDenominator, $
+                             DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                             MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                             MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                             H2DPROBOCC=H2DProbOcc, $
+                             H2DSTR=h2dStr, $
+                             TMPLT_H2DSTR=tmplt_h2dStr, $
+                             H2D_NONZERO_NEV_I=hEv_nz_i, $
+                             H2DFLUXN=h2dFluxN, $
+                             H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                             OUT_H2DMASK=out_h2dMask, $
+                             DATANAME=dataName, $
+                             DATARAWPTR=dataRawPtr, $
+                             MEDHISTOUTDATA=medHistOutData, $
+                             MEDHISTOUTTXT=medHistOutTxt, $
+                             MEDHISTDATADIR=txtOutputDir, $
+                             DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                             ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                             FANCY_PLOTNAMES=fancy_plotNames
+
+           IF ~KEYWORD_SET(eFlux_eSpec_data) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
+           h2dStrArr              = [h2dStrArr,h2dStr] 
+           IF keepMe THEN BEGIN 
+              dataNameArr         = [dataNameArr,dataName] 
+              dataRawPtrArr       = [dataRawPtrArr,dataRawPtr] 
+              varPlotH2DInds      = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+              varPlotRawInds      = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+              removed_ii_listArr  = [removed_ii_listArr,LIST(out_removed_ii)]
+              ;;varplotiskeepInds   = [varPlotIsKeepInds,0]
+           ENDIF  
+           
+           IF KEYWORD_SET(do_grossRate_fluxQuantities) $
+              OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+              grossConvFactorArr  = [grossConvFactorArr,grossConvFactor]
+           ENDIF
+
+        ENDELSE
 
      ENDFOR
   ENDIF

@@ -16,6 +16,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   COORDINATE_SYSTEM=coordinate_system, $
                                   USE_AACGM_COORDS=use_AACGM, $
                                   USE_MAG_COORDS=use_MAG, $
+                                  USE_GEO_COORDS=use_GEO, $
                                   MIN_MAGCURRENT=minMC, $
                                   MAX_NEGMAGCURRENT=maxNegMC, $
                                   HEMI=hemi, $
@@ -47,6 +48,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   COORDINATE_SYSTEM=coordinate_system, $
                                   USE_AACGM_COORDS=use_AACGM, $
                                   USE_MAG_COORDS=use_MAG, $
+                                  USE_GEO_COORDS=use_GEO, $
                                   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                   HEMI=hemi, $
                                   NORTH=north, $
@@ -168,6 +170,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                    coordinate_system   : 'SDT' , $
                    use_AACGM           : 0B    , $
                    use_MAG             : 0B    , $
+                   use_GEO             : 0B    , $
                    north               : 0B    , $
                    south               : 0B    , $
                    both_hemis          : 0B    , $

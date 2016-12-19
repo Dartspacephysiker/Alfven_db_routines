@@ -252,6 +252,12 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                                     '-2009' : '' )
      ENDIF
 
+     IF KEYWORD_SET(charEPlots) OR KEYWORD_SET(eSpec__newellPlot_probOccurrence) THEN BEGIN
+        charEType               = 'charE_eSpec' + $
+                                  ( KEYWORD_SET(eSpec__Newell_2009_interp) ? $
+                                    '-2009' : '' )
+     ENDIF
+
      ;; IF KEYWORD_SET(ionPlots) THEN BEGIN
      ;;    CASE 1 OF
      ;;       STRUPCASE(iFluxPlotType) EQ 'ENERGY': BEGIN

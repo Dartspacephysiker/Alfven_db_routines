@@ -147,6 +147,12 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
      DBs_reset  += 1B
   ENDIF
 
+  IF alfDB_plot_struct1.despunDB NE alfDB_plot_struct2.despunDB THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"despunDB", $
+           alfDB_plot_struct1.despunDB,alfDB_plot_struct2.despunDB
+     DBs_reset  += 1B
+  ENDIF
+
   ;; inds_reset = (COMPARE_STRUCT(alfDB_plot_struct1,alfDB_plot_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)).nDiff GT 0
   comp = COMPARE_STRUCT(alfDB_plot_struct1,alfDB_plot_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)
 
