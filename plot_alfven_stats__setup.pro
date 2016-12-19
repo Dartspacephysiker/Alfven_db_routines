@@ -96,6 +96,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    HOYDIA=hoyDia, $
    LUN=lun, $
    NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
+   NEWELL__COMBINE_ACCELERATED=Newell__combine_accelerated, $
    ESPEC__NO_MAXIMUS=no_maximus, $
    ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
    ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
@@ -343,6 +344,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      HOYDIA=hoyDia, $
      LUN=lun, $
      NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
+     NEWELL__COMBINE_ACCELERATED=Newell__combine_accelerated, $
      FOR_ESPEC_DBS=for_eSpec_DBs, $
      ESPEC__NO_MAXIMUS=no_maximus, $
      ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
