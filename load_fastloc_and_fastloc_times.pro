@@ -97,6 +97,9 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         MAG_file     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--MAG_coords.sav'
         SDT_file     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--SDT_coords.sav'
 
+        mapRatDir    = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
+        mapRatFile   = 'mapratio_for_fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05.dat'
+
      END
      KEYWORD_SET(for_eSpec_DBs): BEGIN
         DefDBFile     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--smaller_datatypes--no_interval_startstop.sav'
@@ -320,15 +323,19 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         IF KEYWORD_SET(do_not_map_delta_t) THEN BEGIN
            PRINT,'Not mapping delta t for fastLoc ...'
         ENDIF ELSE BEGIN
-           IF N_ELEMENTS(mapRatDir) GT 0 AND ~fastLoc.info.is_mapped THEN BEGIN
-              PRINT,"Mapping fastLoc delta-ts to 100 km ..."
-              RESTORE,mapRatDir+mapRatFile
-              ;; fastLoc_delta_t        = fastLoc_delta_t/SQRT((TEMPORARY(mapRatio)).ratio)
-              (*pDB__delta_t)        = (*pDB__delta_t)/SQRT((TEMPORARY(mapRatio)).ratio)
-              fastLoc.info.is_mapped = 1B
+           IF ~fastLoc.info.is_mapped THEN BEGIN
+              IF FILE_TEST(mapRatDir+mapRatFile) THEN BEGIN
+                 PRINT,"Mapping fastLoc delta-ts to 100 km ..."
+                 RESTORE,mapRatDir+mapRatFile
+                 ;; fastLoc_delta_t        = fastLoc_delta_t/SQRT((TEMPORARY(mapRatio)).ratio)
+                 (*pDB__delta_t)        = (*pDB__delta_t)/SQRT((TEMPORARY(mapRatio)).ratio)
+                 fastLoc.info.is_mapped = 1B
+              ENDIF ELSE BEGIN
+                 PRINT,"Can't map fastLoc delta-ts to 100 km! mapRatio DB doesn't exist .."
+                 STOP
+              ENDELSE
            ENDIF ELSE BEGIN
-              PRINT,"Can't map fastLoc delta-ts to 100 km! mapRatio DB doesn't exist .."
-              STOP
+              PRINT,"fastLoc delta-ts are already mapped to 100 km ..."
            ENDELSE
         ENDELSE
      ENDIF ELSE BEGIN

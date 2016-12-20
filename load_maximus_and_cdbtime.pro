@@ -163,7 +163,9 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      IF KEYWORD_SET(force_load_maximus) THEN BEGIN
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"Forcing load, whether or not we already have maximus..."
      ENDIF
+
      IF FILE_TEST(DBDir+DBFile) THEN BEGIN
+
         IF ~KEYWORD_SET(just_cdbTime) THEN BEGIN
            RESTORE,DBDir+DBFile
 
@@ -178,7 +180,9 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
            maximus.info.using_heavies  = KEYWORD_SET(using_heavies)
 
         ENDIF
+
      ENDIF
+
      IF maximus EQ !NULL AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
         PRINT,"Couldn't load maximus!"
         STOP
@@ -420,7 +424,9 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      MAXIMUS__despun                = KEYWORD_SET(despunDB)
      MAXIMUS__dbFile                = TEMPORARY(DBFile    )
      MAXIMUS__dbDir                 = TEMPORARY(DBDir     )
-  ENDIF
+  ENDIF ELSE BEGIN
+     maximus                        = TEMPORARY(*pDBStruct)
+  ENDELSE
 
   PTR_FREE,pDBStruct
 

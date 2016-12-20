@@ -35,7 +35,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   IF KEYWORD_SET(output__inc_IMF) THEN BEGIN
      @common__omni_stability.pro
 
-     IF N_ELEMENTS(C_OMNI__Bx) EQ 0 THEN BEGIN
+     IF N_ELEMENTS(C_OMNI__mag_UTC) EQ 0 THEN BEGIN
 
         PRINTF,lun,'Restoring culled OMNI data to get mag_utc ...'
         dataDir         = "/SPENCEdata/Research/database/"

@@ -245,6 +245,12 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
            matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
+        IF STRMATCH(tmpComp.field,STRUPCASE('*justInds*')) THEN BEGIN
+           ;; inds_reset     += 0
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
         IF STRMATCH(tmpComp.field,STRUPCASE('*include_32Hz*')) THEN BEGIN
            DBs_reset      += 1B
            inds_reset     += 1B
