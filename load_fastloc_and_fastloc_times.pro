@@ -107,7 +107,6 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         DB_date       = '20160505'
         DB_version    = 'v0.0'
         DB_extras     = 'smaller_dataTypes/no_interval_startstop'
-        defCoordDir   = defDBDir + 'alternate_coords/'
         is_128Hz      = 0
         is_noRestrict = 1
 
@@ -120,6 +119,8 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         is_128Hz      = 0
         is_noRestrict = 1
         fastLoc_has_times = 1
+
+        defCoordDir  = defDBDir + 'alternate_coords/'
 
         SDT_file     = 'fastLoc_intervals5--20161129--500-16361--Je_times--SDT_coords.sav'
 
