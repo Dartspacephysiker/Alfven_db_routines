@@ -15,6 +15,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    NUMORBLIM=numOrbLim, $
    DONT_BLACKBALL_MAXIMUS=dont_blackball_maximus, $
    DONT_BLACKBALL_FASTLOC=dont_blackball_fastloc, $
+   DIV_FLUXPLOTS_BY_ORBTOT=div_fluxPlots_by_orbTot, $
+   DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
    MINMLT=minMLT, $
    MAXMLT=maxMLT, $
    BINMLT=binMLT, $
@@ -105,7 +107,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    ORBFREQPLOT=orbFreqPlot, $
    NEVENTPERORBPLOT=nEventPerOrbPlot, $
    NEVENTPERMINPLOT=nEventPerMinPlot, $
+   NORBSWITHEVENTSPERCONTRIBORBSPLOT=nOrbsWithEventsPerContribOrbsPlot, $
    PROBOCCURRENCEPLOT=probOccurrencePlot, $
+   THISTDENOMINATORPLOT=tHistDenominatorPlot, $
    SQUAREPLOT=squarePlot, $
    POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
    MEDIANPLOT=medianPlot, $
@@ -474,6 +478,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          numOrbLim                         : 0B, $
                          dont_blackball_maximus            : 0B, $
                          dont_blackball_fastloc            : 0B, $
+                         div_fluxPlots_by_orbTot           : 0B, $
+                         div_fluxPlots_by_applicable_orbs  : 0B, $
                          EA_binning                        : 0B, $
                          HwMAurOval                        : 0B, $
                          tHist_mask_bins_below_thresh      : 0B, $
@@ -514,7 +520,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          orbFreqPlot                       : 0B, $
                          nEventPerOrbPlot                  : 0B, $
                          nEventPerMinPlot                  : 0B, $
+                         nOrbsWithEventsPerContribOrbsPlot : 0B, $
                          probOccurrencePlot                : 0B, $
+                         tHistDenominatorPlot              : 0B, $
                          squarePlot                        : 0B, $
                          polarContour                      : 0B, $
                          medianPlot                        : 0B, $
@@ -741,6 +749,16 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(dont_blackball_fastloc) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'dont_blackball_fastloc', $
                     dont_blackball_fastloc,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(div_fluxPlots_by_orbTot) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'div_fluxPlots_by_orbTot', $
+                    div_fluxPlots_by_orbTot,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(div_fluxPlots_by_applicable_orbs) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'div_fluxPlots_by_applicable_orbs', $
+                    div_fluxPlots_by_applicable_orbs,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(include_32Hz) GT 0 THEN BEGIN
@@ -982,9 +1000,19 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(nEventPerMinPlot),/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(nOrbsWithEventsPerContribOrbsPlot) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'nOrbsWithEventsPerContribOrbsPlot', $
+                    BYTE(nOrbsWithEventsPerContribOrbsPlot),/ADD_REPLACE
+     ENDIF
+
      IF N_ELEMENTS(probOccurrencePlot) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'probOccurrencePlot', $
                     BYTE(probOccurrencePlot),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(tHistDenominatorPlot) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'tHistDenominatorPlot', $
+                    BYTE(tHistDenominatorPlot),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(squarePlot) GT 0 THEN BEGIN

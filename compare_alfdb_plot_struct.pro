@@ -9,61 +9,63 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
   inds_reset  = 0B
   DBs_reset   = 0B
 
-  except_list = ["dont_blackball_fastLoc"         , $
-                 "dont_blackball_maximus"         , $
-                 "for_eSpec_DBs"                  , $
-                 "eSpec__all_fluxes"              , $
-                 "eSpec__Newell_2009_interp"      , $
-                 "disregard_sample_t"             , $
-                 "maskMin"                        , $
-                 "tHist_mask_bins_below_thresh"   , $
-                 "nPlots"                         , $
-                 "ePlots"                         , $
-                 "eFluxPlotType"                  , $
-                 "eNumFlPlots"                    , $
-                 "eNumFlPlotType"                 , $
-                 "pPlots"                         , $
-                 "ionPlots"                       , $
-                 "ifluxPlotType"                  , $
-                 "charEPlots"                     , $
-                 "charEType"                      , $
-                 "chariEPlots"                    , $
-                 "autoscale_fluxPlots"            , $
-                 "do_timeAvg_fluxQuantities"      , $
-                 "do_logAvg_the_timeAvg"          , $
-                 "t_ProbOccurrence"               , $
-                 "orbContribPlot"                 , $
-                 "orbTotPlot"                     , $
-                 "orbFreqPlot"                    , $
-                 "nEventPerOrbPlot"               , $
-                 "nEventPerMinPlot"               , $
-                 "probOccurrencePlot"             , $
-                 "squarePlot"                     , $
-                 "polarContour"                   , $
-                 "wholeCap"                       , $
-                 "medianPlot"                     , $
-                 "logAvgPlot"                     , $
-                 "plotMedOrAvg"                   , $
-                 "dataDir"                        , $
-                 "no_burstData"                   , $
-                 "writeASCII"                     , $
-                 "writeHDF5"                      , $
-                 "writeProcessedH2d"              , $
-                 "saveRaw"                        , $
-                 "saveDir"                        , $
-                 "showPlotsNoSave"                , $
-                 "medHistOutData"                 , $
-                 "medHistOutTxt"                  , $
-                 "outputPlotSummary"              , $
-                 "del_PS"                         , $
-                 "keepMe"                         , $
-                 "paramStrPrefix"                 , $
-                 "paramStrSuffix"                 , $
-                 "EA_binning"                     , $
-                 "plotH2D_contour"                , $
-                 "plotH2D__kernel_density_unmask" , $
-                 "executing_multiples"            , $
-                 "hoyDia"                         ]
+  except_list = ["dont_blackball_fastLoc"            , $
+                 "dont_blackball_maximus"            , $
+                 "for_eSpec_DBs"                     , $
+                 "eSpec__all_fluxes"                 , $
+                 "eSpec__Newell_2009_interp"         , $
+                 "disregard_sample_t"                , $
+                 "maskMin"                           , $
+                 "tHist_mask_bins_below_thresh"      , $
+                 "nPlots"                            , $
+                 "ePlots"                            , $
+                 "eFluxPlotType"                     , $
+                 "eNumFlPlots"                       , $
+                 "eNumFlPlotType"                    , $
+                 "pPlots"                            , $
+                 "ionPlots"                          , $
+                 "ifluxPlotType"                     , $
+                 "charEPlots"                        , $
+                 "charEType"                         , $
+                 "chariEPlots"                       , $
+                 "autoscale_fluxPlots"               , $
+                 "do_timeAvg_fluxQuantities"         , $
+                 "do_logAvg_the_timeAvg"             , $
+                 "t_ProbOccurrence"                  , $
+                 "orbContribPlot"                    , $
+                 "orbTotPlot"                        , $
+                 "orbFreqPlot"                       , $
+                 "nEventPerOrbPlot"                  , $
+                 "nEventPerMinPlot"                  , $
+                 "probOccurrencePlot"                , $
+                 "tHistDenominatorPlot"              , $
+                 "nOrbsWithEventsPerContribOrbsPlot" , $
+                 "squarePlot"                        , $
+                 "polarContour"                      , $
+                 "wholeCap"                          , $
+                 "medianPlot"                        , $
+                 "logAvgPlot"                        , $
+                 "plotMedOrAvg"                      , $
+                 "dataDir"                           , $
+                 "no_burstData"                      , $
+                 "writeASCII"                        , $
+                 "writeHDF5"                         , $
+                 "writeProcessedH2d"                 , $
+                 "saveRaw"                           , $
+                 "saveDir"                           , $
+                 "showPlotsNoSave"                   , $
+                 "medHistOutData"                    , $
+                 "medHistOutTxt"                     , $
+                 "outputPlotSummary"                 , $
+                 "del_PS"                            , $
+                 "keepMe"                            , $
+                 "paramStrPrefix"                    , $
+                 "paramStrSuffix"                    , $
+                 "EA_binning"                        , $
+                 "plotH2D_contour"                   , $
+                 "plotH2D__kernel_density_unmask"    , $
+                 "executing_multiples"               , $
+                 "hoyDia"                            ]
 
   ;; dbs__except_list = [
 
@@ -243,6 +245,13 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
            matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
+        IF STRMATCH(tmpComp.field,STRUPCASE('*include_32Hz*')) THEN BEGIN
+           DBs_reset      += 1B
+           inds_reset     += 1B
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
         IF KEYWORD_SET(dontStop) THEN BEGIN
            ;; PRINT,'Not stopping!'
         ENDIF ELSE BEGIN
@@ -255,6 +264,10 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
      ENDIF
 
   ENDFOR
+
+  ;; IF N_ELEMENTS(matchArr) GT 0 THEN BEGIN
+  ;;    PRINT,alfDB
+  ;; ENDIF
 
 
 END

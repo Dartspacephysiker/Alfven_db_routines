@@ -126,6 +126,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
            FOR_MAXIMUS=loopType[k] EQ 0, $
            FOR_ESPEC_DBS=loopType[k] EQ 1, $
            DBTIMES=DBTimes, $
+           IMF_STRUCT=IMF_struct, $
            DONT_USE_THESE_INDS=dont_use_these_inds, $
            /DO_LISTS_WITH_STATS, $
            DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $

@@ -278,13 +278,17 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
 
         delta_stuff = KEYWORD_SET(load_dILAT) + KEYWORD_SET(load_dx) + KEYWORD_SET(load_dAngle)
-        IF delta_stuff GT 1 THEN BEGIN
-           PRINT,"Can't have it all."
-           STOP
-        ENDIF ELSE BEGIN
-           dILAT_file         = GET_FAST_DB_STRING((*pDBStruct),/FOR_FASTLOC_DB) + '-delta_ilats.sav'
-           RESTORE,DBDir+dILAT_file
-        ENDELSE
+        CASE delta_stuff OF
+           0:
+           1: BEGIN
+              dILAT_file = GET_FAST_DB_STRING((*pDBStruct),/FOR_FASTLOC_DB) + '-delta_ilats.sav'
+              RESTORE,DBDir+dILAT_file
+           END
+           ELSE: BEGIN
+              PRINT,"Can't have it all."
+              STOP
+           END
+        ENDCASE
 
         IF KEYWORD_SET(load_dILAT) THEN BEGIN
            PRINT,"Replacing fastLoc_delta_t with dILAT ..."
@@ -324,6 +328,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
               fastLoc.info.is_mapped = 1B
            ENDIF ELSE BEGIN
               PRINT,"Can't map fastLoc delta-ts to 100 km! mapRatio DB doesn't exist .."
+              STOP
            ENDELSE
         ENDELSE
      ENDIF ELSE BEGIN

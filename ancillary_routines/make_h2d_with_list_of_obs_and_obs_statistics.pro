@@ -4,6 +4,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
    FOR_MAXIMUS=for_maximus, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
    DBTIMES=dbTimes, $
+   IMF_STRUCT=IMF_struct, $
    DONT_USE_THESE_INDS=dont_use_these_inds, $
    DO_LISTS_WITH_STATS=do_lists_with_stats, $
    DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -33,6 +34,31 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
 
   IF KEYWORD_SET(output__inc_IMF) THEN BEGIN
      @common__omni_stability.pro
+
+     IF N_ELEMENTS(C_OMNI__Bx) EQ 0 THEN BEGIN
+
+        PRINTF,lun,'Restoring culled OMNI data to get mag_utc ...'
+        dataDir         = "/SPENCEdata/Research/database/"
+
+        RESTORE,dataDir + "/OMNI/culled_OMNI_magdata.dat"
+
+        OMNI__SELECT_COORDS,Bx, $
+                            By_GSE,Bz_GSE,Bt_GSE, $
+                            thetaCone_GSE,phiClock_GSE,cone_overClock_GSE,Bxy_over_Bz_GSE, $
+                            By_GSM,Bz_GSM,Bt_GSM, $
+                            thetaCone_GSM,phiClock_GSM,cone_overClock_GSM,Bxy_over_Bz_GSM, $
+                            OMNI_COORDS=IMF_struct.OMNI_coords, $
+                            LUN=lun
+
+        C_OMNI__clean_i = GET_CLEAN_OMNI_I(C_OMNI__Bx,C_OMNI__By,C_OMNI__Bz, $
+                                           LUN=lun)
+        C_OMNI__time_i  = GET_OMNI_TIME_I(mag_UTC, $
+                                          IMF_STRUCT=IMF_struct, $
+                                          LUN=lun)
+
+        C_OMNI__mag_UTC = TEMPORARY(mag_UTC)
+
+     ENDIF
   ENDIF
 
   @common__newell_espec.pro
@@ -259,11 +285,11 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                              tmptempIMFBz        = MEAN(tempIMFBz       [tmpTmpInds]) 
                              tmptempIMFphiClock  = MEAN(tempIMFphiClock [tmpTmpInds]) 
                              tmptempIMFthetaCone = MEAN(tempIMFthetaCone[tmpTmpInds])
-                             tmpTempDst          = MEAN(tempDst[tmpTmpInds])
+                             ;; tmpTempDst          = MEAN(tempDst[tmpTmpInds])
 
                              PRINTF,textLun,FORMAT='(F-5.2,T9,F-6.2,T19,A-0,T46,I-5,T54,F-8.1,T64,' + $
                                     'G-9.3,T74,G-8.2,T85,G-8.2,T94,F-7.3,T103,F-7.3,T112,' + $
-                                    'F-7.3,T121,F-7.3,T130,I0)', $
+                                    'F-7.3,T121,F-7.3)', $ ;,T130,I0)', $
                                     tmpTempMLTs,tmpTempILATs,tmpTempTimes,tmpTempOrb,tmpTempAlts, $
                                     (KEYWORD_SET(for_eSpec_DBs) ? tmptempeFlux     : tmpTempObs  ), $
                                     (KEYWORD_SET(for_eSpec_DBs) ? tmptempeNumFlux  : tmpTempChare), $

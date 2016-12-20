@@ -8,7 +8,7 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
                           SAMPLE_T_RESTRICTION=sample_t_restriction, $
                           INCLUDE_32Hz=include_32Hz, $
                           DISREGARD_SAMPLE_T=disregard_sample_t, $
-                          DO_LSHELL=DO_lshell, $
+                          DO_LSHELL=do_lshell, $
                           USING_HEAVIES=using_heavies, $
                           DO_CHASTDB=do_ChastDB, $
                           FOR_ESPEC_DBS=for_eSpec_dbs
@@ -34,7 +34,7 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
   ENDIF
 
   IF KEYWORD_SET(clean_nans_and_infinities) THEN BEGIN
-     dbTags = tag_names(dbStruct)
+     dbTags = TAG_NAMES(dbStruct)
      IF is_maximus THEN BEGIN
         IF KEYWORD_SET(do_ChastDB) THEN BEGIN
            clean_these_inds = [INDGEN(21),28]
@@ -149,6 +149,9 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
            Hz128_i = WHERE((ABS(dbStruct.sample_t) LE sample_t_hcutoff) AND $
                            (dbStruct.sample_t GT 0),nHz128,/NULL)
 
+
+           PRINTF,lun,FORMAT='("N 32 Hz",T40,": ",I0)',nHz32
+           PRINTF,lun,FORMAT='("N 128 Hz",T40,": ",I0)',nHz128
 
            good_i  = CGSETINTERSECTION(good_i,CGSETUNION(Hz32_i,Hz128_i))
 

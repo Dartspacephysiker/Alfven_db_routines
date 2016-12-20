@@ -18,6 +18,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    DISREGARD_SAMPLE_T=disregard_sample_t, $
    DONT_BLACKBALL_MAXIMUS=dont_blackball_maximus, $
    DONT_BLACKBALL_FASTLOC=dont_blackball_fastloc, $
+   DIV_FLUXPLOTS_BY_ORBTOT=div_fluxPlots_by_orbTot, $
+   DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
    MINMLT=minM,MAXMLT=maxM, $
    BINMLT=binM, $
    SHIFTMLT=shiftM, $
@@ -66,7 +68,9 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    ORBFREQPLOT=orbFreqPlot, $
    NEVENTPERORBPLOT=nEventPerOrbPlot, $
    NEVENTPERMINPLOT=nEventPerMinPlot, $
+   NORBSWITHEVENTSPERCONTRIBORBSPLOT=nOrbsWithEventsPerContribOrbsPlot, $
    PROBOCCURRENCEPLOT=probOccurrencePlot, $
+   THISTDENOMINATORPLOT=tHistDenominatorPlot, $
    SQUAREPLOT=squarePlot, $
    POLARCONTOUR=polarContour, $ 
    MEDIANPLOT=medianPlot, $
@@ -265,6 +269,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      DISREGARD_SAMPLE_T=disregard_sample_t, $
      DONT_BLACKBALL_MAXIMUS=dont_blackball_maximus, $
      DONT_BLACKBALL_FASTLOC=dont_blackball_fastloc, $
+     DIV_FLUXPLOTS_BY_ORBTOT=div_fluxPlots_by_orbTot, $
+     DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
      MINMLT=minM,MAXMLT=maxM, $
      BINMLT=binM, $
      SHIFTMLT=shiftM, $
@@ -314,7 +320,9 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      ORBFREQPLOT=orbFreqPlot, $
      NEVENTPERORBPLOT=nEventPerOrbPlot, $
      NEVENTPERMINPLOT=nEventPerMinPlot, $
+     NORBSWITHEVENTSPERCONTRIBORBSPLOT=nOrbsWithEventsPerContribOrbsPlot, $
      PROBOCCURRENCEPLOT=probOccurrencePlot, $
+     THISTDENOMINATORPLOT=tHistDenominatorPlot, $
      SQUAREPLOT=squarePlot, $
      POLARCONTOUR=polarContour, $ 
      MEDIANPLOT=medianPlot, $

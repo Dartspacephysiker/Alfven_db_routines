@@ -2,7 +2,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
    plot_i, $
    fastLocInterped_i, $
    H2DSTRARR=h2dStrArr, $
-   KEEPME=keepMe, $
    DATARAWPTRARR=dataRawPtrArr, $
    DATANAMEARR=dataNameArr, $
    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -33,17 +32,15 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NOPOSENUMFL=noPosENumFl, $
    ENUMFLPLOTRANGE=ENumFlPlotRange, $
    AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
-   NEWELL_ANALYZE_EFLUX=newell_analyze_eFlux, $
    NEWELL_ANALYZE_MULTIPLY_BY_TYPE_PROBABILITY=newell_analyze_multiply_by_type_probability, $
    NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
-   NEWELL__COMBINE_ACCELERATED=Newell__comb_accelerated, $
    EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
    ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
    IFLUX_ESPEC_DATA=iFlux_eSpec_data, $
    INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
    INDICES__ESPEC=indices__eSpec, $
    INDICES__ION=indices__ion, $
-   ESPEC__NO_MAXIMUS=no_maximus, $
+   ;; ESPEC__NO_MAXIMUS=no_maximus, $
    ;; FOR_ESPEC_DB=for_eSpec_DB, $
    ESPEC__MLTS=eSpec__mlts, $
    ESPEC__ILATS=eSpec__ilats, $
@@ -209,7 +206,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
-  IF KEYWORD_SET(no_maximus) THEN BEGIN
+  IF KEYWORD_SET(alfDB_plot_struct.no_maximus) THEN BEGIN
      CASE 1 OF
         ( (N_ELEMENTS(eFlux_eSpec_data) GT 0) OR $
           (N_ELEMENTS(eNumFlux_eSpec_data) GT 0) ): BEGIN
@@ -242,7 +239,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                            DATANAME=dataName, $
                            DATARAWPTR=dataRawPtr
   
-  IF keepMe THEN BEGIN 
+  IF alfDB_plot_struct.keepMe THEN BEGIN 
      IF KEYWORD_SET(nPlots) THEN BEGIN
         h2dStrArr     = [h2dStr,h2dMaskStr] 
         dataNameArr   = [dataName,"histoMask"] 
@@ -255,19 +252,20 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ENDIF
   
   ;;Get tHist denominator here so other routines can use it as they please
-  IF KEYWORD_SET(nEventPerMinPlot) OR KEYWORD_SET(probOccurrencePlot) $
+  IF KEYWORD_SET(alfDB_plot_struct.nEventPerMinPlot) OR $
+     KEYWORD_SET(alfDB_plot_struct.probOccurrencePlot) $
      ;; OR KEYWORD_SET(timeAvgd_pfluxPlot) OR KEYWORD_SET(timeAvgd_eFluxMaxPlot) $
-     OR KEYWORD_SET(do_timeAvg_fluxQuantities) $
-     OR KEYWORD_SET(nEventPerOrbPlot) $
-     OR KEYWORD_SET(tHistDenominatorPlot) $
-     OR KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) $
-     OR KEYWORD_SET(div_fluxPlots_by_applicable_orbs) $
-     OR KEYWORD_SET(tHist_mask_bins_below_thresh) $
+     OR KEYWORD_SET(alfDB_plot_struct.do_timeAvg_fluxQuantities) $
+     OR KEYWORD_SET(alfDB_plot_struct.nEventPerOrbPlot) $
+     OR KEYWORD_SET(alfDB_plot_struct.tHistDenominatorPlot) $
+     OR KEYWORD_SET(alfDB_plot_struct.nOrbsWithEventsPerContribOrbsPlot) $
+     OR KEYWORD_SET(alfDB_plot_struct.div_fluxPlots_by_applicable_orbs) $
+     OR KEYWORD_SET(alfDB_plot_struct.tHist_mask_bins_below_thresh) $
      OR KEYWORD_SET(alfDB_plot_struct.numOrbLim) $
-     OR KEYWORD_SET(eSpec__t_probOccurrence) $
+     OR KEYWORD_SET(alfDB_plot_struct.t_probOccurrence) $
   THEN BEGIN 
 
-     IF ~KEYWORD_SET(no_maximus) THEN BEGIN
+     IF ~KEYWORD_SET(alfDB_plot_struct.no_maximus) THEN BEGIN
         tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
                            fastLocInterped_i, $
                            HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
@@ -316,7 +314,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
         ENDIF
 
 
-        IF keepMe THEN BEGIN 
+        IF alfDB_plot_struct.keepMe THEN BEGIN 
            IF KEYWORD_SET(tHistDenominatorPlot) THEN BEGIN
               h2dStrArr     = [h2dStrArr,h2dStr] 
               dataNameArr   = [dataNameArr,dataName] 
@@ -357,7 +355,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                  /FOR_ESPEC_DBS)
         
 
-        IF keepMe THEN BEGIN 
+        IF alfDB_plot_struct.keepMe THEN BEGIN 
            IF KEYWORD_SET(tHistDenominatorPlot) THEN BEGIN
               dataName      = dataName+'_nonAlfven'
               h2dStr.name   = dataName
@@ -438,7 +436,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
      IF KEYWORD_SET(orbContribPlot) THEN BEGIN 
         h2dStrArr=[h2dStrArr,h2dContribOrbStr] 
-        IF keepMe THEN dataNameArr=[dataNameArr,dataName] 
+        IF alfDB_plot_struct.keepMe THEN dataNameArr=[dataNameArr,dataName] 
      ENDIF
      
      ;;Mask all bins that don't have requisite number of orbits passing through
@@ -504,7 +502,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      ;; h2dNOrbsWEventsStr.data[h2d_nonzero_contribOrbs_i] = h2dNOrbsWEventsStr.data[h2d_nonzero_contribOrbs_i]/h2dContribOrbStr.data[h2d_nonzero_contribOrbs_i]
 
      h2dStrArr=[h2dStrArr,h2dNOrbsWEventsStr] 
-     IF keepMe THEN dataNameArr=[dataNameArr,dataName] 
+     IF alfDB_plot_struct.keepMe THEN dataNameArr=[dataNameArr,dataName] 
   ENDIF
 
   ;;########TOTAL Orbits########
@@ -528,14 +526,14 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                TMPLT_H2DSTR=tmplt_h2dStr, $
                                DATANAME=dataName, $
                                DATARAWPTR=dataRawPtr, $
-                               KEEPME=keepme, $
+                               KEEPME=alfDB_plot_struct.keepMe, $
                                UNIQUEORBS_I=uniqueOrbs_i, $
                                H2D_NONZERO_ALLORB_I=h2d_nonZero_allOrb_i, $
                                LUN=lun
      
      IF KEYWORD_SET(orbTotPlot) THEN BEGIN 
         h2dStrArr=[h2dStrArr,h2dTotOrbStr] 
-        IF keepMe THEN dataNameArr=[dataNameArr,dataName] 
+        IF alfDB_plot_struct.keepMe THEN dataNameArr=[dataNameArr,dataName] 
      ENDIF
   ENDIF
 
@@ -560,7 +558,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                   DATANAME=dataName
      
      h2dStrArr=[h2dStrArr,h2dStr] 
-     IF keepMe THEN dataNameArr=[dataNameArr,dataName] 
+     IF alfDB_plot_struct.keepMe THEN dataNameArr=[dataNameArr,dataName] 
      
   ENDIF
   
@@ -594,7 +592,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     DATARAWPTR=dataRawPtr
      
      h2dStrArr=[h2dStrArr,h2dStr] 
-     IF keepMe THEN dataNameArr=[dataNameArr,dataName]
+     IF alfDB_plot_struct.keepMe THEN dataNameArr=[dataNameArr,dataName]
   ENDIF
   
   ;;########NEvents/minute########
@@ -639,7 +637,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
         ;; DATARAWPTR=dataRawPtr
         
         h2dStrArr=[h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
+        IF alfDB_plot_struct.keepMe THEN BEGIN 
            dataNameArr=[dataNameArr,dataName] 
            ;; dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
         ENDIF 
@@ -683,7 +681,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
      IF KEYWORD_SET(probOccurrencePlot) THEN BEGIN
         h2dStrArr=[h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
+        IF alfDB_plot_struct.keepMe THEN BEGIN 
            dataNameArr=[dataNameArr,dataName] 
            dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
         ENDIF 
@@ -697,7 +695,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
      ;;Why ~KEYWORD_SET(no_maximus), you ask? Because if there's no maximus, we already have
      ;;the proper H2DFluxN
-     IF KEYWORD_SET(eFlux_eSpec_data) AND ~KEYWORD_SET(no_maximus) THEN BEGIN
+     IF KEYWORD_SET(eFlux_eSpec_data) AND ~KEYWORD_SET(alfDB_plot_struct.no_maximus) THEN BEGIN
         GET_H2D_NEVENTS_AND_MASK,IN_MLTS=in_MLTs, $
                                  IN_ILATS=in_ILATs, $
                                  ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -726,7 +724,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      FOR i=0,N_ELEMENTS(eFluxPlotType)-1 DO BEGIN
         fluxPlotType = eFluxPlotType[i]
 
-        IF KEYWORD_SET(newell_analyze_eFlux) THEN BEGIN
+        IF KEYWORD_SET(alfDB_plot_struct.newell_analyze_eFlux) THEN BEGIN
 
            ;;pass all plot ranges to GET_NEWELL_FLUX_PLOTDATA
            plotRange          = ePlotRange
@@ -753,7 +751,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     ABSFLUX=absFlux, $
                                     EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                                     INDICES__ESPEC=indices__eSpec, $
-                                    COMBINE_ACCELERATED=Newell__comb_accelerated, $
+                                    COMBINE_ACCELERATED=alfDB_plot_struct.Newell__comb_accelerated, $
                                     ESPEC_MLT=eSpec__mlts, $
                                     ESPEC_ILAT=eSpec__ilats, $
                                     ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
@@ -799,7 +797,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     FANCY_PLOTNAMES=fancy_plotNames, $
                                     NPLOTS=nPlots, $
                                     MASKMIN=maskMin, $
-                                    KEEPME=keepMe, $
+                                    KEEPME=alfDB_plot_struct.keepMe, $
                                     LUN=lun
 
         ENDIF ELSE BEGIN        ;No newell analysis, just regular
@@ -901,7 +899,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
            IF ~KEYWORD_SET(eFlux_eSpec_data) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
            h2dStrArr            = [h2dStrArr,h2dStr] 
-           IF keepMe THEN BEGIN
+           IF alfDB_plot_struct.keepMe THEN BEGIN
               dataNameArr       = [dataNameArr,dataName] 
               dataRawPtrArr     =[dataRawPtrArr,dataRawPtr] 
               varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
@@ -951,7 +949,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      FOR i=0,N_ELEMENTS(eNumFlPlotType)-1 DO BEGIN
         fluxPlotType = eNumFlPlotType[i]
 
-        IF KEYWORD_SET(newell_analyze_eFlux) THEN BEGIN
+        IF KEYWORD_SET(alfDB_plot_struct.newell_analyze_eFlux) THEN BEGIN
            ;;A temporary kluge
            ;; IF N_ELEMENTS(eNumFlPlotRange) GT 2 THEN BEGIN
            ;;    plotRange     = eNumFlPlotRange[*,1]
@@ -982,7 +980,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     ABSFLUX=absFlux, $
                                     ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                                     INDICES__ESPEC=indices__eSpec, $
-                                    COMBINE_ACCELERATED=Newell__comb_accelerated, $
+                                    COMBINE_ACCELERATED=alfDB_plot_struct.Newell__comb_accelerated, $
                                     ESPEC_MLT=eSpec__mlts, $
                                     ESPEC_ILAT=eSpec__ilats, $
                                     ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
@@ -1027,7 +1025,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     FANCY_PLOTNAMES=fancy_plotNames, $
                                     NPLOTS=nPlots, $
                                     MASKMIN=maskMin, $
-                                    KEEPME=keepMe, $
+                                    KEEPME=alfDB_plot_struct.keepMe, $
                                     LUN=lun
 
         ENDIF ELSE BEGIN        ;No newell analysis, just regular
@@ -1128,7 +1126,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
            IF ~KEYWORD_SET(eNumFlux_eSpec_data) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
            h2dStrArr             = [h2dStrArr,h2dStr] 
-           IF keepMe THEN BEGIN 
+           IF alfDB_plot_struct.keepMe THEN BEGIN 
               dataNameArr        = [dataNameArr,dataName] 
               dataRawPtrArr      = [dataRawPtrArr,dataRawPtr] 
               varPlotH2DInds     = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
@@ -1201,7 +1199,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
      h2dStrArr             = [h2dStrArr,h2dStr] 
-     IF keepMe THEN BEGIN 
+     IF alfDB_plot_struct.keepMe THEN BEGIN 
         dataNameArr        = [dataNameArr,dataName] 
         dataRawPtrArr      = [dataRawPtrArr,dataRawPtr] 
         varPlotH2DInds     = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
@@ -1344,7 +1342,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
         IF ~KEYWORD_SET(iNumFlux_eSpec_data) AND ~KEYWORD_SET(iFlux_eSpec_data) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
         h2dStrArr             = [h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
+        IF alfDB_plot_struct.keepMe THEN BEGIN 
            dataNameArr        = [dataNameArr,dataName] 
            dataRawPtrArr      = [dataRawPtrArr,dataRawPtr] 
            varPlotH2DInds     = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
@@ -1416,7 +1414,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
      h2dStrArr              = [h2dStrArr,h2dStr] 
-     IF keepMe THEN BEGIN 
+     IF alfDB_plot_struct.keepMe THEN BEGIN 
         dataNameArr         = [dataNameArr,dataName] 
         dataRawPtrArr       = [dataRawPtrArr,dataRawPtr] 
         varPlotH2DInds      = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
@@ -1437,7 +1435,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
      ;;Why ~KEYWORD_SET(no_maximus), you ask? Because if there's no maximus, we already have
      ;;the proper H2DFluxN
-     IF KEYWORD_SET(eFlux_eSpec_data) AND ~KEYWORD_SET(no_maximus) THEN BEGIN
+     IF KEYWORD_SET(eFlux_eSpec_data) AND ~KEYWORD_SET(alfDB_plot_struct.no_maximus) THEN BEGIN
         GET_H2D_NEVENTS_AND_MASK,IN_MLTS=in_MLTs, $
                                  IN_ILATS=in_ILATs, $
                                  ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -1467,7 +1465,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      FOR i=0,N_ELEMENTS(charEType)-1 DO BEGIN
         fluxPlotType = charEType[i]
 
-        IF KEYWORD_SET(newell_analyze_eFlux) THEN BEGIN
+        IF KEYWORD_SET(alfDB_plot_struct.newell_analyze_eFlux) THEN BEGIN
 
            ;;pass all plot ranges to GET_NEWELL_FLUX_PLOTDATA
            plotRange          = charEPlotRange
@@ -1494,7 +1492,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     ABSFLUX=absFlux, $
                                     EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                                     INDICES__ESPEC=indices__eSpec, $
-                                    COMBINE_ACCELERATED=Newell__comb_accelerated, $
+                                    COMBINE_ACCELERATED=alfDB_plot_struct.Newell__comb_accelerated, $
                                     ESPEC_MLT=eSpec__mlts, $
                                     ESPEC_ILAT=eSpec__ilats, $
                                     ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
@@ -1540,7 +1538,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     FANCY_PLOTNAMES=fancy_plotNames, $
                                     NPLOTS=nPlots, $
                                     MASKMIN=maskMin, $
-                                    KEEPME=keepMe, $
+                                    KEEPME=alfDB_plot_struct.keepMe, $
                                     LUN=lun
 
         ENDIF ELSE BEGIN        ;No newell analysis, just regular
@@ -1618,7 +1616,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
            IF ~KEYWORD_SET(eFlux_eSpec_data) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
            h2dStrArr              = [h2dStrArr,h2dStr] 
-           IF keepMe THEN BEGIN 
+           IF alfDB_plot_struct.keepMe THEN BEGIN 
               dataNameArr         = [dataNameArr,dataName] 
               dataRawPtrArr       = [dataRawPtrArr,dataRawPtr] 
               varPlotH2DInds      = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
@@ -1691,7 +1689,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
      h2dStrArr              = [h2dStrArr,h2dStr] 
-     IF keepMe THEN BEGIN 
+     IF alfDB_plot_struct.keepMe THEN BEGIN 
         dataNameArr         = [dataNameArr,dataName] 
         dataRawPtrArr       = [dataRawPtrArr,dataRawPtr] 
         varPlotH2DInds      = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
@@ -1708,7 +1706,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ENDIF
 
   ;;NEWELL PLOTS
-  IF KEYWORD_SET(newellPlots) AND ~KEYWORD_SET(no_maximus) THEN BEGIN
+  IF KEYWORD_SET(newellPlots) AND ~KEYWORD_SET(alfDB_plot_struct.no_maximus) THEN BEGIN
      GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                                 ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                                 IMF_STRUCT=IMF_struct, $
@@ -1718,7 +1716,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                 NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                                 NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                 NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
-                                ESPEC__NO_MAXIMUS=no_maximus, $
+                                ESPEC__NO_MAXIMUS=alfDB_plot_struct.no_maximus, $
                                 ;; ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
                                 INDICES__ESPEC=indices__eSpec, $
                                 TMPLT_H2DSTR=tmplt_h2dStr, $
@@ -1734,14 +1732,14 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                 LUN=lun
 
      h2dStrArr            = [h2dStrArr,h2dStrs]
-     IF keepMe THEN BEGIN 
+     IF alfDB_plot_struct.keepMe THEN BEGIN 
         dataNameArr       = [dataNameArr,dataNames] 
         dataRawPtrArr     = [dataRawPtrArr,dataRawPtrs] 
      ENDIF
 
   ENDIF
 
-  IF KEYWORD_SET(eSpec__newellPlot_probOccurrence) OR KEYWORD_SET(eSpec__t_probOccurrence) THEN BEGIN
+  IF KEYWORD_SET(eSpec__newellPlot_probOccurrence) OR KEYWORD_SET(alfDB_plot_struct.t_probOccurrence) THEN BEGIN
 
      GET_H2D_NEWELLS__EACH_TYPE__NONALFVEN,eSpec,indices__eSpec, $
                                            ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -1752,11 +1750,11 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                            NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                                            NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                            NEWELLPLOT_PROBOCCURRENCE=eSpec__newellPlot_probOccurrence, $
-                                           T_PROBOCCURRENCE=eSpec__t_ProbOccurrence, $
+                                           T_PROBOCCURRENCE=alfDB_plot_struct.t_probOccurrence, $
                                            T_PROBOCC_PLOTRANGE=eSpec__t_probOcc_plotRange, $
                                            THISTDENOMINATOR=eSpec_tHistDenominator, $
                                            NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
-                                           COMBINE_ACCELERATED=Newell__comb_accelerated, $
+                                           COMBINE_ACCELERATED=alfDB_plot_struct.Newell__comb_accelerated, $
                                            TMPLT_H2DSTR=tmplt_h2dStr, $
                                            H2DSTRS=h2dStrs, $
                                            ;; H2DMASKSTR=h2dMaskStr, $
@@ -1771,7 +1769,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                            LUN=lun
 
      h2dStrArr            = [h2dStrArr,h2dStrs]
-     IF keepMe THEN BEGIN 
+     IF alfDB_plot_struct.keepMe THEN BEGIN 
         dataNameArr       = [dataNameArr,dataNames] 
         dataRawPtrArr     = [dataRawPtrArr,dataRawPtrs] 
      ENDIF
@@ -1955,7 +1953,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
      h2dStr.grossIntegrals.total = h2dStr.grossIntegrals.total + h2dStrPflux.grossIntegrals.total
 
      h2dStrArr              = [h2dStrArr,h2dStr] 
-     IF keepMe THEN BEGIN 
+     IF alfDB_plot_struct.keepMe THEN BEGIN 
         dataNameArr         = [dataNameArr,dataName] 
         dataRawPtrArr       = [dataRawPtrArr,dataRawPtr] 
         varPlotH2DInds      = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
@@ -2083,7 +2081,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
         
 
         h2dStrArr=[h2dStrArr,h2dStr] 
-        IF keepMe THEN BEGIN 
+        IF alfDB_plot_struct.keepMe THEN BEGIN 
            dataNameArr=[dataNameArr,dataName] 
            dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
         ENDIF
@@ -2115,8 +2113,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
      IF doing_var_plots THEN PRINTF,lun,"Getting variance plot data ..."
 
      GET_VARIANCE_PLOTDATA,MAXIMUS__maximus,plot_i, $
-                           FOR_MAXIMUS=~KEYWORD_SET(no_maximus), $
-                           FOR_ESPEC_DBS=KEYWORD_SET(no_maximus), $
+                           FOR_MAXIMUS=~KEYWORD_SET(alfDB_plot_struct.no_maximus), $
+                           FOR_ESPEC_DBS=KEYWORD_SET(alfDB_plot_struct.no_maximus), $
                            IN_INDS=indices__eSpec, $
                            IN_MLTS=eSpec__mlts, $
                            IN_ILATS=eSpec__ilats, $
@@ -2131,7 +2129,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                            VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
                            VAR__AUTOSCALE=var__autoscale, $
                            VARPLOTH2DINDS=varPlotH2DInds, $
-                           DBTIMES=KEYWORD_SET(no_maximus) ?  !NULL : MAXIMUS__times, $
+                           DBTIMES=KEYWORD_SET(alfDB_plot_struct.no_maximus) ?  !NULL : MAXIMUS__times, $
                            ;; DONT_USE_THESE_INDS=dont_use_these_inds, $
                            DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                            GROSSRATE__H2D_AREAS=h2dAreas, $
@@ -2155,7 +2153,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                            ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                            IMF_STRUCT=IMF_struct, $
                            MIMC_STRUCT=MIMC_struct, $
-                           ESPEC__NO_MAXIMUS=no_maximus, $
+                           ESPEC__NO_MAXIMUS=alfDB_plot_struct.no_maximus, $
                            TMPLT_H2DSTR=tmplt_h2dStr, $
                            H2D_NONZERO_NEV_I=hEv_nz_i, $
                            LUN=lun
