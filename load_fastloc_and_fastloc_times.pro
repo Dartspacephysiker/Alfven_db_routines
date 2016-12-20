@@ -171,65 +171,64 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      DB_tFile  = DefDB_tFile
   ENDIF
   
-  IF ~KEYWORD_SET(just_times) THEN BEGIN
+  CASE 1 OF
+     KEYWORD_SET(for_eSpec_DBs): BEGIN
+        ;; IF ~KEYWORD_SET(noMem) THEN BEGIN
+        IF N_ELEMENTS(FL_eSpec__fastLoc)  NE 0 AND $
+           N_ELEMENTS(FASTLOC_E__times)   NE 0 AND $
+           N_ELEMENTS(FASTLOC_E__delta_t) NE 0 $
+        THEN BEGIN
 
-     CASE 1 OF
-        KEYWORD_SET(for_eSpec_DBs): BEGIN
-           ;; IF ~KEYWORD_SET(noMem) THEN BEGIN
-           IF N_ELEMENTS(FL_eSpec__fastLoc)  NE 0 AND $
-              N_ELEMENTS(FASTLOC_E__times)   NE 0 AND $
-              N_ELEMENTS(FASTLOC_E__delta_t) NE 0 $
-           THEN BEGIN
+           IF KEYWORD_SET(noMem) THEN BEGIN
+              PRINT,"Moving fastLoc (for eSpec) structs in mem to outputted variables ..."
+              IF ~KEYWORD_SET(just_times) THEN fastLoc = TEMPORARY(FL_eSpec__fastLoc     )
+              fastLoc_times    = TEMPORARY(FASTLOC_E__times      )
+              fastloc_delta_t  = TEMPORARY(FASTLOC_E__delta_t    )
+              dbFile           = TEMPORARY(FASTLOC_E__dbFile     )
+              dbTimesFile      = TEMPORARY(FASTLOC_E__dbTimesFile)
 
-              IF KEYWORD_SET(noMem) THEN BEGIN
-                 PRINT,"Moving fastLoc (for eSpec) structs in mem to outputted variables ..."
-                 fastLoc          = TEMPORARY(FL_eSpec__fastLoc     )
-                 fastLoc_times    = TEMPORARY(FASTLOC_E__times      )
-                 fastloc_delta_t  = TEMPORARY(FASTLOC_E__delta_t    )
-                 dbFile           = TEMPORARY(FASTLOC_E__dbFile     )
-                 dbTimesFile      = TEMPORARY(FASTLOC_E__dbTimesFile)
+              RETURN
+           ENDIF
 
-                 RETURN
-              ENDIF
+           IF ~KEYWORD_SET(just_times) THEN BEGIN
+              pDBStruct        = PTR_NEW(FL_eSpec__fastLoc)
+              pDB__delta_t     = PTR_NEW(FASTLOC_E__delta_t)
+           ENDIF
 
-              pDBStruct     = PTR_NEW(FL_eSpec__fastLoc)
-              pDB__delta_t  = PTR_NEW(FASTLOC_E__delta_t)
+           loadFL              = 0
 
-              loadFL        = 0
+        ENDIF ELSE BEGIN
+           loadFL              = 1
+        ENDELSE
+     END
+     ELSE: BEGIN
+        IF N_ELEMENTS(FL__fastLoc) NE 0 AND $
+           N_ELEMENTS(FASTLOC__times) NE 0 AND $
+           N_ELEMENTS(FASTLOC__delta_t) NE 0 $
+        THEN BEGIN
+           IF KEYWORD_SET(noMem) THEN BEGIN
+              PRINT,"Moving fastLoc structures in mem to outputted variables ..."
+              IF ~KEYWORD_SET(just_times) THEN fastLoc = TEMPORARY(FL__fastLoc)
+              fastLoc_times    = TEMPORARY(FASTLOC__times)
+              fastloc_delta_t  = TEMPORARY(FASTLOC__delta_t)
+              dbFile           = TEMPORARY(FASTLOC__dbFile)
+              dbTimesFile      = TEMPORARY(FASTLOC__dbTimesFile)
 
-           ENDIF ELSE BEGIN
-              loadFL        = 1
-           ENDELSE
-           ;; ENDIF ELSE BEGIN
-           ;;    loadFL           = 1
-           ;; ENDELSE
-        END
-        ELSE: BEGIN
-           IF N_ELEMENTS(FL__fastLoc) NE 0 AND $
-              N_ELEMENTS(FASTLOC__times) NE 0 AND $
-              N_ELEMENTS(FASTLOC__delta_t) NE 0 $
-           THEN BEGIN
-              IF KEYWORD_SET(noMem) THEN BEGIN
-                 PRINT,"Moving fastLoc structures in mem to outputted variables ..."
-                 fastLoc          = TEMPORARY(FL__fastLoc)
-                 fastLoc_times    = TEMPORARY(FASTLOC__times)
-                 fastloc_delta_t  = TEMPORARY(FASTLOC__delta_t)
-                 dbFile           = TEMPORARY(FASTLOC__dbFile)
-                 dbTimesFile      = TEMPORARY(FASTLOC__dbTimesFile)
+              RETURN
+           ENDIF
 
-                 RETURN
-              ENDIF
+           IF ~KEYWORD_SET(just_times) THEN BEGIN
+              pDBStruct     = PTR_NEW(FL__fastLoc)
+              pDB__delta_t  = PTR_NEW(FASTLOC__delta_t)
+           ENDIF
 
-              pDBStruct        = PTR_NEW(FL__fastLoc)
-              pDB__delta_t     = PTR_NEW(FASTLOC__delta_t)
+           loadFL           = 0
 
-              loadFL           = 0
-
-           ENDIF ELSE BEGIN
-              loadFL           = 1
-           ENDELSE
-        END
-     ENDCASE
+        ENDIF ELSE BEGIN
+           loadFL           = 1
+        ENDELSE
+     END
+  ENDCASE
 
      ;; IF N_ELEMENTS(fastLoc) EQ 0 OR KEYWORD_SET(force_load_fastLoc) THEN BEGIN
      IF KEYWORD_SET(loadFL) OR KEYWORD_SET(force_load_fastLoc) THEN BEGIN
@@ -259,7 +258,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         PRINTF,lun,"There is already a fastLoc struct loaded! Not loading " + DBFile
      ENDELSE
      
-  ENDIF
+
 
   IF ~KEYWORD_SET(just_fastLoc) AND KEYWORD_SET(loadFL) THEN BEGIN
 

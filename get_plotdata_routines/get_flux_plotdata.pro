@@ -808,7 +808,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            for_eSpec      = 1
            tmp_i            = indices__eSpec
            ;; inData           = eNumFlux_eSpec_data
-           inData           = ABS(dbStruct.jee/dbStruct.je)*6.242*1.0e11
+           inData           = ABS(NEWELL__eSpec.jee/NEWELL__eSpec.je)*6.242*1.0e11
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
 
