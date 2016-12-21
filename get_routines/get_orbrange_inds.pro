@@ -1,4 +1,5 @@
 FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
+                           DBTIMES=DBTimes, $ ;in case we'd like to trash some time ranges
                            DONT_TRASH_BAD_ORBITS=keepJunk
 
   COMPILE_OPT idl2
@@ -18,9 +19,27 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
 
   IF ~KEYWORD_SET(keepJunk) THEN BEGIN
      ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs)
-  ENDIF;;  ELSE BEGIN
-  ;;    ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs,CUSTOM_ORBS_TO_KILL=8276)
-  ;; ENDELSE
+  ENDIF  ELSE BEGIN
+
+     customKillRanges = [ $
+                        [1028,1055], $ ;;Believe me, these orbits are bad for everyone
+                        [7804,7837] $
+                        ] 
+
+     customTKillStrings = [ $
+                          ['1996-12-08/' + ['08:44:20','08:46:10']] $
+                          ]
+     ;; customTRanges    = 
+
+     ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs, $
+                                      DBTIMES=DBTimes, $
+                                      CUSTOM_ORBS_TO_KILL=8276, $
+                                      CUSTOM_ORBRANGES_TO_KILL=customKillRanges, $
+                                      CUSTOM_TSTRINGS_TO_KILL=customTKillStrings, $
+                                      CUSTOM_TRANGES_TO_KILL=customTKillRanges)
+
+     ;;Why? Because check out Alfven_db_routines/info_on_FAST_database/orbits_to_omit_from_IMF_stats.txt
+  ENDELSE
 
   ;; nBef        = N_ELEMENTS(ind_orbs)
   ;; ind_orbs    = CGSETDIFFERENCE(ind_orbs,WHERE(dbStruct.orbit EQ 9792),COUNT=nAft)

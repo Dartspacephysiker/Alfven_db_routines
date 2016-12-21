@@ -83,8 +83,8 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
 
   ;;Make a mask for plots so that we can show where no data exists
   h2dMaskStr.data   = h2dFluxN
-  h2dMaskStr.data[where(h2dStr.data LT maskMin,/NULL)]=255
-  h2dMaskStr.data[where(h2dStr.data GE maskMin,/NULL)]=0
+  h2dMaskStr.data[where(h2dStr.data LT alfDB_plot_struct.maskMin,/NULL)] = 255
+  h2dMaskStr.data[where(h2dStr.data GE alfDB_plot_struct.maskMin,/NULL)] = 0
 
   hEv_nz_i             = WHERE(h2dFluxN GT 0)
   IF hEv_nz_i[0] EQ -1 THEN BEGIN

@@ -61,6 +61,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
   ;;Check whether this is a maximus or fastloc struct
   IF KEYWORD_SET(dbStruct) THEN BEGIN
      pDBStruct = PTR_NEW(dbStruct)
+     IF N_ELEMENTS(DBTimes) GT 0 THEN BEGIN 
+        pDBTimes = PTR_NEW(DBTimes)
+     ENDIF
      dbFile    = 'From elsewhere!'
 
      IF KEYWORD_SET(get_time_i) THEN BEGIN
@@ -408,6 +411,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
                                 KEYWORD_SET(alfDB_plot_struct.dont_blackball_maximus)) OR $
                                (~(is_maximus) AND $
                                 KEYWORD_SET(alfDB_plot_struct.dont_blackball_fastloc)), $
+                               DBTIMES=(*pDBTimes), $
                                LUN=lun)
         ENDELSE
 

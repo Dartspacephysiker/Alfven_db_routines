@@ -2,8 +2,11 @@
 ;;The text file with your info:
 ;;/Research/Satellites/FAST/espec_identification/txt_log_etc/Blacklisted_orbits.txt
 FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
+                               DBTIMES=DBTimes, $
                                CUSTOM_ORBS_TO_KILL=customKill, $
-                               CUSTOM_ORBRANGES_TO_KILL=customKillRanges
+                               CUSTOM_ORBRANGES_TO_KILL=customKillRanges, $
+                               CUSTOM_TSTRINGS_TO_KILL=customTKillStrings, $
+                               CUSTOM_TRANGES_TO_KILL=customTKillRanges
 
   COMPILE_OPT IDL2
 
@@ -13,6 +16,7 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
 
   IF KEYWORD_SET(customKill) THEN BEGIN
      individual_blackballOrbs = customKill
+     blackballOrb_ranges      = N_ELEMENTS(customKillRanges) GT 0 ? customKillRanges : !NULL
   ENDIF ELSE BEGIN
      
      ;;Mayhem posse
@@ -95,11 +99,59 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
      ENDIF ELSE BEGIN
         PRINT,opener+"No baddies found in this case ..."
      ENDELSE
-  ENDFOR
+  ENDFOR  
 
   IF KEYWORD_SET(broken) THEN STOP
 
   PRINT,"Junked " + STRCOMPRESS(nBTot,/REMOVE_ALL) + " events associated with blackballed orbits"
+
+  IF (KEYWORD_SET(customTKillRanges) OR KEYWORD_SET(customTKillStrings)) AND KEYWORD_SET(DBTimes) THEN BEGIN
+
+     IF N_ELEMENTS(customTKillRanges) GT 0 THEN BEGIN
+        customTimes = customTKillRanges
+     ENDIF ELSE BEGIN
+        customTimes = !NULL
+     ENDELSE
+
+     IF N_ELEMENTS(customTKillStrings) GT 0 THEN BEGIN
+        tmpTimes    = REFORM(STR_TO_TIME(customTKillStrings), $
+                             SIZE(customTKillStrings,/DIMENSIONS))
+        customTimes = [customTimes,TEMPORARY(tmpTimes)]
+     ENDIF ELSE BEGIN
+        customTimes = !NULL
+     ENDELSE
+
+     FOR k=0,N_ELEMENTS(customTimes[0,*])-1 DO BEGIN
+
+        opener       = STRING(FORMAT='("Blackball tRange ",A-23,"-",A-23," : ")', $
+                              TIME_TO_STR(customTimes[0,k],/MS), $
+                              TIME_TO_STR(customTimes[1,k],/MS))
+
+        blackBall_ii = WHERE((dbTimes[good_i] GE customTimes[0,k]) AND $
+                             (dbTimes[good_i] LE customTimes[1,k]), $
+                             nBlackBall, $
+                             COMPLEMENT=keeper_ii, $
+                             NCOMPLEMENT=nKeeper)
+
+        IF nBlackBall GT 0 THEN BEGIN
+           nGood     = N_ELEMENTS(good_i)
+           nBTot    += nBlackBall
+
+           good_i    = good_i[keeper_ii]
+           IF good_i[0] EQ -1 THEN BEGIN
+              PRINT,opener+"We've killed everything!"
+              broken = 1
+              BREAK
+           ENDIF
+           PRINT,opener+'Junked ' + STRCOMPRESS(nGood-nKeeper,/REMOVE_ALL) + ' blackballed events ...'
+        ENDIF ELSE BEGIN
+           PRINT,opener+"No baddies found in this case ..."
+        ENDELSE
+        
+     ENDFOR
+  ENDIF
+
+  IF KEYWORD_SET(broken) THEN STOP
 
   RETURN,good_i
 END
