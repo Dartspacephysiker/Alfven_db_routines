@@ -12,7 +12,8 @@
 
 PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           OVERPLOT=overplot, $
-                          EQUAL_AREA_BINNING=EA_binning, $
+                          ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                          MIMC_STRUCT=MIMC_struct, $
                           H2DMASK=h2dMask, $
                           WHOLECAP=wholeCap, $
                           MIDNIGHT=midnight, $
@@ -56,12 +57,16 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   COMPILE_OPT idl2
 
-  IF KEYWORD_SET(EA_binning) THEN BEGIN
+  IF KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN
 
-     LOAD_EQUAL_AREA_BINNING_STRUCT,EA
+  @common__ea_binning.pro
 
-     ilats        = ABS(EA.maxI)
-     mlts         = EA.maxM
+     IF N_ELEMENTS(EA__s) EQ 0 THEN BEGIN
+        LOAD_EQUAL_AREA_BINNING_STRUCT,HEMI=MIMC_struct.hemi
+     ENDIF
+
+     ilats        = ABS(EA__s.maxI)
+     mlts         = EA__s.maxM
 
   ENDIF
 
@@ -74,7 +79,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                        MAX1=maxM*15.,MAX2=maxI, $
                        MIN1=minM*15.,MIN2=minI, $
                        SHIFT1=shiftM*15.,SHIFT2=shiftI, $
-                       EQUAL_AREA_BINNING=EA_binning
+                       EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning
   ENDIF
 
 
@@ -178,7 +183,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDIF
 
   ;;Get longitudes for drawing boxes
-  IF ~KEYWORD_SET(EA_binning) THEN BEGIN
+  IF ~KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN
      nXlines       = (maxM-minM)/binM + 1
      mlts          = indgen(nXlines)*binM+minM
   ENDIF
@@ -187,7 +192,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ;; ENDIF
 
   IF KEYWORD_SET(do_lShell) THEN BEGIN
-     IF KEYWORD_SET(EA_binning) THEN BEGIN
+     IF KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN
         PRINT,"Can't do l-shell stuff with equal-area binning"
         STOP
      ENDIF
@@ -222,7 +227,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      ENDELSE
 
      ;;Don't erase these lines! You need them
-     IF ~KEYWORD_SET(EA_binning) THEN BEGIN
+     IF ~KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN
         nYlines       = (tempMaxI-tempMinI)/binI + 1
         ilats         = indgen(nYlines)*binI + tempMinI
      ENDIF
@@ -281,8 +286,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
      ;;Option #2: Preset gridLats
      gridLats           = defGridLats
-     ;; IF KEYWORD_SET(EA_binning) THEN BEGIN
-     ;;    IF STRUPCASE(EA.hemi) EQ 'SOUTH' THEN BEGIN
+     ;; IF KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN
+     ;;    IF STRUPCASE(EA__s.hemi) EQ 'SOUTH' THEN BEGIN
      ;;       gridLats    *= -1.
      ;;    ENDIF
      ;; ENDIF
@@ -347,7 +352,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                MINILAT=minI, $
                MAXILAT=maxI, $
                BINILAT=binI, $
-               EQUAL_AREA_BINNING=EA_binning, $
+               EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                /BINCENTER, $
                BINLEFTLOWER=binLL, $
                BINRIGHTUPPER=binRU, $
@@ -530,9 +535,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   THEN BEGIN
      lonsLats  = GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES( $
                  mlts,ilats, $
-                 EQUAL_AREA_BINNING=EA_binning, $
+                 EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                  BINSIZE_LON=binM, $
-                 SHIFT_LON=KEYWORD_SET(EA_binning) ? 0.0  : (temp.shift1), $
+                 SHIFT_LON=KEYWORD_SET(alfDB_plot_struct.EA_binning) ? 0.0  : (temp.shift1), $
                  BINSIZE_LAT=(KEYWORD_SET(do_lShell) ? binL : binI), $
                  /CONVERT_MLT_TO_LON, $
                  /MOREPOINTS, $
@@ -549,7 +554,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         h2dTmp =  DOUBLE(tmpData)
 
         CASE 1 OF
-           KEYWORD_SET(EA_binning): BEGIN
+           KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
               ;; tmpLons = (mlts+temp.shift1)*15.
               ;; tmpLats = ilats
 
@@ -619,7 +624,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         outLons = FINDGEN(nX)            # REPLICATE(lonDelta,nY)
         outLats = REPLICATE(latDelta,nX) # FINDGEN(nY) + minI
 
-        ;; IF KEYWORD_SET(EA_binning) THEN BEGIN
+        ;; IF KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN
         ;;    TRIANGULATE,tmpLons,tmpLats,FVALUE=h2dTmp,SPHERE=sph,/DEGREES
         ;;    bro = TRIGRID(h2dTmp,SPHERE=sph,[lonDelta,latDelta],[lim[1],lim[0],lim[3],lim[2]],/DEGREES)
         ;; ENDIF
@@ -632,7 +637,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         newescl = MIN_CURVE_SURF(DOUBLE(h2dTmp), DOUBLE(tmpLons), DOUBLE(tmpLats), $
                                  /SPHERE, $
                                  ;; /TPS, $
-                                 CONST=KEYWORD_SET(EA_binning), $
+                                 CONST=KEYWORD_SET(alfDB_plot_struct.EA_binning), $
                                  XPOUT=outLons,YPOUT=outLats, $
                                  /DOUBLE)
 
@@ -696,7 +701,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
         ;;Fill up dat plot
         H2D_STEREOGRAPHIC_EXECUTE_POLYFILL,lonsLats,h2descl, $
-                                           EQUAL_AREA_BINNING=EA_binning, $
+                                           EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                                            H2D_MASKED=masked, $
                                            MASKCOLOR=maskColor
 
@@ -709,7 +714,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      KEYWORD_SET(do_integral_savfile) OR $
      KEYWORD_SET(show_integrals) THEN BEGIN
      H2D_STEREOGRAPHIC_INTEGRAL,temp,lonsLats, $
-                                EQUAL_AREA_BINNING=EA_binning, $
+                                EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                                 H2D_MASKED=masked, $
                                 INTEGRAL=integral, $
                                 ABSINTEGRAL=absIntegral, $
