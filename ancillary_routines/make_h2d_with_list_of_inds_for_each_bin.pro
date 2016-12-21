@@ -36,20 +36,40 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
      ENDELSE
   ENDIF
 
+  ;;Keep track of hvor mange
+  nInds   = 0
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;SET UP GRID
-  nXlines  = (MIMC_struct.maxM-MIMC_struct.minM)/MIMC_struct.binM + 1
-  nYlines  = ((KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxLshell : MIMC_struct.maxI)-(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minLshell : MIMC_struct.minI))/ $
-             (KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binLshell : MIMC_struct.binI) + 1
+  CASE 1 OF
+     KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
 
-  mlts     = INDGEN(nXlines)*MIMC_struct.binM+MIMC_struct.minM
-  ilats    = INDGEN(nYlines)*(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binLshell : MIMC_struct.binI) + $
-                             (KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minLshell : MIMC_struct.minI)
+        @common__ea_binning.pro
 
-  nMLT    = N_ELEMENTS(mlts)
-  nILAT   = N_ELEMENTS(ilats)
-  nInds   = 0
+        IF N_ELEMENTS(EA__s) EQ 0 THEN BEGIN
+           LOAD_EQUAL_AREA_BINNING_STRUCT,HEMI=MIMC_struct.hemi
+        ENDIF
 
+        nILAT                  = N_ELEMENTS(EA__s.minI)
+        nMLT                   = N_ELEMENTS(EA__s.minM)
+        outH2D_lists_with_inds = MAKE_ARRAY(nMLT,/OBJ)
+
+     END
+     ELSE: BEGIN
+        nXlines  = (MIMC_struct.maxM-MIMC_struct.minM)/MIMC_struct.binM + 1
+        nYlines  = ((KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxLshell : MIMC_struct.maxI)-(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minLshell : MIMC_struct.minI))/ $
+                   (KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binLshell : MIMC_struct.binI) + 1
+
+        mlts     = INDGEN(nXlines)*MIMC_struct.binM+MIMC_struct.minM
+        ilats    = INDGEN(nYlines)*(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binLshell : MIMC_struct.binI) + $
+                   (KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minLshell : MIMC_struct.minI)
+
+        nMLT    = N_ELEMENTS(mlts)
+        nILAT   = N_ELEMENTS(ilats)
+
+        outH2D_lists_with_inds = MAKE_ARRAY(nMLT,nILAT,/OBJ)
+
+     END
+  ENDCASE
   ;; outH2D_lists_with_inds  = MAKE_ARRAY(nMLT,nILAT,/DOUBLE) ;how long FAST spends in each bin
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -68,7 +88,7 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;loop over MLTs and ILATs
-  outH2D_lists_with_inds                   = MAKE_ARRAY(nMLT,nILAT,/OBJ)
+
   ;; outH2D_lists_with_obs                 = !NULL
   IF KEYWORD_SET(fill_with_indices_into_plot_i) THEN BEGIN
      loopInds                              = INDGEN(N_ELEMENTS(KEYWORD_SET(in_MLTs) ? in_inds : dbStruct_inds),/LONG)
@@ -76,59 +96,118 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
      loopInds                              = (KEYWORD_SET(in_mlts) ? in_inds : dbStruct_inds)
   ENDELSE
   IF DEBUG THEN finalInds                  = !NULL
-  FOR j=0, nILAT-2 DO BEGIN
-     FOR i=0, nMLT-2 DO BEGIN
-        ;; inds                               = indices[WHERE(DBMLTs GE mlts[i] AND $
-        inds = loopInds[ $
-               WHERE( $
-               DBMLTs GE mlts[i] AND $
-               (mlts[i+1] EQ MAX(mlts) ? (DBMLTs LE mlts[i+1]) : (DBMLTs LT mlts[i+1])) AND $
-               DBILATs GE ilats[j] AND $
-               (ilats[j+1] EQ MAX(ilats) ? (DBILATs LT ilats[j+1]) : (DBILATs LT ilats[j+1])), $
-               nTemp,/NULL)]
 
-        ;;Handle edges
-        ;; CASE 1 OF
-        ;;    ( (i EQ (nMLT - 1)) AND (j EQ (nILAT - 1))): BEGIN
-        ;;       inds = [inds,WHERE(DBMLTs EQ mlts[i+1] AND $
-        ;;                          DBILATs EQ ilats[j+i],nBonus,/NULL)]
-        ;;       nTemp += nBonus
-        ;;    END
-        ;;    (i EQ (nMLT - 1)): BEGIN
-        ;;       inds = [inds,WHERE(DBMLTs EQ mlts[i+1] AND $
-        ;;                          DBILATs GE ilats[j] AND $
-        ;;                          DBILATs LT ilats[j+i],nBonus,/NULL)]
-        ;;       nTemp += nBonus
-        ;;    END
-        ;;    (j EQ (nILAT - 1)): BEGIN
-        ;;       inds = [inds,WHERE(DBILATs EQ ilats[j+1] AND $
-        ;;                          DBMLTs GE mlts[i] AND $
-        ;;                          DBMLTs LT mlts[i+i],nBonus,/NULL)]
-        ;;       nTemp += nBonus
-        ;;    END
-        ;;    ELSE: 
-        ;; ENDCASE
+  CASE 1 OF
+     KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
 
-        tempIndsList                       = LIST(inds)
+        latSwitch_i  = [0,WHERE((EA__s.mini[1:-1]-EA__s.mini[0:-2]) NE 0),N_ELEMENTS(EA__s.mini)-1] ;Because rows of latitudes are of unequal lengths
+
+        nLatSwitch   = N_ELEMENTS(latSwitch_i)
+
+        FOR k=0,nLatSwitch-2 DO BEGIN
+
+           tmpInds   = [latSwitch_i[k]:(latSwitch_i[k+1]-1)]
+           nTmpInds  = N_ELEMENTS(tmpInds)
+
+           FOR kk=0,nTmpInds-1 DO BEGIN
+              inds   = WHERE((DBMLTs GE EA__s.minM[tmpInds[kk]]) AND $
+                             ( EA__s.maxM[tmpInds[kk]] EQ MAX(EA__s.maxM) ? $
+                               (DBMLTs LE EA__s.maxM[tmpInds[kk]])        : $
+                               (DBMLTs LT EA__s.maxM[tmpInds[kk]])) AND $
+                             (DBILATs GE EA__s.minI[tmpInds[kk]]) AND $
+                             ( EA__s.maxI[tmpInds[kk]] EQ MAX(EA__s.maxI) ? $
+                               (DBILATs LE EA__s.maxI[tmpInds[kk]])       : $
+                               (DBILATs LT EA__s.maxI[tmpInds[kk]])), $
+                             nTemp, $
+                             /NULL)
+
+              tempIndsList                        = LIST(inds)
+
+              ;;Whether empty or not, add to the array of lists
+              outH2D_lists_with_inds[tmpInds[kk]] = tempIndsList
+              nInds                              += nTemp
+
+              IF DEBUG THEN finalInds             = [finalInds,inds] ;;debug
+
+           ENDFOR
+        ENDFOR        
+
+        ;;Last by hand; necessary because I use latSwitch_i instead of something more s'fissicated
+        inds         = WHERE((DBMLTs GE EA__s.minM[latSwitch_i[-1]]) AND (DBMLTs LT EA__s.maxM[latSwitch_i[-1]]) AND $
+                             (DBILATs GE EA__s.minI[latSwitch_i[-1]]) AND (DBILATs LT EA__s.maxI[latSwitch_i[-1]]), $
+                             nTemp, $
+                             /NULL)
+        nInds       += nTemp
+        tempIndsList = LIST(inds)
+
+        IF DEBUG THEN BEGIN 
+           finalInds = [finalInds,inds] ;;debug
+        ENDIF
+
+        HLOI__H2D_binCenters      = MAKE_ARRAY(2,nMLT)
+        HLOI__H2D_binCenters[0,*] = MEAN(EA__s.minM+EA__s.maxM)
+        HLOI__H2D_binCenters[1,*] = MEAN(EA__s.minI+EA__s.maxI)
+
+     END
+     ELSE: BEGIN
+
+        FOR j=0, nILAT-2 DO BEGIN
+           FOR i=0, nMLT-2 DO BEGIN
+              ;; inds                               = indices[WHERE(DBMLTs GE mlts[i] AND $
+              inds = loopInds[ $
+                     WHERE( $
+                     DBMLTs GE mlts[i] AND $
+                     (mlts[i+1] EQ MAX(mlts) ? (DBMLTs LE mlts[i+1]) : (DBMLTs LT mlts[i+1])) AND $
+                     DBILATs GE ilats[j] AND $
+                     (ilats[j+1] EQ MAX(ilats) ? (DBILATs LT ilats[j+1]) : (DBILATs LT ilats[j+1])), $
+                     nTemp,/NULL)]
+
+              ;;Handle edges
+              ;; CASE 1 OF
+              ;;    ( (i EQ (nMLT - 1)) AND (j EQ (nILAT - 1))): BEGIN
+              ;;       inds = [inds,WHERE(DBMLTs EQ mlts[i+1] AND $
+              ;;                          DBILATs EQ ilats[j+i],nBonus,/NULL)]
+              ;;       nTemp += nBonus
+              ;;    END
+              ;;    (i EQ (nMLT - 1)): BEGIN
+              ;;       inds = [inds,WHERE(DBMLTs EQ mlts[i+1] AND $
+              ;;                          DBILATs GE ilats[j] AND $
+              ;;                          DBILATs LT ilats[j+i],nBonus,/NULL)]
+              ;;       nTemp += nBonus
+              ;;    END
+              ;;    (j EQ (nILAT - 1)): BEGIN
+              ;;       inds = [inds,WHERE(DBILATs EQ ilats[j+1] AND $
+              ;;                          DBMLTs GE mlts[i] AND $
+              ;;                          DBMLTs LT mlts[i+i],nBonus,/NULL)]
+              ;;       nTemp += nBonus
+              ;;    END
+              ;;    ELSE: 
+              ;; ENDCASE
+
+              tempIndsList                       = LIST(inds)
 
 
-        ;; tempIndsList                       = LIST(WHERE(DBMLTs GE mlts[i] AND $
-        ;;                                                 DBMLTs LT mlts[i+1] AND $
-        ;;                                                 DBILATs GE ilats[j] AND $
-        ;;                                                 DBILATs LT ilats[j+1],nTemp,/NULL))
+              ;; tempIndsList                       = LIST(WHERE(DBMLTs GE mlts[i] AND $
+              ;;                                                 DBMLTs LT mlts[i+1] AND $
+              ;;                                                 DBILATs GE ilats[j] AND $
+              ;;                                                 DBILATs LT ilats[j+1],nTemp,/NULL))
 
-        ;;Whether empty or not, add to the array of lists
-        ;; outH2D_lists_with_inds             = [outH2D_lists_with_inds,tempIndsList]
-        outH2D_lists_with_inds[i,j]        = tempIndsList
-        nInds                             += nTemp
+              ;;Whether empty or not, add to the array of lists
+              ;; outH2D_lists_with_inds             = [outH2D_lists_with_inds,tempIndsList]
+              outH2D_lists_with_inds[i,j]        = tempIndsList
+              nInds                             += nTemp
 
-        IF DEBUG THEN finalInds            = [finalInds,inds] ;;debug
+              IF DEBUG THEN finalInds            = [finalInds,inds] ;;debug
 
-     ENDFOR
-  ENDFOR
+           ENDFOR
+        ENDFOR
+
+     END
+  ENDCASE
 
   ;;Get bin centers
   GET_H2D_BIN_CENTERS_OR_EDGES,HLOI__H2D_binCenters, $
+                               EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                                BINSIZE1=MIMC_struct.binM, BINSIZE2=MIMC_struct.binI, $
                                MIN1=MIMC_struct.minM, MIN2=MIMC_struct.minI,$
                                MAX1=MIMC_struct.maxM, MAX2=MIMC_struct.maxI,  $

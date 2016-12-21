@@ -127,6 +127,8 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
            FOR_ESPEC_DBS=loopType[k] EQ 1, $
            DBTIMES=DBTimes, $
            IMF_STRUCT=IMF_struct, $
+           ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+           MIMC_STRUCT=MIMC_struct, $
            DONT_USE_THESE_INDS=dont_use_these_inds, $
            /DO_LISTS_WITH_STATS, $
            DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $

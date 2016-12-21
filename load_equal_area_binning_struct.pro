@@ -1,15 +1,23 @@
 ;;10/15/16
 PRO LOAD_EQUAL_AREA_BINNING_STRUCT,EA, $
-                                   HEMI=hemi
+                                   HEMI=hemi, $
+                                   FORCE_LOAD=force_load
 
   COMPILE_OPT IDL2
 
   @common__ea_binning.pro
 
-  IF N_ELEMENTS(EA__s) EQ 0 THEN BEGIN
+  IF (N_ELEMENTS(EA__s) EQ 0) OR KEYWORD_SET(force_load) THEN BEGIN
+
+     IF KEYWORD_SET(force_load) THEN BEGIN
+        PRINT,"Forced reloading of EA_binning struct!"
+     ENDIF
+
      inDir        = '/SPENCEdata/Research/database/equal-area_binning/'
      EAbins_file  = 'equalArea--20161014--struct_and_ASCII_tmplt.idl'
+
      RESTORE,inDir+EAbins_file
+
      EA__s        = TEMPORARY(EA)
      EA__s        = CREATE_STRUCT(EA__s,'hemi','NORTH')
   ENDIF

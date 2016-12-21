@@ -4,7 +4,9 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
    FOR_MAXIMUS=for_maximus, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
    DBTIMES=dbTimes, $
+   ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
    IMF_STRUCT=IMF_struct, $
+   MIMC_STRUCT=MIMC_struct, $
    DONT_USE_THESE_INDS=dont_use_these_inds, $
    DO_LISTS_WITH_STATS=do_lists_with_stats, $
    DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -166,8 +168,16 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   ;;loop over MLTs and ILATs
   ;; outH2D_stats                             = !NULL
   ;; outH2D_lists_with_obs                    = !NULL
-  outH2D_stats                             = MAKE_ARRAY(4,HLOI__nMLT,HLOI__nILAT,/DOUBLE)
-  outH2D_lists_with_obs                    = MAKE_ARRAY(HLOI__nMLT,HLOI__nILAT,/OBJ)
+  CASE 1 OF
+     KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
+        outH2D_stats          = MAKE_ARRAY(4,HLOI__nMLT,/DOUBLE)
+        outH2D_lists_with_obs = MAKE_ARRAY(HLOI__nMLT,/OBJ)
+     END
+     ELSE: BEGIN
+        outH2D_stats          = MAKE_ARRAY(4,HLOI__nMLT,HLOI__nILAT,/DOUBLE)
+        outH2D_lists_with_obs = MAKE_ARRAY(HLOI__nMLT,HLOI__nILAT,/OBJ)
+     END
+  ENDCASE
 
   IF KEYWORD_SET(output_textFile) AND ~KEYWORD_SET(skip) THEN BEGIN
      CASE 1 OF
@@ -356,14 +366,18 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
 
         
      ENDFOR
+
+     IF KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BREAK
   ENDFOR
 
-  ;Now reform the sucker
-  outH2D_lists_with_obs                    = REFORM(outH2D_lists_with_obs,HLOI__nMLT,HLOI__nILAT)
+  ;;Now reform the sucker
+  IF ~KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN
+     outH2D_lists_with_obs                    = REFORM(outH2D_lists_with_obs,HLOI__nMLT,HLOI__nILAT)
 
-  ;;… and these'ns, if requested
-  IF KEYWORD_SET(do_lists_with_stats) THEN BEGIN
-     outH2D_stats                          = REFORM(outH2D_stats,4,HLOI__nMLT,HLOI__nILAT)
+     ;;… and these'ns, if requested
+     IF KEYWORD_SET(do_lists_with_stats) THEN BEGIN
+        outH2D_stats                          = REFORM(outH2D_stats,4,HLOI__nMLT,HLOI__nILAT)
+     ENDIF
   ENDIF
   
   ;;close output, if we've been doing ... it

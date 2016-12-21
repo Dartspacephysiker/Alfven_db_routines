@@ -21,19 +21,21 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
      ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs)
   ENDIF  ELSE BEGIN
 
-     customKillRanges = [ $
-                        [1028,1055], $ ;;Believe me, these orbits are bad for everyone
-                        [7804,7837] $
-                        ] 
+     customKillRanges   = [ $
+                          [1028,1055], $ ;;Believe me, these orbits are bad for everyone
+                          [7804,7837] $
+                          ] 
 
      customTKillStrings = [ $
                           ['1996-12-08/' + ['08:44:20','08:46:10']] $
                           ]
-     ;; customTRanges    = 
+
+     ;; customKill         = [1002,8276]
+     customKill         = [1002]
 
      ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs, $
                                       DBTIMES=DBTimes, $
-                                      CUSTOM_ORBS_TO_KILL=8276, $
+                                      CUSTOM_ORBS_TO_KILL=customKill, $
                                       CUSTOM_ORBRANGES_TO_KILL=customKillRanges, $
                                       CUSTOM_TSTRINGS_TO_KILL=customTKillStrings, $
                                       CUSTOM_TRANGES_TO_KILL=customTKillRanges)
