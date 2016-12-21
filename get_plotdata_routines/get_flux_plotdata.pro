@@ -1416,6 +1416,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
   IF KEYWORD_SET(for_eSpec) THEN BEGIN
      h2dStr.is_AlfDB   = 0B
+     h2dStr.is_eSpecDB = 1B
      h2dStr.mask       = h2dMask
      h2dStr.hasMask    = 1
 

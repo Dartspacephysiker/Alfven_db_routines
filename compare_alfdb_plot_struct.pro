@@ -8,6 +8,7 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
 
   inds_reset  = 0B
   DBs_reset   = 0B
+  plots_reset = 0B
 
   except_list = ["dont_blackball_fastLoc"            , $
                  "dont_blackball_maximus"            , $
@@ -65,6 +66,7 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
                  "plotH2D_contour"                   , $
                  "plotH2D__kernel_density_unmask"    , $
                  "executing_multiples"               , $
+                 "multiple_IMF_clockAngles"          , $
                  "hoyDia"                            ]
 
   ;; dbs__except_list = [
@@ -153,6 +155,13 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"despunDB", $
            alfDB_plot_struct1.despunDB,alfDB_plot_struct2.despunDB
      DBs_reset  += 1B
+  ENDIF
+
+  IF alfDB_plot_struct1.multiple_IMF_clockAngles NE alfDB_plot_struct2.multiple_IMF_clockAngles THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"multiple_IMF_clockAngles", $
+           alfDB_plot_struct1.multiple_IMF_clockAngles,alfDB_plot_struct2.multiple_IMF_clockAngles
+     inds_reset  += 1B
+     plots_reset += 1B
   ENDIF
 
   ;; inds_reset = (COMPARE_STRUCT(alfDB_plot_struct1,alfDB_plot_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)).nDiff GT 0
@@ -271,9 +280,9 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
 
   ENDFOR
 
-  ;; IF N_ELEMENTS(matchArr) GT 0 THEN BEGIN
-  ;;    PRINT,alfDB
-  ;; ENDIF
+  IF N_ELEMENTS(matchArr) GT 0 THEN BEGIN
+     PRINT,FORMAT='("PASIS diffs :",10(A0,:,", "))',matchArr
+  ENDIF
 
 
 END

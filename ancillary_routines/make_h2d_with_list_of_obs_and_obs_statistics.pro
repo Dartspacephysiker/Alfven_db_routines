@@ -1,8 +1,11 @@
 ;;2016/04/15 En route to Vienna from Istanbul. (Turkey rules, by the way, or at least Turkish Airlines does.)
 ;;Ripped off MAKE_TIMEHIST_DENOMINATOR for this action
+
+;;CAREFUL!! for_eSpec_DBs and alfDB_plot_struct.for_eSpec_DBs do not mean the same thing in this routine!!!
 PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
    FOR_MAXIMUS=for_maximus, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
+   FOR_FASTLOC_DBS=for_fastLoc_DBs, $
    DBTIMES=dbTimes, $
    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
    IMF_STRUCT=IMF_struct, $
@@ -64,6 +67,19 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   ENDIF
 
   @common__newell_espec.pro
+  IF KEYWORD_SET(for_fastLoc_DBs) THEN BEGIN
+     @common__fastloc_espec_vars.pro
+     @common__fastloc_vars.pro
+
+     IF KEYWORD_SET(alfDB_plot_struct.for_eSpec_DBs) THEN BEGIN
+        FLTMP      = FL_E__fastLoc
+        FLTMPTIMES = FASTLOC_E__times
+     ENDIF ELSE BEGIN
+        FLTMP      = FL__fastLoc
+        FLTMPTIMES = FLTMP.time
+     ENDELSE
+  ENDIF
+
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
@@ -100,6 +116,10 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   IF N_ELEMENTS(dataTitle) GT 0 THEN dTitle = dataName ELSE dTitle = 'Observation'
   IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
      dTitle = 'eSpec_DB'
+  ENDIF
+
+  IF KEYWORD_SET(for_fastLoc_DBs) THEN BEGIN
+     dTitle = 'fastLoc_DB'
   ENDIF
 
   ;;No silly, extraneous info
@@ -205,6 +225,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
      ENDCASE
   ENDIF
   FOR j=0,HLOI__nILAT-1 DO BEGIN
+
      FOR i=0,HLOI__nMLT-1 DO BEGIN
         ;;check if valid
         valid = ISA((tempH2D_lists_with_inds[i,j])[0])
@@ -222,19 +243,31 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
            IF (KEYWORD_SET(output_textFile) AND ~KEYWORD_SET(skip)) THEN BEGIN
               ;;Everyone want dat
 
-              IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-                 tempMLTs              = NEWELL__eSpec.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                 tempILATs             = NEWELL__eSpec.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                 tempTimes             = NEWELL__eSpec.x[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                 tempOrbs              = NEWELL__eSpec.orbit[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                 tempAlts              = NEWELL__eSpec.alt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-              ENDIF ELSE BEGIN
-                 tempMLTs              = dbStruct.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                 tempILATs             = dbStruct.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                 tempTimes             = dbStruct.time[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                 tempOrbs              = dbStruct.orbit[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                 tempAlts              = dbStruct.alt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-              ENDELSE
+              CASE 1 OF
+                 KEYWORD_SET(for_eSpec_DBs): BEGIN
+                    tempMLTs  = NEWELL__eSpec.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempILATs = NEWELL__eSpec.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempTimes = NEWELL__eSpec.x[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempOrbs  = NEWELL__eSpec.orbit[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempAlts  = NEWELL__eSpec.alt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                 END
+                 KEYWORD_SET(for_fastLoc_DBs): BEGIN
+                    tempMLTs  = FLTMP.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempILATs = FLTMP.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempTimes = FLTMPTIMES[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempOrbs  = FLTMP.orbit[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempAlts  = FLTMP.alt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+
+                 END
+                 ELSE: BEGIN
+                    tempMLTs  = dbStruct.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempILATs = dbStruct.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempTimes = dbStruct.time[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempOrbs  = dbStruct.orbit[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempAlts  = dbStruct.alt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                 END
+              ENDCASE
+
               ;; PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T25,"Orbit",T35,"Observation")'
               PRINTF,textLun,FORMAT='(F0.3,T10,F0.3)',HLOI__H2D_binCenters[0,i,j],HLOI__H2D_binCenters[1,i,j]
               PRINTF,textLun,'*************************'
@@ -244,12 +277,17 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                     
                     CASE 1 OF
                        KEYWORD_SET(output__orb_avg_obs): BEGIN
+                          ;;CAREFUL!! for_eSpec_DBs and alfDB_plot_struct.for_eSpec_DBs do not mean the same thing in this routine!!!
                           tempUTC           = (KEYWORD_SET(for_eSpec_DBs) ? NEWELL__eSpec.x : dbTimes) $
                                               [dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
                           CASE 1 OF
                              KEYWORD_SET(for_maximus): BEGIN
                                 tempChare         = dbStruct.max_chare_losscone[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
                                 tempeFlux         = dbStruct.elec_energy_flux[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                             END
+                             KEYWORD_SET(for_fastLoc_DBs): BEGIN
+                                tempChare         = MAKE_ARRAY(N_ELEMENTS((tempH2D_lists_with_inds[i,j])[0]),VALUE=0B,/BYTE)
+                                tempeFlux         = MAKE_ARRAY(N_ELEMENTS((tempH2D_lists_with_inds[i,j])[0]),VALUE=0B,/BYTE)
                              END
                              KEYWORD_SET(for_eSpec_DBs): BEGIN
                                 tempeFlux         = NEWELL__eSpec.jee[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
@@ -368,15 +406,16 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
      ENDFOR
 
      IF KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BREAK
+
   ENDFOR
 
   ;;Now reform the sucker
   IF ~KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN
-     outH2D_lists_with_obs                    = REFORM(outH2D_lists_with_obs,HLOI__nMLT,HLOI__nILAT)
+     outH2D_lists_with_obs  = REFORM(outH2D_lists_with_obs,HLOI__nMLT,HLOI__nILAT)
 
      ;;… and these'ns, if requested
      IF KEYWORD_SET(do_lists_with_stats) THEN BEGIN
-        outH2D_stats                          = REFORM(outH2D_stats,4,HLOI__nMLT,HLOI__nILAT)
+        outH2D_stats        = REFORM(outH2D_stats,4,HLOI__nMLT,HLOI__nILAT)
      ENDIF
   ENDIF
   

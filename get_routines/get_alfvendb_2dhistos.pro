@@ -316,9 +316,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
         IF alfDB_plot_struct.keepMe THEN BEGIN 
            IF KEYWORD_SET(tHistDenominatorPlot) THEN BEGIN
-              h2dStrArr     = [h2dStrArr,h2dStr] 
-              dataNameArr   = [dataNameArr,dataName] 
-              dataRawPtrArr = [dataRawPtrArr,dataRawPtr] 
+              h2dStrArr       = [h2dStrArr,h2dStr] 
+              dataNameArr     = [dataNameArr,dataName] 
+              dataRawPtrArr   = [dataRawPtrArr,dataRawPtr] 
+              varPlotH2DInds  = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+              varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+              removed_ii_listArr = [removed_ii_listArr,LIST(!NULL)]
            ENDIF
         ENDIF
 
@@ -2118,6 +2121,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                            IN_INDS=indices__eSpec, $
                            IN_MLTS=eSpec__mlts, $
                            IN_ILATS=eSpec__ilats, $
+                           FASTLOCINDS=fastLocInterped_i, $
                            H2DSTRARR=h2dStrArr, $
                            DATANAMEARR=dataNameArr, $
                            DATARAWPTRARR=dataRawPtrArr, $

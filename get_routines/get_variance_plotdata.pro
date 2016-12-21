@@ -5,6 +5,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                           IN_INDS=in_inds, $
                           IN_MLTS=in_mlts, $
                           IN_ILATS=in_ilats, $
+                          FASTLOCINDS=fastLocInds, $
                           H2DSTRARR=h2dStrArr, $
                           DATANAMEARR=dataNameArr, $
                           DATARAWPTRARR=dataRawPtrArr, $
@@ -45,12 +46,20 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
   
   COMPILE_OPT IDL2
   @common__newell_espec.pro
+
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     @common__fastloc_espec_vars.pro
+  ENDIF ELSE BEGIN
+     @common__fastloc_vars.pro
+  ENDELSE
+
   ;;some temp vars
   var_h2dStrArr    = !NULL
   var_dataNameArr  = !NULL
 
-  H2D_ii__alfDB    = WHERE(h2dStrArr[varploth2dinds].is_alfDB,nAlfDB)
-  H2D_ii__eSpec    = WHERE(~h2dStrArr[varploth2dinds].is_alfDB,nESpec)
+  H2D_ii__alfDB    = WHERE(h2dStrArr[varploth2dinds].is_alfDB   ,nAlfDB   )
+  H2D_ii__eSpec    = WHERE(h2dStrArr[varploth2dinds].is_eSpecDB ,nESpec   )
+  H2D_ii__fastLoc  = WHERE(h2dStrArr[varploth2dinds].is_fastLocDB,nFastLoc)
 
   nLoops           = 0
   loopType         = !NULL
@@ -67,6 +76,12 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
      nLoops++
   ENDIF
 
+  IF nFastLoc GT 0 THEN BEGIN
+     ;; nThisLoop    = [nThisLoop,nESpec]
+     loopType     = [loopType,2]
+     nLoops++
+  ENDIF
+
   ;; FOR kj=0,nLoops-1 DO BEGIN
   FOR k=0,nLoops-1 DO BEGIN
 
@@ -74,6 +89,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
      CASE loopType[k] OF
         0: BEGIN
            dbInds       = maxInds
+           tmpTimes     = DBTimes
            tmpVarH2D_i  = varPlotH2DInds[H2D_ii__alfDB]
            tmpVarRaw_i  = varPlotRawInds[H2D_ii__alfDB]
            send_DB      = 1
@@ -86,15 +102,50 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
            send_DB      = 0
            nVarInds     = nESpec
         END
+        2: BEGIN
+           dbInds       = fastLocInds
+           tmpTimes     = (KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times)
+           tmpVarH2D_i  = varPlotH2DInds[H2D_ii__fastLoc]
+           tmpVarRaw_i  = varPlotRawInds[H2D_ii__fastLoc]
+           send_DB      = 0
+           nVarInds     = nFastLoc
+        END
      ENDCASE
+
+     IF (loopType[k] EQ 1) OR (loopType[k] EQ 2) THEN BEGIN
+
+        haveStuff       = 1
+
+        CASE loopType[k] OF
+           1: BEGIN
+              tmpInds   = in_inds
+              tmpMLTs   = NEWELL__eSpec.mlt [in_inds]
+              tmpILATs  = NEWELL__eSpec.ilat[in_inds]
+           END
+           2: BEGIN
+              tmpInds   = fastLocInds
+              ;; tmpMLTs   = (KEYWORD_SET(for_eSpec_DBs) ? FL_E__fastLoc : FL__fastLoc).mlt [fastLocInds]
+              ;; tmpILATs  = (KEYWORD_SET(for_eSpec_DBs) ? FL_E__fastLoc : FL__fastLoc).ilat[fastLocInds]
+              tmpMLTs   = (KEYWORD_SET(for_eSpec_DBs) ? FL_E__fastLoc : FL__fastLoc).mlt
+              tmpILATs  = (KEYWORD_SET(for_eSpec_DBs) ? FL_E__fastLoc : FL__fastLoc).ilat
+           END
+        ENDCASE
+     ENDIF ELSE BEGIN
+
+        haveStuff = 0
+        tmpInds   = !NULL
+        tmpMLTs   = !NULL
+        tmpILATS  = !NULL
+
+     ENDELSE
 
      MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN, $
         (send_DB ? dbStruct : !NULL), $
         (send_DB ? dbInds   : !NULL), $
         OUTH2D_LISTS_WITH_INDS=outH2D_lists_with_inds,$
-        IN_INDS=( send_DB ? !NULL : in_inds), $
-        IN_MLTS=( send_DB ? !NULL : (loopType EQ 1 ? NEWELL__eSpec.mlt[in_inds]  : in_mlts )), $
-        IN_ILATS=(send_DB ? !NULL : (loopType EQ 1 ? NEWELL__eSpec.ilat[in_inds] : in_ilats)), $
+        IN_INDS=( send_DB ? !NULL : tmpInds), $
+        IN_MLTS=( send_DB ? !NULL : (haveStuff ? tmpMLTs  : in_mlts )), $
+        IN_ILATS=(send_DB ? !NULL : (haveStuff ? tmpILATs : in_ilats)), $
         ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
         IMF_STRUCT=IMF_struct, $
         MIMC_STRUCT=MIMC_struct, $
@@ -125,7 +176,8 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
         MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
            FOR_MAXIMUS=loopType[k] EQ 0, $
            FOR_ESPEC_DBS=loopType[k] EQ 1, $
-           DBTIMES=DBTimes, $
+           FOR_FASTLOC_DBS=loopType[k] EQ 2, $
+           DBTIMES=tmpTimes, $
            IMF_STRUCT=IMF_struct, $
            ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
            MIMC_STRUCT=MIMC_struct, $
@@ -149,7 +201,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
            DATANAME=dataNameArr[tmpVarH2D_i[i]], $
            DATATITLE=h2dStrArr[tmpVarH2D_i[i]].title, $
            DBSTRUCT=(send_DB ? dbStruct : !NULL), $
-           DBSTR_INDS=(send_DB ? dbInds : !NULL), $
+           DBSTR_INDS=(send_DB ? dbInds : tmpInds), $
            LUN=lun
 
         IF doing_var_plots THEN BEGIN       

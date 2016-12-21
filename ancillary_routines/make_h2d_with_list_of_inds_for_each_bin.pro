@@ -144,10 +144,6 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
            finalInds = [finalInds,inds] ;;debug
         ENDIF
 
-        HLOI__H2D_binCenters      = MAKE_ARRAY(2,nMLT)
-        HLOI__H2D_binCenters[0,*] = MEAN(EA__s.minM+EA__s.maxM)
-        HLOI__H2D_binCenters[1,*] = MEAN(EA__s.minI+EA__s.maxI)
-
      END
      ELSE: BEGIN
 

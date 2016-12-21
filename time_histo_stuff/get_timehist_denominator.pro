@@ -154,6 +154,8 @@ FUNCTION GET_TIMEHIST_DENOMINATOR, $
 
      h2dStr                    = tmplt_h2dStr
      h2dStr.is_fluxData        = 0
+     h2dStr.is_alfDB           = 0B
+     h2dStr.is_fastLocDB       = 1B
      
      dataName                  = "tHistDenom"
 

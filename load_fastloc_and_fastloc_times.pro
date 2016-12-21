@@ -176,7 +176,8 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         ;; IF ~KEYWORD_SET(noMem) THEN BEGIN
         IF N_ELEMENTS(FL_eSpec__fastLoc)  NE 0 AND $
            N_ELEMENTS(FASTLOC_E__times)   NE 0 AND $
-           N_ELEMENTS(FASTLOC_E__delta_t) NE 0 $
+           N_ELEMENTS(FASTLOC_E__delta_t) NE 0 AND $
+           ~KEYWORD_SET(force_load_fastLoc)        $
         THEN BEGIN
 
            IF KEYWORD_SET(noMem) THEN BEGIN
@@ -202,9 +203,10 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         ENDELSE
      END
      ELSE: BEGIN
-        IF N_ELEMENTS(FL__fastLoc) NE 0 AND $
-           N_ELEMENTS(FASTLOC__times) NE 0 AND $
-           N_ELEMENTS(FASTLOC__delta_t) NE 0 $
+        IF N_ELEMENTS(FL__fastLoc) NE 0 AND      $
+           N_ELEMENTS(FASTLOC__times) NE 0 AND   $
+           N_ELEMENTS(FASTLOC__delta_t) NE 0 AND $
+           ~KEYWORD_SET(force_load_fastLoc)      $
         THEN BEGIN
            IF KEYWORD_SET(noMem) THEN BEGIN
               PRINT,"Moving fastLoc structures in mem to outputted variables ..."
