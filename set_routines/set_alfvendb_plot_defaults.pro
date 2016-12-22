@@ -1,6 +1,6 @@
-;		     ORBRANGE          :  Two-element vector, lower and upper limit on orbits to include   
-;		     ALTITUDERANGE     :  Two-element vector, lower and upper limit on altitudes to include   
-;                    CHARERANGE        :  Two-element vector, lower ahd upper limit on characteristic energy of electrons in 
+;                    ORBRANGE          :  Two-element vector, lower and upper limit on orbits to include
+;                    ALTITUDERANGE     :  Two-element vector, lower and upper limit on altitudes to include
+;                    CHARERANGE        :  Two-element vector, lower ahd upper limit on characteristic energy of electrons in
 ;                                            the LOSSCONE (could change it to total in get_chaston_ind.pro).
 ;                    POYNTRANGE        :  Two-element vector, lower and upper limit Range of Poynting flux values to include.
 PRO SET_ALFVENDB_PLOT_DEFAULTS, $
@@ -183,12 +183,12 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         NIGHTSIDE=nightside, $
         MIMC_STRUCT=MIMC_struct, $
         LUN=lun
-     
+
   ENDIF
 
   ;;***********************************************
   ;;Tons of defaults
-  
+
   defOrbRange            = [0,12670]
   ;; defCharERange          = [4.0,300]
   ;; defAltRange            = [1000.0, 5000.0]
@@ -196,7 +196,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   defAltRange            = [0, 5000]
 
   defeFluxPlotType = "Max"
-  defENumFlPlotType = "ESA_Number_flux" 
+  defENumFlPlotType = "ESA_Number_flux"
   defIFluxPlotType = "Max"
   defCharEPlotType = "lossCone"
 
@@ -209,7 +209,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
   defDataDir = "/SPENCEdata/Research/database/"
   ;; defMedHistDataDir = 'out/medHistData/'
-  
+
   ;;***********************************************
   ;;RESTRICTIONS ON DATA, SOME VARIABLES
   IF N_ELEMENTS(orbRange            ) EQ 0 THEN BEGIN
@@ -220,10 +220,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      charERange             = defCharERange ; 4,~300 eV in Strangeway
   ENDIF
 
-  IF N_ELEMENTS(altitudeRange       ) EQ 0 THEN BEGIN 
+  IF N_ELEMENTS(altitudeRange       ) EQ 0 THEN BEGIN
      altitudeRange          = defAltRange ;Rob Pfaff says no lower than 1000m
   ENDIF
-  
+
   ;Auroral oval
   IF N_ELEMENTS(HwMAurOval) EQ 0 THEN HwMAurOval = defHwMAurOval
   IF N_ELEMENTS(HwMKpInd) EQ 0 THEN HwMKpInd     = defHwMKpInd
@@ -233,7 +233,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   IF N_ELEMENTS(eFluxPlotType) EQ 0 THEN eFluxPlotType = defEFluxPlotType ;options are "Integ" and "Max"
   IF N_ELEMENTS(iFluxPlotType) EQ 0 THEN iFluxPlotType = defIFluxPlotType ;options are "Integ", "Max", "Integ_Up", "Max_Up", and "Energy"
   IF N_ELEMENTS(eNumFlPlots) EQ 0 THEN eNumFlPlots = 0                    ;electron number flux plots?
-  IF N_ELEMENTS(eNumFlPlotType) EQ 0 THEN eNumFlPlotType = defENumFlPlotType ;options are "Total_Eflux_Integ","Eflux_Losscone_Integ", "ESA_Number_flux" 
+  IF N_ELEMENTS(eNumFlPlotType) EQ 0 THEN eNumFlPlotType = defENumFlPlotType ;options are "Total_Eflux_Integ","Eflux_Losscone_Integ", "ESA_Number_flux"
   IF N_ELEMENTS(pPlots) EQ 0 THEN pPlots =  0                             ;Poynting flux [estimate] plots?
   IF N_ELEMENTS(ionPlots) EQ 0 THEN ionPlots =  0                         ;ion Plots?
   IF N_ELEMENTS(charEPlots) EQ 0 THEN charEPlots =  0                     ;char E plots?
@@ -244,7 +244,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   IF N_ELEMENTS(orbFreqPlot) EQ 0 THEN orbFreqPlot =  0                   ;Contributing/total orbits plot?
   IF N_ELEMENTS(nEventPerOrbPlot) EQ 0 THEN nEventPerOrbPlot =  0         ;N Events/orbit plot?
   IF N_ELEMENTS(nEventPerMinPlot) EQ 0 THEN nEventPerMinPlot =  0         ;N Events/min plot?
-  
+
   ;; IF KEYWORD_SET(autoscale_fluxPlots) THEN PRINT,"Autoscaling flux plots..."
 
 
@@ -297,7 +297,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   IF KEYWORD_SET(showPlotsNoSave) AND KEYWORD_SET(outputPlotSummary) THEN BEGIN    ;;Write output file with data params?
      print, "Is it possible to have outputPlotSummary==1 while showPlotsNoSave==0? You used to say no..."
      outputPlotSummary=defOutSummary   ;;Change to zero if not wanted
-  ENDIF 
+  ENDIF
 
   ;;Any of multifarious reasons for needing output?
   IF KEYWORD_SET(writeASCII) OR KEYWORD_SET(writeHDF5) OR NOT KEYWORD_SET(squarePlot) OR KEYWORD_SET(saveRaw) THEN BEGIN
@@ -308,7 +308,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      PRINT, "medHistOutTxt is enabled, but medHistOutData is not!"
      print, "Enabling medHistOutData, since corresponding output is necessary for medHistOutTxt"
      WAIT, 0.5
-     ;; IF ~KEYWORD_SET(medHistDataDir) THEN medHistDataDir = defMedHistDataDir 
+     ;; IF ~KEYWORD_SET(medHistDataDir) THEN medHistDataDir = defMedHistDataDir
      medHistOutData = 1
   ENDIF
 
@@ -350,7 +350,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
               sampTStr = '-0sampT'
            END
            ELSE: BEGIN
-              sampTStr  = STRING(FORMAT='(F0.2,"_sampT")',sample_t_restriction) 
+              sampTStr  = STRING(FORMAT='(F0.2,"_sampT")',sample_t_restriction)
            END
         ENDCASE
         IF KEYWORD_SET(include_32Hz) THEN BEGIN
@@ -366,7 +366,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      ENDELSE
   ENDELSE
 
-  
+
   ;;********************************************
   ;;A few other strings to tack on
   ;;tap DBs, and setup output
@@ -384,7 +384,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   IF maskMin GT 1 THEN BEGIN
      maskStr = '-mskMin_' + STRING(FORMAT='(I0)',maskMin)
   ENDIF
-  
+
   ;;Set minimum # minutes that must be spent in each bin for inclusion
   tMaskStr = ''
   ;; IF N_ELEMENTS(tHist_mask_bins_below_thresh) EQ 0 THEN BEGIN
@@ -395,7 +395,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         tMaskStr = '-tThresh_' + STRING(FORMAT='(I0)',tHist_mask_bins_below_thresh)
      ;; ENDIF
   ENDIF
-  
+
   EABinStr = ''
   IF KEYWORD_SET(EA_binning) THEN BEGIN
      EABinStr      = '-EA'
@@ -424,13 +424,13 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   IF KEYWORD_SET(plotH2D__kernel_density_unmask) THEN BEGIN
      polarContStr += '-kde'
   ENDIF
-  
+
   ;; paramString=hoyDia+'-'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
   paramString = paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
                 MIMC_struct.hemi+despunStr+coordStr+MCStr+bonusStr+sampTStr+ $
                 lShellStr+plotMedOrAvg+$
                 maskStr+tMaskStr+EABinStr+inc_burstStr+polarContStr+paramStrSuffix
-  
+
   ;;Shouldn't be leftover, unused params from batch call
   IF ISA(e) THEN BEGIN
      IF $
@@ -449,9 +449,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
            ENDIF
         ENDIF
      ENDELSE
-     
+
   ENDIF
-  
+
   ;;Check on ILAT stuff; if I don't do this, all kinds of plots get boogered up
   IF ( (MIMC_struct.maxI-MIMC_struct.minI) MOD MIMC_struct.binI ) NE 0 AND $
      ~KEYWORD_SET(MIMC_struct.dont_correct_ilats) THEN BEGIN
@@ -581,7 +581,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         IF N_ELEMENTS(nonStorm) GT 0 THEN BEGIN
            STR_ELEMENT,storm_opt,'nonStorm',nonStorm,/ADD_REPLACE
            IF KEYWORD_SET(nonStorm) THEN BEGIN
-              paramString = paramString + 'nS'
+              paramString = paramString + 'nStorm'
            ENDIF
         ENDIF
 
@@ -600,7 +600,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         ENDIF
 
         IF N_ELEMENTS(all_storm_phases) GT 0 THEN BEGIN
-           STR_ELEMENT,storm_opt,'allPhases',all_storm_phases,/ADD_REPLACE              
+           STR_ELEMENT,storm_opt,'all_storm_phases',all_storm_phases,/ADD_REPLACE
         ENDIF
 
         IF N_ELEMENTS(dstCutoff) GT 0 THEN BEGIN
@@ -619,8 +619,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'storm_opt',storm_opt,/ADD_REPLACE
 
         IF KEYWORD_SET(all_storm_phases) THEN BEGIN
-           multiples           = ["quiescent","mainphase","recoveryphase"]
-           multiString         = "-all_storm_phases"
+           multiples           = ["nStorm","mPhase","rPhase"]
+           multiString         = "-allPhases"
            executing_multiples = 1
            alfDB_plot_struct.executing_multiples = 1
            alfDB_plot_struct.multiString         = multiString
@@ -631,7 +631,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF KEYWORD_SET(ae_stuff) THEN BEGIN
 
         STR_ELEMENT,alfDB_plot_struct,'ae_stuff',ae_stuff,/ADD_REPLACE
-        
+
         ae_opt = { $
                  use_ae                   : 0B  , $
                  use_au                   : 0B  , $
