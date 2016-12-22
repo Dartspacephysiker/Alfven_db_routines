@@ -241,13 +241,15 @@ PRO GET_ALFVENDB_2DHISTOS, $
   
   IF alfDB_plot_struct.keepMe THEN BEGIN 
      IF KEYWORD_SET(nPlots) THEN BEGIN
-        h2dStrArr     = [h2dStr,h2dMaskStr] 
-        dataNameArr   = [dataName,"histoMask"] 
-        dataRawPtrArr = [dataRawPtr,PTR_NEW(h2dMaskStr.data)] 
+        h2dStrArr          = [h2dStr,h2dMaskStr] 
+        dataNameArr        = [dataName,"histoMask"] 
+        dataRawPtrArr      = [dataRawPtr,PTR_NEW(h2dMaskStr.data)] 
+        removed_ii_listArr = [removed_ii_listArr,LIST(!NULL),LIST(!NULL)]
      ENDIF ELSE BEGIN
-        h2dStrArr     = h2dMaskStr
-        dataNameArr   = "histoMask"
-        dataRawPtrArr = PTR_NEW(h2dMaskStr.data)
+        h2dStrArr          = h2dMaskStr
+        dataNameArr        = "histoMask"
+        dataRawPtrArr      = PTR_NEW(h2dMaskStr.data)
+        removed_ii_listArr = [removed_ii_listArr,LIST(!NULL)]
      ENDELSE
   ENDIF
   

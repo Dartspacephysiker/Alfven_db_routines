@@ -57,8 +57,8 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
   var_h2dStrArr    = !NULL
   var_dataNameArr  = !NULL
 
-  H2D_ii__alfDB    = WHERE(h2dStrArr[varploth2dinds].is_alfDB   ,nAlfDB   )
-  H2D_ii__eSpec    = WHERE(h2dStrArr[varploth2dinds].is_eSpecDB ,nESpec   )
+  H2D_ii__alfDB    = WHERE(h2dStrArr[varploth2dinds].is_alfDB    ,nAlfDB  )
+  H2D_ii__eSpec    = WHERE(h2dStrArr[varploth2dinds].is_eSpecDB  ,nESpec  )
   H2D_ii__fastLoc  = WHERE(h2dStrArr[varploth2dinds].is_fastLocDB,nFastLoc)
 
   nLoops           = 0
@@ -156,15 +156,22 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
      FOR i=0,nVarInds-1 DO BEGIN
         
         dbStruct_obsArr                   = *dataRawPtrArr[tmpVarRaw_i[i]]
-        IF N_ELEMENTS((removed_ii_listArr[i])[0]) GT 0 THEN BEGIN
-           CASE loopType OF
+        IF N_ELEMENTS((removed_ii_listArr[tmpVarRaw_i[i]])[0]) GT 0 THEN BEGIN
+           CASE loopType[k] OF
               0: BEGIN
                  ;; dont_use_these_inds      = (removed_ii_listArr[tmpVarRaw_i[i]])[0]
-                 dont_use_these_inds      = (removed_ii_listArr[i])[0]
+                 dont_use_these_inds      = (removed_ii_listArr[tmpVarRaw_i[i]])[0]
               END
               1: BEGIN
                  ;; dont_use_these_inds      = CGSETINTERSECTION(in_inds,(removed_ii_listArr[tmpVarRaw_i[i]])[0],COUNT=dontDoIt)
-                 dont_use_these_inds      = CGSETINTERSECTION(in_inds,(removed_ii_listArr[i])[0],COUNT=dontDoIt)
+                 ;; dont_use_these_inds      = CGSETINTERSECTION(in_inds,(removed_ii_listArr[i])[0],COUNT=dontDoIt)
+                 dont_use_these_inds      = CGSETINTERSECTION(in_inds,(removed_ii_listArr[tmpVarRaw_i[i]])[0],COUNT=dontDoIt)
+              END
+              2: BEGIN
+                 dont_use_these_inds      = CGSETINTERSECTION( $
+                                            tmpInds, $
+                                            (removed_ii_listArr[tmpVarRaw_i[i]])[0], $
+                                            COUNT=dontDoIt)
               END
            ENDCASE
         ENDIF ELSE BEGIN 

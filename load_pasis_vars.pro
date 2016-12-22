@@ -3,6 +3,7 @@ FUNCTION LOAD_PASIS_VARS, $
    FILENAME=fileName, $
    SAVEDIR=dir, $
    NEED_FASTLOC_I=need_fastLoc_i, $
+   REMAKE_PREVIOUS_PLOT_I_LISTS_IF_EXISTING=remake_prev_plot_file, $
    VERBOSE=verbose
 
   COMPILE_OPT IDL2
@@ -24,6 +25,11 @@ FUNCTION LOAD_PASIS_VARS, $
 
 
   IF FILE_TEST(saveDir+fName) THEN BEGIN
+
+     IF KEYWORD_SET(remake_prev_plot_file) THEN BEGIN
+        PRINT,'Remaking PASIS inds file ...'
+        RETURN,0
+     ENDIF 
 
      ;;Setup temps for comparison
      IF KEYWORD_SET(checkAgainst) THEN BEGIN
