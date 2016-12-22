@@ -415,9 +415,9 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      ;;satellite string
      omniStr                    = ""
      IF satellite EQ "OMNI" THEN BEGIN
-        omniStr                 = "-" + OMNI_coords 
+        ;; omniStr                 = 
         IF STRUPCASE(OMNI_coords) NE 'GSM' THEN BEGIN
-           OMNIStr += OMNI_coords
+           OMNIStr += "-" + OMNI_coords
         ENDIF
      ENDIF
 

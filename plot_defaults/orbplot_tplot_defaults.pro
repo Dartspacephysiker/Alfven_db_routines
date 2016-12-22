@@ -50,12 +50,12 @@ scAltString_pub              = ', at FAST altitude'
 alfStr                     = ANSI_VALUE('Alfvén')
 ;; title__probOccurrence        = alfStr + " Wave!CProbability of Occurrence"
 title__probOccurrence        = "Probability of Occurrence"
-name__probOccurrence         = "probOccurrence"
+name__probOccurrence         = "probOcc"
 
 ;; title__timeAvgd_pFlux        = 'Time-averaged Poynting flux (' + energyFluxStr + ')' + ionosphString_pub
 title__timeAvgd_pFlux        = 'Time-averaged Poynting flux (' + energyFluxStr + ')'
-name__timeAvgd_pFlux         = "timeAvgd_pFlux"
+name__timeAvgd_pFlux         = "tAvg_pF"
 
 ;; title__timeAvgd_eFluxMax     = 'Time-averaged loss-cone e!U-!N flux (' + energyFluxStr + ')' + ionosphString_pub
 title__timeAvgd_eFluxMax     = 'Time-averaged loss-cone e!U-!N flux (' + energyFluxStr + ')'
-name__timeAvgd_eFluxMax      = "timeAvgd_eFluxMax"
+name__timeAvgd_eFluxMax      = "tAvgd_eFMax"

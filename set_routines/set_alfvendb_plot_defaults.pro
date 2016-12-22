@@ -323,7 +323,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   IF KEYWORD_SET(use_AACGM) AND KEYWORD_SET(use_MAG) THEN STOP
   CASE 1 OF
      KEYWORD_SET(use_AACGM): BEGIN
-        coordStr = '__AACGM'
+        coordStr = '_AACGM'
      END
      KEYWORD_SET(use_MAG): BEGIN
         coordStr = '_MAG'

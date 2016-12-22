@@ -55,7 +55,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,dbStruct,plot_i,tHistDenominator, $
   CASE 1 OF 
      KEYWORD_SET(do_width_x): BEGIN
         widthData                  = dbStruct.width_x[plot_i]
-        dataName                   = "probOccurrence_width_x"
+        dataName                   = "probOcc_width_x"
         h2dStr.title               = "Event width/Time in bin (m/s)"  ;;but what even is this quantity, bro?
      END                           
      KEYWORD_SET(do_timeavgd_pflux): BEGIN
