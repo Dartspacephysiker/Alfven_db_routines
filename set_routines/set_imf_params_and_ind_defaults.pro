@@ -69,6 +69,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
    CLOCKSTR=clockStr, $
    ANGLELIM1=angleLim1,  $
    ANGLELIM2=angleLim2, $
+   THETACONEMIN=tConeMin, $
+   THETACONEMAX=tConeMax, $
    MULTIPLE_IMF_CLOCKANGLES=multiple_IMF_clockAngles, $
    DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
    BYMIN=byMin, $
@@ -217,7 +219,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
                                    N_ELEMENTS(btMin) > N_ELEMENTS(btMax) > $
                                    N_ELEMENTS(bxMin) > N_ELEMENTS(bxMax) > $
                                    N_ELEMENTS(bx_over_by_ratio_min) > $
-                                   N_ELEMENTS(bx_over_by_ratio_max)
+                                   N_ELEMENTS(bx_over_by_ratio_max) > $
+                                   N_ELEMENTS(tConeMin) > N_ELEMENTS(tConeMax)
 
      multiple_B_conds            = nB_conds GT 1
 
@@ -409,6 +412,40 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
                                    + 'bxy_rMx' + STRING(bx_over_by_ratio_max,FORMAT='(D0.1)')
      ENDIF
 
+
+     ;;Requirement for IMF cone angle?
+     tConeMinStr                    = ''
+     tConeMaxStr                    = ''
+     
+     nTConeMin                      = N_ELEMENTS(tConeMin)
+     IF (nTConeMin GE 1) AND (nB_conds GT 1) THEN BEGIN
+        IF (nTConeMin GT 1) AND (nB_conds NE nTConeMin) THEN BEGIN
+           PRINT,"Unequal number of B conds provided!"
+           STOP
+        ENDIF ELSE BEGIN
+           TConeMin                 = REPLICATE(TConeMin,nB_conds)
+        ENDELSE
+     ENDIF
+     IF nTConeMin GT 0 THEN BEGIN
+        tConeMinStr                 = '_' + (KEYWORD_SET(abs_tConeMin) ? 'ABS' : '') $
+                                   + 'tConeMin' + STRING(tConeMin,FORMAT='(D0.1)')
+     ENDIF
+
+     nTConeMax                      = N_ELEMENTS(tConeMax)
+     IF (nTConeMax GE 1) AND (nB_conds GT 1) THEN BEGIN
+        IF (nTConeMax GT 1) AND (nB_conds NE nTConeMax) THEN BEGIN
+           PRINT,"Unequal number of B conds provided!"
+           STOP
+        ENDIF ELSE BEGIN
+           TConeMax                 = REPLICATE(TConeMax,nB_conds)
+        ENDELSE
+     ENDIF
+     IF nTConeMax GT 0 THEN BEGIN
+        tConeMaxStr                 = '_' + (KEYWORD_SET(abs_tConeMax) ? 'ABS' : '') $
+                                   + 'tConeMax' + STRING(tConeMax,FORMAT='(D0.1)')
+     ENDIF
+     
+
      ;;********************************************
      ;;Set up some other strings
      
@@ -465,7 +502,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            multiString          = "IMF_delays"
            FOR iDel=0,N_ELEMENTS(multiples)-1 DO BEGIN
               OMNIparamStr_list.add,OMNIparamStr+'-'+omniStr+clockOutStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
-                 byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
+                 byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr+tConeMinStr+tConeMaxStr
            ENDFOR
         ENDIF
 
@@ -473,7 +510,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            multiples            = clockStr
            ;; multiString       = "IMF_clock angles"
            multiString          = OMNIparamStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
-                                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
+                                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr+tConeMinStr+tConeMaxStr
            IF N_ELEMENTS(clockStr) EQ 8 THEN BEGIN
               multiString_suff  = '-Ring'
            ENDIF
@@ -484,7 +521,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            FOR iClock=0,N_ELEMENTS(multiples)-1 DO BEGIN
               OMNIparamStr_list.add,OMNIparamStr+'-'+omniStr+clockOutStr[iClock]+"_"+ $
                  strtrim(stableIMF,2)+"stable"+smoothStr+delayStr+$
-                 byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
+                 byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr+tConeMinStr+tConeMaxStr
 
               IF ~KEYWORD_SET(multiString_suff) THEN BEGIN
                  multiString    = multiString+'_'+clockStr[iClock]
@@ -493,7 +530,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         ENDIF
 
         IF KEYWORD_SET(multiple_B_conds) THEN BEGIN
-           multiples            = byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
+           multiples            = byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr+tConeMinStr+tConeMaxStr
            multiString          = OMNIparamStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]
            IF KEYWORD_SET(multiString_suff) THEN BEGIN
               multiString       = multiString + multiString_suff
@@ -504,7 +541,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            FOR iClock=0,N_ELEMENTS(multiples)-1 DO BEGIN
               OMNIparamStr_list.add,OMNIparamStr+'-'+omniStr+clockOutStr[iClock]+"_"+ $
                  STRTRIM(stableIMF,2)+"stable"+smoothStr+delayStr+$
-                 byMinStr[iClock]+byMaxStr[iClock]+bzMinStr[iClock]+bzMaxStr[iClock]+btMinStr[iClock]+btMaxStr[iClock]+bxMinStr[iClock]+bxMaxStr[iClock]+bx_over_by_ratio_minStr[iClock]+bx_over_by_ratio_maxStr[iClock]
+                 byMinStr[iClock]+byMaxStr[iClock]+bzMinStr[iClock]+bzMaxStr[iClock]+btMinStr[iClock]+btMaxStr[iClock]+bxMinStr[iClock]+bxMaxStr[iClock]+bx_over_by_ratio_minStr[iClock]+bx_over_by_ratio_maxStr[iClock]+tConeMinStr[iClock]+tConeMaxStr[iClock]
 
               IF ~KEYWORD_SET(multiString_suff) THEN BEGIN
                  multiString    = multiString+'_'+clockStr[iClock]
@@ -530,7 +567,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         executing_multiples     = 0
         OMNIparamStr             = OMNIparamStr+'-'+omniStr+clockOutStr+"_"+ $
                                   strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
-                                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr
+                                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr+tConeMinStr+tConeMaxStr
         OMNIparamStr_list.add,OMNIparamStr
      ENDELSE
   ENDELSE
@@ -645,6 +682,14 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
 
      IF N_ELEMENTS(Bx_over_ByBz_Lim) GT 0 THEN BEGIN
         STR_ELEMENT,IMF_struct,'Bx_over_ByBz_Lim',FLOAT(Bx_over_ByBz_Lim),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(tConeMin) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'tConeMin',FLOAT(tConeMin),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(tConeMax) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'tConeMax',FLOAT(tConeMax),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(do_not_consider_IMF) GT 0 THEN BEGIN

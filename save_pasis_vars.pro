@@ -33,7 +33,7 @@ PRO SAVE_PASIS_VARS, $
                 'PASIS__eFlux_eSpec_data,PASIS__eNumFlux_eSpec_data,' + $
                 'PASIS__eSpec__MLTs,PASIS__eSpec__ILATs,'
   ENDIF ELSE BEGIN
-     saveStr += 'PASIS__plot_i_list'
+     saveStr += 'PASIS__plot_i_list,'
   ENDELSE
 
   IF KEYWORD_SET(need_fastLoc_i) THEN BEGIN
@@ -46,7 +46,7 @@ PRO SAVE_PASIS_VARS, $
                 'PASIS__ion__MLTs,PASIS__ion__ILATs,'
   ENDIF
 
-  saveStr    += ',FILENAME=saveDir+fName'
+  saveStr    += 'FILENAME=saveDir+fName'
 
   bro = EXECUTE(saveStr)
   IF ~bro THEN STOP

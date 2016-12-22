@@ -131,6 +131,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    CLOCKSTR=clockStr, $
    ANGLELIM1=angleLim1, $
    ANGLELIM2=angleLim2, $
+   THETACONEMIN=tConeMin, $
+   THETACONEMAX=tConeMax, $
    BYMIN=byMin, $
    BYMAX=byMax, $
    BZMIN=bzMin, $
@@ -392,6 +394,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      CLOCKSTR=clockStr, $
      ANGLELIM1=angleLim1, $
      ANGLELIM2=angleLim2, $
+     THETACONEMIN=tConeMin, $
+     THETACONEMAX=tConeMax, $
      BYMIN=byMin, $
      BYMAX=byMax, $
      BZMIN=bzMin, $
