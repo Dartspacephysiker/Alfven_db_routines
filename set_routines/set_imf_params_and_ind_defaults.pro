@@ -95,7 +95,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
    OMNIPARAMSTR=OMNIparamStr, $
    OMNI_PARAMSTR_LIST=OMNIparamStr_list, $
    SATELLITE=satellite, $
-   OMNI_COORDS=omni_Coords, $
+   OMNI_COORDS=OMNI_coords, $
    DELAY=delay, $
    MULTIPLE_DELAYS=multiple_delays, $
    OUT_EXECUTING_MULTIPLES=executing_multiples, $
@@ -125,7 +125,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
   
                                 ; satellite defaults
   defSatellite           = "OMNI" ;either "ACE", "wind", "wind_ACE", or "OMNI" (default, you see)
-  defOmni_Coords         = "GSM"  ; either "GSE" or "GSM"
+  defOMNI_Coords         = "GSM"  ; either "GSE" or "GSM"
 
   defDelay               = 900
 
@@ -161,8 +161,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
   IF N_ELEMENTS(satellite           ) EQ 0 THEN BEGIN
      satellite              = defSatellite ;either "ACE", "wind", "wind_ACE", or "OMNI" (default, you see)
   ENDIF
-  IF N_ELEMENTS(omni_Coords         ) EQ 0 THEN BEGIN
-     omni_Coords            = defOmni_Coords ; either "GSE" or "GSM"
+  IF N_ELEMENTS(OMNI_coords         ) EQ 0 THEN BEGIN
+     OMNI_coords            = defOMNI_Coords ; either "GSE" or "GSM"
   ENDIF
 
   IF N_ELEMENTS(delay               ) EQ 0 THEN BEGIN
@@ -415,7 +415,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      ;;satellite string
      omniStr                    = ""
      IF satellite EQ "OMNI" THEN BEGIN
-        omniStr                 = "-" + omni_Coords 
+        omniStr                 = "-" + OMNI_coords 
+        IF STRUPCASE(OMNI_coords) NE 'GSM' THEN BEGIN
+           OMNIStr += OMNI_coords
+        ENDIF
      ENDIF
 
      IF N_ELEMENTS(delay) GT 0 THEN BEGIN
@@ -687,8 +690,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         STR_ELEMENT,IMF_struct,'satellite',satellite,/ADD_REPLACE
      ENDIF
 
-     IF N_ELEMENTS(omni_Coords) GT 0 THEN BEGIN
-        STR_ELEMENT,IMF_struct,'omni_Coords',omni_Coords,/ADD_REPLACE
+     IF N_ELEMENTS(OMNI_coords) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'OMNI_coords',OMNI_coords,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(delay) GT 0 THEN BEGIN

@@ -19,10 +19,10 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
 
   IF ~KEYWORD_SET(keepJunk) THEN BEGIN
      ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs)
-  ENDIF  ELSE BEGIN
+  ENDIF ELSE BEGIN
 
      customKillRanges   = [ $
-                          [1028,1055], $ ;;Believe me, these orbits are bad for everyone
+                          [1028,1056], $ ;;Believe me, these orbits are bad for everyone
                           [7804,7837] $
                           ] 
 
@@ -30,8 +30,8 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
                           ['1996-12-08/' + ['08:44:20','08:46:10']] $
                           ]
 
-     ;; customKill         = [1002,8276]
-     customKill         = [1002]
+     customKill         = [1002,8276,9585]
+     ;; customKill         = [1002]
 
      ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs, $
                                       DBTIMES=DBTimes, $

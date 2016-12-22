@@ -1850,7 +1850,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                        REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
                        REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
-                       FLUXPLOTTYPE=eFluxPlotType, $
+                       FLUXPLOTTYPE=pFluxPlotType, $
                        NOPOSFLUX=noPoseflux, $
                        NONEGFLUX=noNegeflux, $
                        ABSFLUX=abseflux, $

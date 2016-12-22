@@ -169,6 +169,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
      CASE 1 OF
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ"): BEGIN
+           tmpFluxPlotType  = 'Intg'
            h2dStr.title     = title__alfDB_ind_09
            inData           = maximus.integ_elec_energy_flux
            can_div_by_w_x   = 0
@@ -178,6 +179,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            h2dStr.gUnits    = 'bro'
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("eflux_losscone_integ"): BEGIN
+           tmpFluxPlotType  = 'LC_intg'
            h2dStr.title     = title__alfDB_ind_10
            inData           = maximus.eflux_losscone_integ
            can_div_by_w_x   = 1
@@ -213,6 +215,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("total_eflux_integ"): BEGIN
+           tmpFluxPlotType  = 'tot_intg'
            h2dStr.title     = title__alfDB_ind_11
            inData           = maximus.total_eflux_integ
            can_div_by_w_x   = 1
@@ -245,6 +248,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Max"): BEGIN
+           tmpFluxPlotType  = 'Max'
            h2dStr.title     = title__alfDB_ind_08
            inData           = maximus.elec_energy_flux
            can_div_by_w_x   = 0
@@ -270,6 +274,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         END
         ((STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_eSpec")) OR $
            (STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_eSpec-2009"))): BEGIN
+           tmpFluxPlotType  = 'eSpec' + (STRMATCH(fluxPlotType,'*2009*') ? '-2009' : '')
            h2dStr.title     = title__eSpec_ind_10
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            for_eSpec      = 1
@@ -296,10 +301,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
               ENDCASE
            ENDIF
            IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
-              dataname += '--candidates_removed'
+              dataname += '-candidates_removed'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
-                 dataname += '--all_fluxes'
+                 dataname += '-all_fluxes'
               ENDIF
            ENDELSE
         END
@@ -315,6 +320,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
      CASE 1 OF
         STRUPCASE(fluxPlotType) EQ STRUPCASE("total_eflux_integ"): BEGIN
+           tmpFluxPlotType  = 'tot_eF_intg'
            h2dStr.title     = title__alfDB_ind_11
            inData           = maximus.total_eflux_integ
            can_div_by_w_x   = 1
@@ -328,6 +334,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Eflux_Losscone_Integ"): BEGIN
+           tmpFluxPlotType  = 'eF_LC_intg'
            h2dStr.title     = title__alfDB_ind_10
            inData           = maximus.eflux_losscone_integ
            can_div_by_w_x   = 1
@@ -398,6 +405,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("ESA_Number_flux"): BEGIN
+           tmpFluxPlotType  = ''
            h2dStr.title  = title__alfDB_esa_nFlux
 
            h2dStr.grossFac  = 1e25
@@ -456,6 +464,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("ESA_Current"): BEGIN
+           tmpFluxPlotType  = 'e_curr'
            h2dStr.title  = title__alfDB_ind_07
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            inData           = maximus.esa_current
@@ -464,6 +473,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         END
         ((STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_eSpec")) OR $
          (STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_eSpec-2009"))): BEGIN
+           tmpFluxPlotType  = 'eSpec' + (STRMATCH(fluxPlotType,'*2009*') ? '-2009' : '')
            h2dStr.title     = title__eSpec_esa_nFlux
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            for_eSpec      = 1
@@ -477,10 +487,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            h2dStr.gUnits    = 'E+25'
 
            IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
-              dataname += '--candidates_removed'
+              dataname += '-candidates_removed'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
-                 dataname += '--all_fluxes'
+                 dataname += '-all_fluxes'
               ENDIF
            ENDELSE
 
@@ -515,6 +525,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      
   IF KEYWORD_SET(get_pFlux) THEN BEGIN
 
+     tmpFluxPlotType       = 'pF'
      h2dStr.grossFac       = 1.D9
      h2dStr.gUnits         = 'GW'
 
@@ -605,7 +616,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         ENDCASE
      ENDIF
      
-     dataName               = KEYWORD_SET(sum_eFlux_and_pFlux) ? "eFlux_and_pFlux" : "pFlux"
+     dataName               = KEYWORD_SET(sum_eFlux_and_pFlux) ? "eF_pF" : "pF"
      h2dStr.labelFormat     = fluxPlotPPlotCBLabelFormat
      ;; h2dStr.logLabels       = logPFluxLabels
      h2dStr.logLabels       = 0
@@ -637,6 +648,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
      CASE 1 OF
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ"): BEGIN
+           tmpFluxPlotType  = 'Intg'
            h2dStr.title     = title__alfDB_ind_17
            inData           = maximus.integ_ion_flux
            can_div_by_w_x   = 1
@@ -650,18 +662,21 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Max"): BEGIN
+           tmpFluxPlotType  = 'Max'
            h2dStr.title     = title__alfDB_ind_15
            inData           = maximus.ion_flux
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Max_Up"): BEGIN
+           tmpFluxPlotType  = 'MaxUp'
            h2dStr.title     = title__alfDB_ind_16
            inData           = maximus.ion_flux_up
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ_Up"): BEGIN
+           tmpFluxPlotType  = 'IntgUp'
            h2dStr.title     = title__alfDB_ind_18
            inData           = maximus.integ_ion_flux_up
            can_div_by_w_x   = 1
@@ -716,6 +731,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Ji_nonAlfven"): BEGIN
+           tmpFluxPlotType  = 'Ji_nAlf'
            h2dStr.title  = title__eSpec_ind_18
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            for_eSpec      = 1
@@ -725,10 +741,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            can_mlt_by_w_x   = 0
 
            IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
-              dataname += '--candidates_removed'
+              dataname += '-candidates_removed'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
-                 dataname += '--all_fluxes'
+                 dataname += '-all_fluxes'
               ENDIF
            ENDELSE
 
@@ -748,6 +764,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Jei_nonAlfven"): BEGIN
+           tmpFluxPlotType  = 'Jei_nAlf'
            h2dStr.title  = 'Ion Energy Flux (non-' + alficStr + ')'
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            for_eSpec      = 1
@@ -757,14 +774,15 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            can_mlt_by_w_x   = 1
 
            IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
-              dataname += '--candidates_removed'
+              dataname += '-candidates_removed'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
-                 dataname += '--all_fluxes'
+                 dataname += '-all_fluxes'
               ENDIF
            ENDELSE
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Energy"): BEGIN
+           tmpFluxPlotType  = 'NRG'
            h2dStr.title     = title__alfDB_ind_14
            inData           = maximus.ion_energy_flux
            can_div_by_w_x   = 0
@@ -793,16 +811,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
      CASE 1 OF
         STRUPCASE(fluxplottype) EQ STRUPCASE("lossCone"): BEGIN
+           tmpFluxPlotType  = 'LC'
            h2dStr.title     = title__alfDB_ind_12
            inData           = maximus.max_chare_losscone
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Total"): BEGIN
+           tmpFluxPlotType  = 'tot'
            h2dStr.title     = title__alfDB_ind_13
            inData           = maximus.max_chare_total
         END
         ( (STRUPCASE(fluxplottype) EQ STRUPCASE("charE_eSpec")) OR $
           (STRUPCASE(fluxplottype) EQ STRUPCASE("charE_eSpec-2009"))): BEGIN
-           
+           tmpFluxPlotType  = 'eSpec' + (STRMATCH(fluxPlotType,'*2009*') ? '-2009' : '')           
            h2dStr.title     = title__eSpec_charEE
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            for_eSpec      = 1
@@ -816,10 +836,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            h2dStr.gUnits    = ''
 
            IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
-              dataname += '--candidates_removed'
+              dataname += '-cndidts_rmd'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
-                 dataname += '--all_fluxes'
+                 dataname += '-all_fluxes'
               ENDIF
            ENDELSE
 
@@ -858,7 +878,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      PRINTF,lun,"N pos elements in " + dataName + " data: ",N_ELEMENTS(where(inData[tmp_i] GT 0.))
      PRINTF,lun,"N neg elements in " + dataName + " data: ",N_ELEMENTS(where(inData[tmp_i] LT 0.))
      IF KEYWORD_SET(noPosFlux) THEN BEGIN
-        posStr              = 'NoPos--'
+        posStr              = 'NoP-'
         PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(tmp_i)
         lt_ii                =  WHERE(inData[tmp_i] LT 0.,COMPLEMENT=removed_ii)
         IF lt_ii[0] NE -1 THEN BEGIN
@@ -880,12 +900,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            inData           = ABS(inData)
         ENDIF
      ENDIF ELSE BEGIN
-        absStr              = 'Abs--' 
+        absStr              = 'Abs-' 
      ENDELSE
      inData                 = ABS(inData)
   ENDIF
   IF KEYWORD_SET(noNegFlux) THEN BEGIN
-     negStr                 = 'NoNegs--'
+     negStr                 = 'NoN-'
      PRINTF,lun,"N elements in " + dataName + " before junking neg vals: ",N_ELEMENTS(tmp_i)
      gt_ii                   =  WHERE(inData[tmp_i] GT 0.,COMPLEMENT=removed_ii)
      IF gt_ii[0] NE -1 THEN BEGIN
@@ -907,7 +927,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      ENDIF
   ENDIF
   IF KEYWORD_SET(noPosFlux) AND ~KEYWORD_SET(absFlux) THEN BEGIN
-     posStr                 = 'NoPos--'
+     posStr                 = 'NoP-'
      PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(tmp_i)
      lt_ii                   =  WHERE(inData LT 0.,COMPLEMENT=removed_ii)
      IF lt_ii[0] NE -1 THEN BEGIN
@@ -938,7 +958,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
   absnegslogStr             = absStr + negStr + posStr + logStr
   dataName                  = STRTRIM(absnegslogStr,2)+dataName + $
-                              (KEYWORD_SET(fluxPlotType) ? '_' + STRUPCASE(fluxplottype) : '')
+                              (KEYWORD_SET(tmpFluxPlotType) ? '_' + tmpFluxPlotType : '')
   ;; h2dStr.title              = absnegslogStr + h2dStr.title
 
   ;;This looks like a nice spot for outlier removal
@@ -971,7 +991,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
      ;;'igfpd' = 'in GET_FLUX_PLOTDATA'
      ;; dataName += '_rm' + ( KEYWORD_SET(remove_log_outliers) ? 'l' : '' ) + 'ol_igfpd'
-     dataName += '_rm' + ( KEYWORD_SET(remove_log_outliers) ? 'l' : '' ) + 'ol--no_sus'
+     dataName += '_rm' + ( KEYWORD_SET(remove_log_outliers) ? 'l' : '' ) + 'ol-no_sus'
   ENDIF
 
 
@@ -979,7 +999,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      IF can_div_by_w_x THEN BEGIN
         PRINT,'Dividing by WIDTH_X!'
         
-        dataName               = 'spatialAvg_' + dataName
+        dataName               = 'sptAvg_' + dataName
 
         ;;If the ion plots or one of the select electron plots didn't pick this up, set it to 1
         ;;NOTE, oxy also needs to be scaled!!!
@@ -1000,7 +1020,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         IF can_div_by_w_x2 THEN BEGIN
            PRINT,'Dividing by WIDTH_X!'
            
-           dataName               = 'spatialAvg_' + dataName
+           dataName               = 'sptAvg_' + dataName
 
            ;;If the ion plots or one of the select electron plots didn't pick this up, set it to 1
            ;;NOTE, oxy also needs to be scaled!!!
@@ -1018,7 +1038,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      IF can_mlt_by_w_x THEN BEGIN
         PRINT,'Multiplying by WIDTH_X!'
         
-        dataName               = 'spatialInteg_' + dataName
+        dataName               = 'sptIntg_' + dataName
         
         ;;If the ion plots or one of the select electron plots didn't pick this up, set it to 1
         ;;NOTE, oxy also needs to be scaled!!!
@@ -1034,7 +1054,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         IF can_mlt_by_w_x2 THEN BEGIN
            PRINT,'Multiplying by WIDTH_X!'
            
-           dataName               = 'spatialInteg_' + dataName
+           dataName               = 'sptIntg_' + dataName
            
            ;;If the ion plots or one of the select electron plots didn't pick this up, set it to 1
            ;;NOTE, oxy also needs to be scaled!!!
@@ -1070,7 +1090,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      ENDIF ELSE BEGIN
         inData        = inData * maximus.width_time 
      ENDELSE
-     dataName         = 'timeAvgd_' + dataName
+     dataName         = 'tAvgd_' + dataName
   ENDIF
 
   ;;gross rates?
@@ -1421,11 +1441,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      h2dStr.hasMask    = 1
 
      ;; IF KEYWORD_SET(alfDB_plot_struct.eSpec__Newell_2009_interp) THEN BEGIN
-     ;;    dataName      += '--2009'
+     ;;    dataName      += '-2009'
      ;; ENDIF
 
      IF KEYWORD_SET(alfDB_plot_struct.eSpec__use_2000km_file) THEN BEGIN
-        dataName      += '--2000kmFile'
+        dataName      += '-2kmFil'
      ENDIF
   ENDIF
 

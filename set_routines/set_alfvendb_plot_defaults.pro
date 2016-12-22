@@ -581,26 +581,26 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         IF N_ELEMENTS(nonStorm) GT 0 THEN BEGIN
            STR_ELEMENT,storm_opt,'nonStorm',nonStorm,/ADD_REPLACE
            IF KEYWORD_SET(nonStorm) THEN BEGIN
-              paramString = paramString + 'quiescent'
+              paramString = paramString + 'nS'
            ENDIF
         ENDIF
 
         IF N_ELEMENTS(recoveryPhase) GT 0 THEN BEGIN
            STR_ELEMENT,storm_opt,'recoveryPhase',recoveryPhase,/ADD_REPLACE
            IF KEYWORD_SET(recoveryPhase) THEN BEGIN
-              paramString = paramString + 'recoveryPhase'
+              paramString = paramString + 'rPhase'
            ENDIF
         ENDIF
 
         IF N_ELEMENTS(mainPhase) GT 0 THEN BEGIN
            STR_ELEMENT,storm_opt,'mainPhase',mainPhase,/ADD_REPLACE
            IF KEYWORD_SET(mainPhase) THEN BEGIN
-              paramString = paramString + 'mainPhase'
+              paramString = paramString + 'mPhase'
            ENDIF
         ENDIF
 
         IF N_ELEMENTS(all_storm_phases) GT 0 THEN BEGIN
-           STR_ELEMENT,storm_opt,'all_storm_phases',all_storm_phases,/ADD_REPLACE              
+           STR_ELEMENT,storm_opt,'allPhases',all_storm_phases,/ADD_REPLACE              
         ENDIF
 
         IF N_ELEMENTS(dstCutoff) GT 0 THEN BEGIN
@@ -608,7 +608,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         ENDIF
 
         IF N_ELEMENTS(smooth_dst) GT 0 THEN BEGIN
-           STR_ELEMENT,storm_opt,'smooth_dst',smooth_dst,/ADD_REPLACE
+           STR_ELEMENT,storm_opt,'smDst',smooth_dst,/ADD_REPLACE
         ENDIF
 
         IF N_ELEMENTS(use_mostRecent_Dst_files) GT 0 THEN BEGIN
