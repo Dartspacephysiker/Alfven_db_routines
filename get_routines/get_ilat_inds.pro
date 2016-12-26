@@ -29,33 +29,34 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi, $
      lats                        = maximus.ilat
   ENDELSE
 
-  IF STRUPCASE(hemi) EQ "BOTH" THEN BEGIN
-     ilat_i     = CGSETUNION( $
-                  WHERE(lats GE minI AND lats LE maxI), $
-                  WHERE(lats GE -ABS(maxI) AND lats LE -ABS(minI)))
-     n_ilat     = N_ELEMENTS(ilat_i)
-     n_not_ilat = N_ELEMENTS(lats)-n_ilat
+  CASE STRUPCASE(hemi) OF
+     "BOTH": BEGIN
+        ilat_i     = CGSETUNION( $
+                     WHERE(lats GE minI AND lats LE maxI), $
+                     WHERE(lats GE -ABS(maxI) AND lats LE -ABS(minI)))
+        n_ilat     = N_ELEMENTS(ilat_i)
+        n_not_ilat = N_ELEMENTS(lats)-n_ilat
 
-     PRINTF,lun,'Hemisphere: Northern AND Southern'
-     PRINTF,lun,"Converting negative ILAT values (Southern Hemi) to positive with ABS function..."
-     lats[ilat_i] = ABS(lats[ilat_i])
-     ;; PRINT,"STOP: Why were you ever converting negs to pos in the first place?"
-     ;; WAIT,2
-     ;; STOP
-  ENDIF ELSE BEGIN
-     IF STRUPCASE(hemi) EQ "SOUTH" THEN BEGIN
+        PRINTF,lun,'Hemisphere: Northern AND Southern'
+        PRINTF,lun,"Converting negative ILAT values (Southern Hemi) to positive with ABS function..."
+        lats[ilat_i] = ABS(lats[ilat_i])
+        ;; PRINT,"STOP: Why were you ever converting negs to pos in the first place?"
+        ;; WAIT,2
+        ;; STOP
+     END
+     "SOUTH": BEGIN
         ilat_i = WHERE(lats GE minI AND lats LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT)
         PRINTF,lun,'Hemisphere: Southern'
-     ENDIF ELSE BEGIN
-        IF STRUPCASE(hemi) EQ "NORTH" THEN BEGIN
-           ilat_i = WHERE(lats GE minI AND lats LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT) 
-           PRINTF,lun,'Hemisphere: Northern'
-        ENDIF ELSE BEGIN
-           PRINTF,lun,"Invalid hemisphere provided! Can't get ILAT indices..."
-           STOP
-        ENDELSE
-     ENDELSE
-  ENDELSE
+     END
+     "NORTH": BEGIN
+        ilat_i = WHERE(lats GE minI AND lats LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT) 
+        PRINTF,lun,'Hemisphere: Northern'
+     END
+     ELSE: BEGIN
+        PRINTF,lun,"Invalid hemisphere provided! Can't get ILAT indices..."
+        STOP
+     END
+  ENDCASE
 
   IF KEYWORD_SET(auroral_oval) THEN BEGIN
      PRINT,'Restricting ILATs with auroral oval boundaries ...'

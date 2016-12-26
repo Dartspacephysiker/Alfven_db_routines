@@ -28,11 +28,14 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
                           ] 
 
      customTKillStrings = [ $
-                          ['1996-12-08/' + ['08:44:20','08:46:10']] $
+                          ['1996-12-08/' + ['08:44:20','08:46:10']], $
+                          ['1999-02-17/' + ['20:58:30','20:59:30']], $ ;orb 9860 badness
+                          ['1997-12-30/' + ['05:53:40','05:54:00']], $ ;orb 5363 badness
+                          ['1998-11-13/' + ['02:54:32','02:54:35']]  $ ;orb 8809 badness 
                           ]
 
      customKill         = [1002, $
-                           ;; 8276, $ ;;This guy is bad for IMF stuff, but good for storms
+                           8276, $ ;;This guy is bad for IMF stuff, but good for storms
                            9585, $
                            12278,12297,12471, $
                            13214,13785, $

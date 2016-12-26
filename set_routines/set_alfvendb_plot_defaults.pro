@@ -71,7 +71,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
    DO_LOGAVG_THE_TIMEAVG=do_logAvg_the_timeAvg, $
    NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
-   NEWELL__COMBINE_ACCELERATED=Newell__combine_accelerated, $
+   NEWELL__COMBINE_ACCELERATED=Newell__comb_accelerated, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
    ESPEC__NO_MAXIMUS=no_maximus, $
    ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
@@ -151,6 +151,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
   COMPILE_OPT idl2
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
+
+  IF N_ELEMENTS(saveDir) EQ 0 THEN BEGIN 
+     saveDir = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/saves_output_etc/'
+  ENDIF
 
   ;for statistical auroral oval
   defHwMAurOval          = 0
@@ -503,7 +507,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          do_timeAvg_fluxQuantities         : 0B, $
                          do_logAvg_the_timeAvg             : 0B, $
                          Newell_analyze_eFlux              : 0B, $
-                         Newell__combine_accelerated       : 0B, $
+                         Newell__comb_accelerated          : 0B, $
                          for_eSpec_DBs                     : 0B, $
                          no_maximus                        : 0B, $
                          eSpec_flux_plots                  : 0B, $
@@ -915,9 +919,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(Newell_analyze_eFlux),/ADD_REPLACE
      ENDIF
 
-     IF N_ELEMENTS(Newell__combine_accelerated) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'Newell__combine_accelerated', $
-                    BYTE(Newell__combine_accelerated),/ADD_REPLACE
+     IF N_ELEMENTS(Newell__comb_accelerated) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'Newell__comb_accelerated', $
+                    BYTE(Newell__comb_accelerated),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(for_eSpec_DBs) GT 0 THEN BEGIN

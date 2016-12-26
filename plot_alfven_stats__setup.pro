@@ -229,8 +229,6 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
 
   COMPILE_OPT IDL2
 
-  saveDir = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/saves_output_etc/'
-
   need_fastLoc_i  = KEYWORD_SET(nEventPerMinPlot) $
                     OR KEYWORD_SET(probOccurrencePlot) $
                     OR KEYWORD_SET(do_timeAvg_fluxQuantities) $

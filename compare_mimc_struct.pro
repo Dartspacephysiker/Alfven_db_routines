@@ -106,6 +106,7 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
                  'maxNegMC', $
                  'binM', $
                  'shiftM', $
+                 'binI', $
                  'minI', $
                  'maxI', $
                  'hemi', $

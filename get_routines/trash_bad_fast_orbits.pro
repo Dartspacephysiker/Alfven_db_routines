@@ -45,6 +45,16 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                                  12278,12297,12471, $
                                  13214,13785, $
                                  14297] ;Round 4 resultant
+
+
+     customTKillStrings = [ $
+                          ['1996-12-08/' + ['08:44:20','08:46:10']], $
+                          ['1999-02-17/' + ['20:58:30','20:59:30']], $ ;orb 9860 badness
+                          ['1997-12-30/' + ['05:53:40','05:54:00']], $ ;orb 5363 badness
+                          ['1998-11-13/' + ['02:54:32','02:54:35']]  $ ;orb 8809 badness 
+                          ]
+
+
   ENDELSE
 
   IF N_ELEMENTS(blackballOrb_ranges) GT 0 THEN BEGIN
