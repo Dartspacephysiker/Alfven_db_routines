@@ -14,7 +14,8 @@ PRO JOURNAL__20161220__MAKE_AACGM_ETC_FOR_FASTLOC_5
   create_timeStamps       = 0
   get_GEI_coords          = 0
   do_GEO_MAG_conversions  = 0
-  do_AACGM_conversions    = 1
+  do_AACGM_conversions    = 0
+  stitch_files            = 1
 
   ;; test_single             = 0
 
@@ -37,6 +38,7 @@ PRO JOURNAL__20161220__MAKE_AACGM_ETC_FOR_FASTLOC_5
      GET_GEI_COORDS=get_GEI_coords, $
      DO_GEO_MAG_CONVERSIONS=do_GEO_MAG_conversions, $
      DO_AACGM_CONVERSIONS=do_AACGM_conversions, $
+     STITCH_FILES=stitch_files, $
      ORIG_ROUTINENAME=orig_routineName, $
      COORDDIR=coordDir, $
      OUTFILE_PREF=outFile_pref, $
