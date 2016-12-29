@@ -103,12 +103,10 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
    NEWELL__COMBINE_ACCELERATED=Newell__combine_accelerated, $
    ION__NO_MAXIMUS=ion__no_maximus, $
+   ION__NOMAPTO100KM=ion__noMap, $
    ION__DOWNGOING=ion__downgoing, $
    ION_FLUX_PLOTS=ion_flux_plots, $
    ION__JUNK_ALFVEN_CANDIDATES=ion__junk_alfven_candidates, $
-   ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
-   ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
-   ESPEC__NOMAPTO100KM=eSpec__noMap, $
    ESPEC__NO_MAXIMUS=no_maximus, $
    ESPEC__UPGOING=eSpec__upgoing, $
    ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
@@ -368,6 +366,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      NEWELL__COMBINE_ACCELERATED=Newell__combine_accelerated, $
      FOR_ION_DBS=for_ion_DBs, $
      ION__NO_MAXIMUS=ion__no_maximus, $
+     ION__NOMAPTO100KM=ion__noMap, $
      ION__DOWNGOING=ion__downgoing, $
      ION_FLUX_PLOTS=ion_flux_plots, $
      ION__JUNK_ALFVEN_CANDIDATES=ion__junk_alfven_candidates, $

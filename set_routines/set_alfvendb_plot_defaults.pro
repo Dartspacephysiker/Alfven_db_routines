@@ -74,6 +74,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    NEWELL__COMBINE_ACCELERATED=Newell__comb_accelerated, $
    FOR_ION_DBS=for_ion_DBs, $
    ION__NO_MAXIMUS=ion__no_maximus, $
+   ION__NOMAPTO100KM=ion__noMap, $
    ION__DOWNGOING=ion__downgoing, $
    ION_FLUX_PLOTS=ion_flux_plots, $
    ION__JUNK_ALFVEN_CANDIDATES=ion__junk_alfven_candidates, $
@@ -516,6 +517,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          Newell__comb_accelerated          : 0B, $
                          for_ion_DBs                       : 0B, $
                          ion__no_maximus                   : 0B, $
+                         ion__noMap                        : 0B, $
                          ion__downgoing                    : 0B, $
                          ion_flux_plots                    : 0B, $
                          ion__junk_alfven_candidates       : 0B, $
@@ -936,14 +938,20 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(Newell__comb_accelerated),/ADD_REPLACE
      ENDIF
 
+     ;;**IONS**
      IF N_ELEMENTS(for_ion_DBs) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'for_ion_DBs', $
                     BYTE(for_ion_DBs),/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(ion__noMap) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'ion__noMap', $
+                    BYTE(ion__noMap),/ADD_REPLACE
+     ENDIF
+
      IF N_ELEMENTS(ion__no_maximus) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'ion__no_maximus', $
-                    BYTE(no_maximus),/ADD_REPLACE
+                    BYTE(ion__no_maximus),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(ion_flux_plots) GT 0 THEN BEGIN
@@ -961,6 +969,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(ion__junk_alfven_candidates),/ADD_REPLACE
      ENDIF
 
+     ;;**ELECTRONS**
      IF N_ELEMENTS(for_eSpec_DBs) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'for_eSpec_DBs', $
                     BYTE(for_eSpec_DBs),/ADD_REPLACE

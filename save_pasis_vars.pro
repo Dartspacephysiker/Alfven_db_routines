@@ -40,7 +40,7 @@ PRO SAVE_PASIS_VARS, $
      saveStr += 'PASIS__fastLocInterped_i_list,'
   ENDIF
 
-  IF KEYWORD_SET(ion_junk) THEN BEGIN
+  IF KEYWORD_SET(PASIS__alfDB_plot_struct.for_ion_DBs) THEN BEGIN
      saveStr += 'PASIS__indices__ion_list,'                         + $
                 'PASIS__iFlux_eSpec_data,PASIS__iNumFlux_eSpec_data,' + $
                 'PASIS__ion__MLTs,PASIS__ion__ILATs,'

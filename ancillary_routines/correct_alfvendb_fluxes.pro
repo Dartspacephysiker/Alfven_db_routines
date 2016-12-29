@@ -156,7 +156,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      correctStr += "ELECTRONS: Earthward flow is positive" + STRING(10B)
 
      ;;07-ESA_CURRENT
-     maximus.esa_current[north_i]  = -1 * maximus.esa_current[north_i]
+     maximus.esa_current[north_i]  = -1. * maximus.esa_current[north_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'07-ESA_CURRENT             (Flip sign in N Hemi)'
      correctStr += '07-ESA_CURRENT             (Flip sign in N Hemi)' + STRING(10B)
      
@@ -176,13 +176,13 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
 
         ;;10-EFLUX_LOSSCONE_INTEG
         ;;Truly integrated over Alfven interval, already mapped to ionosphere per AS5
-        maximus.eflux_losscone_integ[south_i] = -1 * maximus.eflux_losscone_integ[south_i]
+        maximus.eflux_losscone_integ[south_i] = -1. * maximus.eflux_losscone_integ[south_i]
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'10-EFLUX_LOSSCONE_INTEG    (Flip sign in S Hemi)'
         correctStr += '10-EFLUX_LOSSCONE_INTEG    (Flip sign in S Hemi)' + STRING(10B)
 
      ;;11-TOTAL_EFLUX_INTEG
      ;;Field-aligned energy flux (with contrib. from ALL angles) that is already mapped to ionosphere per AS5
-     maximus.total_eflux_integ[south_i] = -1 * maximus.total_eflux_integ[south_i]
+     maximus.total_eflux_integ[south_i] = -1. * maximus.total_eflux_integ[south_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'11-TOTAL_EFLUX_INTEG       (Flip sign in S Hemi)'
      correctStr += '11-TOTAL_EFLUX_INTEG       (Flip sign in S Hemi)' + STRING(10B)
 
@@ -216,7 +216,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;; maximus.ion_flux[north_i] = -1 * maximus.ion_flux[north_i]
      ;; IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'ION_FLUX             (Flip sign in N Hemi)'
      ;;new
-     maximus.ion_flux[south_i]     = -1 * maximus.ion_flux[south_i]
+     maximus.ion_flux[south_i]     = -1. * maximus.ion_flux[south_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'15-ION_FLUX                (Flip sign in S Hemi)'
      correctStr += '15-ION_FLUX                (Flip sign in S Hemi)' + STRING(10B)
      
@@ -229,8 +229,8 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;; maximus.integ_ion_flux[south_i] = -1 * maximus.integ_ion_flux[south_i]
      ;; IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'17-INTEG_ION_FLUX          (Flip sign in S Hemi)'
      ;;new
-     maximus.integ_ion_flux             =  100 * maximus.integ_ion_flux
-     maximus.integ_ion_flux[north_i]    =   -1 * maximus.integ_ion_flux[north_i]
+     maximus.integ_ion_flux             =  100. * maximus.integ_ion_flux
+     maximus.integ_ion_flux[north_i]    =   -1. * maximus.integ_ion_flux[north_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'17-INTEG_ION_FLUX          (Flip sign in N Hemi, units to #/cm-s)'
      correctStr += '17-INTEG_ION_FLUX          (Flip sign in N Hemi, units to #/cm-s)' + STRING(10B)
 
@@ -239,8 +239,8 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;; maximus.integ_ion_flux_up[south_i] = -1 *maximus.integ_ion_flux_up[south_i]
      ;; IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'18-INTEG_ION_FLUX_UP       (Flip sign in S Hemi)'
      ;;new
-     maximus.integ_ion_flux_up          =  100 * maximus.integ_ion_flux_up
-     maximus.integ_ion_flux_up[north_i] =   -1 * maximus.integ_ion_flux_up[north_i]
+     maximus.integ_ion_flux_up          =  100. * maximus.integ_ion_flux_up
+     maximus.integ_ion_flux_up[north_i] =   -1. * maximus.integ_ion_flux_up[north_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'18-INTEG_ION_FLUX_UP       (Flip sign in N Hemi, scale to #/cm-s)'
      correctStr += '18-INTEG_ION_FLUX_UP       (Flip sign in N Hemi, scale to #/cm-s)' + STRING(10B)
 
@@ -260,17 +260,17 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      IF KEYWORD_SET(using_heavies) THEN BEGIN
 
      ;;26-PROTON_FLUX_UP
-        maximus.proton_flux_up[north_i] = -1 * maximus.proton_flux_up[north_i]
+        maximus.proton_flux_up[north_i] = -1. * maximus.proton_flux_up[north_i]
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'26-PROTON_FLUX_UP             (Flip sign in N Hemi)'
         correctStr += '26-PROTON_FLUX_UP             (Flip sign in N Hemi)' + STRING(10B)
 
      ;;28-OXY_FLUX_UP
-        maximus.oxy_flux_up[north_i] = -1 * maximus.oxy_flux_up[north_i]
+        maximus.oxy_flux_up[north_i] = -1. * maximus.oxy_flux_up[north_i]
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'28-OXY_FLUX_UP                (Flip sign in N Hemi)'
         correctStr += '28-OXY_FLUX_UP                (Flip sign in N Hemi)' + STRING(10B)
 
      ;;30-HELIUM_FLUX_UP
-        maximus.helium_flux_up[north_i] = -1 * maximus.helium_flux_up[north_i]
+        maximus.helium_flux_up[north_i] = -1. * maximus.helium_flux_up[north_i]
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'30-HELIUM_FLUX_UP             (Flip sign in N Hemi)'
         correctStr += '30-HELIUM_FLUX_UP             (Flip sign in N Hemi)' + STRING(10B)
 

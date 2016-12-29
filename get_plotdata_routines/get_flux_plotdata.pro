@@ -68,8 +68,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                       GET_CHARIE=get_chariE, $
                       EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                       ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
-                      IFLUX_ESPEC_DATA=iFlux_eSpec_data, $
-                      INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
+                      IFLUX_ION_DATA=iFlux_ion_data, $
+                      INUMFLUX_ION_DATA=iNumFlux_ion_data, $
                       INDICES__ESPEC=indices__eSpec, $
                       INDICES__ION=indices__ion, $
                       ION_DELTA_T=ion_delta_t, $
@@ -89,6 +89,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
   @fluxplot_defaults.pro
 
   @common__newell_espec.pro
+  @common__newell_ion_db.pro
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
   IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
@@ -220,6 +221,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            inData           = maximus.total_eflux_integ
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
+
+           h2dStr.grossFac  = 1e9
+           h2dStr.gUnits    = 'GW'
+
+
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
               h2dStr.title  = title__alfDB_ind_11__div_by_width_x
               ;; dataName     += '__div_by_width_x'
@@ -325,7 +331,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            inData           = maximus.total_eflux_integ
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
+
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+
+              h2dStr.grossFac  = 1e9
+              h2dStr.gUnits    = 'GW'
+
               h2dStr.title  = title__alfDB_ind_11__div_by_width_x
               ;; dataName     += '__div_by_width_x'
               ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
@@ -413,7 +424,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            ;; inData           = maximus.esa_current * (DOUBLE(1. / 1.6e-9))
 
-           inData = maximus.ELEC_ENERGY_FLUX / maximus.MAX_CHARE_LOSSCONE * 6.242*1.0e11
+           ;; inData = maximus.ELEC_ENERGY_FLUX / maximus.MAX_CHARE_LOSSCONE * 6.242*1.0e11
+
+           ;;Try it
+           inData           = (maximus.esa_current * (DOUBLE(1. / 1.6e-9)) * (-1.) +  $
+                              maximus.integ_ion_flux) / 1e4
 
            IF KEYWORD_SET(multiply_by_width_x) THEN BEGIN
               PRINTF,lun,"you realize you should probably just divide energy flux by chare, right?"
@@ -470,6 +485,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            inData           = maximus.esa_current
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
+
+           h2dStr.grossFac  = 1d15
+           h2dStr.gUnits    = 'GA'
+
         END
         ((STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_eSpec")) OR $
          (STRUPCASE(fluxPlotType) EQ STRUPCASE("eNumFlux_eSpec-2009"))): BEGIN
@@ -512,8 +531,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      ENDCASE
 
      IF KEYWORD_SET(multiply_by_width_x) AND can_mlt_by_w_x THEN BEGIN
-        scale_width_for_these_plots = [STRUPCASE("ESA_Number_flux"),STRUPCASE("eNumFlux_nonAlfven")]
-        scale_to_cm = WHERE(STRUPCASE(fluxPlotType) EQ scale_width_for_these_plots)
+        ;; scale_width_for_these_plots = [STRUPCASE("ESA_Number_flux"),STRUPCASE("eNumFlux_eSpec")]
+        ;; scale_to_cm = WHERE(STRUPCASE(fluxPlotType) EQ scale_width_for_these_plots)
+        scale_width_for_these_plots = [STRUPCASE("*ESA_Number_flux*"),STRUPCASE("*eNumFlux_eSpec*")]
+        scale_to_cm = WHERE(STRMATCH(STRUPCASE(fluxPlotType),scale_width_for_these_plots))
         IF scale_to_cm[0] EQ -1 THEN BEGIN
            factor = 1.D
         ENDIF ELSE BEGIN 
@@ -653,6 +674,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            inData           = maximus.integ_ion_flux
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
+
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
               h2dStr.title  = title__alfDB_ind_17__div_by_width_x
               ;; dataName     += '__div_by_width_x'
@@ -730,20 +752,22 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
               ENDCASE
            ENDIF
         END
-        STRUPCASE(fluxPlotType) EQ STRUPCASE("Ji_nonAlfven"): BEGIN
+        STRUPCASE(fluxPlotType) EQ STRUPCASE("Ji_ion"): BEGIN
            tmpFluxPlotType  = 'Ji_nAlf'
            h2dStr.title  = title__eSpec_ind_18
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            for_eSpec      = 1
            tmp_i            = indices__ion
-           inData           = iNumFlux_eSpec_data
+           ;; inData           = iNumFlux_ion_data
+           inData           = NEWELL_I__ion.ji
+
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
 
-           IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
+           IF KEYWORD_SET(alfDB_plot_struct.ion__junk_alfven_candidates) THEN BEGIN
               dataname += '-candidates_removed'
            ENDIF ELSE BEGIN
-              IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
+              IF KEYWORD_SET(alfDB_plot_struct.ion__all_fluxes) THEN BEGIN
                  dataname += '-all_fluxes'
               ENDIF
            ENDELSE
@@ -763,13 +787,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
               ENDCASE
            ENDIF
         END
-        STRUPCASE(fluxPlotType) EQ STRUPCASE("Jei_nonAlfven"): BEGIN
+        STRUPCASE(fluxPlotType) EQ STRUPCASE("Jei_ion"): BEGIN
            tmpFluxPlotType  = 'Jei_nAlf'
            h2dStr.title  = 'Ion Energy Flux (non-' + alficStr + ')'
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
            for_eSpec      = 1
            tmp_i            = indices__ion
-           inData           = iFlux_eSpec_data
+           inData           = iFlux_ion_data
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
 
@@ -791,8 +815,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      ENDCASE
 
      IF KEYWORD_SET(divide_by_width_x) AND can_div_by_w_x THEN BEGIN
-        scale_width_for_these_plots = [STRUPCASE("Integ"),STRUPCASE("Max"),STRUPCASE("Max_Up"),STRUPCASE("Integ_Up"),STRUPCASE("Jei_nonAlfven")]
-        scale_to_cm = WHERE(STRUPCASE(fluxPlotType) EQ scale_width_for_these_plots)
+        ;; scale_width_for_these_plots = [STRUPCASE("Integ"),STRUPCASE("Max"),STRUPCASE("Max_Up"),STRUPCASE("Integ_Up"),STRUPCASE("Jei_ion")]
+        ;; scale_to_cm = WHERE(STRUPCASE(fluxPlotType) EQ scale_width_for_these_plots)
+        scale_width_for_these_plots = [STRUPCASE("*Integ*"),STRUPCASE("*Max*"),STRUPCASE("*Max_Up*"),STRUPCASE("*Integ_Up*"),STRUPCASE("*Jei_ion*")]
+        scale_to_cm = WHERE(STRMATCH(fluxPlotType,scale_width_for_these_plots))
         IF scale_to_cm[0] EQ -1 THEN BEGIN
            factor           = 1.D
         ENDIF ELSE BEGIN 

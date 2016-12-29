@@ -36,8 +36,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
    EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
    ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
-   IFLUX_ESPEC_DATA=iFlux_eSpec_data, $
-   INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
+   IFLUX_ION_DATA=iFlux_ion_data, $
+   INUMFLUX_ION_DATA=iNumFlux_ion_data, $
    INDICES__ESPEC=indices__eSpec, $
    INDICES__ION=indices__ion, $
    ;; ESPEC__NO_MAXIMUS=no_maximus, $
@@ -192,6 +192,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   @common__maximus_vars.pro
   @common__fastloc_vars.pro
   @common__newell_espec.pro
+  @common__newell_ion_db.pro
 
   ;;set up variance plot inds
   varPlotRawInds         = !NULL
@@ -213,8 +214,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
            in_MLTS  = NEWELL__eSpec.mlt[indices__eSpec]
            in_ILATS = NEWELL__eSpec.ilat[indices__eSpec]
         END
-        ( (N_ELEMENTS(iFlux_eSpec_data) GT 0) OR $
-          (N_ELEMENTS(iNumFlux_eSpec_data) GT 0) ): BEGIN
+        ( (N_ELEMENTS(iFlux_ion_data) GT 0) OR $
+          (N_ELEMENTS(iNumFlux_ion_data) GT 0) ): BEGIN
            in_MLTS  = NEWELL_I__ion.mlt[indices__ion]
            in_ILATS = NEWELL_I__ion.ilat[indices__ion]
         END
@@ -331,8 +332,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
      IF KEYWORD_SET(eFlux_eSpec_data   ) OR $
         KEYWORD_SET(eNumFlux_eSpec_data) OR $
-        KEYWORD_SET(iFlux_eSpec_data   ) OR $
-        KEYWORD_SET(iNumFlux_eSpec_data)    $
+        KEYWORD_SET(iFlux_ion_data   ) OR $
+        KEYWORD_SET(iNumFlux_ion_data)    $
      THEN BEGIN
         eSpec_tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
                                  fastLocInterped_i, $
@@ -1222,7 +1223,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   
   ;;########ION FLUX########
   IF KEYWORD_SET(ionPlots) THEN BEGIN
-     IF N_ELEMENTS(iFlux_eSpec_data) GT 0 OR N_ELEMENTS(iNumFlux_eSpec_data) GT 0 THEN BEGIN
+     IF N_ELEMENTS(iFlux_ion_data) GT 0 OR N_ELEMENTS(iNumFlux_ion_data) GT 0 THEN BEGIN
         GET_H2D_NEVENTS_AND_MASK,IN_MLTS=in_MLTs, $
                                  IN_ILATS=in_MLTs, $
                                  ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -1303,8 +1304,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
                           NOPOSFLUX=noPosFlux, $
                           NONEGFLUX=noNegFlux, $
                           ABSFLUX=absFlux, $
-                          IFLUX_ESPEC_DATA=iFlux_eSpec_data, $
-                          INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
+                          IFLUX_ION_DATA=iFlux_ion_data, $
+                          INUMFLUX_ION_DATA=iNumFlux_ion_data, $
                           INDICES__ION=indices__ion, $
                           ION_DELTA_T=ion_delta_t, $
                           ESPEC_MLT=ion__mlts, $
@@ -1344,7 +1345,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                           ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
                           FANCY_PLOTNAMES=fancy_plotNames
         
-        IF ~KEYWORD_SET(iNumFlux_eSpec_data) AND ~KEYWORD_SET(iFlux_eSpec_data) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+        IF ~KEYWORD_SET(iNumFlux_ion_data) AND ~KEYWORD_SET(iFlux_ion_data) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
         h2dStrArr             = [h2dStrArr,h2dStr] 
         IF alfDB_plot_struct.keepMe THEN BEGIN 

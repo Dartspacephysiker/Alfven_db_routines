@@ -31,7 +31,8 @@ PRO H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
   CASE 1 OF
      KEYWORD_SET(EA_binning): BEGIN
         LOAD_EQUAL_AREA_BINNING_STRUCT,EA
-
+        EA.minM    *= 15.
+        EA.maxM    *= 15.
         grateMe_i   = WHERE(~h2d_masked,nGrate)
         dusk_i      = WHERE((EA.minM GE 180) AND (EA.maxM GE 180),nPureDusk)
         dawn_i      = WHERE((EA.minM LE 180) AND (EA.maxM LE 180),nPureDawn)
@@ -130,7 +131,7 @@ PRO H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
            pEvenMidN_i = !NULL
         ENDIF
 
-        ctrLon      = MEAN([[EA.minM],[EA.maxm]],DIMENSION=2,/DOUBLE)*15.D
+        ctrLon      = MEAN([[EA.minM],[EA.maxm]],DIMENSION=2,/DOUBLE)
         
         FOR j=0,nLats-2 DO BEGIN 
 
