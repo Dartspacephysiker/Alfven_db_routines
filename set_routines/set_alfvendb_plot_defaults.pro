@@ -72,8 +72,14 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    DO_LOGAVG_THE_TIMEAVG=do_logAvg_the_timeAvg, $
    NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
    NEWELL__COMBINE_ACCELERATED=Newell__comb_accelerated, $
+   FOR_ION_DBS=for_ion_DBs, $
+   ION__NO_MAXIMUS=ion__no_maximus, $
+   ION__DOWNGOING=ion__downgoing, $
+   ION_FLUX_PLOTS=ion_flux_plots, $
+   ION__JUNK_ALFVEN_CANDIDATES=ion__junk_alfven_candidates, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
    ESPEC__NO_MAXIMUS=no_maximus, $
+   ESPEC__UPGOING=eSpec__upgoing, $
    ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
    ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
    ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
@@ -508,8 +514,14 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          do_logAvg_the_timeAvg             : 0B, $
                          Newell_analyze_eFlux              : 0B, $
                          Newell__comb_accelerated          : 0B, $
+                         for_ion_DBs                       : 0B, $
+                         ion__no_maximus                   : 0B, $
+                         ion__downgoing                    : 0B, $
+                         ion_flux_plots                    : 0B, $
+                         ion__junk_alfven_candidates       : 0B, $
                          for_eSpec_DBs                     : 0B, $
                          no_maximus                        : 0B, $
+                         eSpec__upgoing                    : 0B, $
                          eSpec_flux_plots                  : 0B, $
                          eSpec__junk_alfven_candidates     : 0B, $
                          eSpec__all_fluxes                 : 0B, $
@@ -924,6 +936,31 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(Newell__comb_accelerated),/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(for_ion_DBs) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'for_ion_DBs', $
+                    BYTE(for_ion_DBs),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(ion__no_maximus) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'ion__no_maximus', $
+                    BYTE(no_maximus),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(ion_flux_plots) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'ion_flux_plots', $
+                    BYTE(ion_flux_plots),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(ion__downgoing) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'ion__downgoing', $
+                    BYTE(ion__downgoing),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(ion__junk_alfven_candidates) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'ion__junk_alfven_candidates', $
+                    BYTE(ion__junk_alfven_candidates),/ADD_REPLACE
+     ENDIF
+
      IF N_ELEMENTS(for_eSpec_DBs) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'for_eSpec_DBs', $
                     BYTE(for_eSpec_DBs),/ADD_REPLACE
@@ -937,6 +974,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(eSpec_flux_plots) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'eSpec_flux_plots', $
                     BYTE(eSpec_flux_plots),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(eSpec__upgoing) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'eSpec__upgoing', $
+                    BYTE(eSpec__upgoing),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(eSpec__junk_alfven_candidates) GT 0 THEN BEGIN

@@ -1,6 +1,7 @@
 ;;12/17/16
 PRO PLOT_ALFVEN_STATS__SETUP, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
+   FOR_ION_DBS=for_ion_DBs, $
    NEED_FASTLOC_I=need_fastLoc_i, $
    USE_STORM_STUFF=use_storm_stuff, $
    AE_STUFF=ae_stuff, $    
@@ -101,7 +102,15 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    LUN=lun, $
    NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
    NEWELL__COMBINE_ACCELERATED=Newell__combine_accelerated, $
+   ION__NO_MAXIMUS=ion__no_maximus, $
+   ION__DOWNGOING=ion__downgoing, $
+   ION_FLUX_PLOTS=ion_flux_plots, $
+   ION__JUNK_ALFVEN_CANDIDATES=ion__junk_alfven_candidates, $
+   ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
+   ESPEC__USE_2000KM_FILE=eSpec__use_2000km_file, $
+   ESPEC__NOMAPTO100KM=eSpec__noMap, $
    ESPEC__NO_MAXIMUS=no_maximus, $
+   ESPEC__UPGOING=eSpec__upgoing, $
    ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
    ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
    ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
@@ -240,10 +249,14 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
                     OR KEYWORD_SET(numOrbLim) $
                     OR KEYWORD_SET(eSpec__t_probOccurrence)
 
-  for_eSpec_DBs   = KEYWORD_SET(eSpec_flux_plots                ) $
-     OR KEYWORD_SET(eSpec__newellPlot_probOccurrence) $
-     OR KEYWORD_SET(eSpec__t_probOccurrence         ) $
-     OR KEYWORD_SET(no_maximus                      )
+  for_eSpec_DBs   = (KEYWORD_SET(eSpec_flux_plots    ) $
+                     OR KEYWORD_SET(eSpec__newellPlot_probOccurrence) $
+                     OR KEYWORD_SET(eSpec__t_probOccurrence         ) $
+                     OR KEYWORD_SET(no_maximus                      ))
+
+  for_ion_DBs     = (KEYWORD_SET(ion_flux_plots                     ) $ 
+                     OR KEYWORD_SET(ion__t_probOccurrence           ) $
+                     OR KEYWORD_SET(ion__no_maximus                 ))
   
   use_storm_stuff = KEYWORD_SET(nonStorm        ) + $
                     KEYWORD_SET(mainPhase       ) + $
@@ -353,8 +366,14 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      LUN=lun, $
      NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
      NEWELL__COMBINE_ACCELERATED=Newell__combine_accelerated, $
+     FOR_ION_DBS=for_ion_DBs, $
+     ION__NO_MAXIMUS=ion__no_maximus, $
+     ION__DOWNGOING=ion__downgoing, $
+     ION_FLUX_PLOTS=ion_flux_plots, $
+     ION__JUNK_ALFVEN_CANDIDATES=ion__junk_alfven_candidates, $
      FOR_ESPEC_DBS=for_eSpec_DBs, $
      ESPEC__NO_MAXIMUS=no_maximus, $
+     ESPEC__UPGOING=eSpec__upgoing, $
      ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
      ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
      ESPEC__ALL_FLUXES=eSpec__all_fluxes, $

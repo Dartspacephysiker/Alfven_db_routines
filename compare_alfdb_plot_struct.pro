@@ -12,8 +12,12 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
 
   except_list = ["dont_blackball_fastLoc"            , $
                  "dont_blackball_maximus"            , $
+                 "for_ion_DBs"                       , $
+                 "ion__all_fluxes"                   , $
+                 "ion__downgoing"                    , $
                  "for_eSpec_DBs"                     , $
                  "eSpec__all_fluxes"                 , $
+                 "eSpec__upgoing"                    , $
                  "eSpec__Newell_2009_interp"         , $
                  "disregard_sample_t"                , $
                  "maskMin"                           , $
@@ -133,6 +137,26 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
      inds_reset += 1B
   ENDIF
 
+  IF alfDB_plot_struct1.for_ion_DBs NE alfDB_plot_struct2.for_ion_DBs THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"for_ion_DBs", $
+           alfDB_plot_struct1.for_ion_DBs,alfDB_plot_struct2.for_ion_DBs
+     DBs_reset  += 1B
+  ENDIF
+
+  IF alfDB_plot_struct1.ion__all_fluxes NE alfDB_plot_struct2.ion__all_fluxes THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"ion__all_fluxes", $
+           alfDB_plot_struct1.ion__all_fluxes,alfDB_plot_struct2.ion__all_fluxes
+     inds_reset += 1B
+  ENDIF
+
+  IF alfDB_plot_struct1.ion__downgoing NE alfDB_plot_struct2.ion__downgoing THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"ion__downgoing", $
+           alfDB_plot_struct1.ion__downgoing,alfDB_plot_struct2.ion__downgoing
+     inds_reset += 1B
+     DBs_reset  += 1B
+     plots_reset += 1B
+  ENDIF
+
   IF alfDB_plot_struct1.for_eSpec_DBs NE alfDB_plot_struct2.for_eSpec_DBs THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"for_eSpec_DBs", $
            alfDB_plot_struct1.for_eSpec_DBs,alfDB_plot_struct2.for_eSpec_DBs
@@ -143,6 +167,14 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"eSpec__all_fluxes", $
            alfDB_plot_struct1.eSpec__all_fluxes,alfDB_plot_struct2.eSpec__all_fluxes
      inds_reset += 1B
+  ENDIF
+
+  IF alfDB_plot_struct1.eSpec__upgoing NE alfDB_plot_struct2.eSpec__upgoing THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"eSpec__upgoing", $
+           alfDB_plot_struct1.eSpec__upgoing,alfDB_plot_struct2.eSpec__upgoing
+     inds_reset += 1B
+     DBs_reset  += 1B
+     plots_reset += 1B
   ENDIF
 
   IF alfDB_plot_struct1.eSpec__Newell_2009_interp NE alfDB_plot_struct2.eSpec__Newell_2009_interp THEN BEGIN
