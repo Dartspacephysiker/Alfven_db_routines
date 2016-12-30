@@ -46,7 +46,7 @@ PRO H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
                             (EA.minM LE 135 AND EA.maxM LE 135  ),nPureMorn)
         even_i      = WHERE((EA.minM GE 225 AND EA.maxM GE 225 ) AND $
                             (EA.minM LE 315 AND EA.maxM LE 315  ),nPureEven)
-        midN_i      = WHERE((EA.minM GE 315 AND EA.maxM GE 315 ) AND $
+        midN_i      = WHERE((EA.minM GE 315 AND EA.maxM GE 315 ) OR  $
                             (EA.minM LE 45  AND EA.maxM LE 45  ),nPuremidN)
 
         ;;Weird stuff happens at boundaries, so divide 'em up

@@ -63,6 +63,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    CHAREPLOTS=charEPlots, $
    CHARETYPE=charEType, $
    CHARIEPLOTS=chariEPlots, $
+   MAGCPLOTS=magCPlots, $
    ;; AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -235,26 +236,27 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      altitudeRange          = defAltRange ;Rob Pfaff says no lower than 1000m
   ENDIF
 
-  ;Auroral oval
-  IF N_ELEMENTS(HwMAurOval) EQ 0 THEN HwMAurOval = defHwMAurOval
-  IF N_ELEMENTS(HwMKpInd) EQ 0 THEN HwMKpInd     = defHwMKpInd
+                                ;Auroral oval
+  IF N_ELEMENTS(HwMAurOval       ) EQ 0 THEN HwMAurOval        = defHwMAurOval
+  IF N_ELEMENTS(HwMKpInd         ) EQ 0 THEN HwMKpInd          = defHwMKpInd
 
-  IF N_ELEMENTS(nPlots) EQ 0 THEN nPlots = 0                              ; do num events plots?
-  IF N_ELEMENTS(ePlots) EQ 0 THEN ePlots =  0                             ;electron energy flux plots?
-  IF N_ELEMENTS(eFluxPlotType) EQ 0 THEN eFluxPlotType = defEFluxPlotType ;options are "Integ" and "Max"
-  IF N_ELEMENTS(iFluxPlotType) EQ 0 THEN iFluxPlotType = defIFluxPlotType ;options are "Integ", "Max", "Integ_Up", "Max_Up", and "Energy"
-  IF N_ELEMENTS(eNumFlPlots) EQ 0 THEN eNumFlPlots = 0                    ;electron number flux plots?
-  IF N_ELEMENTS(eNumFlPlotType) EQ 0 THEN eNumFlPlotType = defENumFlPlotType ;options are "Total_Eflux_Integ","Eflux_Losscone_Integ", "ESA_Number_flux"
-  IF N_ELEMENTS(pPlots) EQ 0 THEN pPlots =  0                             ;Poynting flux [estimate] plots?
-  IF N_ELEMENTS(ionPlots) EQ 0 THEN ionPlots =  0                         ;ion Plots?
-  IF N_ELEMENTS(charEPlots) EQ 0 THEN charEPlots =  0                     ;char E plots?
-  IF N_ELEMENTS(charEType) EQ 0 THEN charEType = defCharEPlotType         ;options are "lossCone" and "Total"
-  IF N_ELEMENTS(chariEPlots) EQ 0 THEN chariEPlots =  0                     ;char E plots?
-  IF N_ELEMENTS(orbContribPlot) EQ 0 THEN orbContribPlot =  0             ;Contributing orbits plot?
-  IF N_ELEMENTS(orbTotPlot) EQ 0 THEN orbTotPlot =  0                     ;"Total orbits considered" plot?
-  IF N_ELEMENTS(orbFreqPlot) EQ 0 THEN orbFreqPlot =  0                   ;Contributing/total orbits plot?
-  IF N_ELEMENTS(nEventPerOrbPlot) EQ 0 THEN nEventPerOrbPlot =  0         ;N Events/orbit plot?
-  IF N_ELEMENTS(nEventPerMinPlot) EQ 0 THEN nEventPerMinPlot =  0         ;N Events/min plot?
+  IF N_ELEMENTS(nPlots           ) EQ 0 THEN nPlots            = 0B                ; do num events plots?
+  IF N_ELEMENTS(ePlots           ) EQ 0 THEN ePlots            = 0B                ;electron energy flux plots?
+  IF N_ELEMENTS(eFluxPlotType    ) EQ 0 THEN eFluxPlotType     = defEFluxPlotType  ;options are "Integ" and "Max"
+  IF N_ELEMENTS(iFluxPlotType    ) EQ 0 THEN iFluxPlotType     = defIFluxPlotType  ;options are "Integ", "Max", "Integ_Up", "Max_Up", and "Energy"
+  IF N_ELEMENTS(eNumFlPlots      ) EQ 0 THEN eNumFlPlots       = 0B                ;electron number flux plots?
+  IF N_ELEMENTS(eNumFlPlotType   ) EQ 0 THEN eNumFlPlotType    = defENumFlPlotType ;options are "Total_Eflux_Integ","Eflux_Losscone_Integ", "ESA_Number_flux"
+  IF N_ELEMENTS(pPlots           ) EQ 0 THEN pPlots            = 0B                ;Poynting flux [estimate] plots?
+  IF N_ELEMENTS(ionPlots         ) EQ 0 THEN ionPlots          = 0B                ;ion Plots?
+  IF N_ELEMENTS(charEPlots       ) EQ 0 THEN charEPlots        = 0B                ;char E plots?
+  IF N_ELEMENTS(charEType        ) EQ 0 THEN charEType         = defCharEPlotType  ;options are "lossCone" and "Total"
+  IF N_ELEMENTS(chariEPlots      ) EQ 0 THEN chariEPlots       = 0B                ;char E plots?
+  IF N_ELEMENTS(magCPlots        ) EQ 0 THEN magCPlots         = 0B
+  IF N_ELEMENTS(orbContribPlot   ) EQ 0 THEN orbContribPlot    = 0B ;Contributing orbits plot?
+  IF N_ELEMENTS(orbTotPlot       ) EQ 0 THEN orbTotPlot        = 0B ;"Total orbits considered" plot?
+  IF N_ELEMENTS(orbFreqPlot      ) EQ 0 THEN orbFreqPlot       = 0B ;Contributing/total orbits plot?
+  IF N_ELEMENTS(nEventPerOrbPlot ) EQ 0 THEN nEventPerOrbPlot  = 0B ;N Events/orbit plot?
+  IF N_ELEMENTS(nEventPerMinPlot ) EQ 0 THEN nEventPerMinPlot  = 0B ;N Events/min plot?
 
   ;; IF KEYWORD_SET(autoscale_fluxPlots) THEN PRINT,"Autoscaling flux plots..."
 
@@ -506,6 +508,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          ionPlots                          : 0B, $
                          charEPlots                        : 0B, $
                          chariEPlots                       : 0B, $
+                         magCPlots                         : 0B, $
                          ;; autoscale_fluxPlots               : 0B, $
                          fluxPlots__remove_outliers        : 0B, $
                          fluxPlots__remove_log_outliers    : 0B, $
@@ -891,6 +894,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(chariEPlots) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'chariEPlots', $
                     BYTE(chariEPlots),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(magCPlots) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'magCPlots', $
+                    BYTE(magCPlots),/ADD_REPLACE
      ENDIF
 
      ;; IF N_ELEMENTS(autoscale_fluxPlots) GT 0 THEN BEGIN

@@ -10,6 +10,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              DB_TFILE=DB_tFile, $
                              CORRECT_FLUXES=correct_fluxes, $
                              DO_NOT_MAP_ESA_CURRENT=do_not_map_esa_current, $
+                             DO_NOT_MAP_MAG_CURRENT=do_not_map_mag_current, $
                              DO_NOT_MAP_PFLUX=do_not_map_pflux, $
                              DO_NOT_MAP_IONFLUX=do_not_map_ionflux, $
                              DO_NOT_MAP_HEAVIES=do_not_map_heavies, $
@@ -295,6 +296,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   IF correct_fluxes AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
      CORRECT_ALFVENDB_FLUXES,(*pDBStruct), $
                              MAP_ESA_CURRENT_TO_IONOS=~KEYWORD_SET(do_not_map_esa_current) $
+                             AND ~KEYWORD_SET(no_mapping), $
+                             MAP_MAG_CURRENT_TO_IONOS=~KEYWORD_SET(do_not_map_mag_current) $
                              AND ~KEYWORD_SET(no_mapping), $
                              MAP_PFLUX_TO_IONOS=~KEYWORD_SET(do_not_map_pflux) $
                              AND ~KEYWORD_SET(no_mapping), $

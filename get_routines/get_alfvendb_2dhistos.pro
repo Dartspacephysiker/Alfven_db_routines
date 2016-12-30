@@ -81,6 +81,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NONEGCHARIE=noNegCharie, $
    NOPOSCHARIE=noPosCharie, $
    CHARIEPLOTRANGE=ChariePlotRange, $
+   MAGCPLOTS=magCPlots, $
+   LOGMAGCPLOT=logMagCPlot, $
+   ABSMAGC=absMagC, $
+   NONEGMAGC=noNegMagC, $
+   NOPOSMAGC=noPosMagC, $
+   MAGCPLOTRANGE=MagCPlotRange, $
    AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -1660,6 +1666,76 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        ABSFLUX=absChariE, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logChariEPlot)), $
+                       DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                       DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                       DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                       GROSSRATE__H2D_AREAS=h2dAreas, $
+                       DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                       GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+                       GROSSRATE__CENTERS_MLT=centersMLT, $
+                       GROSSRATE__CENTERS_ILAT=centersILAT, $
+                       GROSSCONVFACTOR=grossConvFactor, $
+                       WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
+                       GROSSLUN=grossLun, $
+                       SHOW_INTEGRALS=show_integrals, $
+                       THISTDENOMINATOR=tHistDenominator, $
+                       DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                       MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                       MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                       H2DPROBOCC=H2DProbOcc, $
+                       H2DSTR=h2dStr, $
+                       TMPLT_H2DSTR=tmplt_h2dStr, $
+                       H2D_NONZERO_NEV_I=hEv_nz_i, $
+                       H2DFLUXN=h2dFluxN, $
+                       H2DMASK=h2dStrArr[KEYWORD_SET(nPlots)].data, $
+                       OUT_H2DMASK=out_h2dMask, $
+                       DATANAME=dataName, $
+                       DATARAWPTR=dataRawPtr, $
+                       MEDHISTOUTDATA=medHistOutData, $
+                       MEDHISTOUTTXT=medHistOutTxt, $
+                       MEDHISTDATADIR=txtOutputDir, $
+                       DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                       ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                       FANCY_PLOTNAMES=fancy_plotNames
+     
+     h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+
+     h2dStrArr              = [h2dStrArr,h2dStr] 
+     IF alfDB_plot_struct.keepMe THEN BEGIN 
+        dataNameArr         = [dataNameArr,dataName] 
+        dataRawPtrArr       = [dataRawPtrArr,dataRawPtr] 
+        varPlotH2DInds      = [varPlotH2DInds,N_ELEMENTS(h2dStrArr)-1]
+        varPlotRawInds      = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+        removed_ii_listArr  = [removed_ii_listArr,LIST(out_removed_ii)]
+        ;;varplotiskeepInds   = [varPlotIsKeepInds,0]
+     ENDIF  
+     
+     IF KEYWORD_SET(do_grossRate_fluxQuantities) $
+        OR KEYWORD_SET(do_grossRate_with_long_width) THEN BEGIN
+        grossConvFactorArr  = [grossConvFactorArr,grossConvFactor]
+     ENDIF
+
+  ENDIF
+
+  ;;########CHARACTERISTIC ION ENERGY########
+  IF KEYWORD_SET(magCPlots) THEN BEGIN
+     GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_MAGC, $
+                       ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                       IMF_STRUCT=IMF_struct, $
+                       MIMC_STRUCT=MIMC_struct, $
+                       OUTH2DBINSMLT=outH2DBinsMLT, $
+                       OUTH2DBINSILAT=outH2DBinsILAT, $
+                       OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                       PLOTRANGE=magCPlotRange, $
+                       PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_magCPlots), $
+                       NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
+                       REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                       REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
+                       NOPOSFLUX=noPosMagC, $
+                       NONEGFLUX=noNegMagC, $
+                       ABSFLUX=absMagC, $
+                       OUT_REMOVED_II=out_removed_ii, $
+                       LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logMagCPlot)), $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                        DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                        DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $

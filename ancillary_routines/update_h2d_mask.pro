@@ -1,5 +1,5 @@
 PRO UPDATE_H2D_MASK,h2dStr,H2DBinsMLT,H2DBinsILAT,H2DFluxN,dataName, $
-                    h2dMask,h2d_nonzero_nEv_i, $
+                    h2dMask,hEv_nz_i, $
    LUN=lun
 
   IF ~KEYWORD_SET(lun) THEN lun = -1
@@ -28,7 +28,7 @@ PRO UPDATE_H2D_MASK,h2dStr,H2DBinsMLT,H2DBinsILAT,H2DFluxN,dataName, $
         h2dmask[ind]              = 255
      ENDFOR
      ;; h2dStr.hasMask                   = 1
-     h2d_nonzero_nEv_i                = WHERE(~h2dMask)
+     hEv_nz_i                = WHERE(~h2dMask)
      ;; PRINTF,lun,"Might have problems in UPDATE_H2D_MASK now that each h2dStr has its own mask..."
      PRINTF,lun,""
   ENDIF

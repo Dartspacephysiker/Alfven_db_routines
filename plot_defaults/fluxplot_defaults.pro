@@ -3,14 +3,16 @@ fluxPlotColorBarLabelFormat  = '(D0.2)'
 fluxPlotPPlotCBLabelFormat   = '(D0.2)'
 fluxPlotEPlotCBLabelFormat   = '(G0.2)'
 fluxPlotChareCBLabelFormat   = '(D0.1)'
-fluxPlotChariCBLabelFormat   = '(D0.2)'
+fluxPlotCharieCBLabelFormat  = '(D0.2)'
+fluxPlotMagCCBLabelFormat  = '(D0.2)'
 
 logeFluxLabels               = 0
 logeNumFluxLabels            = 0
 logPFluxLabels               = 0
 logiFluxLabels               = 0
 logChareLabels               = 0
-logChariLabels               = 0
+logCharieLabels              = 0
+logMagCLabels              = 0
 
 eFlux_do_plotIntegral        = 0
 eNumFlux_do_plotIntegral     = 0
@@ -18,6 +20,7 @@ PFlux_do_plotIntegral        = 0
 iFlux_do_plotIntegral        = 0
 Charee_do_plotIntegral       = 0
 Charie_do_plotIntegral       = 0
+MagC_do_plotIntegral       = 0
 
 eFlux_do_midCBLabel          = 1
 eNumFlux_do_midCBLabel       = 1
@@ -25,6 +28,7 @@ PFlux_do_midCBLabel          = 1
 iFlux_do_midCBLabel          = 1
 Charee_do_midCBLabel         = 1
 Charie_do_midCBLabel         = 1
+MagC_do_midCBLabel         = 1
 
 ;; energyFluxStr                = 'ergs/cm!U2!N-s'
 energyFluxStr                = 'mW m!U-2!N'
@@ -55,7 +59,8 @@ scAltString_pub              = ', at FAST altitude'
 ;; ENDIF
 
 IF KEYWORD_SET(fancy_plotNames) THEN BEGIN
-title__alfDB_ind_07          = 'ESA Current ( microA/m!U2!N)' + ionosphString_pub    ;"ESA_CURRENT"
+title__alfDB_ind_06          = 'Mag Current (microA/m!U2!N)' + scAltString_pub
+title__alfDB_ind_07          = 'ESA Current (microA/m!U2!N)' + ionosphString_pub    ;"ESA_CURRENT"
 title__alfDB_ind_08          = 'Max Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString_pub    ;"Max"     
 title__alfDB_ind_09          = 'Max e!U-!N Flux, whole dist. (' + energyFluxStr + ')' + ionosphString_pub ;"Integ"
 title__alfDB_ind_10          = 'Integrated Loss Cone e!U-!N Energy Flux (' + intEnergyFluxStr + ')' + ionosphString_pub      ;"Eflux_Losscone_Integ"
@@ -99,6 +104,7 @@ title__alfDB_ind_49          = 'Log-averaged Poynting Flux (' + energyFluxStr + 
 
 ENDIF ELSE BEGIN
 
+title__alfDB_ind_06          = 'Mag Current (microA/m!U2!N)' + scAltString_pub
 title__alfDB_ind_07          = 'ESA Current ( microA/m!U2!N)' + ionosphString    ;"ESA_CURRENT"     
 title__alfDB_ind_08          = 'Max L.C. e!U-!N Flux (' + energyFluxStr + ')' + ionosphString         ;"Integ"
 title__alfDB_ind_09          = 'Max e!U-!N Flux, whole dist. (' + energyFluxStr + ')' + ionosphString ;"Max"

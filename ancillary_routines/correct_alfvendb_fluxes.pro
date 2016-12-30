@@ -93,6 +93,7 @@
 ;-
 PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             MAP_ESA_CURRENT_TO_IONOS=map_esa_current, $
+                            MAP_MAG_CURRENT_TO_IONOS=map_mag_current, $
                             MAP_PFLUX_TO_IONOS=map_pflux, $
                             DESPUNDB=despunDB, $
                             CHASTDB=chastDB, $
@@ -152,9 +153,14 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
      ;;ELECTRONS--Earthward flow is positive
 
-     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"ELECTRONS: Earthward flow is positive"
-     correctStr += "ELECTRONS: Earthward flow is positive" + STRING(10B)
+     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"MAG_CURRENT: Earthward flow is positive"
+     correctStr += "MAG_CURRENT: Earthward flow is positive" + STRING(10B)
 
+     ;;06-MAG_CURRENT
+     maximus.mag_current[north_i]  = -1. * maximus.mag_current[north_i]
+     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'06-MAG_CURRENT             (Flip sign in N Hemi)'
+     correctStr += '06-MAG_CURRENT             (Flip sign in N Hemi)' + STRING(10B)
+     
      ;;07-ESA_CURRENT
      maximus.esa_current[north_i]  = -1. * maximus.esa_current[north_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'07-ESA_CURRENT             (Flip sign in N Hemi)'
@@ -299,6 +305,20 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ENDIF
 
      ;;Added 2016/04/23
+     IF KEYWORD_SET(map_mag_current) AND ~maximus.info.mapped.mag_current THEN BEGIN
+        IF KEYWORD_SET(map_sqrt_fluxes) THEN BEGIN
+           maximus.mag_current       = maximus.mag_current * SQRT(mapRatio.ratio)
+           maximus.info.mapped.sqrt  = 1B
+        ENDIF ELSE BEGIN
+           maximus.mag_current       = maximus.mag_current * mapRatio.ratio
+        ENDELSE
+
+        IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->06-MAG_CURRENT'
+        correctStr += '-->06-MAG_CURRENT' + STRING(10B)
+
+        maximus.info.mapped.mag_current = 1B
+     ENDIF
+
      IF KEYWORD_SET(map_esa_current) AND ~maximus.info.mapped.esa_current THEN BEGIN
         IF KEYWORD_SET(map_sqrt_fluxes) THEN BEGIN
            maximus.esa_current       = maximus.esa_current * SQRT(mapRatio.ratio)
@@ -307,8 +327,8 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
            maximus.esa_current       = maximus.esa_current * mapRatio.ratio
         ENDELSE
 
-        IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->07-ESA_CURRENT'
-        correctStr += '-->07-ESA_CURRENT' + STRING(10B)
+        IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'-->06-ESA_CURRENT'
+        correctStr += '-->06-ESA_CURRENT' + STRING(10B)
 
         maximus.info.mapped.esa_current = 1B
      ENDIF

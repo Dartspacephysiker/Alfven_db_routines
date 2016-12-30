@@ -58,6 +58,31 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    CHAREPLOTS=charEPlots, $
    CHARETYPE=charEType, $
    CHARIEPLOTS=chariEPlots, $
+   MAGCPLOTS=magCPlots, $
+   ABSCHARE=absCharE, $
+   ABSCHARIE=absCharie, $
+   ABSEFLUX=abseflux, $
+   ABSENUMFL=absENumFl, $
+   ABSIFLUX=absIflux, $
+   ABSMAGC=absMagC, $
+   ABSOXYFLUX=absOxyFlux, $
+   ABSPFLUX=absPflux, $
+   NONEGCHARE=noNegCharE, $
+   NONEGCHARIE=noNegCharie, $
+   NONEGEFLUX=noNegEflux, $
+   NONEGENUMFL=noNegENumFl, $
+   NONEGIFLUX=noNegIflux, $
+   NONEGMAGC=noNegMagC, $
+   NONEGOXYFLUX=noNegOxyFlux, $
+   NONEGPFLUX=noNegPflux, $
+   NOPOSCHARE=noPosCharE, $
+   NOPOSCHARIE=noPosCharie, $
+   NOPOSEFLUX=noPosEFlux, $
+   NOPOSENUMFL=noPosENumFl, $
+   NOPOSIFLUX=noPosIflux, $
+   NOPOSMAGC=noPosMagC, $
+   NOPOSOXYFLUX=noPosOxyFlux, $
+   NOPOSPFLUX=noPosPflux, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
    FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
@@ -198,6 +223,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    CHAREPLOTRANGE=charePlotRange, $
    LOGCHARIEPLOT=logChariePlot, $
    CHARIEPLOTRANGE=chariEPlotRange, $
+   LOGMAGCPLOT=logMagCPlot, $
+   MAGCPLOTRANGE=magCPlotRange, $
    AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    ORBCONTRIBRANGE=orbContribRange, $
    ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
@@ -319,6 +346,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      CHAREPLOTS=charEPlots, $
      CHARETYPE=charEType, $
      CHARIEPLOTS=chariEPlots, $
+     MAGCPLOTS=magCPlots, $
      ;; AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
      FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
      FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -480,6 +508,32 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      CHAREPLOTRANGE=charePlotRange, $
      LOGCHARIEPLOT=logChariePlot, $
      CHARIEPLOTRANGE=chariEPlotRange, $
+     LOGMAGCPLOT=logMagCPlot, $
+     MAGCPLOTRANGE=magCPlotRange, $
+     ABSCHARE=absCharE, $
+     ABSCHARIE=absCharie, $
+     ABSEFLUX=abseflux, $
+     ABSENUMFL=absENumFl, $
+     ABSIFLUX=absIflux, $
+     ABSMAGC=absMagC, $
+     ABSOXYFLUX=absOxyFlux, $
+     ABSPFLUX=absPflux, $
+     NONEGCHARE=noNegCharE, $
+     NONEGCHARIE=noNegCharie, $
+     NONEGEFLUX=noNegEflux, $
+     NONEGENUMFL=noNegENumFl, $
+     NONEGIFLUX=noNegIflux, $
+     NONEGMAGC=noNegMagC, $
+     NONEGOXYFLUX=noNegOxyFlux, $
+     NONEGPFLUX=noNegPflux, $
+     NOPOSCHARE=noPosCharE, $
+     NOPOSCHARIE=noPosCharie, $
+     NOPOSEFLUX=noPosEFlux, $
+     NOPOSENUMFL=noPosENumFl, $
+     NOPOSIFLUX=noPosIflux, $
+     NOPOSMAGC=noPosMagC, $
+     NOPOSOXYFLUX=noPosOxyFlux, $
+     NOPOSPFLUX=noPosPflux, $
      AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
      ORBCONTRIBRANGE=orbContribRange, $
      ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
@@ -515,8 +569,5 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      LOGTIMEAVGD_EFLUXMAX=logTimeAvgd_EFluxMax, $
      ALL_LOGPLOTS=all_logPlots,$
      ALFDB_PLOTLIM_STRUCT=alfDB_plotLim_struct
-
-
-
 
 END

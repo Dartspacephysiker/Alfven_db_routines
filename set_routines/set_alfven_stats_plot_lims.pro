@@ -17,6 +17,32 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
    CHAREPLOTRANGE=chareRange, $
    LOGCHARIEPLOT=logChariePlot, $
    CHARIEPLOTRANGE=chariEPlotRange, $
+   LOGMAGCPLOT=logMagCPlot, $
+   MAGCPLOTRANGE=magCPlotRange, $
+   ABSCHARE=absCharE, $
+   ABSCHARIE=absCharie, $
+   ABSEFLUX=abseflux, $
+   ABSENUMFL=absENumFl, $
+   ABSIFLUX=absIflux, $
+   ABSMAGC=absMagC, $
+   ABSOXYFLUX=absOxyFlux, $
+   ABSPFLUX=absPflux, $
+   NONEGCHARE=noNegCharE, $
+   NONEGCHARIE=noNegCharie, $
+   NONEGEFLUX=noNegEflux, $
+   NONEGENUMFL=noNegENumFl, $
+   NONEGIFLUX=noNegIflux, $
+   NONEGMAGC=noNegMagC, $
+   NONEGOXYFLUX=noNegOxyFlux, $
+   NONEGPFLUX=noNegPflux, $
+   NOPOSCHARE=noPosCharE, $
+   NOPOSCHARIE=noPosCharie, $
+   NOPOSEFLUX=noPosEFlux, $
+   NOPOSENUMFL=noPosENumFl, $
+   NOPOSIFLUX=noPosIflux, $
+   NOPOSMAGC=noPosMagC, $
+   NOPOSOXYFLUX=noPosOxyFlux, $
+   NOPOSPFLUX=noPosPflux, $
    AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    ORBCONTRIBRANGE=orbContribRange, $
    ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
@@ -129,6 +155,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
   defPPlotRange                  = [0,1.0   ]
   defchareRange                  = [0,3e4   ]
   defchariEPlotRange             = [0,3e3   ]
+  defmagCPlotRange               = [-20,20  ]
   defeSpec__newell_plotRange     = [0,1.0   ]
   defeSpec__t_probOcc_plotRange  = [0,1.0   ]
   defnEventPerMinRange           = [ 0,100  ]
@@ -156,6 +183,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
   deflogOxyfPlot	      = 0B
   deflogCharEPlot	      = 0B
   deflogChariePlot	      = 0B
+  deflogMagCPlot              = 0B
   defautoscale_fluxPlots      = 0B
   deforbContribAutoscale      = 0B
   deflogOrbContribPlot        = 0B
@@ -185,6 +213,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          PPlotRange                  : defPPlotRange                 , $
                          chareRange                  : defchareRange                 , $
                          chariEPlotRange	     : defchariEPlotRange            , $
+                         magCPlotRange               : defMagCPlotRange              , $
                          eSpec__newell_plotRange     : defeSpec__newell_plotRange    , $   
                          eSpec__t_probOcc_plotRange  : defeSpec__t_probOcc_plotRange , $
                          nEventPerMinRange           : defnEventPerMinRange          , $
@@ -210,6 +239,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          logOxyfPlot                 : deflogOxyfPlot                , $
                          logCharEPlot                : deflogCharEPlot               , $
                          logChariePlot               : deflogChariePlot              , $
+                         logMagCPlot                 : deflogMagCPlot                , $
                          autoscale_fluxPlots         : defautoscale_fluxPlots        , $
                          orbContribAutoscale         : deforbContribAutoscale        , $
                          logOrbContribPlot           : deflogOrbContribPlot	     , $
@@ -230,8 +260,31 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          newellPlot_normalize        : defnewellPlot_normalize       , $
                          logTimeAvgd_PFlux           : deflogTimeAvgd_PFlux	     , $
                          logTimeAvgd_EFluxMax        : deflogTimeAvgd_EFluxMax       , $
-                         all_logPlots                : defall_logPlots		  $ 
-                         }
+                         all_logPlots                : defall_logPlots               , $ 
+                         absCharE                    : 0B                            , $
+                         absCharie                   : 0B                            , $
+                         abseflux                    : 0B                            , $
+                         absENumFl                   : 0B                            , $
+                         absIflux                    : 0B                            , $
+                         absMagC                    : 0B                            , $
+                         absOxyFlux                  : 0B                            , $
+                         absPflux                    : 0B                            , $
+                         noNegCharE                  : 0B                            , $
+                         noNegCharie                 : 0B                            , $
+                         noNegEflux                  : 0B                            , $
+                         noNegENumFl                 : 0B                            , $
+                         noNegIflux                  : 0B                            , $
+                         noNegMagC                  : 0B                            , $
+                         noNegOxyFlux                : 0B                            , $
+                         noNegPflux                  : 0B                            , $
+                         noPosCharE                  : 0B                            , $
+                         noPosCharie                 : 0B                            , $
+                         noPosEFlux                  : 0B                            , $
+                         noPosENumFl                 : 0B                            , $
+                         noPosIflux                  : 0B                            , $
+                         noPosMagC                  : 0B                            , $
+                         noPosOxyFlux                : 0B                            , $
+                         noPosPflux                  : 0B                            }
 
   ;; IF N_ELEMENTS(alfDB_plotLim_struct) GT 0 AND ~KEYWORD_SET(reset) THEN BEGIN
   ;;    PRINT,"Already have an alfDB_plotLim_struct! Returning ..."
@@ -284,6 +337,13 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
      STR_ELEMENT,alfDB_plotLim_struct, $
                  'chariEPlotRange', $
                  chariEPlotRange, $
+                 /ADD_REPLACE
+  ENDIF
+  
+  IF KEYWORD_SET(magCPlotRange) THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'magCPlotRange', $
+                 magCPlotRange, $
                  /ADD_REPLACE
   ENDIF
   
@@ -462,6 +522,13 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  /ADD_REPLACE
   ENDIF
   
+  IF N_ELEMENTS(logMagCPlot) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'logMagCPlot', $
+                 BYTE(logMagCPlot), $
+                 /ADD_REPLACE
+  ENDIF
+  
   IF N_ELEMENTS(autoscale_fluxPlots) GT 0 THEN BEGIN
      STR_ELEMENT,alfDB_plotLim_struct, $
                  'autoscale_fluxPlots', $
@@ -608,5 +675,175 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  BYTE(all_logPlots), $
                  /ADD_REPLACE
   ENDIF
+
+  IF N_ELEMENTS(absCharE) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'absCharE', $
+                 BYTE(absCharE), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(absCharie) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'absCharie', $
+                 BYTE(absCharie), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(abseflux) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'abseflux', $
+                 BYTE(abseflux), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(absENumFl) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'absENumFl', $
+                 BYTE(absENumFl), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(absIflux) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'absIflux', $
+                 BYTE(absIflux), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(absMagC) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'absMagC', $
+                 BYTE(absMagC), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(absOxyFlux) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'absOxyFlux', $
+                 BYTE(absOxyFlux), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(absPflux) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'absPflux', $
+                 BYTE(absPflux), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noNegCharE) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noNegCharE', $
+                 BYTE(noNegCharE), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noNegCharie) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noNegCharie', $
+                 BYTE(noNegCharie), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noNegEflux) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noNegEflux', $
+                 BYTE(noNegEflux), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noNegENumFl) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noNegENumFl', $
+                 BYTE(noNegENumFl), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noNegIflux) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noNegIflux', $
+                 BYTE(noNegIflux), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noNegMagC) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noNegMagC', $
+                 BYTE(noNegMagC), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noNegOxyFlux) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noNegOxyFlux', $
+                 BYTE(noNegOxyFlux), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noNegPflux) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noNegPflux', $
+                 BYTE(noNegPflux), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noPosCharE) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noPosCharE', $
+                 BYTE(noPosCharE), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noPosCharie) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noPosCharie', $
+                 BYTE(noPosCharie), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noPosEFlux) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noPosEFlux', $
+                 BYTE(noPosEFlux), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noPosENumFl) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noPosENumFl', $
+                 BYTE(noPosENumFl), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noPosIflux) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noPosIflux', $
+                 BYTE(noPosIflux), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noPosMagC) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noPosMagC', $
+                 BYTE(noPosMagC), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noPosOxyFlux) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noPosOxyFlux', $
+                 BYTE(noPosOxyFlux), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noPosPflux) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noPosPflux', $
+                 BYTE(noPosPflux), $
+                 /ADD_REPLACE
+  ENDIF
+
+
   
 END

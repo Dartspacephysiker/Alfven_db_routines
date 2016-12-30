@@ -46,7 +46,8 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                 rmOutliers       : 0B, $
                 corrected_fluxes : 0B, $
                 corrected_string : '', $
-                mapped           : {esa_current : 0B, $
+                mapped           : {mag_current : 0B, $
+                                    esa_current : 0B, $
                                     pFlux       : 0B, $
                                     ion_flux    : 0B, $
                                     heavies     : 0B, $

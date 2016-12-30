@@ -13,7 +13,6 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
   except_list = ["dont_blackball_fastLoc"            , $
                  "dont_blackball_maximus"            , $
                  "for_ion_DBs"                       , $
-                 "ion__all_fluxes"                   , $
                  "ion__downgoing"                    , $
                  "for_eSpec_DBs"                     , $
                  "eSpec__all_fluxes"                 , $
@@ -141,12 +140,6 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"for_ion_DBs", $
            alfDB_plot_struct1.for_ion_DBs,alfDB_plot_struct2.for_ion_DBs
      DBs_reset  += 1B
-  ENDIF
-
-  IF alfDB_plot_struct1.ion__all_fluxes NE alfDB_plot_struct2.ion__all_fluxes THEN BEGIN
-     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"ion__all_fluxes", $
-           alfDB_plot_struct1.ion__all_fluxes,alfDB_plot_struct2.ion__all_fluxes
-     inds_reset += 1B
   ENDIF
 
   IF alfDB_plot_struct1.ion__downgoing NE alfDB_plot_struct2.ion__downgoing THEN BEGIN

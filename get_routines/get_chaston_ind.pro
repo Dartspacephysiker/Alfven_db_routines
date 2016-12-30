@@ -372,7 +372,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
         magc_i                    = GET_MAGC_INDS(*pDBStruct, $
                                                   MIMC__minMC, $
                                                   MIMC__maxNegMC, $
-                                                  N_OUTSIDE_MAGC=n_magc_outside_range)
+                                                  N_OUTSIDE_MAGC=n_magc_outside_range, $
+                                                  /UNMAP_IF_MAPPED)
         region_i                  = CGSETINTERSECTION(region_i,magc_i)
      ENDIF
 
