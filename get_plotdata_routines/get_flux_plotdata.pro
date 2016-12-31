@@ -543,8 +543,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         ;; scale_width_for_these_plots = [STRUPCASE("ESA_Number_flux"),STRUPCASE("eNumFlux_eSpec")]
         ;; scale_to_cm = WHERE(STRUPCASE(fluxPlotType) EQ scale_width_for_these_plots)
         scale_width_for_these_plots = [STRUPCASE("*ESA_Number_flux*"),STRUPCASE("*eNumFlux_eSpec*")]
-        scale_to_cm = WHERE(STRMATCH(STRUPCASE(fluxPlotType),scale_width_for_these_plots))
-        IF scale_to_cm[0] EQ -1 THEN BEGIN
+        ;; scale_to_cm = WHERE(STRMATCH(STRUPCASE(fluxPlotType),scale_width_for_these_plots))
+        ;; IF scale_to_cm[0] EQ -1 THEN BEGIN
+        scale_to_cm = 0B
+        FOR b=0,N_ELEMENTS(scale_width_for_these_plots)-1 DO BEGIN
+           scale_to_cm = scale_to_cm OR STRMATCH(fluxPlotType,scale_width_for_these_plots[b])
+        ENDFOR
+        IF ~scale_to_cm THEN BEGIN
            factor = 1.D
         ENDIF ELSE BEGIN 
            factor = .01D 
@@ -827,8 +832,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         ;; scale_width_for_these_plots = [STRUPCASE("Integ"),STRUPCASE("Max"),STRUPCASE("Max_Up"),STRUPCASE("Integ_Up"),STRUPCASE("Jei_ion")]
         ;; scale_to_cm = WHERE(STRUPCASE(fluxPlotType) EQ scale_width_for_these_plots)
         scale_width_for_these_plots = [STRUPCASE("*Integ*"),STRUPCASE("*Max*"),STRUPCASE("*Max_Up*"),STRUPCASE("*Integ_Up*"),STRUPCASE("*Jei_ion*")]
-        scale_to_cm = WHERE(STRMATCH(fluxPlotType,scale_width_for_these_plots))
-        IF scale_to_cm[0] EQ -1 THEN BEGIN
+        scale_to_cm = 0B
+        FOR b=0,N_ELEMENTS(scale_width_for_these_plots)-1 DO BEGIN
+           scale_to_cm = scale_to_cm OR STRMATCH(fluxPlotType,scale_width_for_these_plots[b])
+        ENDFOR
+        ;; scale_to_cm = WHERE(STRMATCH(fluxPlotType,scale_width_for_these_plots))
+        ;; IF scale_to_cm[0] EQ -1 THEN BEGIN
+        IF ~scale_to_cm THEN BEGIN
            factor           = 1.D
         ENDIF ELSE BEGIN 
            factor           = .01D 

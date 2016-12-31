@@ -157,12 +157,12 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      correctStr += "MAG_CURRENT: Earthward flow is positive" + STRING(10B)
 
      ;;06-MAG_CURRENT
-     maximus.mag_current[north_i]  = -1. * maximus.mag_current[north_i]
+     ;; maximus.mag_current[north_i]  = -1. * maximus.mag_current[north_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'06-MAG_CURRENT             (Flip sign in N Hemi)'
      correctStr += '06-MAG_CURRENT             (Flip sign in N Hemi)' + STRING(10B)
      
      ;;07-ESA_CURRENT
-     maximus.esa_current[north_i]  = -1. * maximus.esa_current[north_i]
+     ;; maximus.esa_current[north_i]  = -1. * maximus.esa_current[north_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'07-ESA_CURRENT             (Flip sign in N Hemi)'
      correctStr += '07-ESA_CURRENT             (Flip sign in N Hemi)' + STRING(10B)
      
