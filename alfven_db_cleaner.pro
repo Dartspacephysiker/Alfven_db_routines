@@ -155,13 +155,13 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
      IF good_i[0] EQ -1 THEN STOP
      PRINTF,lun,FORMAT='("N lost to cutoff in ",A-30," : ",I0)',"MAG_CURRENT",nBef-nAft
 
-     ;; nBef   = nAft
-     ;; good_i = CGSETINTERSECTION(good_i, $
-     ;;                            WHERE(ABS(maximus.esa_current) LE esac_hcutOff,/NULL), $
-     ;;                            COUNT=nAft, $
-     ;;                            NORESULT=-1)
-     ;; IF good_i[0] EQ -1 THEN STOP
-     ;; PRINTF,lun,FORMAT='("N lost to cutoff in ",A-30," : ",I0)',"ESA_CURRENT",nBef-nAft
+     nBef   = nAft
+     good_i = CGSETINTERSECTION(good_i, $
+                                WHERE(ABS(maximus.esa_current) LE esac_hcutOff,/NULL), $
+                                COUNT=nAft, $
+                                NORESULT=-1)
+     IF good_i[0] EQ -1 THEN STOP
+     PRINTF,lun,FORMAT='("N lost to cutoff in ",A-30," : ",I0)',"ESA_CURRENT",nBef-nAft
      
      ;;No delta_Bs above any absurd values
      nBef   = nAft

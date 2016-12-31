@@ -54,10 +54,15 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    NIGHTSIDE=nightside, $
    NPLOTS=nPlots, $
    EPLOTS=ePlots, $
+   NEWELLPLOTS=NewellPlots, $
    EFLUXPLOTTYPE=eFluxPlotType, $
    ENUMFLPLOTS=eNumFlPlots, $
    ENUMFLPLOTTYPE=eNumFlPlotType, $
+   OXYPLOTS=oxyPlots, $
+   OXYFLUXPLOTTYPE=oxyFluxPlotType, $
    PPLOTS=pPlots, $
+   TIMEAVGD_PFLUXPLOT=timeAvgd_pFluxPlot, $
+   TIMEAVGD_EFLUXMAXPLOT=timeAvgd_eFluxMaxPlot, $
    IONPLOTS=ionPlots, $
    IFLUXPLOTTYPE=ifluxPlotType, $
    CHAREPLOTS=charEPlots, $
@@ -71,6 +76,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    FLUXPLOTS__NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
    DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
    DO_LOGAVG_THE_TIMEAVG=do_logAvg_the_timeAvg, $
+   DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
    NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
    NEWELL__COMBINE_ACCELERATED=Newell__comb_accelerated, $
    FOR_ION_DBS=for_ion_DBs, $
@@ -144,6 +150,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    CONTOUR__LEVELS=contour__levels, $
    CONTOUR__PERCENT=contour__percent, $
    PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
+   SHOW_INTEGRALS=show_integrals, $
+   MAKE_INTEGRAL_TXTFILE=make_integral_txtfile, $
+   MAKE_INTEGRAL_SAVFILES=make_integral_savfiles, $
+   INTEGRALSAVFILEPREF=integralSavFilePref, $
    OVERPLOT_FILE=overplot_file, $
    OVERPLOT_ARR=overplot_arr, $
    OVERPLOT_CONTOUR__LEVELS=op_contour__levels, $
@@ -503,8 +513,12 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          load_dx                           : 0B, $
                          nPlots                            : 0B, $
                          ePlots                            : 0B, $
+                         timeAvgd_eFluxMaxPlot             : 0B, $
                          eNumFlPlots                       : 0B, $
+                         NewellPlots                       : 0B, $
+                         oxyPlots                          : 0B, $
                          pPlots                            : 0B, $
+                         timeAvgd_pFluxPlot                : 0B, $
                          ionPlots                          : 0B, $
                          charEPlots                        : 0B, $
                          chariEPlots                       : 0B, $
@@ -516,6 +530,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          fluxPlots__Newell_the_cusp        : 0B, $
                          do_timeAvg_fluxQuantities         : 0B, $
                          do_logAvg_the_timeAvg             : 0B, $
+                         do_grossRate_fluxQuantities       : 0B, $
                          Newell_analyze_eFlux              : 0B, $
                          Newell__comb_accelerated          : 0B, $
                          for_ion_DBs                       : 0B, $
@@ -566,6 +581,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          contour__levels                   : 0B, $
                          contour__percent                  : 0B, $
                          plotH2D__kernel_density_unmask    : 0B, $
+                         show_integrals                    : 0B, $
+                         make_integral_txtfile             : 0B, $
+                         make_integral_savfiles            : 0B, $
+                         integralSavFilePref               : '', $
                          overplot_file                     : '', $
                          overplot_arr                      : 0B, $
                          op_contour__levels                : 0B, $
@@ -851,6 +870,16 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(ePlots),/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(timeAvgd_eFluxMaxPlot) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'timeAvgd_eFluxMaxPlot', $
+                    BYTE(timeAvgd_eFluxMaxPlot),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(NewellPlots) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'NewellPlots', $
+                    BYTE(NewellPlots),/ADD_REPLACE
+     ENDIF
+
      IF KEYWORD_SET(eFluxPlotType) THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'eFluxPlotType', $
                     eFluxPlotType,/ADD_REPLACE
@@ -866,9 +895,19 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     eNumFlPlotType,/ADD_REPLACE
      ENDIF
 
+     IF KEYWORD_SET(oxyFluxPlotType) THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'oxyFluxPlotType', $
+                    oxyFluxPlotType,/ADD_REPLACE
+     ENDIF
+
      IF N_ELEMENTS(pPlots) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'pPlots', $
                     BYTE(pPlots),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(timeAvgd_pFluxPlot) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'timeAvgd_pFluxPlot', $
+                    BYTE(timeAvgd_pFluxPlot),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(ionPlots) GT 0 THEN BEGIN
@@ -934,6 +973,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(do_logAvg_the_timeAvg) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'do_logAvg_the_timeAvg', $
                     BYTE(do_logAvg_the_timeAvg),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(do_grossRate_fluxQuantities) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'do_grossRate_fluxQuantities', $
+                    BYTE(do_grossRate_fluxQuantities),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(Newell_analyze_eFlux) GT 0 THEN BEGIN
@@ -1236,6 +1280,26 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(plotH2D__kernel_density_unmask),/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(show_integrals) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'show_integrals', $
+                    show_integrals,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(make_integral_txtfile) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'make_integral_txtfile', $
+                    make_integral_txtfile,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(make_integral_savfiles) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'make_integral_savfiles', $
+                    make_integral_savfiles,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(integralSavFilePref) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'integralSavFilePref', $
+                    integralSavFilePref,/ADD_REPLACE
+     ENDIF
+   
      IF N_ELEMENTS(overplot_file) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'overplot_file', $
                     overplot_file,/ADD_REPLACE

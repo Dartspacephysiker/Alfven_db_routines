@@ -936,7 +936,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         tmp_i               = tmp_i[finite_ii]
      ENDIF
 
-     IF rmpTmp_ii[0] NE -1 THEN BEGIN
+     IF rmTmp_ii[0] NE -1 THEN BEGIN
         removed_ii          = [removed_ii,TEMPORARY(rmTmp_ii)]
      ENDIF
 
@@ -968,7 +968,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            inData           = ABS(inData)
         ENDIF
 
-        IF rmpTmp_ii[0] NE -1 THEN BEGIN
+        IF rmTmp_ii[0] NE -1 THEN BEGIN
            removed_ii          = [removed_ii,TEMPORARY(rmTmp_ii)]
         ENDIF
 
@@ -999,7 +999,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",N_ELEMENTS(tmp_i)
      ENDIF
 
-     IF rmpTmp_ii[0] NE -1 THEN BEGIN
+     IF rmTmp_ii[0] NE -1 THEN BEGIN
         removed_ii          = [removed_ii,TEMPORARY(rmTmp_ii)]
      ENDIF
 
@@ -1030,7 +1030,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         inData              = ABS(inData) ;Also make it positif
      ENDIF
 
-     IF rmpTmp_ii[0] NE -1 THEN BEGIN
+     IF rmTmp_ii[0] NE -1 THEN BEGIN
         removed_ii          = [removed_ii,TEMPORARY(rmTmp_ii)]
      ENDIF
 

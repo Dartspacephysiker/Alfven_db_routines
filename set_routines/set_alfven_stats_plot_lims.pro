@@ -14,7 +14,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
    LOGOXYFPLOT=logOxyfPlot, $
    OXYPLOTRANGE=oxyPlotRange, $
    LOGCHAREPLOT=logCharEPlot, $
-   CHAREPLOTRANGE=chareRange, $
+   CHAREPLOTRANGE=charEPlotRange, $
    LOGCHARIEPLOT=logChariePlot, $
    CHARIEPLOTRANGE=chariEPlotRange, $
    LOGMAGCPLOT=logMagCPlot, $
@@ -78,6 +78,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
    LOGTIMEAVGD_EFLUXMAX=logTimeAvgd_EFluxMax, $
    ALL_LOGPLOTS=all_logPlots,$
    ALFDB_PLOTLIM_STRUCT=alfDB_plotLim_struct, $
+   _EXTRA=e, $
    RESET_STRUCT=reset
 
   COMPILE_OPT idl2
@@ -153,7 +154,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
   defEPlotRange                  = [0,1.0   ]
   defIPlotRange                  = [0,1e8   ]
   defPPlotRange                  = [0,1.0   ]
-  defchareRange                  = [0,3e4   ]
+  defcharePlotRange              = [0,3e4   ]
   defchariEPlotRange             = [0,3e3   ]
   defmagCPlotRange               = [-20,20  ]
   defeSpec__newell_plotRange     = [0,1.0   ]
@@ -211,7 +212,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          EPlotRange                  : defEPlotRange                 , $
                          IPlotRange                  : defIPlotRange                 , $
                          PPlotRange                  : defPPlotRange                 , $
-                         chareRange                  : defchareRange                 , $
+                         charePlotRange              : defcharePlotRange             , $
                          chariEPlotRange	     : defchariEPlotRange            , $
                          magCPlotRange               : defMagCPlotRange              , $
                          eSpec__newell_plotRange     : defeSpec__newell_plotRange    , $   
@@ -319,17 +320,10 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  /ADD_REPLACE
   ENDIF
   
-  IF KEYWORD_SET(chareRange) THEN BEGIN
+  IF KEYWORD_SET(charEPlotRange) THEN BEGIN
      STR_ELEMENT,alfDB_plotLim_struct, $
-                 'chareRange', $
-                 chareRange, $
-                 /ADD_REPLACE
-  ENDIF
-  
-  IF KEYWORD_SET(chareRange) THEN BEGIN
-     STR_ELEMENT,alfDB_plotLim_struct, $
-                 'chareRange', $
-                 chareRange, $
+                 'charEPlotRange', $
+                 charEPlotRange, $
                  /ADD_REPLACE
   ENDIF
   

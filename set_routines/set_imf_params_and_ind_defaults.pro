@@ -116,6 +116,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
    IMF_STRUCT=IMF_struct, $
    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
    RESET_STRUCT=reset, $
+   _EXTRA=e, $
    LUN=lun
 
   COMPILE_OPT idl2
