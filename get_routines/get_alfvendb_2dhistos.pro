@@ -32,6 +32,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NOPOSENUMFL=noPosENumFl, $
    ENUMFLPLOTRANGE=ENumFlPlotRange, $
    AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
+   NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
    NEWELL_ANALYZE_MULTIPLY_BY_TYPE_PROBABILITY=newell_analyze_multiply_by_type_probability, $
    NEWELL_ANALYSIS__OUTPUT_SUMMARY=newell_analysis__output_summary, $
    EFLUX_ESPEC_DATA=eFlux_eSpec_data, $

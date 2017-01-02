@@ -18,6 +18,7 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
                  "eSpec__all_fluxes"                 , $
                  "eSpec__upgoing"                    , $
                  "eSpec__Newell_2009_interp"         , $
+                 "Newell__comb_accelerated"          , $
                  "disregard_sample_t"                , $
                  "maskMin"                           , $
                  "tHist_mask_bins_below_thresh"      , $
