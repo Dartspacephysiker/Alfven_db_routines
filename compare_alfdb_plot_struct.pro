@@ -32,6 +32,7 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
                  "charEPlots"                        , $
                  "charEType"                         , $
                  "chariEPlots"                       , $
+                 "magCPlots"                         , $
                  "autoscale_fluxPlots"               , $
                  "do_timeAvg_fluxQuantities"         , $
                  "do_logAvg_the_timeAvg"             , $

@@ -150,7 +150,8 @@
   ;; esac_hcutOff = 112          ; junk 0.2%
 
   ;; magc_hcutOff = 159.           ;junk 0.1%
-  esac_hcutOff = 500.         ; junk 0.1%
+  ;; esac_hcutOff = 500.         ; junk 0.1%
+  esac_hcutOff = 90.         ; junk something else
 
   ;; magc_hcutOff = 87.3           ;junk 0.5%
   ;; esac_hcutOff = 75.12          ; junk 0.5%

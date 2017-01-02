@@ -235,10 +235,10 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      ;; maximus.integ_ion_flux[south_i] = -1 * maximus.integ_ion_flux[south_i]
      ;; IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'17-INTEG_ION_FLUX          (Flip sign in S Hemi)'
      ;;new
-     maximus.integ_ion_flux             =  100. * maximus.integ_ion_flux
+     ;; maximus.integ_ion_flux             =  100. * maximus.integ_ion_flux
      maximus.integ_ion_flux[north_i]    =   -1. * maximus.integ_ion_flux[north_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'17-INTEG_ION_FLUX          (Flip sign in N Hemi, units to #/cm-s)'
-     correctStr += '17-INTEG_ION_FLUX          (Flip sign in N Hemi, units to #/cm-s)' + STRING(10B)
+     correctStr += '17-INTEG_ION_FLUX          (Flip sign in N Hemi, scale units to #/cm-s)' + STRING(10B)
 
      ;;18-INTEG_ION_FLUX_UP
      ;;old
@@ -248,7 +248,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      maximus.integ_ion_flux_up          =  100. * maximus.integ_ion_flux_up
      maximus.integ_ion_flux_up[north_i] =   -1. * maximus.integ_ion_flux_up[north_i]
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'18-INTEG_ION_FLUX_UP       (Flip sign in N Hemi, scale to #/cm-s)'
-     correctStr += '18-INTEG_ION_FLUX_UP       (Flip sign in N Hemi, scale to #/cm-s)' + STRING(10B)
+     correctStr += '18-INTEG_ION_FLUX_UP       (Flip sign in N Hemi, scale units to #/cm-s)' + STRING(10B)
 
      ;;19-CHAR_ION_ENERGY--what to do?
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'19-CHAR_ION_ENERGY         (In AS5, division of two quantities where hemi is not accounted for--how to interpret sign?)'
@@ -404,6 +404,11 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
            maximus.info.mapped.width_x    = 1
         ENDELSE
      ENDIF
+
+     correctStr += '--MAPPED BY AS5:10-EFLUX_LOSSCONE_INTEG' + STRING(10B)
+     correctStr += '--MAPPED BY AS5:11-TOTAL_EFLUX_INTEG   ' + STRING(10B)
+     correctStr += '--MAPPED BY AS5:17-INTEG_ION_FLUX      ' + STRING(10B)
+     correctStr += '--MAPPED BY AS5:18-INTEG_ION_FLUX_UP   ' + STRING(10B)
 
      ;;Now add the CORRECTED_FLUXES tag to maximus
      ;; maximus=CREATE_STRUCT(NAME='maximus',maximus,'CORRECTED_FLUXES',1)     
