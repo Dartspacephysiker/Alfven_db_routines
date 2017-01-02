@@ -57,6 +57,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   COMPILE_OPT idl2
 
+  @ploth2d_stereographic_defaults.pro
+
   IF KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN
 
   @common__ea_binning.pro
@@ -88,8 +90,6 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         wholeCap  = 1
      ENDIF
   ENDIF
-
-  @ploth2d_stereographic_defaults.pro
 
   ;; Open a graphics window.
   IF ~(KEYWORD_SET(no_display) OR KEYWORD_SET(overplot)) THEN BEGIN

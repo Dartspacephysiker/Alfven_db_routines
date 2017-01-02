@@ -81,7 +81,15 @@
   defcharSize_grid               = 2.0
 
   ;;lat/lon/lshell grid defaults
-  defGridLats                 = [60,70,80]
+  CASE 1 OF
+     (KEYWORD_SET(alfDB_plot_struct.EA_binning) AND $
+      KEYWORD_SET(alfDB_plot_struct.for_eSpec_DBs)): BEGIN
+        defGridLats                 = [48,60,72,84]
+     END
+     ELSE: BEGIN
+        defGridLats                 = [60,70,80]
+     END
+  ENDCASE
   defGridLshells              = [2,6,10,14,16,20]
 
   ;;the bold part
