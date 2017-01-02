@@ -221,6 +221,24 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
      IF good_i[0] EQ -1 THEN STOP 
      PRINTF,lun,FORMAT='("N lost to cutoff in ",A-30," : ",I0)',"CHAR_ELEC_ENERGY_FLUX",nBef-nAft
      
+     ;;No absurd integrated electron stuff
+     nBef   = nAft
+     good_i = CGSETINTERSECTION(good_i, $
+                                WHERE(ABS(maximus.total_eflux_integ) LE 1e6,/NULL), $
+                                COUNT=nAft, $
+                                NORESULT=-1)
+     IF good_i[0] EQ -1 THEN STOP 
+     PRINTF,lun,FORMAT='("N lost to cutoff in ",A-30," : ",I0)',"TOTAL_EFLUX_INTEG",nBef-nAft
+     
+     ;;No absurd integrated ion stuff
+     nBef   = nAft
+     good_i = CGSETINTERSECTION(good_i, $
+                                WHERE(ABS(maximus.integ_ion_flux) LE 1e17,/NULL), $
+                                COUNT=nAft, $
+                                NORESULT=-1)
+     IF good_i[0] EQ -1 THEN STOP 
+     PRINTF,lun,FORMAT='("N lost to cutoff in ",A-30," : ",I0)',"INTEG_ION_FLUX",nBef-nAft
+     
      ;;No absurd ion fluxes
      nBef   = nAft
      good_i = CGSETINTERSECTION(good_i, $

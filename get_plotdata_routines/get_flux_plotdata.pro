@@ -130,12 +130,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
   ENDCASE
 
   ;; Flux plot safety
-  IF KEYWORD_SET(logFluxPlot) AND NOT KEYWORD_SET(absFlux) AND NOT KEYWORD_SET(noNegFlux) AND NOT KEYWORD_SET(noPosFlux) THEN BEGIN 
+  IF KEYWORD_SET(logFluxPlot) AND $
+     ~(KEYWORD_SET(absFlux) OR KEYWORD_SET(noNegFlux) OR KEYWORD_SET(noPosFlux)) $
+  THEN BEGIN 
      PRINTF,lun,"Warning!: You're trying to do logplots of flux but you don't have 'absFlux', 'noNegFlux', or 'noPosFlux' set!"
      PRINTF,lun,"Can't make log plots without using absolute value or only positive values..."
      PRINTF,lun,"Default: junking all negative flux values"
      WAIT, 1
-     noNegFlux=1
+     noNegFlux = 1
   ENDIF
   IF KEYWORD_SET(noPosFlux) AND KEYWORD_SET (logFluxPlot) THEN absFlux = 1
 
@@ -174,8 +176,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            tmpFluxPlotType  = 'Intg'
            h2dStr.title     = title__alfDB_ind_09
            inData           = maximus.integ_elec_energy_flux
-           can_div_by_w_x   = 0
-           can_mlt_by_w_x   = 1
+           can_div_by_w_x   = 1
+           can_mlt_by_w_x   = 0
 
            h2dStr.grossFac  = 1e9
            h2dStr.gUnits    = 'bro'
@@ -217,22 +219,19 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("total_eflux_integ"): BEGIN
+
            tmpFluxPlotType  = 'tot_intg'
            h2dStr.title     = title__alfDB_ind_11
            inData           = maximus.total_eflux_integ
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
 
-           h2dStr.grossFac  = 1e9
-           h2dStr.gUnits    = 'GW'
-
-
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
-              h2dStr.title  = title__alfDB_ind_11__div_by_width_x
-              ;; dataName     += '__div_by_width_x'
-              ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
-              ;;                       DESPUNDB=maximus.info.despun
-              ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
+
+              h2dStr.grossFac  = 1e9
+              h2dStr.gUnits    = 'GW'
+           
+              h2dStr.title     = title__alfDB_ind_11__div_by_width_x
            ENDIF
 
            IF KEYWORD_SET(do_timeAvg_fluxQuantities) AND ~KEYWORD_SET(for_pres) THEN BEGIN
@@ -327,6 +326,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
      CASE 1 OF
         STRUPCASE(fluxPlotType) EQ STRUPCASE("total_eflux_integ"): BEGIN
+
            tmpFluxPlotType  = 'tot_eF_intg'
            h2dStr.title     = title__alfDB_ind_11
            inData           = maximus.total_eflux_integ
@@ -338,12 +338,25 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
               h2dStr.grossFac  = 1e9
               h2dStr.gUnits    = 'GW'
 
-              h2dStr.title  = title__alfDB_ind_11__div_by_width_x
-              ;; dataName     += '__div_by_width_x'
-              ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
-              ;;                       DESPUNDB=maximus.info.despun
-              ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
+              h2dStr.title     = title__alfDB_ind_11__div_by_width_x
+
            ENDIF
+
+           IF KEYWORD_SET(grossRateMe) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    h2dStr.title   = title__alfDB_ind_11_grossRate + '(long. wid.)'
+                    H2DAreaConvFac = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+                 END
+                 ELSE: BEGIN
+                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+                       h2dStr.title = title__alfDB_ind_11_grossRate
+                    ENDIF
+                    H2DAreaConvFac  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 END
+              ENDCASE
+           ENDIF
+
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Eflux_Losscone_Integ"): BEGIN
            tmpFluxPlotType  = 'eF_LC_intg'
@@ -358,12 +371,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
               h2dStr.gUnits    = 'GW'
 
               ;; dataName     += '__div_by_width_x'
-              LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DESPUNDB=maximus.info.despun
+              ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
+              ;;                       DESPUNDB=maximus.info.despun
               ;; magFieldFactor = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
               magFieldFactor = 1.0D
 
-              inData        = ((indata/magFieldFactor)/maximus.width_x)*mapRatio.ratio
+              inData        = ((indata/magFieldFactor)/maximus.width_x) ;*mapRatio.ratio
               already_divided_by_width_x = 1
 
               ;;Make them sane
@@ -547,12 +560,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         ;; IF scale_to_cm[0] EQ -1 THEN BEGIN
         scale_to_cm = 0B
         FOR b=0,N_ELEMENTS(scale_width_for_these_plots)-1 DO BEGIN
-           scale_to_cm = scale_to_cm OR STRMATCH(fluxPlotType,scale_width_for_these_plots[b])
+           scale_to_cm = scale_to_cm OR STRMATCH(STRUPCASE(fluxPlotType),scale_width_for_these_plots[b])
         ENDFOR
         IF ~scale_to_cm THEN BEGIN
-           factor = 1.D
+           sclFactor = 1.D
         ENDIF ELSE BEGIN 
-           factor = .01D 
+           sclFactor = .01D 
            PRINT,'...Scaling WIDTH_X to centimeters for '+fluxPlotType+' plots...'
         ENDELSE
      ENDIF
@@ -678,9 +691,6 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      h2dStr.do_plotIntegral = iFlux_do_plotIntegral
      h2dStr.do_midCBLabel   = iFlux_do_midCBLabel
 
-     h2dStr.grossFac       = 1.D24
-     h2dStr.gUnits         = 'E+24'
-
      CASE 1 OF
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ"): BEGIN
            tmpFluxPlotType  = 'Intg'
@@ -689,12 +699,39 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
 
+
+           h2dStr.grossFac       = 1.D22
+           h2dStr.gUnits         = 'E+22'
+
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
-              h2dStr.title  = title__alfDB_ind_17__div_by_width_x
+              h2dStr.title               = title__alfDB_ind_17__div_by_width_x
+
+              ;;OOOOOH no you don't. Alreay handled by AS5
+              ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
+              ;;                       DESPUNDB=maximus.info.despun
+
+              magFieldFactor             = 1.0D
+              inData                     = ((indata/magFieldFactor)/maximus.width_x)
+              already_divided_by_width_x = 1
               ;; dataName     += '__div_by_width_x'
               ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
               ;;                       DESPUNDB=maximus.info.despun
               ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
+           ENDIF
+
+           IF KEYWORD_SET(grossRateMe) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    h2dStr.title    = title__alfDB_ind_17 + '(long. wid.)'
+                    H2DAreaConvFac  = 1e5 ;Lengths given in km, but we need them in cm.
+                 END
+                 ELSE: BEGIN
+                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+                       h2dStr.title = title__alfDB_ind_17_grossRate
+                    ENDIF
+                    H2DAreaConvFac  = 1e10 ;Areas are given in km^2, but we need them in cm^2
+                 END
+              ENDCASE
            ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Max"): BEGIN
@@ -703,6 +740,22 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            inData           = maximus.ion_flux
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
+
+           h2dStr.grossFac       = 1.D22
+           h2dStr.gUnits         = 'E+22'
+
+           IF KEYWORD_SET(grossRateMe) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    H2DAreaConvFac  = 1e5 ;Lengths given in km, but we need them in cm.
+                 END
+                 ELSE: BEGIN
+                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+                    ENDIF
+                    H2DAreaConvFac  = 1e10 ;Areas are given in km^2, but we need them in cm^2
+                 END
+              ENDCASE
+           ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Max_Up"): BEGIN
            tmpFluxPlotType  = 'MaxUp'
@@ -710,6 +763,22 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            inData           = maximus.ion_flux_up
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
+
+           h2dStr.grossFac       = 1.D24
+           h2dStr.gUnits         = 'E+24'
+
+           IF KEYWORD_SET(grossRateMe) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    H2DAreaConvFac  = 1e5 ;Lengths given in km, but we need them in cm.
+                 END
+                 ELSE: BEGIN
+                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+                    ENDIF
+                    H2DAreaConvFac  = 1e10 ;Areas are given in km^2, but we need them in cm^2
+                 END
+              ENDCASE
+           ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ_Up"): BEGIN
            tmpFluxPlotType  = 'IntgUp'
@@ -717,10 +786,16 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            inData           = maximus.integ_ion_flux_up
            can_div_by_w_x   = 1
            can_mlt_by_w_x   = 0
+
+           h2dStr.grossFac       = 1.D24
+           h2dStr.gUnits         = 'E+24'
+
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
 
               h2dStr.title  = title__alfDB_ind_18__div_by_width_x
               ;; dataName     += '__div_by_width_x'
+
+              ;;OOOOOH no you don't. Alreay handled by AS5
               ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
               ;;                       DESPUNDB=maximus.info.despun
               ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
@@ -778,6 +853,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
 
+           h2dStr.grossFac       = 1.D22
+           h2dStr.gUnits         = 'E+22'
+
            IF KEYWORD_SET(alfDB_plot_struct.ion__junk_alfven_candidates) THEN BEGIN
               dataname += '-candidates_removed'
            ENDIF ELSE BEGIN
@@ -811,6 +889,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
 
+           h2dStr.grossFac  = 1e9
+           h2dStr.gUnits    = 'GW'
+
            IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
               dataname += '-candidates_removed'
            ENDIF ELSE BEGIN
@@ -818,6 +899,19 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                  dataname += '-all_fluxes'
               ENDIF
            ENDELSE
+
+           IF KEYWORD_SET(grossRateMe) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    H2DAreaConvFac = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+                 END
+                 ELSE: BEGIN
+                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+                    ENDIF
+                    H2DAreaConvFac  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 END
+              ENDCASE
+           ENDIF
         END
         STRUPCASE(fluxplottype) EQ STRUPCASE("Energy"): BEGIN
            tmpFluxPlotType  = 'NRG'
@@ -825,6 +919,22 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            inData           = maximus.ion_energy_flux
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 1
+
+           h2dStr.grossFac  = 1e6
+           h2dStr.gUnits    = 'MW'
+
+           IF KEYWORD_SET(grossRateMe) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    H2DAreaConvFac = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+                 END
+                 ELSE: BEGIN
+                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+                    ENDIF
+                    H2DAreaConvFac  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 END
+              ENDCASE
+           ENDIF
         END
      ENDCASE
 
@@ -834,14 +944,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         scale_width_for_these_plots = [STRUPCASE("*Integ*"),STRUPCASE("*Max*"),STRUPCASE("*Max_Up*"),STRUPCASE("*Integ_Up*"),STRUPCASE("*Jei_ion*")]
         scale_to_cm = 0B
         FOR b=0,N_ELEMENTS(scale_width_for_these_plots)-1 DO BEGIN
-           scale_to_cm = scale_to_cm OR STRMATCH(fluxPlotType,scale_width_for_these_plots[b])
+           scale_to_cm = scale_to_cm OR STRMATCH(STRUPCASE(fluxPlotType),STRUPCASE(scale_width_for_these_plots[b]))
         ENDFOR
         ;; scale_to_cm = WHERE(STRMATCH(fluxPlotType,scale_width_for_these_plots))
         ;; IF scale_to_cm[0] EQ -1 THEN BEGIN
         IF ~scale_to_cm THEN BEGIN
-           factor           = 1.D
+           sclFactor           = 1.D
         ENDIF ELSE BEGIN 
-           factor           = .01D 
+           sclFactor           = .01D 
            PRINT,'...Scaling WIDTH_X to centimeters for dividing '+fluxPlotType+' plots...'
         ENDELSE
      ENDIF
@@ -948,13 +1058,19 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
   negStr                    = ""
   posStr                    = ""
   logStr                    = ""
+
   removed_ii                = !NULL
-  IF N_ELEMENTS(WHERE(FINITE(inData))) NE N_ELEMENTS(inData) THEN BEGIN
-     finite_ii              =  WHERE(FINITE(inData[tmp_i]),COMPLEMENT=rmTmp_ii, $
+  IF N_ELEMENTS(WHERE(FINITE(inData[tmp_i]))) NE N_ELEMENTS(tmp_i) THEN BEGIN
+     ;; finite_ii              =  WHERE(FINITE(inData[tmp_i]),COMPLEMENT=rmTmp_ii, $
+     ;;                                 NCOMPLEMENT=nRem)
+     finite_i               =  WHERE(FINITE(inData),COMPLEMENT=rmTmp_i, $
                                      NCOMPLEMENT=nRem)
-     IF finite_ii[0] NE -1 THEN BEGIN
-        PRINT,"BAD DATA: " + STRCOMPRESS(nRem,/REMOVE_ALL)
-        tmp_i               = tmp_i[finite_ii]
+     
+     IF finite_i[0] NE -1 THEN BEGIN
+        ;; PRINT,"BAD DATA: " + STRCOMPRESS(nRem,/REMOVE_ALL)
+        tmp_i               = CGSETINTERSECTION(tmp_i,finite_i,COUNT=nFinite)
+        junk_i              = CGSETDIFFERENCE(tmp_i,finite_i,POSITIONS=rmpTmp_ii,NORESULT=-1)
+        ;; tmp_i               = tmp_i[finite_ii]
      ENDIF
 
      IF rmTmp_ii[0] NE -1 THEN BEGIN
@@ -968,24 +1084,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      IF KEYWORD_SET(noPosFlux) THEN BEGIN
         posStr              = 'NoP-'
         PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(tmp_i)
-        lt_ii                =  WHERE(inData[tmp_i] LT 0.,COMPLEMENT=rmTmp_ii)
+        ;; lt_ii                =  WHERE(inData[tmp_i] LT 0.,COMPLEMENT=rmTmp_ii)
+        lt_i                =  WHERE(inData LT 0.,COMPLEMENT=rmTmp_i)
 
-        IF lt_ii[0] NE -1 THEN BEGIN
-           ;; inData           = inData[lt_ii]
-           ;; IF KEYWORD_SET(inData2) THEN BEGIN
-           ;;    inData2       = inData2[lt_ii]
-           ;; ENDIF
+        ;; IF lt_ii[0] NE -1 THEN BEGIN
+        IF lt_i[0] NE -1 THEN BEGIN
 
-           ;;mag field factors
-           ;; IF N_ELEMENTS(magFieldFactor) GT 1 THEN BEGIN
-           ;;    magFieldFactor   = magFieldFactor[lt_ii]
-           ;; ENDIF
-           ;; IF N_ELEMENTS(magFieldFactor2) GT 1 THEN BEGIN
-           ;;    magFieldFactor2  = magFieldFactor2[lt_ii]
-           ;; ENDIF
-
-           tmp_i            = tmp_i[lt_ii]
-           PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(tmp_i)
+           ;; tmp_i            = tmp_i[lt_ii]
+           tmp_i            = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
+           junk_i           = CGSETDIFFERENCE(tmp_i,lt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
+           ;; tmp_i            = tmp_i[lt_ii]
+           ;; PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(tmp_i)
+           PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",nNeg
            inData           = ABS(inData)
         ENDIF
 
@@ -1001,23 +1111,15 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
   IF KEYWORD_SET(noNegFlux) THEN BEGIN
      negStr                 = 'NoN-'
      PRINTF,lun,"N elements in " + dataName + " before junking neg vals: ",N_ELEMENTS(tmp_i)
-     gt_ii                   =  WHERE(inData[tmp_i] GT 0.,COMPLEMENT=rmTmp_ii)
-     IF gt_ii[0] NE -1 THEN BEGIN
-        ;; inData              = inData[gt_ii]
-        ;; IF KEYWORD_SET(inData2) THEN BEGIN
-        ;;    inData2          = inData2[gt_ii]
-        ;; ENDIF
+     ;; gt_ii                   =  WHERE(inData[tmp_i] GT 0.,COMPLEMENT=rmTmp_ii)
+     gt_i                   =  WHERE(inData GT 0.,COMPLEMENT=rmTmp_i)
+     IF gt_i[0] NE -1 THEN BEGIN
 
-        ;; ;;mag field factors
-        ;; IF N_ELEMENTS(magFieldFactor) GT 1 THEN BEGIN
-        ;;    magFieldFactor   = magFieldFactor[gt_ii]
-        ;; ENDIF
-        ;; IF N_ELEMENTS(magFieldFactor2) GT 1 THEN BEGIN
-        ;;    magFieldFactor2  = magFieldFactor2[gt_ii]
-        ;; ENDIF
-
-        tmp_i               = tmp_i[gt_ii]
-        PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",N_ELEMENTS(tmp_i)
+        tmp_i            = CGSETINTERSECTION(tmp_i,gt_i,COUNT=nPos)
+        junk_i           = CGSETDIFFERENCE(tmp_i,gt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
+        ;; tmp_i               = tmp_i[gt_ii]
+        ;; PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",N_ELEMENTS(tmp_i)
+        PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",nPos
      ENDIF
 
      IF rmTmp_ii[0] NE -1 THEN BEGIN
@@ -1029,26 +1131,20 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      posStr                 = 'NoP-'
      PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(tmp_i)
 
-     lt_ii                   =  WHERE(inData LT 0.,COMPLEMENT=rmTmp_ii)
+     ;; lt_ii                   =  WHERE(inData[tmp_i] LT 0.,COMPLEMENT=rmTmp_ii)
 
-     IF lt_ii[0] NE -1 THEN BEGIN
-        ;; inData              = inData[lt_ii]
-        ;; IF KEYWORD_SET(inData2) THEN BEGIN
-        ;;    inData2          = inData2[lt_ii]
-        ;; ENDIF
+     lt_i                    =  WHERE(inData LT 0.,COMPLEMENT=rmTmp_i)
+     ;; IF lt_ii[0] NE -1 THEN BEGIN
+     IF lt_i[0] NE -1 THEN BEGIN
 
-        ;;mag field factors
-        ;; IF N_ELEMENTS(magFieldFactor) GT 1 THEN BEGIN
-        ;;    magFieldFactor   = magFieldFactor[lt_ii]
-        ;; ENDIF
-        ;; IF N_ELEMENTS(magFieldFactor2) GT 1 THEN BEGIN
-        ;;    magFieldFactor2  = magFieldFactor2[lt_ii]
-        ;; ENDIF
+        ;; tmp_i               = tmp_i[lt_ii]
+        ;; PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(tmp_i)
 
-        tmp_i               = tmp_i[lt_ii]
-        PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(tmp_i)
+        tmp_i            = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
+        junk_i           = CGSETDIFFERENCE(tmp_i,lt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
 
-        inData              = ABS(inData) ;Also make it positif
+        PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",nNeg
+        inData           = ABS(inData)
      ENDIF
 
      IF rmTmp_ii[0] NE -1 THEN BEGIN
@@ -1109,14 +1205,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
         ;;If the ion plots or one of the select electron plots didn't pick this up, set it to 1
         ;;NOTE, oxy also needs to be scaled!!!
-        IF N_ELEMENTS(factor) EQ 0 THEN factor = 1.0D
+        IF N_ELEMENTS(sclFactor) EQ 0 THEN sclFactor = 1.0D
         IF N_ELEMENTS(magFieldFactor) EQ 0 THEN magFieldFactor = 1.0D
 
         IF ~KEYWORD_SET(already_divided_by_width_x) THEN BEGIN
-           inData                 = inData*factor*magFieldFactor/maximus.width_x
+           inData                 = inData*sclFactor*magFieldFactor/maximus.width_x
         ENDIF ELSE BEGIN
-           PRINT,'ALREADY DIVIDED ' + dataName + ', DUDE'
-           inData                 = inData*factor
+           ;; PRINT,'ALREADY DIVIDED ' + dataName + ', DUDE'
+           inData                 = inData*sclFactor
         ENDELSE
      ENDIF ELSE BEGIN
         PRINTF,lun,"Can't divide " + dataName + " by width_x! Not in the cards."
@@ -1130,10 +1226,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
            ;;If the ion plots or one of the select electron plots didn't pick this up, set it to 1
            ;;NOTE, oxy also needs to be scaled!!!
-           IF N_ELEMENTS(factor2) EQ 0 THEN factor2 = 1.0D
+           IF N_ELEMENTS(sclFactor2) EQ 0 THEN sclFactor2 = 1.0D
            IF N_ELEMENTS(magFieldFactor2) EQ 0 THEN magFieldFactor2 = 1.0D
 
-           inData2                 = inData2*factor2*magFieldFactor2/maximus.width_x
+           inData2                 = inData2*sclFactor2*magFieldFactor2/maximus.width_x
         ENDIF ELSE BEGIN
            PRINTF,lun,"Can't divide " + dataName + " by width_x! Not in the cards."
         ENDELSE
@@ -1148,10 +1244,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         
         ;;If the ion plots or one of the select electron plots didn't pick this up, set it to 1
         ;;NOTE, oxy also needs to be scaled!!!
-        IF N_ELEMENTS(factor) EQ 0 THEN factor = 1.0D
+        IF N_ELEMENTS(sclFactor) EQ 0 THEN sclFactor = 1.0D
         IF N_ELEMENTS(magFieldFactor) EQ 0 THEN magFieldFactor = 1.0D
         
-        inData                 = inData*factor*magFieldFactor*maximus.width_x
+        inData                 = inData*sclFactor*magFieldFactor*maximus.width_x
      ENDIF ELSE BEGIN
         PRINTF,lun,"Can't multiply " + dataName + " by width_x! Not in the cards."
      ENDELSE
@@ -1164,10 +1260,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            
            ;;If the ion plots or one of the select electron plots didn't pick this up, set it to 1
            ;;NOTE, oxy also needs to be scaled!!!
-           IF N_ELEMENTS(factor2) EQ 0 THEN factor2 = 1.0D
+           IF N_ELEMENTS(sclFactor2) EQ 0 THEN sclFactor2 = 1.0D
            IF N_ELEMENTS(magFieldFactor2) EQ 0 THEN magFieldFactor2 = 1.0D
            
-           inData2                 = inData2*factor2*magFieldFactor2*maximus.width_x
+           inData2                 = inData2*sclFactor2*magFieldFactor2*maximus.width_x
         ENDIF ELSE BEGIN
            PRINTF,lun,"Can't multiply " + dataName + " by width_x! Not in the cards."
         ENDELSE
@@ -1304,7 +1400,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
               KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
                  h2dStr.data = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                           ilats,$
-                                                          (KEYWORD_SET(alfDB_plot_struct.do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
+                                                          (KEYWORD_SET(alfDB_plot_struct.do_logAvg_the_timeAvg) ? ALOG10(DOUBLE(inData)) : DOUBLE(inData)),$
                                                           MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(do_lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
                                                           MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                                           OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
@@ -1334,9 +1430,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                                                    h2dMask
 
            ;;junked all those WHERE(h2dstr.data GT 0) as of 2016/04/23
-           h2dStr.data[WHERE(h2dstr.data GT 0)] = h2dStr.data[WHERE(h2dstr.data GT 0)]/ $
+           h2dStr.data[WHERE(ABS(H2DStr.data) GT 0)] = h2dStr.data[WHERE(ABS(H2DStr.data) GT 0)]/ $
                                                   (KEYWORD_SET(for_eSpec) ? eSpec_tHistDenominator : $
-                                                   tHistDenominator)[WHERE(h2dstr.data GT 0)]
+                                                   tHistDenominator)[WHERE(ABS(H2DStr.data) GT 0)]
            ;; h2dStr.data[hEv_nz_i] = h2dStr.data[hEv_nz_i]/tHistDenominator[hEv_nz_i]
 
         END
@@ -1345,7 +1441,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
               KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
                  h2dStr.data  = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                            ilats,$
-                                                           (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) OR KEYWORD_SET(tmpLogAvg) ? ALOG10(inData) : inData),$
+                                                           (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) OR KEYWORD_SET(tmpLogAvg) ? ALOG10(DOUBLE(inData)) : DOUBLE(inData)),$
                                                            MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
                                                            MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                                            OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
@@ -1353,7 +1449,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
               ELSE: BEGIN
                  h2dStr.data  = HIST2D(mlts, $
                                        ilats,$
-                                       (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) OR KEYWORD_SET(tmpLogAvg) ? ALOG10(inData) : inData),$
+                                       (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) OR KEYWORD_SET(tmpLogAvg) ? ALOG10(DOUBLE(inData)) : DOUBLE(inData)),$
                                        MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
                                        MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                        BINSIZE1=MIMC_struct.binM,BINSIZE2=(KEYWORD_SET(MIMC_struct.do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
@@ -1388,8 +1484,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         END
      ENDCASE
 
-     nz_h2dDat_i = WHERE(ABS(h2dstr.data NE 0))
-
+     ;; nz_h2dDat_i = WHERE(ABS(h2dstr.data) GT 0)
+     nz_h2dDat_i = hEv_nz_i
      IF KEYWORD_SET(multiply_fluxes_by_probOccurrence) THEN BEGIN
         PRINT,'Multiplying by probability of occurrence!'
         dataName += '_probOcc'
@@ -1398,8 +1494,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
      IF KEYWORD_SET(grossRateMe) THEN BEGIN
 
-        dayInds    = WHERE(centersMLT GE 6*15 AND centersMLT LT 18*15 AND ~h2dMask)
-        nightInds  = WHERE((centersMLT GE 18*15 OR centersMLT LT 6*15) AND ~h2dMask)
+        dayInds    = WHERE((centersMLT GE 6*15  AND centersMLT LT 18*15) AND ~h2dMask)
+        nightInds  = WHERE((centersMLT GE 18*15 OR  centersMLT LT 6*15 ) AND ~h2dMask)
 
         CASE 1 OF
            KEYWORD_SET(do_grossRate_with_long_width): BEGIN
@@ -1563,6 +1659,29 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      ENDIF
   ENDIF
 
+  showMeThings = 0
+  IF N_ELEMENTS(fluxPlotType) GT 0 AND KEYWORD_SET(showMeThings) THEN BEGIN
+     ;; IF (STRUPCASE(fluxPlotType) EQ STRUPCASE("total_eflux_integ")) OR $
+     ;;    (STRUPCASE(fluxPlotType) EQ STRUPCASE("Eflux_Losscone_Integ")) THEN BEGIN
+     ;; IF (STRUPCASE(fluxPlotType) EQ STRUPCASE("integ")) OR $
+     ;;    (STRUPCASE(fluxPlotType) EQ STRUPCASE("integ_up")) THEN BEGIN
+     IF (STRUPCASE(fluxPlotType) EQ STRUPCASE("esa_current")) THEN BEGIN
+        PRINT,fluxplottype,MEAN(h2dstr.data),MAX(h2dstr.data),MIN(h2dstr.data)
+        HELP,h2dstr.grossintegrals
+
+        PRINT,"H2DAreaConvFac : ",H2DAreaConvFac
+        PRINT,"G Units        : ",H2DStr.gUnits
+        PRINT,"GrossFac       : ",H2DStr.grossFac
+        nCol = 2
+        nRow = 3
+
+        CGHISTOPLOT,h2dstr.data[WHERE(~h2dMask)],TITLE=fluxplottype
+
+        PRINT,"Et sample: ",indata[LONG(LINDGEN(5)/4.*(N_ELEMENTS(tmp_i)-1))]
+        STOP
+     ENDIF
+  ENDIF
+
   IF N_ELEMENTS(removed_ii) NE 0 THEN BEGIN 
      IF removed_ii[0] NE -1 THEN BEGIN 
         out_removed_ii = TEMPORARY(removed_ii)
@@ -1572,5 +1691,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
   ENDIF ELSE BEGIN 
      out_removed_ii = !NULL 
   ENDELSE
+
+  H2DAreaConvFac = !NULL
 
 END

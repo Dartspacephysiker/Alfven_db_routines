@@ -148,6 +148,7 @@ title__alfDB_esa_nFlux_grossRate = 'e!U-!N Precipitation (' + numGrossStr + ')' 
 title__alfDB_ind_08_grossRate = 'Max e!U-!N Energy Deposition (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
 title__alfDB_ind_10_grossRate = 'e!U-!N Energy Deposition (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
 title__alfDB_ind_11_grossRate = 'Total Alfic e!U-!N Energy Deposition (' + energyGrossStr + ')' + ionosphString      ;"Eflux_Losscone_Integ"
+title__alfDB_ind_18_grossRate = 'All Ions (' + numGrossStr + ')' + ionosphString        ;"Integ"
 title__alfDB_ind_18_grossRate = 'Upflowing Ions (' + numGrossStr + ')' + ionosphString        ;"Integ_Up"
 title__alfDB_ind_49_grossRate = 'Wave Energy Deposition  (' + energyGrossStr + ')' + ionosphString
 
