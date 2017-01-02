@@ -167,10 +167,15 @@ title__alfDB_ind_10__div_by_width_x  = alficStr + ' Loss-cone e!U-!N Flux (' + e
 title__alfDB_ind_18__div_by_width_x  = alficStr + ' Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
 title__alfDB_ind_49                  = alficStr + ' Poynting Flux (' + energyFluxStr + ')' + ionosphString
 
-title__eSpec_ind_10     = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString ;"Eflux_Losscone_Integ"
-title__eSpec_esa_nFlux  = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + numFluxStr + ')' + ionosphString    ;"ESA_Number_flux"
-title__eSpec_ind_18     = 'Non-' + alficStr + ' Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
-title__eSpec_ion_energy = 'Non-' + alficStr + ' Upward Ion Energy Flux (' + numFluxStr + ')' + ionosphString   ;Specialty
+;; title__eSpec_ind_10     = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString ;"Eflux_Losscone_Integ"
+;; title__eSpec_esa_nFlux  = 'Non-' + alficStr + ' Loss-cone e!U-!N Flux (' + numFluxStr + ')' + ionosphString    ;"ESA_Number_flux"
+;; title__eSpec_ind_18     = 'Non-' + alficStr + ' Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
+;; title__eSpec_ion_energy = 'Non-' + alficStr + ' Upward Ion Energy Flux (' + numFluxStr + ')' + ionosphString   ;Specialty
+
+title__eSpec_ind_10     = 'Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString ;"Eflux_Losscone_Integ"
+title__eSpec_esa_nFlux  = 'Loss-cone e!U-!N Flux (' + numFluxStr + ')' + ionosphString    ;"ESA_Number_flux"
+title__eSpec_ind_18     = 'Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
+title__eSpec_ion_energy = 'Upward Ion Energy Flux (' + numFluxStr + ')' + ionosphString   ;Specialty
 
 title__eSpec_charEE                = 'Electron Characteristic Energy (' + charEUnitString + ') ' + scAltString
 

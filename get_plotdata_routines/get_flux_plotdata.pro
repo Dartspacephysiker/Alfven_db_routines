@@ -854,6 +854,11 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      h2dStr.do_plotIntegral = Charee_do_plotIntegral
      h2dStr.do_midCBLabel   = Charee_do_midCBLabel
 
+     h2dStr.do_plotIntegral = 0B
+     h2dStr.is_fluxData     = 0B
+     h2dStr.do_grossRate    = 0B
+     h2dStr.do_timeAvg      = 0B
+
      CASE 1 OF
         STRUPCASE(fluxplottype) EQ STRUPCASE("lossCone"): BEGIN
            tmpFluxPlotType  = 'LC'
@@ -908,6 +913,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
      can_div_by_w_x         = 0
      can_mlt_by_w_x         = 0
+
+     h2dStr.do_plotIntegral = 0B
+     h2dStr.is_fluxData     = 0B
+     h2dStr.do_grossRate    = 0B
+     h2dStr.do_timeAvg      = 0B
+
   ENDIF
 
   IF KEYWORD_SET(get_magC) THEN BEGIN
