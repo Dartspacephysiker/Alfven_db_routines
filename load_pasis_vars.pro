@@ -80,10 +80,11 @@ FUNCTION LOAD_PASIS_VARS, $
         ENDIF
      END
      ELSE: BEGIN
-        IF N_ELEMENTS(PASIS__paramString_list       ) EQ 0 OR $
-           N_ELEMENTS(PASIS__paramString            ) EQ 0 OR $
-           N_ELEMENTS(PASIS__plot_i_list            ) EQ 0 OR $
-           N_ELEMENTS(PASIS__fastLocInterped_i_list ) EQ 0 OR $
+        IF N_ELEMENTS(PASIS__paramString_list        ) EQ 0  OR $
+           N_ELEMENTS(PASIS__paramString             ) EQ 0  OR $
+           N_ELEMENTS(PASIS__plot_i_list             ) EQ 0  OR $
+           (KEYWORD_SET(need_fastLoc_i) AND $
+            N_ELEMENTS(PASIS__fastLocInterped_i_list ) EQ 0) OR $
            ;; N_ELEMENTS(PASIS__indices__eSpec_list ) EQ 0 OR $
            ;; N_ELEMENTS(PASIS__indices__ion_list   ) EQ 0 OR $
            ;; N_ELEMENTS(PASIS__eFlux_eSpec_data       ) EQ 0 OR $
@@ -95,12 +96,17 @@ FUNCTION LOAD_PASIS_VARS, $
            ;; N_ELEMENTS(PASIS__ion_delta_t            ) EQ 0 OR $
            ;; N_ELEMENTS(PASIS__ion__MLTs              ) EQ 0 OR $
            ;; N_ELEMENTS(PASIS__ion__ILATs             ) EQ 0 OR $
-           N_ELEMENTS(PASIS__alfDB_plot_struct      ) EQ 0 OR $
-           N_ELEMENTS(PASIS__IMF_struct             ) EQ 0 OR $
-           N_ELEMENTS(PASIS__MIMC_struct            ) EQ 0 $
+           (~KEYWORD_SET(checkAgainst) AND $
+            (N_ELEMENTS(PASIS__alfDB_plot_struct      ) EQ 0 OR $
+             N_ELEMENTS(PASIS__IMF_struct             ) EQ 0 OR $
+             N_ELEMENTS(PASIS__MIMC_struct            ) EQ 0)) $
         THEN BEGIN
-           PRINT,"BROOOOOO!"
-           STOP
+           IF N_ELEMENTS(PASIS__plot_i_list) EQ 0 THEN BEGIN
+              inds_reset = 1
+           ENDIF ELSE BEGIN
+              PRINT,"BROOOOOO!"
+              STOP
+           ENDELSE
         ENDIF
      END
   ENDCASE

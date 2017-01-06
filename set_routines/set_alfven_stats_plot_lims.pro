@@ -8,6 +8,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
    ENUMFLPLOTRANGE=ENumFlPlotRange, $
    LOGENUMFLPLOT=logENumFlPlot, $
    AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
+   LOGPFPLOT=logPFPlot, $
    PPLOTRANGE=PPlotRange, $
    LOGIFPLOT=logIfPlot, $
    IPLOTRANGE=IPlotRange, $
@@ -177,14 +178,15 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
   deflogNEventsPlot	      = 0B
   defnEventsPlotAutoscale     = 0B
   defnEventsPlotNormalize     = 0B
-  deflogEfPlot                = 0B
-  deflogENumFlPlot	      = 0B
-  defautoscale_eNumFlplots    = 0B
-  deflogIfPlot                = 0B
-  deflogOxyfPlot	      = 0B
   deflogCharEPlot	      = 0B
   deflogChariePlot	      = 0B
+  deflogEfPlot                = 0B
+  deflogENumFlPlot	      = 0B
+  deflogIfPlot                = 0B
   deflogMagCPlot              = 0B
+  deflogOxyfPlot	      = 0B
+  deflogPFPlot                = 0B
+  defautoscale_eNumFlplots    = 0B
   defautoscale_fluxPlots      = 0B
   deforbContribAutoscale      = 0B
   deflogOrbContribPlot        = 0B
@@ -233,14 +235,15 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          logNEventsPlot              : deflogNEventsPlot	     , $
                          nEventsPlotAutoscale        : defnEventsPlotAutoscale       , $
                          nEventsPlotNormalize        : defnEventsPlotNormalize       , $
-                         logEfPlot                   : deflogEfPlot		     , $
-                         logENumFlPlot               : deflogENumFlPlot              , $
-                         autoscale_eNumFlplots       : defautoscale_eNumFlplots      , $
-                         logIfPlot                   : deflogIfPlot		     , $
-                         logOxyfPlot                 : deflogOxyfPlot                , $
                          logCharEPlot                : deflogCharEPlot               , $
                          logChariePlot               : deflogChariePlot              , $
+                         logEfPlot                   : deflogEfPlot		     , $
+                         logENumFlPlot               : deflogENumFlPlot              , $
+                         logIfPlot                   : deflogIfPlot		     , $
                          logMagCPlot                 : deflogMagCPlot                , $
+                         logOxyfPlot                 : deflogOxyfPlot                , $
+                         logPFPlot                   : deflogPFPlot                  , $
+                         autoscale_eNumFlplots       : defautoscale_eNumFlplots      , $
                          autoscale_fluxPlots         : defautoscale_fluxPlots        , $
                          orbContribAutoscale         : deforbContribAutoscale        , $
                          logOrbContribPlot           : deflogOrbContribPlot	     , $
@@ -467,41 +470,6 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  /ADD_REPLACE
   ENDIF
   
-  IF N_ELEMENTS(logEfPlot) GT 0 THEN BEGIN
-     STR_ELEMENT,alfDB_plotLim_struct, $
-                 'logEfPlot', $
-                 BYTE(logEfPlot), $
-                 /ADD_REPLACE
-  ENDIF
-  
-  IF N_ELEMENTS(logENumFlPlot) GT 0 THEN BEGIN
-     STR_ELEMENT,alfDB_plotLim_struct, $
-                 'logENumFlPlot', $
-                 BYTE(logENumFlPlot), $
-                 /ADD_REPLACE
-  ENDIF
-  
-  IF N_ELEMENTS(autoscale_eNumFlplots) GT 0 THEN BEGIN
-     STR_ELEMENT,alfDB_plotLim_struct, $
-                 'autoscale_eNumFlplots', $
-                 BYTE(autoscale_eNumFlplots), $
-                 /ADD_REPLACE
-  ENDIF
-  
-  IF N_ELEMENTS(logIfPlot) GT 0 THEN BEGIN
-     STR_ELEMENT,alfDB_plotLim_struct, $
-                 'logIfPlot', $
-                 BYTE(logIfPlot), $
-                 /ADD_REPLACE
-  ENDIF
-  
-  IF N_ELEMENTS(logOxyfPlot) GT 0 THEN BEGIN
-     STR_ELEMENT,alfDB_plotLim_struct, $
-                 'logOxyfPlot', $
-                 BYTE(logOxyfPlot), $
-                 /ADD_REPLACE
-  ENDIF
-  
   IF N_ELEMENTS(logCharEPlot) GT 0 THEN BEGIN
      STR_ELEMENT,alfDB_plotLim_struct, $
                  'logCharEPlot', $
@@ -516,6 +484,27 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  /ADD_REPLACE
   ENDIF
   
+  IF N_ELEMENTS(logEfPlot) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'logEfPlot', $
+                 BYTE(logEfPlot), $
+                 /ADD_REPLACE
+  ENDIF
+  
+  IF N_ELEMENTS(logENumFlPlot) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'logENumFlPlot', $
+                 BYTE(logENumFlPlot), $
+                 /ADD_REPLACE
+  ENDIF  
+  
+  IF N_ELEMENTS(logIfPlot) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'logIfPlot', $
+                 BYTE(logIfPlot), $
+                 /ADD_REPLACE
+  ENDIF
+  
   IF N_ELEMENTS(logMagCPlot) GT 0 THEN BEGIN
      STR_ELEMENT,alfDB_plotLim_struct, $
                  'logMagCPlot', $
@@ -523,6 +512,33 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  /ADD_REPLACE
   ENDIF
   
+  IF N_ELEMENTS(logOxyfPlot) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'logOxyfPlot', $
+                 BYTE(logOxyfPlot), $
+                 /ADD_REPLACE
+  ENDIF
+  
+  IF N_ELEMENTS(logOxyfPlot) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'logOxyfPlot', $
+                 BYTE(logOxyfPlot), $
+                 /ADD_REPLACE
+  ENDIF
+  
+  IF N_ELEMENTS(logPFPlot) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'logPFPlot', $
+                 BYTE(logPFPlot), $
+                 /ADD_REPLACE
+  ENDIF
+  
+  IF N_ELEMENTS(autoscale_eNumFlplots) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'autoscale_eNumFlplots', $
+                 BYTE(autoscale_eNumFlplots), $
+                 /ADD_REPLACE
+  ENDIF
   IF N_ELEMENTS(autoscale_fluxPlots) GT 0 THEN BEGIN
      STR_ELEMENT,alfDB_plotLim_struct, $
                  'autoscale_fluxPlots', $

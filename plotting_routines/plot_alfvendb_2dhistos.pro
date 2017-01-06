@@ -18,6 +18,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                            CLOCKSTR=clockStr, $
                            NO_COLORBAR=no_colorbar, $
                            SUPPRESS_THICKGRID=suppress_thickGrid, $
+                           SUPPRESS_THINGRID=suppress_thinGrid, $
                            SUPPRESS_GRIDLABELS=suppress_gridLabels, $
                            SUPPRESS_MLT_LABELS=suppress_MLT_labels, $
                            SUPPRESS_ILAT_LABELS=suppress_ILAT_labels, $
@@ -174,7 +175,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
               ;; defIntegPos         = [0.07 , 0.93, 0.82 , 0.07]
               defIntegPos         = [0.03 , 0.03, 0.82 , 0.07]
            ENDIF ELSE BEGIN
-              defIntegPos         = [0.11 , 0.78, 0.68 , 0.74]
+              ;; defIntegPos         = [0.11 , 0.78, 0.68 , 0.74] ;for top-left corner,top-right corners
+              defIntegPos         = [0.04 , 0.03, 0.68 , 0.74] ;for bottom-left corner,top-right corners
            ENDELSE
            defIntegDelta          = 0.05
 
@@ -372,6 +374,12 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                     N_ELEMENTS(tiling_order): suppress_tg = suppress_thickGrid[i]
                  ENDCASE
 
+                 CASE N_ELEMENTS(suppress_thickGrid) OF
+                    0:
+                    1: suppress_tnG = suppress_thinGrid
+                    N_ELEMENTS(tiling_order): suppress_tnG = suppress_thinGrid[i]
+                 ENDCASE
+                 
                  CASE N_ELEMENTS(suppress_gridLabels) OF
                     0: 
                     1: suppress_gl = suppress_gridLabels
@@ -469,6 +477,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        CB_INFO=cb_info, $
                                        /NO_DISPLAY, $
                                        SUPPRESS_THICKGRID=suppress_tg, $
+                                       SUPPRESS_THINGRID=suppress_tnG, $
                                        SUPPRESS_GRIDLABELS=suppress_gl, $
                                        SUPPRESS_MLT_LABELS=suppress_Ml, $
                                        SUPPRESS_ILAT_LABELS=suppress_Il, $
@@ -511,6 +520,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                           CB_INFO=op_cb_info, $
                                           /NO_DISPLAY, $
                                           SUPPRESS_THICKGRID=suppress_tg, $
+                                          SUPPRESS_THINGRID=suppress_tnG, $
                                           SUPPRESS_GRIDLABELS=suppress_gl, $
                                           SUPPRESS_MLT_LABELS=suppress_Ml, $
                                           SUPPRESS_ILAT_LABELS=suppress_Il, $
@@ -734,7 +744,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
               xSize    = 5
               ySize    = 5
 
-              integ_position = [0.11 , 0.78, 0.68 , 0.74]
+              ;; integ_position = [0.11 , 0.78, 0.68 , 0.74] ;for top-left corner,top-right corners
+              integ_position = [0.11 , 0.08, 0.68 , 0.74] ;for bottom-left corner,top-right corners
               integ_delta    = 0.05
 
               FOR i=0, N_ELEMENTS(h2dStrArr) - 2 DO BEGIN  
@@ -786,6 +797,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        /NO_DISPLAY, $
                                        CB_POSITION=cb_position, $
                                        SUPPRESS_THICKGRID=suppress_thickGrid, $
+                                       SUPPRESS_THINGRID=suppress_thinGrid, $
                                        SUPPRESS_GRIDLABELS=suppress_gridLabels, $
                                        SUPPRESS_MLT_LABELS=suppress_MLT_labels, $
                                        SUPPRESS_ILAT_LABELS=suppress_ILAT_labels, $

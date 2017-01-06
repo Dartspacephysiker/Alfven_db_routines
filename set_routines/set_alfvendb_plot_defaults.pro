@@ -17,6 +17,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    DONT_BLACKBALL_FASTLOC=dont_blackball_fastloc, $
    DIV_FLUXPLOTS_BY_ORBTOT=div_fluxPlots_by_orbTot, $
    DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+   DO_NOT_MAP_ANYTHING=noMapping, $
    MINMLT=minMLT, $
    MAXMLT=maxMLT, $
    BINMLT=binMLT, $
@@ -503,6 +504,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          dont_blackball_fastloc            : 0B, $
                          div_fluxPlots_by_orbTot           : 0B, $
                          div_fluxPlots_by_applicable_orbs  : 0B, $
+                         noMapping                         : 0B, $
                          EA_binning                        : 0B, $
                          HwMAurOval                        : 0B, $
                          tHist_mask_bins_below_thresh      : 0B, $
@@ -799,6 +801,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(div_fluxPlots_by_applicable_orbs) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'div_fluxPlots_by_applicable_orbs', $
                     div_fluxPlots_by_applicable_orbs,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(noMapping) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'noMapping', $
+                    noMapping,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(include_32Hz) GT 0 THEN BEGIN

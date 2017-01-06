@@ -30,6 +30,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           WINDOW_YSIZE=ySize, $
                           NO_DISPLAY=no_display, $
                           SUPPRESS_THICKGRID=suppress_thickGrid, $
+                          SUPPRESS_THINGRID=suppress_thinGrid, $
                           SUPPRESS_GRIDLABELS=suppress_gridLabels, $
                           SUPPRESS_MLT_LABELS=suppress_MLT_labels, $
                           SUPPRESS_ILAT_LABELS=suppress_ILAT_labels, $
@@ -741,7 +742,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      shiftedMLTs                  = !NULL
   ENDELSE
 
-  IF binI GT 3.0 AND ~KEYWORD_SET(overplot) THEN BEGIN
+  IF binI GT 3.0 AND ~(KEYWORD_SET(overplot) OR KEYWORD_SET(suppress_thinGrid)) THEN BEGIN
      CGMAP_GRID, CLIP_TEXT=1, $
                  /NOCLIP, $
                  LINESTYLE=0, $
@@ -981,7 +982,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                               defCharSize_grid)           $
                   * charScale)
 
-     show_daynight_integrals = 1
+     show_daynight_integrals = 0
      IF KEYWORD_SET(show_daynight_integrals) THEN BEGIN
 
         CGTEXT, $
@@ -1134,7 +1135,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                  TCHARSIZE=KEYWORD_SET(labels_for_presentation) ? charSize_plotTitle_pres : cbTCharSize*charScale,$
                  POSITION=KEYWORD_SET(cb_position) ? cb_position : (KEYWORD_SET(labels_for_presentation) ? cbPosition_pres : cbPosition), $
                  TEXTTHICK=cbTextThick, VERTICAL=cbVertical, $
-                 CHARSIZE=KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : cbTCharSize*charScale,$
+                 CHARSIZE=(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : cbTCharSize)*charScale,$
                  TICKLEN=0.5, $
                  ;; TICKINTERVAL=(temp.is_logged AND temp.logLabels) ? 0.25 : !NULL, $
                  TICKNAMES=cbTickNames

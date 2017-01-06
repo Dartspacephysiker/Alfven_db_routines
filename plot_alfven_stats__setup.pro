@@ -94,6 +94,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    LOGNEVENTSPLOT=logNEventsPlot, $
    LOGORBCONTRIBPLOT=logOrbContribPlot, $
    LOGOXYFPLOT=logOxyfPlot, $
+   LOGPFPLOT=logPFPlot, $
    LOGPROBOCCURRENCE=logProbOccurrence, $
    LOGTIMEAVGD_EFLUXMAX=logTimeAvgd_EFluxMax, $
    LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
@@ -501,6 +502,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      ENUMFLPLOTRANGE=ENumFlPlotRange, $
      LOGENUMFLPLOT=logENumFlPlot, $
      AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
+     LOGPFPLOT=logPFPlot, $
      PPLOTRANGE=PPlotRange, $
      LOGIFPLOT=logIfPlot, $
      IPLOTRANGE=IPlotRange, $

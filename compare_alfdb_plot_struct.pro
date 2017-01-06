@@ -20,6 +20,7 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
                  "eSpec__Newell_2009_interp"         , $
                  "Newell__comb_accelerated"          , $
                  "disregard_sample_t"                , $
+                 "noMapping"                         , $
                  "maskMin"                           , $
                  "tHist_mask_bins_below_thresh"      , $
                  "nPlots"                            , $
@@ -123,6 +124,12 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
   IF alfDB_plot_struct1.disregard_sample_t NE alfDB_plot_struct2.disregard_sample_t THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"disregard_sample_t", $
            alfDB_plot_struct1.disregard_sample_t,alfDB_plot_struct2.disregard_sample_t
+     DBs_reset += 1B
+  ENDIF
+  
+  IF alfDB_plot_struct1.noMapping NE alfDB_plot_struct2.noMapping THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"noMapping", $
+           alfDB_plot_struct1.noMapping,alfDB_plot_struct2.noMapping
      DBs_reset += 1B
   ENDIF
   
