@@ -177,6 +177,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    SUMMED_EFLUX_PFLUXPLOTRANGE=summed_eFlux_pFluxplotRange, $
    SUMMED_EFLUX_PFLUX_LOGPLOT=summed_eFlux_pFlux_logPlot, $
    MEDIANPLOT=medianPlot, $
+   MAXPLOT=maxPlot, $
    MEDHISTOUTDATA=medHistOutData, $
    MEDHISTOUTTXT=medHistOutTxt, $
    LOGAVGPLOT=logAvgPlot, $

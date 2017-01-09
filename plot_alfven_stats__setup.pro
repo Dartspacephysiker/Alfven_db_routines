@@ -117,6 +117,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    SQUAREPLOT=squarePlot, $
    POLARCONTOUR=polarContour, $ 
    MEDIANPLOT=medianPlot, $
+   MAXPLOT=maxPlot, $
+   MINPLOT=minPlot, $
    LOGAVGPLOT=logAvgPlot, $
    PLOTMEDORAVG=plotMedOrAvg, $
    DATADIR=dataDir, $
@@ -367,6 +369,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      SQUAREPLOT=squarePlot, $
      POLARCONTOUR=polarContour, $ 
      MEDIANPLOT=medianPlot, $
+     MAXPLOT=maxPlot, $
+     MINPLOT=minPlot, $
      LOGAVGPLOT=logAvgPlot, $
      PLOTMEDORAVG=plotMedOrAvg, $
      DATADIR=dataDir, $

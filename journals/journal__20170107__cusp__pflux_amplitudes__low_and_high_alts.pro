@@ -324,10 +324,12 @@ PRO JOURNAL__20170107__CUSP__PFLUX_AMPLITUDES__LOW_AND_HIGH_ALTS
                   XTITLE='FAC width (m)', $
                   YTITLE='Max FAC Amplitude ($\mu$A/m!U2!N)'
 
-  plotMax = PLOT(10.^(wCenter),maxFAC, $
+  plotMax = PLOT(10.^(wCenter)/1000.,maxFAC, $
                  /XLOG, $
-                 XTITLE='FAC width (m)', $
-                 YTITLE='Max FAC Amplitude  ($\mu$A/m!U2!N)', $
+                 ;; XTITLE='FAC width (km)', $
+                 XTITLE='Width (km)', $
+                 ;; YTITLE='Max FAC Amplitude  ($\mu$A/m!U2!N)', $
+                 YTITLE='Amplitude  ($\mu$A/m!U2!N)', $
                  FONT_SIZE=20)
 
   STOP

@@ -128,6 +128,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    SQUAREPLOT=squarePlot, $
    POLARCONTOUR=polarContour, $ ;WHOLECAP=wholeCap, $
    MEDIANPLOT=medianPlot, $
+   MAXPLOT=maxPlot, $
+   MINPLOT=minPlot, $
    LOGAVGPLOT=logAvgPlot, $
    PLOTMEDORAVG=plotMedOrAvg, $
    DATADIR=dataDir, $
@@ -396,9 +398,24 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   ;;tap DBs, and setup output
   IF KEYWORD_SET(no_burstData) THEN inc_burstStr ='-noBurst' ELSE inc_burstStr=''
 
-  IF KEYWORD_SET(medianplot) THEN plotMedOrAvg = "-med" ELSE BEGIN
-     IF KEYWORD_SET(logAvgPlot) THEN plotMedOrAvg = "-lgAvg" ELSE plotMedOrAvg = "-avg"
-  ENDELSE
+  CASE 1 OF
+     KEYWORD_SET(medianPlot): BEGIN
+        plotMedOrAvg = "-med"
+     END
+     KEYWORD_SET(maxPlot): BEGIN
+        plotMedOrAvg = "-max"
+     END
+     KEYWORD_SET(minPlot): BEGIN
+        plotMedOrAvg = "-min"
+     END
+     ELSE: BEGIN
+        IF KEYWORD_SET(logAvgPlot) THEN BEGIN
+           plotMedOrAvg = "-lgAvg"
+        ENDIF ELSE BEGIN
+           plotMedOrAvg = "-avg"
+        ENDELSE
+     END
+  ENDCASE
 
   ;;Set minimum allowable number of events for a histo bin to be displayed
   maskStr = ''
@@ -564,6 +581,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          squarePlot                        : 0B, $
                          polarContour                      : 0B, $
                          medianPlot                        : 0B, $
+                         maxPlot                           : 0B, $
+                         minPlot                           : 0B, $
                          logAvgPlot                        : 0B, $
                          plotMedOrAvg                      : 0B, $
                          no_burstData                      : 0B, $
@@ -1147,10 +1166,22 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'medianPlot', $
                     BYTE(medianPlot),/ADD_REPLACE
      ENDIF
+
+     IF N_ELEMENTS(maxPlot) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'maxPlot', $
+                    BYTE(maxPlot),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(minPlot) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'minPlot', $
+                    BYTE(minPlot),/ADD_REPLACE
+     ENDIF
+
      IF N_ELEMENTS(logAvgPlot) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'logAvgPlot', $
                     BYTE(logAvgPlot),/ADD_REPLACE
      ENDIF
+
      IF N_ELEMENTS(plotMedOrAvg) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'plotMedOrAvg', $
                     BYTE(plotMedOrAvg),/ADD_REPLACE

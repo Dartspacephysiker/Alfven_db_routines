@@ -1436,6 +1436,28 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            ;; h2dStr.data[hEv_nz_i] = h2dStr.data[hEv_nz_i]/tHistDenominator[hEv_nz_i]
 
         END
+        (KEYWORD_SET(alfDB_plot_struct.maxPlot) OR KEYWORD_SET(alfDB_plot_struct.minPlot)): BEGIN
+
+           h2dStr.data = MEDIAN_HIST(mlts, $
+                                     ilats,$
+                                     inData,$
+                                     MAXIMUM=alfDB_plot_struct.maxPlot, $
+                                     MINIMUM=alfDB_plot_struct.minPlot, $
+                                     MIN1=MIMC_struct.minM, $
+                                     MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI), $
+                                     BINSIZE1=MIMC_struct.binM, $
+                                     MAX1=MIMC_struct.maxM, $
+                                     MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI), $
+                                     BINSIZE2=(KEYWORD_SET(MIMC_struct.do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
+                                     OBIN1=outH2DBinsMLT, $
+                                     OBIN2=(KEYWORD_SET(MIMC_struct.do_lshell) ? outH2DBinsLShell : outH2DBinsILAT),$
+                                     ABSMED=absFlux, $
+                                     OUTFILE=medHistDatFile, $
+                                     PLOT_I=tmp_i, $
+                                     EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning) 
+
+
+        END
         ELSE: BEGIN
            CASE 1 OF
               KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
