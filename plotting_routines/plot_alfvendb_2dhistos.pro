@@ -684,7 +684,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
 
                  position         = CALC_PLOT_POSITION(jBlank+1,n_tile_columns,n_tile_rows)
 
-                 arrowFile  = '/home/spencerh/Desktop/Spence_paper_drafts/2016/Alfvens_IMF/Figs/clockAngle_for_zhang_analog_v4.png'
+                 arrowFile  = '/home/spencerh/Desktop/Spence_paper_drafts/2017/Alfvens_IMF/Figs/clockAngle_for_zhang_analog_v4.png'
 
                  ;; wDim       = [800*n_tile_columns,800*n_tile_rows]
                  ;; wDim       = [800*n_tile_columns*xRatio,800*n_tile_rows*yRatio]

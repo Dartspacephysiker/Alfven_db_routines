@@ -116,25 +116,48 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
      hemi           = STRUPCASE(hemi)
   ENDELSE
   
-  IF STRUPCASE(hemi) EQ "NORTH" THEN BEGIN
-     IF N_ELEMENTS(minI)       EQ 0 THEN minI  = defMinI
-     IF N_ELEMENTS(maxI)       EQ 0 THEN maxI  = defMaxI
-  ENDIF ELSE BEGIN
-     IF STRUPCASE(hemi) EQ "SOUTH" THEN BEGIN
+  IF ( (STRUPCASE(hemi) NE "NORTH") AND $
+       (STRUPCASE(hemi) NE "SOUTH") AND $
+       (STRUPCASE(hemi) NE "BOTH" ) )   $
+  THEN BEGIN
+     PRINTF,lun,"Invalid hemisphere name provided! Should be 'North' or 'South'."
+     PRINTF,lun,"Defaulting to 'North'."
+     hemi           = "North"
+  ENDIF
+
+  CASE 1 OF
+     STRUPCASE(hemi) EQ "NORTH": BEGIN
+        IF N_ELEMENTS(minI)       EQ 0 THEN minI  = defMinI
+        IF N_ELEMENTS(maxI)       EQ 0 THEN maxI  = defMaxI
+
+        ;;Flip things if they're lacking sense
+        IF minI LT 0 THEN minI *= -1.
+        IF maxI LT 0 THEN maxI *= -1.
+     END
+     STRUPCASE(hemi) EQ "SOUTH": BEGIN
         IF N_ELEMENTS(minI)    EQ 0 THEN minI  = -defMaxI
         IF N_ELEMENTS(maxI)    EQ 0 THEN maxI  = -defMinI
-     ENDIF ELSE BEGIN
-        IF STRUPCASE(hemi) EQ "BOTH" THEN BEGIN     ;;Other routines will handle this situation
-           IF N_ELEMENTS(minI) EQ 0 THEN minI  = defMinI
-           IF N_ELEMENTS(maxI) EQ 0 THEN maxI  = defMaxI
-        ENDIF ELSE BEGIN
-           PRINTF,lun,"Invalid hemisphere name provided! Should be 'North' or 'South'."
-           PRINTF,lun,"Defaulting to 'North'."
-           hemi                                = "North"
-           STOP
-        ENDELSE
-     ENDELSE
-  ENDELSE
+
+        ;;Flip things if they're lacking sense
+        IF minI GT 0 THEN minI *= -1.
+        IF maxI GT 0 THEN maxI *= -1.
+     END
+     STRUPCASE(hemi) EQ "BOTH": BEGIN     ;;Other routines will handle this situation
+        IF N_ELEMENTS(minI) EQ 0 THEN minI  = defMinI
+        IF N_ELEMENTS(maxI) EQ 0 THEN maxI  = defMaxI
+
+        ;;Flip things if they're lacking sense
+        IF minI LT 0 THEN minI *= -1.
+        IF maxI LT 0 THEN maxI *= -1.
+     END
+  ENDCASE
+
+  ;;Fix 'em
+  IF minI GT maxI THEN BEGIN
+     tmp  = maxI
+     maxI = minI
+     minI = TEMPORARY(tmp)
+  ENDIF
 
   IF N_ELEMENTS(binI) EQ 0 THEN binI = defBinI
 

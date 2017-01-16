@@ -167,7 +167,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    MIMC_STRUCT=MIMC_struct, $
    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
    RESET_STRUCT=reset, $
-   DO_NOT_SET_DEFAULTS=do_not_set_defaults
+   DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+   _EXTRA=e
 
 
   COMPILE_OPT idl2
