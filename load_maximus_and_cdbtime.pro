@@ -151,9 +151,21 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
         IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"Doing despun DB!"
         MAXIMUS__despun = 1
      ENDIF ELSE BEGIN
+
         IF N_ELEMENTS(DBDir) EQ 0 THEN DBDir = DefDBDir
-        IF N_ELEMENTS(DBFile) EQ 0 THEN DBFile = DefDBFile
-        IF N_ELEMENTS(DB_tFile) EQ 0 THEN DB_tFile = DefDB_tFile
+
+        IF N_ELEMENTS(DBFile) EQ 0 THEN BEGIN
+           DBFile   = DefDBFile
+           DB_tFile = DefDB_tFile
+        ENDIF ELSE BEGIN
+           IF (KEYWORD_SET(force_load_maximus) AND $
+               (STRUPCASE(DBFile) EQ "FROM ELSEWHERE!")) $
+           THEN BEGIN
+              DBFile   = DefDBFile
+              DB_tFile = DefDB_tFile
+           ENDIF 
+        ENDELSE
+        
         MAXIMUS__despun = 0
      ENDELSE
   ENDELSE

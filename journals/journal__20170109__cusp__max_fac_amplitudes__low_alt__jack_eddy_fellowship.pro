@@ -35,18 +35,24 @@ PRO JOURNAL__20170109__CUSP__MAX_FAC_AMPLITUDES__LOW_ALT__JACK_EDDY_FELLOWSHIP
                               FORCE_LOAD_BOTH=force_load_maximus
   ENDIF
 
+  ;; hemi = 'BOTH'
+  ;; minM = 11.5
+  ;; maxM = 12.5
+  ;; minI = 72
+  ;; maxI = 86
+  
   hemi = 'BOTH'
-  minM = 11.5
-  maxM = 12.5
-  minI = 72
-  maxI = 86
+  minM = 0
+  maxM = 24
+  minI = 58
+  maxI = 90
   
   altRange = [ $
-             [300,700] $
+             ;; [300,700] $
              ;; [700,1700], $
              ;; [1700,2700], $
              ;; [2700,3700], $
-             ;; [300,4300] $ ;Leave me alone! I am not counted in the plots
+             [300,1000] $ ;Leave me alone! I am not counted in the plots
              ]
 
   ;; dstCutoff            = -30
