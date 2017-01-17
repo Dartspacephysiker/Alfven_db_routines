@@ -37,8 +37,26 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
      ;;And individual rogues
      individual_blackballOrbs = [1002,3461,7822,7836,7891,7925] 
      individual_blackballOrbs = [1002,3461,7822,7836,7891,7925,8756] ;Round 3 resultant
+
+     ;; individual_blackballOrbs = [749, $
+     ;;                             1002,1179,1200,1543,1733,1775,1879,1915,1947,2660,2793,2985, $
+     ;;                             3015,3025,3054,3059,3123,3135,3296,3345,3360,3372,3461,3489,3680,3868, $
+     ;;                             4149,4204,4226,4480,4497,4603,4632,4641,4678,4962, $
+     ;;                             5154,5243,5390,5476,5494,5585,5608,5636,5771,5837, $
+     ;;                             6232, $
+     ;;                             7012,7683,7744,7758,7836,7857,7891,7925,7926, $
+     ;;                             8162,8540,8756,8768, $
+     ;;                             9401,9406,9596,9830,9980,9990, $
+     ;;                             10014,10072,10080,10083,10094,10131,10314, $
+     ;;                             12278,12297,12471, $
+     ;;                             13214,13785, $
+     ;;                             14297] ;Round 4 resultant
+
+     ;;1002: TOTAL LOSS (nothing even close to sensible, all red
+     ;;1179: Bunch of little screwups throughout the survey ESA data
+     ;;1543 Can be salvaged, I'm too lazy
      individual_blackballOrbs = [749, $
-                                 1002,1179,1200,1543,1733,1775,1879,1915,1947,2660,2793,2985, $
+                                 1002,1543,1733,1775,1879,1915,1947,2660,2793,2985, $
                                  3015,3025,3054,3059,3123,3135,3296,3345,3360,3372,3461,3489,3680,3868, $
                                  4149,4204,4226,4480,4497,4603,4632,4641,4678,4962, $
                                  5154,5243,5390,5476,5494,5585,5608,5636,5771,5837, $
@@ -49,8 +67,7 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                                  10014,10072,10080,10083,10094,10131,10314, $
                                  12278,12297,12471, $
                                  13214,13785, $
-                                 14297] ;Round 4 resultant
-
+                                 14297] ;Round 5 resultant, 2017/01/17
 
      ;; customTKillStrings = [ $
      ;;                      ['1996-12-08/' + ['08:44:20','08:46:10']], $
@@ -62,7 +79,18 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
      ;;Round 4 resultant
      customTKillStrings = [ $
                           ['1996-12-08/' + ['08:44:20','08:46:10']], $
-                          ['1999-02-17/' + ['20:58:30','20:59:30']], $ ;orb 9860 badness
+                          ['1996-12-08/' + ['10:40:10','10:41:14']], $ ;orb 1197 badness (some good in between, but too lazy)
+                          ['1996-12-08/' + ['10:44:19','10:44:40']], $ ;orb 1197 badness (some good in between, but too lazy)
+                          ['1996-12-08/' + ['10:46:03','10:46:11']], $ ;orb 1197 badness (some good in between, but too lazy)
+                          ['1996-12-08/' + ['10:53:40','10:53:49']], $ ;orb 1197 badness (some good in between, but too lazy)
+                          ['1996-12-08/' + ['10:54:47','10:54:54']], $ ;orb 1197 badness (some good in between, but too lazy)
+                          ['1996-12-08/' + ['10:59:07','10:59:16']], $ ;orb 1197 badness (some good in between, but too lazy)
+                          ['1996-12-10/' + ['09:16:53','09:19:05']], $ ;orb 1200 badness (but good burst data)
+                          ['1996-12-10/' + ['09:30:58','09:31:07']], $ ;orb 1200 badness (but good burst data)
+                          ['1996-12-10/' + ['09:37:31','09:37:39']], $ ;orb 1200 badness (but good burst data)
+                          ['1997-01-11/' + ['02:37:08','02:41:41']], $ ;orb 1543 badness
+                          ['1997-01-11/' + ['02:47:03','02:47:11']], $ ;orb 1543 badness
+                          ['1997-01-11/' + ['02:49:22','02:49:35']], $ ;orb 1543 badness
                           ['1997-12-30/' + ['05:53:40','05:54:00']], $ ;orb 5363 badness
                           ['1998-08-12/' + ['12:00:18','12:01:42']], $ ;orb 7804 badness (but good burst data)
                           ['1998-08-12/' + ['18:29:15','18:30:55']], $ ;orb 7807 badness (but good burst data)
@@ -95,6 +123,7 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                           ['1998-08-15/' + ['11:03:54','11:05:22']], $ ;orb 7836 badness (and no burst data)
                           ['1998-08-15/' + ['13:10:48','13:12:18']], $ ;orb 7837 badness (and no burst data)
                           ['1998-11-13/' + ['02:54:32','02:54:35']], $ ;orb 8809 badness 
+                          ['1999-02-17/' + ['20:58:30','20:59:30']], $ ;orb 9860 badness
                           ['1999-09-01/' + ['06:59:11','07:01:35']], $ ;orb 11985 badness
                           ['1999-09-01/' + ['07:51:15','07:55:11']], $ ;orb 11986 badness
                           ['1999-09-01/' + ['09:48:43','09:58:09']], $ ;orb 11987 badness
@@ -184,7 +213,9 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
 
   PRINT,"Junked " + STRCOMPRESS(nBTot,/REMOVE_ALL) + " events associated with blackballed orbits"
 
-  IF (KEYWORD_SET(customTKillRanges) OR KEYWORD_SET(customTKillStrings)) AND KEYWORD_SET(DBTimes) THEN BEGIN
+  IF (KEYWORD_SET(customTKillRanges) OR KEYWORD_SET(customTKillStrings)) AND (KEYWORD_SET(DBTimes) OR TAG_EXIST(DBStruct,'x')) THEN BEGIN
+
+     use_x = TAG_EXIST(dbStruct,'x')
 
      IF N_ELEMENTS(customTKillRanges) GT 0 THEN BEGIN
         customTimes = customTKillRanges
@@ -206,8 +237,8 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                               TIME_TO_STR(customTimes[0,k],/MS), $
                               TIME_TO_STR(customTimes[1,k],/MS))
 
-        blackBall_ii = WHERE((dbTimes[good_i] GE customTimes[0,k]) AND $
-                             (dbTimes[good_i] LE customTimes[1,k]), $
+        blackBall_ii = WHERE(((use_x ? DBStruct.x : DBTimes)[good_i] GE customTimes[0,k]) AND $
+                             ((use_x ? DBStruct.x : DBTimes)[good_i] LE customTimes[1,k]), $
                              nBlackBall, $
                              COMPLEMENT=keeper_ii, $
                              NCOMPLEMENT=nKeeper)
