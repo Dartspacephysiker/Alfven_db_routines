@@ -174,6 +174,8 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                                             COUNT=dontDoIt)
               END
            ENDCASE
+
+           PRINT,"I got " + STRCOMPRESS(N_ELEMENTS(dont_use_these_inds)) + " bad inds for " + dataNameArr[tmpVarH2D_i[i]]
         ENDIF ELSE BEGIN 
            dont_use_these_inds            = !NULL
         ENDELSE

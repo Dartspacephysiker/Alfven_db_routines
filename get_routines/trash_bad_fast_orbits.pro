@@ -56,18 +56,34 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
      ;;1179: Bunch of little screwups throughout the survey ESA data
      ;;1543 Can be salvaged, I'm too lazy
      individual_blackballOrbs = [749, $
+                                 592,651,665, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                  1002,1543,1733,1775,1879,1915,1947,2660,2793,2985, $
+                                 1327,1392,1470,1533,1534,1710,1733,1788,1789,2713,3482,3557,3591,3623,3737,3769, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                  3015,3025,3054,3059,3123,3135,3296,3345,3360,3372,3461,3489,3680,3868, $
+                                 4258, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                  4149,4204,4226,4480,4497,4603,4632,4641,4678,4962, $
+                                 5073, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                  5154,5243,5390,5476,5494,5585,5608,5636,5771,5837, $
+                                 6126,6127, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                  6232, $
-                                 7012,7683,7744,7758,7836,7857,7891,7925,7926, $
+                                 7684,7742,7783,7894, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                 7012,7683,7744,7758,7857,7891,7925,7926, $
+                                 8334,8414,8538,8556, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                  8162,8540,8756,8768, $
+                                 9555,9596, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                  9401,9406,9596,9830,9980,9990, $
                                  10014,10072,10080,10083,10094,10131,10314, $
+                                 10118,10131,10314,10636, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                 11563, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                 12350,12539,12746, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                  12278,12297,12471, $
                                  13214,13785, $
-                                 14297] ;Round 5 resultant, 2017/01/17
+                                 14076,14732,14867, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                 14297, $
+                                 15054,15463 $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                ]                     ;Round 5 resultant, 2017/01/17
+
+
 
      ;; customTKillStrings = [ $
      ;;                      ['1996-12-08/' + ['08:44:20','08:46:10']], $

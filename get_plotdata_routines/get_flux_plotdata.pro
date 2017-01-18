@@ -1068,12 +1068,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      
      IF finite_i[0] NE -1 THEN BEGIN
         ;; PRINT,"BAD DATA: " + STRCOMPRESS(nRem,/REMOVE_ALL)
+        junk_i              = CGSETDIFFERENCE(tmp_i,finite_i,POSITIONS=rmTmp_ii,NORESULT=-1)
         tmp_i               = CGSETINTERSECTION(tmp_i,finite_i,COUNT=nFinite)
-        junk_i              = CGSETDIFFERENCE(tmp_i,finite_i,POSITIONS=rmpTmp_ii,NORESULT=-1)
         ;; tmp_i               = tmp_i[finite_ii]
      ENDIF
 
-     IF rmTmp_ii[0] NE -1 THEN BEGIN
+     IF junk_i[0] NE -1 THEN BEGIN
         removed_ii          = [removed_ii,TEMPORARY(rmTmp_ii)]
      ENDIF
 
@@ -1091,15 +1091,15 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         IF lt_i[0] NE -1 THEN BEGIN
 
            ;; tmp_i            = tmp_i[lt_ii]
-           tmp_i            = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
            junk_i           = CGSETDIFFERENCE(tmp_i,lt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
+           tmp_i            = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
            ;; tmp_i            = tmp_i[lt_ii]
            ;; PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(tmp_i)
            PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",nNeg
            inData           = ABS(inData)
         ENDIF
 
-        IF rmTmp_ii[0] NE -1 THEN BEGIN
+        IF junk_i[0] NE -1 THEN BEGIN
            removed_ii          = [removed_ii,TEMPORARY(rmTmp_ii)]
         ENDIF
 
@@ -1115,14 +1115,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      gt_i                   =  WHERE(inData GT 0.,COMPLEMENT=rmTmp_i)
      IF gt_i[0] NE -1 THEN BEGIN
 
-        tmp_i            = CGSETINTERSECTION(tmp_i,gt_i,COUNT=nPos)
         junk_i           = CGSETDIFFERENCE(tmp_i,gt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
+        tmp_i            = CGSETINTERSECTION(tmp_i,gt_i,COUNT=nPos)
         ;; tmp_i               = tmp_i[gt_ii]
         ;; PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",N_ELEMENTS(tmp_i)
         PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",nPos
      ENDIF
 
-     IF rmTmp_ii[0] NE -1 THEN BEGIN
+     IF junk_i[0] NE -1 THEN BEGIN
         removed_ii          = [removed_ii,TEMPORARY(rmTmp_ii)]
      ENDIF
 
@@ -1140,14 +1140,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         ;; tmp_i               = tmp_i[lt_ii]
         ;; PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(tmp_i)
 
-        tmp_i            = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
         junk_i           = CGSETDIFFERENCE(tmp_i,lt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
+        tmp_i            = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
 
         PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",nNeg
         inData           = ABS(inData)
      ENDIF
 
-     IF rmTmp_ii[0] NE -1 THEN BEGIN
+     IF junk_i[0] NE -1 THEN BEGIN
         removed_ii          = [removed_ii,TEMPORARY(rmTmp_ii)]
      ENDIF
 
@@ -1705,6 +1705,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
   ENDIF
 
   IF N_ELEMENTS(removed_ii) NE 0 THEN BEGIN 
+     pref = "!!!Removed_ii has " + STRCOMPRESS(N_ELEMENTS(WHERE(removed_ii NE -1)),/REMOVE_ALL) + " inds for " + dataName + "!"
      IF removed_ii[0] NE -1 THEN BEGIN 
         out_removed_ii = TEMPORARY(removed_ii)
      ENDIF ELSE BEGIN 
