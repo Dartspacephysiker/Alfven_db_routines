@@ -66,7 +66,7 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                                  5154,5243,5390,5476,5494,5585,5608,5636,5771,5837, $
                                  6126,6127, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                  6232, $
-                                 7684,7742,7783,7894, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                 7684,7783,7894, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                  7012,7683,7744,7758,7857,7891,7925,7926, $
                                  8334,8414,8538,8556, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                  8162,8540,8756,8768, $
@@ -107,7 +107,9 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                           ['1997-01-11/' + ['02:37:08','02:41:41']], $ ;orb 1543 badness
                           ['1997-01-11/' + ['02:47:03','02:47:11']], $ ;orb 1543 badness
                           ['1997-01-11/' + ['02:49:22','02:49:35']], $ ;orb 1543 badness
+                          ['1997-07-07/' + ['21:25:27','21:25:31']], $ ;orb 3465 badness
                           ['1997-12-30/' + ['05:53:40','05:54:00']], $ ;orb 5363 badness
+                          ['1998-08-06/' + ['18:52:23','18:52:32']], $ ;orb 7742 badness
                           ['1998-08-12/' + ['12:00:18','12:01:42']], $ ;orb 7804 badness (but good burst data)
                           ['1998-08-12/' + ['18:29:15','18:30:55']], $ ;orb 7807 badness (but good burst data)
                           ['1998-08-13/' + ['10:00:05','10:01:35']], $ ;orb 7814 badness (but good burst data)
@@ -140,6 +142,11 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                           ['1998-08-15/' + ['13:10:48','13:12:18']], $ ;orb 7837 badness (and no burst data)
                           ['1998-11-13/' + ['02:54:32','02:54:35']], $ ;orb 8809 badness 
                           ['1999-02-17/' + ['20:58:30','20:59:30']], $ ;orb 9860 badness
+                          ['1999-06-26/' + ['04:56:24','04:56:34']], $ ;orb 11255 badness
+                          ['1999-06-28/' + ['05:25:22','05:25:38']], $ ;orb 11277 badness
+                          ['1999-08-30/' + ['08:43:42','08:43:51']], $ ;orb 11964 badness
+                          ['1999-08-30/' + ['12:57:48','12:57:57']], $ ;orb 11966 badness
+                          ['1999-08-30/' + ['17:39:25','17:39:29']], $ ;orb 11968 badness
                           ['1999-09-01/' + ['06:59:11','07:01:35']], $ ;orb 11985 badness
                           ['1999-09-01/' + ['07:51:15','07:55:11']], $ ;orb 11986 badness
                           ['1999-09-01/' + ['09:48:43','09:58:09']], $ ;orb 11987 badness
