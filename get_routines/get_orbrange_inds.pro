@@ -35,7 +35,9 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
         customTKillStrings = [ $
                              ['1996-12-08/' + ['08:44:20','08:46:10']], $
                              ['1999-02-17/' + ['20:58:30','20:59:30']], $ ;orb 9860 badness
+                             ['1997-06-06/' + ['14:08:58','14:09:07']], $ ;orb 3127 badness: weird jitters while changing samp rate (no burst data)
                              ['1997-07-07/' + ['21:25:27','21:25:31']], $ ;orb 3465 badness
+                             ['1997-08-11/' + ['07:45:48','07:52:51']], $ ;orb 3838:The spectrum is good, but the energies are way wrong! (but good burst data)
                              ['1997-12-30/' + ['05:53:40','05:54:00']], $ ;orb 5363 badness
                              ['1998-08-06/' + ['18:52:23','18:52:32']], $ ;orb 7742 badness
                              ['1998-08-12/' + ['12:00:18','12:01:42']], $ ;orb 7804 badness (but good burst data)

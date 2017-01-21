@@ -107,7 +107,9 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                           ['1997-01-11/' + ['02:37:08','02:41:41']], $ ;orb 1543 badness
                           ['1997-01-11/' + ['02:47:03','02:47:11']], $ ;orb 1543 badness
                           ['1997-01-11/' + ['02:49:22','02:49:35']], $ ;orb 1543 badness
+                          ['1997-06-06/' + ['14:08:58','14:09:07']], $ ;orb 3127 badness: weird jitters while changing samp rate (no burst data)
                           ['1997-07-07/' + ['21:25:27','21:25:31']], $ ;orb 3465 badness
+                          ['1997-08-11/' + ['07:45:48','07:52:51']], $ ;orb 3838:The spectrum is good, but the energies are way wrong! (but good burst data) 2017/01/20
                           ['1997-12-30/' + ['05:53:40','05:54:00']], $ ;orb 5363 badness
                           ['1998-08-06/' + ['18:52:23','18:52:32']], $ ;orb 7742 badness
                           ['1998-08-12/' + ['12:00:18','12:01:42']], $ ;orb 7804 badness (but good burst data)
