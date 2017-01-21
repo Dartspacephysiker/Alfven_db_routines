@@ -26,7 +26,7 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
-  IF N_ELEMENTS(HLOI_H2D_lists_with_inds) GT 0 THEN BEGIN
+  IF N_ELEMENTS(HLOI__H2D_lists_with_inds) GT 0 THEN BEGIN
      IF KEYWORD_SET(reset_H2D_lists_with_inds) THEN BEGIN
         PRINTF,lun,"Resetting H2D_lists_with_inds ..."
      ENDIF ELSE BEGIN

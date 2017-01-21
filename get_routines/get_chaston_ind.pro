@@ -403,15 +403,18 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
                                                  MIMC__orbRange, $
                                                  POSITIONS=orb_i)
         ENDIF ELSE BEGIN
+           bro               = 1 ;Are we going to trash bad ESA stuff?
+
            orb_i             = GET_ORBRANGE_INDS( $
                                *pDBStruct, $
                                MIMC__orbRange[0], $
-                               MIMC__orbRange[1], $o
+                               MIMC__orbRange[1], $
                                DONT_TRASH_BAD_ORBITS= $
                                ((is_maximus) AND $
                                 KEYWORD_SET(alfDB_plot_struct.dont_blackball_maximus)) OR $
                                (~(is_maximus) AND $
                                 KEYWORD_SET(alfDB_plot_struct.dont_blackball_fastloc)), $
+                               SERIOUSLY__NOJUNK=bro, $
                                DBTIMES=(*pDBTimes), $
                                LUN=lun)
         ENDELSE
@@ -515,7 +518,31 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
         ENDELSE
      ENDIF
 
-     good_i                      = TEMPORARY(region_i)
+     good_i = TEMPORARY(region_i)
+
+     ;;Are we going to kill the bad ESA times? (See JOURNAL__20170119__STITCH_GAPS_FILES.PRO in espec_identification journals) 
+     IF bro AND is_maximus THEN BEGIN
+
+        killGap_file = GET_NEWELL_ESPEC_KILLGAP_FILE(dbStruct, $
+                                                     NEWELLDBDIR=dbDir, $
+                                                     /WHOWANTSTOKNOW, $
+                                                     /STOP_IF_NOEXIST)
+
+        RESTORE,killGap_file
+
+        ;;Don't use befStartTimes, because exclusion of the first 10 seconds of ESA data was built in to ALFVEN_STATS_5.
+        timeMe  = VALUE_CLOSEST2(junkTimes,(*pDBTimes))
+        likee = WHERE(ABS(junkTimes[timeMe]-(*pDBTimes)) GE 2.6,nLikee)
+        IF nLikee NE 0 THEN BEGIN
+           nGood  = N_ELEMENTS(good_i)
+           good_i = CGSETINTERSECTION(likee,good_i,COUNT=nKeep)
+           PRINT,"Lost " + STRCOMPRESS(nGood-nKeep) + " inds to junkTimes"
+        ENDIF ELSE BEGIN
+           PRINT,"DAWG!"
+           STOP
+        ENDELSE
+
+     ENDIF
 
      ;;Now, clear out all the garbage (NaNs & Co.)
      IF is_maximus THEN BEGIN

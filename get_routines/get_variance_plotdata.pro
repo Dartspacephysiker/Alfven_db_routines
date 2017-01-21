@@ -119,8 +119,8 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
         CASE loopType[k] OF
            1: BEGIN
               tmpInds   = in_inds
-              tmpMLTs   = NEWELL__eSpec.mlt [in_inds]
-              tmpILATs  = NEWELL__eSpec.ilat[in_inds]
+              tmpMLTs   = NEWELL__eSpec.mlt 
+              tmpILATs  = NEWELL__eSpec.ilat
            END
            2: BEGIN
               tmpInds   = fastLocInds
