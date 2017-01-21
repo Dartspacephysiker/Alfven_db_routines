@@ -29,14 +29,39 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                                  [1506,1522],[1533,1534],[1556,1557],[1564,1565],[1788,1789],[2681,2682], $
                                  [3091,3092],[4247,4248],[7804,7837],[11985,12001]] ;Resulting from Round 3
 
-     blackballOrb_ranges      = [[1028,1056],[1443,1444],[1465,1466],[1477,1478],[1487,1488],[1496,1499], $
-                                 [1506,1522],[1533,1534],[1556,1557],[1564,1565],[1788,1789],[2681,2682], $
-                                 [3091,3092],[4247,4248]] ;Resulting from Round 4, 2017/01/17
+     ;; blackballOrb_ranges      = [[1028,1056],[1443,1444],[1465,1466],[1477,1478],[1487,1488],[1496,1499], $
+     ;;                             [1506,1522],[1533,1534],[1556,1557],[1564,1565],[1788,1789],[2681,2682], $
+     ;;                             [3091,3092],[4247,4248]] ;Resulting from Round 4, 2017/01/17
                                 ;Removed 7804-7837 and 11985-12001, since I corrected these by hånd
 
+     blackballOrb_ranges      = [ $
+                                [744,751], $ ;2017/01/21 These orbits are piping-hot garbage. They are red-hot, featureless wastes of disk space
+                                [753,756], $ ;2017/01/21 These orbits are piping-hot garbage. They are red-hot, featureless wastes of disk space
+                                [1031,1035], $
+                                [1038,1040], $
+                                [1042,1045], $
+                                [1053,1056], $
+                                [1465,1466], $
+                                [1477,1478], $
+                                [1487,1488], $
+                                [1496,1499], $
+                                [1506,1522], $
+                                [1533,1534], $
+                                [1556,1557], $
+                                [1564,1565], $
+                                [1788,1789], $
+                                [2681,2682], $
+                                [3091,3092], $
+                                [4247,4248]] ;Resulting from Round 4, 2017/01/17, and Round 5, 2017/01/21
+                                ;Re-added several from 1028-1056 range based on this new
+                                ;JOURNAL__20170120__PLOT_JE_JEE_CHARE_WITH_GAPS_REMOVED that shows it all
+
+                             
+
+
      ;;And individual rogues
-     individual_blackballOrbs = [1002,3461,7822,7836,7891,7925] 
-     individual_blackballOrbs = [1002,3461,7822,7836,7891,7925,8756] ;Round 3 resultant
+     ;; individual_blackballOrbs = [1002,3461,7822,7836,7891,7925] 
+     ;; individual_blackballOrbs = [1002,3461,7822,7836,7891,7925,8756] ;Round 3 resultant
 
      ;; individual_blackballOrbs = [749, $
      ;;                             1002,1179,1200,1543,1733,1775,1879,1915,1947,2660,2793,2985, $
@@ -55,32 +80,65 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
      ;;1002: TOTAL LOSS (nothing even close to sensible, all red
      ;;1179: Bunch of little screwups throughout the survey ESA data
      ;;1543 Can be salvaged, I'm too lazy
-     individual_blackballOrbs = [749, $
-                                 592,651,665, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
-                                 1002,1543,1733,1775,1879,1915,1947,2660,2793,2985, $
-                                 1327,1392,1470,1533,1534,1710,1733,1788,1789,2713,3482,3557,3591,3623,3737,3769, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
-                                 3015,3025,3054,3059,3123,3135,3296,3345,3360,3372,3461,3489,3680,3868, $
-                                 4258, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
-                                 4149,4204,4226,4480,4497,4603,4632,4641,4678,4962, $
-                                 5073, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+     individual_blackballOrbs = [ $
+                                 ;; 592, $ ;2017/01/21 Give the boy a try
+                                 ;; 651, $ ;2017/01/21 Give the boy a try
+                                 ;; 665, $ ;2017/01/21 Give the boy a try
+                                1002, $ ;2017/01/21 It is actually trash, nothing but red-hot noise
+                                ;; 1543, $ ;2017/01/21 Give the boy a try
+                                ;; 1733, $ ;2017/01/21 Give the boy a try
+                                ;; 1775, $ ;2017/01/21 Give the boy a try
+                                ;; 1879, $ ;2017/01/21 Give the boy a try
+                                ;; 1915, $ ;2017/01/21 Give the boy a try
+                                ;; 1947, $ ;2017/01/21 Give the boy a try
+                                ;; 2660, $ ;2017/01/21 Give the boy a try
+                                ;; 2793, $ ;2017/01/21 SUSPICIOUS, but give the boy a try
+                                ;; 2985, $ ;2017/01/21 Give the boy a try
+                                ;; 1327, $ ;2017/01/21 Give the boy a try
+                                ;; 1392, $ ;2017/01/21 Give the boy a try
+                                ;; 1470, $ ;2017/01/21 Give the boy a try
+                                1533, $ ;2017/01/21 Could be salvaged, but kind of a mess
+                                1534, $ ;2017/01/21 Could be salvaged, but kind of a mess
+                                1544, $ ;2017/01/21 A crap orbit--the whole thing
+                                ;; 1710, $ ;2017/01/21 Give the boy a try
+                                ;; 1788, $ ;2017/01/21 Give the boy a try
+                                ;; 1789, $ ;2017/01/21 Give the boy a try
+                                ;; 2713, $ ;2017/01/21 Give the boy a try
+                                ;; 3482, $ ;2017/01/21 A real troublemaker, but I'm salvaging
+                                ;; 3557, $ ;2017/01/21 A real troublemaker, but I'm salvaging
+                                ;; 3591, $ ;2017/01/21 A real troublemaker, but I'm salvaging
+                                ;; 3623, $ ;2017/01/21 Give the boy a try
+                                ;; 3737, $ ;2017/01/21 Give the boy a try
+                                ;; 3769, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                ;; 3015, $ ;2017/01/21 It is a crazy orbit, but the data look real
+                                ;; 3025, $
+                                ;; 3054, $ ;2017/01/21 A real troublemaker, but I'm salvaging
+                                ;; 3059, $ ;2017/01/21 Give the boy a try
+                                ;; 3123, $ ;2017/01/21 A real troublemaker, but I'm salvaging
+                                ;; 3135, $ ;2017/01/21 Give the boy a try
+                                3296,3345,3360,3372,3461,3489,3680,3868, $
+                                4258, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                4149,4204,4226,4480,4497,4603,4632,4641,4678,4962, $
+                                5073, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                  5154,5243,5390,5476,5494,5585,5608,5636,5771,5837, $
-                                 6126,6127, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
-                                 6232, $
-                                 7684,7783,7894, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
-                                 7012,7683,7744,7758,7857,7891,7925,7926, $
-                                 8334,8414,8538,8556, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
-                                 8162,8540,8756,8768, $
-                                 9555,9596, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
-                                 9401,9406,9596,9830,9980,9990, $
-                                 10014,10072,10080,10083,10094,10131,10314, $
-                                 10118,10131,10314,10636, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
-                                 11563, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
-                                 12350,12539,12746, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
-                                 12278,12297,12471, $
-                                 13214,13785, $
-                                 14076,14732,14867, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
-                                 14297, $
-                                 15054,15463 $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                ;; 6126, $ ;2017/01/21 Give the boy a try
+                                ;; 6127, $ ;2017/01/21 Give the boy a try
+                                6232, $
+                                7684,7783,7894, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                7012,7683,7744,7758,7857,7891,7925,7926, $
+                                8334,8414,8538,8556, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                8162,8540,8756,8768, $
+                                9555,9596, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                9401,9406,9596,9830,9980,9990, $
+                                10014,10072,10080,10083,10094,10131,10314, $
+                                10118,10131,10314,10636, $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                11563, $                   ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                12350,12539,12746, $       ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
+                                 ;; 12471, $ ;2017/01/21 Give the boy a try
+                                 ;; 13214,13785, $ ;2017/01/21 Give the boy a try
+                                 ;; 14076,14732,14867, $ ;2017/01/21 Give the boy a try
+                                 ;; 14297, $
+                                15054,15463 $ ;BONUS FROM JOURNAL__20170117__EXPLORE_TSERIES_FOR_BAD_ORBITS__AUTOMATE_BADDY_IDENTIFICATION
                                 ]                     ;Round 5 resultant, 2017/01/17
 
 
@@ -94,7 +152,8 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
 
      ;;Round 4 resultant
      customTKillStrings = [ $
-                          ['1996-12-08/' + ['08:44:20','08:46:10']], $
+                          ['1996-12-08/' + ['01:52:20','01:52:40']], $ ;orb 1175 REAL badness (not picked up by transitions) 2017/01/21 
+                          ['1996-12-08/' + ['08:44:20','08:46:10']], $ ;orb 1178 badness?
                           ['1996-12-08/' + ['10:40:10','10:41:14']], $ ;orb 1197 badness (some good in between, but too lazy)
                           ['1996-12-08/' + ['10:44:19','10:44:40']], $ ;orb 1197 badness (some good in between, but too lazy)
                           ['1996-12-08/' + ['10:46:03','10:46:11']], $ ;orb 1197 badness (some good in between, but too lazy)
@@ -104,13 +163,26 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                           ['1996-12-10/' + ['09:16:53','09:19:05']], $ ;orb 1200 badness (but good burst data)
                           ['1996-12-10/' + ['09:30:58','09:31:07']], $ ;orb 1200 badness (but good burst data)
                           ['1996-12-10/' + ['09:37:31','09:37:39']], $ ;orb 1200 badness (but good burst data)
+                          ['1997-01-01/' + ['21:00:00','21:12:30']], $ ;orb 1443 REAL badness (not picked up by transitions) 2017/01/21 
+                          ['1997-01-01/' + ['23:14:00','23:21:00']], $ ;orb 1444 REAL badness (not picked up by transitions) 2017/01/21 
                           ['1997-01-11/' + ['02:37:08','02:41:41']], $ ;orb 1543 badness
                           ['1997-01-11/' + ['02:47:03','02:47:11']], $ ;orb 1543 badness
                           ['1997-01-11/' + ['02:49:22','02:49:35']], $ ;orb 1543 badness
+                          ['1997-05-28/' + ['04:00:00','04:06:00']], $ ;orb 3025 REAL badness (not picked up by transitions) 2017/01/21 
+                          ['1997-05-30/' + ['20:12:07','20:12:13']], $ ;orb 3054 REAL badness (not picked up by transitions) 2017/01/21 
+                          ['1997-06-06/' + ['05:21:22','05:21:30']], $ ;orb 3123 REAL badness (not picked up by transitions) 2017/01/21 
                           ['1997-06-06/' + ['14:08:58','14:09:07']], $ ;orb 3127 badness: weird jitters while changing samp rate (no burst data)
                           ['1997-07-07/' + ['21:25:27','21:25:31']], $ ;orb 3465 badness
-                          ['1997-08-11/' + ['07:45:48','07:52:51']], $ ;orb 3838:The spectrum is good, but the energies are way wrong! (but good burst data) 2017/01/20
+                          ['1997-07-09/' + ['09:53:40','09:53:45']], $ ;orb 3482 REAL badness not picked up by trans 2017/01/21
+                          ['1997-07-09/' + ['09:54:08','09:54:15']], $ ;orb 3482 REAL badness not picked up by trans 2017/01/21
+                          ['1997-07-16/' + ['08:23:30','08:23:39']], $ ;orb 3557 REAL badness not picked up by trans 2017/01/21
+                          ['1997-07-19/' + ['11:38:08','11:38:14']], $ ;orb 3591 REAL badness not picked up by trans 2017/01/21
+                          ['1997-08-04/' + ['22:54:18','22:54:28']], $ ;orb 3769 REAL badness not picked up by trans 2017/01/21
+                          ['1997-08-11/' + ['07:45:48','07:52:51']], $ ;orb 3838:The spectrum is good, but the energies are way wrong! (but good burst data) 2017/01/21
                           ['1997-12-30/' + ['05:53:40','05:54:00']], $ ;orb 5363 badness
+                          ['1998-01-30/' + ['12:00:56','12:01:07']], $ ;orb 5701 REAL badness not picked up by trans 2017/01/21
+                          ['1998-05-05/' + ['13:51:21','13:51:30']], $ ;orb 6731 REAL badness not picked up by trans 2017/01/21
+                          ['1998-08-06/' + ['05:36:28','05:38:20']], $ ;orb 7736 REAL badness not picked up by trans 2017/01/21
                           ['1998-08-06/' + ['18:52:23','18:52:32']], $ ;orb 7742 badness
                           ['1998-08-12/' + ['12:00:18','12:01:42']], $ ;orb 7804 badness (but good burst data)
                           ['1998-08-12/' + ['18:29:15','18:30:55']], $ ;orb 7807 badness (but good burst data)
@@ -142,7 +214,13 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                           ['1998-08-15/' + ['08:50:21','08:51:48']], $ ;orb 7835 badness (and no burst data)
                           ['1998-08-15/' + ['11:03:54','11:05:22']], $ ;orb 7836 badness (and no burst data)
                           ['1998-08-15/' + ['13:10:48','13:12:18']], $ ;orb 7837 badness (and no burst data)
+                          ['1998-09-29/' + ['06:15:12','06:15:28']], $ ;orb 8322 REAL badness not picked up by transtimes 2017/01/21
+                          ['1998-09-29/' + ['06:21:50','06:23:50']], $ ;orb 8322 REAL badness not picked up by transtimes 2017/01/21
                           ['1998-11-13/' + ['02:54:32','02:54:35']], $ ;orb 8809 badness 
+                          ['1999-01-23/' + ['14:49:43','14:49:49']], $ ;orb 9585 REAL badness not picked up by transtimes 2017/01/21
+                          ['1999-01-23/' + ['14:53:45','14:53:55']], $ ;orb 9585 REAL badness not picked up by transtimes 2017/01/21
+                          ['1999-01-23/' + ['14:54:13','14:54:20']], $ ;orb 9585 REAL badness not picked up by transtimes 2017/01/21
+                          ['1999-01-23/' + ['15:02:40','15:02:50']], $ ;orb 9585 REAL badness not picked up by transtimes 2017/01/21
                           ['1999-02-17/' + ['20:58:30','20:59:30']], $ ;orb 9860 badness
                           ['1999-06-26/' + ['04:56:24','04:56:34']], $ ;orb 11255 badness
                           ['1999-06-28/' + ['05:25:22','05:25:38']], $ ;orb 11277 badness
@@ -172,7 +250,8 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                           ['1999-09-02/' + ['09:13:48','09:15:04']], $ ;orb 11997 badness
                           ['1999-09-02/' + ['12:12:14','12:32:29']], $ ;orb 11999 badness
                           ['1999-09-02/' + ['14:30:48','14:32:04']], $ ;orb 12000 badness
-                          ['1999-09-02/' + ['15:59:20','16:09:35']]  $ ;orb 12000 badness (good burst data)
+                          ['1999-09-02/' + ['15:59:20','16:09:35']], $ ;orb 12000 badness (good burst data)
+                          ['1999-09-29/' + ['20:58:52','20:59:02']]  $ ;orb 12297 REAL badness 2017/01/21 (no burst data)
                           ]
 
 

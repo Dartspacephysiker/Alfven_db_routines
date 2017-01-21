@@ -10,7 +10,8 @@ FUNCTION GET_CHARE_INDS,dbStruct,minCharE,maxCharE, $
   dbType = 'char. energy'
   CASE 1 OF
      KEYWORD_SET(for_eSpec_DB): BEGIN
-        chare = ABS(dbStruct.jee/dbStruct.je)*6.242*1.0e11
+        ;; chare = ABS(dbStruct.jee/dbStruct.je)*6.242*1.0e11
+        chare = dbStruct.chare
      END
      KEYWORD_SET(for_ion_DB): BEGIN
         chare = ABS(dbStruct.jei/dbStruct.ji)*6.242*1.0e11
