@@ -45,9 +45,7 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
         ;;                       14297]
 
         ;;2017/01/21 Removed 9585 and 12278, 12297
-        customKill         = [749, $ ;2017/01/21 It is actually trash, nothing but red-hot noise
-                              754, $ ;2017/01/21 It is actually trash, nothing but red-hot noise
-                              1002, $ ;2017/01/21 It really is an entire orbit of noise
+        customKill         = [1002, $ ;2017/01/21 It really is an entire orbit of noise
                               1533, $ ;2017/01/21 Could be salvaged, but kind of a mess
                               1534, $ ;2017/01/21 Could be salvaged, but kind of a mess
                               1544, $ ;2017/01/21 A crap orbit--the whole thing
