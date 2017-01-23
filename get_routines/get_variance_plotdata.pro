@@ -6,7 +6,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                           IN_MLTS=in_mlts, $
                           IN_ILATS=in_ilats, $
                           FASTLOCINDS=fastLocInds, $
-                          H2DSTRARR=h2dStrArr, $
+                          H2DSTRARR=H2DStrArr, $
                           DATANAMEARR=dataNameArr, $
                           DATARAWPTRARR=dataRawPtrArr, $
                           REMOVED_II_LISTARR=removed_ii_listArr, $
@@ -16,13 +16,16 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                           VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
                           VAR__AUTOSCALE=var__autoscale, $
                           VARPLOTH2DINDS=varPlotH2DInds, $
+                          ;; H2D_THIST_I=H2D_tHist_i, $
+                          VARPLOTRAWINDS=varPlotRawInds, $
                           DBTIMES=DBTimes, $
+                          THISTDENOMINATOR=tHistDenominator, $
                           DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                           GROSSRATE__H2D_AREAS=h2dAreas, $
                           DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
                           GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
                           GROSSCONVFACTOR=grossConvFactor, $
-                          VAR_H2DSTRARR=var_h2dStrArr, $
+                          VAR_H2DSTRARR=var_H2DStrArr, $
                           VAR_DATANAMEARR=var_datNameArr, $
                           OUTH2D_LISTS_WITH_OBS=outH2D_lists_with_obs,$
                           OUTH2D_STATS=outH2D_stats, $
@@ -33,7 +36,6 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                           OUTPUT_TEXTFILE=write_obsArr_textFile, $
                           OUTPUT__INC_IMF=write_obsArr__inc_IMF, $
                           OUTPUT__ORB_AVG_OBS=write_obsArr__orb_avg_obs, $
-                          VARPLOTRAWINDS=varPlotRawInds, $
                           OUTH2D_LISTS_WITH_INDS=outH2D_lists_with_inds,$
                           ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                           IMF_STRUCT=IMF_struct, $
@@ -54,12 +56,12 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
   ENDELSE
 
   ;;some temp vars
-  var_h2dStrArr    = !NULL
+  var_H2DStrArr    = !NULL
   var_dataNameArr  = !NULL
 
-  H2D_ii__alfDB    = WHERE(h2dStrArr[varploth2dinds].is_alfDB    ,nAlfDB  )
-  H2D_ii__eSpec    = WHERE(h2dStrArr[varploth2dinds].is_eSpecDB  ,nESpec  )
-  H2D_ii__fastLoc  = WHERE(h2dStrArr[varploth2dinds].is_fastLocDB,nFastLoc)
+  H2D_ii__alfDB    = WHERE(H2DStrArr[varploth2dinds].is_alfDB    ,nAlfDB  )
+  H2D_ii__eSpec    = WHERE(H2DStrArr[varploth2dinds].is_eSpecDB  ,nESpec  )
+  H2D_ii__fastLoc  = WHERE(H2DStrArr[varploth2dinds].is_fastLocDB,nFastLoc)
 
   nLoops           = 0
   loopType         = !NULL
@@ -197,6 +199,9 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
            DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
            GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
            GROSSCONVFACTOR=grossConvFactor, $
+           DO_TIMEAVG_FLUXQUANTITIES=alfDB_plot_struct.do_timeAvg_fluxQuantities AND H2DStrArr[tmpVarH2D_i[i]].do_timeAvg, $
+           ;; THISTDENOMINATOR=(N_ELEMENTS(H2D_tHist_i) GT 0 ? H2DStrArr[H2D_tHist_i].data : !NULL), $
+           THISTDENOMINATOR=tHistDenominator, $
            BOTH_HEMIS=KEYWORD_SET(tmplt_h2dStr.both_hemis), $
            OUTH2D_LISTS_WITH_OBS=outH2D_lists_with_obs,$
            OUTH2D_STATS=outH2D_stats, $
@@ -208,7 +213,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
            OUTPUT__INC_IMF=write_obsArr__inc_IMF, $
            OUTPUT__ORB_AVG_OBS=write_obsArr__orb_avg_obs, $
            DATANAME=dataNameArr[tmpVarH2D_i[i]], $
-           DATATITLE=h2dStrArr[tmpVarH2D_i[i]].title, $
+           DATATITLE=H2DStrArr[tmpVarH2D_i[i]].title, $
            DBSTRUCT=(send_DB ? dbStruct : !NULL), $
            DBSTR_INDS=(send_DB ? dbInds : tmpInds), $
            LUN=lun
@@ -216,7 +221,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
         IF doing_var_plots THEN BEGIN       
            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
            ;;Now get it all set up
-           h2dStrTemp                     = h2dStrArr[tmpVarH2D_i[i]]
+           h2dStrTemp                     = H2DStrArr[tmpVarH2D_i[i]]
            IF KEYWORD_SET(var__do_stddev_instead) THEN BEGIN
               dataNameTemp                = dataNameArr[tmpVarH2D_i[i]] + '_stddev'
            ENDIF ELSE BEGIN
@@ -226,7 +231,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
 
            ;;;;;;;;;;;;;;;;;;;; 
            ;;set up lims--2 std devs on either side
-           notMasked                      = WHERE(h2dStrArr[KEYWORD_SET(nPlots)].data LT 250.)
+           notMasked                      = WHERE(H2DStrArr[KEYWORD_SET(nPlots)].data LT 250.)
            tempStats                      = MOMENT(h2dStrTemp.data[notMasked])
            h2dStrTemp.do_posNeg_cb        = 1
            h2dStrTemp.force_oobLow        = 0
@@ -302,7 +307,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
            ENDIF
            h2dStrTemp.name  = dataNameTemp
 
-           var_h2dStrArr    = [var_h2dStrArr,h2dStrTemp]
+           var_H2DStrArr    = [var_H2DStrArr,h2dStrTemp]
            var_dataNameArr  = [var_dataNameArr,dataNameTemp]
         ENDIF
      ENDFOR
@@ -334,12 +339,12 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
      CASE 1 OF
         KEYWORD_SET(only_variance_plots): BEGIN
            dataNameArr  = [dataNameArr[KEYWORD_SET(nPlots)],var_dataNameArr]
-           h2dStrArr    = [h2dStrArr[KEYWORD_SET(nPlots)],var_h2dStrArr]
+           H2DStrArr    = [H2DStrArr[KEYWORD_SET(nPlots)],var_H2DStrArr]
            nPlots       = 0
         END
         KEYWORD_SET(add_variance_plots): BEGIN
            dataNameArr  = [dataNameArr,var_dataNameArr]
-           h2dStrArr    = [h2dStrArr,var_h2dStrArr]
+           H2DStrArr    = [H2DStrArr,var_H2DStrArr]
         END
      ENDCASE
   ENDIF

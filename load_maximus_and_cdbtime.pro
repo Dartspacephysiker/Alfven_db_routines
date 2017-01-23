@@ -423,14 +423,63 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   ENDIF
 
   ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND((*pDBStruct),HEMI='BOTH')
-  IF ARG_PRESENT(good_i) THEN good_i = GET_CHASTON_IND( $
-                                       (*pDBStruct), $
-                                       MIN_MAGCURRENT=minMC, $
-                                       MAX_NEGMAGCURRENT=maxNegMC, $
-                                       INCLUDE_32HZ=include_32Hz, $
-                                       HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH', $
-                                       DESPUNDB=despunDB, $
-                                       RESET_GOOD_INDS=KEYWORD_SET(swap_DBs))
+  IF ARG_PRESENT(good_i) THEN BEGIN
+
+     SET_ALFVENDB_PLOT_DEFAULTS, $
+        ORBRANGE=orbRange, $
+        ALTITUDERANGE=altitudeRange, $
+        CHARERANGE=charERange, $
+        POYNTRANGE=poyntRange, $
+        SAMPLE_T_RESTRICTION=sample_t_restriction, $
+        INCLUDE_32HZ=include_32Hz, $
+        DISREGARD_SAMPLE_T=disregard_sample_t, $
+        /DONT_BLACKBALL_MAXIMUS, $
+        ;; DONT_BLACKBALL_FASTLOC=dont_blackball_fastloc, $
+        MINMLT=minM, $
+        MAXMLT=maxM, $
+        BINMLT=binM, $
+        SHIFTMLT=shiftM, $
+        MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+        HEMI=hemi__good_i, $
+        NORTH=north, $
+        SOUTH=south, $
+        BOTH_HEMIS=both_hemis, $
+        DAYSIDE=dayside, $
+        NIGHTSIDE=nightside, $
+        EQUAL_AREA_BINNING=EA_binning, $
+        DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+        REVERSE_LSHELL=reverse_lShell, $
+        MIN_MAGCURRENT=minMC, $
+        MAX_NEGMAGCURRENT=maxNegMC, $
+        HWMAUROVAL=HwMAurOval, $
+        HWMKPIND=HwMKpInd, $
+        MASKMIN=maskMin, $
+        THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
+        DESPUNDB=despunDB, $
+        COORDINATE_SYSTEM=coordinate_system, $
+        USE_AACGM_COORDS=use_AACGM, $
+        USE_MAG_COORDS=use_MAG, $
+        ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+        MIMC_STRUCT=MIMC_struct, $
+        RESET_STRUCT=reset, $
+        _EXTRA=e
+
+     
+     good_i = GET_CHASTON_IND( $
+              (*pDBStruct), $
+              ;; MIN_MAGCURRENT=minMC, $
+              ;; MAX_NEGMAGCURRENT=maxNegMC, $
+              ;; INCLUDE_32HZ=include_32Hz, $
+              ;; HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH', $
+              ;; DESPUNDB=despunDB, $
+              DBTIMES=cdbTime, $
+              ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+              MIMC_STRUCT=MIMC_struct, $
+              RESET_GOOD_INDS=KEYWORD_SET(swap_DBs))
+
+     MAXIMUS__good_i = good_i
+
+  ENDIF
 
   IF ~KEYWORD_SET(noMem) THEN BEGIN
      MAXIMUS__maximus               = TEMPORARY(*pDBStruct)

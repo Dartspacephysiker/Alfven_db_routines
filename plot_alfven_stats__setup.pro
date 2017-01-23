@@ -317,6 +317,12 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      BINMLT=binM, $
      SHIFTMLT=shiftM, $
      MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+     HEMI=hemi, $
+     NORTH=north, $
+     SOUTH=south, $
+     BOTH_HEMIS=both_hemis, $
+     DAYSIDE=dayside, $
+     NIGHTSIDE=nightside, $
      EQUAL_AREA_BINNING=EA_binning, $
      DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
      REVERSE_LSHELL=reverse_lShell, $
@@ -333,12 +339,6 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      LOAD_DELTA_ILAT_FOR_WIDTH_TIME=load_dILAT, $
      LOAD_DELTA_ANGLE_FOR_WIDTH_TIME=load_dAngle, $
      LOAD_DELTA_X_FOR_WIDTH_TIME=load_dx, $
-     HEMI=hemi, $
-     NORTH=north, $
-     SOUTH=south, $
-     BOTH_HEMIS=both_hemis, $
-     DAYSIDE=dayside, $
-     NIGHTSIDE=nightside, $
      NPLOTS=nPlots, $
      EPLOTS=ePlots, $
      EFLUXPLOTTYPE=eFluxPlotType, $

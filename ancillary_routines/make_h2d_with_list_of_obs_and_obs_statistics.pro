@@ -17,6 +17,8 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
    DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
    GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
    GROSSCONVFACTOR=grossConvFactor, $
+   DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+   THISTDENOMINATOR=tHistDenominator, $
    BOTH_HEMIS=both_hemis, $
    OUTH2D_LISTS_WITH_OBS=outH2D_lists_with_obs,$
    OUTH2D_STATS=outH2D_stats, $
@@ -210,7 +212,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                   (KEYWORD_SET(for_eSpec_DBs) ? "eFlux"    :  dTitle), $
                   (KEYWORD_SET(for_eSpec_DBs) ? "eNumFlux" : "charE"), $
                   (KEYWORD_SET(for_eSpec_DBs) ? "charE"    : "eFlux"), $
-                  "Bx","By","Bz","Dst"
+                  "Bx","By","Bz","NEvents" ;"Dst"
 
            ;; PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T20,"Time",T47,"Orbit",T56,"Alt",T65,A0,T74,A0,T85,A0,T97,A0,T108)', $
            ;;        'pFlux', $
@@ -269,8 +271,19 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
               ENDCASE
 
               ;; PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T25,"Orbit",T35,"Observation")'
-              PRINTF,textLun,FORMAT='(F0.3,T10,F0.3)',HLOI__H2D_binCenters[0,i,j],HLOI__H2D_binCenters[1,i,j]
-              PRINTF,textLun,'*************************'
+              ;; PRINTF,textLun,FORMAT='(F0.3,T10,F0.3)',HLOI__H2D_binCenters[0,i,j],HLOI__H2D_binCenters[1,i,j]
+              ;; PRINTF,textLun,'*************************'
+              IF (KEYWORD_SET(do_timeAvg_fluxQuantities) AND N_ELEMENTS(tHistDenominator) GT 0) THEN BEGIN
+                 ;; PRINTF,textLun,FORMAT='(F0.3,T10,F0.3,T30,"T here (seconds): ",F-7.3)', $
+                 PRINTF,textLun,FORMAT='(F0.3,T10,F0.3,T20,F-7.3)', $
+                        HLOI__H2D_binCenters[0,i,j],HLOI__H2D_binCenters[1,i,j],tHistDenominator[i,j]
+                 PRINTF,textLun,'************************************************************'
+                 ;; PRINTF,textLun,FORMAT='("T here (seconds): ",T64,F-7.3)',tHistDenominator[i,j]
+                 ;; PRINTF,textLun,'*************************'
+              ENDIF ELSE BEGIN
+                 PRINTF,textLun,FORMAT='(F0.3,T10,F0.3)',HLOI__H2D_binCenters[0,i,j],HLOI__H2D_binCenters[1,i,j]
+                 PRINTF,textLun,'*************************'
+              ENDELSE
 
               CASE 1 OF
                  KEYWORD_SET(output__inc_IMF): BEGIN
@@ -313,7 +326,22 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                              tmpTmpInds     = WHERE(tempOrbs EQ tmpTempOrb,nTmpTmp)
                              IF tmpTmpInds[0] EQ -1 THEN STOP
 
-                             tmptempObs     = 10.^(MEAN(ALOG10(tempObs  [tmpTmpInds])))
+                             CASE 1 OF
+                                (KEYWORD_SET(do_timeAvg_fluxQuantities) AND N_ELEMENTS(tHistDenominator) GT 0): BEGIN
+                                   tmptempObs   = TOTAL(tempObs  [tmpTmpInds])/tHistDenominator[i,j]
+                                   tmptempeFlux = TOTAL(tempeFlux[tmpTmpInds])/tHistDenominator[i,j]
+                                   IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+                                      tmptempeNumFlux = TOTAL(tempeNumFlux[tmpTmpInds])/tHistDenominator[i,j]
+                                   ENDIF
+                                END
+                                ELSE: BEGIN
+                                   tmptempObs   = 10.^(MEAN(ALOG10(tempObs  [tmpTmpInds])))
+                                   tmptempeFlux = 10.^(MEAN(ALOG10(tempeFlux[tmpTmpInds])))
+                                   IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+                                      tmptempeNumFlux = 10.^(MEAN(ALOG10(tempeNumFlux[tmpTmpInds])))
+                                   ENDIF
+                                END
+                             ENDCASE
                              ;; tmptempObs     = MEAN(tempObs  [tmpTmpInds])
                              tmptempAlts    = MEAN(tempAlts [tmpTmpInds])
                              tmptempMLTs    = MEAN(tempMLTs [tmpTmpInds])
@@ -322,10 +350,6 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                              junk           = MIN(ABS(tempUTC[tmpTmpInds]-tmptempUTC),minInd)
                              tmpTempTimes   = tempTimes[tmpTmpInds[minInd]]
                              tmptempChare   = MEAN(tempChare[tmpTmpInds])        
-                             tmptempeFlux   = 10.^(MEAN(ALOG10(tempeFlux[tmpTmpInds])))
-                             IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-                                tmptempeNumFlux = 10.^(MEAN(ALOG10(tempeNumFlux[tmpTmpInds])))
-                             ENDIF
 
                              tmpIMFinds          = IMFinds[tmpTmpInds]  
                              tmptempIMFBx        = MEAN(tempIMFBx       [tmpTmpInds]) 
@@ -337,7 +361,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
 
                              PRINTF,textLun,FORMAT='(F-5.2,T9,F-6.2,T19,A-0,T46,I-5,T54,F-8.1,T64,' + $
                                     'G-9.3,T74,G-8.2,T85,G-8.2,T94,F-7.3,T103,F-7.3,T112,' + $
-                                    'F-7.3,T121,F-7.3)', $ ;,T130,I0)', $
+                                    'F-7.3,T121,I0)', $ ; THIS ONE FOR DST--> F-7.3)', $ ;,T130,I0)', $
                                     tmpTempMLTs,tmpTempILATs,tmpTempTimes,tmpTempOrb,tmpTempAlts, $
                                     (KEYWORD_SET(for_eSpec_DBs) ? tmptempeFlux     : tmpTempObs  ), $
                                     (KEYWORD_SET(for_eSpec_DBs) ? tmptempeNumFlux  : tmpTempChare), $

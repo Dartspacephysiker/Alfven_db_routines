@@ -50,8 +50,9 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
                               1534, $ ;2017/01/21 Could be salvaged, but kind of a mess
                               1544, $ ;2017/01/21 A crap orbit--the whole thing
                               7758, $ ;2017/01/21 Real poo, very little to salvage
-                              7833] ;;2017/01/21 Truly a bunch of noise and worthless measurements
-                              ;; 8276, $ ;;This guy is bad for IMF stuff, but good for storms
+                              7833 $
+                              ;; 8276 $ ;;This guy is bad for IMF stuff, but good for storms
+                             ] ;;2017/01/21 Truly a bunch of noise and worthless measurements
                               ;; 12471, $ ;2017/01/21 Give the boy a try
                               ;; 13214,13785, $ ;2017/01/21 Give the boy a try
                               ;; 14297] ;2017/01/21 Give the boy a try

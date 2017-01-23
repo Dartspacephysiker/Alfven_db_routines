@@ -1009,6 +1009,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      can_div_by_w_x         = 0
      can_mlt_by_w_x         = 0
      cant_timeAvg           = 1
+     H2DStr.do_timeAvg      = 0
      cant_grossRate         = 1
      tmpLogAvg              = 1
   ENDIF
@@ -1029,7 +1030,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      h2dStr.is_fluxData     = 0B
      h2dStr.do_grossRate    = 0B
      h2dStr.do_timeAvg      = 0B
-
+     
   ENDIF
 
   IF KEYWORD_SET(get_magC) THEN BEGIN
@@ -1293,7 +1294,9 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      ENDIF ELSE BEGIN
         inData        = inData * maximus.width_time 
      ENDELSE
+
      dataName         = 'tAvgd_' + dataName
+
   ENDIF
 
   ;;gross rates?
