@@ -20,6 +20,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                       PLOTRANGE=plotRange, $
                       PLOTAUTOSCALE=plotAutoscale, $
                       NEWELL_THE_CUSP=Newell_the_cusp, $
+                      DIFFUSE_EVERYWHAR=fluxPlots__diffuse_everywhar, $
                       REMOVE_OUTLIERS=remove_outliers, $
                       REMOVE_LOG_OUTLIERS=remove_log_outliers, $
                       NOPOSFLUX=noPosFlux, $
@@ -1316,33 +1317,60 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      dataName         = 'orbAvgd_' + dataName
   ENDIF
 
-  ;;According to the Newell et al. [2009] strategy, kill obs. with characteristic energy < 300 eV if they lie between 9.5 and 14.5 MLT
-  IF KEYWORD_SET(Newell_the_cusp) THEN BEGIN
-     PRINT,'Newelling the cusp ...'
+  ;; IF KEYWORD_SET(Newell_the_cusp) THEN BEGIN
+  ;;    PRINT,'Newelling the cusp ...'
 
-     CASE 1 OF
-        KEYWORD_SET(for_eSpec): BEGIN
-           tempChare  = NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11
-           tmp_i      = CGSETDIFFERENCE( $
-                        tmp_i, $
-                        WHERE((NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11) LT 300 ) AND $
-                        (NEWELL__eSpec.MLT                                LT 14.5)   AND $
-                        (NEWELL__eSpec.MLT                                GT 9.5), $
-                        COUNT=nTmp, $
-                        NORESULT=-1)
+  ;;    CASE 1 OF
+  ;;       KEYWORD_SET(for_eSpec): BEGIN
+  ;;          tempChare  = NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11
+  ;;          tmp_i      = CGSETDIFFERENCE( $
+  ;;                       tmp_i, $
+  ;;                       WHERE((NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11) LT 300 ) AND $
+  ;;                       (NEWELL__eSpec.MLT                                LT 14.5)   AND $
+  ;;                       (NEWELL__eSpec.MLT                                GT 9.5), $
+  ;;                       COUNT=nTmp, $
+  ;;                       NORESULT=-1)
            
-        END
-        ELSE: BEGIN
-           tmp_i      = CGSETDIFFERENCE( $
-                        tmp_i, $
-                        WHERE((maximus.max_chare_losscone LT 300) AND $
-                              (maximus.MLT                LT 14.5)  AND $
-                              (maximus.MLT                GT 9.5)), $
-                        COUNT=nTmp, $
-                        NORESULT=-1)
-        END
-     ENDCASE
-  ENDIF
+  ;;       END
+  ;;       ELSE: BEGIN
+  ;;          tmp_i      = CGSETDIFFERENCE( $
+  ;;                       tmp_i, $
+  ;;                       WHERE((maximus.max_chare_losscone LT 300) AND $
+  ;;                             (maximus.MLT                LT 14.5)  AND $
+  ;;                             (maximus.MLT                GT 9.5)), $
+  ;;                       COUNT=nTmp, $
+  ;;                       NORESULT=-1)
+  ;;       END
+  ;;    ENDCASE
+  ;; ENDIF
+
+  ;;According to the Newell et al. [2009] strategy, kill obs. with characteristic energy < 300 eV if they lie between 9.5 and 14.5 MLT
+  ;; IF KEYWORD_SET(diffuse_everywhar) THEN BEGIN
+  ;;    PRINT,'Diffusing everywhar ...'
+
+  ;;    CASE 1 OF
+  ;;       KEYWORD_SET(for_eSpec): BEGIN
+  ;;          tempChare  = NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11
+  ;;          tmp_i      = CGSETDIFFERENCE( $
+  ;;                       tmp_i, $
+  ;;                       WHERE((NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11) LT 300 ) AND $
+  ;;                       (NEWELL__eSpec.MLT                                LT 14.5)   AND $
+  ;;                       (NEWELL__eSpec.MLT                                GT 9.5), $
+  ;;                       COUNT=nTmp, $
+  ;;                       NORESULT=-1)
+           
+  ;;       END
+  ;;       ELSE: BEGIN
+  ;;          tmp_i      = CGSETDIFFERENCE( $
+  ;;                       tmp_i, $
+  ;;                       WHERE((maximus.max_chare_losscone LT 300) AND $
+  ;;                             (maximus.MLT                LT 14.5)  AND $
+  ;;                             (maximus.MLT                GT 9.5)), $
+  ;;                       COUNT=nTmp, $
+  ;;                       NORESULT=-1)
+  ;;       END
+  ;;    ENDCASE
+  ;; ENDIF
 
   ;;Update inData, others
   inData              = inData[tmp_i]

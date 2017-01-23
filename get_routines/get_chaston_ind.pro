@@ -450,7 +450,11 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
      ;;limits on characteristic electron energies to use?
      test = !NULL
      STR_ELEMENT,alfDB_plot_struct,'charERange',test
-     IF (SIZE(test,/TYPE) NE 0) AND is_maximus THEN BEGIN
+     IF ((SIZE(test,/TYPE) NE 0)                      OR $
+         alfDB_plot_struct.fluxPlots__Newell_the_cusp     OR $
+         alfDB_plot_struct.fluxPlots__broadband_everywhar OR $
+         alfDB_plot_struct.fluxPlots__diffuse_everywhar      ) AND $
+        is_maximus THEN BEGIN
         IF N_ELEMENTS(alfDB_plot_struct.charERange) EQ 2 THEN BEGIN
            MIMC__charERange  = alfDB_plot_struct.charERange
            
@@ -458,7 +462,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
                                *pDBStruct, $
                                alfDB_plot_struct.charERange[0], $
                                alfDB_plot_struct.charERange[1], $
-                               NEWELL_THE_CUSP=alfDB_plot_struct.charE__Newell_the_cusp, $
+                               NEWELL_THE_CUSP=alfDB_plot_struct.fluxPlots__Newell_the_cusp, $
+                               BROADBAND_EVERYWHAR=alfDB_plot_struct.fluxPlots__broadband_everywhar, $
+                               DIFFUSE_EVERYWHAR=alfDB_plot_struct.fluxPlots__diffuse_everywhar, $
                                CHASTDB=alfDB_plot_struct.chastDB, $
                                LUN=lun)
 

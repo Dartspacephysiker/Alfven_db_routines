@@ -13,7 +13,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                              FLUXPLOTTYPE=fluxPlotType, $
                              PLOTRANGE=plotRange, $
                              PLOTAUTOSCALE=plotAutoscale, $
-                             NEWELL_THE_CUSP=Newell_the_cusp, $
+                             ;; NEWELL_THE_CUSP=Newell_the_cusp, $
+                             ;; BROADBAND_EVERYWHAR=fluxPlots__broadband_everywhar, $
+                             ;; DIFFUSE_EVERYWHAR=fluxPlots__diffuse_everywhar, $
                              REMOVE_OUTLIERS=remove_outliers, $
                              REMOVE_LOG_OUTLIERS=remove_log_outliers, $
                              NOPOSFLUX=noPosFlux, $
@@ -272,7 +274,9 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                        FLUXPLOTTYPE=fluxPlotType, $
                        PLOTRANGE=plotR, $
                        PLOTAUTOSCALE=plotAutoscale, $
-                       NEWELL_THE_CUSP=Newell_the_cusp, $
+                       ;; NEWELL_THE_CUSP=Newell_the_cusp, $
+                       ;; BROADBAND_EVERYWHAR=fluxPlots__broadband_everywhar, $
+                       ;; DIFFUSE_EVERYWHAR=fluxPlots__diffuse_everywhar, $
                        REMOVE_OUTLIERS=remove_outliers, $
                        REMOVE_LOG_OUTLIERS=remove_log_outliers, $
                        NOPOSFLUX=noPosF, $

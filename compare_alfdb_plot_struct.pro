@@ -240,7 +240,19 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
            matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
-        IF STRMATCH(tmpComp.field,STRUPCASE('*chare__newell_the_cusp*')) THEN BEGIN
+        IF STRMATCH(tmpComp.field,STRUPCASE('*fluxPlots__Newell_the_cusp*')) THEN BEGIN
+           inds_reset     += 1
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
+        IF STRMATCH(tmpComp.field,STRUPCASE('*fluxPlots__broadband_everywhar*')) THEN BEGIN
+           inds_reset     += 1
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
+        IF STRMATCH(tmpComp.field,STRUPCASE('*fluxPlots__diffuse_everywhar*')) THEN BEGIN
            inds_reset     += 1
            dontstop        = 1
            matchArr        = [matchArr,tmpComp.field]
@@ -309,6 +321,20 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
         ENDIF
 
         IF STRMATCH(tmpComp.field,STRUPCASE('*show_integrals*')) THEN BEGIN
+           ;; DBs_reset      += 0B
+           ;; inds_reset     += 0B
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
+        IF STRMATCH(tmpComp.field,STRUPCASE('*contour__levels*')) THEN BEGIN
+           ;; DBs_reset      += 0B
+           ;; inds_reset     += 0B
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
+        IF STRMATCH(tmpComp.field,STRUPCASE('*contour__percent*')) THEN BEGIN
            ;; DBs_reset      += 0B
            ;; inds_reset     += 0B
            dontstop        = 1

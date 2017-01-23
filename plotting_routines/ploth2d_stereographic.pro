@@ -588,7 +588,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
               h2dTmp  = h2dTmp[0:-2,*   ]
               h2dTmp  = h2dTmp[   *,0:-2]
-              tmpLons = (KEYWORD_SET(overplot) ? oCentersMLT  : centersMLT  ) + (binM/2. + temp.shift1)*15.
+              ;;2017/01/23 Trying to fix shift issues
+              ;;The thing is, this introduces a super weird dotted line–type trace in the contours. Sup?
+              ;;
+              ;; tmpLons = (KEYWORD_SET(overplot) ? oCentersMLT  : centersMLT  ) + (binM/2. + temp.shift1)*15.
+              tmpLons = (KEYWORD_SET(overplot) ? oCentersMLT  : centersMLT  ) + (binM/2.)*15.
               tmpLats = (KEYWORD_SET(overplot) ? oCentersILAT : centersILAT ) + binI/2
 
               tmpLons  = tmpLons[0:-2,*   ]
@@ -622,7 +626,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ;; outLats = REPLICATE(latDelta,nX) # FINDGEN(nY) + minI + latDelta/2.0
         nX       = (maxM-minM)/lonDelta*15.+1
         ny       = (maxI-minI)/latDelta+1
-        outLons = FINDGEN(nX)            # REPLICATE(lonDelta,nY)
+        outLons = (FINDGEN(nX)           # REPLICATE(lonDelta,nY)) + (binM/2.)*15.
         outLats = REPLICATE(latDelta,nX) # FINDGEN(nY) + minI
 
         ;; IF KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN

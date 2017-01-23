@@ -12,7 +12,6 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    ORBRANGE=orbRange, $
    ALTITUDERANGE=altitudeRange, $
    CHARERANGE=charERange, $
-   CHARE__NEWELL_THE_CUSP=charE__Newell_the_cusp, $
    POYNTRANGE=poyntRange, $
    SAMPLE_T_RESTRICTION=sample_t_restriction, $
    INCLUDE_32HZ=include_32Hz, $
@@ -104,6 +103,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
    FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
    FLUXPLOTS__NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
+   FLUXPLOTS__BROADBAND_EVERYWHAR=fluxPlots__broadband_everywhar, $
+   FLUXPLOTS__DIFFUSE_EVERYWHAR=fluxPlots__diffuse_everywhar, $
    DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
    DO_LOGAVG_THE_TIMEAVG=do_logAvg_the_timeAvg, $
    ORBCONTRIBPLOT=orbContribPlot, $
@@ -304,7 +305,6 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      ORBRANGE=orbRange, $
      ALTITUDERANGE=altitudeRange, $
      CHARERANGE=charERange, $
-     CHARE__NEWELL_THE_CUSP=charE__Newell_the_cusp, $
      POYNTRANGE=poyntRange, $
      SAMPLE_T_RESTRICTION=sample_t_restriction, $
      INCLUDE_32HZ=include_32Hz, $
@@ -356,6 +356,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
      FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
      FLUXPLOTS__NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
+     FLUXPLOTS__BROADBAND_EVERYWHAR=fluxPlots__broadband_everywhar, $
+     FLUXPLOTS__DIFFUSE_EVERYWHAR=fluxPlots__diffuse_everywhar, $
      DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
      DO_LOGAVG_THE_TIMEAVG=do_logAvg_the_timeAvg, $
      ORBCONTRIBPLOT=orbContribPlot, $
