@@ -1,4 +1,5 @@
 FUNCTION GET_CHARE_INDS,dbStruct,minCharE,maxCharE, $
+                        INVERT_NEWELL_THE_CUSP=invert_Newell_the_cusp, $
                         NEWELL_THE_CUSP=Newell_the_cusp, $
                         BROADBAND_EVERYWHAR=broadband_everywhar, $
                         DIFFUSE_EVERYWHAR=diffuse_everywhar, $
@@ -90,6 +91,24 @@ FUNCTION GET_CHARE_INDS,dbStruct,minCharE,maxCharE, $
 
         ENDELSE
 
+     END
+     KEYWORD_SET(invert_Newell_the_cusp): BEGIN
+        IF KEYWORD_SET(for_eSpec_DB) OR KEYWORD_SET(for_ion_DB) THEN BEGIN
+           PRINT,"It's meaningless to invert-Newell the cusp for the " + $
+                 ( KEYWORD_SET(for_eSpec_DB) ? 'eSpec' : 'ion' ) + $
+                 ' DB'
+        ENDIF ELSE BEGIN
+           chare_i = CGSETINTERSECTION( $
+                     chare_i, $
+                     WHERE((dbStruct.mlt GT   9.5) AND $
+                           (dbStruct.mlt LT  14.5) AND $
+                           (chare        LT 300  )), $
+                     NORESULT=-1, $
+                     COUNT=nCharE_invNewell)
+           PRINTF,lun,FORMAT='("N lost to invert-Newelling the cusp",T35,": ",I0)', $
+                  nCharE-nCharE_invNewell
+
+        ENDELSE
      END
      KEYWORD_SET(Newell_the_cusp): BEGIN
         ;;According to the Newell et al. [2009] strategy, kill obs. with characteristic energy < 300 eV if they lie between 9.5 and 14.5 MLT

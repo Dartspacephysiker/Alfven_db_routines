@@ -73,6 +73,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
    FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
+   FLUXPLOTS__INVERT_NEWELL_THE_CUSP=fluxPlots__invert_Newell_the_cusp, $
    FLUXPLOTS__NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
    FLUXPLOTS__BROADBAND_EVERYWHAR=fluxPlots__broadband_everywhar, $
    FLUXPLOTS__DIFFUSE_EVERYWHAR=fluxPlots__diffuse_everywhar, $
@@ -455,6 +456,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   ;;bonus
   bonusStr         = ''
   nCharERestr      = 0
+  IF KEYWORD_SET(fluxPlots__invert_Newell_the_cusp) THEN BEGIN
+     bonusStr     += '-invNC'
+     nCharERestr++
+  ENDIF
+
   IF KEYWORD_SET(fluxPlots__Newell_the_cusp) THEN BEGIN
      bonusStr     += '-NC'
      nCharERestr++
@@ -471,7 +477,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   ENDIF
 
   IF nCharERestr GT 1 THEN BEGIN
-     PRINT,"Bro! You can't set more than one of FLUXPLOTS__NEWELL_THE_CUSP, FLUXPLOTS__BROADBAND_EVERYWHAR, and FLUXPLOTS__DIFFUSE_EVERYWHAR, but that's exactly what you've done! Haven't you learned how to use your own program? Have you even considered what you're asking for? Don't lie to me and say that you have, because you know you haven't. What makes you think you're so much different—so ""special""— compared to the rest of us? Is that how your parents raised you? What would your mom think if she saw you acting this way?"
+     PRINT,"Bro! You can't set more than one of FLUXPLOTS__INVERT_NEWELL_THE_CUSP, FLUXPLOTS__NEWELL_THE_CUSP, FLUXPLOTS__BROADBAND_EVERYWHAR, and FLUXPLOTS__DIFFUSE_EVERYWHAR, but that's exactly what you've done! Haven't you learned how to use your own program? Have you even considered what you're asking for? Don't lie to me and say that you have, because you know you haven't. What makes you think you're so much different—so ""special""— compared to the rest of us? Is that how your parents raised you? What would your mom think if she saw you acting this way?"
      PRINT,"You think this is some sort of joke, but I'm telling you—I know where you live. I know what else you think you're getting away with. Wanna find out what happens if you keep this up? Watch. Just watch what happens. You're gonna find out if this little ""joke"" is funny after all. Go ahead—restart the program and act like we didn't have this conversation. But it's not going to change the facts, or the world of pain you'll find yourself in when they find out, when I come for you. It's real this time, bro."
      STOP
   ENDIF
@@ -565,6 +571,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          fluxPlots__remove_outliers        : 0B, $
                          fluxPlots__remove_log_outliers    : 0B, $
                          fluxPlots__add_suspect_outliers   : 0B, $
+                         fluxPlots__invert_Newell_the_cusp : 0B, $
                          fluxPlots__Newell_the_cusp        : 0B, $
                          fluxPlots__broadband_everywhar    : 0B, $
                          fluxPlots__diffuse_everywhar      : 0B, $
@@ -1000,6 +1007,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(fluxPlots__add_suspect_outliers) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'fluxPlots__add_suspect_outliers', $
                     BYTE(fluxPlots__add_suspect_outliers),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(fluxPlots__invert_Newell_the_cusp) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'fluxPlots__invert_Newell_the_cusp', $
+                    BYTE(fluxPlots__invert_Newell_the_cusp),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(fluxPlots__Newell_the_cusp) GT 0 THEN BEGIN

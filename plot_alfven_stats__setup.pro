@@ -102,6 +102,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
    FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
+   FLUXPLOTS__INVERT_NEWELL_THE_CUSP=fluxPlots__invert_Newell_the_cusp, $
    FLUXPLOTS__NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
    FLUXPLOTS__BROADBAND_EVERYWHAR=fluxPlots__broadband_everywhar, $
    FLUXPLOTS__DIFFUSE_EVERYWHAR=fluxPlots__diffuse_everywhar, $
@@ -362,6 +363,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
      FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
      FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
+     FLUXPLOTS__INVERT_NEWELL_THE_CUSP=fluxPlots__invert_Newell_the_cusp, $
      FLUXPLOTS__NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
      FLUXPLOTS__BROADBAND_EVERYWHAR=fluxPlots__broadband_everywhar, $
      FLUXPLOTS__DIFFUSE_EVERYWHAR=fluxPlots__diffuse_everywhar, $
