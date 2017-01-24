@@ -263,6 +263,13 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
    TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
    TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
+   CONTOUR__LEVELS=contour__levels, $
+   CONTOUR__PERCENT=contour__percent, $
+   OVERPLOT_FILE=overplot_file, $
+   OVERPLOT_ARR=overplot_arr, $
+   OVERPLOT_CONTOUR__LEVELS=op_contour__levels, $
+   OVERPLOT_CONTOUR__PERCENT=op_contour__percent, $
+   OVERPLOT_PLOTRANGE=op_plotRange, $        
    _REF_EXTRA=e, $
    RESET_STRUCT=reset
 
@@ -439,6 +446,11 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      USE_MOSTRECENT_AE_FILES=use_mostRecent_AE_files, $
      ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
      MIMC_STRUCT=MIMC_struct, $
+     OVERPLOT_FILE=overplot_file, $
+     OVERPLOT_ARR=overplot_arr, $
+     OVERPLOT_CONTOUR__LEVELS=op_contour__levels, $
+     OVERPLOT_CONTOUR__PERCENT=op_contour__percent, $
+     OVERPLOT_PLOTRANGE=op_plotRange, $        
      RESET_STRUCT=reset, $
      _EXTRA=e
 
