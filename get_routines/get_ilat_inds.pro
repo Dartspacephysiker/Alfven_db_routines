@@ -29,7 +29,9 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi, $
      lats                        = maximus.ilat
   ENDELSE
 
-  CASE STRUPCASE(hemi) OF
+  hem = KEYWORD_SET(hemi) ? hemi : 'NORTH'
+
+  CASE STRUPCASE(hem) OF
      "BOTH": BEGIN
         ilat_i     = CGSETUNION( $
                      WHERE(lats GE minI AND lats LE maxI), $
