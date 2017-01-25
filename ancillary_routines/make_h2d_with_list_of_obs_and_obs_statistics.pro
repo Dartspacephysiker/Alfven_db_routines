@@ -275,7 +275,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
               ;; PRINTF,textLun,'*************************'
               IF (KEYWORD_SET(do_timeAvg_fluxQuantities) AND N_ELEMENTS(tHistDenominator) GT 0) THEN BEGIN
                  ;; PRINTF,textLun,FORMAT='(F0.3,T10,F0.3,T30,"T here (seconds): ",F-7.3)', $
-                 PRINTF,textLun,FORMAT='(F0.3,T10,F0.3,T20,F-7.3)', $
+                 PRINTF,textLun,FORMAT='(F0.3,T10,F0.3,T20,F-8.1)', $
                         HLOI__H2D_binCenters[0,i,j],HLOI__H2D_binCenters[1,i,j],tHistDenominator[i,j]
                  PRINTF,textLun,'************************************************************'
                  ;; PRINTF,textLun,FORMAT='("T here (seconds): ",T64,F-7.3)',tHistDenominator[i,j]

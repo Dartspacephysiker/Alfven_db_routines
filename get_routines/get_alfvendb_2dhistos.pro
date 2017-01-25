@@ -2248,7 +2248,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                            ;; H2D_THIST_I=H2D_tHist_i, $
                            VARPLOTRAWINDS=varPlotRawInds, $
                            DBTIMES=KEYWORD_SET(no_maximus) ?  !NULL : MAXIMUS__times, $
-                           THISTDENOMINATOR=tHistDenominator, $
+                           THISTDENOMINATOR=KEYWORD_SET(no_maximus) ? eSpec_tHistDenominator : tHistDenominator, $
                            ;; DONT_USE_THESE_INDS=dont_use_these_inds, $
                            DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                            GROSSRATE__H2D_AREAS=h2dAreas, $
