@@ -47,6 +47,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                            OVERPLOT_PLOTRANGE=op_plotRange, $
                            CENTERS_MLT=centersMLT, $
                            CENTERS_ILAT=centersILAT, $
+                           PREV_PLOT_I__LIMIT_TO_THESE=prev_plot_i__limit_to_these, $
                            SHOW_INTEGRALS=show_integrals, $
                            MAKE_INTEGRAL_TXTFILE=make_integral_txtfile, $
                            MAKE_INTEGRAL_SAVFILE=make_integral_savfile, $
@@ -196,6 +197,13 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
               ;Determine where blanks are
               IF KEYWORD_SET(tiling_order) THEN BEGIN
                  blankLocs = WHERE(tiling_order LT 0,nBlanks)
+
+                 IF N_ELEMENTS(prev_plot_i__limit_to_these) GT 0 THEN BEGIN
+                    blankLocs = CGSETINTERSECTION(prev_plot_i__limit_to_these,WHERE(tiling_order LT 0),COUNT=nBlanks)
+                 ENDIF ELSE BEGIN
+                    blankLocs = WHERE(tiling_order LT 0,nBlanks)
+                 ENDELSE
+
               ENDIF ELSE BEGIN
                  nBlanks   = 0
               ENDELSE
@@ -350,7 +358,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                    tPSuff + '--integrals.sav'
               ENDIF
 
-              FOR i=0, nPlotsAndBlanks-1 DO BEGIN  
+              FOR i=0,nPlotsAndBlanks-1 DO BEGIN  
 
                  IF KEYWORD_SET(tiling_order) THEN j = tiling_order[i] ELSE j = i
                  IF nBlanks GT 0 THEN BEGIN ;is it blankety blank?

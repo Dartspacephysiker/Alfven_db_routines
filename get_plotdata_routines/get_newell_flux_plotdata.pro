@@ -62,6 +62,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                              VARPLOTH2DINDS=varPlotH2DInds, $
                              VARPLOTRAWINDS=varPlotRawInds, $
                              REMOVED_II_LISTARR=removed_ii_listArr, $
+                             KEEP_II_LISTARR=keep_i_listArr, $
                              ;; VARPLOTISKEEPINDS=varPlotIsKeepInds, $
                              MEDHISTOUTDATA=medHistOutData, $
                              MEDHISTOUTTXT=medHistOutTxt, $
@@ -100,7 +101,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
      
   ENDIF 
 
-  IF KEYWORD_SET(eFlux_eSpec_data) OR KEYWORD_SET(eNumFlux_eSpec_data) $
+  IF KEYWORD_SET(eFlux_eSpec_data) OR KEYWORD_SET(eNumFlux_eSpec_data) OR KEYWORD_SET(alfDB_plot_struct.for_eSpec_DBs) $
   THEN BEGIN
      for_eSpec_DBs       = 1
      ;; nonAlf_inds     = indices__eSpec
@@ -112,12 +113,14 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
   ;;    ENDIF 
   ;; ENDELSE
 
-  IF KEYWORD_SET(alfDB_plot_struct.for_eSpec_DBs) THEN BEGIN
+  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
 
      SPLIT_ESPECDB_I_BY_ESPEC_TYPE,indices__eSpec, $
                                    OUT_TITLES=out_titles, $
                                    OUT_DATANAMESUFFS=out_datanamesuffs, $
-                                   OUT_I_LIST=out_i_list, $
+                                   ;; OUT_I_LIST=out_i_list, $
+                                   OUT_II_LIST=out_ii_list, $
+                                   RM_II_LIST=rm_ii_list, $
                                    SUMMARY=newell_analysis__output_summary, $
                                    COMBINE_ACCELERATED=comb_accelerated, $
                                    SUM_LUN=sum_lun
@@ -158,6 +161,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                                  OUT_TITLES=out_titles, $
                                  OUT_DATANAMESUFFS=out_datanamesuffs, $
                                  OUT_I_LIST=out_i_list, $
+                                 ;;2017/01/25 YOU NEED TO ADD OUT_II_LIST IN ORDER TO MATCH SPLIT_ESPECDB_I_BY_ESPEC_TYPE
                                  SUMMARY=newell_analysis__output_summary, $
                                  DESPUN_ALF_DB=despun_alf_db, $
                                  SUM_LUN=sum_lun
@@ -199,11 +203,30 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
      FREE_LUN,sum_lun
   ENDIF
   
-  FOR k=0,N_ELEMENTS(out_i_list)-1 DO BEGIN
+  ;; FOR k=0,N_ELEMENTS(out_i_list)-1 DO BEGIN
+  FOR k=0,N_ELEMENTS(out_ii_list)-1 DO BEGIN
      
-     tmp_i           = out_i_list[k]
+     ;; tmp_i           = out_i_list[k]
+     ;; IF tmp_i[0] EQ -1 THEN CONTINUE
 
-     IF tmp_i[0] EQ -1 THEN CONTINUE
+     CASE 1 OF
+        KEYWORD_SET(for_eSpec_DBs): BEGIN
+
+           shouldContinue = (out_ii_list[k])[0] EQ !NULL 
+
+           tmp_i        = indices__eSpec[out_ii_list[k]]
+
+        END
+        ELSE: BEGIN
+
+           shouldContinue = tmp_i[0] EQ -1
+
+           tmp_i        = out_i_list[k]
+
+        END
+     ENDCASE
+
+     IF shouldContinue THEN CONTINUE
 
      CASE N_ELEMENTS(noPosFlux) OF
         0:   noPosF     = !NULL
@@ -360,13 +383,21 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
            ;; junker[tmp_i]  = 1B
            ;; out_removed_ii = WHERE(~TEMPORARY(junker))
 
-           junker                      = MAKE_ARRAY(N_ELEMENTS(NEWELL__eSpec.mlt),VALUE=0B,/BYTE)
-           tmpJunk                     = CGSETDIFFERENCE(indices__eSpec, $
-                                                         tmp_i, $
-                                                         COUNT=nJunked, $
-                                                         NORESULT=-1)
-           junker[TEMPORARY(tmpJunk)]  = 1B
-           out_removed_ii              = WHERE(TEMPORARY(junker))
+           ;;*THE OLD WAY AS OF 2017/01/25
+           ;; junker                      = MAKE_ARRAY(N_ELEMENTS(NEWELL__eSpec.mlt),VALUE=0B,/BYTE)
+           ;; tmpJunk                     = CGSETDIFFERENCE(indices__eSpec, $
+           ;;                                               tmp_i, $
+           ;;                                               COUNT=nJunked, $
+           ;;                                               NORESULT=-1)
+           ;; junker[TEMPORARY(tmpJunk)]  = 1B
+           ;; out_removed_ii              = WHERE(TEMPORARY(junker))
+           ;;*END THE OLD WAY
+
+           ;;*THE NEW WAY AS OF 2017/01/25
+           
+           ;; IF N_ELEMENTS(out_removed_ii) GT 0 THEN STOP
+           ;;*DON'T STOP THE NEW WAY
+
            ;; out_removed_ii   = WHERE(TEMPORARY(junker))
 
         ENDIF
@@ -374,7 +405,28 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
         ;; IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
         ;;    removed_ii_listArr = [removed_ii_listArr,LIST(tmp_i)]
         ;; ENDIF ELSE BEGIN
-        removed_ii_listArr = [removed_ii_listArr,LIST(TEMPORARY(out_removed_ii))]
+
+        ;; removed_ii_listArr = [removed_ii_listArr,LIST(TEMPORARY(out_removed_ii))]
+
+        ;;*THE OLD WAY AS OF 2017/01/25
+        ;; removed_ii_listArr = [removed_ii_listArr,LIST(TEMPORARY(out_removed_ii))]
+        ;;*END THE OLD WAY
+
+        ;;*THE NEW WAY AS OF 2017/01/25
+        tmpRemove_ii       = rm_ii_list[k]
+        IF N_ELEMENTS(out_removed_ii) GT 0 THEN BEGIN
+           IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+
+              tmpRemove_ii = [tmpRemove_ii,(out_ii_list[k])[out_removed_ii]]
+
+           ENDIF ELSE BEGIN
+              PRINT,"This is an unsolved problem for the maximo DB"
+              STOP
+           ENDELSE
+        END
+
+        removed_ii_listArr = [removed_ii_listArr,LIST(tmpRemove_ii)]
+
         ;; ENDELSE
      ENDIF 
 

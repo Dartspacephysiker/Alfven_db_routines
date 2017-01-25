@@ -179,6 +179,10 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
               ;; tempH2D_lists_with_orbs[j] = LIST(tempOrbs)
               nRemoved            += tempNRemoved
            ENDIF
+
+           IF tempCount EQ 0 THEN BEGIN
+              (tempH2D_lists_with_inds[j])[0] = !NULL
+           ENDIF
         ENDIF;;  ELSE BEGIN
      
         ;; ENDELSE
@@ -349,7 +353,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                              tmptempUTC     = MEAN(tempUTC  [tmpTmpInds])
                              junk           = MIN(ABS(tempUTC[tmpTmpInds]-tmptempUTC),minInd)
                              tmpTempTimes   = tempTimes[tmpTmpInds[minInd]]
-                             tmptempChare   = MEAN(tempChare[tmpTmpInds])        
+                             tmptempChare   = MEDIAN(tempChare[tmpTmpInds])        
 
                              tmpIMFinds          = IMFinds[tmpTmpInds]  
                              tmptempIMFBx        = MEAN(tempIMFBx       [tmpTmpInds]) 

@@ -167,7 +167,8 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
               1: BEGIN
                  ;; dont_use_these_inds      = CGSETINTERSECTION(in_inds,(removed_ii_listArr[tmpVarRaw_i[i]])[0],COUNT=dontDoIt)
                  ;; dont_use_these_inds      = CGSETINTERSECTION(in_inds,(removed_ii_listArr[i])[0],COUNT=dontDoIt)
-                 dont_use_these_inds      = CGSETINTERSECTION(in_inds,(removed_ii_listArr[tmpVarRaw_i[i]])[0],COUNT=dontDoIt)
+                 ;; dont_use_these_inds      = CGSETINTERSECTION(in_inds,(removed_ii_listArr[tmpVarRaw_i[i]])[0],COUNT=dontDoIt)
+                 dont_use_these_inds      = (removed_ii_listArr[tmpVarRaw_i[i]])[0]
               END
               2: BEGIN
                  dont_use_these_inds      = CGSETINTERSECTION( $

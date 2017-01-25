@@ -1,4 +1,5 @@
 ;;06/04/16
+;;2017/01/25 YOU NEED TO ADD OUT_II_LIST IN ORDER TO MATCH SPLIT_ESPECDB_I_BY_ESPEC_TYPE
 PRO SPLIT_ALFDB_I_BY_ESPEC_TYPE,good_i,is_despun, $
                                 PURE_B_I=pure_b_i, $
                                 PURE_D_I=pure_d_i, $
