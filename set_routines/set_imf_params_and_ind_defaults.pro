@@ -89,9 +89,13 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
    DO_ABS_BTMAX=abs_btMax, $
    DO_ABS_BXMIN=abs_bxMin, $
    DO_ABS_BXMAX=abs_bxMax, $
+   DO_ABS_N2007FUNCMIN=abs_N2007FuncMin, $
+   DO_ABS_N2007FUNCMAX=abs_N2007FuncMax, $
    BX_OVER_BY_RATIO_MAX=bx_over_by_ratio_max, $
    BX_OVER_BY_RATIO_MIN=bx_over_by_ratio_min, $
    BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+   N2007FUNCMIN=N2007FuncMin, $
+   N2007FUNCMAX=N2007FuncMax, $
    DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
    SKIP_IMF_STRING=skip_IMF_string, $
    OMNIPARAMSTR=OMNIparamStr, $
@@ -693,6 +697,14 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         STR_ELEMENT,IMF_struct,'abs_bxMax',BYTE(abs_bxMax),/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(abs_N2007FuncMin) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'abs_N2007FuncMin',BYTE(abs_N2007FuncMin),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(abs_N2007FuncMax) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'abs_N2007FuncMax',BYTE(abs_N2007FuncMax),/ADD_REPLACE
+     ENDIF
+
      IF N_ELEMENTS(bx_over_by_ratio_max) GT 0 THEN BEGIN
         STR_ELEMENT,IMF_struct,'bx_over_by_ratio_max',FLOAT(bx_over_by_ratio_max),/ADD_REPLACE
      ENDIF
@@ -703,6 +715,14 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
 
      IF N_ELEMENTS(Bx_over_ByBz_Lim) GT 0 THEN BEGIN
         STR_ELEMENT,IMF_struct,'Bx_over_ByBz_Lim',FLOAT(Bx_over_ByBz_Lim),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(N2007FuncMin) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'N2007FuncMin',FLOAT(N2007FuncMin),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(N2007FuncMax) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'N2007FuncMax',FLOAT(N2007FuncMax),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(tConeMin) GT 0 THEN BEGIN

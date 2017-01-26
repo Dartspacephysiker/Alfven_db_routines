@@ -202,9 +202,13 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    DO_ABS_BTMAX=abs_btMax, $
    DO_ABS_BXMIN=abs_bxMin, $
    DO_ABS_BXMAX=abs_bxMax, $
+   DO_ABS_N2007FUNCMIN=abs_N2007FuncMin, $
+   DO_ABS_N2007FUNCMAX=abs_N2007FuncMax, $
    BX_OVER_BY_RATIO_MAX=bx_over_by_ratio_max, $
    BX_OVER_BY_RATIO_MIN=bx_over_by_ratio_min, $
    BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+   N2007FUNCMIN=N2007FuncMin, $
+   N2007FUNCMAX=N2007FuncMax, $
    DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
    DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
    OMNIPARAMSTR=OMNIparamStr, $
@@ -478,9 +482,13 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      DO_ABS_BTMAX=abs_btMax, $
      DO_ABS_BXMIN=abs_bxMin, $
      DO_ABS_BXMAX=abs_bxMax, $
+     DO_ABS_N2007FUNCMIN=abs_N2007FuncMin, $
+     DO_ABS_N2007FUNCMAX=abs_N2007FuncMax, $
      BX_OVER_BY_RATIO_MAX=bx_over_by_ratio_max, $
      BX_OVER_BY_RATIO_MIN=bx_over_by_ratio_min, $
      BX_OVER_BYBZ_LIM=Bx_over_ByBz_Lim, $
+     N2007FUNCMIN=N2007FuncMin, $
+     N2007FUNCMAX=N2007FuncMax, $
      DONT_CONSIDER_CLOCKANGLES=dont_consider_clockAngles, $
      DO_NOT_CONSIDER_IMF=do_not_consider_IMF, $
      SKIP_IMF_STRING=KEYWORD_SET(use_storm_stuff) OR KEYWORD_SET(AE_STUFF), $
