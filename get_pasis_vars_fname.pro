@@ -16,6 +16,9 @@ FUNCTION GET_PASIS_VARS_FNAME,NEED_FASTLOC_I=need_fastLoc_i
      END
   ENDCASE
 
+  IF ABS(PASIS__MIMC_struct.minI) LT 60 THEN BEGIN
+     PASISparamStr += STRING(FORMAT='("--",I0,"-",I0,"_ILAT")',PASIS__MIMC_struct.minI,PASIS__MIMC_struct.maxI)
+  ENDIF
 
   CASE 1 OF
      KEYWORD_SET(PASIS__alfDB_plot_struct.for_eSpec_DBs): BEGIN

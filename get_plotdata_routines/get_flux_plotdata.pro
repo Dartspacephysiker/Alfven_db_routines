@@ -1554,16 +1554,16 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         IF haveCustomMLT THEN BEGIN
            customMLTInds = GET_MLT_INDS(!NULL, $
                                         alfDB_plot_struct.custom_integral.mltRange[0,alfDB_plot_struct.custom_integral.friend_i], $
-                                        alfDB_plot_struct.custom_integral.mltRange[0,alfDB_plot_struct.custom_integral.friend_i], $
-                                        DIRECT_MLTS=centersMLT, $
+                                        alfDB_plot_struct.custom_integral.mltRange[1,alfDB_plot_struct.custom_integral.friend_i], $
+                                        DIRECT_MLTS=centersMLT/15., $
                                         N_MLT=nCustomMLT)
         ENDIF
 
         IF haveCustomILAT THEN BEGIN
            customILATInds = GET_ILAT_INDS(!NULL, $
                                           alfDB_plot_struct.custom_integral.ilatRange[0,alfDB_plot_struct.custom_integral.friend_i], $
-                                          alfDB_plot_struct.custom_integral.ilatRange[0,alfDB_plot_struct.custom_integral.friend_i], $
-                                          HEMI=MIMC_struct.hemi, $
+                                          alfDB_plot_struct.custom_integral.ilatRange[1,alfDB_plot_struct.custom_integral.friend_i], $
+                                          MIMC_struct.hemi, $
                                           DIRECT_LATITUDES=centersILAT, $
                                           N_ILAT=nCustomILAT)
         ENDIF
@@ -1622,7 +1622,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
         IF N_ELEMENTS(customIntegInds) GT 0 THEN BEGIN
            grossCustom         = TOTAL(grossDat[customIntegInds])
-        ENDIF
+        ENDIF ELSE grossCustom = 0
      ENDIF
 
   ENDELSE
@@ -1649,13 +1649,15 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            H2DStr.grossIntegrals.day    = grossDay
            H2DStr.grossIntegrals.night  = grossNight
            H2DStr.grossIntegrals.total  = grossDay+grossNight
+           H2DStr.grossIntegrals.custom = grossCustom
            H2DStr.gAreas                = h2dAreas ;Note, areas in square kilometers
 
-           IF N_ELEMENTS(grossCustom) GT 0 THEN BEGIN
-              tmpGross                  = H2DStr.grossIntegrals
-              STR_ELEMENT,tmpGross,'custom',grossCustom,/ADD_REPLACE
-              STR_ELEMENT,H2DStr,'grossIntegrals',tmpGross,/ADD_REPLACE
-           ENDIF
+           ;; IF N_ELEMENTS(grossCustom) GT 0 THEN BEGIN
+           ;;    ;; tmpGross                  = H2DStr.grossIntegrals
+           ;;    ;; STR_ELEMENT,tmpGross,'custom',grossCustom,/ADD_REPLACE
+           ;;    ;; STR_ELEMENT,H2DStr,'grossIntegrals',tmpGross,/ADD_REPLACE
+           ;;    H2DStr.grossIntegrals.custom = grossCustom
+           ;; ENDIF
         ENDIF
 
      ENDIF ELSE BEGIN
@@ -1692,8 +1694,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            
            cMax   = MAX(H2DStr.data[customIntegInds],maxCustomInd_ii)
            PRINT,"Custom max (MLT,ILAT): ",cMax, $
-                 '(' + STRCOMPRESS(centersMLT[CustomInds[maxCustomInd_ii]]/15.,/REMOVE_ALL), $
-                 ', ' + STRCOMPRESS(centersILAT[CustomInds[maxCustomInd_ii]]) + ')'
+                 '(' + STRCOMPRESS(centersMLT[customIntegInds[maxCustomInd_ii]]/15.,/REMOVE_ALL), $
+                 ', ' + STRCOMPRESS(centersILAT[customIntegInds[maxCustomInd_ii]]) + ')'
 
         ENDIF
 

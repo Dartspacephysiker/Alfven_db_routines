@@ -1368,16 +1368,16 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         tmpStruct = custom_integral_struct
 
         validTags = ['mltRange','ilatRange']
-        IF SIZE(tmpStruct) NE 8 THEN BEGIN
+        IF SIZE(tmpStruct,/TYPE) NE 8 THEN BEGIN
            PRINT,"custom_integral struct needs to be, as you may have guessed, a struct. Try again."
            STOP
         ENDIF
         tmpTags = TAG_NAMES(tmpStruct)
         nTags   = N_ELEMENTS(tmpTags)
 
-        stdFriends = SIZE(tmpStruct.(k),/DIMENSIONS)
+        stdFriends = SIZE(tmpStruct.(0),/DIMENSIONS)
         FOR k=0,nTags-1 DO BEGIN
-           IF (WHERE(STRUPCASE(tmpTags[k]) EQ validTags))[0] EQ -1 THEN BEGIN
+           IF (WHERE(STRUPCASE(tmpTags[k]) EQ STRUPCASE(validTags)))[0] EQ -1 THEN BEGIN
               PRINT,"Invalid tag: ",tmpTags[k]
               STOP
            ENDIF
@@ -1393,11 +1393,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
               STOP
            ENDIF
 
-           IF N_ELEMENTS(nFriends) EQ 1 THEN nFriends = [nFriends,0]
+           IF N_ELEMENTS(nFriends) EQ 1 THEN nFriends = [nFriends,1]
 
            FOR kk=0,nFriends[1]-1 DO BEGIN
-              PRINT,FORMAT='("custom_integral ",A0,": [",F0.2,",",",F0.2,"]")', $
-                    tmpTags[k],tmpStruct.(k)[0,kk],tmpStruct.(k)[1,kk]
+              ;; PRINT,FORMAT='("custom_integral ",A0,": [",F0.2,",",F0.2,"]")', $
+              ;;       tmpTags[k],tmpStruct.(k)[0,kk],tmpStruct.(k)[1,kk]
 
               IF (tmpStruct.(k))[0,kk] GT (tmpStruct.(k))[1,kk] THEN BEGIN
                  (tmpStruct.(k))[*,kk] = [(tmpStruct.(k))[1,kk],(tmpStruct.(k))[0,kk]]
@@ -1414,9 +1414,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
            tmpILATRange = tmpStruct.ilatRange
            nFriends = SIZE(tmpILATRange,/DIMENSIONS)
-           IF N_ELEMENTS(nFriends) EQ 1 THEN nFriends = [nFriends,0]
+           IF N_ELEMENTS(nFriends) EQ 1 THEN nFriends = [nFriends,1]
 
-           custSign = ABS(MAX(tmpILATRange[0,*]))/MAX(tmpILATRange[1,*])
+           custSign = ABS(tmpILATRange[0,*])/tmpILATRange[0,*]
            hemiSign = ABS(MIMC_struct.maxI)/MIMC_struct.maxI
 
            FOR kk=0,nFriends[1]-1 DO BEGIN
@@ -1434,7 +1434,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
         ENDIF
 
-        STR_ELEMENT,tmpStruct,"nFriends",nFriends[0],/ADD_REPLACE
+        STR_ELEMENT,tmpStruct,"nFriends",nFriends[1],/ADD_REPLACE
         STR_ELEMENT,tmpStruct,"friend_i",0S,/ADD_REPLACE
         STR_ELEMENT,alfDB_plot_struct,"custom_integral",tmpStruct,/ADD_REPLACE
 

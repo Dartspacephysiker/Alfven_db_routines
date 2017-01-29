@@ -33,15 +33,15 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi, $
 
   CASE STRUPCASE(hem) OF
      "BOTH": BEGIN
-        ilat_i     = CGSETUNION( $
-                     WHERE(lats GE minI AND lats LE maxI), $
-                     WHERE(lats GE -ABS(maxI) AND lats LE -ABS(minI)))
-        n_ilat     = N_ELEMENTS(ilat_i)
-        n_not_ilat = N_ELEMENTS(lats)-n_ilat
+        PRINTF,lun,"Converting negative ILAT values (Southern Hemi) to positive with ABS function..."
+        lats = ABS(lats)
+
+        ;; ilat_i     = CGSETUNION( $
+        ;;              WHERE(lats GE minI AND lats LE maxI), $
+        ;;              WHERE(lats GE -ABS(maxI) AND lats LE -ABS(minI)))
+        ilat_i     = WHERE(lats GE minI AND lats LE maxI,n_ilat,NCOMPLEMENT=n_not_ilat)
 
         PRINTF,lun,'Hemisphere: Northern AND Southern'
-        PRINTF,lun,"Converting negative ILAT values (Southern Hemi) to positive with ABS function..."
-        lats[ilat_i] = ABS(lats[ilat_i])
         ;; PRINT,"STOP: Why were you ever converting negs to pos in the first place?"
         ;; WAIT,2
         ;; STOP

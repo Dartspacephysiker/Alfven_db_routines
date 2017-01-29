@@ -410,7 +410,6 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      PARAMSTRSUFFIX=plotSuffix,$
      PLOTH2D_CONTOUR=plotH2D_contour, $
      PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
-     CUSTOM_INTEGRAL_STRUCT=custom_integral_struct, $
      ;; HOYDIA=hoyDia, $
      LUN=lun, $
      NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
