@@ -159,19 +159,20 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    MAKE_INTEGRAL_TXTFILE=make_integral_txtfile, $
    MAKE_INTEGRAL_SAVFILES=make_integral_savfiles, $
    INTEGRALSAVFILEPREF=integralSavFilePref, $
+   CUSTOM_INTEGRAL_STRUCT=custom_integral_struct, $
    OVERPLOT_FILE=overplot_file, $
    OVERPLOT_ARR=overplot_arr, $
    OVERPLOT_CONTOUR__LEVELS=op_contour__levels, $
    OVERPLOT_CONTOUR__PERCENT=op_contour__percent, $
    OVERPLOT_PLOTRANGE=op_plotRange, $
-   HOYDIA=hoyDia,LUN=lun, $
+   ;; HOYDIA=hoyDia, $
+   LUN=lun, $
    DONT_CORRECT_ILATS=dont_correct_ilats, $
    MIMC_STRUCT=MIMC_struct, $
    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
    RESET_STRUCT=reset, $
    DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
    _EXTRA=e
-
 
   COMPILE_OPT idl2
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
@@ -185,7 +186,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   defHwMKpInd            = 7
 
   ;Aujour d'hui
-  hoyDia                 = GET_TODAY_STRING()
+  ;; hoyDia                 = GET_TODAY_STRING()
 
   ; Handle MLT and ILAT ... and L-shell
   IF ~KEYWORD_SET(do_not_set_defaults) THEN BEGIN
@@ -644,6 +645,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          executing_multiples               : 0B, $
                          multiString                       : '', $
                          multiples                         : '', $
+                         multi_i                           : 0 , $
                          multiple_IMF_clockAngles          : 0B, $
                          multiple_B_conds                  : 0B, $
                          multiple_delays                   : 0B, $
@@ -1359,6 +1361,83 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(show_integrals) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'show_integrals', $
                     show_integrals,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(custom_integral_struct) GT 0 THEN BEGIN
+
+        tmpStruct = custom_integral_struct
+
+        validTags = ['mltRange','ilatRange']
+        IF SIZE(tmpStruct) NE 8 THEN BEGIN
+           PRINT,"custom_integral struct needs to be, as you may have guessed, a struct. Try again."
+           STOP
+        ENDIF
+        tmpTags = TAG_NAMES(tmpStruct)
+        nTags   = N_ELEMENTS(tmpTags)
+
+        stdFriends = SIZE(tmpStruct.(k),/DIMENSIONS)
+        FOR k=0,nTags-1 DO BEGIN
+           IF (WHERE(STRUPCASE(tmpTags[k]) EQ validTags))[0] EQ -1 THEN BEGIN
+              PRINT,"Invalid tag: ",tmpTags[k]
+              STOP
+           ENDIF
+
+           nFriends = SIZE(tmpStruct.(k),/DIMENSIONS)
+           IF ~ARRAY_EQUAL(stdFriends,nFriends) THEN BEGIN
+              PRINT,"Unequal dimensions of friends in custom_integral_struct"
+              STOP
+           ENDIF
+           
+           IF nFriends[0] NE 2 THEN BEGIN
+              PRINT,"Invalid dimensions; needs to be 2xN"
+              STOP
+           ENDIF
+
+           IF N_ELEMENTS(nFriends) EQ 1 THEN nFriends = [nFriends,0]
+
+           FOR kk=0,nFriends[1]-1 DO BEGIN
+              PRINT,FORMAT='("custom_integral ",A0,": [",F0.2,",",",F0.2,"]")', $
+                    tmpTags[k],tmpStruct.(k)[0,kk],tmpStruct.(k)[1,kk]
+
+              IF (tmpStruct.(k))[0,kk] GT (tmpStruct.(k))[1,kk] THEN BEGIN
+                 (tmpStruct.(k))[*,kk] = [(tmpStruct.(k))[1,kk],(tmpStruct.(k))[0,kk]]
+              ENDIF
+
+           ENDFOR
+
+        ENDFOR
+
+        ;;flip sign, if we have ilatRange
+        IF STRUPCASE(MIMC_struct.hemi) EQ "NORTH" AND    $
+           TAG_EXIST(tmpStruct,'ilatRange') $
+        THEN BEGIN
+
+           tmpILATRange = tmpStruct.ilatRange
+           nFriends = SIZE(tmpILATRange,/DIMENSIONS)
+           IF N_ELEMENTS(nFriends) EQ 1 THEN nFriends = [nFriends,0]
+
+           custSign = ABS(MAX(tmpILATRange[0,*]))/MAX(tmpILATRange[1,*])
+           hemiSign = ABS(MIMC_struct.maxI)/MIMC_struct.maxI
+
+           FOR kk=0,nFriends[1]-1 DO BEGIN
+
+              IF tmpILATRange[0,kk] GT tmpILATRange[1,kk] THEN BEGIN
+                 tmpILATRange[*,kk] = [tmpILATRange[1,kk],tmpILATRange[0,kk]]
+              ENDIF
+
+              IF custSign[kk] NE hemiSign $
+              THEN BEGIN
+                 tmpILATRange[*,kk] = (-1.)*[tmpILATRange[1,kk],tmpILATRange[0,kk]]
+              ENDIF
+
+           ENDFOR
+
+        ENDIF
+
+        STR_ELEMENT,tmpStruct,"nFriends",nFriends[0],/ADD_REPLACE
+        STR_ELEMENT,tmpStruct,"friend_i",0S,/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,"custom_integral",tmpStruct,/ADD_REPLACE
+
      ENDIF
 
      IF N_ELEMENTS(make_integral_txtfile) GT 0 THEN BEGIN

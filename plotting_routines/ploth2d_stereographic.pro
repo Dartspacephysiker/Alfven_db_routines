@@ -719,6 +719,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      KEYWORD_SET(do_integral_savfile) OR $
      KEYWORD_SET(show_integrals) THEN BEGIN
      H2D_STEREOGRAPHIC_INTEGRAL,temp,lonsLats, $
+                                ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                                 EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                                 H2D_MASKED=masked, $
                                 INTEGRAL=integral, $
@@ -986,7 +987,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                               defCharSize_grid)           $
                   * charScale)
 
-     show_daynight_integrals = 0
+     show_daynight_integrals = 1
      IF KEYWORD_SET(show_daynight_integrals) THEN BEGIN
 
         CGTEXT, $

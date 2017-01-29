@@ -144,8 +144,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    PARAMSTRSUFFIX=plotSuffix,$
    PLOTH2D_CONTOUR=plotH2D_contour, $
    PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
-   HOYDIA=hoyDia, $
-   LUN=lun, $
+   ;; HOYDIA=hoyDia, $
    NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
    NEWELL__COMBINE_ACCELERATED=Newell__combine_accelerated, $
    ION__NO_MAXIMUS=ion__no_maximus, $
@@ -276,7 +275,9 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    OVERPLOT_CONTOUR__PERCENT=op_contour__percent, $
    OVERPLOT_PLOTRANGE=op_plotRange, $        
    _REF_EXTRA=e, $
-   RESET_STRUCT=reset
+   RESET_STRUCT=reset, $
+   LUN=lun
+   
 
   COMPILE_OPT IDL2
 
@@ -409,7 +410,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      PARAMSTRSUFFIX=plotSuffix,$
      PLOTH2D_CONTOUR=plotH2D_contour, $
      PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
-     HOYDIA=hoyDia, $
+     CUSTOM_INTEGRAL_STRUCT=custom_integral_struct, $
+     ;; HOYDIA=hoyDia, $
      LUN=lun, $
      NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
      NEWELL__COMBINE_ACCELERATED=Newell__combine_accelerated, $

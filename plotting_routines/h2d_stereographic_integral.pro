@@ -1,4 +1,5 @@
 PRO H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
+                               ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                                EQUAL_AREA_BINNING=EA_binning, $
                                H2D_MASKED=h2d_masked, $
                                INTEGRAL=integral, $
