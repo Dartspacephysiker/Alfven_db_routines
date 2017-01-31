@@ -1431,8 +1431,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         ENDFOR
 
         ;;flip sign, if we have ilatRange
-        IF STRUPCASE(MIMC_struct.hemi) EQ "NORTH" AND    $
-           TAG_EXIST(tmpStruct,'ilatRange') $
+        ;; IF STRUPCASE(MIMC_struct.hemi) EQ "NORTH" AND    $
+        IF TAG_EXIST(tmpStruct,'ilatRange') $
         THEN BEGIN
 
            tmpILATRange = tmpStruct.ilatRange
@@ -1462,7 +1462,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
               3: BEGIN
 
                  FOR jj=0,nFriends[2]-1 DO BEGIN
-                    custSign = ABS(tmpILATRange[0,*])/tmpILATRange[0,*]
+                    custSign = ABS(tmpILATRange[0,*,jj])/tmpILATRange[0,*,jj]
                     hemiSign = ABS(MIMC_struct.maxI)/MIMC_struct.maxI
 
                     FOR kk=0,nFriends[1]-1 DO BEGIN
@@ -1483,7 +1483,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
               END
            ENDCASE
 
-
+           STR_ELEMENT,tmpStruct,'ilatRange',tmpILATRange,/ADD_REPLACE
         ENDIF
 
         STR_ELEMENT,tmpStruct,"nFriends",nFriends[1],/ADD_REPLACE
