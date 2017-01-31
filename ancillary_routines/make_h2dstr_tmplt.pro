@@ -11,7 +11,8 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                            DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
                            BOTH_HEMIS=both_hemis, $
                            CB_FORCE_OOBHIGH=cb_force_oobHigh, $
-                           CB_FORCE_OOBLOW=cb_force_oobLow
+                           CB_FORCE_OOBLOW=cb_force_oobLow, $
+                           NCUSTOMINTEGRALS=nCustomIntegrals
 
   COMPILE_OPT idl2
 
@@ -69,7 +70,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                 grossIntegrals  : {day:0.D, $
                                    night:0.D, $
                                    total:0.D, $
-                                   custom:0.D}, $
+                                   custom:(KEYWORD_SET(nCustomIntegrals) ? MAKE_ARRAY(nCustomIntegrals,VALUE=0.D) : 0.D)}, $
                 grossFac        : 1.D, $
                 gUnits          : '', $
                 gAreas          : h2dDatTmplt, $
