@@ -16,7 +16,10 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
    REVERSE_LSHELL=reverse_lShell, $
    COORDINATE_SYSTEM=coordinate_system, $
    USE_AACGM_COORDS=use_AACGM, $
+   USE_GEI_COORDS=use_GEI, $
+   USE_GEO_COORDS=use_GEO, $
    USE_MAG_COORDS=use_MAG, $
+   USE_SDT_COORDS=use_SDT, $
    MIN_MAGCURRENT=minMC, $
    MAX_NEGMAGCURRENT=maxNegMC, $
    HEMI=hemi, $
@@ -103,9 +106,24 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
      use_AACGM = MIMC_struct.use_AACGM
   ENDIF
 
+  STR_ELEMENT,MIMC_struct,'use_GEI',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     use_GEI = MIMC_struct.use_GEI
+  ENDIF
+
+  STR_ELEMENT,MIMC_struct,'use_GEO',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     use_GEO = MIMC_struct.use_GEO
+  ENDIF
+
   STR_ELEMENT,MIMC_struct,'use_MAG',INDEX=tmpInd
   IF tmpInd GE 0 THEN BEGIN
      use_MAG = MIMC_struct.use_MAG
+  ENDIF
+
+  STR_ELEMENT,MIMC_struct,'use_SDT',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     use_SDT = MIMC_struct.use_SDT
   ENDIF
 
   STR_ELEMENT,MIMC_struct,'minMC',INDEX=tmpInd

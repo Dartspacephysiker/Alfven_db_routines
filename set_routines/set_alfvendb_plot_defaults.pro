@@ -39,9 +39,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    DESPUNDB=despunDB, $
    CHASTDB=chastDB, $
    COORDINATE_SYSTEM=coordinate_system, $
-   USE_AACGM_COORDS=use_aacgm, $
-   USE_MAG_COORDS=use_MAG, $
+   USE_AACGM_COORDS=use_AACGM, $
+   USE_GEI_COORDS=use_GEI, $
    USE_GEO_COORDS=use_GEO, $
+   USE_MAG_COORDS=use_MAG, $
    USE_SDT_COORDS=use_SDT, $
    LOAD_DELTA_ILAT_FOR_WIDTH_TIME=load_dILAT, $
    LOAD_DELTA_ANGLE_FOR_WIDTH_TIME=load_dAngle, $
@@ -198,8 +199,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         DONT_CORRECT_ILATS=dont_correct_ilats, $
         COORDINATE_SYSTEM=coordinate_system, $
         USE_AACGM_COORDS=use_AACGM, $
-        USE_MAG_COORDS=use_MAG, $
+        USE_GEI_COORDS=use_GEI, $
         USE_GEO_COORDS=use_GEO, $
+        USE_MAG_COORDS=use_MAG, $
         USE_SDT_COORDS=use_SDT, $
         MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
         REVERSE_LSHELL=reverse_lShell, $
@@ -211,6 +213,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         DAYSIDE=dayside, $
         NIGHTSIDE=nightside, $
         MIMC_STRUCT=MIMC_struct, $
+        _EXTRA=e, $
         LUN=lun
 
   ENDIF
@@ -350,10 +353,17 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
   IF KEYWORD_SET(despunDB) THEN despunStr  = '-despun' ELSE despunStr = ''
 
-  IF KEYWORD_SET(use_AACGM) AND KEYWORD_SET(use_MAG) THEN STOP
+  stopMe = KEYWORD_SET(use_AACGM) + KEYWORD_SET(use_GEI) + KEYWORD_SET(use_GEO) + KEYWORD_SET(use_MAG) + KEYWORD_SET(use_SDT)
+  IF stopMe GT 1 THEN STOP
   CASE 1 OF
      KEYWORD_SET(use_AACGM): BEGIN
         coordStr = '_AACGM'
+     END
+     KEYWORD_SET(use_GEI): BEGIN
+        coordStr = '_GEI'
+     END
+     KEYWORD_SET(use_GEO): BEGIN
+        coordStr = '_GEO'
      END
      KEYWORD_SET(use_MAG): BEGIN
         coordStr = '_MAG'

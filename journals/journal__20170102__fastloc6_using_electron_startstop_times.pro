@@ -1,7 +1,11 @@
 ;;2017/01/02
+;;Just waiting for the day when I get all of the Je_time stuff un-duped so I can pull the trigger here
 PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
 
   COMPILE_OPT IDL2
+
+  PRINT,"WAIT! You have to clean up all the Je_times inds for orbits 16362–50000, you know"
+  STOP
 
   startOrb = 500
   stopOrb  = 23999
@@ -45,11 +49,11 @@ PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
            checkInterval  = TEMPORARY(checkIntervalSav)
            curElem        = TEMPORARY(curElemSav)
         ENDIF ELSE BEGIN
-           PRINT,"Couldn't restore tmpFile! Creating fastLoc5 from scratch ..."
+           PRINT,"Couldn't restore tmpFile! Creating fastLoc6 from scratch ..."
         ENDELSE
      END
      ELSE: BEGIN
-        PRINT,'Beginning creation of fastLoc5 ...'
+        PRINT,'Beginning creation of fastLoc6 ...'
      END
   ENDCASE
   FOR orb=startOrb,stopOrb DO BEGIN

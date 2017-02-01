@@ -9,6 +9,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    INCLUDE_32Hz=include_32Hz, $
                                    COORDINATE_SYSTEM=coordinate_system, $
                                    USE_AACGM_COORDS=use_aacgm, $
+                                   USE_GEI_COORDS=use_gei, $
                                    USE_GEO_COORDS=use_geo, $
                                    USE_MAG_COORDS=use_mag, $
                                    USE_SDT_COORDS=use_sdt, $
@@ -123,7 +124,11 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
         defCoordDir   = defDBDir + 'alternate_coords/'
 
-        SDT_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times--SDT_coords.sav'
+        ;; AACGM_file    = 'fastLoc_intervals5--20161129--500-16361--Je_times--AACGM_coords.sav'
+        GEI_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-GEI.sav'
+        GEO_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-GEO.sav'
+        MAG_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-MAG.sav'
+        SDT_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-SDT.sav'
 
         mapRatDir     = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
         mapRatFile    = 'mapratio_for_fastLoc_intervals5--20161129--500-16361--Je_times.sav'
@@ -350,24 +355,35 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         CASE STRUPCASE(coordinate_system) OF
            'AACGM': BEGIN
               use_aacgm = 1
+              use_gei   = 0
+              use_geo   = 0
+              use_mag   = 0
+              use_SDT   = 0
+           END
+           'GEI'  : BEGIN
+              use_aacgm = 0
+              use_gei   = 1
               use_geo   = 0
               use_mag   = 0
               use_SDT   = 0
            END
            'GEO'  : BEGIN
               use_aacgm = 0
+              use_gei   = 0
               use_geo   = 1
               use_mag   = 0
               use_SDT   = 0
            END
            'MAG'  : BEGIN
               use_aacgm = 0
+              use_gei   = 0
               use_geo   = 0
               use_mag   = 1
               use_SDT   = 0
            END
            'SDT'  : BEGIN
               use_aacgm = 0
+              use_gei   = 0
               use_geo   = 0
               use_mag   = 0
               use_SDT   = 1
@@ -375,12 +391,12 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         ENDCASE
      ENDIF
 
-     IF KEYWORD_SET(for_eSpec_DBs) AND $
-        (KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_GEO) OR KEYWORD_SET(use_MAG)) $
+     IF KEYWORD_SET(for_eSpec_DBs) AND KEYWORD_SET(use_AACGM) $
      THEN BEGIN
         PRINT,'Not set up for this!!' 
         STOP
      ENDIF
+
 
      changeCoords = 0B
 
@@ -389,7 +405,17 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         RESTORE,defCoordDir+AACGM_file
 
         coordName = 'AACGM'
-        coordStr  = TEMPORARY(FL_AACGM)
+        coordStr  = TEMPORARY(AACGM)
+
+        changeCoords = 1B
+     ENDIF
+
+     IF KEYWORD_SET(use_GEI) THEN BEGIN
+
+        RESTORE,defCoordDir+GEI_file
+
+        coordStr  = TEMPORARY(GEI)
+        coordName = 'GEI'
 
         changeCoords = 1B
      ENDIF
@@ -398,7 +424,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
         RESTORE,defCoordDir+GEO_file
 
-        coordStr  = TEMPORARY(FL_GEO)
+        coordStr  = TEMPORARY(GEO)
         coordName = 'GEO'
 
         changeCoords = 1B
@@ -409,7 +435,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         RESTORE,defCoordDir+MAG_file
 
         coordName = 'MAG'
-        coordStr  = TEMPORARY(FL_MAG)
+        coordStr  = TEMPORARY(MAG)
 
         changeCoords = 1B
      ENDIF
@@ -426,7 +452,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         RESTORE,defCoordDir+SDT_file
 
         coordName = 'SDT'
-        coordStr  = TEMPORARY(FL_SDT)
+        coordStr  = TEMPORARY(SDT)
 
         changeCoords = 1B
      ENDIF

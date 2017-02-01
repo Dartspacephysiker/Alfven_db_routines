@@ -15,8 +15,9 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   REVERSE_LSHELL=reverse_lShell, $
                                   COORDINATE_SYSTEM=coordinate_system, $
                                   USE_AACGM_COORDS=use_AACGM, $
-                                  USE_MAG_COORDS=use_MAG, $
+                                  USE_GEI_COORDS=use_GEI, $
                                   USE_GEO_COORDS=use_GEO, $
+                                  USE_MAG_COORDS=use_MAG, $
                                   USE_SDT_COORDS=use_SDT, $
                                   MIN_MAGCURRENT=minMC, $
                                   MAX_NEGMAGCURRENT=maxNegMC, $
@@ -27,6 +28,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   DAYSIDE=dayside, $
                                   NIGHTSIDE=nightside, $
                                   MIMC_STRUCT=MIMC_struct, $
+                                  _EXTRA=e, $
                                   LUN=lun
 
   COMPILE_OPT idl2
@@ -48,8 +50,10 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   REVERSE_LSHELL=reverse_lShell, $
                                   COORDINATE_SYSTEM=coordinate_system, $
                                   USE_AACGM_COORDS=use_AACGM, $
-                                  USE_MAG_COORDS=use_MAG, $
+                                  USE_GEI_COORDS=use_GEI, $
                                   USE_GEO_COORDS=use_GEO, $
+                                  USE_MAG_COORDS=use_MAG, $
+                                  USE_SDT_COORDS=use_SDT, $
                                   MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                   HEMI=hemi, $
                                   NORTH=north, $
@@ -193,8 +197,9 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                    reverse_Lshell      : 0B    , $
                    coordinate_system   : 'SDT' , $
                    use_AACGM           : 0B    , $
-                   use_MAG             : 0B    , $
+                   use_GEI             : 0B    , $
                    use_GEO             : 0B    , $
+                   use_MAG             : 0B    , $
                    use_SDT             : 0B    , $
                    north               : 0B    , $
                    south               : 0B    , $
@@ -262,26 +267,37 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
         CASE STRUPCASE(coordinate_system) OF
            'AACGM': BEGIN
               use_AACGM = 1
+              use_GEI   = 0
+              use_GEO   = 0
+              use_MAG   = 0
+              use_SDT   = 0
+           END
+           'GEI'  : BEGIN
+              use_AACGM = 0
+              use_GEI   = 1
               use_GEO   = 0
               use_MAG   = 0
               use_SDT   = 0
            END
            'GEO'  : BEGIN
               use_AACGM = 0
-              use_MAG   = 0
+              use_GEI   = 0
               use_GEO   = 1
+              use_MAG   = 0
               use_SDT   = 0
            END
            'MAG'  : BEGIN
               use_AACGM = 0
-              use_MAG   = 1
+              use_GEI   = 0
               use_GEO   = 0
+              use_MAG   = 1
               use_SDT   = 0
            END
            ELSE: BEGIN
               use_AACGM = 0
-              use_MAG   = 0
+              use_GEI   = 0
               use_GEO   = 0
+              use_MAG   = 0
               use_SDT   = 1
            END
         ENDCASE
@@ -293,9 +309,9 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
         MIMC_struct.coordinate_system = coordinate_system
      ENDIF
 
-     IF KEYWORD_SET(use_MAG) THEN BEGIN
-        STR_ELEMENT,MIMC_struct,'use_MAG',use_MAG,/ADD_REPLACE
-        coordinate_system             = 'MAG'
+     IF KEYWORD_SET(use_GEI) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'use_GEI',use_GEI,/ADD_REPLACE
+        coordinate_system             = 'GEI'
         MIMC_struct.coordinate_system = coordinate_system
      ENDIF
 
@@ -305,7 +321,13 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
         MIMC_struct.coordinate_system = coordinate_system
      ENDIF
 
-     IF KEYWORD_SET(use_GEO) THEN BEGIN
+     IF KEYWORD_SET(use_MAG) THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'use_MAG',use_MAG,/ADD_REPLACE
+        coordinate_system             = 'MAG'
+        MIMC_struct.coordinate_system = coordinate_system
+     ENDIF
+
+     IF KEYWORD_SET(use_SDT) THEN BEGIN
         STR_ELEMENT,MIMC_struct,'use_SDT',use_SDT,/ADD_REPLACE
         coordinate_system             = 'SDT'
         MIMC_struct.coordinate_system = coordinate_system

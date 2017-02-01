@@ -35,8 +35,11 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
    DESPUNDB=despunDB, $
    COORDINATE_SYSTEM=coordinate_system, $
-   USE_AACGM_COORDS=use_AACGM, $
-   USE_MAG_COORDS=use_MAG, $
+   ;; USE_AACGM_COORDS=use_AACGM, $
+   ;; USE_GEI_COORDS=use_GEI, $
+   ;; USE_GEO_COORDS=use_GEO, $
+   ;; USE_MAG_COORDS=use_MAG, $
+   ;; USE_SDT_COORDS=use_SDT, $
    LOAD_DELTA_ILAT_FOR_WIDTH_TIME=load_dILAT, $
    LOAD_DELTA_ANGLE_FOR_WIDTH_TIME=load_dAngle, $
    LOAD_DELTA_X_FOR_WIDTH_TIME=load_dx, $
@@ -348,7 +351,10 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      DESPUNDB=despunDB, $
      COORDINATE_SYSTEM=coordinate_system, $
      USE_AACGM_COORDS=use_AACGM, $
+     USE_GEI_COORDS=use_GEI, $
+     USE_GEO_COORDS=use_GEO, $
      USE_MAG_COORDS=use_MAG, $
+     USE_SDT_COORDS=use_SDT, $
      LOAD_DELTA_ILAT_FOR_WIDTH_TIME=load_dILAT, $
      LOAD_DELTA_ANGLE_FOR_WIDTH_TIME=load_dAngle, $
      LOAD_DELTA_X_FOR_WIDTH_TIME=load_dx, $
