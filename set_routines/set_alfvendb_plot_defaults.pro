@@ -632,6 +632,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          contour__percent                  : 0B, $
                          plotH2D__kernel_density_unmask    : 0B, $
                          show_integrals                    : 0B, $
+                         nCustomIntegrals                  : 0B, $
                          make_integral_txtfile             : 0B, $
                          make_integral_savfiles            : 0B, $
                          integralSavFilePref               : '', $
@@ -1395,43 +1396,94 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
            IF N_ELEMENTS(nFriends) EQ 1 THEN nFriends = [nFriends,1]
 
-           FOR kk=0,nFriends[1]-1 DO BEGIN
-              ;; PRINT,FORMAT='("custom_integral ",A0,": [",F0.2,",",F0.2,"]")', $
-              ;;       tmpTags[k],tmpStruct.(k)[0,kk],tmpStruct.(k)[1,kk]
+           CASE N_ELEMENTS(nFriends) OF
+              2: BEGIN
+                 alfDB_plot_struct.nCustomIntegrals = 1
+                 FOR kk=0,nFriends[1]-1 DO BEGIN
+                    ;; PRINT,FORMAT='("custom_integral ",A0,": [",F0.2,",",F0.2,"]")', $
+                    ;;       tmpTags[k],tmpStruct.(k)[0,kk],tmpStruct.(k)[1,kk]
 
-              IF (tmpStruct.(k))[0,kk] GT (tmpStruct.(k))[1,kk] THEN BEGIN
-                 (tmpStruct.(k))[*,kk] = [(tmpStruct.(k))[1,kk],(tmpStruct.(k))[0,kk]]
-              ENDIF
+                    IF (tmpStruct.(k))[0,kk] GT (tmpStruct.(k))[1,kk] THEN BEGIN
+                       (tmpStruct.(k))[*,kk] = [(tmpStruct.(k))[1,kk],(tmpStruct.(k))[0,kk]]
+                    ENDIF
 
-           ENDFOR
+                 ENDFOR
+              END
+              3: BEGIN                 
+                 alfDB_plot_struct.nCustomIntegrals = nFriends[2]
+
+                 FOR jj=0,nFriends[2]-1 DO BEGIN
+                    FOR kk=0,nFriends[1]-1 DO BEGIN
+                       ;; PRINT,FORMAT='("custom_integral ",A0,": [",F0.2,",",F0.2,"]")', $
+                       ;;       tmpTags[k],tmpStruct.(k)[0,kk],tmpStruct.(k)[1,kk]
+
+                       IF (tmpStruct.(k))[0,kk,jj] GT (tmpStruct.(k))[1,kk,jj] THEN BEGIN
+                          (tmpStruct.(k))[*,kk,jj] = [(tmpStruct.(k))[1,kk,jj],(tmpStruct.(k))[0,kk,jj]]
+                       ENDIF
+
+                    ENDFOR
+                 ENDFOR
+
+              END
+           ENDCASE
+
 
         ENDFOR
 
         ;;flip sign, if we have ilatRange
-        IF STRUPCASE(MIMC_struct.hemi) EQ "NORTH" AND    $
-           TAG_EXIST(tmpStruct,'ilatRange') $
+        ;; IF STRUPCASE(MIMC_struct.hemi) EQ "NORTH" AND    $
+        IF TAG_EXIST(tmpStruct,'ilatRange') $
         THEN BEGIN
 
            tmpILATRange = tmpStruct.ilatRange
            nFriends = SIZE(tmpILATRange,/DIMENSIONS)
            IF N_ELEMENTS(nFriends) EQ 1 THEN nFriends = [nFriends,1]
 
-           custSign = ABS(tmpILATRange[0,*])/tmpILATRange[0,*]
-           hemiSign = ABS(MIMC_struct.maxI)/MIMC_struct.maxI
+           CASE N_ELEMENTS(nFriends) OF
+              2: BEGIN
 
-           FOR kk=0,nFriends[1]-1 DO BEGIN
+                 custSign = ABS(tmpILATRange[0,*])/tmpILATRange[0,*]
+                 hemiSign = ABS(MIMC_struct.maxI)/MIMC_struct.maxI
 
-              IF tmpILATRange[0,kk] GT tmpILATRange[1,kk] THEN BEGIN
-                 tmpILATRange[*,kk] = [tmpILATRange[1,kk],tmpILATRange[0,kk]]
-              ENDIF
+                 FOR kk=0,nFriends[1]-1 DO BEGIN
 
-              IF custSign[kk] NE hemiSign $
-              THEN BEGIN
-                 tmpILATRange[*,kk] = (-1.)*[tmpILATRange[1,kk],tmpILATRange[0,kk]]
-              ENDIF
+                    IF tmpILATRange[0,kk] GT tmpILATRange[1,kk] THEN BEGIN
+                       tmpILATRange[*,kk] = [tmpILATRange[1,kk],tmpILATRange[0,kk]]
+                    ENDIF
 
-           ENDFOR
+                    IF custSign[kk] NE hemiSign $
+                    THEN BEGIN
+                       tmpILATRange[*,kk] = (-1.)*[tmpILATRange[1,kk],tmpILATRange[0,kk]]
+                    ENDIF
 
+                 ENDFOR
+
+              END
+              3: BEGIN
+
+                 FOR jj=0,nFriends[2]-1 DO BEGIN
+                    custSign = ABS(tmpILATRange[0,*,jj])/tmpILATRange[0,*,jj]
+                    hemiSign = ABS(MIMC_struct.maxI)/MIMC_struct.maxI
+
+                    FOR kk=0,nFriends[1]-1 DO BEGIN
+
+                       IF tmpILATRange[0,kk,jj] GT tmpILATRange[1,kk,jj] THEN BEGIN
+                          tmpILATRange[*,kk,jj] = [tmpILATRange[1,kk,jj],tmpILATRange[0,kk,jj]]
+                       ENDIF
+
+                       IF custSign[kk] NE hemiSign $
+                       THEN BEGIN
+                          tmpILATRange[*,kk,jj] = (-1.)*[tmpILATRange[1,kk,jj],tmpILATRange[0,kk,jj]]
+                       ENDIF
+
+                    ENDFOR
+
+                 ENDFOR
+
+              END
+           ENDCASE
+
+           STR_ELEMENT,tmpStruct,'ilatRange',tmpILATRange,/ADD_REPLACE
         ENDIF
 
         STR_ELEMENT,tmpStruct,"nFriends",nFriends[1],/ADD_REPLACE

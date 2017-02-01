@@ -1548,43 +1548,116 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
      IF TAG_EXIST(alfDB_plot_struct,'custom_integral') AND  $
         (KEYWORD_SET(grossRateMe) OR N_ELEMENTS(centersMLT) GT 0) THEN BEGIN
 
+        tmpI           = alfDB_plot_struct.custom_integral.friend_i
+        PRINT,"FRIEND_I: ",tmpI
+
         haveCustomMLT  = TAG_EXIST(alfDB_plot_struct.custom_integral,'mltRange')
         haveCustomILAT = TAG_EXIST(alfDB_plot_struct.custom_integral,'ilatRange')
         haveBoth       = haveCustomMLT AND haveCustomILAT
         IF haveCustomMLT THEN BEGIN
-           customMLTInds = GET_MLT_INDS(!NULL, $
-                                        alfDB_plot_struct.custom_integral.mltRange[0,alfDB_plot_struct.custom_integral.friend_i], $
-                                        alfDB_plot_struct.custom_integral.mltRange[1,alfDB_plot_struct.custom_integral.friend_i], $
-                                        DIRECT_MLTS=centersMLT/15., $
-                                        N_MLT=nCustomMLT)
+           tmpDim      = SIZE(alfDB_plot_struct.custom_integral.mltRange,/DIMENSIONS)
+           nDim        = N_ELEMENTS(tmpDim)
+           CASE nDim OF
+              2: BEGIN
+                 customMLTInds = GET_MLT_INDS(!NULL, $
+                                              alfDB_plot_struct.custom_integral.mltRange[0,tmpI], $
+                                              alfDB_plot_struct.custom_integral.mltRange[1,tmpI], $
+                                              DIRECT_MLTS=centersMLT/15., $
+                                              N_MLT=nCustomMLT)
+              END
+              3: BEGIN
+                 customMLTInds = LIST()
+                 nCustomMLT    = !NULL
+                 FOR jj=0,tmpDim[2]-1 DO BEGIN
+                    PRINT,"[minM,maxM]: " ,alfDB_plot_struct.custom_integral.mltRange[0,tmpI,jj],alfDB_plot_struct.custom_integral.mltRange[1,tmpI,jj]
+                    customMLTInds.Add,GET_MLT_INDS(!NULL, $
+                                                   alfDB_plot_struct.custom_integral.mltRange[0,tmpI,jj], $
+                                                   alfDB_plot_struct.custom_integral.mltRange[1,tmpI,jj], $
+                                                   DIRECT_MLTS=centersMLT/15., $
+                                                   N_MLT=tmpNCustomMLT)
+                    nCustomMLT = [nCustomMLT,tmpNCustomMLT]
+                 ENDFOR
+              END
+           ENDCASE
         ENDIF
 
         IF haveCustomILAT THEN BEGIN
-           customILATInds = GET_ILAT_INDS(!NULL, $
-                                          alfDB_plot_struct.custom_integral.ilatRange[0,alfDB_plot_struct.custom_integral.friend_i], $
-                                          alfDB_plot_struct.custom_integral.ilatRange[1,alfDB_plot_struct.custom_integral.friend_i], $
-                                          MIMC_struct.hemi, $
-                                          DIRECT_LATITUDES=centersILAT, $
-                                          N_ILAT=nCustomILAT)
+           tmpDim      = SIZE(alfDB_plot_struct.custom_integral.ilatRange,/DIMENSIONS)
+           nDim        = N_ELEMENTS(tmpDim)
+           CASE nDim OF
+              2: BEGIN
+                 customILATInds = GET_ILAT_INDS(!NULL, $
+                                                alfDB_plot_struct.custom_integral.ilatRange[0,tmpI], $
+                                                alfDB_plot_struct.custom_integral.ilatRange[1,tmpI], $
+                                                MIMC_struct.hemi, $
+                                                DIRECT_LATITUDES=centersILAT, $
+                                                N_ILAT=nCustomILAT)
+              END
+              3: BEGIN
+                 customILATInds = LIST()
+                 nCustomILAT    = !NULL
+                 FOR jj=0,tmpDim[2]-1 DO BEGIN
+                    PRINT,"[minI,maxI]: " ,alfDB_plot_struct.custom_integral.ilatRange[0,tmpI,jj],alfDB_plot_struct.custom_integral.ilatRange[1,tmpI,jj]
+                    customILATInds.Add,GET_ILAT_INDS(!NULL, $
+                                                     alfDB_plot_struct.custom_integral.ilatRange[0,tmpI,jj], $
+                                                     alfDB_plot_struct.custom_integral.ilatRange[1,tmpI,jj], $
+                                                     MIMC_struct.hemi, $
+                                                     DIRECT_LATITUDES=centersILAT, $
+                                                     N_ILAT=tmpNCustomILAT)
+                    nCustomILAT = [nCustomILAT,tmpNCustomILAT]
+                 ENDFOR
+              END
+           ENDCASE
         ENDIF
 
         CASE 1 OF
            haveBoth: BEGIN
-              customIntegInds = CGSETINTERSECTION(TEMPORARY(customMLTInds), $
-                                                  TEMPORARY(customILATInds), $
-                                                  COUNT=nCustomInteg)
+              CASE nDim OF
+                 2: BEGIN
+                    customIntegInds = CGSETINTERSECTION(TEMPORARY(customMLTInds), $
+                                                        TEMPORARY(customILATInds), $
+                                                        COUNT=nCustomInteg)
+                 END
+                 3: BEGIN
+                    customIntegInds = LIST()
+                    nCustomInteg    = !NULL
+                    FOR jj=0,tmpDim[2]-1 DO BEGIN
+                       customIntegInds.Add,CGSETINTERSECTION(customMLTInds[jj], $
+                                                             customILATInds[jj], $
+                                                             COUNT=tmpNCustomInteg)
+                       nCustomInteg = [nCustomInteg,tmpNCustomInteg]
+                    ENDFOR
+                 END
+              ENDCASE
            END
            haveCustomMLT: BEGIN
-              customIntegInds = TEMPORARY(customMLTInds)
-              nCustomInteg    = nCustomMLT
+              CASE nDim OF
+                 2: BEGIN
+                    customIntegInds = TEMPORARY(customMLTInds)
+                    nCustomInteg    = nCustomMLT
+                 END
+                 3: BEGIN
+                    customIntegInds = customMLTInds
+                    nCustomInteg    = nCustomMLT
+                 END
+              ENDCASE
            END
            haveCustomILAT: BEGIN
-              customIntegInds = TEMPORARY(customILATInds)
-              nCustomInteg    = nCustomILAT
+              CASE nDim OF
+                 2: BEGIN
+                    customIntegInds = TEMPORARY(customILATInds)
+                    nCustomInteg    = nCustomILAT
+                 END
+                 3: BEGIN
+                    customIntegInds = customILATInds
+                    nCustomInteg    = nCustomILAT
+                 END
+              ENDCASE
            END
         ENDCASE
 
-        IF nCustomInteg LT 2 THEN STOP
+        PRINT,"N Custom Integ: ",nCustomInteg
+        IF (WHERE(nCustomInteg LT 2))[0] NE -1 THEN STOP
 
      ENDIF
 
@@ -1621,7 +1694,18 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
         ENDIF ELSE grossNight  = 0
 
         IF N_ELEMENTS(customIntegInds) GT 0 THEN BEGIN
-           grossCustom         = TOTAL(grossDat[customIntegInds])
+           CASE N_ELEMENTS(nCustomInteg) OF
+              1: BEGIN
+                 grossCustom   = TOTAL(grossDat[customIntegInds])
+              END
+              ELSE: BEGIN
+                 grossCustom   = !NULL
+                 FOR jj=0,N_ELEMENTS(nCustomInteg)-1 DO BEGIN
+                    grossCustom   = [grossCustom,TOTAL(grossDat[customIntegInds[jj]])]
+                 ENDFOR
+              END
+           ENDCASE
+
         ENDIF ELSE grossCustom = 0
      ENDIF
 
@@ -1692,10 +1776,22 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
         IF TAG_EXIST(alfDB_plot_struct,'custom_integral') THEN BEGIN
            
-           cMax   = MAX(H2DStr.data[customIntegInds],maxCustomInd_ii)
-           PRINT,"Custom max (MLT,ILAT): ",cMax, $
-                 '(' + STRCOMPRESS(centersMLT[customIntegInds[maxCustomInd_ii]]/15.,/REMOVE_ALL), $
-                 ', ' + STRCOMPRESS(centersILAT[customIntegInds[maxCustomInd_ii]]) + ')'
+           CASE N_ELEMENTS(nCustomInteg) OF
+              1: BEGIN
+                 cMax   = MAX(H2DStr.data[customIntegInds],maxCustomInd_ii)
+                 PRINT,"Custom max (MLT,ILAT): ",cMax, $
+                       '(' + STRCOMPRESS(centersMLT[customIntegInds[maxCustomInd_ii]]/15.,/REMOVE_ALL), $
+                       ', ' + STRCOMPRESS(centersILAT[customIntegInds[maxCustomInd_ii]]) + ')'
+              END
+              ELSE: BEGIN
+                 FOR jj=0,N_ELEMENTS(nCustomInteg)-1 DO BEGIN
+                    cMax   = MAX(H2DStr.data[customIntegInds[jj]],maxCustomInd_ii)
+                    PRINT,"Custom max (MLT,ILAT): ",cMax, $
+                          '(' + STRCOMPRESS(centersMLT[(customIntegInds[jj])[maxCustomInd_ii]]/15.,/REMOVE_ALL), $
+                          ', ' + STRCOMPRESS(centersILAT[(customIntegInds[jj])[maxCustomInd_ii]]) + ')'
+                 ENDFOR
+              END
+           ENDCASE
 
         ENDIF
 
