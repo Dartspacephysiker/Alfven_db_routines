@@ -90,15 +90,21 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
      DBs_reset  = 1B
   ENDIF
 
-  IF MIMC_struct1.use_MAG NE MIMC_struct2.use_MAG THEN BEGIN
-     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"use_MAG", $
-           MIMC_struct1.use_MAG,MIMC_struct2.use_MAG
+  IF MIMC_struct1.use_GEI NE MIMC_struct2.use_GEI THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"use_GEI", $
+           MIMC_struct1.use_GEI,MIMC_struct2.use_GEI
      DBs_reset  = 1B
   ENDIF
 
   IF MIMC_struct1.use_GEO NE MIMC_struct2.use_GEO THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"use_GEO", $
            MIMC_struct1.use_GEO,MIMC_struct2.use_GEO
+     DBs_reset  = 1B
+  ENDIF
+
+  IF MIMC_struct1.use_MAG NE MIMC_struct2.use_MAG THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"use_MAG", $
+           MIMC_struct1.use_MAG,MIMC_struct2.use_MAG
      DBs_reset  = 1B
   ENDIF
 
@@ -131,8 +137,9 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
                  'nightside', $
                  'do_lShell', $
                  'use_AACGM', $
-                 'use_MAG', $
+                 'use_GEI', $
                  'use_GEO', $
+                 'use_MAG', $
                  'use_SDT', $
                  'coordinate_system']
 

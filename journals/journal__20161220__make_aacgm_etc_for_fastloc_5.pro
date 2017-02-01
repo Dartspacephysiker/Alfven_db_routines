@@ -3,7 +3,7 @@ PRO JOURNAL__20161220__MAKE_AACGM_ETC_FOR_FASTLOC_5
 
   COMPILE_OPT IDL2
 
-  outFile_pref            = 'fastLoc_intervals5'
+  outFile_pref            = 'fastLoc_intervals5--20161129--500-16361--Je_times'
   dry_run                 = 0
 
   ;; nCPUsToRun              = 7
@@ -27,7 +27,8 @@ PRO JOURNAL__20161220__MAKE_AACGM_ETC_FOR_FASTLOC_5
   LOAD_FASTLOC_AND_FASTLOC_TIMES,!NULL,times, $
                                  /FOR_ESPEC_DBS, $
                                  /NO_MEMORY_LOAD, $
-                                 /JUST_TIMES
+                                 /JUST_TIMES, $
+                                 /DO_NOT_MAP_DELTA_T
 
 
   FASTDB_COORDINATE_CONVERSION__PARALLEL, $
