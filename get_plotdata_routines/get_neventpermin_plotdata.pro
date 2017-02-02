@@ -2,6 +2,7 @@ PRO GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
                               MINM=minM,MAXM=maxM, $
                               BINM=binM, $
                               SHIFTM=shiftM, $
+                              USE_LNG=use_Lng,$
                               MINI=minI,MAXI=maxI,BINI=binI, $
                               DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
                               LOGNEVENTPERMIN=logNEventPerMin, $

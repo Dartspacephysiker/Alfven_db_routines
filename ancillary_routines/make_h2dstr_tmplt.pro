@@ -9,6 +9,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                            EQUAL_AREA_BINNING=EA_binning, $
                            ;; PLOT_I=plot_i, $
                            DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                           ;; USE_LNG=use_lng, $
                            BOTH_HEMIS=both_hemis, $
                            CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                            CB_FORCE_OOBLOW=cb_force_oobLow, $

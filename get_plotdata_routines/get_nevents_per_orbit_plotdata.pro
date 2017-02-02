@@ -3,6 +3,7 @@
 PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                    BINM=binM,$
                                    SHIFTM=shiftM, $
+                                   USE_LNG=use_Lng,$
                                    MINI=minI,MAXI=maxI,BINI=binI, $
                                    EQUAL_AREA_BINNING=EA_binning, $
                                    DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $

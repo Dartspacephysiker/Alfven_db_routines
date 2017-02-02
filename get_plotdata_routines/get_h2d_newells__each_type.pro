@@ -62,14 +62,19 @@ PRO GET_H2D_NEWELLS__EACH_TYPE,eSpec,plot_i, $
                              info:eSpec.info}
 
   ENDIF ELSE BEGIN
-     LOAD_NEWELL_ESPEC_DB,tmp_eSpec
+     ;; LOAD_NEWELL_ESPEC_DB,tmp_eSpec
 
-     tmp_eSpec  = {mlt     : tmp_eSpec.mlt[indices__nonAlfven_eSpec]   , $
-                   ilat    : tmp_eSpec.ilat[indices__nonAlfven_eSpec]  , $
-                   mono    : tmp_eSpec.mono[indices__nonAlfven_eSpec]  , $
-                   broad   : tmp_eSpec.broad[indices__nonAlfven_eSpec] , $
-                   diffuse : tmp_eSpec.diffuse[indices__nonAlfven_eSpec], $
-                   info    : eSpec.info}
+     ;; tmp_eSpec  = {mlt     : tmp_eSpec.mlt[indices__nonAlfven_eSpec]   , $
+     ;;               ilat    : tmp_eSpec.ilat[indices__nonAlfven_eSpec]  , $
+     ;;               mono    : tmp_eSpec.mono[indices__nonAlfven_eSpec]  , $
+     ;;               broad   : tmp_eSpec.broad[indices__nonAlfven_eSpec] , $
+     ;;               diffuse : tmp_eSpec.diffuse[indices__nonAlfven_eSpec], $
+     ;;               info    : eSpec.info}
+
+     ;; IF KEYWORD_SET(MIMC_struct.use_Lng) THEN BEGIN
+     ;;    STR_ELEMENT,tmp_eSpec,'lng',
+     PRINT,"What are you thinking loading the Newell eSpec DB right here? It will screw up untold numbers of things"
+     STOP
   ENDELSE
 
   ;;The main body

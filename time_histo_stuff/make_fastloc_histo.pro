@@ -23,6 +23,7 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc, $
                        MINMLT=minMLT,MAXMLT=maxMLT, $
                        BINMLT=binMLT, $
                        SHIFTMLT=shiftM, $
+                       USE_LNG=use_Lng, $
                        MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
                        EQUAL_AREA_BINNING=EA_binning, $
                        USE_AACGM_COORDS=use_AACGM, $
@@ -127,7 +128,7 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc, $
      IF (WHERE(fastLoc_delta_t LT 0) )[0] NE -1 THEN STOP
 
      ;;fix MLTs
-     fastLocMLTs   = SHIFT_MLTS_FOR_H2D(fastLoc,fastLoc_inds,shiftM)
+     fastLocMLTs   = SHIFT_MLTS_FOR_H2D(fastLoc,fastLoc_inds,shiftM,SHIFTM_IS_SHIFTLNG=use_Lng)
 
      fastLocILATS  = (KEYWORD_SET(do_lShell) ? fastLoc.lShell : fastLoc.ILAT)[fastLoc_inds]
 

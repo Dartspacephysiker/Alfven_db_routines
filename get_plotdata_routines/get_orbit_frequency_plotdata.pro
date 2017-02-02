@@ -1,8 +1,9 @@
 ;;2016/03/29
 ;;In this case, we're getting the number of orbits passing through a given bin per MINUTE
 PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM, $
-                                 SHIFTM=shiftM, $
                                  BINM=binM, $
+                                 SHIFTM=shiftM, $
+                                 USE_LNG=use_Lng,$
                                  MINI=minI,MAXI=maxI,BINI=binI, $
                                  EQUAL_AREA_BINNING=EA_binning, $
                                  ORBFREQRANGE=orbFreqRange, $
@@ -19,8 +20,8 @@ PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM, $
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$
-                                      MIN1=MINM,MIN2=(KEYWORD_SET(DO_LSHELL) ? MINL : MINI),$
-                                      MAX1=MAXM,MAX2=(KEYWORD_SET(DO_LSHELL) ? MAXL : MAXI), $
+                                      MIN1=minM,MIN2=(KEYWORD_SET(do_lShell) ? minL : minI),$
+                                      MAX1=maxM,MAX2=(KEYWORD_SET(do_lShell) ? maxL : maxI), $
                                       SHIFT1=shiftM,SHIFT2=shiftI, $
                                       EQUAL_AREA_BINNING=EA_binning, $
                                       CB_FORCE_OOBHIGH=cb_force_oobHigh, $

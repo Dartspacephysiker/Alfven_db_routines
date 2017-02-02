@@ -3,6 +3,11 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   MAXMLT=maxM, $
                                   BINM=binM, $
                                   SHIFTMLT=shiftM, $
+                                  USE_LNG=use_lng, $
+                                  MINLNG=minLng, $
+                                  MAXLNG=maxLng, $
+                                  BINLNG=binLng, $
+                                  SHIFTLNG=shiftLng, $
                                   MINILAT=minI, $
                                   MAXILAT=maxI, $
                                   BINI=binI, $
@@ -11,7 +16,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   DO_LSHELL=do_lShell, $
                                   MINLSHELL=minL, $
                                   MAXLSHELL=maxL, $
-                                  BINL=binL, $
+                                  BINLSHELL=binL, $
                                   REVERSE_LSHELL=reverse_lShell, $
                                   COORDINATE_SYSTEM=coordinate_system, $
                                   USE_AACGM_COORDS=use_AACGM, $
@@ -40,6 +45,10 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   MINMLT=minM,MAXMLT=maxM, $
                                   BINM=binM, $
                                   SHIFTMLT=shiftM, $
+                                  USE_LNG=use_lng, $
+                                  MINLNG=minLng, $
+                                  MAXLNG=maxLng, $
+                                  BINLNG=binLng, $
                                   MINILAT=minI, $
                                   MAXILAT=maxI, $
                                   BINI=binI, $
@@ -206,6 +215,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
 
      ;; MIMC_struct = BLANK_MIMC_STRUCT()
      MIMC_struct = { $
+                   use_Lng             : 0B    , $
                    dont_correct_ilats  : 0B    , $
                    do_lShell           : 0B    , $
                    reverse_Lshell      : 0B    , $
@@ -236,6 +246,42 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
 
      IF N_ELEMENTS(shiftM) GT 0 THEN BEGIN
         STR_ELEMENT,MIMC_struct,'shiftM',shiftM,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(use_Lng) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'use_lng',use_lng,/ADD_REPLACE
+
+        IF N_ELEMENTS(minLng) EQ 0 THEN BEGIN
+           minLng = minM*15.
+        ENDIF
+        
+        IF N_ELEMENTS(maxLng) EQ 0 THEN BEGIN
+           maxLng = maxM*15.
+        ENDIF
+        
+        IF N_ELEMENTS(binLng) EQ 0 THEN BEGIN
+           binLng = binM*15.
+        ENDIF
+
+        IF N_ELEMENTS(shiftLng) EQ 0 THEN BEGIN
+           shiftLng = shiftM*15.
+        ENDIF
+     ENDIF
+
+     IF N_ELEMENTS(minLng) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'minLng',minLng,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(maxLng) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'maxLng',maxLng,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(binLng) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'binLng',binLng,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(shiftLng) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'shiftLng',shiftLng,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(minI) GT 0 THEN BEGIN

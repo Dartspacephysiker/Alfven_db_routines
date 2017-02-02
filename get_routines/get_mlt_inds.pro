@@ -1,5 +1,5 @@
 ;2015/10/19  Added ability to give negative minM so that, for example, the range 18 MLT to 6 MLT (nightside) is possible
-FUNCTION GET_MLT_INDS,maximus,minM,maxM, $
+FUNCTION GET_MLT_INDS,dbStruct,minM,maxM, $
                       DAWNSECTOR=dawnSector, $
                       DUSKSECTOR=duskSector, $
                       DAYSIDE=dayside, $
@@ -7,32 +7,56 @@ FUNCTION GET_MLT_INDS,maximus,minM,maxM, $
                       N_MLT=n_mlt, $
                       N_OUTSIDE_MLT=n_outside_MLT, $
                       DIRECT_MLTS=direct_mlts, $
+                      USE_LNG=use_Lng, $
                       LUN=lun
 
   COMPILE_OPT idl2
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun=-1 ;;stdout
 
-  IF N_ELEMENTS(maximus) EQ 0 THEN BEGIN
+  IF N_ELEMENTS(dbStruct) EQ 0 THEN BEGIN
      IF ~KEYWORD_SET(direct_mlts) THEN BEGIN
-        PRINTF,lun,"Error! No maximus struct provided!"
+        PRINTF,lun,"Error! No dbStruct struct provided!"
         STOP
      ENDIF ELSE BEGIN
         PRINTF,lun,'Using direct mlts provided by user...'
-        mlts                     = direct_mlts
+        mlts              = direct_mlts
      ENDELSE
   ENDIF ELSE BEGIN
-     mlts                        = maximus.mlt
+     CASE 1 OF
+        KEYWORD_SET(use_Lng): BEGIN
+           mlts           = dbStruct.Lng
+           flip           = WHERE(mlts LT 0)
+           IF flip[0] NE -1 THEN BEGIN
+              mlts[flip]  = ABS(mlts[flip]) + 180.
+           ENDIF
+        END
+        ELSE: BEGIN
+           mlts           = dbStruct.mlt
+        END
+     ENDCASE
   ENDELSE
 
-  dawnMinM = 3
-  dawnMaxM = 11
-  duskMinM = 13
-  duskMaxM = 19
-  dayMinM  = 6.0
-  dayMaxM  = 18.0
-  nightMinM = -6.0
-  nightMaxM = 6.0
+  dawnMinM   = 3
+  dawnMaxM   = 11
+  duskMinM   = 13
+  duskMaxM   = 19
+  dayMinM    = 6.0
+  dayMaxM    = 18.0
+  nightMinM  = -6.0
+  nightMaxM  = 6.0
+
+  IF KEYWORD_SET(use_Lng) THEN BEGIN
+     dawnMinM   *= 15.
+     dawnMaxM   *= 15.
+     duskMinM   *= 15.
+     duskMaxM   *= 15.
+     dayMinM    *= 15.
+     dayMaxM    *= 15.
+     nightMinM  *= 15.
+     nightMaxM  *= 15.
+  ENDIF
+
   CASE 1 OF
      KEYWORD_SET(dayside): BEGIN
         dminM = dayMinM

@@ -3,6 +3,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i, $
                                      MAXM=maxM, $
                                      BINM=binM, $
                                      SHIFTM=shiftM, $
+                                     USE_LNG=use_Lng,$
                                      MINI=minI, $
                                      MAXI=maxI, $
                                      BINI=binI, $
@@ -66,7 +67,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i, $
   ENDELSE
 
   ;;fix MLTs
-  mlts       = SHIFT_MLTS_FOR_H2D(dbStruct,plot_i,shiftM)
+  mlts       = SHIFT_MLTS_FOR_H2D(dbStruct,plot_i,shiftM,SHIFTM_IS_SHIFTLNG=use_Lng)
   ilats      = (KEYWORD_SET(do_lShell) ? dbStruct.lshell : dbStruct.ilat)[plot_i]
   IF KEYWORD_SET(h2dStr.both_hemis) THEN BEGIN
      ilats  = ABS(ilats)

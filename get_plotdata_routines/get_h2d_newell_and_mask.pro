@@ -31,10 +31,13 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
   ENDIF
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
-     tmplt_h2dStr                   = MAKE_H2DSTR_TMPLT(BIN1=MIMC_struct.binM,BIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binL : MIMC_struct.binI),$
-                                                        MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.minL : MIMC_struct.minI),$
-                                                        MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.maxL : MIMC_struct.maxI), $
-                                                        SHIFT1=MIMC_struct.shiftM,SHIFT2=shiftI, $
+     tmplt_h2dStr                   = MAKE_H2DSTR_TMPLT(BIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                                                        BIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binL : MIMC_struct.binI),$
+                                                        MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+                                                        MIN2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                                        MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+                                                        MAX2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.maxL : MIMC_struct.maxI), $
+                                                        SHIFT1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM),SHIFT2=shiftI, $
                                                         EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                                                         CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                                                         CB_FORCE_OOBLOW=cb_force_oobLow)
@@ -52,8 +55,11 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
   ;;########Flux_N########
   ;;First, histo to show where events are
   ;;shift MLTs backwards, because we want to shift the binning FORWARD
-  mlts                    = KEYWORD_SET(in_MLTS) ? in_MLTs : eSpec.mlt[eSpec_i]-MIMC_struct.shiftM
-  mlts[WHERE(mlts LT 0)]  = mlts[WHERE(mlts LT 0)] + 24
+  mlts                    = KEYWORD_SET(in_MLTS) ? in_MLTs : (KEYWORD_SET(MIMC_struct.use_Lng) ? eSpec.lng[eSpec_i] - MIMC_struct.shiftLng : $
+                                                              eSpec.mlt[eSpec_i]-MIMC_struct.shiftM)
+  IF ~KEYWORD_SET(MIMC_struct.use_Lng) THEN BEGIN
+     mlts[WHERE(mlts LT 0)]  = mlts[WHERE(mlts LT 0)] + 24
+  ENDIF
   horiz                   = KEYWORD_SET(in_ILATs) ? in_ILATs : eSpec.ilat[eSpec_i]
 
   IF KEYWORD_SET(h2dStr.both_hemis) THEN horiz = ABS(horiz)
@@ -62,16 +68,21 @@ PRO GET_H2D_NEWELL_AND_MASK,eSpec,eSpec_i, $
      KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
         h2dFluxN       = HIST2D__EQUAL_AREA_BINNING(mlts,$
                                                     horiz,$
-                                                    MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.minL : MIMC_struct.minI),$
-                                                    MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.maxL : MIMC_struct.maxI))
+                                                    MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+                                                    MIN2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                                    MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+                                                    MAX2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.maxL : MIMC_struct.maxI))
 
      END
      ELSE: BEGIN
         h2dFluxN       = HIST_2D(mlts,$
                                  horiz,$
-                                 BIN1=MIMC_struct.binM,BIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binL : MIMC_struct.binI),$
-                                 MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.minL : MIMC_struct.minI),$
-                                 MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.maxL : MIMC_struct.maxI))
+                                 BIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                                 BIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binL : MIMC_struct.binI),$
+                                 MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+                                 MIN2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                 MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+                                 MAX2=(KEYWORD_SET(MIMC_struct.DO_LSHELL) ? MIMC_struct.maxL : MIMC_struct.maxI))
      END
   ENDCASE
   

@@ -143,10 +143,13 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
   IF KEYWORD_SET(noPosFlux) AND KEYWORD_SET (logFluxPlot) THEN absFlux = 1
 
   IF N_ELEMENTS(tmplt_H2DStr) EQ 0 THEN BEGIN
-     tmplt_H2DStr  = MAKE_H2DSTR_TMPLT(BIN1=MIMC_struct.binM,BIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
-                                       MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
-                                       MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI), $
-                                       SHIFT1=MIMC_struct.shiftM,SHIFT2=shiftI, $
+     tmplt_H2DStr  = MAKE_H2DSTR_TMPLT(BIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+BIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
+                                       MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+MIN2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                       MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI), $
+                                       SHIFT1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM),SHIFT2=shiftI, $
                                        EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                                        DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                                        ;; PLOT_I=plot_i, $
@@ -1381,9 +1384,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
   ;;fix MLTs
   IF KEYWORD_SET(eSpec_mlt) THEN BEGIN
      mlts             = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,MIMC_struct.shiftM, $
-                                           IN_MLTS=NEWELL__eSpec.mlt[tmp_i])
+                                           IN_MLTS=(KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL__eSpec.lng : NEWELL__eSpec.mlt)[tmp_i], $
+                                           SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
   ENDIF ELSE BEGIN
-     mlts             = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,MIMC_struct.shiftM)
+     mlts             = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,MIMC_struct.shiftM,SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
   ENDELSE
   IF KEYWORD_SET(eSpec_ilat) THEN BEGIN
      ilats            = NEWELL__eSpec.ilat[tmp_i]
@@ -1410,10 +1414,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
            H2DStr.data = MEDIAN_HIST(mlts, $
                                      ilats,$
                                      inData,$
-                                     MIN1=MIMC_struct.minM, $
+                                     MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
                                      MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI), $
-                                     BINSIZE1=MIMC_struct.binM, $
-                                     MAX1=MIMC_struct.maxM, $
+                                     BINSIZE1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                                     MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
                                      MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI), $
                                      BINSIZE2=(KEYWORD_SET(MIMC_struct.do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
                                      OBIN1=outH2DBinsMLT, $
@@ -1440,9 +1444,12 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                  H2DStr.data = HIST2D(mlts, $
                                       ilats,$
                                       (KEYWORD_SET(alfDB_plot_struct.do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
-                                      MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(do_lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
-                                      MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
-                                      BINSIZE1=MIMC_struct.binM,BINSIZE2=(KEYWORD_SET(do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
+                                      MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+MIN2=(KEYWORD_SET(do_lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                      MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+                                      BINSIZE1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                                      BINSIZE2=(KEYWORD_SET(do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
                                       OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
               END
            ENDCASE
@@ -1474,10 +1481,10 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                                      inData,$
                                      MAXIMUM=alfDB_plot_struct.maxPlot, $
                                      MINIMUM=alfDB_plot_struct.minPlot, $
-                                     MIN1=MIMC_struct.minM, $
+                                     MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
                                      MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI), $
-                                     BINSIZE1=MIMC_struct.binM, $
-                                     MAX1=MIMC_struct.maxM, $
+                                     BINSIZE1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                                     MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
                                      MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI), $
                                      BINSIZE2=(KEYWORD_SET(MIMC_struct.do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
                                      OBIN1=outH2DBinsMLT, $
@@ -1495,17 +1502,22 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                  H2DStr.data  = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                            ilats,$
                                                            (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) OR KEYWORD_SET(tmpLogAvg) ? ALOG10(DOUBLE(inData)) : DOUBLE(inData)),$
-                                                           MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
-                                                           MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+                                                           MIN1=MIMC_struct.minM, $
+MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                                           MAX1=MIMC_struct.maxM, $
+MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                                            OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
               END
               ELSE: BEGIN
                  H2DStr.data  = HIST2D(mlts, $
                                        ilats,$
                                        (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) OR KEYWORD_SET(tmpLogAvg) ? ALOG10(DOUBLE(inData)) : DOUBLE(inData)),$
-                                       MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
-                                       MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
-                                       BINSIZE1=MIMC_struct.binM,BINSIZE2=(KEYWORD_SET(MIMC_struct.do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
+                                       MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                       MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+                                       BINSIZE1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                                       BINSIZE2=(KEYWORD_SET(MIMC_struct.do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
                                        OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
               END
            ENDCASE

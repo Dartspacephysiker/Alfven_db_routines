@@ -55,11 +55,19 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
 
      END
      ELSE: BEGIN
-        nXlines  = (MIMC_struct.maxM-MIMC_struct.minM)/MIMC_struct.binM + 1
+        CASE 1 OF
+           KEYWORD_SET(MIMC_struct.use_Lng): BEGIN
+              nXlines  = (MIMC_struct.maxLng-MIMC_struct.minLng)/MIMC_struct.binLng + 1
+              mlts     = INDGEN(nXlines)*MIMC_struct.binLng+MIMC_struct.minLng
+           END
+           ELSE: BEGIN
+              nXlines  = (MIMC_struct.maxM-MIMC_struct.minM)/MIMC_struct.binM + 1
+              mlts     = INDGEN(nXlines)*MIMC_struct.binM+MIMC_struct.minM
+           END
+        ENDCASE
         nYlines  = ((KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxLshell : MIMC_struct.maxI)-(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minLshell : MIMC_struct.minI))/ $
                    (KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binLshell : MIMC_struct.binI) + 1
 
-        mlts     = INDGEN(nXlines)*MIMC_struct.binM+MIMC_struct.minM
         ilats    = INDGEN(nYlines)*(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.binLshell : MIMC_struct.binI) + $
                    (KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minLshell : MIMC_struct.minI)
 
@@ -76,11 +84,17 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   ;;fix MLTs, if need be
   IF N_ELEMENTS(in_mlts) GT 0 THEN BEGIN
      indices   = in_inds
-     DBMLTs    = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,MIMC_struct.shiftM,IN_MLTS=in_MLTs[in_inds])
+     DBMLTs    = SHIFT_MLTS_FOR_H2D(!NULL,!NULL, $
+                                    (KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM), $
+                                    IN_MLTS=in_MLTs[in_inds], $
+                                    SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
      DBILATs   = in_ILATs[in_inds]
   ENDIF ELSE BEGIN
      indices   = dbStruct_inds
-     DBMLTs    = SHIFT_MLTS_FOR_H2D(dbStruct,dbStruct_inds,MIMC_struct.shiftM)
+     DBMLTs    = SHIFT_MLTS_FOR_H2D(dbStruct, $
+                                    dbStruct_inds, $
+                                    (KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM), $
+                                    SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
      DBILATs   = (KEYWORD_SET(MIMC_struct.do_lShell) ? dbStruct.lShell : dbStruct.ILAT)[dbStruct_inds]
   ENDELSE
 
@@ -204,15 +218,19 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
   ;;Get bin centers
   GET_H2D_BIN_CENTERS_OR_EDGES,HLOI__H2D_binCenters, $
                                EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
-                               BINSIZE1=MIMC_struct.binM, BINSIZE2=MIMC_struct.binI, $
-                               MIN1=MIMC_struct.minM, MIN2=MIMC_struct.minI,$
-                               MAX1=MIMC_struct.maxM, MAX2=MIMC_struct.maxI,  $
-                               SHIFT1=MIMC_struct.shiftM,SHIFT2=MIMC_struct.shiftI, $
-                               OMIN1=Omin1, OMIN2=Omin2, $
-                               OMAX1=Omax1, OMAX2=Omax2,  $
-                               OBIN1=Obin1, OBIN2=Obin2, $
-                               NBINS1=nBins1, NBINS2=nBins2, $
-                               BINEDGE1=Binedge1, BINEDGE2=Binedge2
+                               BINSIZE1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                               BINSIZE2=MIMC_struct.binI, $
+                               MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+                               MIN2=MIMC_struct.minI,$
+                               MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+                               MAX2=MIMC_struct.maxI,  $
+                               SHIFT1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM), $
+                               SHIFT2=MIMC_struct.shiftI, $
+                               OMIN1=Omin1,OMIN2=Omin2, $
+                               OMAX1=Omax1,OMAX2=Omax2,  $
+                               OBIN1=Obin1,OBIN2=Obin2, $
+                               NBINS1=nBins1,NBINS2=nBins2, $
+                               BINEDGE1=Binedge1,BINEDGE2=Binedge2
 
 
 

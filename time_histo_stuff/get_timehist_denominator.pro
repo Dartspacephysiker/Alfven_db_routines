@@ -55,10 +55,13 @@ FUNCTION GET_TIMEHIST_DENOMINATOR, $
   IF N_ELEMENTS(lun)         EQ 0 THEN lun         = -1 ;stdout
 
      IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN BEGIN
-        tmplt_h2dStr  = MAKE_H2DSTR_TMPLT(BIN1=MIMC_struct.binM,BIN2=(KEYWORD_SET(do_Lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
-                                          MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(do_Lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
-                                          MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI), $
-                                          SHIFT1=MIMC_struct.shiftM, $
+        tmplt_h2dStr  = MAKE_H2DSTR_TMPLT(BIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                                          BIN2=(KEYWORD_SET(do_Lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
+                                          MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+                                          MIN2=(KEYWORD_SET(do_Lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                          MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+                                          MAX2=(KEYWORD_SET(do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI), $
+                                          SHIFT1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM), $
                                           SHIFT2=shiftI, $
                                           EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning, $
                                           DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i, $
@@ -111,10 +114,11 @@ FUNCTION GET_TIMEHIST_DENOMINATOR, $
      FASTLOC_STRUCT=KEYWORD_SET(for_eSpec_DBs) ? FL_eSpec__fastLoc : FL__fastLoc, $
      FASTLOC_TIMES=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times, $
      FASTLOC_DELTA_T=KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__delta_t : FASTLOC__delta_t, $
-     MINMLT=MIMC_struct.minM, $
-     MAXMLT=MIMC_struct.maxM, $
-     BINMLT=MIMC_struct.binM, $
-     SHIFTMLT=MIMC_struct.shiftM, $
+     MINMLT=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+     MAXMLT=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+     BINMLT=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+     SHIFTMLT=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM), $
+     USE_LNG=MIMC_struct.use_Lng,$
      MINILAT=MIMC_struct.minI, $
      MAXILAT=MIMC_struct.maxI, $
      BINILAT=MIMC_struct.binI, $

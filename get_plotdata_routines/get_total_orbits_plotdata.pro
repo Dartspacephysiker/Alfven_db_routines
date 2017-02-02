@@ -2,6 +2,7 @@
 PRO GET_TOTAL_ORBITS_PLOTDATA,dbStruct,MINM=minM,MAXM=maxM, $
                               BINM=binM, $
                               SHIFTM=shiftM, $
+                              USE_LNG=use_Lng,$
                               MINI=minI,MAXI=maxI,BINI=binI, $
                               EQUAL_AREA_BINNING=EA_binning, $
                               DO_LSHELL=do_lshell, MINL=minL,MAXL=maxL,BINL=binL, $
@@ -32,7 +33,7 @@ PRO GET_TOTAL_ORBITS_PLOTDATA,dbStruct,MINM=minM,MAXM=maxM, $
                                       CB_FORCE_OOBLOW=cb_force_oobLow)
 
   ;;fix MLTs
-  mlts                      = SHIFT_MLTS_FOR_H2D(maximus,INDGEN(N_ELEMENTS(maximus.mlt)),shiftM)
+  mlts                      = SHIFT_MLTS_FOR_H2D(maximus,INDGEN(N_ELEMENTS(maximus.mlt)),shiftM,SHIFTM_IS_SHIFTLNG=use_Lng)
   ilats                     = KEYWORD_SET(do_lShell) ? dbStruct.lshell : dbStruct.ilat
   IF KEYWORD_SET(h2dStr.both_hemis) THEN ilats = ABS(ilats)
 

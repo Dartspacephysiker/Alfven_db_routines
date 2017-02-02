@@ -312,6 +312,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
                                      NIGHTSIDE=MIMC__nightside, $
                                      N_MLT=n_mlt, $
                                      N_OUTSIDE_MLT=n_outside_MLT, $
+                                     USE_LNG=MIMC_struct.use_Lng, $
                                      LUN=lun)
      
      ;;;;;;;;;;;;

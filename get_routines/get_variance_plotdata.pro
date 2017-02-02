@@ -121,14 +121,21 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
         CASE loopType[k] OF
            1: BEGIN
               tmpInds   = in_inds
-              tmpMLTs   = NEWELL__eSpec.mlt 
+              tmpMLTs   = KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL__eSpec.lng : NEWELL__eSpec.mlt 
               tmpILATs  = NEWELL__eSpec.ilat
            END
            2: BEGIN
               tmpInds   = fastLocInds
               ;; tmpMLTs   = (KEYWORD_SET(for_eSpec_DBs) ? FL_E__fastLoc : FL__fastLoc).mlt [fastLocInds]
               ;; tmpILATs  = (KEYWORD_SET(for_eSpec_DBs) ? FL_E__fastLoc : FL__fastLoc).ilat[fastLocInds]
-              tmpMLTs   = (KEYWORD_SET(for_eSpec_DBs) ? FL_E__fastLoc : FL__fastLoc).mlt
+              CASE 1 OF
+                 KEYWORD_SET(MIMC_struct.use_Lng): BEGIN
+                    tmpMLTs = (KEYWORD_SET(for_eSpec_DBs) ? FL_E__fastLoc : FL__fastLoc).lng
+                 END
+                 ELSE: BEGIN
+                    tmpMLTs = (KEYWORD_SET(for_eSpec_DBs) ? FL_E__fastLoc : FL__fastLoc).mlt
+                 END
+              ENDCASE
               tmpILATs  = (KEYWORD_SET(for_eSpec_DBs) ? FL_E__fastLoc : FL__fastLoc).ilat
            END
         ENDCASE

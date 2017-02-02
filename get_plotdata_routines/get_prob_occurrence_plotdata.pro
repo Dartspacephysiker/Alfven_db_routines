@@ -16,6 +16,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,dbStruct,plot_i,tHistDenominator, $
                                  MINM=minM,MAXM=maxM, $
                                  BINM=binM, $
                                  SHIFTM=shiftM, $
+                                 USE_LNG=use_Lng,$
                                  MINI=minI,MAXI=maxI,BINI=binI, $
                                  EQUAL_AREA_BINNING=EA_binning, $
                                  DO_LSHELL=do_lShell, MINL=minL,MAXL=maxL,BINL=binL, $
@@ -124,7 +125,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,dbStruct,plot_i,tHistDenominator, $
   ENDCASE
 
   ;;fix MLTs
-  mlts                      = SHIFT_MLTS_FOR_H2D(dbStruct,plot_i,shiftM)
+  mlts                      = SHIFT_MLTS_FOR_H2D(dbStruct,plot_i,shiftM,SHIFTM_IS_SHIFTLNG=use_Lng)
   ilats                     = (KEYWORD_SET(do_lshell) ? dbStruct.lshell : dbStruct.ilat)[plot_i]
   IF KEYWORD_SET(h2dStr.both_hemis) THEN ilats = ABS(ilats)
 

@@ -5,6 +5,10 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
    MAXMLT=maxM, $
    BINM=binM, $
    SHIFTMLT=shiftM, $
+   USE_LNG=use_lng, $
+   MINLNG=minLng, $
+   MAXLNG=maxLng, $
+   BINLNG=binLng, $
    MINILAT=minI, $
    MAXILAT=maxI, $
    BINI=binI, $
@@ -49,6 +53,26 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
   STR_ELEMENT,MIMC_struct,'shiftM',INDEX=tmpInd
   IF tmpInd GE 0 THEN BEGIN
      shiftM = MIMC_struct.shiftM
+  ENDIF
+
+  STR_ELEMENT,MIMC_struct,'use_lng',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     use_lng = MIMC_struct.use_lng
+  ENDIF
+
+  STR_ELEMENT,MIMC_struct,'minLng',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     minLng = MIMC_struct.minLng
+  ENDIF
+
+  STR_ELEMENT,MIMC_struct,'maxLng',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     maxLng = MIMC_struct.maxLng
+  ENDIF
+
+  STR_ELEMENT,MIMC_struct,'binLng',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     binLng = MIMC_struct.binLng
   ENDIF
 
   STR_ELEMENT,MIMC_struct,'minI',INDEX=tmpInd

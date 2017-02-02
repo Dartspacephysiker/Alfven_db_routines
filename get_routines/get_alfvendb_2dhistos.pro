@@ -414,10 +414,6 @@ PRO GET_ALFVENDB_2DHISTOS, $
                    IMF_STRUCT=IMF_struct, $
                    MIMC_STRUCT=MIMC_struct, $
                    /PRINT_PARAM_SUMMARY)
-
-
-
-
      ENDIF
         
      ;; ENDCASE
@@ -425,10 +421,11 @@ PRO GET_ALFVENDB_2DHISTOS, $
      GET_CONTRIBUTING_ORBITS_PLOTDATA, $
         (KEYWORD_SET(orbContrib__reference_alfvenDB) ? MAXIMUS__maximus : FL__fastLoc), $
         (KEYWORD_SET(orbContrib__reference_alfvenDB) ? alfRef_i : fastLocInterped_i), $
-        MINM=MIMC_struct.minM, $
-        MAXM=MIMC_struct.maxM, $
-        BINM=MIMC_struct.binM, $
-        SHIFTM=MIMC_struct.shiftM, $
+        MINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+        MAXM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+        BINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+        SHIFTM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM), $
+        USE_LNG=MIMC_struct.use_Lng,$
         MINI=MIMC_struct.minI, $
         MAXI=MIMC_struct.maxI, $
         BINI=MIMC_struct.binI, $
@@ -495,10 +492,11 @@ PRO GET_ALFVENDB_2DHISTOS, $
   IF KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) THEN BEGIN
 
      GET_CONTRIBUTING_ORBITS_PLOTDATA,MAXIMUS__maximus,plot_i, $
-                                      MINM=MIMC_struct.minM, $
-                                      MAXM=MIMC_struct.maxM, $
-                                      BINM=MIMC_struct.binM, $
-                                      SHIFTM=MIMC_struct.shiftM, $
+                                      MINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+                                      MAXM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+                                      BINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                                      SHIFTM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM), $
+                                      USE_LNG=MIMC_struct.use_Lng,$
                                       MINI=MIMC_struct.minI, $
                                       MAXI=MIMC_struct.maxI, $
                                       BINI=MIMC_struct.binI, $
@@ -528,10 +526,11 @@ PRO GET_ALFVENDB_2DHISTOS, $
   IF KEYWORD_SET(orbtotplot) OR KEYWORD_SET(orbfreqplot) $
      OR (KEYWORD_SET(nEventPerOrbPlot) AND KEYWORD_SET(divNEvByTotal)) THEN BEGIN
      GET_TOTAL_ORBITS_PLOTDATA,MAXIMUS__maximus, $
-                               MINM=MIMC_struct.minM, $
-                               MAXM=MIMC_struct.maxM, $
-                               BINM=MIMC_struct.binM, $
-                               SHIFTM=MIMC_struct.shiftM, $
+                               MINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+                               MAXM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+                               BINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                               SHIFTM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM), $
+                               USE_LNG=MIMC_struct.use_Lng,$
                                MINI=MIMC_struct.minI, $
                                MAXI=MIMC_struct.maxI, $
                                BINI=MIMC_struct.binI, $
@@ -559,10 +558,11 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;;########Orbit FREQUENCY########
   IF KEYWORD_SET(orbfreqplot) THEN BEGIN
      GET_ORBIT_FREQUENCY_PLOTDATA,MAXIMUS__maximus, $
-                                  MINM=MIMC_struct.minM, $
-                                  MAXM=MIMC_struct.maxM, $
-                                  BINM=MIMC_struct.binM, $
-                                  SHIFTM=MIMC_struct.shiftM, $
+                                  MINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+                                  MAXM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+                                  BINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                                  SHIFTM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM), $
+                                  USE_LNG=MIMC_struct.use_Lng,$
                                   MINI=MIMC_struct.minI, $
                                   MAXI=MIMC_struct.maxI, $
                                   BINI=MIMC_struct.binI, $
@@ -584,10 +584,11 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;;########NEvents/orbit########
   IF KEYWORD_SET(nEventPerOrbPlot) THEN BEGIN 
      GET_NEVENTS_PER_ORBIT_PLOTDATA,MAXIMUS__maximus,plot_i, $
-                                    MINM=MIMC_struct.minM, $
-                                    MAXM=MIMC_struct.maxM, $
-                                    BINM=MIMC_struct.binM, $
-                                    SHIFTM=MIMC_struct.shiftM, $
+                                    MINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+                                    MAXM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+                                    BINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                                    SHIFTM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM), $
+                                    USE_LNG=MIMC_struct.use_Lng,$
                                     MINI=MIMC_struct.minI, $
                                     MAXI=MIMC_struct.maxI, $
                                     BINI=MIMC_struct.binI, $
@@ -633,10 +634,11 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
 
         GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
-                                  MINM=MIMC_struct.minM, $
-                                  MAXM=MIMC_struct.maxM, $
-                                  BINM=MIMC_struct.binM, $
-                                  SHIFTM=MIMC_struct.shiftM, $
+                                  MINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+                                  MAXM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+                                  BINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                                  SHIFTM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM), $
+                                  USE_LNG=MIMC_struct.use_Lng,$
                                   MINI=MIMC_struct.minI, $
                                   MAXI=MIMC_struct.maxI, $
                                   BINI=MIMC_struct.binI, $
@@ -671,10 +673,11 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                   PROBOCCURRENCERANGE=probOccurrenceRange, $
                                   PROBOCCURRENCEAUTOSCALE=probOccurrenceAutoscale, $
                                   DO_WIDTH_X=do_width_x, $
-                                  MINM=MIMC_struct.minM, $
-                                  MAXM=MIMC_struct.maxM, $
-                                  BINM=MIMC_struct.binM, $
-                                  SHIFTM=MIMC_struct.shiftM, $
+                                  MINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+                                  MAXM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+                                  BINM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+                                  SHIFTM=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.shiftLng : MIMC_struct.shiftM), $
+                                  USE_LNG=MIMC_struct.use_Lng,$
                                   MINI=MIMC_struct.minI, $
                                   MAXI=MIMC_struct.maxI, $
                                   BINI=MIMC_struct.binI, $
