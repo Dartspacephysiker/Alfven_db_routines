@@ -64,8 +64,8 @@ FUNCTION LOAD_PASIS_VARS, $
            ;; N_ELEMENTS(PASIS__indices__ion_list   ) EQ 0 OR $
            ((N_ELEMENTS(PASIS__eFlux_eSpec_data       ) EQ 0) AND $
             (N_ELEMENTS(PASIS__eNumFlux_eSpec_data    ) EQ 0)) OR $
-           (N_ELEMENTS(PASIS__eSpec__MLTs             ) EQ 0) OR $
-           (N_ELEMENTS(PASIS__eSpec__ILATs            ) EQ 0) OR $
+           ;; (N_ELEMENTS(PASIS__eSpec__MLTs             ) EQ 0) OR $
+           ;; (N_ELEMENTS(PASIS__eSpec__ILATs            ) EQ 0) OR $
            ;; N_ELEMENTS(PASIS__iFlux_eSpec_data       ) EQ 0 OR $
            ;; N_ELEMENTS(PASIS__iNumFlux_eSpec_data    ) EQ 0 OR $
            ;; N_ELEMENTS(PASIS__ion_delta_t            ) EQ 0 OR $
@@ -78,6 +78,11 @@ FUNCTION LOAD_PASIS_VARS, $
            PRINT,"BROOOOOO!"
            STOP
         ENDIF
+
+        PASIS__eFlux_eSpec_data    = 1
+        PASIS__eNumFlux_eSpec_data = 1
+        PASIS__eSpec__MLTs         = 1
+        PASIS__eSpec__ILATs        = 1
      END
      ELSE: BEGIN
         IF N_ELEMENTS(PASIS__paramString_list        ) EQ 0  OR $

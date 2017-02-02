@@ -20,9 +20,10 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              CHASTDB=chastDB, $
                              DESPUNDB=despunDB, $
                              COORDINATE_SYSTEM=coordinate_system, $
-                             USE_AACGM_COORDS=use_aacgm, $
-                             USE_GEO_COORDS=use_geo, $
-                             USE_MAG_COORDS=use_mag, $
+                             USE_AACGM_COORDS=use_AACGM, $
+                             USE_GEI_COORDS=use_GEI, $
+                             USE_GEO_COORDS=use_GEO, $
+                             USE_MAG_COORDS=use_MAG, $
                              USE_SDT_COORDS=use_SDT, $
                              ;; GET_GOOD_I=get_good_i, $
                              HEMI__GOOD_I=hemi__good_i, $
@@ -335,33 +336,37 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   IF KEYWORD_SET(coordinate_system) THEN BEGIN
      CASE STRUPCASE(coordinate_system) OF
         'AACGM': BEGIN
-           use_aacgm = 1
-           use_geo   = 0
-           use_mag   = 0
+           use_AACGM = 1
+           use_GEI   = 0
+           use_GEO   = 0
+           use_MAG   = 0
            use_SDT   = 0
         END
         'GEO'  : BEGIN
-           use_aacgm = 0
-           use_geo   = 1
-           use_mag   = 0
+           use_AACGM = 0
+           use_GEI   = 0
+           use_GEO   = 1
+           use_MAG   = 0
            use_SDT   = 0
         END
         'MAG'  : BEGIN
-           use_aacgm = 0
-           use_geo   = 0
-           use_mag   = 1
+           use_AACGM = 0
+           use_GEI   = 0
+           use_GEO   = 0
+           use_MAG   = 1
            use_SDT   = 0
         END
         'SDT'  : BEGIN
-           use_aacgm = 0
-           use_geo   = 0
-           use_mag   = 0
+           use_AACGM = 0
+           use_GEI   = 0
+           use_GEO   = 0
+           use_MAG   = 0
            use_SDT   = 1
         END
      ENDCASE
   ENDIF
 
-  IF KEYWORD_SET(use_aacgm) THEN BEGIN
+  IF KEYWORD_SET(use_AACGM) THEN BEGIN
 
      IF KEYWORD_SET(despunDB) THEN BEGIN
         AACGM_file = AACGM_file__despun
@@ -373,8 +378,19 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      coordStr  = TEMPORARY(max_AACGM)
   ENDIF
 
+  IF KEYWORD_SET(use_GEI) THEN BEGIN
 
-  IF KEYWORD_SET(use_geo) THEN BEGIN
+     IF KEYWORD_SET(despunDB) THEN BEGIN
+        GEI_file = GEI_file__despun
+     ENDIF
+        
+     RESTORE,defCoordDir+GEI_file
+
+     coordName = 'GEI'
+     coordStr  = TEMPORARY(max_GEI)
+  ENDIF
+
+  IF KEYWORD_SET(use_GEO) THEN BEGIN
 
      IF KEYWORD_SET(despunDB) THEN BEGIN
         GEO_file = GEO_file__despun
@@ -386,7 +402,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      coordStr  = TEMPORARY(max_GEO)
   ENDIF
 
-  IF KEYWORD_SET(use_mag) THEN BEGIN
+  IF KEYWORD_SET(use_MAG) THEN BEGIN
 
      IF KEYWORD_SET(despunDB) THEN BEGIN
         MAG_file = MAG_file__despun
