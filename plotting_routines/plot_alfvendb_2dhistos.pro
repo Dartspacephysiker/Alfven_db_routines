@@ -59,8 +59,16 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
   
   @common__overplot_vars.pro
 
-  defXSize                        = 5
-  defYSize                        = 5
+  CASE STRUPCASE(MIMC_struct.map_projection) OF
+     'STEREOGRAPHIC': BEGIN
+        defXSize     = 5
+        defYSize     = 5
+     END
+     ELSE: BEGIN
+        defXSize     = 8
+        defYSize     = 5
+     END
+  ENDCASE
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
@@ -749,8 +757,8 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
 
            ENDIF ELSE BEGIN
 
-              xSize    = 5
-              ySize    = 5
+              xSize    = defXSize
+              ySize    = defYSize
 
               ;; integ_position = [0.11 , 0.78, 0.68 , 0.74] ;for top-left corner,top-right corners
               integ_position = [0.11 , 0.08, 0.68 , 0.74] ;for bottom-left corner,top-right corners

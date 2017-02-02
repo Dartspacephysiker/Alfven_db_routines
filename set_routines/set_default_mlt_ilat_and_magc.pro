@@ -34,6 +34,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   DAYSIDE=dayside, $
                                   NIGHTSIDE=nightside, $
                                   MIMC_STRUCT=MIMC_struct, $
+                                  MAP_PROJECTION=map_projection, $
                                   _EXTRA=e, $
                                   LUN=lun
 
@@ -230,7 +231,8 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                    both_hemis          : 0B    , $
                    globe               : 0B    , $
                    dayside             : 0B    , $
-                   nightside           : 0B  }
+                   nightside           : 0B    , $
+                   map_projection      : 'STEREOGRAPHIC'}
 
      IF N_ELEMENTS(minM) GT 0 THEN BEGIN
         STR_ELEMENT,MIMC_struct,'minM',minM,/ADD_REPLACE
@@ -428,6 +430,10 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
 
      IF N_ELEMENTS(nightside) GT 0 THEN BEGIN
         STR_ELEMENT,MIMC_struct,'nightside',nightside,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(map_projection) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'map_projection',map_projection,/ADD_REPLACE
      ENDIF
 
   ENDIF

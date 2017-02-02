@@ -30,6 +30,18 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
      inds_reset = 1B
   ENDIF
 
+  IF MIMC_struct1.minLng NE MIMC_struct2.minLng THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"minLng", $
+           MIMC_struct1.minLng,MIMC_struct2.minLng
+     inds_reset = 1B
+  ENDIF
+
+  IF MIMC_struct1.maxLng NE MIMC_struct2.maxLng THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"maxLng", $
+           MIMC_struct1.maxLng,MIMC_struct2.maxLng
+     inds_reset = 1B
+  ENDIF
+
   IF MIMC_struct1.minI NE MIMC_struct2.minI THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"minI", $
            MIMC_struct1.minI,MIMC_struct2.minI
@@ -132,15 +144,24 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
      DBs_reset  = 1B
   ENDIF
 
+  IF MIMC_struct1.map_projection NE MIMC_struct2.map_projection THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",A0,", ",A0,"! Resetting ...")',"map_projection", $
+           MIMC_struct1.map_projection,MIMC_struct2.map_projection
+     inds_reset  = 1B
+  ENDIF
+
   except_list = ['minMC', $
                  'maxNegMC', $
+                 'minM', $
+                 'maxM', $
                  'binM', $
+                 'minLng', $
+                 'maxLng', $
+                 'binLng', $
                  'shiftM', $
                  'binI', $
                  'minI', $
                  'maxI', $
-                 'minM', $
-                 'maxM', $
                  'hemi', $
                  'north', $
                  'south', $
@@ -155,7 +176,8 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
                  'use_GEO', $
                  'use_MAG', $
                  'use_SDT', $
-                 'coordinate_system']
+                 'coordinate_system', $
+                 'map_projection']
 
   comp = COMPARE_STRUCT(MIMC_struct1,MIMC_struct2,/RECUR_A,/RECUR_B,EXCEPT=except_list)
 

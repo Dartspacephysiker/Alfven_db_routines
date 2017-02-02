@@ -58,8 +58,6 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   COMPILE_OPT idl2
 
-  @ploth2d_stereographic_defaults.pro
-
   IF KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN
 
   @common__ea_binning.pro
@@ -103,37 +101,82 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                /LANDSCAPE_FORCE
   ENDIF
 
-  IF KEYWORD_SET(mirror) THEN BEGIN
-     IF mirror NE 0 THEN BEGIN
-        mirror        = 1
-     ENDIF ELSE BEGIN
-        mirror        = 0
-     ENDELSE
-  ENDIF ELSE BEGIN
-     mirror           = 0
-  ENDELSE
+  CASE STRUPCASE(MIMC_struct.map_projection) OF
+     'STEREOGRAPHIC': BEGIN
+        stereographic = 1
 
-  ;; IF KEYWORD_SET(wholeCap) THEN BEGIN
-  ;;    IF wholeCap EQ 0 THEN wholeCap=!NULL
-  ;; ENDIF
-  IF N_ELEMENTS(midnight) EQ 0 THEN BEGIN
-     midnight         = 1
+        IF N_ELEMENTS(midnight) EQ 0 THEN BEGIN
+           midnight         = 1
+        ENDIF
+
+        IF KEYWORD_SET(mirror) THEN BEGIN
+           IF mirror NE 0 THEN BEGIN
+              mirror        = 1
+           ENDIF ELSE BEGIN
+              mirror        = 0
+           ENDELSE
+        ENDIF ELSE BEGIN
+           mirror           = 0
+        ENDELSE
+
+        IF mirror THEN BEGIN
+           IF minI GT 0 THEN BEGIN
+              centerLat  = -90
+           ENDIF ELSE BEGIN
+              centerLat  = 90
+           ENDELSE
+        ENDIF ELSE BEGIN
+           IF minI GT 0 THEN BEGIN
+              centerLat  = 90
+           ENDIF ELSE BEGIN
+              centerLat  = -90
+           ENDELSE
+        ENDELSE
+
+        IF minI LT 0 AND NOT mirror THEN BEGIN
+           IF midnight NE !NULL THEN BEGIN
+              centerLon  = 180
+           ENDIF ELSE BEGIN
+              centerLon  = 0
+           ENDELSE
+        ENDIF ELSE BEGIN
+           IF midnight NE !NULL THEN BEGIN
+              centerLon  = 0
+           ENDIF ELSE BEGIN
+              centerLon  = 180
+           ENDELSE
+        ENDELSE
+
+        gridLons         = [0,90,180,270,360]
+
+        lim              = [(mirror) ? -maxI : minI,minM*15,(mirror) ? -minI : maxI,maxM*15]
+
+     END
+     'GOODES_HOMOLOSINE': BEGIN
+        goodes_homolosine = 1B
+        fullMeal          = 1B
+     END
+     'ROBINSON': BEGIN
+        robinson          = 1B
+        fullMeal          = 1B
+     END
+  ENDCASE
+
+  IF KEYWORD_SET(fullMeal) THEN BEGIN
+     centerLat         = 0.
+     centerLon         = 0.
+
+     gridLons          = [0,45,90,135,180,225,270,315,360]
+     ;; lim               = [minI,minM*15,maxI,maxM*15]
+     lim               = [-90,0,90,360]
+
   ENDIF
-  ;;    IF midnight EQ 0 THEN midnight=!NULL
-  ;; ENDIF
 
-  ;; IF N_ELEMENTS(wholeCap) EQ 0 THEN BEGIN
-  ;; IF ~KEYWORD_SET(wholeCap) THEN BEGIN
-  ;; map_position     = [0.1, 0.075, 0.9, 0.75]
+  @ploth2d_stereographic_defaults.pro
+
   IF ~KEYWORD_SET(map_position) THEN BEGIN
-     map_position     = defH2DMapPosition
+     map_position     = KEYWORD_SET(fullMeal) ? defH2DMapPosition_fullMeal : defH2DMapPosition
   ENDIF
-  lim                 = [(mirror) ? -maxI : minI,minM*15,(mirror) ? -minI : maxI,maxM*15]
-  ;; ENDIF ELSE BEGIN
-  ;;    map_position  = [0.05, 0.05, 0.85, 0.85]
-  ;;    lim=[(mirror) ? -maxI : minI, 0 ,(mirror) ? -minI : maxI,360] ;
-  ;; ;; lim           = [minimum lat, minimum long, maximum lat, maximum long]
-  ;; ENDELSE
 
   ;; xScale        = (defH2DMapPosition[2]-defH2DMapPosition[0])/(map_position[2]-map_position[0])
   ;; yScale        = (defH2DMapPosition[3]-defH2DMapPosition[1])/(map_position[3]-map_position[1])
@@ -144,38 +187,15 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   presentationBLOWITUP = 1.3
 
-  IF mirror THEN BEGIN
-     IF minI GT 0 THEN BEGIN
-        centerLat  = -90
-     ENDIF ELSE BEGIN
-        centerLat  = 90
-     ENDELSE
-  ENDIF ELSE BEGIN
-     IF minI GT 0 THEN BEGIN
-        centerLat  = 90
-     ENDIF ELSE BEGIN
-        centerLat  = -90
-     ENDELSE
-  ENDELSE
-
-  IF minI LT 0 AND NOT mirror THEN BEGIN
-     IF midnight NE !NULL THEN BEGIN
-        centerLon  = 180
-     ENDIF ELSE BEGIN
-        centerLon  = 0
-     ENDELSE
-  ENDIF ELSE BEGIN
-     IF midnight NE !NULL THEN BEGIN
-        centerLon  = 0
-     ENDIF ELSE BEGIN
-        centerLon  = 180
-     ENDELSE
-  ENDELSE
 
   IF ~KEYWORD_SET(overplot) THEN BEGIN
-     CGMAP_SET,centerLat,centerLon,/STEREOGRAPHIC,/HORIZON, $
-               /ISOTROPIC,/NOERASE,/NOBORDER, $
-               POSITION=map_position,LIMIT=lim
+     CGMAP_SET,centerLat,centerLon,STEREOGRAPHIC=stereographic, $
+               GOODESHOMOLOSINE=goodes_homolosine, $
+               ROBINSON=robinson, $
+               /HORIZON, $
+               /ISOTROPIC,/NOERASE,NOBORDER=KEYWORD_SET(stereographic), $
+               POSITION=map_position, $
+               LIMIT=lim
      ;;Limit=[minI-5,maxM*15-360,maxI+5,minM*15],
      
      IF N_ELEMENTS(plotTitle) EQ 0 THEN BEGIN
@@ -189,7 +209,6 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      mlts          = indgen(nXlines)*binM+minM
   ENDIF
   ;; IF KEYWORD_SET(wholeCap) THEN BEGIN
-  gridLons         = [0,90,180,270,360]
   ;; ENDIF
 
   IF KEYWORD_SET(do_lShell) THEN BEGIN
@@ -316,7 +335,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDELSE
 
 
-  IF mirror THEN BEGIN
+  IF KEYWORD_SET(mirror) THEN BEGIN
      ilats              = -1.0 * ilats
      gridLats           = -1   * FIX(gridLats)
      ;; gridLatNames    = -1.0 * gridLatNames
@@ -379,53 +398,6 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   notMasked          = WHERE(~masked)
 
   h2descl            = MAKE_ARRAY(SIZE(tmpData,/DIMENSIONS),VALUE=0)
-
-
-  ;;5 bar things per decade
-  ;; IF KEYWORD_SET(temp.is_logged) THEN BEGIN
-  ;;    nLevels                   = CEIL(temp.lim[1]-temp.lim[0])*5
-  ;; ENDIF
-
-  ;;Select color table
-  ;; IF temp.is_fluxData AND ~temp.is_logged THEN BEGIN
-  ;; IF ~temp.is_logged THEN BEGIN
-
-  ;;    IF N_ELEMENTS(WHERE(tmpData[notMasked] LT 0,/NULL)) EQ 0 AND ~temp.do_posNeg_cb THEN BEGIN
-  ;;       ;; RAINBOW_COLORS,N_COLORS=nLevels
-  ;;       ;; LOADCT,76  ;Modded rainbow; drops purples at bottom
-  ;;       ;; LOADCT,77 ;greenthing
-
-  ;;       ;;This is the one for doing sweet flux plots that include negative values
-  ;;       ;; cgLoadCT, ctIndex, BREWER=ctBrewer, REVERSE=ctReverse, NCOLORS=nLevels
-  ;;    ENDIF ELSE BEGIN
-  ;;       SUNSET_COLORS,N_COLORS=nLevels
-  ;;    ENDELSE
-
-  ;; ENDIF ELSE BEGIN
-  ;;    IF temp.do_posNeg_cb THEN BEGIN
-  ;;       SUNSET_COLORS,N_COLORS=nLevels
-
-  ;;       ;;This is the one for doing sweet flux plots that include negative values
-  ;;       ;; cgLoadCT, ctIndex, BREWER=ctBrewer, REVERSE=ctReverse, NCOLORS=nLevels
-  ;;    ENDIF ELSE BEGIN
-  ;;       ;; This one is the one we use for nEvent- and orbit-type plots (plots w/ all positive values)
-  ;;       ;; RAINBOW_COLORS,N_COLORS=nLevels
-  ;;       ;; LOADCT,76  ;Modded rainbow; drops purples at bottom
-  ;;       ;; LOADCT,77 ;greenthing
-  ;;    ENDELSE
-
-  ;;    ;; cgLoadCT, ctIndex_allPosData, BREWER=ctBrewer_allPosData, REVERSE=ctReverse_allPosData, NCOLORS=nLevels
-
-  ;;    ;; IF chrisPosScheme THEN BEGIN
-  ;;    ;;    ;;make last color dark red
-  ;;    ;;    TVLCT,r,g,b,/GET
-  ;;    ;;    r[nLevels-1]           = 180
-  ;;    ;;    g[nLevels-1]           = 0
-  ;;    ;;    b[nLevels-1]           = 0
-  ;;    ;;    TVLCT,r,g,b
-  ;;    ;; ENDIF
-
-  ;; ENDELSE
 
   CASE 1 OF
      KEYWORD_SET(overplot): BEGIN
@@ -747,24 +719,38 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      shiftedMLTs                  = !NULL
   ENDELSE
 
-  IF binI GT 3.0 AND ~(KEYWORD_SET(overplot) OR KEYWORD_SET(suppress_thinGrid)) THEN BEGIN
+  IF KEYWORD_SET(stereographic) THEN BEGIN
+     IF (binI GT 3.0) AND ~(KEYWORD_SET(overplot) OR KEYWORD_SET(suppress_thinGrid)) THEN BEGIN
+        CGMAP_GRID, CLIP_TEXT=1, $
+                    /NOCLIP, $
+                    LINESTYLE=0, $
+                    THICK=((!D.Name EQ 'PS') ? defGridLineThick_PS : defGridLineThick_PS)*gridScale,$
+                    COLOR=defGridColor, $
+                    LONDELTA=binM*15, $
+                    ;; LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : binI ), $
+                    LONS=shiftedMLTs, $
+                    ;;LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI )
+                    LATS=ilats
+        ;; LATS=(KEYWORD_SET(do_lShell) ? ilats : !NULL)
+     ENDIF
+  ENDIF ELSE BEGIN
+     ;; CGMAP_CONTINENTS,/HIRES,/ADDCMD
+     CGMAP_CONTINENTS,/HIRES
+
      CGMAP_GRID, CLIP_TEXT=1, $
                  /NOCLIP, $
                  LINESTYLE=0, $
                  THICK=((!D.Name EQ 'PS') ? defGridLineThick_PS : defGridLineThick_PS)*gridScale,$
                  COLOR=defGridColor, $
-                 LONDELTA=binM*15, $
-                 ;; LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : binI ), $
-                 LONS=shiftedMLTs, $
-                 ;;LATDELTA=(KEYWORD_SET(do_lShell) ? binL : binI )
-                 LATS=ilats
-     ;; LATS=(KEYWORD_SET(do_lShell) ? ilats : !NULL)
-  ENDIF
+                 LONDELTA=15, $
+                 LATDELTA=10
+
+  ENDELSE
 
 
   ;;add thicker grid to a few latitude lines
   ;; IF temp.shift1 LT 0.0001 THEN BEGIN
-  IF ~(KEYWORD_SET(suppress_thickGrid) OR KEYWORD_SET(overplot)) THEN BEGIN
+  IF KEYWORD_SET(stereographic) AND ~(KEYWORD_SET(suppress_thickGrid) OR KEYWORD_SET(overplot)) THEN BEGIN
      CGMAP_GRID, CLIP_TEXT=1, $
                  /NOCLIP, $
                  THICK=((!D.Name EQ 'PS') ? defGridBoldLineThick_PS : defGridBoldLineThick)*gridScale,$
@@ -780,13 +766,13 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   IF KEYWORD_SET(do_lShell) THEN BEGIN
      ;; lonLabel=(minL GT 0 ? minL : maxL)
      lonLabel=(minI GT 0 ? minI : maxI)
-     IF mirror THEN lonLabel      = -1.0 * lonLabel ;mirror dat
+     IF KEYWORD_SET(mirror) THEN lonLabel      = -1.0 * lonLabel ;mirror dat
   ENDIF ELSE BEGIN
      lonLabel=(minI GT 0 ? minI : maxI)
-     IF mirror THEN lonLabel      = -1.0 * lonLabel ;mirror dat
+     IF KEYWORD_SET(mirror) THEN lonLabel      = -1.0 * lonLabel ;mirror dat
   ENDELSE
 
-  IF ~(KEYWORD_SET(suppress_gridLabels) OR KEYWORD_SET(overplot)) THEN BEGIN
+  IF KEYWORD_SET(stereographic) AND ~(KEYWORD_SET(suppress_gridLabels) OR KEYWORD_SET(overplot)) THEN BEGIN
 
      IF KEYWORD_SET(wholeCap) THEN BEGIN
         factor                    = 6.0
@@ -805,7 +791,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ;; ENDIF
 
         gridLatNames              = STRING(gridLatNames,format=latLabelFormat)
-        tmpInd                    = mirror ? -1 : 0
+        tmpInd                    = KEYWORD_SET(mirror) ? -1 : 0
         gridLatNames[tmpInd]      = gridLatNames[tmpInd] + $
                                     ( KEYWORD_SET(suppress_ILAT_name) ? '' : $
                                       ( KEYWORD_SET(DO_lShell) ? " L-shell" : " " ) )  ;" ILAT" ) )
@@ -873,7 +859,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ENDIF
 
         ;;ILATs
-        IF ~(KEYWORD_SET(suppress_ILAT_labels) OR KEYWORD_SET(overplot)) THEN BEGIN
+        IF KEYWORD_SET(stereographic) AND ~(KEYWORD_SET(suppress_ILAT_labels) OR KEYWORD_SET(overplot)) THEN BEGIN
            ILATColor              = defGridTextColor
            ILAT_longitude         = 45
            ILAT_longitude         = 80
@@ -900,7 +886,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ;; nLats                  = N_ELEMENTS(latNames)
 
         ;;Latitudes
-        IF mirror THEN BEGIN
+        IF KEYWORD_SET(mirror) THEN BEGIN
            minLatLabel            = CEIL(-maxI/10.)*10
            maxLatLabel            = FLOOR(-minI/10.)*10
         ENDIF ELSE BEGIN

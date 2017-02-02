@@ -17,17 +17,17 @@ PRO ALFDB_SWITCH_COORDS,dbStruct,coordStr,coordName,SUCCESS=success
      ENDELSE
   ENDIF
 
-  possibilities = STRUPCASE(['ALT','MLT','ILAT','LNG'])
-  possPair      = STRUPCASE(['ALT','MLT', 'LAT','LNG'])
-  nPoss         = N_ELEMENTS(possibilities)
+  dbName        = STRUPCASE(['ALT','MLT','ILAT','LNG','LNG'])
+  coordStrName  = STRUPCASE(['ALT','MLT', 'LAT','LNG','LON'])
+  nPoss         = N_ELEMENTS(dbName)
 
   dbTags        = STRUPCASE(TAG_NAMES(dbStruct))
   coordTags     = STRUPCASE(TAG_NAMES(coordStr))
 
   coordString   = coordName
   FOR k=0,nPoss-1 DO BEGIN
-     tempI      = WHERE(dbTags    EQ possibilities[k])
-     coordI     = WHERE(coordTags EQ possPair[k])
+     tempI      = WHERE(dbTags    EQ dbName[k])
+     coordI     = WHERE(coordTags EQ coordStrName[k])
 
      CASE 1 OF
         tempI[0] NE -1 AND coordI[0] NE -1: BEGIN
@@ -39,29 +39,29 @@ PRO ALFDB_SWITCH_COORDS,dbStruct,coordStr,coordName,SUCCESS=success
 
            dbStruct.(tempI) = coordStr.(coordI)
            
-           coordString += '_' + possibilities[k]
+           coordString += '_' + dbName[k]
            
         END
         coordI[0] NE -1: BEGIN
 
-           PRINT,"Adding " + possPair[k] + " to DB ..."
+           PRINT,"Adding " + coordStrName[k] + " to DB ..."
 
            IF N_ELEMENTS(dbStruct.(0)) NE N_ELEMENTS(coordStr.(coordI)) THEN BEGIN
               PRINT,'Mismatching numbers of elements! I don''t think adding ' + $
-                    possPair[k] + ' is valid ...'
+                    coordStrName[k] + ' is valid ...'
               STOP
            ENDIF
 
            tmpInfo = dbStruct.info
            STR_ELEMENT,dbStruct,'info',/DELETE
-           STR_ELEMENT,dbStruct,possPair[k],coordStr.(coordI),/ADD_REPLACE
+           STR_ELEMENT,dbStruct,dbName[k],coordStr.(coordI),/ADD_REPLACE
            STR_ELEMENT,dbStruct,'info',tmpInfo,/ADD_REPLACE
            ;; dbStruct.(tempI) = coordStr.(coordI)
-           coordString += '_' + possibilities[k]
+           coordString += '_' + dbName[k]
            
         END
         ELSE: BEGIN
-           PRINT,"Couldn't find " + possPair[k] + " in coordStr ..."
+           PRINT,"Couldn't find " + coordStrName[k] + " in coordStr ..."
         END
      ENDCASE
 

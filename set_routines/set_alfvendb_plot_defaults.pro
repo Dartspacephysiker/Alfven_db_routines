@@ -531,7 +531,6 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         HELP,e
         PRINT,e
         PRINT,"Why the extra parameters? They have no home..."
-        RETURN
      ENDIF ELSE BEGIN
         IF TAG_EXIST(e,"wholecap") THEN BEGIN
            IF e.wholecap GT 0 THEN BEGIN
