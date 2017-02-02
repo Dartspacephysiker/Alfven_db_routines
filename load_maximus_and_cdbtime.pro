@@ -207,6 +207,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
 
            FASTDB__ADD_INFO_STRUCT,maximus, $
                                    /FOR_ALFDB, $
+                                   DB_DIR=DBDir, $
                                    DB_DATE=DB_date, $
                                    DB_VERSION=DB_version, $
                                    DB_EXTRAS=DB_extras

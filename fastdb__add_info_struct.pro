@@ -2,6 +2,7 @@
 PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                             FOR_ALFDB=for_alfDB, $
                             FOR_FASTLOC=for_fastLoc, $
+                            DB_DIR=DB_dir, $
                             DB_DATE=DB_date, $
                             DB_VERSION=DB_version, $
                             DB_EXTRAS=DB_extras ;, $
@@ -18,6 +19,7 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                 ;; corrected_fluxes : 0B, $
                 ;; corrected_string : '', $
                 ;; is_reduced       : BYTE(KEYWORD_SET(reduce_dbSize)), $
+                DB_dir           : '', $
                 DB_date          : '', $
                 DB_version       : '', $
                 DB_extras        : '', $
@@ -35,6 +37,7 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
         dbNavn = 'maximus'
         info  = { $             ;converted        : 0B, $
                 ;; is_reduced       : BYTE(KEYWORD_SET(reduce_dbSize)), $
+                DB_dir           : '', $
                 DB_date          : '', $
                 DB_version       : '', $
                 DB_extras        : '', $
@@ -60,6 +63,9 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
      END
   ENDCASE
 
+  IF KEYWORD_SET(DB_dir) THEN BEGIN
+     info.DB_dir     = DB_dir
+  ENDIF
 
   IF KEYWORD_SET(DB_date) THEN BEGIN
      info.DB_date    = DB_date

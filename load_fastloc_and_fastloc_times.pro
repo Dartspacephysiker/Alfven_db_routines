@@ -255,6 +255,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
         FASTDB__ADD_INFO_STRUCT,fastLoc, $
                                 /FOR_FASTLOC, $
+                                DB_DIR=DBDir, $
                                 DB_DATE=DB_date, $
                                 DB_VERSION=DB_version, $
                                 DB_EXTRAS=DB_extras

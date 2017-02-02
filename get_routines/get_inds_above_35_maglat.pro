@@ -1,6 +1,6 @@
 ;;02/02/17
 PRO GET_INDS_ABOVE_35_MAGLAT,dBStruct,good_i, $
-                             DBDIR=DBDir, $
+                             ;; DBDIR=DBDir, $
                              FOR_ALFDB=for_alfDB, $
                              FOR_ESPEC_DB=for_eSpec_DB, $
                              FOR_FASTLOC_DB=for_fastLoc_DB, $
@@ -25,7 +25,7 @@ PRO GET_INDS_ABOVE_35_MAGLAT,dBStruct,good_i, $
      RETURN
   ENDIF
 
-  RESTORE,DBDir+'alternate_coords/'+DBStr+fSuff
+  RESTORE,DBStruct.info.DB_Dir+(KEYWORD_SET(FOR_eSpec_DB) ? '../' : '') + 'alternate_coords/'+DBStr+fSuff
 
   NBef = N_ELEMENTS(good_i)
 
