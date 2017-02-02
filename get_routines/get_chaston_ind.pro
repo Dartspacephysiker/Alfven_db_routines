@@ -320,6 +320,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
      MIMC__north          = KEYWORD_SET(MIMC_struct.north)
      MIMC__south          = KEYWORD_SET(MIMC_struct.south)
      MIMC__both_hemis     = KEYWORD_SET(MIMC_struct.both_hemis)
+     MIMC__globe          = KEYWORD_SET(MIMC_struct.globe)
      IF KEYWORD_SET(do_lShell) THEN BEGIN
         MIMC__minLshell   = MIMC_struct.minL
         MIMC__maxLshell   = MIMC_struct.maxL

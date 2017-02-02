@@ -156,6 +156,11 @@ PRO MIMC__REPOPULATE_WITH_STRUCT, $
      both_hemis = MIMC_struct.both_hemis
   ENDIF
 
+  STR_ELEMENT,MIMC_struct,'globe',INDEX=tmpInd
+  IF tmpInd GE 0 THEN BEGIN
+     globe = MIMC_struct.globe
+  ENDIF
+
   STR_ELEMENT,MIMC_struct,'dayside',INDEX=tmpInd
   IF tmpInd GE 0 THEN BEGIN
      dayside = MIMC_struct.dayside

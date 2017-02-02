@@ -80,12 +80,21 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   ;; defDespunDB_tFile    = 'Dartdb_20160107--502-16361_despun--cdbtime--noDupes.sav'
   defDespunDBFile      = 'Dartdb_20160508--502-16361_despun--maximus--pflux_lshell--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
   defDespunDB_tFile    = 'Dartdb_20160508--502-16361_despun--cdbtime--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
+  DB_date__despun      = '20160508'
+  DB_version__despun   = 'v0.0'
+  DB_extras__despun    = 'despun'
 
   ;; AACGM_dir            = '/SPENCEdata/Research/database/FAST/ephemeris/'
-  AACGM_file           = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--AACGM_coords.sav'
-  GEO_file             = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--GEO_coords.sav'
-  MAG_file             = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--MAG_coords.sav'
-  SDT_file             = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--SDT_coords.sav'
+  ;; AACGM_file           = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--AACGM_coords.sav'
+  ;; GEO_file             = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--GEO_coords.sav'
+  ;; MAG_file             = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--MAG_coords.sav'
+  ;; SDT_file             = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--SDT_coords.sav'
+
+  AACGM_file           = 'alfDB-20151222_v0_0-AACGM.sav'
+  GEI_file             = 'alfDB-20151222_v0_0-GEI.sav'
+  GEO_file             = 'alfDB-20151222_v0_0-GEO.sav'
+  MAG_file             = 'alfDB-20151222_v0_0-MAG.sav'
+  SDT_file             = 'alfDB-20151222_v0_0-SDT.sav'
 
   AACGM_file__despun   = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_coords--every_tstamp--20160824.sav'
   GEO_file__despun     = 'Dartdb_20160508--502-16361_despun--maximus--GEO_coords.sav'
@@ -182,6 +191,12 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
 
         IF ~KEYWORD_SET(just_cdbTime) THEN BEGIN
            RESTORE,DBDir+DBFile
+
+           IF KEYWORD_SET(despunDB) THEN BEGIN
+              DB_date    = DB_date__despun
+              DB_version = DB_version__despun
+              DB_extras  = DB_extras__despun
+           ENDIF
 
            FASTDB__ADD_INFO_STRUCT,maximus, $
                                    /FOR_ALFDB, $
@@ -342,6 +357,13 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
            use_MAG   = 0
            use_SDT   = 0
         END
+        'GEI'  : BEGIN
+           use_AACGM = 0
+           use_GEI   = 1
+           use_GEO   = 0
+           use_MAG   = 0
+           use_SDT   = 0
+        END
         'GEO'  : BEGIN
            use_AACGM = 0
            use_GEI   = 0
@@ -387,7 +409,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      RESTORE,defCoordDir+GEI_file
 
      coordName = 'GEI'
-     coordStr  = TEMPORARY(max_GEI)
+     coordStr  = TEMPORARY(GEI)
   ENDIF
 
   IF KEYWORD_SET(use_GEO) THEN BEGIN
@@ -399,7 +421,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      RESTORE,defCoordDir+GEO_file
 
      coordName = 'GEO'
-     coordStr  = TEMPORARY(max_GEO)
+     coordStr  = TEMPORARY(GEO)
   ENDIF
 
   IF KEYWORD_SET(use_MAG) THEN BEGIN
@@ -410,13 +432,13 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
         
      RESTORE,defCoordDir+MAG_file
 
-     coordStr  = TEMPORARY(max_MAG)
      coordName = 'MAG'
+     coordStr  = TEMPORARY(MAG)
   ENDIF
 
   ;;Make sure we have SDT coords loaded if nothing else has been requested
   IF ~(KEYWORD_SET(just_CDBTime) AND KEYWORD_SET(noMem)) THEN BEGIN
-     IF ~(KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_MAG) OR KEYWORD_SET(use_GEO)) THEN BEGIN
+     IF ~(KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_GEI) OR KEYWORD_SET(use_GEO) OR KEYWORD_SET(use_MAG)) THEN BEGIN
         IF STRUPCASE((*pDBStruct).info.coords) NE 'SDT' THEN BEGIN
            use_SDT = 1
         ENDIF 
@@ -427,7 +449,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
         RESTORE,defCoordDir+SDT_file
 
         coordName = 'SDT'
-        coordStr  = TEMPORARY(max_SDT)
+        coordStr  = TEMPORARY(SDT)
 
      ENDIF
 

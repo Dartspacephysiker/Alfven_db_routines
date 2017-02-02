@@ -3,7 +3,17 @@ PRO JOURNAL__20170202__MAKE_AACGM_ETC_FOR_ALFDB__FASTDB_COORDINATE_CONVERSION__P
 
   COMPILE_OPT IDL2
 
-  outFile_pref            = 'alfDB-20151222_v0_0' ;output from GET_FAST_DB_STRING(maximus,/FOR_ALFDB)
+  ;;The following strings are output from GET_FAST_DB_STRING(maximus,/FOR_ALFDB)
+  CASE 1 OF
+     KEYWORD_SET(despunDB): BEGIN
+        outFile_pref      = 'alfDB-20160508_v0_0--despun'
+
+     END
+     ELSE: BEGIN
+        outFile_pref      = 'alfDB-20151222_v0_0' 
+     END
+  ENDCASE
+
   dry_run                 = 0
 
   ;; nCPUsToRun              = 7
@@ -17,8 +27,6 @@ PRO JOURNAL__20170202__MAKE_AACGM_ETC_FOR_ALFDB__FASTDB_COORDINATE_CONVERSION__P
   do_AACGM_conversionsArr   = [0,0,0,0]
   stitch_filesArr           = [0,0,0,1]
 
-  ;; test_single             = 0
-
   ;;Less-important options
   DBDir                   = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
   coordDir                = DBDir + 'alternate_coords/'
@@ -27,6 +35,7 @@ PRO JOURNAL__20170202__MAKE_AACGM_ETC_FOR_ALFDB__FASTDB_COORDINATE_CONVERSION__P
   LOAD_MAXIMUS_AND_CDBTIME,!NULL,times, $
                            /NO_MEMORY_LOAD, $
                            /JUST_CDBTIME, $
+                           DESPUNDB=despunDB, $
                            /DO_NOT_MAP_ANYTHING
 
   nThang = N_ELEMENTS(create_timeStampsArr)

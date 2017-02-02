@@ -25,6 +25,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   NORTH=north, $
                                   SOUTH=south, $
                                   BOTH_HEMIS=both_hemis, $
+                                  GLOBE=globe, $
                                   DAYSIDE=dayside, $
                                   NIGHTSIDE=nightside, $
                                   MIMC_STRUCT=MIMC_struct, $
@@ -59,6 +60,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   NORTH=north, $
                                   SOUTH=south, $
                                   BOTH_HEMIS=both_hemis, $
+                                  GLOBE=globe, $
                                   DAYSIDE=dayside, $
                                   NIGHTSIDE=nightside
 
@@ -98,33 +100,40 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
 
   ;;Handle ILATs
   IF N_ELEMENTS(hemi) EQ 0 THEN BEGIN
-     IF KEYWORD_SET(both_hemis) THEN BEGIN
-        PRINTF,lun,"hemi set to 'BOTH' via keyword /BOTH_HEMIS"
-        hemi        = "BOTH"
-     ENDIF ELSE BEGIN
-        IF KEYWORD_SET(north) THEN BEGIN
+     CASE 1 OF
+
+        KEYWORD_SET(both_hemis): BEGIN
+           PRINTF,lun,"hemi set to 'BOTH' via keyword /BOTH_HEMIS"
+           hemi        = "BOTH"
+        END
+        KEYWORD_SET(north): BEGIN
            PRINTF,lun,"hemi set to 'NORTH' via keyword /NORTH"
            hemi     = "NORTH"
-        ENDIF ELSE BEGIN
-           IF KEYWORD_SET(south) THEN BEGIN
-              PRINTF,lun,"hemi set to 'SOUTH' via keyword /SOUTH"
-              hemi="SOUTH"
-           ENDIF ELSE BEGIN
-              hemi  = defHemi
-              hemi  = STRUPCASE(hemi)
-              PRINTF,lun,"No hemisphere specified! Set to default: " + hemi + "..."
-           ENDELSE
-        ENDELSE
-     ENDELSE
+        END
+        KEYWORD_SET(south): BEGIN
+           PRINTF,lun,"hemi set to 'SOUTH' via keyword /SOUTH"
+           hemi="SOUTH"
+        END
+        KEYWORD_SET(globe): BEGIN
+           PRINTF,lun,"hemi set to 'GLOBE' via keyword /GLOBE"
+           hemi="GLOBE"
+        END
+        ELSE: BEGIN
+           hemi  = defHemi
+           hemi  = STRUPCASE(hemi)
+           PRINTF,lun,"No hemisphere specified! Set to default: " + hemi + "..."
+        END
+     ENDCASE
   ENDIF ELSE BEGIN
      hemi           = STRUPCASE(hemi)
   ENDELSE
   
   IF ( (STRUPCASE(hemi) NE "NORTH") AND $
        (STRUPCASE(hemi) NE "SOUTH") AND $
-       (STRUPCASE(hemi) NE "BOTH" ) )   $
+       (STRUPCASE(hemi) NE "BOTH" ) AND $
+       (STRUPCASE(hemi) NE "GLOBE" ) )   $
   THEN BEGIN
-     PRINTF,lun,"Invalid hemisphere name provided! Should be 'North' or 'South'."
+     PRINTF,lun,"Invalid hemisphere name provided! Should be 'North,' 'South,' 'Both,' or 'Globe.'"
      PRINTF,lun,"Defaulting to 'North'."
      hemi           = "North"
   ENDIF
@@ -153,6 +162,11 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
         ;;Flip things if they're lacking sense
         IF minI LT 0 THEN minI *= -1.
         IF maxI LT 0 THEN maxI *= -1.
+     END
+     STRUPCASE(hemi) EQ "GLOBE": BEGIN
+        IF N_ELEMENTS(minI)    EQ 0 THEN minI  = -90
+        IF N_ELEMENTS(maxI)    EQ 0 THEN maxI  = 90
+
      END
   ENDCASE
 
@@ -204,6 +218,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                    north               : 0B    , $
                    south               : 0B    , $
                    both_hemis          : 0B    , $
+                   globe               : 0B    , $
                    dayside             : 0B    , $
                    nightside           : 0B  }
 
@@ -355,6 +370,10 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
 
      IF N_ELEMENTS(both_hemis) GT 0 THEN BEGIN
         STR_ELEMENT,MIMC_struct,'both_hemis',both_hemis,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(globe) GT 0 THEN BEGIN
+        STR_ELEMENT,MIMC_struct,'globe',globe,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(dayside) GT 0 THEN BEGIN

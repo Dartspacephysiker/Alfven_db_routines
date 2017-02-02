@@ -32,6 +32,14 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi, $
   hem = KEYWORD_SET(hemi) ? hemi : 'NORTH'
 
   CASE STRUPCASE(hem) OF
+     "NORTH": BEGIN
+        ilat_i = WHERE(lats GE minI AND lats LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT) 
+        PRINTF,lun,'Hemisphere: Northern'
+     END
+     "SOUTH": BEGIN
+        ilat_i = WHERE(lats GE minI AND lats LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT)
+        PRINTF,lun,'Hemisphere: Southern'
+     END
      "BOTH": BEGIN
         PRINTF,lun,"Converting negative ILAT values (Southern Hemi) to positive with ABS function..."
         lats = ABS(lats)
@@ -46,13 +54,9 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi, $
         ;; WAIT,2
         ;; STOP
      END
-     "SOUTH": BEGIN
-        ilat_i = WHERE(lats GE minI AND lats LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT)
-        PRINTF,lun,'Hemisphere: Southern'
-     END
-     "NORTH": BEGIN
+     "GLOBE": BEGIN
         ilat_i = WHERE(lats GE minI AND lats LE maxI,n_ilat,NCOMPLEMENT=n_not_ILAT) 
-        PRINTF,lun,'Hemisphere: Northern'
+        PRINTF,lun,'Full globe!'
      END
      ELSE: BEGIN
         PRINTF,lun,"Invalid hemisphere provided! Can't get ILAT indices..."

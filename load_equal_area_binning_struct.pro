@@ -64,6 +64,10 @@ PRO LOAD_EQUAL_AREA_BINNING_STRUCT,EA, $
               EA__s.hemi = 'SOUTH'
            ENDIF
         END
+        'GLOBE': BEGIN
+           PRINT,"Can't do full globe with equal area binning ..."
+           STOP
+        END
         ELSE: STOP
      ENDCASE
   ENDIF

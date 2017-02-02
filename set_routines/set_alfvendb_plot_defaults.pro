@@ -210,6 +210,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         NORTH=north, $
         SOUTH=south, $
         BOTH_HEMIS=both_hemis, $
+        GLOBE=globe, $
         DAYSIDE=dayside, $
         NIGHTSIDE=nightside, $
         MIMC_STRUCT=MIMC_struct, $
