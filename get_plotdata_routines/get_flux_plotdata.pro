@@ -74,8 +74,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                       INDICES__ESPEC=indices__eSpec, $
                       INDICES__ION=indices__ion, $
                       ION_DELTA_T=ion_delta_t, $
-                      ESPEC_MLT=eSpec_mlt, $
-                      ESPEC_ILAT=eSpec_ilat, $
+                      ESPEC_MLTSILATS=eSpec_MLTsILATs, $
                       ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                       DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                       PRINT_MAX_AND_MIN=print_mandm, $
@@ -1382,14 +1381,14 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   inData              = inData[tmp_i]
 
   ;;fix MLTs
-  IF KEYWORD_SET(eSpec_mlt) THEN BEGIN
+  IF KEYWORD_SET(eSpec_MLTsILATs) THEN BEGIN
      mlts             = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,MIMC_struct.shiftM, $
                                            IN_MLTS=(KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL__eSpec.lng : NEWELL__eSpec.mlt)[tmp_i], $
                                            SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
   ENDIF ELSE BEGIN
      mlts             = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,MIMC_struct.shiftM,SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
   ENDELSE
-  IF KEYWORD_SET(eSpec_ilat) THEN BEGIN
+  IF KEYWORD_SET(eSpec_MLTsILATs) THEN BEGIN
      ilats            = NEWELL__eSpec.ilat[tmp_i]
   ENDIF ELSE BEGIN
      ilats            = (KEYWORD_SET(MIMC_struct.do_lShell) ? maximus.lshell : maximus.ilat)[tmp_i]

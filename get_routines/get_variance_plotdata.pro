@@ -114,14 +114,15 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
         END
      ENDCASE
 
-     IF (loopType[k] EQ 1) OR (loopType[k] EQ 2) THEN BEGIN
+     IF (loopType[k] EQ 1) OR (loopType[k] EQ 2) THEN BEGIN 
 
+        ;;if eSpec [loopType == 1] or fastLoc [loopType == 2], we have stuff
         haveStuff       = 1
 
         CASE loopType[k] OF
            1: BEGIN
               tmpInds   = in_inds
-              tmpMLTs   = KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL__eSpec.lng : NEWELL__eSpec.mlt 
+              tmpMLTs   = (KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL__eSpec.lng : NEWELL__eSpec.mlt)
               tmpILATs  = NEWELL__eSpec.ilat
            END
            2: BEGIN

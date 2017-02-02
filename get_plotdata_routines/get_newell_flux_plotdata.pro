@@ -28,9 +28,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                              INDICES__ESPEC=indices__eSpec, $
                              ;; INDICES__ION=indices__ion, $
                              COMB_ACCELERATED=comb_accelerated, $
-                             ESPEC_MLT=eSpec_mlt, $
-                             ESPEC_ILAT=eSpec_ilat, $
-
+                             ESPEC_MLTSILATS=eSpec_MLTsILATs, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=logFluxPlot, $
@@ -269,8 +267,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
 
      ;;Need to provide a new h2dFluxN and a new mask for each of these
      GET_H2D_NEVENTS_AND_MASK,maximus,tmp_i, $
-                              IN_MLTS=KEYWORD_SET(eSpec_mlt  ) ? NEWELL__eSpec.mlt [tmp_i] : !NULL, $
-                              IN_ILATS=KEYWORD_SET(eSpec_ilat) ? NEWELL__eSpec.ilat[tmp_i] : !NULL, $
+                              IN_MLTS=KEYWORD_SET(eSpec_MLTsILATs  ) ? (KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL__eSpec.lng : NEWELL__eSpec.mlt)[tmp_i] : !NULL, $
+                              IN_ILATS=KEYWORD_SET(eSpec_MLTsILATs ) ? NEWELL__eSpec.ilat[tmp_i] : !NULL, $
                               ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                               IMF_STRUCT=IMF_struct, $
                               MIMC_STRUCT=MIMC_struct, $
@@ -310,8 +308,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                        ;; IFLUX_ESPEC_DATA=iFlux_eSpec_data, $
                        ;; INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
                        INDICES__ESPEC=KEYWORD_SET(for_eSpec_DBs) ? tmp_i : indices__eSpec, $
-                       ESPEC_MLT=eSpec_mlt, $
-                       ESPEC_ILAT=eSpec_ilat, $
+                       ESPEC_MLTSILATS=eSpec_MLTsILATs, $
                        ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=logP, $
@@ -357,7 +354,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                        FANCY_PLOTNAMES=fancy_plotNames, $
                        LUN=lun
 
-     ;; IF ~KEYWORD_SET(eSpec_mlt) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
+     ;; IF ~KEYWORD_SET(eSpec_MLTsILATs) THEN h2dStrArr[KEYWORD_SET(nPlots)].data = out_h2dMask
 
      ;;Add Newell-specific stuff
      h2dStr.title        += out_titles[k]
@@ -379,7 +376,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
         ;; varPlotIsKeepInds = [varPlotIsKeepInds,KEYWORD_SET(for_eSpec_DBs)]
 
         IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-           ;; junker         = MAKE_ARRAY(N_ELEMENTS(eSpec_mlt),VALUE=0B,/BYTE)
+           ;; junker         = MAKE_ARRAY(N_ELEMENTS(eSpec_MLTsILATs),VALUE=0B,/BYTE)
            ;; junker[tmp_i]  = 1B
            ;; out_removed_ii = WHERE(~TEMPORARY(junker))
 

@@ -43,11 +43,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
    INDICES__ION=indices__ion, $
    ESPEC__NO_MAXIMUS=no_maximus, $
    ;; FOR_ESPEC_DB=for_eSpec_DB, $
-   ESPEC__MLTS=eSpec__mlts, $
-   ESPEC__ILATS=eSpec__ilats, $
+   ESPEC__MLTSILATS=eSpec__MLTsILATs, $
    ;; FOR_ION_DB=for_ion_DB, $
-   ION__MLTS=ion__mlts, $
-   ION__ILATS=ion__ilats, $
+   ION__MLTSILATS=ion__MLTsILATs, $
    ION_DELTA_T=ion_delta_t, $
    PPLOTS=pPlots, $
    LOGPFPLOT=logPfPlot, $
@@ -196,6 +194,10 @@ PRO GET_ALFVENDB_2DHISTOS, $
    TXTOUTPUTDIR=txtOutputDir, $
    DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
    KEEPME=keepMe, $
+   HAVE_PREVIOUS_THISTO=have_prev_tHistos, $
+   HAVE_PREVIOUS_ESPEC_THISTO=have_prev_eSpec_tHistos, $
+   IN_THISTDENOMINATOR=tHistDenominator, $
+   IN_ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
    _EXTRA=e, $
    LUN=lun
   
@@ -223,12 +225,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
      CASE 1 OF
         ( (N_ELEMENTS(eFlux_eSpec_data) GT 0) OR $
           (N_ELEMENTS(eNumFlux_eSpec_data) GT 0) ): BEGIN
-           in_MLTS  = NEWELL__eSpec.mlt[indices__eSpec]
+           in_MLTS  = (KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL__eSpec.lng : NEWELL__eSpec.mlt)[indices__eSpec]
            in_ILATS = NEWELL__eSpec.ilat[indices__eSpec]
         END
         ( (N_ELEMENTS(iFlux_ion_data) GT 0) OR $
           (N_ELEMENTS(iNumFlux_ion_data) GT 0) ): BEGIN
-           in_MLTS  = NEWELL_I__ion.mlt[indices__ion]
+           in_MLTS  = (KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL_I__ion.lng : NEWELL_I__ion.mlt)[indices__ion]
            in_ILATS = NEWELL_I__ion.ilat[indices__ion]
         END
      ENDCASE
@@ -267,44 +269,51 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ENDIF
   
   ;;Get tHist denominator here so other routines can use it as they please
-  IF KEYWORD_SET(nEventPerMinPlot) OR $
-     KEYWORD_SET(probOccurrencePlot) $
-     ;; OR KEYWORD_SET(timeAvgd_pfluxPlot) OR KEYWORD_SET(timeAvgd_eFluxMaxPlot) $
-     OR KEYWORD_SET(do_timeAvg_fluxQuantities) $
-     OR KEYWORD_SET(nEventPerOrbPlot) $
-     OR KEYWORD_SET(tHistDenominatorPlot) $
-     OR KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot) $
-     OR KEYWORD_SET(div_fluxPlots_by_applicable_orbs) $
-     OR KEYWORD_SET(tHist_mask_bins_below_thresh) $
-     OR KEYWORD_SET(numOrbLim) $
-     OR KEYWORD_SET(t_probOccurrence) $
+  IF (KEYWORD_SET(nEventPerMinPlot                    ) OR   $
+     KEYWORD_SET(probOccurrencePlot                   )      $
+      ;; OR KEYWORD_SET(timeAvgd_pfluxPlot            ) OR   $
+      ;;KEYWORD_SET(timeAvgd_eFluxMaxPlot             )      $
+     OR KEYWORD_SET(do_timeAvg_fluxQuantities         )      $
+     OR KEYWORD_SET(nEventPerOrbPlot                  )      $
+     OR KEYWORD_SET(tHistDenominatorPlot              )      $
+     OR KEYWORD_SET(nOrbsWithEventsPerContribOrbsPlot )      $
+     OR KEYWORD_SET(div_fluxPlots_by_applicable_orbs  )      $
+     OR KEYWORD_SET(tHist_mask_bins_below_thresh      )      $
+     OR KEYWORD_SET(numOrbLim                         )      $
+     OR KEYWORD_SET(t_probOccurrence                  ))     $
   THEN BEGIN 
 
      IF ~KEYWORD_SET(no_maximus) THEN BEGIN
-        tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
-                           fastLocInterped_i, $
-                           HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
-                           ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
-                           IMF_STRUCT=IMF_struct, $
-                           MIMC_STRUCT=MIMC_struct, $
-                           FASTLOCOUTPUTDIR=txtOutputDir, $
-                           MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
-                           THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
-                           THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
-                           THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
-                           THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
-                           TMPLT_H2DSTR=tmplt_h2dStr, $
-                           H2DSTR=h2dStr, $
-                           DATANAME=dataName, $
-                           DATARAWPTR=dataRawPtr, $
-                           H2D_NONZERO_NEV_I=hEv_nz_i, $
-                           SAVE_FASTLOC_INDS=save_fastLoc_inds, $
-                           PARAMSTR_FOR_SAVING=paramStr, $
-                           IND_FILEDIR=ind_fileDir, $
-                           INDSFILEPREFIX=paramStrPrefix, $
-                           INDSFILESUFFIX=paramStrSuffix, $
-                           DO_NOT_SET_DEFAULTS=do_not_set_defaults)
-
+        IF ~KEYWORD_SET(have_prev_tHistos) THEN BEGIN
+           tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
+                              fastLocInterped_i, $
+                              HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
+                              ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                              IMF_STRUCT=IMF_struct, $
+                              MIMC_STRUCT=MIMC_struct, $
+                              FASTLOCOUTPUTDIR=txtOutputDir, $
+                              MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
+                              THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                              THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
+                              THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
+                              THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
+                              TMPLT_H2DSTR=tmplt_h2dStr, $
+                              H2DSTR=h2dStr, $
+                              DATANAME=dataName, $
+                              DATARAWPTR=dataRawPtr, $
+                              H2D_NONZERO_NEV_I=hEv_nz_i, $
+                              SAVE_FASTLOC_INDS=save_fastLoc_inds, $
+                              PARAMSTR_FOR_SAVING=paramStr, $
+                              IND_FILEDIR=ind_fileDir, $
+                              INDSFILEPREFIX=paramStrPrefix, $
+                              INDSFILESUFFIX=paramStrSuffix, $
+                              DO_NOT_SET_DEFAULTS=do_not_set_defaults)
+        ENDIF ELSE BEGIN
+           IF KEYWORD_SET(tHistDenominatorPlot) THEN BEGIN
+              PRINT,"Not set up! You haven't figured out how to do tHistDenominator plots with HAVE_PREV_THISTOS"
+              STOP
+           ENDIF
+        ENDELSE
         
         IF KEYWORD_SET(tHist_mask_bins_below_thresh) THEN BEGIN
            PRINT,'Applying min threshold (' + $
@@ -343,36 +352,42 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
      ENDIF
 
-     IF KEYWORD_SET(eFlux_eSpec_data   ) OR $
-        KEYWORD_SET(eNumFlux_eSpec_data) OR $
-        KEYWORD_SET(iFlux_ion_data   ) OR $
-        KEYWORD_SET(iNumFlux_ion_data)    $
+     IF (KEYWORD_SET(eFlux_eSpec_data        ) OR   $
+         KEYWORD_SET(eNumFlux_eSpec_data     ) OR   $
+         KEYWORD_SET(iFlux_ion_data          ) OR   $
+         KEYWORD_SET(iNumFlux_ion_data       ))      $
      THEN BEGIN
-        eSpec_tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
-                                 fastLocInterped_i, $
-                                 HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
-                                 ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
-                                 IMF_STRUCT=IMF_struct, $
-                                 MIMC_STRUCT=MIMC_struct, $
-                                 FASTLOCOUTPUTDIR=txtOutputDir, $
-                                 MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
-                                 THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
-                                 THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
-                                 THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
-                                 THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
-                                 TMPLT_H2DSTR=tmplt_h2dStr, $
-                                 H2DSTR=h2dStr, $
-                                 DATANAME=dataName, $
-                                 DATARAWPTR=dataRawPtr, $
-                                 H2D_NONZERO_NEV_I=hEv_nz_i__nonAlfven, $
-                                 SAVE_FASTLOC_INDS=save_fastLoc_inds, $
-                                 PARAMSTR_FOR_SAVING=paramStr, $
-                                 IND_FILEDIR=ind_fileDir, $
-                                 INDSFILEPREFIX=paramStrPrefix, $
-                                 INDSFILESUFFIX=paramStrSuffix, $
-                                 DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
-                                 /FOR_ESPEC_DBS)
-        
+        IF ~KEYWORD_SET(have_prev_eSpec_tHistos) THEN BEGIN
+           eSpec_tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
+                                    fastLocInterped_i, $
+                                    HERE_ARE_YOUR_FASTLOC_INDS=fastLoc_inds, $
+                                    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                    IMF_STRUCT=IMF_struct, $
+                                    MIMC_STRUCT=MIMC_struct, $
+                                    FASTLOCOUTPUTDIR=txtOutputDir, $
+                                    MAKE_TIMEHIST_H2DSTR=tHistDenominatorPlot, $
+                                    THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
+                                    THISTDENOMPLOTAUTOSCALE=tHistDenomPlotAutoscale, $
+                                    THISTDENOMPLOTNORMALIZE=tHistDenomPlotNormalize, $
+                                    THISTDENOMPLOT_NOMASK=tHistDenomPlot_noMask, $
+                                    TMPLT_H2DSTR=tmplt_h2dStr, $
+                                    H2DSTR=h2dStr, $
+                                    DATANAME=dataName, $
+                                    DATARAWPTR=dataRawPtr, $
+                                    H2D_NONZERO_NEV_I=hEv_nz_i__nonAlfven, $
+                                    SAVE_FASTLOC_INDS=save_fastLoc_inds, $
+                                    PARAMSTR_FOR_SAVING=paramStr, $
+                                    IND_FILEDIR=ind_fileDir, $
+                                    INDSFILEPREFIX=paramStrPrefix, $
+                                    INDSFILESUFFIX=paramStrSuffix, $
+                                    DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
+                                    /FOR_ESPEC_DBS)
+        ENDIF ELSE BEGIN
+           IF KEYWORD_SET(tHistDenominatorPlot) THEN BEGIN
+              PRINT,"Not set up! You haven't figured out how to do tHistDenominator plots with HAVE_PREV_THISTOS"
+              STOP
+           ENDIF
+        ENDELSE
 
         IF keepMe THEN BEGIN 
            IF KEYWORD_SET(tHistDenominatorPlot) THEN BEGIN
@@ -775,9 +790,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     ABSFLUX=absFlux, $
                                     EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                                     INDICES__ESPEC=indices__eSpec, $
-                                    COMBINE_ACCELERATED=Newell__comb_accelerated, $
-                                    ESPEC_MLT=eSpec__mlts, $
-                                    ESPEC_ILAT=eSpec__ilats, $
+                                    COMB_ACCELERATED=Newell__comb_accelerated, $
+                                    ESPEC_MLTSILATS=eSpec__MLTsILATs, $
                                     ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -884,8 +898,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              ABSFLUX=absFlux, $
                              EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                              INDICES__ESPEC=indices__eSpec, $
-                             ESPEC_MLT=eSpec__mlts, $
-                             ESPEC_ILAT=eSpec__ilats, $
+                             ESPEC_MLTSILATS=eSpec__MLTsILATs, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -1008,9 +1021,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     ABSFLUX=absFlux, $
                                     ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                                     INDICES__ESPEC=indices__eSpec, $
-                                    COMBINE_ACCELERATED=Newell__comb_accelerated, $
-                                    ESPEC_MLT=eSpec__mlts, $
-                                    ESPEC_ILAT=eSpec__ilats, $
+                                    COMB_ACCELERATED=Newell__comb_accelerated, $
+                                    ESPEC_MLTSILATS=eSpec__MLTsILATs, $
                                     ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -1116,8 +1128,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              ABSFLUX=absFlux, $
                              ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                              INDICES__ESPEC=indices__eSpec, $
-                             ESPEC_MLT=eSpec__mlts, $
-                             ESPEC_ILAT=eSpec__ilats, $
+                             ESPEC_MLTSILATS=eSpec__MLTsILATs, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -1336,8 +1347,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                           INUMFLUX_ION_DATA=iNumFlux_ion_data, $
                           INDICES__ION=indices__ion, $
                           ION_DELTA_T=ion_delta_t, $
-                          ESPEC_MLT=ion__mlts, $
-                          ESPEC_ILAT=ion__ilats, $
+                          ESPEC_MLTSILATS=ion__MLTsILATs, $
                           ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                           OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -1530,9 +1540,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     ABSFLUX=absFlux, $
                                     EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                                     INDICES__ESPEC=indices__eSpec, $
-                                    COMBINE_ACCELERATED=Newell__comb_accelerated, $
-                                    ESPEC_MLT=eSpec__mlts, $
-                                    ESPEC_ILAT=eSpec__ilats, $
+                                    COMB_ACCELERATED=Newell__comb_accelerated, $
+                                    ESPEC_MLTSILATS=eSpec__MLTsILATs, $
                                     ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -1611,6 +1620,10 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              FLUXPLOTTYPE=charEType, $
                              PLOTRANGE=plotRange, $
                              PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_charEPlots), $
+                             INDICES__ESPEC=indices__eSpec, $
+                             EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
+                             ESPEC_MLTSILATS=eSpec__MLTsILATs, $
+                             ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              ;; NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                              ;; BROADBAND_EVERYWHAR=fluxPlots__broadband_everywhar, $
                              ;; DIFFUSE_EVERYWHAR=fluxPlots__diffuse_everywhar, $
@@ -1868,7 +1881,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                            T_PROBOCC_PLOTRANGE=eSpec__t_probOcc_plotRange, $
                                            THISTDENOMINATOR=eSpec_tHistDenominator, $
                                            NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
-                                           COMBINE_ACCELERATED=Newell__comb_accelerated, $
+                                           COMB_ACCELERATED=Newell__comb_accelerated, $
                                            TMPLT_H2DSTR=tmplt_h2dStr, $
                                            H2DSTRS=h2dStrs, $
                                            ;; H2DMASKSTR=h2dMaskStr, $
@@ -2234,8 +2247,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
                            FOR_MAXIMUS=~KEYWORD_SET(no_maximus), $
                            FOR_ESPEC_DBS=KEYWORD_SET(no_maximus), $
                            IN_INDS=indices__eSpec, $
-                           IN_MLTS=eSpec__mlts, $
-                           IN_ILATS=eSpec__ilats, $
+                           IN_MLTS=eSpec__MLTsILATs, $
+                           ;; IN_ILATS=eSpec__ilats, $
                            FASTLOCINDS=fastLocInterped_i, $
                            H2DSTRARR=H2DStrArr, $
                            DATANAMEARR=dataNameArr, $
