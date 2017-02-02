@@ -17,44 +17,65 @@ PRO ALFDB_SWITCH_COORDS,dbStruct,coordStr,coordName,SUCCESS=success
      ENDELSE
   ENDIF
 
-  possibilities = STRLOWCASE(['ALT','MLT','ILAT'])
-  possPair      = STRLOWCASE(['ALT','MLT', 'LAT'])
+  possibilities = STRUPCASE(['ALT','MLT','ILAT','LNG'])
+  possPair      = STRUPCASE(['ALT','MLT', 'LAT','LNG'])
   nPoss         = N_ELEMENTS(possibilities)
 
-  dbTags        = STRLOWCASE(TAG_NAMES(dbStruct))
-  coordTags     = STRLOWCASE(TAG_NAMES(coordStr))
+  dbTags        = STRUPCASE(TAG_NAMES(dbStruct))
+  coordTags     = STRUPCASE(TAG_NAMES(coordStr))
 
   coordString   = coordName
   FOR k=0,nPoss-1 DO BEGIN
      tempI      = WHERE(dbTags    EQ possibilities[k])
      coordI     = WHERE(coordTags EQ possPair[k])
 
-     IF tempI[0] NE -1 AND coordI[0] NE -1 THEN BEGIN
+     CASE 1 OF
+        tempI[0] NE -1 AND coordI[0] NE -1: BEGIN
 
-        IF N_ELEMENTS(dbStruct.(tempI)) NE N_ELEMENTS(coordStr.(coordI)) THEN BEGIN
-           PRINT,'Mismatching numbers of elements! I don''t think this coordinate conversion is valid ...'
-           STOP
-        ENDIF
+           IF N_ELEMENTS(dbStruct.(tempI)) NE N_ELEMENTS(coordStr.(coordI)) THEN BEGIN
+              PRINT,'Mismatching numbers of elements! I don''t think this coordinate conversion is valid ...'
+              STOP
+           ENDIF
 
-        dbStruct.(tempI) = coordStr.(coordI)
-        
-        coordString += '_' + possibilities[k]
-        
-     ENDIF
+           dbStruct.(tempI) = coordStr.(coordI)
+           
+           coordString += '_' + possibilities[k]
+           
+        END
+        coordI[0] NE -1: BEGIN
 
-     IF TAG_EXIST(dbStruct,'info') THEN BEGIN
-        dbStruct.info.coords = coordString
-     ENDIF ELSE BEGIN
-        ;; IF TAG_EXIST(dbStruct,'coords') THEN BEGIN
-        ;;    dbStruct.coords = coordString
-        ;; ENDIF ELSE BEGIN
-        ;;    dbStruct        = CREATE_STRUCT(dbStruct,'COORDS',coordString)
-        ;; ENDELSE
-        PRINT,'FIX'
-        STOP
-     ENDELSE
+           PRINT,"Adding " + possPair[k] + " to DB ..."
+
+           IF N_ELEMENTS(dbStruct.(0)) NE N_ELEMENTS(coordStr.(coordI)) THEN BEGIN
+              PRINT,'Mismatching numbers of elements! I don''t think adding ' + $
+                    possPair[k] + ' is valid ...'
+              STOP
+           ENDIF
+
+           STR_ELEMENT,dbStruct,possPair[k],coordStr.(coordI),/ADD_REPLACE
+           ;; dbStruct.(tempI) = coordStr.(coordI)
+           
+           coordString += '_' + possibilities[k]
+           
+        END
+        ELSE: BEGIN
+           PRINT,"Couldn't find " + possPair[k] + " in coordStr ..."
+        END
+     ENDCASE
 
   ENDFOR
+
+  IF TAG_EXIST(dbStruct,'info') THEN BEGIN
+     dbStruct.info.coords = coordString
+  ENDIF ELSE BEGIN
+     ;; IF TAG_EXIST(dbStruct,'coords') THEN BEGIN
+     ;;    dbStruct.coords = coordString
+     ;; ENDIF ELSE BEGIN
+     ;;    dbStruct        = CREATE_STRUCT(dbStruct,'COORDS',coordString)
+     ;; ENDELSE
+     PRINT,'FIX'
+     STOP
+  ENDELSE
 
   success = 1B
 
