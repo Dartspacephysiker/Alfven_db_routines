@@ -25,14 +25,19 @@ FUNCTION GET_MLT_INDS,dbStruct,minM,maxM, $
   ENDIF ELSE BEGIN
      CASE 1 OF
         KEYWORD_SET(use_Lng): BEGIN
-           mlts           = dbStruct.Lng
-           flip           = WHERE(mlts LT 0)
+           flip           = WHERE(dbStruct.lng LT 0)
            IF flip[0] NE -1 THEN BEGIN
-              mlts[flip]  = ABS(mlts[flip]) + 180.
+              dbStruct.lng[flip]  = ABS(dbStruct.Lng[flip]) + 180.
+              ;; mlts[flip]  = ABS(mlts[flip]) + 180.
            ENDIF
+           mlts           = dbStruct.Lng
         END
         ELSE: BEGIN
            mlts           = dbStruct.mlt
+           flip           = WHERE(mlts LT 0)
+           IF flip[0] NE -1 THEN BEGIN
+              mlts[flip]  = ABS(mlts[flip]) + 24.
+           ENDIF
         END
      ENDCASE
   ENDELSE

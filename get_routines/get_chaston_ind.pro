@@ -300,9 +300,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
 
      ;;;;;;;;;;;;
      ;;Handle longitudes
-     MIMC__minMLT     = MIMC_struct.minM
-     MIMC__maxMLT     = MIMC_struct.maxM
-     MIMC__binMLT     = MIMC_struct.binM
+     MIMC__minMLT     = (KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM)
+     MIMC__maxMLT     = (KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM)
+     MIMC__binMLT     = (KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM)
      MIMC__dayside    = KEYWORD_SET(MIMC_struct.dayside)
      MIMC__nightside  = KEYWORD_SET(MIMC_struct.nightside)
      mlt_i            = GET_MLT_INDS(*pDBStruct, $

@@ -52,9 +52,11 @@ PRO ALFDB_SWITCH_COORDS,dbStruct,coordStr,coordName,SUCCESS=success
               STOP
            ENDIF
 
+           tmpInfo = dbStruct.info
+           STR_ELEMENT,dbStruct,'info',/DELETE
            STR_ELEMENT,dbStruct,possPair[k],coordStr.(coordI),/ADD_REPLACE
+           STR_ELEMENT,dbStruct,'info',tmpInfo,/ADD_REPLACE
            ;; dbStruct.(tempI) = coordStr.(coordI)
-           
            coordString += '_' + possibilities[k]
            
         END

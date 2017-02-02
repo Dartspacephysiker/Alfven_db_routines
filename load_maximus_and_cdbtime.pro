@@ -20,6 +20,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              CHASTDB=chastDB, $
                              DESPUNDB=despunDB, $
                              COORDINATE_SYSTEM=coordinate_system, $
+                             USE_LNG=use_lng, $
                              USE_AACGM_COORDS=use_AACGM, $
                              USE_GEI_COORDS=use_GEI, $
                              USE_GEO_COORDS=use_GEO, $
@@ -465,6 +466,17 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
            coordStr, $
            coordName, $
            SUCCESS=success
+     ENDIF
+
+     IF KEYWORD_SET(use_lng) THEN BEGIN
+        index = -1
+        STR_ELEMENT,(*pDBStruct),'lng',INDEX=index
+        IF index NE -1 THEN BEGIN
+           flip = WHERE((*pDBStruct).lng LT 0.)
+           IF flip[0] NE -1 THEN BEGIN
+              (*pDBStruct).lng[flip] += 360.
+           ENDIF
+        ENDIF
      ENDIF
 
      ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND((*pDBStruct),HEMI='BOTH')

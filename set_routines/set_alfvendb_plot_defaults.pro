@@ -39,6 +39,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    DESPUNDB=despunDB, $
    CHASTDB=chastDB, $
    COORDINATE_SYSTEM=coordinate_system, $
+   USE_LNG=use_Lng, $
    USE_AACGM_COORDS=use_AACGM, $
    USE_GEI_COORDS=use_GEI, $
    USE_GEO_COORDS=use_GEO, $
@@ -198,6 +199,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
         DONT_CORRECT_ILATS=dont_correct_ilats, $
         COORDINATE_SYSTEM=coordinate_system, $
+        USE_LNG=use_Lng, $
         USE_AACGM_COORDS=use_AACGM, $
         USE_GEI_COORDS=use_GEI, $
         USE_GEO_COORDS=use_GEO, $
@@ -354,7 +356,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
   IF KEYWORD_SET(despunDB) THEN despunStr  = '-despun' ELSE despunStr = ''
 
-  stopMe = KEYWORD_SET(use_AACGM) + KEYWORD_SET(use_GEI) + KEYWORD_SET(use_GEO) + KEYWORD_SET(use_MAG) + KEYWORD_SET(use_SDT)
+  lngAble = KEYWORD_SET(use_AACGM) + KEYWORD_SET(use_GEI) + KEYWORD_SET(use_GEO) + KEYWORD_SET(use_MAG) 
+  stopMe  = lngAble + KEYWORD_SET(use_SDT) ;have we set too many (i.e., gt 1) keywords?
   IF stopMe GT 1 THEN STOP
   CASE 1 OF
      KEYWORD_SET(use_AACGM): BEGIN
@@ -373,6 +376,15 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         coordStr = ''
      END
   ENDCASE
+
+  IF KEYWORD_SET(use_Lng) THEN BEGIN
+     IF KEYWORD_SET(lngAble) THEN BEGIN
+        coordStr += '_lng'
+     ENDIF ELSE BEGIN
+        PRINT,"You've requested use of longitudes, but that's incompatible with the coordinate system you've selected: " + coordStr
+        STOP
+     ENDELSE
+  ENDIF
 
   IF KEYWORD_SET(load_dILAT ) THEN coordStr += '_dI'
   IF KEYWORD_SET(load_dAngle) THEN coordStr += '_dA'

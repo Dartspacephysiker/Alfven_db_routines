@@ -8,11 +8,12 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    FORCE_LOAD_ALL=force_load_all, $
                                    INCLUDE_32Hz=include_32Hz, $
                                    COORDINATE_SYSTEM=coordinate_system, $
-                                   USE_AACGM_COORDS=use_aacgm, $
-                                   USE_GEI_COORDS=use_gei, $
-                                   USE_GEO_COORDS=use_geo, $
-                                   USE_MAG_COORDS=use_mag, $
-                                   USE_SDT_COORDS=use_sdt, $
+                                   USE_LNG=use_lng, $
+                                   USE_AACGM_COORDS=use_AACGM, $
+                                   USE_GEI_COORDS=use_GEI, $
+                                   USE_GEO_COORDS=use_GEO, $
+                                   USE_MAG_COORDS=use_MAG, $
+                                   USE_SDT_COORDS=use_SDT, $
                                    FOR_ESPEC_DBS=for_eSpec_DBs, $
                                    ;; CHECK_DB=check_DB, $
                                    JUST_FASTLOC=just_fastLoc, $
@@ -469,6 +470,17 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
            SUCCESS=success
 
         changedCoords = KEYWORD_SET(success)
+     ENDIF
+
+     IF KEYWORD_SET(use_lng) THEN BEGIN
+        index = -1
+        STR_ELEMENT,(*pDBStruct),'lng',INDEX=index
+        IF index NE -1 THEN BEGIN
+           flip = WHERE((*pDBStruct).lng LT 0.)
+           IF flip[0] NE -1 THEN BEGIN
+              (*pDBStruct).lng[flip] += 360.
+           ENDIF
+        ENDIF
      ENDIF
 
      IF KEYWORD_SET(changeCoords) AND ~KEYWORD_SET(changedCoords) THEN STOP

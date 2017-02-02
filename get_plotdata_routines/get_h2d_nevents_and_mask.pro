@@ -54,13 +54,23 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
   ;; h2dFluxN           = HIST_2D(maximus.mlt[plot_i],$
-  mlts                  = (KEYWORD_SET(in_MLTS) ? in_MLTs : maximus.mlt[plot_i])-MIMC_struct.shiftM ;shift MLTs backwards, because we want to shift the binning FORWARD
-  swapme                = WHERE(mlts LT 0,nSwap)
-  IF nSwap GT 0 THEN BEGIN
-     mlts[swapme]       = mlts[swapme] + 24
-  ENDIF
-
-  horiz                 = KEYWORD_SET(in_ILATs) ? in_ILATs : ( (KEYWORD_SET(MIMC_struct.do_lShell) ? maximus.lshell : maximus.ilat)[plot_i] )
+  CASE 1 OF
+     KEYWORD_SET(MIMC_struct.use_Lng): BEGIN
+        mlts             = (KEYWORD_SET(in_MLTS) ? in_MLTs : maximus.lng[plot_i])-MIMC_struct.shiftLng 
+        swapme           = WHERE(mlts LT 0,nSwap)
+        IF nSwap GT 0 THEN BEGIN
+           mlts[swapme]  = mlts[swapme] + 360.
+        ENDIF
+     END
+     ELSE: BEGIN
+        mlts             = (KEYWORD_SET(in_MLTS) ? in_MLTs : maximus.mlt[plot_i])-MIMC_struct.shiftM ;shift MLTs backwards, because we want to shift the binning FORWARD
+        swapme           = WHERE(mlts LT 0,nSwap)
+        IF nSwap GT 0 THEN BEGIN
+           mlts[swapme]  = mlts[swapme] + 24
+        ENDIF
+     END
+  ENDCASE
+  horiz                  = KEYWORD_SET(in_ILATs) ? in_ILATs : ( (KEYWORD_SET(MIMC_struct.do_lShell) ? maximus.lshell : maximus.ilat)[plot_i] )
 
   IF KEYWORD_SET(h2dStr.both_hemis) THEN horiz = ABS(horiz)
 

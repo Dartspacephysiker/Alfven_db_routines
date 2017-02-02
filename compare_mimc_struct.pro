@@ -60,6 +60,12 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
      inds_reset = 1B
   ENDIF
 
+  IF MIMC_struct1.globe NE MIMC_struct2.globe THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"globe", $
+           MIMC_struct1.globe,MIMC_struct2.globe
+     inds_reset = 1B
+  ENDIF
+
   IF MIMC_struct1.both_hemis NE MIMC_struct2.both_hemis THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"both_hemis", $
            MIMC_struct1.both_hemis,MIMC_struct2.both_hemis
@@ -76,6 +82,12 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"nightside", $
            MIMC_struct1.nightside,MIMC_struct2.nightside
      inds_reset = 1B
+  ENDIF
+
+  IF MIMC_struct1.use_Lng NE MIMC_struct2.use_Lng THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"use_Lng", $
+           MIMC_struct1.use_Lng,MIMC_struct2.use_Lng
+     DBs_reset  = 1B
   ENDIF
 
   IF MIMC_struct1.do_lShell NE MIMC_struct2.do_lShell THEN BEGIN
@@ -132,10 +144,12 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
                  'hemi', $
                  'north', $
                  'south', $
+                 'globe', $
                  'both_hemis', $
                  'dayside', $
                  'nightside', $
                  'do_lShell', $
+                 'use_Lng', $
                  'use_AACGM', $
                  'use_GEI', $
                  'use_GEO', $
