@@ -141,10 +141,15 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         DB_extras    = 'samp_t_le_0.01'
         is_128Hz     = 1
 
+        ;;someday, this is the corresponding string: 'fastLocDB-20160505_v0_0--samp_t_le_0.01'
+        ;; AACGM_file   = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_coords.sav'
+        ;; GEO_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--GEO_coords.sav'
+        ;; MAG_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--MAG_coords.sav'
         AACGM_file   = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--AACGM_coords.sav'
-        GEO_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--GEO_coords.sav'
-        MAG_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--MAG_coords.sav'
-        SDT_file     = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01--SDT_coords.sav'
+        GEI_file     = 'fastLocDB-20160505_v0_0--samp_t_le_0.01-GEI.sav'
+        GEO_file     = 'fastLocDB-20160505_v0_0--samp_t_le_0.01-GEO.sav'
+        MAG_file     = 'fastLocDB-20160505_v0_0--samp_t_le_0.01-MAG.sav'
+        SDT_file     = 'fastLocDB-20160505_v0_0--samp_t_le_0.01-SDT.sav'
         mapRatDir    = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
         mapRatFile   = 'mapratio_for_fastLoc_intervals4--500-16361--below_aur_oval--20160213--times--noDupes--sample_freq_le_0.01.dat'
      END
@@ -354,38 +359,38 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      IF KEYWORD_SET(coordinate_system) THEN BEGIN
         CASE STRUPCASE(coordinate_system) OF
            'AACGM': BEGIN
-              use_aacgm = 1
-              use_gei   = 0
-              use_geo   = 0
-              use_mag   = 0
+              use_AACGM = 1
+              use_GEI   = 0
+              use_GEO   = 0
+              use_MAG   = 0
               use_SDT   = 0
            END
            'GEI'  : BEGIN
-              use_aacgm = 0
-              use_gei   = 1
-              use_geo   = 0
-              use_mag   = 0
+              use_AACGM = 0
+              use_GEI   = 1
+              use_GEO   = 0
+              use_MAG   = 0
               use_SDT   = 0
            END
            'GEO'  : BEGIN
-              use_aacgm = 0
-              use_gei   = 0
-              use_geo   = 1
-              use_mag   = 0
+              use_AACGM = 0
+              use_GEI   = 0
+              use_GEO   = 1
+              use_MAG   = 0
               use_SDT   = 0
            END
            'MAG'  : BEGIN
-              use_aacgm = 0
-              use_gei   = 0
-              use_geo   = 0
-              use_mag   = 1
+              use_AACGM = 0
+              use_GEI   = 0
+              use_GEO   = 0
+              use_MAG   = 1
               use_SDT   = 0
            END
            'SDT'  : BEGIN
-              use_aacgm = 0
-              use_gei   = 0
-              use_geo   = 0
-              use_mag   = 0
+              use_AACGM = 0
+              use_GEI   = 0
+              use_GEO   = 0
+              use_MAG   = 0
               use_SDT   = 1
            END
         ENDCASE
@@ -400,7 +405,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
      changeCoords = 0B
 
-     IF KEYWORD_SET(use_aacgm) THEN BEGIN
+     IF KEYWORD_SET(use_AACGM) THEN BEGIN
 
         RESTORE,defCoordDir+AACGM_file
 

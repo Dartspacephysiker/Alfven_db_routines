@@ -195,7 +195,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         MINMLT=minMLT,MAXMLT=maxMLT, $
         BINM=binMLT, $
         SHIFTMLT=shiftMLT, $
-        MINILAT=minILAT,MAXILAT=maxILAT,BINI=binILAT, $
+        MINILAT=minILAT,MAXILAT=maxILAT,BINILAT=binILAT, $
         DONT_CORRECT_ILATS=dont_correct_ilats, $
         COORDINATE_SYSTEM=coordinate_system, $
         USE_AACGM_COORDS=use_AACGM, $
@@ -203,7 +203,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         USE_GEO_COORDS=use_GEO, $
         USE_MAG_COORDS=use_MAG, $
         USE_SDT_COORDS=use_SDT, $
-        MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINL=binLshell, $
+        MINLSHELL=minLshell,MAXLSHELL=maxLshell,BINLSHELL=binLshell, $
         REVERSE_LSHELL=reverse_lShell, $
         MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
         HEMI=hemi, $

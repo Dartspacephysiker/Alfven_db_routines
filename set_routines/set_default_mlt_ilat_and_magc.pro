@@ -1,7 +1,7 @@
 ;2015/01/01 Added NORTH, SOUTH, BOTH_HEMIS keywords
 PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   MAXMLT=maxM, $
-                                  BINM=binM, $
+                                  BINMLT=binM, $
                                   SHIFTMLT=shiftM, $
                                   USE_LNG=use_lng, $
                                   MINLNG=minLng, $
@@ -10,7 +10,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   SHIFTLNG=shiftLng, $
                                   MINILAT=minI, $
                                   MAXILAT=maxI, $
-                                  BINI=binI, $
+                                  BINILAT=binI, $
                                   SHIFTILAT=shiftI, $
                                   DONT_CORRECT_ILATS=dont_correct_ilats, $
                                   DO_LSHELL=do_lShell, $
