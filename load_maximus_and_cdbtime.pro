@@ -96,9 +96,15 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   MAG_file             = 'alfDB-20151222_v0_0-MAG.sav'
   SDT_file             = 'alfDB-20151222_v0_0-SDT.sav'
 
-  AACGM_file__despun   = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_coords--every_tstamp--20160824.sav'
-  GEO_file__despun     = 'Dartdb_20160508--502-16361_despun--maximus--GEO_coords.sav'
-  MAG_file__despun     = 'Dartdb_20160508--502-16361_despun--maximus--MAG_coords.sav'
+  ;; AACGM_file__despun   = 'Dartdb_20160508--502-16361_despun--maximus--AACGM_coords--every_tstamp--20160824.sav'
+  ;; GEO_file__despun     = 'Dartdb_20160508--502-16361_despun--maximus--GEO_coords.sav'
+  ;; MAG_file__despun     = 'Dartdb_20160508--502-16361_despun--maximus--MAG_coords.sav'
+
+  AACGM_file__despun   = 'alfDB-20160508_v0_0--despun-AACGM.sav'
+  GEI_file__despun     = 'alfDB-20160508_v0_0--despun-GEI.sav'
+  GEO_file__despun     = 'alfDB-20160508_v0_0--despun-GEO.sav'
+  MAG_file__despun     = 'alfDB-20160508_v0_0--despun-MAG.sav'
+  SDT_file__despun     = 'alfDB-20160508_v0_0--despun-SDT.sav'
 
   IF KEYWORD_SET(check_DB) THEN BEGIN
      maximus      = N_ELEMENTS(MAXIMUS__maximus)     GT 0 ? MAXIMUS__maximus     : !NULL

@@ -3,11 +3,12 @@ PRO JOURNAL__20170202__MAKE_AACGM_ETC_FOR_ALFDB__FASTDB_COORDINATE_CONVERSION__P
 
   COMPILE_OPT IDL2
 
+  despunDB                = 1
+
   ;;The following strings are output from GET_FAST_DB_STRING(maximus,/FOR_ALFDB)
   CASE 1 OF
      KEYWORD_SET(despunDB): BEGIN
         outFile_pref      = 'alfDB-20160508_v0_0--despun'
-
      END
      ELSE: BEGIN
         outFile_pref      = 'alfDB-20151222_v0_0' 
