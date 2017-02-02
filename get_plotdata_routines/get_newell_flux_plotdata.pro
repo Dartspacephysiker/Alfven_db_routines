@@ -27,7 +27,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                              ;; INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
                              INDICES__ESPEC=indices__eSpec, $
                              ;; INDICES__ION=indices__ion, $
-                             COMBINE_ACCELERATED=comb_accelerated, $
+                             COMB_ACCELERATED=comb_accelerated, $
                              ESPEC_MLT=eSpec_mlt, $
                              ESPEC_ILAT=eSpec_ilat, $
 
@@ -122,7 +122,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                                    OUT_II_LIST=out_ii_list, $
                                    RM_II_LIST=rm_ii_list, $
                                    SUMMARY=newell_analysis__output_summary, $
-                                   COMBINE_ACCELERATED=comb_accelerated, $
+                                   COMB_ACCELERATED=comb_accelerated, $
                                    SUM_LUN=sum_lun
 
      IF KEYWORD_SET(newell_analyze_multiply_by_type_probability) THEN BEGIN
@@ -136,7 +136,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                                               NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                                               NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                               /NEWELLPLOT_PROBOCCURRENCE, $
-                                              COMBINE_ACCELERATED=comb_accelerated, $
+                                              COMB_ACCELERATED=comb_accelerated, $
                                               TMPLT_H2DSTR=tmplt_h2dStr, $
                                               H2DSTRS=h2dStrs, $
                                               ;; H2DMASKSTR=h2dMaskStr, $
@@ -177,7 +177,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                                    NEWELLPLOT_AUTOSCALE=newellPlot_autoscale, $
                                    NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
                                    NEWELLPLOT_PROBOCCURRENCE=newellPlot_probOccurrence, $
-                                   COMBINE_ACCELERATED=comb_accelerated, $
+                                   COMB_ACCELERATED=comb_accelerated, $
                                    TMPLT_H2DSTR=tmplt_h2dStr, $
                                    H2DSTRS=h2dStrs, $
                                    H2DFLUXN=junk_h2dFluxN, $

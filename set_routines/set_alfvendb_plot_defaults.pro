@@ -83,7 +83,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    DO_LOGAVG_THE_TIMEAVG=do_logAvg_the_timeAvg, $
    DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
    NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
-   NEWELL__COMBINE_ACCELERATED=Newell__comb_accelerated, $
+   NEWELL__COMB_ACCELERATED=Newell__comb_accelerated, $
    FOR_ION_DBS=for_ion_DBs, $
    ION__NO_MAXIMUS=ion__no_maximus, $
    ION__NOMAPTO100KM=ion__noMap, $
@@ -523,24 +523,24 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                 maskStr+tMaskStr+EABinStr+inc_burstStr+polarContStr+paramStrSuffix
 
   ;;Shouldn't be leftover, unused params from batch call
-  IF ISA(e) THEN BEGIN
-     IF $
-        NOT tag_exist(e,"mirror") AND $
-        ~(TAG_EXIST(e,"plottitle") OR TAG_EXIST(e,"midnight")) $ ;keywords for interp_polar2dhist
-     THEN BEGIN                 ;Check for passed variables here
-        HELP,e
-        PRINT,e
-        PRINT,"Why the extra parameters? They have no home..."
-     ENDIF ELSE BEGIN
-        IF TAG_EXIST(e,"wholecap") THEN BEGIN
-           IF e.wholecap GT 0 THEN BEGIN
-              MIMC_struct.minM = 0.0
-              MIMC_struct.maxM = 24.0
-           ENDIF
-        ENDIF
-     ENDELSE
+  ;; IF ISA(e) THEN BEGIN
+  ;;    IF $
+  ;;       NOT tag_exist(e,"mirror") AND $
+  ;;       ~(TAG_EXIST(e,"plottitle") OR TAG_EXIST(e,"midnight")) $ ;keywords for interp_polar2dhist
+  ;;    THEN BEGIN                 ;Check for passed variables here
+  ;;       HELP,e
+  ;;       PRINT,e
+  ;;       PRINT,"Why the extra parameters? They have no home..."
+  ;;    ENDIF ELSE BEGIN
+  ;;       IF TAG_EXIST(e,"wholecap") THEN BEGIN
+  ;;          IF e.wholecap GT 0 THEN BEGIN
+  ;;             MIMC_struct.minM = 0.0
+  ;;             MIMC_struct.maxM = 24.0
+  ;;          ENDIF
+  ;;       ENDIF
+  ;;    ENDELSE
 
-  ENDIF
+  ;; ENDIF
 
   ;;Check on ILAT stuff; if I don't do this, all kinds of plots get boogered up
   IF ( (MIMC_struct.maxI-MIMC_struct.minI) MOD MIMC_struct.binI ) NE 0 AND $

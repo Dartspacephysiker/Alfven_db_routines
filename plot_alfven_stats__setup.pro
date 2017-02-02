@@ -149,7 +149,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
    ;; HOYDIA=hoyDia, $
    NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
-   NEWELL__COMBINE_ACCELERATED=Newell__combine_accelerated, $
+   ;; NEWELL__COMB_ACCELERATED=Newell__comb_accelerated, $
    ION__NO_MAXIMUS=ion__no_maximus, $
    ION__NOMAPTO100KM=ion__noMap, $
    ION__DOWNGOING=ion__downgoing, $
@@ -419,7 +419,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      ;; HOYDIA=hoyDia, $
      LUN=lun, $
      NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
-     NEWELL__COMBINE_ACCELERATED=Newell__combine_accelerated, $
+     NEWELL__COMB_ACCELERATED=Newell__comb_accelerated, $
      FOR_ION_DBS=for_ion_DBs, $
      ION__NO_MAXIMUS=ion__no_maximus, $
      ION__NOMAPTO100KM=ion__noMap, $
