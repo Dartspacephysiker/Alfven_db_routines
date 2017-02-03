@@ -30,18 +30,30 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
      inds_reset = 1B
   ENDIF
 
-  IF MIMC_struct1.minLng NE MIMC_struct2.minLng THEN BEGIN
-     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"minLng", $
-           MIMC_struct1.minLng,MIMC_struct2.minLng
-     inds_reset = 1B
+  exist1 = -1
+  exist2 = -1
+  STR_ELEMENT,MIMC_struct1,'minLng',exist1
+  STR_ELEMENT,MIMC_struct2,'minLng',exist2
+  IF (exist1 NE -1) AND (exist2 NE -1) THEN BEGIN
+     IF MIMC_struct1.minLng NE MIMC_struct2.minLng THEN BEGIN
+        PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"minLng", $
+              MIMC_struct1.minLng,MIMC_struct2.minLng
+        inds_reset = 1B
+     ENDIF
   ENDIF
 
-  IF MIMC_struct1.maxLng NE MIMC_struct2.maxLng THEN BEGIN
-     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"maxLng", $
-           MIMC_struct1.maxLng,MIMC_struct2.maxLng
-     inds_reset = 1B
+  exist1 = -1
+  exist2 = -1
+  STR_ELEMENT,MIMC_struct1,'maxLng',exist1
+  STR_ELEMENT,MIMC_struct2,'maxLng',exist2
+  IF (exist1 NE -1) AND (exist2 NE -1) THEN BEGIN
+     IF MIMC_struct1.maxLng NE MIMC_struct2.maxLng THEN BEGIN
+        PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"maxLng", $
+              MIMC_struct1.maxLng,MIMC_struct2.maxLng
+        inds_reset = 1B
+     ENDIF
   ENDIF
-
+  
   IF MIMC_struct1.minI NE MIMC_struct2.minI THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"minI", $
            MIMC_struct1.minI,MIMC_struct2.minI
