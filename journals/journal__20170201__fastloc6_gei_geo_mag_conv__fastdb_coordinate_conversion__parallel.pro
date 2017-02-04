@@ -3,6 +3,8 @@ PRO JOURNAL__20170201__FASTLOC6_GEI_GEO_MAG_CONV__FASTDB_COORDINATE_CONVERSION__
 
   COMPILE_OPT IDL2
 
+  check_if_exists         = 1
+
   for_eSpec_DBs           = 1
   CASE 1 OF
      KEYWORD_SET(for_eSpec_DBs): BEGIN
