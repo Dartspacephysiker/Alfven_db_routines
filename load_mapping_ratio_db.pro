@@ -4,6 +4,7 @@ PRO LOAD_MAPPING_RATIO_DB,mapRatio, $
                           DBFile=DBFile, $
                           DESPUNDB=despunDB, $
                           CHASTDB=chastDB, $
+                          QUIET=quiet, $
                           LUN=lun
   
   COMPILE_OPT idl2
@@ -35,7 +36,7 @@ PRO LOAD_MAPPING_RATIO_DB,mapRatio, $
         END
      ENDCASE
 
-     PRINTF,lun,'Mapping Poynting fluxes using mapping ratios for ' + dbName + ' DB ...'
+     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'Mapping Poynting fluxes using mapping ratios for ' + dbName + ' DB ...'
   ENDIF
 
   IF N_ELEMENTS(mapRatio) EQ 0 THEN BEGIN
@@ -45,7 +46,7 @@ PRO LOAD_MAPPING_RATIO_DB,mapRatio, $
         STOP
      ENDIF
   ENDIF ELSE BEGIN
-     PRINTF,lun,"There is already a mapRatio struct loaded! Not loading " + DBFile
+     IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,"There is already a mapRatio struct loaded! Not loading " + DBFile
   ENDELSE
 
 END

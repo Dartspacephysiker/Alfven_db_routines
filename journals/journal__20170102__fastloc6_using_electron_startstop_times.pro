@@ -4,16 +4,19 @@ PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
 
   COMPILE_OPT IDL2
 
-  PRINT,"WAIT! You have to clean up all the Je_times inds for orbits 16362–50000, you know"
-  STOP
-
   startOrb = 500
-  stopOrb  = 23999
+  stopOrb  = 24507
 
-  resumeFromTmp = 1
+  resumeFromTmp = 0
+
+  jeDir    = '/home/spencerh/software/sdt/batch_jobs/saves_output_etc/eesa_time_intervals/'
 
   outDir   = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals6/'
   outFile  = STRING(FORMAT='("fastLoc_intervals6--",A0,"--",I0,"-",I0,"--Je_times.sav")', $
+                    GET_TODAY_STRING(/DO_YYYYMMDD_FMT), $
+                    startOrb, $
+                    stopOrb)
+  outMFile = STRING(FORMAT='("fastLoc_intervals6--",A0,"--",I0,"-",I0,"--Je_times--mapRatio.sav")', $
                     GET_TODAY_STRING(/DO_YYYYMMDD_FMT), $
                     startOrb, $
                     stopOrb)
@@ -30,14 +33,15 @@ PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
                     alt    :   MAKE_ARRAY(nElem,/FLOAT), $
                     MLT    :   MAKE_ARRAY(nElem,/FLOAT), $
                     ILAT   :   MAKE_ARRAY(nElem,/FLOAT)}
-
+  mapRatio       = MAKE_ARRAY(nElem,/FLOAT)
+  
   ;;Start 'er up
   curElem        = 0L
   TIC
   orbClock       = 'fastLoc6'
   ticTocClock    = TIC(orbClock)
 
-  checkInterval  = 100
+  checkInterval  = 5000
   CASE 1 OF
      KEYWORD_SET(resumeFromTmp): BEGIN
         IF FILE_TEST(outDir+tmpFile) THEN BEGIN
@@ -46,6 +50,7 @@ PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
            startOrb       = TEMPORARY(startOrbSav)
            stopOrb        = TEMPORARY(stoporbSav)
            fastLoc        = TEMPORARY(fastLocSav)
+           mapRatio       = TEMPORARY(mapRatioSav)
            checkInterval  = TEMPORARY(checkIntervalSav)
            curElem        = TEMPORARY(curElemSav)
         ENDIF ELSE BEGIN
@@ -56,72 +61,147 @@ PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
         PRINT,'Beginning creation of fastLoc6 ...'
      END
   ENDCASE
-  FOR orb=startOrb,stopOrb DO BEGIN
+
+  orb = startOrb
+  ;; FOR orb=startOrb,stopOrb DO BEGIN
+  WHILE orb LT stopOrb DO BEGIN
 
      this = LOAD_JE_AND_JE_TIMES_FOR_ORB(orb, $
                                          /USE_DUPELESS_FILES, $
                                          TIME_RANGES_OUT=tmpTRanges, $
-                                         NINTERVALS_OUT=tmpNIntervals)
-     IF this EQ 0 THEN BEGIN
-        FOR k=0,tmpNIntervals-1 DO BEGIN
-           GET_FA_ORBIT, $
-              tmpTRanges[k,0], $
-              tmpTRanges[k,1], $
-              DELTA_T=2.5, $
-              /DEFINITIVE
+                                         NINTERVALS_OUT=tmpNIntervals, $
+                                         OUT_FILE_ORB1=orb1, $
+                                         OUT_FILE_ORB2=orb2, $
+                                         OUT_JEFILENAME=out_jeFileName)
 
-           GET_DATA,'ORBIT',DATA=tmpOrb
-           GET_DATA,'ALT',DATA=tmpAlt
-           GET_DATA,'ILAT',DATA=tmpILAT
-           GET_DATA,'MLT',DATA=tmpMLT
+     RESTORE,jeDir+out_jeFileName
 
-           bro     = N_ELEMENTS(tmpOrb.x)
-           tmpInds = [curElem:(curElem+bro-1)]
+     ;; PRINT,'out_jeFileName: ',out_jeFileName
+     ;; times = !NULL & FOREACH struct,je_hash DO time = [times,struct.x]
+;; help,je_trange_hash[1002]
+;; <Expression>    DOUBLE    = Array[1, 2]
 
-           fastLoc.x[tmpInds] = tmpOrb.x
-           fastLoc.orbit[tmpInds] = tmpOrb.y
-           fastLoc.alt[tmpInds] = tmpAlt.y
-           fastLoc.mlt[tmpInds] = tmpMlt.y
-           fastLoc.ilat[tmpInds] = tmpIlat.y
+     times = !NULL
+     lastStartT = 0
+     lastStopT  = 0
+     keys = LIST_TO_1DARRAY(je_tRange_hash.keys())
 
-           curElem += bro
+     keys = keys[SORT(keys)]
+     FOREACH key,keys DO BEGIN
+        ;; FOREACH tRange,je_tRange_hash,key DO BEGIN
+        tRange = je_tRange_hash[key]
+        FOR k=0,N_ELEMENTS(tRange[*,0])-1 DO BEGIN
+           startT = tRange[k,0]
+           stopT  = tRange[k,1]
+
+           IF (startT LE lastStartT) OR (stopT LE lastStopT) OR (startT LE lastStopT) THEN BEGIN
+              PRINT,"WHATTTTT FOR ORBIT " + STRCOMPRESS(key,/REMOVE_ALL)
+           ENDIF
+           times = [times, $
+                    MAKE_EVENLY_SPACED_TIME_SERIES(DELTA_T=2.5, $
+                                                   START_T=startT, $
+                                                   STOP_T=stopT)]
+
+           lastStartT = startT
+           lastStopT  = stopT
         ENDFOR
-                                         
+     ENDFOREACH
+
+     IF (WHERE((times[1:-1]-times[0:-2]) LT 0))[0] NE -1 THEN STOP
+
+     ;; IF this EQ 0 THEN BEGIN
+        ;; FOR k=0,tmpNIntervals-1 DO BEGIN
+        GET_FA_ORBIT, $
+           times, $
+           /TIME_ARRAY, $
+           /ALL, $
+           ;; DELTA_T=2.5, $
+           /DEFINITIVE
+
+        ;; GET_FA_ORBIT, $
+        ;;    tmpTRanges[k,0], $
+        ;;    tmpTRanges[k,1], $
+        ;;    /ALL, $
+        ;;    DELTA_T=2.5, $
+        ;;    /DEFINITIVE
+
+        GET_DATA,'ORBIT',DATA=tmpOrb
+        GET_DATA,'ALT',DATA=tmpAlt
+        GET_DATA,'ILAT',DATA=tmpILAT
+        GET_DATA,'MLT',DATA=tmpMLT
+        GET_DATA,'B_model',DATA=bMod
+        GET_DATA,'BFOOT',DATA=bFoot
+
+        mag1      = (bMod.y[*,0]*bMod.y[*,0]+ $
+                     bMod.y[*,1]*bMod.y[*,1]+ $
+                     bMod.y[*,2]*bMod.y[*,2])^0.5
+        mag2      = (bFoot.y[*,0]*bFoot.y[*,0]+ $
+                     bFoot.y[*,1]*bFoot.y[*,1]+ $
+                     bFoot.y[*,2]*bFoot.y[*,2])^0.5
+        ratio     = TEMPORARY(mag2)/TEMPORARY(mag1)
+
+
+        bro     = N_ELEMENTS(tmpOrb.x)
+        tmpInds = [curElem:(curElem+bro-1)]
+
+        fastLoc.x[tmpInds]      = tmpOrb.x
+        fastLoc.orbit[tmpInds]  = (TEMPORARY(tmpOrb)).y
+        fastLoc.alt[tmpInds]    = (TEMPORARY(tmpAlt)).y
+        fastLoc.mlt[tmpInds]    = (TEMPORARY(tmpMlt)).y
+        fastLoc.ilat[tmpInds]   = (TEMPORARY(tmpIlat)).y
+        mapRatio[tmpInds]       = TEMPORARY(ratio)
+
+        curElem += bro
+        ;; ENDFOR
+        
+        PRINT,FORMAT='("Orbits ",I0,"-",I0)',orb1,orb2
+        TOC,ticTocClock
+
         IF ( (orb MOD checkInterval) EQ 0) THEN BEGIN
-           PRINT,FORMAT='("Orbit ",I0)',orb
-           TOC,ticTocClock
 
            startOrbSav       = startOrb
            stopOrbSav        = stopOrb
            orbSav            = orb
-           fastLocSav        = fastLoc
+           fastLocSav        = TEMPORARY(fastLoc)
+           mapRatioSav       = TEMPORARY(mapRatio)
            checkIntervalSav  = checkInterval
            curElemSav        = curElem
 
            PRINT,'Saving to tmpFile: ' + tmpFile + ' ...'
-           SAVE,startOrbSav,stopOrbSav,orbSav,fastLocSav,checkIntervalSav,curElemSav,FILENAME=outDir+tmpFile
+           SAVE,startOrbSav,stopOrbSav,orbSav,fastLocSav,mapRatioSav,checkIntervalSav,curElemSav,FILENAME=outDir+tmpFile
+
+           fastLoc           = TEMPORARY(fastLocSav)
+           mapRatio          = TEMPORARY(mapRatioSav)
 
         ENDIF
 
-     ENDIF ELSE BEGIN
-        ;; PRINT,"Issues with orbit " + STRCOMPRESS(orb,/REMOVE_ALL) + "!!"
-     ENDELSE
-        
-  ENDFOR
+     ;; ENDIF ELSE BEGIN
+     ;;    ;; PRINT,"Issues with orbit " + STRCOMPRESS(orb,/REMOVE_ALL) + "!!"
+     ;; ENDELSE
+     
+           orb = orb2 + 1
+
+  ENDWHILE
+  ;; ENDFOR
 
   ;;And where are we?
-  fastLoc        = {x      :   fastLoc.x[0:curElem-1], $
-                    orbit  :   fastLoc.orbit[0:curElem-1], $
-                    alt    :   fastLoc.alt[0:curElem-1], $
-                    MLT    :   fastLoc.mlt[0:curElem-1], $
-                    ILAT   :   fastLoc.ilat[0:curElem-1]}
+  fastLoc          = {x      :   fastLoc.x[0:(curElem-1)], $
+                      orbit  :   fastLoc.orbit[0:(curElem-1)], $
+                      alt    :   fastLoc.alt[0:(curElem-1)], $
+                      MLT    :   fastLoc.mlt[0:(curElem-1)], $
+                      ILAT   :   fastLoc.ilat[0:(curElem-1)]}
+  mapRatio         = mapRatio[0:(curElem-1)]
 
   PRINT,"Saving fastLoc6 to " + outFile + '...'
   SAVE,fastLoc,FILENAME=outDir+outFile
 
-  fastLoc_times = fastLoc.x
-  fastLoc_delta_t = MAKE_ARRAY(N_ELEMENTS(fastLoc.x),/FLOAT,VALUE=2.5)
+  PRINT,"Saving fastLoc6 mapRatio to " + outMFile + '...'
+  SAVE,mapRatio,FILENAME=outDir+outMFile
+
+  fastLoc_times    = fastLoc.x
+  fastLoc_delta_t  = MAKE_ARRAY(N_ELEMENTS(fastLoc.x),/FLOAT,VALUE=2.5)
   PRINT,"Saving fastLoc_times and fastLoc_delta_t to " + outTFile + '...'
   SAVE,fastLoc_times,fastLoc_delta_t,FILENAME=outDir+outTFile
+
 END
 
