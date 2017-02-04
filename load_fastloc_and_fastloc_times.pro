@@ -136,7 +136,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         ;;fastLoc 6--is it any better?
         DefDBDir      = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals6/'
         defDBFile     = 'fastLoc_intervals6--20170204--500-24507--Je_times.sav'
-        defDB_tFile   = 'fastLoc_intervals5--20170204--500-24507--Je_times--time_and_delta_t.sav'
+        defDB_tFile   = 'fastLoc_intervals6--20170204--500-24507--Je_times--time_and_delta_t.sav'
         DB_date       = '20170204'
         DB_version    = 'v0.0'
         DB_extras     = 'no_TIME_tag/no_interval_startstop'

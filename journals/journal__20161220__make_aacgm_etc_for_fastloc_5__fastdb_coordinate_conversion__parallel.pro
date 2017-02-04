@@ -1,9 +1,9 @@
-;;12/20/16
+;;2016/12/20
 PRO JOURNAL__20161220__MAKE_AACGM_ETC_FOR_FASTLOC_5__FASTDB_COORDINATE_CONVERSION__PARALLEL
 
   COMPILE_OPT IDL2
 
-  for_eSpec_DBs           = 0
+  for_eSpec_DBs           = 1
   CASE 1 OF
      KEYWORD_SET(for_eSpec_DBs): BEGIN
         outFile_pref      = 'fastLoc_intervals5--20161129--500-16361--Je_times'
