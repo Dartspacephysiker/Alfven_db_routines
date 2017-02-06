@@ -11,19 +11,19 @@ FUNCTION GET_FAST_DB_STRING,DBStruct, $
   WHILE brokeBack DO BEGIN
      CASE 1 OF
         KEYWORD_SET(alfDB): BEGIN
-           pref = 'alfDB'
+           pref = 'alfDB-'
            brokeBack = 0
         END
         KEYWORD_SET(fastLocDB): BEGIN
-           pref = 'fastLocDB'
+           pref = 'fastLocDB-'
            brokeBack = 0
         END
         KEYWORD_SET(eSpecDB): BEGIN
-           pref = 'eSpecDB'
+           pref = 'eSpecDB_'
            brokeBack = 0
         END
         KEYWORD_SET(ionDB): BEGIN
-           pref = 'ionDB'
+           pref = 'ionDB_'
            brokeBack = 0
         END
         ELSE: BEGIN
@@ -45,7 +45,7 @@ FUNCTION GET_FAST_DB_STRING,DBStruct, $
 
   ENDWHILE
 
-  DBString = pref + '-' + DBStruct.info.DB_DATE + '_' + $
+  DBString = pref + DBStruct.info.DB_DATE + '_' + $
              (DBStruct.info.DB_version).Replace('.','_') + '--' + $
              DBStruct.info.DB_extras.Replace('/','--')
 
