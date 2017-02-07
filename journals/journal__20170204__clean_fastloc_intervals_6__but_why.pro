@@ -15,17 +15,41 @@ PRO JOURNAL__20170204__CLEAN_FASTLOC_INTERVALS_6__BUT_WHY
                    'fastLoc_intervals6--20170204--500-24507--Je_times-SDT.sav']
   coordStrName  = ['GEI','GEO','MAG','SDT']
 
+  uniqSavFile   = 'fastLoc_intervals6--20170204--500-24507--Je_times--uniq_inds_for_shrinking_DB--20170207.sav'
+
   mapRatDir     = defDBDir
   mapRatFile    = 'fastLoc_intervals6--20170204--500-24507--Je_times--mapRatio.sav'
 
   RESTORE,defDBDir+defDBFile
   RESTORE,defDBDir+defDB_tFile
 
-  uniq_i = UNIQ(fastLoc_times,SORT(fastLoc_times))
+  IF FILE_TEST(defDBDir+uniqSavFile) THEN BEGIN
+     PRINT,"Restoring fastLoc_intervals6 uniq inds file ..."
+     RESTORE,defDBDir+uniqSavFile
+     
+     IF (N_ELEMENTS(uniq_i  ) EQ 0) OR $
+        (N_ELEMENTS(nUniq   ) EQ 0) OR $
+        (N_ELEMENTS(nElem   ) EQ 0) OR $
+        (N_ELEMENTS(tagNames) EQ 0)    $
+     THEN BEGIN
+        PRINT,"Whoa! so what exactly was saved here?"
+        STOP
+     ENDIF
 
-  nUniq     = N_ELEMENTS(uniq_i)
-  nElem     = N_ELEMENTS(fastLoc_times)
-  tagNames = TAGNAMES(fastLoc)
+  ENDIF ELSE BEGIN
+
+     PRINT,"Getting uniq inds for fastLoc_intervals6 ..."
+
+     uniq_i = UNIQ(fastLoc.x,SORT(fastLoc.x))
+
+     nUniq     = N_ELEMENTS(uniq_i)
+     nElem     = N_ELEMENTS(fastLoc.x)
+     tagNames = TAG_NAMES(fastLoc)
+
+     PRINT,"Saving fastLoc_intervals6 uniq inds to " + uniqSavFile + ' ...'
+     SAVE,uniq_i,nUniq,nElem,tagNames,FILENAME=defDBDir+uniqSavFile
+
+  ENDELSE
 
   alreadyFixed = !NULL
   fastLoc_is_updated = 0B
@@ -50,7 +74,7 @@ PRO JOURNAL__20170204__CLEAN_FASTLOC_INTERVALS_6__BUT_WHY
   fastLoc_dt_AND_times_are_updated = 0B
   CASE 1 OF
      N_ELEMENTS(fastLoc_delta_t) EQ nUniq: BEGIN
-        alreadyFixed = [already_fixed,'fastLoc_delta_t']
+        alreadyFixed = [alreadyFixed,'fastLoc_delta_t']
      END
      ELSE: BEGIN
         PRINT,"Fixing fastLoc_delta_t ..."
@@ -59,16 +83,18 @@ PRO JOURNAL__20170204__CLEAN_FASTLOC_INTERVALS_6__BUT_WHY
      END
   ENDCASE
 
-  CASE 1 OF
-     N_ELEMENTS(fastLoc_delta_t) EQ nUniq: BEGIN
-        alreadyFixed = [already_fixed,'fastLoc_times']
-     END
-     ELSE: BEGIN
-        PRINT,"Fixing fastLoc_times ..."
-        fastLoc_times   = fastLoc_times[uniq_i]
-        fastLoc_dt_and_times_are_updated += 1B
-     END
-  ENDCASE
+  IF N_ELEMENTS(fastLoc_times) GT 0 THEN BEGIN
+     CASE 1 OF
+        (N_ELEMENTS(fastLoc_times) EQ nUniq): BEGIN
+           alreadyFixed = [alreadyFixed,'fastLoc_times']
+        END
+        ELSE: BEGIN
+           PRINT,"Fixing fastLoc_times ..."
+           fastLoc_times   = fastLoc_times[uniq_i]
+           fastLoc_dt_and_times_are_updated += 1B
+        END
+     ENDCASE
+  ENDIF
 
   STOP
 
@@ -97,15 +123,15 @@ PRO JOURNAL__20170204__CLEAN_FASTLOC_INTERVALS_6__BUT_WHY
      execStr = 'coordStr = TEMPORARY('+coordStrName[k]+')'
      IF ~EXECUTE(execStr) THEN STOP
      
-     tagNames = TAGNAMES(coordStr)
+     tagNames = TAG_NAMES(coordStr)
      nTags    = N_ELEMENTS(tagNames)
      FOR j=0,nTags-1 DO BEGIN
         ;; IF N_ELEMENTS(coordStr.(k)) EQ nElem THEN BEGIN
-        IF N_ELEMENTS(coordStr.(k)) EQ nUniq THEN BEGIN
-           alreadyFixed = [alreadyFixed,coordStrName+'.'+tagNames[k]]
+        IF N_ELEMENTS(coordStr.(j)) EQ nUniq THEN BEGIN
+           alreadyFixed = [alreadyFixed,coordStrName+'.'+tagNames[j]]
         ENDIF ELSE BEGIN
-           PRINT,"Replacing " + tagNames[k] + ' ...'
-           STR_ELEMENT,coordStr,tagNames[k],(coordStr.(k))[uniq_i],/ADD_REPLACE
+           PRINT,"Replacing " + tagNames[j] + ' ...'
+           STR_ELEMENT,coordStr,tagNames[j],(coordStr.(j))[uniq_i],/ADD_REPLACE
            coordStr_is_updated[k] += 1
         ENDELSE
 
@@ -135,6 +161,9 @@ PRO JOURNAL__20170204__CLEAN_FASTLOC_INTERVALS_6__BUT_WHY
      PRINT,"Updating mapRatio DB ..."
      mapRatio = mapRatio[uniq_i]
 
-     
+     STOP
 
+     SAVE,mapRatio,FILENAME=mapRatDir+mapRatFile
+  ENDIF
+     
 END

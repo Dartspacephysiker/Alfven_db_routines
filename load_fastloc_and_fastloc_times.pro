@@ -362,7 +362,15 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                  PRINT,"Mapping fastLoc delta-ts to 100 km ..."
                  RESTORE,mapRatDir+mapRatFile
                  ;; fastLoc_delta_t        = fastLoc_delta_t/SQRT((TEMPORARY(mapRatio)).ratio)
-                 (*pDB__delta_t)        = (*pDB__delta_t)/SQRT((TEMPORARY(mapRatio)).ratio)
+                 CASE 1 OF
+                    LONG(fastloc.info.db_date) GE 20170204: BEGIN
+                       IF N_ELEMENTS(mapRatio) NE N_ELEMENTS(*pDB__delta_t) THEN STOP
+                       (*pDB__delta_t)  = (*pDB__delta_t)/SQRT(TEMPORARY(mapRatio))
+                    END
+                    ELSE: BEGIN
+                       (*pDB__delta_t)  = (*pDB__delta_t)/SQRT((TEMPORARY(mapRatio)).ratio)
+                    END
+                 ENDCASE
                  fastLoc.info.is_mapped = 1B
               ENDIF ELSE BEGIN
                  PRINT,"Can't map fastLoc delta-ts to 100 km! mapRatio DB doesn't exist .."

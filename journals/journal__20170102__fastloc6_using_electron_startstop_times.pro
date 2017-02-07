@@ -198,10 +198,11 @@ PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
   PRINT,"Saving fastLoc6 mapRatio to " + outMFile + '...'
   SAVE,mapRatio,FILENAME=outDir+outMFile
 
-  fastLoc_times    = fastLoc.x
+  ;; fastLoc_times    = fastLoc.x ;;Don't need to include fastLoc_times since we can set fastLoc_has_times in LOAD_FASTLOC_AND_FASTLOC_TIMES
   fastLoc_delta_t  = MAKE_ARRAY(N_ELEMENTS(fastLoc.x),/FLOAT,VALUE=2.5)
   PRINT,"Saving fastLoc_times and fastLoc_delta_t to " + outTFile + '...'
-  SAVE,fastLoc_times,fastLoc_delta_t,FILENAME=outDir+outTFile
+  ;; SAVE,fastLoc_times,fastLoc_delta_t,FILENAME=outDir+outTFile
+  SAVE,fastLoc_delta_t,FILENAME=outDir+outTFile
 
 END
 
