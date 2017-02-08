@@ -109,7 +109,7 @@
   ilat_hcutoff = 90
   ilat_lcutoff = -90
 
-  orbit_hcutoff = 16361
+  orbit_hcutoff = 50000
   orbit_lcutoff = 500
 
   fieldsmode_lcutoff = 0
