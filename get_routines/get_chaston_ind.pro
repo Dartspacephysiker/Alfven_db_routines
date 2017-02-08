@@ -350,7 +350,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
         region_i          = CGSETINTERSECTION(ilat_i,mlt_i)
 
         ;;Kill everything below 35 deg MAG lat (trust me, see the output from JOURNAL__20170201__ESPEC_PLOTS__DURING_STORMPHASES__ALTERNATE_COORDS
-        IF ~is_maximus THEN BEGIN
+        Spence_cares = 0
+        IF ~is_maximus AND Spence_cares THEN BEGIN
            GET_INDS_ABOVE_35_MAGLAT,dBStruct,ilat_i, $
                                     /FOR_FASTLOC_DB
         ENDIF

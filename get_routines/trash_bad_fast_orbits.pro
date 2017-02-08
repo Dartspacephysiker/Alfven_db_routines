@@ -52,10 +52,12 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                                 [1788,1789], $
                                 [2681,2682], $
                                 [3091,3092], $
-                                [4247,4248]] ;Resulting from Round 4, 2017/01/17, and Round 5, 2017/01/21
+                                [4247,4248], $
+                                [17193-17195]] ;Resulting from Round 4, 2017/01/17, and Round 5, 2017/01/21
                                 ;Re-added several from 1028-1056 range based on this new
                                 ;JOURNAL__20170120__PLOT_JE_JEE_CHARE_WITH_GAPS_REMOVED that shows it all
-
+                                ;Not sure why I can't pull EESA data for orbs 17193–17195, since I was evidently able to at one point.
+                                ;The issue is that 17193–17195 are present in the eSpec DB, but I can't get ephemeris data for them
                              
 
 

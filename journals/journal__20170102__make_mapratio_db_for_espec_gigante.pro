@@ -7,16 +7,24 @@ PRO JOURNAL__20170102__MAKE_MAPRATIO_DB_FOR_ESPEC_GIGANTE
   @common__newell_espec.pro
 
   outDir    = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
-  outFile   = 'mapratio_for_eSpec_gigante--20170102--500-23999--Je_times.sav'
+  ;; outFile   = 'mapratio_for_eSpec_gigante--20170102--500-23999--Je_times.sav'
+  outFile   = 'mapratio_for_eSpec--20170203--500-24634--Je_times.sav'
 
   ;; LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime,/DO_CHASTDB
   ;; LOAD_FASTLOC_AND_FASTLOC_TIMES,DB_TFILE=db_tFile,/FOR_ESPEC_DBS
-  LOAD_NEWELL_ESPEC_DB,/GIGANTE,/DONT_MAP_TO_100KM,/REDUCED_DB
-
+  ;; LOAD_NEWELL_ESPEC_DB,/GIGANTE,/DONT_MAP_TO_100KM,/REDUCED_DB
+  LOAD_NEWELL_ESPEC_DB,NEWELL__eSpec, $
+                       /DONT_MAP_TO_100KM, $
+                       /REDUCED_DB, $
+                       /DONT_PERFORM_CORRECTION, $
+                       /DONT_CONVERT_TO_STRICT_NEWELL,  $
+                       /DO_NOT_MAP_DELTA_T, $
+                       /NO_MEMORY_LOAD
+  
   ;; FASTLOC_E__delta_t = !NULL
   ;; fastLoc_info = (TEMPORARY(FL_eSpec__fastLoc)).info
 
-  PRINT,'Getting mapRatios for fastLoc_intervals5 DB ...'
+  PRINT,'Getting mapRatios for eSpec--20170203 DB ...'
 
   info  = NEWELL__eSpec.info
   times = (TEMPORARY(NEWELL__eSpec)).x

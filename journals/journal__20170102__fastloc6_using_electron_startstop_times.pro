@@ -76,7 +76,7 @@ PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
 
      RESTORE,jeDir+out_jeFileName
 
-     ;; PRINT,'out_jeFileName: ',out_jeFileName
+     PRINT,'out_jeFileName: ',out_jeFileName
      ;; times = !NULL & FOREACH struct,je_hash DO time = [times,struct.x]
 ;; help,je_trange_hash[1002]
 ;; <Expression>    DOUBLE    = Array[1, 2]
@@ -86,26 +86,80 @@ PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
      lastStopT  = 0
      keys = LIST_TO_1DARRAY(je_tRange_hash.keys())
 
+     ;;what happens if I just get all of the times first?
+     tRangeArr = MAKE_ARRAY(10000,2,VALUE=0.D,/DOUBLE)
      keys = keys[SORT(keys)]
+     curElom = 0
      FOREACH key,keys DO BEGIN
         ;; FOREACH tRange,je_tRange_hash,key DO BEGIN
-        tRange = je_tRange_hash[key]
-        FOR k=0,N_ELEMENTS(tRange[*,0])-1 DO BEGIN
-           startT = tRange[k,0]
-           stopT  = tRange[k,1]
+        tRange  = je_tRange_hash[key]
+        nTRange = N_ELEMENTS(tRange[*,0])
 
-           IF (startT LE lastStartT) OR (stopT LE lastStopT) OR (startT LE lastStopT) THEN BEGIN
-              PRINT,"WHATTTTT FOR ORBIT " + STRCOMPRESS(key,/REMOVE_ALL)
-           ENDIF
-           times = [times, $
-                    MAKE_EVENLY_SPACED_TIME_SERIES(DELTA_T=2.5, $
-                                                   START_T=startT, $
-                                                   STOP_T=stopT)]
+        IF nTRange EQ 0 THEN BEGIN
+           PRINT,"Orb " + key
+           STOP
+           CONTINUE
+        ENDIF
 
-           lastStartT = startT
-           lastStopT  = stopT
-        ENDFOR
+        IF nTRange GT 1 THEN BEGIN
+           CHECK_SORTED,tRange[*,0],isStartSorted,/QUIET
+           CHECK_SORTED,tRange[*,1],isStopSorted,/QUIET
+           IF ~(isStartSorted AND isStopSorted) THEN STOP
+        ENDIF
+        
+        tRangeArr[[curElom:(curElom+nTRange-1)],0] = tRange[*,0]
+        tRangeArr[[curElom:(curElom+nTRange-1)],1] = tRange[*,1]
+
+        curElom += nTRange
+
+        ;; FOR k=0,N_ELEMENTS(tRange[*,0])-1 DO BEGIN
+        ;;    startT = tRange[k,0]
+        ;;    stopT  = tRange[k,1]
+
+        ;;    IF (startT LE lastStartT) OR (stopT LE lastStopT) OR (startT LE lastStopT) THEN BEGIN
+        ;;       PRINT,"WHATTTTT FOR ORBIT " + STRCOMPRESS(key,/REMOVE_ALL)
+        ;;    ENDIF
+        ;;    times = [times, $
+        ;;             MAKE_EVENLY_SPACED_TIME_SERIES(DELTA_T=2.5, $
+        ;;                                            START_T=startT, $
+        ;;                                            STOP_T=stopT)]
+
+        ;;    lastStartT = startT
+        ;;    lastStopT  = stopT
+        ;; ENDFOR
+
      ENDFOREACH
+     tRangeArr = tRangeArr[[0:(curElom-1)],*]
+
+     IF (WHERE((tRangeArr[*,1]-tRangeArr[*,0]) LE 0))[0] NE -1 THEN STOP
+     IF (WHERE((tRangeArr[[1:(curElom-1)],0]-tRangeArr[[0:(curElom-2)],0]) LE 0))[0] NE -1 THEN STOP
+     IF (WHERE((tRangeArr[[1:(curElom-1)],1]-tRangeArr[[0:(curElom-2)],1]) LE 0))[0] NE -1 THEN STOP
+
+     FOR k=0,curElom-1 DO BEGIN
+        times = [times,MAKE_EVENLY_SPACED_TIME_SERIES(DELTA_T=2.5, $
+                                                   START_T=tRangeArr[k,0], $
+                                                   STOP_T=tRangeArr[k,1])]
+     ENDFOR
+
+     ;; FOREACH key,keys DO BEGIN
+     ;;    ;; FOREACH tRange,je_tRange_hash,key DO BEGIN
+     ;;    tRange = je_tRange_hash[key]
+     ;;    FOR k=0,N_ELEMENTS(tRange[*,0])-1 DO BEGIN
+     ;;       startT = tRange[k,0]
+     ;;       stopT  = tRange[k,1]
+
+     ;;       IF (startT LE lastStartT) OR (stopT LE lastStopT) OR (startT LE lastStopT) THEN BEGIN
+     ;;          PRINT,"WHATTTTT FOR ORBIT " + STRCOMPRESS(key,/REMOVE_ALL)
+     ;;       ENDIF
+     ;;       times = [times, $
+     ;;                MAKE_EVENLY_SPACED_TIME_SERIES(DELTA_T=2.5, $
+     ;;                                               START_T=startT, $
+     ;;                                               STOP_T=stopT)]
+
+     ;;       lastStartT = startT
+     ;;       lastStopT  = stopT
+     ;;    ENDFOR
+     ;; ENDFOREACH
 
      IF (WHERE((times[1:-1]-times[0:-2]) LT 0))[0] NE -1 THEN STOP
 
@@ -154,7 +208,7 @@ PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
         curElem += bro
         ;; ENDFOR
         
-        PRINT,FORMAT='("Orbits ",I0,"-",I0)',orb1,orb2
+        PRINT,FORMAT='("Orbits ",I0,"-",I0," (",I0," elems so far)")',orb1,orb2,curElem
         TOC,ticTocClock
 
         IF ( (orb MOD checkInterval) EQ 0) THEN BEGIN
@@ -183,6 +237,8 @@ PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
 
   ENDWHILE
   ;; ENDFOR
+
+  STOP
 
   ;;And where are we?
   fastLoc          = {x      :   fastLoc.x[0:(curElem-1)], $
