@@ -5,7 +5,7 @@ PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
   COMPILE_OPT IDL2
 
   startOrb = 500
-  stopOrb  = 24507
+  stopOrb  = 25007
 
   resumeFromTmp = 0
 

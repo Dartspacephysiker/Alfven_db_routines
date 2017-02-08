@@ -8,7 +8,8 @@ PRO JOURNAL__20170201__FASTLOC6_GEI_GEO_MAG_CONV__FASTDB_COORDINATE_CONVERSION__
   for_eSpec_DBs           = 1
   CASE 1 OF
      KEYWORD_SET(for_eSpec_DBs): BEGIN
-        outFile_pref      = 'fastLoc_intervals6--20170207--500-24507--Je_times'
+        ;; outFile_pref      = 'fastLoc_intervals6--20170208--500-25007--Je_times'
+        outFile_pref      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop'
         DBDir             = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals6/'
      END
      ELSE: BEGIN
@@ -19,8 +20,8 @@ PRO JOURNAL__20170201__FASTLOC6_GEI_GEO_MAG_CONV__FASTDB_COORDINATE_CONVERSION__
   dry_run                 = 0
 
   ;; nCPUsToRun              = 7
-  ;; startCPU                = 0
-  ;; stopCPU                 = 6
+  ;; startCPU                = 2
+  ;; stopCPU                 = 3
 
   diag                    = 0 ;diagnostic mode
 
