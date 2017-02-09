@@ -631,12 +631,16 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                        FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl' ;Attempt to recreate (sort of) Bin's color bar
                  ENDELSE
 
+                 IF H2DStrArr[j].cb_divFactor NE 1.0 THEN BEGIN
+                    cb_info.range /= H2DStrArr[j].cb_divFactor
+                 ENDIF
+
                  CGCOLORBAR,NCOLORS=cb_info.nColors, $
-                            XLOG=cb_info.XLOG, $
-                            BOTTOM=cb_info.BOTTOM, $
+                            XLOG=cb_info.xLog, $
+                            BOTTOM=cb_info.bottom, $
                             OOB_LOW=TAG_EXIST(cb_info,'OOB_Low'  ) ? cb_info.OOB_Low  : !NULL, $
                             OOB_HIGH=TAG_EXIST(cb_info,'OOB_High') ? cb_info.OOB_High : !NULL, $
-                            RANGE=cb_info.RANGE, $
+                            RANGE=cb_info.range, $
                             TITLE=!NULL, $ ;cb_info.TITLE, $
                             DIVISIONS=(TAG_EXIST(cb_info,'cbNDivisions') ? cb_info.cbNDivisions : !NULL), $
                             TICKNAMES=(TAG_EXIST(cb_info,'cbTickNames') ? cb_info.cbTickNames : !NULL), $

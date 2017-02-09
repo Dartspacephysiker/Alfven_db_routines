@@ -1,6 +1,7 @@
 ;;02/09/17
 FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
    maximus,cdbTime,eSpec,fName, $
+   USER_INDS=user_inds, $
    USE_COMMON_VARS=use_common_vars
 
   COMPILE_OPT IDL2
@@ -53,6 +54,11 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
 
   RESTORE,file
 
+  nInds           = N_ELEMENTS(alf_into_eSpecDB.inds)
+  IF nInds NE N_ELEMENTS(*pAlfTime) THEN BEGIN
+     PRINT,"Unequal numbers of inds into eSpecDB and AlfDB times! Care to inspect?"
+     STOP
+  ENDIF
 
   hadeSpec        = 0B
   IF KEYWORD_SET(eSpec) THEN BEGIN
@@ -130,8 +136,20 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
      RETURN,-1
   ENDIF
   
+  IF KEYWORD_SET(user_inds) THEN BEGIN
+     IF (MAX(user_inds) GE nInds) OR (N_ELEMENTS(user_inds) GT nInds) THEN BEGIN
+        PRINT,"There is almost certainly an issue. You've got more user_inds than is lawful in this sitiation. (I ALWAYS mean sitiation.)"
+        STOP
+     ENDIF
+  ENDIF ELSE BEGIN
+     user_inds          = LINDGEN(nInds)
+  ENDELSE
+
+  alf_into_eSpecDB_inds = alf_into_eSpecDB.inds[user_inds]
+
+  ;;Now do what we came for
   maxTDiff         = 10.
-  tDiff            = (*peSpecDB).x[alf_into_eSpecDB.inds]-(*pAlfTime)
+  tDiff            = (*peSpecDB).x[alf_into_eSpecDB_inds]-((*pAlfTime)[user_inds])
   disqualified_i   = WHERE(ABS(tDiff) GE maxTDiff, $
                            nDisqualified)
   IF ~KEYWORD_SET(quiet) THEN BEGIN
@@ -139,18 +157,18 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
            nDisqualified,maxTDiff
   ENDIF
 
-  alfDB_eSpec     = {x          : (*peSpecDB).x         [alf_into_eSpecDB.inds], $
-                     orbit      : (*peSpecDB).orbit     [alf_into_eSpecDB.inds], $
-                     MLT        : (*peSpecDB).MLT       [alf_into_eSpecDB.inds], $
-                     ILAT       : (*peSpecDB).ILAT      [alf_into_eSpecDB.inds], $
-                     alt        : (*peSpecDB).alt       [alf_into_eSpecDB.inds], $
-                     mono       : (*peSpecDB).mono      [alf_into_eSpecDB.inds], $
-                     broad      : (*peSpecDB).broad     [alf_into_eSpecDB.inds], $
-                     diffuse    : (*peSpecDB).diffuse   [alf_into_eSpecDB.inds], $
-                     je         : (*peSpecDB).je        [alf_into_eSpecDB.inds], $
-                     jee        : (*peSpecDB).jee       [alf_into_eSpecDB.inds], $
-                     nBad_eSpec : (*peSpecDB).nBad_eSpec[alf_into_eSpecDB.inds], $
-                     mapFactor  : (*peSpecDB).mapFactor [alf_into_eSpecDB.inds], $
+  alfDB_eSpec     = {x          : (*peSpecDB).x         [alf_into_eSpecDB_inds], $
+                     orbit      : (*peSpecDB).orbit     [alf_into_eSpecDB_inds], $
+                     MLT        : (*peSpecDB).MLT       [alf_into_eSpecDB_inds], $
+                     ILAT       : (*peSpecDB).ILAT      [alf_into_eSpecDB_inds], $
+                     alt        : (*peSpecDB).alt       [alf_into_eSpecDB_inds], $
+                     mono       : (*peSpecDB).mono      [alf_into_eSpecDB_inds], $
+                     broad      : (*peSpecDB).broad     [alf_into_eSpecDB_inds], $
+                     diffuse    : (*peSpecDB).diffuse   [alf_into_eSpecDB_inds], $
+                     je         : (*peSpecDB).je        [alf_into_eSpecDB_inds], $
+                     jee        : (*peSpecDB).jee       [alf_into_eSpecDB_inds], $
+                     nBad_eSpec : (*peSpecDB).nBad_eSpec[alf_into_eSpecDB_inds], $
+                     mapFactor  : (*peSpecDB).mapFactor [alf_into_eSpecDB_inds], $
                      tDiff      : tDiff                                        , $
                      maxTDiff   : maxTDiff                                     , $
                      disqual_i  : disqualified_i                               , $

@@ -1043,7 +1043,14 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   cbSpacingStr_low                = (nLevels-1)/2-(N_ELEMENTS(is_OOBLow) GT 0 ? is_OOBLow : 0)
   cbSpacingStr_high               = (nLevels-1)/2-(N_ELEMENTS(is_OOBHigh) GT 0 ? is_OOBHigh : 0)
 
-  cbRange                         = (temp.is_logged AND temp.logLabels) ? 10.^(ROUND(temp.lim*100.)/100.) : temp.lim
+  cbRange                         = (temp.is_logged AND temp.logLabels) ? 10.^(ROUND(temp.lim*100.)/100.) : temp.lim 
+
+  ;;Check—do we have a divfactor? If not it's because the files are old
+  hasit = -2
+  STR_ELEMENT,temp,'cb_divfactor',INDEX=hasit 
+  IF (hasit LT 0) THEN BEGIN 
+     STR_ELEMENT,temp,'cb_divFactor',1.0,/ADD_REPLACE 
+  ENDIF
   IF temp.cb_divFactor NE 1.0 THEN BEGIN
      cbRange /= temp.cb_divFactor
   ENDIF
