@@ -1044,6 +1044,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   cbSpacingStr_high               = (nLevels-1)/2-(N_ELEMENTS(is_OOBHigh) GT 0 ? is_OOBHigh : 0)
 
   cbRange                         = (temp.is_logged AND temp.logLabels) ? 10.^(ROUND(temp.lim*100.)/100.) : temp.lim
+  IF temp.cb_divFactor NE 1.0 THEN BEGIN
+     cbRange /= temp.cb_divFactor
+  ENDIF
   cbTitle                         = KEYWORD_SET(suppress_titles) OR KEYWORD_SET(overplot) ? !NULL : plotTitle
 
 

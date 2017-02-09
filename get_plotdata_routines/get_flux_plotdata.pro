@@ -28,6 +28,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                       ABSFLUX=absFlux, $
                       OUT_REMOVED_II=out_removed_ii, $
                       LOGFLUXPLOT=logFluxPlot, $
+                      CB_DIVFACTOR=cb_divFactor, $
                       DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                       MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                       MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
@@ -166,6 +167,10 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   ;; H2DStr                    = {tmplt_H2DStr}
   H2DStr                    = tmplt_H2DStr
   H2DStr.is_fluxData        = 1
+
+  IF KEYWORD_SET(cb_divFactor) THEN BEGIN
+     H2DStr.cb_divFactor    = cb_divFactor
+  ENDIF
 
   IF KEYWORD_SET(get_eFlux) THEN BEGIN
      dataName               = "eFlux"

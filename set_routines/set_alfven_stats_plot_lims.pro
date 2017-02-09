@@ -20,6 +20,12 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
    CHARIEPLOTRANGE=chariEPlotRange, $
    LOGMAGCPLOT=logMagCPlot, $
    MAGCPLOTRANGE=magCPlotRange, $
+   CBEFDIVFAC=cbEFDivFac, $
+   CBENUMFLDIVFAC=cbENumFlDivFac, $
+   CBPFDIVFAC=CBPFDivFac, $
+   CBIFDIVFAC=cbIFDivFac, $
+   CBCHAREDIVFAC=cbCharEDivFac, $
+   CBMAGCDIVFAC=CBMagCDivFac, $
    ABSCHARE=absCharE, $
    ABSCHARIE=absCharie, $
    ABSEFLUX=abseflux, $
@@ -186,6 +192,12 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
   deflogMagCPlot              = 0B
   deflogOxyfPlot	      = 0B
   deflogPFPlot                = 0B
+  defcbEFDivFac               = 1.0
+  defcbENumFlDivFac           = 1.0
+  DefCBPFdivFac               = 1.0
+  defcbIFDivFac               = 1.0
+  defcbCharEDivFac            = 1.0
+  DefCBMagCDivFac             = 1.0
   defautoscale_eNumFlplots    = 0B
   defautoscale_fluxPlots      = 0B
   deforbContribAutoscale      = 0B
@@ -243,6 +255,12 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          logMagCPlot                 : deflogMagCPlot                , $
                          logOxyfPlot                 : deflogOxyfPlot                , $
                          logPFPlot                   : deflogPFPlot                  , $
+                         cbEFDivFac                  : defcbEFDivFac                 , $
+                         cbENumFlDivFac              : defcbENumFlDivFac             , $
+                         CBPFdivFac                  : DefCBPFdivFac                 , $
+                         cbIFDivFac                  : defcbIFDivFac                 , $
+                         cbCharEDivFac               : defcbCharEDivFac              , $
+                         CBMagCDivFac                : DefCBMagCDivFac               , $
                          autoscale_eNumFlplots       : defautoscale_eNumFlplots      , $
                          autoscale_fluxPlots         : defautoscale_fluxPlots        , $
                          orbContribAutoscale         : deforbContribAutoscale        , $
@@ -533,6 +551,53 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  /ADD_REPLACE
   ENDIF
   
+  IF N_ELEMENTS(cbEFDivFac) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'cbEFDivFac', $
+                 cbEFDivFac, $
+                 /ADD_REPLACE
+  ENDIF
+
+  
+  IF N_ELEMENTS(cbENumFlDivFac) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'cbENumFlDivFac', $
+                 cbENumFlDivFac, $
+                 /ADD_REPLACE
+  ENDIF
+
+
+  IF N_ELEMENTS(CBPFdivFac) GT 0 THEN BEGIN
+     STR_ELEMENT,AlfDB_PlotLim_Struct, $
+                 'CBPFdivFac', $
+                 CBPFdivFac, $
+                 /ADD_REPLACE
+  ENDIF
+
+  
+  IF N_ELEMENTS(cbIFDivFac) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'cbIFDivFac', $
+                 cbIFDivFac, $
+                 /ADD_REPLACE
+  ENDIF
+
+  
+  IF N_ELEMENTS(cbCharEDivFac) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'cbCharEDivFac', $
+                 cbCharEDivFac, $
+                 /ADD_REPLACE
+  ENDIF
+
+ 
+  IF N_ELEMENTS(CBMagCDivFac) GT 0 THEN BEGIN
+     STR_ELEMENT,AlfDB_PlotLim_Struct, $
+                 'CBMagCDivFac', $
+                 CBMagCDivFac, $
+                 /ADD_REPLACE
+  ENDIF
+
   IF N_ELEMENTS(autoscale_eNumFlplots) GT 0 THEN BEGIN
      STR_ELEMENT,alfDB_plotLim_struct, $
                  'autoscale_eNumFlplots', $

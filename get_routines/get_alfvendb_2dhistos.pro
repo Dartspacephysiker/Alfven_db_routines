@@ -24,6 +24,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NOPOSEFLUX=noPosEFlux, $
    NONEGEFLUX=noNegEflux, $
    EPLOTRANGE=EPlotRange, $
+   CBEFDIVFAC=cbEFDivFac, $
    ENUMFLPLOTS=eNumFlPlots, $
    ENUMFLPLOTTYPE=eNumFlPlotType, $
    LOGENUMFLPLOT=logENumFlPlot, $
@@ -31,6 +32,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NONEGENUMFL=noNegENumFl, $
    NOPOSENUMFL=noPosENumFl, $
    ENUMFLPLOTRANGE=ENumFlPlotRange, $
+   CBENUMFLDIVFAC=cbENumFlDivFac, $
    AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
    NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
    NEWELL_ANALYZE_MULTIPLY_BY_TYPE_PROBABILITY=newell_analyze_multiply_by_type_probability, $
@@ -53,6 +55,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NONEGPFLUX=noNegPflux, $
    NOPOSPFLUX=noPosPflux, $
    PPLOTRANGE=PPlotRange, $
+   CBPFDIVFAC=CBPFdivFac, $
    IONPLOTS=ionPlots, $
    IFLUXPLOTTYPE=ifluxPlotType, $
    LOGIFPLOT=logIfPlot, $
@@ -60,6 +63,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NONEGIFLUX=noNegIflux, $
    NOPOSIFLUX=noPosIflux, $
    IPLOTRANGE=IPlotRange, $
+   CBIFDIVFAC=cbIFDivFac, $
    OXYPLOTS=oxyPlots, $
    OXYFLUXPLOTTYPE=oxyFluxPlotType, $
    LOGOXYFPLOT=logOxyfPlot, $
@@ -74,6 +78,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NONEGCHARE=noNegCharE, $
    NOPOSCHARE=noPosCharE, $
    CHAREPLOTRANGE=CharEPlotRange, $
+   CBCHAREDIVFAC=cbCharEDivFac, $
    CHARIEPLOTS=chariePlots, $
    LOGCHARIEPLOT=logChariePlot, $
    ABSCHARIE=absCharie, $
@@ -86,6 +91,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NONEGMAGC=noNegMagC, $
    NOPOSMAGC=noPosMagC, $
    MAGCPLOTRANGE=MagCPlotRange, $
+   CBMAGCDIVFAC=CBMagCDivFac, $
    AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -768,6 +774,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
            noPosFlux          = N_ELEMENTS(noPosEFlux) GT 0 ? noPosEFlux : !NULL
            noNegFlux          = N_ELEMENTS(noNegEFlux) GT 0 ? noNegEFlux : !NULL
            absFlux            = N_ELEMENTS(absEFlux)   GT 0 ? absEFlux   : !NULL
+           cb_divFactor       = N_ELEMENTS(cbEFDivFac) GT 0 ? cbEFDivFac : !NULL
            logPlot            = N_ELEMENTS(logEfPlot)  GT 0 ? logEfPlot  : !NULL
 
            GET_NEWELL_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_EFLUX, $
@@ -788,6 +795,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     NOPOSFLUX=noPosFlux, $
                                     NONEGFLUX=noNegFlux, $
                                     ABSFLUX=absFlux, $
+                                    CB_DIVFACTOR=CB_divFactor, $
                                     EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                                     INDICES__ESPEC=indices__eSpec, $
                                     COMB_ACCELERATED=Newell__comb_accelerated, $
@@ -864,6 +872,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
               ELSE: logPlot      = logEfPlot[i]
            ENDCASE
 
+           CASE N_ELEMENTS(cbEFDivFac) OF
+              0:   cb_divFactor  = !NULL
+              1:   cb_divFactor  = cbEFDivFac
+              ELSE: cb_divFactor = cbEFDivFac[i]
+           ENDCASE
+
            dims                  = SIZE(ePlotRange,/DIMENSIONS)
            CASE N_ELEMENTS(dims) OF 
               0:   plotRange     = !NULL
@@ -896,6 +910,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              NOPOSFLUX=noPosFlux, $
                              NONEGFLUX=noNegFlux, $
                              ABSFLUX=absFlux, $
+                             CB_DIVFACTOR=CB_divFactor, $
                              EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                              INDICES__ESPEC=indices__eSpec, $
                              ESPEC_MLTSILATS=eSpec__MLTsILATs, $
@@ -996,10 +1011,11 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
            ;;pass all plot ranges to GET_NEWELL_FLUX_PLOTDATA
            plotRange          = eNumFlPlotRange
-           noPosFlux          = N_ELEMENTS(noPosENumFl)   GT 0 ? noPosENumFl : !NULL
-           noNegFlux          = N_ELEMENTS(noNegENumFl)   GT 0 ? noNegENumFl : !NULL
-           absFlux            = N_ELEMENTS(absENumFl)     GT 0 ? absENumFl   : !NULL
-           logPlot            = N_ELEMENTS(logENumFlPlot) GT 0 ? logENumFlPlot  : !NULL
+           noPosFlux          = N_ELEMENTS(noPosENumFl)    GT 0 ? noPosENumFl    : !NULL
+           noNegFlux          = N_ELEMENTS(noNegENumFl)    GT 0 ? noNegENumFl    : !NULL
+           absFlux            = N_ELEMENTS(absENumFl)      GT 0 ? absENumFl      : !NULL
+           cb_divFactor       = N_ELEMENTS(cbENumFlDivFac) GT 0 ? cbENumFlDivFac : !NULL
+           logPlot            = N_ELEMENTS(logENumFlPlot)  GT 0 ? logENumFlPlot  : !NULL
 
            GET_NEWELL_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_ENUMFLUX, $
                                     ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -1019,6 +1035,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     NOPOSFLUX=noPosFlux, $
                                     NONEGFLUX=noNegFlux, $
                                     ABSFLUX=absFlux, $
+                                    CB_DIVFACTOR=CB_divFactor, $
                                     ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                                     INDICES__ESPEC=indices__eSpec, $
                                     COMB_ACCELERATED=Newell__comb_accelerated, $
@@ -1088,6 +1105,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
               ELSE: absFlux      = absENumFl[i]
            ENDCASE
 
+           CASE N_ELEMENTS(cbENumFlDivFac) OF
+              0:   cb_divFactor  = !NULL
+              1:   cb_divFactor  = cbENumFlDivFac
+              ELSE: cb_divFactor = cbENumFlDivFac[i]
+           ENDCASE
+
            CASE N_ELEMENTS(logENumFlPlot) OF
               0:   logPlot       = !NULL
               1:   logPlot       = logENumFlPlot
@@ -1126,6 +1149,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              NOPOSFLUX=noPosFlux, $
                              NONEGFLUX=noNegFlux, $
                              ABSFLUX=absFlux, $
+                             CB_DIVFACTOR=CB_divFactor, $
                              ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                              INDICES__ESPEC=indices__eSpec, $
                              ESPEC_MLTSILATS=eSpec__MLTsILATs, $
@@ -1205,6 +1229,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        NOPOSFLUX=noPosPflux, $
                        NONEGFLUX=noNegPflux, $
                        ABSFLUX=absPflux, $
+                       CB_DIVFACTOR=CBPFdivFac, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPfPlot)), $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -1306,6 +1331,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
            ELSE: absFlux      = absIFlux[i]
         ENDCASE
 
+        CASE N_ELEMENTS(cbIFDivFac) OF
+           0:   cb_divFactor  = !NULL
+           1:   cb_divFactor  = cbIFDivFac
+           ELSE: cb_divFactor = cbIFDivFac[i]
+        ENDCASE
+
         CASE N_ELEMENTS(logIfPlot) OF
            0:   logPlot       = !NULL
            1:   logPlot       = logIfPlot
@@ -1343,6 +1374,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                           NOPOSFLUX=noPosFlux, $
                           NONEGFLUX=noNegFlux, $
                           ABSFLUX=absFlux, $
+                          CB_DIVFACTOR=CB_divFactor, $
                           IFLUX_ION_DATA=iFlux_ion_data, $
                           INUMFLUX_ION_DATA=iNumFlux_ion_data, $
                           INDICES__ION=indices__ion, $
@@ -1515,10 +1547,11 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
            ;;pass all plot ranges to GET_NEWELL_FLUX_PLOTDATA
            plotRange          = charEPlotRange
-           noPosFlux          = N_ELEMENTS(noPosCharE)   GT 0 ? noPosCharE   : !NULL
-           noNegFlux          = N_ELEMENTS(noNegCharE)   GT 0 ? noNegCharE   : !NULL
-           absFlux            = N_ELEMENTS(absCharE)     GT 0 ? absCharE     : !NULL
-           logPlot            = N_ELEMENTS(logCharEPlot) GT 0 ? logCharEPlot : !NULL
+           noPosFlux          = N_ELEMENTS(noPosCharE)    GT 0 ? noPosCharE    : !NULL
+           noNegFlux          = N_ELEMENTS(noNegCharE)    GT 0 ? noNegCharE    : !NULL
+           absFlux            = N_ELEMENTS(absCharE)      GT 0 ? absCharE      : !NULL
+           cb_divFactor       = N_ELEMENTS(cbCharEDivFac) GT 0 ? cbCharEDivFac : !NULL
+           logPlot            = N_ELEMENTS(logCharEPlot)  GT 0 ? logCharEPlot  : !NULL
 
            GET_NEWELL_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_CHAREE, $
                                     ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -1538,6 +1571,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     NOPOSFLUX=noPosFlux, $
                                     NONEGFLUX=noNegFlux, $
                                     ABSFLUX=absFlux, $
+                                    CB_DIVFACTOR=CB_divFactor, $
                                     EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                                     INDICES__ESPEC=indices__eSpec, $
                                     COMB_ACCELERATED=Newell__comb_accelerated, $
@@ -1591,6 +1625,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
         ENDIF ELSE BEGIN        ;No newell analysis, just regular
 
 
+           CASE N_ELEMENTS(cbCharEDivFac) OF
+              0:   cb_divFactor  = !NULL
+              1:   cb_divFactor  = cbCharEDivFac
+              ELSE: cb_divFactor = cbCharEDivFac[i]
+           ENDCASE
+
            CASE N_ELEMENTS(logCharEPlot) OF
               0:   logPlot       = !NULL
               1:   logPlot       = logCharEPlot
@@ -1632,6 +1672,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              NOPOSFLUX=noPosCharE, $
                              NONEGFLUX=noNegCharE, $
                              ABSFLUX=absCharE, $
+                             CB_DIVFACTOR=cbCharEDivFac, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
                              DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -1779,6 +1820,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        NOPOSFLUX=noPosMagC, $
                        NONEGFLUX=noNegMagC, $
                        ABSFLUX=absMagC, $
+                       CB_DIVFACTOR=CBMagCDivFac, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logMagCPlot)), $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
@@ -2173,6 +2215,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                    NOPOSFLUX=noPosFlux, $
                                    NONEGFLUX=noNegFlux, $
                                    ABSFLUX=absFlux, $
+                                   CB_DIVFACTOR=CB_divFactor, $
                                    OUT_REMOVED_II=out_removed_ii, $
                                    LOGPLOT=log_custom, $
                                    DIVIDE_BY_WIDTH_X=divide_by_width_x, $

@@ -21,6 +21,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                              NOPOSFLUX=noPosFlux, $
                              NONEGFLUX=noNegFlux, $
                              ABSFLUX=absFlux, $
+                             CB_DIVFACTOR=CB_divFactor, $
                              EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                              ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                              ;; IFLUX_ESPEC_DATA=iFlux_eSpec_data, $
@@ -250,6 +251,12 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
         ELSE: logP      = logFluxPlot[k]
      ENDCASE
 
+     CASE N_ELEMENTS(cb_divFactor) OF
+        0:   cbDF       = !NULL
+        1:   cbDF       = cb_divFactor
+        ELSE: cbDF      = cb_divFactor[k]
+     ENDCASE
+
      dims                  = SIZE(plotRange,/DIMENSIONS)
      CASE N_ELEMENTS(dims) OF 
         0:   plotR     = !NULL
@@ -312,6 +319,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                        ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=logP, $
+                       CB_DIVFACTOR=cbDF, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                        MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                        MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $

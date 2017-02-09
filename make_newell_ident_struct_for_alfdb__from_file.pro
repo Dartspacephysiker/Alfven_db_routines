@@ -1,6 +1,6 @@
 ;;02/09/17
 FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
-   maximus,eSpec,fName, $
+   maximus,cdbTime,eSpec,fName, $
    USE_COMMON_VARS=use_common_vars
 
   COMPILE_OPT IDL2
@@ -18,13 +18,14 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
   IF KEYWORD_SET(maximus) THEN BEGIN
      hadMaximus   = 1B
      pAlfDB       = PTR_NEW(TEMPORARY(maximus))
+     pAlfTime     = PTR_NEW(TEMPORARY(cdbTime))
   ENDIF ELSE BEGIN
      @common__maximus_vars.pro
      IF N_ELEMENTS(MAXIMUS__maximus) EQ 0 THEN BEGIN
         LOAD_MAXIMUS_AND_CDBTIME
-
-        pAlfDB    = PTR_NEW(TEMPORARY(MAXIMUS__maximus))
      ENDIF
+        pAlfDB    = PTR_NEW(TEMPORARY(MAXIMUS__maximus))
+        pAlfTime  = PTR_NEW(TEMPORARY(MAXIMUS__times))
   ENDELSE
 
   IF ~KEYWORD_SET(file) THEN BEGIN
@@ -33,6 +34,20 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
 
   IF ~FILE_TEST(file) THEN BEGIN
      PRINT,"Couldn't find file: " + file + "! Returning ..."
+
+     IF hadMaximus THEN BEGIN
+        maximus           = TEMPORARY(*pAlfDB)
+        cdbTime           = TEMPORARY(*pAlfTime)
+     ENDIF ELSE BEGIN
+        MAXIMUS__maximus  = TEMPORARY(*pAlfDB)
+        MAXIMUS__times    = TEMPORARY(*pAlfTime)
+     ENDELSE
+
+     PTR_FREE,pAlfDB,pAlfTime
+     HEAP_FREE,pAlfDB,/PTR
+     HEAP_FREE,pAlfTime,/PTR
+     HEAP_GC
+
      RETURN,-1
   ENDIF
 
@@ -45,62 +60,126 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
      peSpecDB     = PTR_NEW(TEMPORARY(eSpec))
   ENDIF ELSE BEGIN
      @common__newell_espec.pro
-     IF N_ELEMENTS(MAXIMUS__maximus) EQ 0 THEN BEGIN
-        LOAD_NEWELL_ESPEC_DB
-
-        peSpecDB  = PTR_NEW(TEMPORARY(NEWELL__eSpec))
+     IF N_ELEMENTS(NEWELL__eSpec) EQ 0 THEN BEGIN
+        LOAD_NEWELL_ESPEC_DB,/DONT_CONVERT_TO_STRICT_NEWELL
      ENDIF
+        peSpecDB  = PTR_NEW(TEMPORARY(NEWELL__eSpec))
   ENDELSE
 
   IF alf_into_eSpecDB.alfDB_info.DB_date NE (*pAlfDB).info.DB_date THEN BEGIN
      PRINT,"Mismatching AlfDBs, je crois ..."
      PRINT,FORMAT='(A0,T25,": ",A0)',"alfDB_into_eSpecDB alfDB_date",alf_into_eSpecDB.alfDB_info.DB_date
      PRINT,FORMAT='(A0,T25,": ",A0)',"alfDB DB_date",(*pAlfDB).info.DB_date
+
+     IF hadMaximus THEN BEGIN
+        maximus           = TEMPORARY(*pAlfDB)
+        cdbTime           = TEMPORARY(*pAlfTime)
+     ENDIF ELSE BEGIN
+        IF KEYWORD_SET(use_common_vars) THEN BEGIN
+           MAXIMUS__maximus  = TEMPORARY(*pAlfDB)
+           MAXIMUS__times    = TEMPORARY(*pAlfTime)
+        ENDIF
+     ENDELSE
+
+     IF hadeSpec THEN BEGIN
+        eSpec             = TEMPORARY(*peSpecDB)
+     ENDIF ELSE BEGIN
+        IF KEYWORD_SET(use_common_vars) THEN BEGIN
+           NEWELL__eSpec     = TEMPORARY(*peSpecDB)
+        ENDIF
+     ENDELSE
+
+     PTR_FREE,pAlfDB,pAlfTime,peSpecDB
+     HEAP_FREE,pAlfDB,/PTR
+     HEAP_FREE,pAlfTime,/PTR
+     HEAP_FREE,peSpecDB,/PTR
+     HEAP_GC
+
      RETURN,-1
   ENDIF
   
-  IF alf_into_eSpecDB.eSpec_info.DB_date NE (*peSpec).info.DB_date THEN BEGIN
+  IF alf_into_eSpecDB.eSpec_info.DB_date NE (*peSpecDB).info.DB_date THEN BEGIN
      PRINT,"Mismatching eSpecDBs, je crois ..."
      PRINT,FORMAT='(A0,T25,": ",A0)',"alfDB_into_eSpecDB eSpecDB_date",alf_into_eSpecDB.eSpec_info.DB_date
-     PRINT,FORMAT='(A0,T25,": ",A0)',"alfDB DB_date",(*peSpec).info.DB_date
+     PRINT,FORMAT='(A0,T25,": ",A0)',"alfDB DB_date",(*peSpecDB).info.DB_date
+
+     IF hadMaximus THEN BEGIN
+        maximus           = TEMPORARY(*pAlfDB)
+        cdbTime           = TEMPORARY(*pAlfTime)
+     ENDIF ELSE BEGIN
+        IF KEYWORD_SET(use_common_vars) THEN BEGIN
+           MAXIMUS__maximus  = TEMPORARY(*pAlfDB)
+           MAXIMUS__times    = TEMPORARY(*pAlfTime)
+        ENDIF
+     ENDELSE
+
+     IF hadeSpec THEN BEGIN
+        eSpec             = TEMPORARY(*peSpecDB)
+     ENDIF ELSE BEGIN
+        IF KEYWORD_SET(use_common_vars) THEN BEGIN
+           NEWELL__eSpec     = TEMPORARY(*peSpecDB)
+        ENDIF
+     ENDELSE
+
+     PTR_FREE,pAlfDB,pAlfTime,peSpecDB
+     HEAP_FREE,pAlfDB,/PTR
+     HEAP_FREE,pAlfTime,/PTR
+     HEAP_FREE,peSpecDB,/PTR
+     HEAP_GC
+
      RETURN,-1
   ENDIF
   
-  ;; maxTDiff         = 10.
-  ;; disqualified_i   = WHERE(ABS((*peSpec).x[alfDB__eSpec_inds]-MAXIMUS__times) GE maxTDiff, $
-  ;;                          nDisqualified)
+  maxTDiff         = 10.
+  tDiff            = (*peSpecDB).x[alf_into_eSpecDB.inds]-(*pAlfTime)
+  disqualified_i   = WHERE(ABS(tDiff) GE maxTDiff, $
+                           nDisqualified)
+  IF ~KEYWORD_SET(quiet) THEN BEGIN
+     PRINT,FORMAT='("Could disqualify ",I0," inds that are more than ",F0.2," s from the time of max IAW current")', $
+           nDisqualified,maxTDiff
+  ENDIF
 
-  alfDB_eSpec     = {x          : (*peSpec).x         [alf_into_eSpecDB.inds], $
-                     orbit      : (*peSpec).orbit     [alf_into_eSpecDB.inds], $
-                     MLT        : (*peSpec).MLT       [alf_into_eSpecDB.inds], $
-                     ILAT       : (*peSpec).ILAT      [alf_into_eSpecDB.inds], $
-                     alt        : (*peSpec).alt       [alf_into_eSpecDB.inds], $
-                     mono       : (*peSpec).mono      [alf_into_eSpecDB.inds], $
-                     broad      : (*peSpec).broad     [alf_into_eSpecDB.inds], $
-                     diffuse    : (*peSpec).diffuse   [alf_into_eSpecDB.inds], $
-                     je         : (*peSpec).je        [alf_into_eSpecDB.inds], $
-                     jee        : (*peSpec).jee       [alf_into_eSpecDB.inds], $
-                     nBad_eSpec : (*peSpec).nBad_eSpec[alf_into_eSpecDB.inds], $
-                     mapFactor  : (*peSpec).mapFactor [alf_into_eSpecDB.inds], $
-                     info       : (*peSpec).info                             }
+  alfDB_eSpec     = {x          : (*peSpecDB).x         [alf_into_eSpecDB.inds], $
+                     orbit      : (*peSpecDB).orbit     [alf_into_eSpecDB.inds], $
+                     MLT        : (*peSpecDB).MLT       [alf_into_eSpecDB.inds], $
+                     ILAT       : (*peSpecDB).ILAT      [alf_into_eSpecDB.inds], $
+                     alt        : (*peSpecDB).alt       [alf_into_eSpecDB.inds], $
+                     mono       : (*peSpecDB).mono      [alf_into_eSpecDB.inds], $
+                     broad      : (*peSpecDB).broad     [alf_into_eSpecDB.inds], $
+                     diffuse    : (*peSpecDB).diffuse   [alf_into_eSpecDB.inds], $
+                     je         : (*peSpecDB).je        [alf_into_eSpecDB.inds], $
+                     jee        : (*peSpecDB).jee       [alf_into_eSpecDB.inds], $
+                     nBad_eSpec : (*peSpecDB).nBad_eSpec[alf_into_eSpecDB.inds], $
+                     mapFactor  : (*peSpecDB).mapFactor [alf_into_eSpecDB.inds], $
+                     tDiff      : tDiff                                        , $
+                     maxTDiff   : maxTDiff                                     , $
+                     disqual_i  : disqualified_i                               , $
+                     info       : (*peSpecDB).info                             }
 
-
+  alfDB_eSpec.info.is_alfNewell = 1B
+  
   IF hadMaximus THEN BEGIN
      maximus           = TEMPORARY(*pAlfDB)
+     cdbTime           = TEMPORARY(*pAlfTime)
   ENDIF ELSE BEGIN
-     MAXIMUS__maximus  = TEMPORARY(*pAlfDB)
+     IF KEYWORD_SET(use_common_vars) THEN BEGIN
+        MAXIMUS__maximus  = TEMPORARY(*pAlfDB)
+        MAXIMUS__times    = TEMPORARY(*pAlfTime)
+     ENDIF
   ENDELSE
-
 
   IF hadeSpec THEN BEGIN
-     eSpec             = TEMPORARY(*peSpec)
+     eSpec             = TEMPORARY(*peSpecDB)
   ENDIF ELSE BEGIN
-     NEWELL__eSpec     = TEMPORARY(*peSpec)
+     IF KEYWORD_SET(use_common_vars) THEN BEGIN
+        NEWELL__eSpec     = TEMPORARY(*peSpecDB)
+     ENDIF
   ENDELSE
 
-  PTR_FREE,pAlfDB,peSpec
+  PTR_FREE,pAlfDB,pAlfTime,peSpecDB
   HEAP_FREE,pAlfDB,/PTR
-  HEAP_FREE,peSpec,/PTR
+  HEAP_FREE,pAlfTime,/PTR
+  HEAP_FREE,peSpecDB,/PTR
   HEAP_GC
   
   RETURN,alfDB_eSpec

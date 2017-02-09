@@ -52,28 +52,29 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
      END
   ENDCASE
 
-  h2dStr_tmplt={data            : h2dDatTmplt, $
-                name            : '', $
-                title           : "Template for 2D hist structure", $
-                lim             : DBLARR(2), $
-                shift1          : s1, $
-                shift2          : s2, $
-                is_logged       : 0B, $
-                avgType         : '', $
-                is_fluxdata     : 0B, $
-                labelFormat     : '', $
-                do_midCBLabel   : 0B, $
-                logLabels       : 0B, $
-                do_posNeg_cb    : 0B, $
-                do_plotIntegral : 0B, $
-                do_timeAvg      : BYTE(KEYWORD_SET(do_timeAvg_fluxQuantities)), $
-                do_grossRate    : BYTE(KEYWORD_SET(do_grossRate_fluxQuantities)), $
+  h2dStr_tmplt={data            :  h2dDatTmplt, $
+                name            :  '', $
+                title           :  "Template for 2D hist structure", $
+                lim             :  DBLARR(2), $
+                shift1          :  s1, $
+                shift2          :  s2, $
+                is_logged       :  0B, $
+                avgType         :  '', $
+                is_fluxdata     :  0B, $
+                labelFormat     :  '', $
+                do_midCBLabel   :  0B, $
+                logLabels       :  0B, $
+                do_posNeg_cb    :  0B, $
+                cb_divFactor    : 1.0, $
+                do_plotIntegral :  0B, $
+                do_timeAvg      :  BYTE(KEYWORD_SET(do_timeAvg_fluxQuantities)), $
+                do_grossRate    :  BYTE(KEYWORD_SET(do_grossRate_fluxQuantities)), $
                 grossIntegrals  : {day:0.D, $
                                    night:0.D, $
                                    total:0.D, $
                                    custom:(KEYWORD_SET(nCustomIntegrals) ? MAKE_ARRAY(nCustomIntegrals,VALUE=0.D) : 0.D)}, $
                 grossFac        : 1.D, $
-                gUnits          : '', $
+                gUnits          :  '', $
                 gAreas          : h2dDatTmplt, $
                 ;; grossConvFactor : h2dDatTmplt, $
                 both_hemis      : BYTE(KEYWORD_SET(both_hemis)), $
