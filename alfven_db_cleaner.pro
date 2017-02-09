@@ -287,6 +287,16 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
         ENDIF
      ENDIF
 
+     ;;And I guess we screen by width_t in any case
+     widthTDat = maximus.width_time
+     IF maximus.info.mapped.width_time THEN BEGIN
+        PRINT,"Temporarily unmapping width time for screening ..."
+        LOAD_MAPPING_RATIO_DB,mapRatio, $
+                              DESPUNDB=maximus.info.despun, $
+                              CHASTDB=maximus.info.is_chastDB
+        widthTDat *= SQRT((TEMPORARY(mapRatio)).ratio)
+     ENDIF
+
      nBef  = nAft
      CASE 1 OF
         ((N_ELEMENTS(sample_t_restriction) GT 0) OR $
@@ -301,16 +311,6 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
               IF good_i[0] EQ -1 THEN STOP
               PRINTF,lun,FORMAT='("N lost to cutoff in ",A-30," : ",I0)',"SAMPLE_T",nBef-nAft
            ENDELSE
-
-           ;;And I guess we screen by width_t in any case
-           widthTDat = maximus.width_time
-           IF maximus.info.mapped.width_time THEN BEGIN
-              PRINT,"Temporarily unmapping width time for screening ..."
-              LOAD_MAPPING_RATIO_DB,mapRatio, $
-                                    DESPUNDB=maximus.info.despun, $
-                                    CHASTDB=maximus.info.is_chastDB
-              widthTDat *= SQRT((TEMPORARY(mapRatio)).ratio)
-           ENDIF
 
            CASE 1 OF
               maximus.info.dILAT_not_dt: BEGIN
@@ -343,10 +343,11 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
            width32_cutoff  = 0.63 ; 1./(32/20.)
 
            Hz32_i  = WHERE((ABS(maximus.sample_t - 0.03125) LT 0.003) AND $
-                           (maximus.width_time LE width32_cutoff),nHz32,/NULL)
+                           (widthTDat LE width32_cutoff),nHz32,/NULL)
 
            Hz128_i = WHERE((ABS(maximus.sample_t) LE sample_t_hcutoff) AND $
-                           (maximus.width_time LE width128_cutoff),nHz128,/NULL)
+                           (widthTDat LE width128_cutoff) AND $
+                           (widthTDat GE 1/25.),nHz128,/NULL)
 
 
            PRINTF,lun,FORMAT='("N lost to cutoff in ",A-30," : ",I0)',"sample_t & width_time (128/32Hz)",nBef-nAft
@@ -360,7 +361,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
 
            nBef   = nAft
            good_i = CGSETINTERSECTION(good_i, $
-                                      WHERE(maximus.width_time LE width_t_cutoff,/NULL),COUNT=nAft)
+                                      WHERE(widthTDat LE width_t_cutoff,/NULL),COUNT=nAft)
 
            PRINTF,lun,FORMAT='("N lost to cutoff in ",A-30," : ",I0)',"WIDTH_TIME",nBef-nAft
         END
@@ -507,7 +508,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
      ;;Remove that spin-plane stuff
      nBef   = nAft
      good_i = CGSETINTERSECTION(good_i, $
-                                WHERE(maximus.width_time LE width_t_cutoff,/NULL), $
+                                WHERE(widthTDat LE width_t_cutoff,/NULL), $
                                 COUNT=nAft, $
                                 NORESULT=-1)
      IF good_i[0] EQ -1 THEN STOP

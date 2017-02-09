@@ -48,7 +48,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
   IF ~KEYWORD_SET(do_not_set_defaults) THEN BEGIN
      SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM,MAXMLT=maxM,BINM=binM, $
                                    MINILAT=minI,MAXILAT=maxI,BINI=binI, $
-                                   MINLSHELL=minL,MAXLSHELL=maxL,BINL=binL, $
+                                   MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
                                    MIN_MAGCURRENT=minMC,MAX_NEGMAGCURRENT=maxNegMC, $
                                    HEMI=hemi, $
                                    BOTH_HEMIS=both_hemis, $
