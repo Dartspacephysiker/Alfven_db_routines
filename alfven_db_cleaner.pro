@@ -294,6 +294,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
         LOAD_MAPPING_RATIO_DB,mapRatio, $
                               DESPUNDB=maximus.info.despun, $
                               CHASTDB=maximus.info.is_chastDB
+        IF N_ELEMENTS(mapRatio.ratio) NE N_ELEMENTS(widthTDat) THEN STOP
         widthTDat *= SQRT((TEMPORARY(mapRatio)).ratio)
      ENDIF
 
@@ -357,13 +358,19 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
         ELSE: BEGIN
            good_i = CGSETINTERSECTION(good_i, $
                                       WHERE(ABS(maximus.sample_t) LE sample_t_hcutoff,/NULL),COUNT=nAft)
-           PRINTF,lun,FORMAT='("N lost to cutoff in ",A-30," : ",I0)',"WIDTH_TIME",nBef-nAft
+           PRINTF,lun,FORMAT='("N lost to cutoff in ",A-30," : ",I0)',"SAMPLE_T",nBef-nAft
 
            nBef   = nAft
            good_i = CGSETINTERSECTION(good_i, $
                                       WHERE(widthTDat LE width_t_cutoff,/NULL),COUNT=nAft)
 
-           PRINTF,lun,FORMAT='("N lost to cutoff in ",A-30," : ",I0)',"WIDTH_TIME",nBef-nAft
+           PRINTF,lun,FORMAT='("N lost to upcut  in ",A-30," : ",I0)',"WIDTH_TIME",nBef-nAft
+
+           nBef   = nAft
+           good_i = CGSETINTERSECTION(good_i, $
+                                      WHERE(widthTDat GE 1/25.,/NULL),COUNT=nAft)
+
+           PRINTF,lun,FORMAT='("N lost to lowcut in ",A-30," : ",I0)',"WIDTH_TIME",nBef-nAft
         END
      ENDCASE
      
