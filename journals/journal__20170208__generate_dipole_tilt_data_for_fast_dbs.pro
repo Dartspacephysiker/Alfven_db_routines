@@ -5,8 +5,8 @@ PRO JOURNAL__20170208__GENERATE_DIPOLE_TILT_DATA_FOR_FAST_DBS
 
   
   create_timeStamps   = 0
-  get_dipoleTilt_data = 1
-  stitch_files        = 0
+  get_dipoleTilt_data = 0
+  stitch_files        = 1
 
   OMNIDir         = '/SPENCEdata/Research/database/OMNI/'
   OMNIdata        = 'sw_data.dat'
