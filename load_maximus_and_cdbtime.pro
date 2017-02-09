@@ -77,6 +77,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   DB_version           = 'v0.0'
   DB_extras            = ''
 
+  DB__into_eSpec_file  = 'Dartdb_20151222--500-16361_inc_lower_lats--max_magCurrent_time_alfs_into_20170203_eSpecDB.sav'
+
   ;; defDespunDBFile      = 'Dartdb_20160107--502-16361_despun--maximus--pflux--lshell--burst--noDupes.sav'
   ;; defDespunDB_tFile    = 'Dartdb_20160107--502-16361_despun--cdbtime--noDupes.sav'
   defDespunDBFile      = 'Dartdb_20160508--502-16361_despun--maximus--pflux_lshell--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'
@@ -210,7 +212,8 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                                    DB_DIR=DBDir, $
                                    DB_DATE=DB_date, $
                                    DB_VERSION=DB_version, $
-                                   DB_EXTRAS=DB_extras
+                                   DB_EXTRAS=DB_extras, $
+                                   DB__INTO_ESPEC_FILE=DB__into_eSpec_file
 
            maximus.info.despun         = KEYWORD_SET(despunDB)
            maximus.info.is_chastDB     = KEYWORD_SET(chastDB) ;MAXIMUS__is_chastDB

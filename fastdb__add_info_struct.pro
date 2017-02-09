@@ -5,7 +5,8 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                             DB_DIR=DB_dir, $
                             DB_DATE=DB_date, $
                             DB_VERSION=DB_version, $
-                            DB_EXTRAS=DB_extras ;, $
+                            DB_EXTRAS=DB_extras, $
+                            DB__INTO_ESPEC_FILE=DB__into_eSpec_file ;, $
   ;; REDUCE_DBSIZE=reduce_dbSize, $
   ;; IS_ALFNEWELL=is_AlfNewell
 
@@ -37,29 +38,30 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
         dbNavn = 'maximus'
         info  = { $             ;converted        : 0B, $
                 ;; is_reduced       : BYTE(KEYWORD_SET(reduce_dbSize)), $
-                DB_dir           : '', $
-                DB_date          : '', $
-                DB_version       : '', $
-                DB_extras        : '', $
+                DB_dir              : '', $
+                DB_date             : '', $
+                DB_version          : '', $
+                DB_extras           : '', $
+                DB__into_eSpec_file : '', $
                 ;; is_AlfNewell     : BYTE(KEYWORD_SET(is_AlfNewell)), $
-                despun           : 0B, $
-                is_chastDB       : 0B, $
-                using_heavies    : 0B, $
-                coords           : 'SDT', $
-                rmOutliers       : 0B, $
-                corrected_fluxes : 0B, $
-                corrected_string : '', $
-                mapped           : {mag_current : 0B, $
-                                    esa_current : 0B, $
-                                    pFlux       : 0B, $
-                                    ion_flux    : 0B, $
-                                    heavies     : 0B, $
-                                    width_time  : 0B, $
-                                    width_x     : 0B, $
-                                    sqrt        : 0B}, $
-                dILAT_not_dt     : 0B, $
-                dAngle_not_dt    : 0B, $
-                dx_not_dt        : 0B}
+                despun              : 0B, $
+                is_chastDB          : 0B, $
+                using_heavies       : 0B, $
+                coords              : 'SDT', $
+                rmOutliers          : 0B, $
+                corrected_fluxes    : 0B, $
+                corrected_string    : '', $
+                mapped              : {mag_current : 0B, $
+                                       esa_current : 0B, $
+                                       pFlux       : 0B, $
+                                       ion_flux    : 0B, $
+                                       heavies     : 0B, $
+                                       width_time  : 0B, $
+                                       width_x     : 0B, $
+                                       sqrt        : 0B}, $
+                dILAT_not_dt        : 0B, $
+                dAngle_not_dt       : 0B, $
+                dx_not_dt           : 0B}
      END
   ENDCASE
 
@@ -77,6 +79,10 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
 
   IF KEYWORD_SET(DB_extras) THEN BEGIN
      info.DB_extras  = DB_extras
+  ENDIF
+
+  IF KEYWORD_SET(DB__into_eSpec_file) THEN BEGIN
+     info.DB__into_eSpec_file  = DB__into_eSpec_file
   ENDIF
 
   ;;Now see whether to replace or just append the thing
