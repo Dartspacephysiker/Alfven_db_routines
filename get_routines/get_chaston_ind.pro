@@ -689,6 +689,12 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
      ENDELSE
   ENDELSE
 
+  ;; good_i_file = '~/Desktop/maximus_good_i-' + $
+  ;;      GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '.sav'
+  ;; PRINT,"Saving good_i to " + good_i_file
+  ;; SAVE,good_i,FILENAME=good_i_file
+  ;; STOP
+  
   RETURN, good_i
 
   IF KEYWORD_SET(nonMem) THEN BEGIN

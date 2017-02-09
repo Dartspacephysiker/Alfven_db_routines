@@ -973,7 +973,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                               defCharSize_grid)           $
                   * charScale)
 
-     show_daynight_integrals = 1
+     show_daynight_integrals = 0
      IF KEYWORD_SET(show_daynight_integrals) THEN BEGIN
 
         CGTEXT, $
