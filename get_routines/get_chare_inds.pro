@@ -102,7 +102,7 @@ FUNCTION GET_CHARE_INDS,dbStruct,minCharE,maxCharE, $
                      chare_i, $
                      WHERE((dbStruct.mlt GT   9.5) AND $
                            (dbStruct.mlt LT  14.5) AND $
-                           (chare        LT 300  )), $
+                           (chare        LT  80  )), $
                      NORESULT=-1, $
                      COUNT=nCharE_invNewell)
            PRINTF,lun,FORMAT='("N lost to invert-Newelling the cusp",T35,": ",I0)', $
@@ -122,7 +122,7 @@ FUNCTION GET_CHARE_INDS,dbStruct,minCharE,maxCharE, $
                      chare_i, $
                      WHERE((dbStruct.mlt GT   9.5) AND $
                            (dbStruct.mlt LT  14.5) AND $
-                           (chare        LT 300  )), $
+                           (chare        LT  80  )), $
                      NORESULT=-1, $
                      COUNT=nCharE_Newell)
            PRINTF,lun,FORMAT='("N lost to Newelling the cusp",T35,": ",I0)', $

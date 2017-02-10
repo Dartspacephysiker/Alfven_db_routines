@@ -78,6 +78,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   DB_extras            = ''
 
   DB__into_eSpec_file  = 'Dartdb_20151222--500-16361_inc_lower_lats--max_magCurrent_time_alfs_into_20170203_eSpecDB.sav'
+  ;; DB__into_eSpec_file  = 'Dartdb_20151222--500-16361_inc_lower_lats--max_magCurrent_time_alfs_into_20170203_eSpecDB__good_i.sav'
 
   ;; defDespunDBFile      = 'Dartdb_20160107--502-16361_despun--maximus--pflux--lshell--burst--noDupes.sav'
   ;; defDespunDB_tFile    = 'Dartdb_20160107--502-16361_despun--cdbtime--noDupes.sav'

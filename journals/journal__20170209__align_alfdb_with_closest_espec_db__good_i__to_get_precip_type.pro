@@ -7,14 +7,28 @@ PRO JOURNAL__20170209__ALIGN_ALFDB_WITH_CLOSEST_ESPEC_DB__GOOD_I__TO_GET_PRECIP_
 
   outDir           = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
   ;; tooBigDiffFile = 'Dartdb_20151222--500-16361_inc_lower_lats--alfs_way_separated_from_eesa_obs.sav'
-  alfIntoeSpecFile = 'Dartdb_20151222--500-16361_inc_lower_lats--max_magCurrent_time_alfs_into_20170203_eSpecDB.sav'
+  alfIntoeSpecFile = 'Dartdb_20151222--500-16361_inc_lower_lats--max_magCurrent_time_alfs_into_20170203_eSpecDB__good_i.sav'
 
   @common__newell_espec.pro
   IF N_ELEMENTS(NEWELL__eSpec) EQ 0 THEN BEGIN
      ;; LOAD_NEWELL_ESPEC_DB,/DO_NOT_MAP_DELTA_T,/DO_NOT_MAP_FLUXES,/DONT_PERFORM_CORRECTION
-     LOAD_NEWELL_ESPEC_DB,/DO_NOT_MAP_DELTA_T,/DO_NOT_MAP_FLUXES,/DONT_PERFORM_CORRECTION,/DONT_CONVERT_TO_STRICT_NEWELL
+     LOAD_NEWELL_ESPEC_DB,/DO_NOT_MAP_DELTA_T,/DO_NOT_MAP_FLUXES,/DONT_CONVERT_TO_STRICT_NEWELL,/LOAD_CHARE
   ENDIF
-  eSpecTimes   = NEWELL__eSpec.x
+
+  PLOT_ALFVEN_STATS__SETUP, $
+     ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+     MIMC_STRUCT=MIMC_struct, $
+     HEMI='GLOBE', $
+     MINILAT=-90, $
+     MAXILAT=90, $
+     ORBRANGE=[500,16362]
+
+  good_i       = GET_ESPEC_ION_DB_IND(NEWELL__eSpec, $
+                                      ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                                      MIMC_STRUCT=MIMC_struct, $
+                                      /GET_ESPEC_I_NOT_ION_I)
+
+  STOP
 
   @common__maximus_vars.pro
   IF N_ELEMENTS(MAXIMUS__maximus) EQ 0 THEN BEGIN
@@ -29,12 +43,12 @@ PRO JOURNAL__20170209__ALIGN_ALFDB_WITH_CLOSEST_ESPEC_DB__GOOD_I__TO_GET_PRECIP_
   pastTheMark_i = WHERE(NEWELL__eSpec.x GT MAX(MAXIMUS__times))
   latest_i      = MIN(pastTheMark_i)
   ;; eSpecTimes    = NEWELL__eSpec.x[0:latest_i]
+  eSpecTimes    = NEWELL__eSpec.x[good_i]
   
-  
-  alfDB__eSpec_inds = VALUE_CLOSEST2(NEWELL__eSpec.x,MAXIMUS__times,EXTREME_I=extreme_i)
+  alfDB__eSpec_inds = VALUE_CLOSEST2(eSpecTimes,MAXIMUS__times,EXTREME_I=extreme_i)
 
-  maxTDiff         = 10.
-  disqualified_i   = WHERE(ABS(NEWELL__eSpec.x[alfDB__eSpec_inds]-MAXIMUS__times) GE maxTDiff, $
+  maxTDiff         = 20.
+  disqualified_i   = WHERE(ABS(eSpecTimes[alfDB__eSpec_inds]-MAXIMUS__times) GE maxTDiff, $
                            nDisqualified)
 
   ;; eSpec            = {X          : NEWELL__eSpec.X         [alfDB__eSpec_inds], $
@@ -59,7 +73,7 @@ PRO JOURNAL__20170209__ALIGN_ALFDB_WITH_CLOSEST_ESPEC_DB__GOOD_I__TO_GET_PRECIP_
   ;;    alfDB__eSpec_inds[disqualified_i] = -1
   ;; ENDIF
 
-  alf_into_eSpecDB = {inds:alfDB__eSpec_inds, $                 
+  alf_into_eSpecDB = {inds:good_i[alfDB__eSpec_inds], $                 
                       ALFDB_INFO:MAXIMUS__maximus.info, $
                       ESPEC_INFO:NEWELL__eSpec.info, $
                       ORIGINATING_ROUTINE:orig_rtine, $

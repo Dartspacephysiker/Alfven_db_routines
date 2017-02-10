@@ -2,7 +2,14 @@
 FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
    maximus,cdbTime,eSpec,fName, $
    USER_INDS=user_inds, $
-   USE_COMMON_VARS=use_common_vars
+   USE_COMMON_VARS=use_common_vars, $
+   DONT_PERFORM_CORRECTION=dont_perform_SH_correction, $
+   DONT_CONVERT_TO_STRICT_NEWELL=dont_convert_to_strict_newell, $
+   DONT_MAP_TO_100KM=no_mapping, $
+   DO_NOT_MAP_FLUXES=do_not_map_fluxes, $
+   DO_NOT_MAP_DELTA_T=do_not_map_delta_t, $
+   USE_2000KM_FILE=use_2000km_file
+
 
   COMPILE_OPT IDL2
 
@@ -29,12 +36,12 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
         pAlfTime  = PTR_NEW(TEMPORARY(MAXIMUS__times))
   ENDELSE
 
-  IF ~KEYWORD_SET(file) THEN BEGIN
-     file = (*pAlfDB).info.DB_dir + (*pAlfDB).info.DB__into_eSpec_file
+  IF ~KEYWORD_SET(fName) THEN BEGIN
+     fName = (*pAlfDB).info.DB_dir + (*pAlfDB).info.DB__into_eSpec_file
   ENDIF
 
-  IF ~FILE_TEST(file) THEN BEGIN
-     PRINT,"Couldn't find file: " + file + "! Returning ..."
+  IF ~FILE_TEST(fName) THEN BEGIN
+     PRINT,"Couldn't find file: " + fName + "! Returning ..."
 
      IF hadMaximus THEN BEGIN
         maximus           = TEMPORARY(*pAlfDB)
@@ -52,7 +59,8 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
      RETURN,-1
   ENDIF
 
-  RESTORE,file
+  PRINT,"Restoring " + fName + ' ...'
+  RESTORE,fName
 
   nInds           = N_ELEMENTS(alf_into_eSpecDB.inds)
   IF nInds NE N_ELEMENTS(*pAlfTime) THEN BEGIN
@@ -67,7 +75,14 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
   ENDIF ELSE BEGIN
      @common__newell_espec.pro
      IF N_ELEMENTS(NEWELL__eSpec) EQ 0 THEN BEGIN
-        LOAD_NEWELL_ESPEC_DB,/DONT_CONVERT_TO_STRICT_NEWELL
+        LOAD_NEWELL_ESPEC_DB, $
+           DONT_PERFORM_CORRECTION=dont_perform_SH_correction, $
+           DONT_CONVERT_TO_STRICT_NEWELL=dont_convert_to_strict_newell, $
+           DONT_MAP_TO_100KM=no_mapping, $
+           DO_NOT_MAP_FLUXES=do_not_map_fluxes, $
+           DO_NOT_MAP_DELTA_T=do_not_map_delta_t, $
+           USE_2000KM_FILE=use_2000km_file, $
+           /LOAD_CHARE
      ENDIF
         peSpecDB  = PTR_NEW(TEMPORARY(NEWELL__eSpec))
   ENDELSE
@@ -167,6 +182,7 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
                      diffuse    : (*peSpecDB).diffuse   [alf_into_eSpecDB_inds], $
                      je         : (*peSpecDB).je        [alf_into_eSpecDB_inds], $
                      jee        : (*peSpecDB).jee       [alf_into_eSpecDB_inds], $
+                     charE      : (*peSpecDB).charE     [alf_into_eSpecDB_inds], $
                      nBad_eSpec : (*peSpecDB).nBad_eSpec[alf_into_eSpecDB_inds], $
                      mapFactor  : (*peSpecDB).mapFactor [alf_into_eSpecDB_inds], $
                      tDiff      : tDiff                                        , $
