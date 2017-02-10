@@ -71,6 +71,9 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
                  "EA_binning"                        , $
                  "plotH2D_contour"                   , $
                  "plotH2D__kernel_density_unmask"    , $
+                 "contour__nColors"                  , $
+                 "contour__CTIndex"                  , $
+                 "contour__CTBottom"                 , $
                  "executing_multiples"               , $
                  "multiple_IMF_clockAngles"          , $
                  "hoyDia"                            ]

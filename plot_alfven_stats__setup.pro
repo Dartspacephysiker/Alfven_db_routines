@@ -147,6 +147,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    PARAMSTRSUFFIX=plotSuffix,$
    PLOTH2D_CONTOUR=plotH2D_contour, $
    PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
+   PLOTH2D__CONT__CTINDEX=plotH2D__cont__CTIndex, $
    ;; HOYDIA=hoyDia, $
    NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $
    ;; NEWELL__COMB_ACCELERATED=Newell__comb_accelerated, $
@@ -416,6 +417,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      PARAMSTRSUFFIX=plotSuffix,$
      PLOTH2D_CONTOUR=plotH2D_contour, $
      PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
+     PLOTH2D__CONT__CTINDEX=plotH2D__cont__CTIndex, $
      ;; HOYDIA=hoyDia, $
      LUN=lun, $
      NEWELL_ANALYZE_EFLUX=Newell_analyze_eFlux, $

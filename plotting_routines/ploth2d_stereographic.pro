@@ -45,6 +45,9 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           PLOTH2D_CONTOUR=plotH2D_contour, $
                           CONTOUR__LEVELS=contour__levels, $
                           CONTOUR__PERCENT=contour__percent, $
+                          CONTOUR__NCOLORS=contour__nColors, $
+                          CONTOUR__CTINDEX=contour__CTIndex, $
+                          CONTOUR__CTBOTTOM=contour__CTBottom, $
                           PLOTRANGE=plotRange, $
                           PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
                           CENTERS_MLT=centersMLT, $
@@ -401,14 +404,14 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   CASE 1 OF
      KEYWORD_SET(overplot): BEGIN
-        contourBottom  = 4
-        nContourColors = 10
+        contourBottom  = N_ELEMENTS(contour__CTBottom) GT 0 ? contour__CTBottom : 4
+        nContourColors = KEYWORD_SET(contour__nColors) ? contour__nColors : 10
         nLevels        = 255
         nLevelBottom   = nLevels*contourBottom/nContourColors
      END
      ELSE: BEGIN
-        contourBottom  = 4
-        nContourColors = 10
+        contourBottom  = N_ELEMENTS(contour__CTBottom) GT 0 ? contour__CTBottom : 4
+        nContourColors = KEYWORD_SET(contour__nColors) ? contour__nColors : 10
         nLevels        = 255
         nLevelBottom   = nLevels*contourBottom/nContourColors
      END
@@ -425,17 +428,25 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         IF KEYWORD_SET(overplot) THEN BEGIN
            LOADCT, $
               3, $
-              NCOLORS=nLevels
+              NCOLORS=nLevels+1
         ENDIF ELSE BEGIN
+           customCT = N_ELEMENTS(contour__CTIndex) GT 0
            LOADCT, $
-              1, $
-              NCOLORS=nLevels
+              customCT ? ABS(contour__CTIndex) : 1, $
+              NCOLORS=nLevels+1
+           IF customCT THEN BEGIN
+              IF contour__CTIndex LT 0 THEN BEGIN
+                 TVLCT,r,g,b,/GET
+                 TVLCT,REVERSE(r),REVERSE(g),REVERSE(b)
+              ENDIF
+           ENDIF
+
         ENDELSE
      END
      ELSE: BEGIN
         LOADCT, $
            78, $
-           NCOLORS=nLevels, $
+           NCOLORS=nLevels+1, $
            FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl' ;Attempt to recreate (sort of) Bin's color bar
      END
   ENDCASE
@@ -1045,6 +1056,10 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   cbRange                         = (temp.is_logged AND temp.logLabels) ? 10.^(ROUND(temp.lim*100.)/100.) : temp.lim 
 
+  IF KEYWORD_SET(plotRange) THEN BEGIN
+     cbRange = plotRange
+  ENDIF
+
   ;;Check—do we have a divfactor? If not it's because the files are old
   hasit = -2
   STR_ELEMENT,temp,'cb_divfactor',INDEX=hasit 
@@ -1062,14 +1077,15 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      cbOOBHighVal                 = !NULL
 
      IF KEYWORD_SET(contour__percent) THEN BEGIN
-        cbNDivisions              = 10
-        cbTickNames               = REPLICATE(' ',cbNDivisions+1)
-        markem                    = VALUE_CLOSEST2(INDGEN(cbNDivisions+1)/FLOAT(cbNDivisions)*100,contour__levels)
-        cbTickNames[markem]       = STRING(FORMAT='(G0.2)',(cbRange[1]*INDGEN(cbNDivisions+1)/FLOAT(cbNDivisions))[markem])
+        ;; cbNDivisions              = KEYWORD_SET(cb_nDivisions) ? cb_nDivisions : 10
+        cbNDivisions              = nContourColors + 1
+        cbTickNames               = REPLICATE(' ',cbNDivisions)
+        markem                    = VALUE_CLOSEST2(INDGEN(cbNDivisions)/FLOAT(nContourColors)*100,contour__levels)
+        cbTickNames[markem]       = STRING(FORMAT='(G0.2)',(cbRange[1]*INDGEN(cbNDivisions)/FLOAT(nContourColors))[markem])
      ENDIF
 
      nCBColors                    = nContourColors
-     cbBottom                     = contourBottom-1
+     cbBottom                     = contourBottom
   ENDIF ELSE BEGIN
      cbOOBLowVal                  = (MIN(tmpData[notMasked]) LT pltR[0] OR temp.force_oobLow) ? $
                                     0B : !NULL
@@ -1102,7 +1118,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   IF KEYWORD_SET(plotH2D_contour) THEN BEGIN
 
      IF N_ELEMENTS(cbNDivisions) GT 0 THEN BEGIN
-        STR_ELEMENT,cb_info,'cbNDivisions',cbNDivisions,/ADD_REPLACE
+        STR_ELEMENT,cb_info,'cbNDivisions',nContourColors,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(cbTickNames) GT 0 THEN BEGIN

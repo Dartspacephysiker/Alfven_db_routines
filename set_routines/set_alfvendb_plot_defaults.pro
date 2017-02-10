@@ -156,6 +156,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    PLOTH2D_CONTOUR=plotH2D_contour, $
    CONTOUR__LEVELS=contour__levels, $
    CONTOUR__PERCENT=contour__percent, $
+   CONTOUR__NCOLORS=contour__nColors, $
+   CONTOUR__CTINDEX=contour__CTIndex, $
+   CONTOUR__CTBOTTOM=contour__CTBottom, $
    PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
    SHOW_INTEGRALS=show_integrals, $
    MAKE_INTEGRAL_TXTFILE=make_integral_txtfile, $
@@ -166,6 +169,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    OVERPLOT_ARR=overplot_arr, $
    OVERPLOT_CONTOUR__LEVELS=op_contour__levels, $
    OVERPLOT_CONTOUR__PERCENT=op_contour__percent, $
+   OVERPLOT_CONTOUR__NCOLORS=op_contour__nColors, $
+   OVERPLOT_CONTOUR__CTINDEX=op_contour__CTIndex, $
+   OVERPLOT_CONTOUR__CTBOTTOM=op_contour__CTBottom, $
    OVERPLOT_PLOTRANGE=op_plotRange, $
    ;; HOYDIA=hoyDia, $
    LUN=lun, $
@@ -652,7 +658,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          plotH2D_contour                   : 0B, $
                          contour__levels                   : 0B, $
                          contour__percent                  : 0B, $
+                         contour__nColors                  : 0B, $
                          plotH2D__kernel_density_unmask    : 0B, $
+                         ;; contour__CTIndex            : 0B, $
                          show_integrals                    : 0B, $
                          nCustomIntegrals                  : 0B, $
                          make_integral_txtfile             : 0B, $
@@ -1376,6 +1384,21 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(contour__percent),/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(contour__nColors) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'contour__nColors', $
+                    BYTE(contour__nColors),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(contour__CTIndex) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'contour__CTIndex', $
+                    FIX(contour__CTIndex),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(contour__CTBottom) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'contour__CTBottom', $
+                    FIX(contour__CTBottom),/ADD_REPLACE
+     ENDIF
+
      IF N_ELEMENTS(plotH2D__kernel_density_unmask) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'plotH2D__kernel_density_unmask', $
                     BYTE(plotH2D__kernel_density_unmask),/ADD_REPLACE
@@ -1547,6 +1570,21 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(op_contour__percent) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'op_contour__percent', $
                     BYTE(op_contour__percent),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(op_contour__nColors) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'op_contour__nColors', $
+                    BYTE(op_contour__nColors),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(op_contour__CTIndex) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'op_contour__CTIndex', $
+                    FIX(op_contour__CTIndex),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(op_contour__CTBottom) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'op_contour__CTBottom', $
+                    FIX(op_contour__CTBottom),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(op_plotRange) GT 0 THEN BEGIN

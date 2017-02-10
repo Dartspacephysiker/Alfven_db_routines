@@ -40,10 +40,16 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                            PLOTH2D_CONTOUR=plotH2D_contour, $
                            CONTOUR__LEVELS=contour__levels, $
                            CONTOUR__PERCENT=contour__percent, $
+                           CONTOUR__NCOLORS=contour__nColors, $
+                           CONTOUR__CTINDEX=contour__CTIndex, $
+                           CONTOUR__CTBOTTOM=contour__CTBottom, $
                            PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
                            OVERPLOTSTR=oplotStr, $
                            OVERPLOT_CONTOUR__LEVELS=op_contour__levels, $
                            OVERPLOT_CONTOUR__PERCENT=op_contour__percent, $
+                           OVERPLOT_CONTOUR__NCOLORS=op_contour__nColors, $
+                           OVERPLOT_CONTOUR__CTINDEX=op_contour__CTIndex, $
+                           OVERPLOT_CONTOUR__CTBOTTOM=op_contour__CTBottom, $
                            OVERPLOT_PLOTRANGE=op_plotRange, $
                            CENTERS_MLT=centersMLT, $
                            CENTERS_ILAT=centersILAT, $
@@ -505,6 +511,9 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        PLOTH2D_CONTOUR=plotH2D_contour, $
                                        CONTOUR__LEVELS=contour__levels, $
                                        CONTOUR__PERCENT=contour__percent, $
+                                       CONTOUR__NCOLORS=contour__nColors, $
+                                       CONTOUR__CTINDEX=contour__CTIndex, $
+                                       CONTOUR__CTBOTTOM=contour__CTBottom, $
                                        PLOTRANGE=plotRange, $
                                        PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
                                        CENTERS_MLT=centersMLT, $
@@ -550,6 +559,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                           /PLOTH2D_CONTOUR, $
                                           CONTOUR__LEVELS=op_contour__levels, $
                                           CONTOUR__PERCENT=op_contour__percent, $
+                                          CONTOUR__NCOLORS=op_contour__nColors, $
                                           PLOTRANGE=op_plotRange, $
                                           /PLOTH2D__KERNEL_DENSITY_UNMASK, $
                                           CENTERS_MLT=centersMLT, $
@@ -621,9 +631,20 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                  cb_info.charsize = 0.75
 
                  IF KEYWORD_SET(plotH2D_contour) THEN BEGIN
+                    customCT = N_ELEMENTS(contour__CTIndex) GT 0
                     LOADCT, $
-                       1, $
+                       customCT ? ABS(contour__CTIndex) : 1, $
                        NCOLORS=cb_info.nColors+cb_info.bottom
+                    IF customCT THEN BEGIN
+                       IF contour__CTIndex LT 0 THEN BEGIN
+                          TVLCT,r,g,b,/GET
+                          r[0:(cb_info.nColors+cb_info.bottom-1)] = REVERSE(r[0:(cb_info.nColors+cb_info.bottom-1)])
+                          g[0:(cb_info.nColors+cb_info.bottom-1)] = REVERSE(g[0:(cb_info.nColors+cb_info.bottom-1)])
+                          b[0:(cb_info.nColors+cb_info.bottom-1)] = REVERSE(b[0:(cb_info.nColors+cb_info.bottom-1)])
+                          ;; TVLCT,REVERSE(r),REVERSE(g),REVERSE(b)
+                          TVLCT,r,g,b
+                       ENDIF
+                    ENDIF
                  ENDIF ELSE BEGIN
                     LOADCT, $
                        78, $
@@ -631,9 +652,9 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                        FILE='~/idl/lib/hatch_idl_utils/colors/colorsHammer.tbl' ;Attempt to recreate (sort of) Bin's color bar
                  ENDELSE
 
-                 IF H2DStrArr[j].cb_divFactor NE 1.0 THEN BEGIN
-                    cb_info.range /= H2DStrArr[j].cb_divFactor
-                 ENDIF
+                 ;; IF H2DStrArr[j].cb_divFactor NE 1.0 THEN BEGIN
+                 ;;    cb_info.range /= H2DStrArr[j].cb_divFactor
+                 ;; ENDIF
 
                  CGCOLORBAR,NCOLORS=cb_info.nColors, $
                             XLOG=cb_info.xLog, $
@@ -827,6 +848,9 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        PLOTH2D_CONTOUR=plotH2D_contour, $
                                        CONTOUR__LEVELS=contour__levels, $
                                        CONTOUR__PERCENT=contour__percent, $
+                                       CONTOUR__NCOLORS=contour__nColors, $
+                                       CONTOUR__CTINDEX=contour__CTIndex, $
+                                       CONTOUR__CTBOTTOM=contour__CTBottom, $
                                        PLOTRANGE=plotRange, $
                                        PLOTH2D__KERNEL_DENSITY_UNMASK=plotH2D__kernel_density_unmask, $
                                        CENTERS_MLT=centersMLT, $
