@@ -124,6 +124,15 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      map_width_t                   = 1
   ENDIF
   
+  load_mapRatioDB                  =  KEYWORD_SET(map_heavies     ) OR $
+                                      KEYWORD_SET(map_pflux       ) OR $
+                                      KEYWORD_SET(map_ionflux     ) OR $
+                                      KEYWORD_SET(map_width_t     ) OR $
+                                      KEYWORD_SET(map_width_x     ) OR $
+                                      KEYWORD_SET(map_mag_current ) OR $
+                                      KEYWORD_SET(map_esa_current )
+
+
   IS_STRUCT_ALFVENDB_OR_FASTLOC,maximus,is_maximus
 
   ;;Find out if correction is applicable
@@ -254,7 +263,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      IF ~KEYWORD_SET(quiet) THEN PRINTF,lun,'19-CHAR_ION_ENERGY         (In AS5, division of two quantities where hemi is not accounted for--how to interpret sign?)'
      correctStr += '19-CHAR_ION_ENERGY         (In AS5, division of two quantities where hemi is not accounted for--how to interpret sign?)' + STRING(10B)
 
-     IF KEYWORD_SET(map_heavies) OR KEYWORD_SET(map_pflux) OR KEYWORD_SET(map_ionflux) THEN BEGIN
+     IF load_mapRatioDB THEN BEGIN
         LOAD_MAPPING_RATIO_DB,mapRatio, $
                               DESPUNDB=despunDB, $
                               CHASTDB=chastDB
