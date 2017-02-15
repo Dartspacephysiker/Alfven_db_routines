@@ -13,7 +13,8 @@ PRO FASTDBS__DELTA_SWITCHER, $
    FOR_ALFDB=alfDB, $
    FOR_FASTLOC_DB=fastLocDB, $
    FOR_ESPEC_DB=eSpecDB, $
-   FOR_ION_DB=ionDB
+   FOR_ION_DB=ionDB, $
+   DELTA_STUFF=delta_stuff
 
 
   COMPILE_OPT IDL2

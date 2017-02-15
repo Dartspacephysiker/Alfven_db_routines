@@ -28,24 +28,26 @@ PRO SAVE_PASIS_VARS, $
             'PASIS__alfDB_plot_struct,PASIS__IMF_struct,'      + $
             'PASIS__MIMC_struct,'
 
-  IF KEYWORD_SET(PASIS__alfDB_plot_struct.for_eSpec_DBs) THEN BEGIN
-     saveStr += 'PASIS__indices__eSpec_list,'                         + $
-                'PASIS__eFlux_eSpec_data,PASIS__eNumFlux_eSpec_data,' + $
-                ;; 'PASIS__eSpec__MLTs,PASIS__eSpec__ILATs,'
-                'PASIS__eSpec__MLTs,'
-  ENDIF ELSE BEGIN
-     saveStr += 'PASIS__plot_i_list,'
-  ENDELSE
+  CASE 1 OF
+     KEYWORD_SET(PASIS__alfDB_plot_struct.for_eSpec_DBs): BEGIN
+        saveStr += 'PASIS__indices__eSpec_list,'                         + $
+                   'PASIS__eFlux_eSpec_data,PASIS__eNumFlux_eSpec_data,' + $
+                   ;; 'PASIS__eSpec__MLTs,PASIS__eSpec__ILATs,'
+                   'PASIS__eSpec__MLTs,'
+     END
+     KEYWORD_SET(PASIS__alfDB_plot_struct.for_ion_DBs): BEGIN
+        saveStr += 'PASIS__indices__ion_list,'                         + $
+                   'PASIS__iFlux_ion_data,PASIS__iNumFlux_ion_data,' + $
+                   ;; 'PASIS__ion__MLTs,PASIS__ion__ILATs,'
+                   'PASIS__ion__MLTs,'
+     END
+     ELSE: BEGIN
+        saveStr += 'PASIS__plot_i_list,'
+     END
+  ENDCASE
 
   IF KEYWORD_SET(need_fastLoc_i) THEN BEGIN
      saveStr += 'PASIS__fastLocInterped_i_list,'
-  ENDIF
-
-  IF KEYWORD_SET(PASIS__alfDB_plot_struct.for_ion_DBs) THEN BEGIN
-     saveStr += 'PASIS__indices__ion_list,'                         + $
-                'PASIS__iFlux_eSpec_data,PASIS__iNumFlux_eSpec_data,' + $
-                ;; 'PASIS__ion__MLTs,PASIS__ion__ILATs,'
-                'PASIS__ion__MLTs'
   ENDIF
 
   saveStr    += 'FILENAME=saveDir+fName'

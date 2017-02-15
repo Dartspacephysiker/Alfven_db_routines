@@ -43,7 +43,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    INUMFLUX_ION_DATA=iNumFlux_ion_data, $
    INDICES__ESPEC=indices__eSpec, $
    INDICES__ION=indices__ion, $
-   ESPEC__NO_MAXIMUS=no_maximus, $
+   NO_MAXIMUS=no_maximus, $
    ;; FOR_ESPEC_DB=for_eSpec_DB, $
    ESPEC__MLTSILATS=eSpec__MLTsILATs, $
    ;; FOR_ION_DB=for_ion_DB, $
@@ -225,17 +225,18 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
 
+  for_ions               = N_ELEMENTS(iFlux_ion_data  ) GT 0 OR N_ELEMENTS(iNumFlux_ion_data  ) GT 0
+  for_eSpecs             = N_ELEMENTS(eFlux_eSpec_data) GT 0 OR N_ELEMENTS(eNumFlux_eSpec_data) GT 0
+
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
   IF KEYWORD_SET(no_maximus) THEN BEGIN
      CASE 1 OF
-        ( (N_ELEMENTS(eFlux_eSpec_data) GT 0) OR $
-          (N_ELEMENTS(eNumFlux_eSpec_data) GT 0) ): BEGIN
+        for_eSpecs: BEGIN
            in_MLTS  = (KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL__eSpec.lng : NEWELL__eSpec.mlt)[indices__eSpec]
            in_ILATS = NEWELL__eSpec.ilat[indices__eSpec]
         END
-        ( (N_ELEMENTS(iFlux_ion_data) GT 0) OR $
-          (N_ELEMENTS(iNumFlux_ion_data) GT 0) ): BEGIN
+        for_ions: BEGIN
            in_MLTS  = (KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL_I__ion.lng : NEWELL_I__ion.mlt)[indices__ion]
            in_ILATS = NEWELL_I__ion.ilat[indices__ion]
         END
@@ -358,11 +359,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
      ENDIF
 
-     IF (KEYWORD_SET(eFlux_eSpec_data        ) OR   $
-         KEYWORD_SET(eNumFlux_eSpec_data     ) OR   $
-         KEYWORD_SET(iFlux_ion_data          ) OR   $
-         KEYWORD_SET(iNumFlux_ion_data       ))      $
-     THEN BEGIN
+     IF (for_eSpecs OR for_ions) THEN BEGIN
         IF ~KEYWORD_SET(have_prev_eSpec_tHistos) THEN BEGIN
            eSpec_tHistDenominator = GET_TIMEHIST_DENOMINATOR( $
                                     fastLocInterped_i, $
@@ -1287,7 +1284,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   IF KEYWORD_SET(ionPlots) THEN BEGIN
      IF N_ELEMENTS(iFlux_ion_data) GT 0 OR N_ELEMENTS(iNumFlux_ion_data) GT 0 THEN BEGIN
         GET_H2D_NEVENTS_AND_MASK,IN_MLTS=in_MLTs, $
-                                 IN_ILATS=in_MLTs, $
+                                 IN_ILATS=in_ILATs, $
                                  ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                                  IMF_STRUCT=IMF_struct, $
                                  MIMC_STRUCT=MIMC_struct, $
@@ -1749,6 +1746,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        NONEGFLUX=noNegChariE, $
                        ABSFLUX=absChariE, $
                        INDICES__ION=indices__ion, $
+                       ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logChariEPlot)), $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $

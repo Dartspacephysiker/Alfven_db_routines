@@ -1047,8 +1047,8 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
   IF KEYWORD_SET(get_ChariE) THEN BEGIN
   
-     H2DStr.labelFormat     = fluxPlotChariCBLabelFormat
-     H2DStr.logLabels       = logChariLabels
+     H2DStr.labelFormat     = fluxPlotCharieCBLabelFormat
+     H2DStr.logLabels       = logCharieLabels
      H2DStr.do_plotIntegral = Charie_do_plotIntegral
      H2DStr.do_midCBLabel   = Charie_do_midCBLabel
 
@@ -1067,6 +1067,10 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
      can_div_by_w_x         = 0
      can_mlt_by_w_x         = 0
+     cant_timeAvg           = 1
+     H2DStr.do_timeAvg      = 0
+     cant_grossRate         = 1
+     tmpLogAvg              = 1
 
      H2DStr.do_plotIntegral = 0B
      H2DStr.is_fluxData     = 0B

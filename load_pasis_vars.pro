@@ -84,6 +84,25 @@ FUNCTION LOAD_PASIS_VARS, $
         PASIS__eSpec__MLTs         = 1
         ;; PASIS__eSpec__ILATs        = 1
      END
+     KEYWORD_SET(alfdb_plot_struct.for_ion_DBs): BEGIN
+        IF (N_ELEMENTS(PASIS__paramString_list        ) EQ 0) OR $
+           (N_ELEMENTS(PASIS__paramString             ) EQ 0) OR $
+           (N_ELEMENTS(PASIS__fastLocInterped_i_list  ) EQ 0) OR $
+           (N_ELEMENTS(PASIS__indices__ion_list     ) EQ 0) OR $
+           ((N_ELEMENTS(PASIS__iFlux_ion_data       ) EQ 0) AND $
+            (N_ELEMENTS(PASIS__iNumFlux_ion_data    ) EQ 0)) OR $
+           (N_ELEMENTS(PASIS__alfDB_plot_struct       ) EQ 0) OR $
+           (N_ELEMENTS(PASIS__IMF_struct              ) EQ 0) OR $
+           (N_ELEMENTS(PASIS__MIMC_struct             ) EQ 0) $
+        THEN BEGIN
+           PRINT,"BROOOOOO!"
+           STOP
+        ENDIF
+
+        PASIS__iFlux_ion_data      = 1
+        PASIS__iNumFlux_ion_data   = 1
+        PASIS__ion__MLTs           = 1
+     END
      ELSE: BEGIN
         IF N_ELEMENTS(PASIS__paramString_list        ) EQ 0  OR $
            N_ELEMENTS(PASIS__paramString             ) EQ 0  OR $
