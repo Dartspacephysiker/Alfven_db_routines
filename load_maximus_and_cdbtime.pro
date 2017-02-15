@@ -280,58 +280,78 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
      DB_tFile = MAXIMUS__dbTimesFile
   ENDELSE
 
-     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;What type of delta do you want?
-  delta_stuff = KEYWORD_SET(load_dILAT) + KEYWORD_SET(load_dx) + KEYWORD_SET(load_dAngle)
-  CASE delta_stuff OF
-     0: 
-     1: BEGIN
+  FASTDBS__DELTA_SWITCHER, $
+     (*pDBStruct), $
+     OUT_WIDTH_MEASURE=width_measure, $
+     DBDIR=DBDir, $
+     LOAD_DELTA_T=load_delta_t, $
+     LOAD_DELTA_ILAT_NOT_DELTA_T=load_dILAT, $
+     LOAD_DELTA_ANGLE_FOR_WIDTH_TIME=load_dAngle, $
+     LOAD_DELTA_X_FOR_WIDTH_TIME=load_dx, $
+     DO_NOT_MAP_DELTA_T=do_not_map_delta_t, $
+     MAP_SQRT_FLUXES=map_sqrt_fluxes, $
+     DILAT_FILE=dILAT_file, $
+     /FOR_ALFDB ;;, $
+  ;; FOR_FASTLOC_DB=fastLocDB, $
+  ;; FOR_ESPEC_DB=eSpecDB, $
+  ;; FOR_ION_DB=ionDB
 
-        IF (*pDBStruct).info.corrected_fluxes THEN BEGIN
-           PRINT,"You need to reset corrected fluxes. Otherwise you're going to get junk."
-           PRINT,"However you got here, make sure that FORCE_LOAD_ALL gets called instead of cruising through."
-           STOP
-        ENDIF
+  IF N_ELEMENTS(width_measure) GT 0 THEN BEGIN
+     (*pDBStruct).width_time  = TEMPORARY(width_measure)
+  ENDIF
 
-        dILAT_file         = GET_FAST_DB_STRING(*pDBStruct,/FOR_ALFDB) + 'delta_ilats.sav'
-        RESTORE,DBDir+dILAT_file
+  ;; delta_stuff = KEYWORD_SET(load_dILAT) + KEYWORD_SET(load_dx) + KEYWORD_SET(load_dAngle)
+  ;; CASE delta_stuff OF
+  ;;    0: 
+  ;;    1: BEGIN
 
-        CASE 1 OF
-           KEYWORD_SET(load_dILAT): BEGIN
-              ;; PRINT,"Not mapping anything, and replacing width_time with dILAT ..."
-              PRINT,"Replacing width_t with dILAT, and mapping fluxes with SQRT(ratio) ..."
+  ;;       IF (*pDBStruct).info.corrected_fluxes THEN BEGIN
+  ;;          PRINT,"You need to reset corrected fluxes. Otherwise you're going to get junk."
+  ;;          PRINT,"However you got here, make sure that FORCE_LOAD_ALL gets called instead of cruising through."
+  ;;          STOP
+  ;;       ENDIF
 
-              ;; no_mapping                 = 1
-              do_not_map_width_t             = 1
-              map_sqrt_fluxes                = 1
-              (*pDBStruct).width_time        = ABS(FLOAT(width_ILAT))
-              (*pDBStruct).info.dILAT_not_dt = 1B
-           END
-           KEYWORD_SET(load_dAngle): BEGIN
-              PRINT,"Replacing width_t with dAngle, and mapping fluxes with SQRT(ratio) ..."
+  ;;       dILAT_file         = GET_FAST_DB_STRING(*pDBStruct,/FOR_ALFDB) + 'delta_ilats.sav'
+  ;;       RESTORE,DBDir+dILAT_file
 
-              ;; no_mapping                 = 1
-              do_not_map_width_t              = 1
-              map_sqrt_fluxes                 = 1
-              (*pDBStruct).width_time         = ABS(FLOAT(width_angle))
-              (*pDBStruct).info.dAngle_not_dt = 1B
-           END
-           KEYWORD_SET(load_dx):BEGIN
-              PRINT,"Replacing width_t with dx, and mapping fluxes with SQRT(ratio) ..."
+  ;;       CASE 1 OF
+  ;;          KEYWORD_SET(load_dILAT): BEGIN
+  ;;             ;; PRINT,"Not mapping anything, and replacing width_time with dILAT ..."
+  ;;             PRINT,"Replacing width_t with dILAT, and mapping fluxes with SQRT(ratio) ..."
 
-              ;; no_mapping                = 1
+  ;;             ;; no_mapping                 = 1
+  ;;             do_not_map_width_t             = 1
+  ;;             map_sqrt_fluxes                = 1
+  ;;             (*pDBStruct).width_time        = ABS(FLOAT(width_ILAT))
+  ;;             (*pDBStruct).info.dILAT_not_dt = 1B
+  ;;          END
+  ;;          KEYWORD_SET(load_dAngle): BEGIN
+  ;;             PRINT,"Replacing width_t with dAngle, and mapping fluxes with SQRT(ratio) ..."
 
-              map_sqrt_fluxes               = 1
-              (*pDBStruct).width_time       = ABS(FLOAT(width_x))
-              (*pDBStruct).info.dx_not_dt   = 1B
-           END
-        ENDCASE
-     END
-     ELSE: BEGIN
-        PRINT,"Can't have it all."
-        STOP
-     END
-  ENDCASE
+  ;;             ;; no_mapping                 = 1
+  ;;             do_not_map_width_t              = 1
+  ;;             map_sqrt_fluxes                 = 1
+  ;;             (*pDBStruct).width_time         = ABS(FLOAT(width_angle))
+  ;;             (*pDBStruct).info.dAngle_not_dt = 1B
+  ;;          END
+  ;;          KEYWORD_SET(load_dx):BEGIN
+  ;;             PRINT,"Replacing width_t with dx, and mapping fluxes with SQRT(ratio) ..."
+
+  ;;             ;; no_mapping                = 1
+
+  ;;             map_sqrt_fluxes               = 1
+  ;;             (*pDBStruct).width_time       = ABS(FLOAT(width_x))
+  ;;             (*pDBStruct).info.dx_not_dt   = 1B
+  ;;          END
+  ;;       ENDCASE
+  ;;    END
+  ;;    ELSE: BEGIN
+  ;;       PRINT,"Can't have it all."
+  ;;       STOP
+  ;;    END
+  ;; ENDCASE
 
   IF correct_fluxes AND ~KEYWORD_SET(just_cdbTime) THEN BEGIN
      CORRECT_ALFVENDB_FLUXES,(*pDBStruct), $
@@ -360,190 +380,212 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
   ENDELSE
 
 
-  IF KEYWORD_SET(coordinate_system) THEN BEGIN
-     CASE STRUPCASE(coordinate_system) OF
-        'AACGM': BEGIN
-           use_AACGM = 1
-           use_GEI   = 0
-           use_GEO   = 0
-           use_MAG   = 0
-           use_SDT   = 0
-        END
-        'GEI'  : BEGIN
-           use_AACGM = 0
-           use_GEI   = 1
-           use_GEO   = 0
-           use_MAG   = 0
-           use_SDT   = 0
-        END
-        'GEO'  : BEGIN
-           use_AACGM = 0
-           use_GEI   = 0
-           use_GEO   = 1
-           use_MAG   = 0
-           use_SDT   = 0
-        END
-        'MAG'  : BEGIN
-           use_AACGM = 0
-           use_GEI   = 0
-           use_GEO   = 0
-           use_MAG   = 1
-           use_SDT   = 0
-        END
-        'SDT'  : BEGIN
-           use_AACGM = 0
-           use_GEI   = 0
-           use_GEO   = 0
-           use_MAG   = 0
-           use_SDT   = 1
-        END
-     ENDCASE
-  ENDIF
+  IF ~KEYWORD_SET(just_CDBTime) THEN BEGIN
 
-  IF KEYWORD_SET(use_AACGM) THEN BEGIN
+     FASTDBS__COORDINATE_SWITCHER, $
+        (*pDBStruct), $
+        COORDINATE_SYSTEM=coordinate_system, $
+        USE_LNG=use_lng, $
+        USE_AACGM_COORDS=use_AACGM, $
+        USE_GEI_COORDS=use_GEI, $
+        USE_GEO_COORDS=use_GEO, $
+        USE_MAG_COORDS=use_MAG, $
+        USE_SDT_COORDS=use_SDT, $
+        DEFCOORDDIR=defCoordDir, $
+        AACGM_FILE=AACGM_file, $
+        GEI_FILE=GEI_file, $
+        GEO_FILE=GEO_file, $
+        MAG_FILE=MAG_file, $
+        SDT_FILE=SDT_file, $
+        NO_MEMORY_LOAD=noMem, $
+        CHANGEDCOORDS=changedCoords
 
-     IF KEYWORD_SET(despunDB) THEN BEGIN
-        AACGM_file = AACGM_file__despun
-     ENDIF;;  ELSE BEGIN
+  ;; IF KEYWORD_SET(coordinate_system) THEN BEGIN
+  ;;    CASE STRUPCASE(coordinate_system) OF
+  ;;       'AACGM': BEGIN
+  ;;          use_AACGM = 1
+  ;;          use_GEI   = 0
+  ;;          use_GEO   = 0
+  ;;          use_MAG   = 0
+  ;;          use_SDT   = 0
+  ;;       END
+  ;;       'GEI'  : BEGIN
+  ;;          use_AACGM = 0
+  ;;          use_GEI   = 1
+  ;;          use_GEO   = 0
+  ;;          use_MAG   = 0
+  ;;          use_SDT   = 0
+  ;;       END
+  ;;       'GEO'  : BEGIN
+  ;;          use_AACGM = 0
+  ;;          use_GEI   = 0
+  ;;          use_GEO   = 1
+  ;;          use_MAG   = 0
+  ;;          use_SDT   = 0
+  ;;       END
+  ;;       'MAG'  : BEGIN
+  ;;          use_AACGM = 0
+  ;;          use_GEI   = 0
+  ;;          use_GEO   = 0
+  ;;          use_MAG   = 1
+  ;;          use_SDT   = 0
+  ;;       END
+  ;;       'SDT'  : BEGIN
+  ;;          use_AACGM = 0
+  ;;          use_GEI   = 0
+  ;;          use_GEO   = 0
+  ;;          use_MAG   = 0
+  ;;          use_SDT   = 1
+  ;;       END
+  ;;    ENDCASE
+  ;; ENDIF
+
+  ;; IF KEYWORD_SET(use_AACGM) THEN BEGIN
+
+  ;;    IF KEYWORD_SET(despunDB) THEN BEGIN
+  ;;       AACGM_file = AACGM_file__despun
+  ;;    ENDIF;;  ELSE BEGIN
         
-     RESTORE,defCoordDir+AACGM_file
+  ;;    RESTORE,defCoordDir+AACGM_file
 
-     coordName = 'AACGM'
-     coordStr  = TEMPORARY(max_AACGM)
-  ENDIF
+  ;;    coordName = 'AACGM'
+  ;;    coordStr  = TEMPORARY(max_AACGM)
+  ;; ENDIF
 
-  IF KEYWORD_SET(use_GEI) THEN BEGIN
+  ;; IF KEYWORD_SET(use_GEI) THEN BEGIN
 
-     IF KEYWORD_SET(despunDB) THEN BEGIN
-        GEI_file = GEI_file__despun
-     ENDIF
+  ;;    IF KEYWORD_SET(despunDB) THEN BEGIN
+  ;;       GEI_file = GEI_file__despun
+  ;;    ENDIF
         
-     RESTORE,defCoordDir+GEI_file
+  ;;    RESTORE,defCoordDir+GEI_file
 
-     coordName = 'GEI'
-     coordStr  = TEMPORARY(GEI)
-  ENDIF
+  ;;    coordName = 'GEI'
+  ;;    coordStr  = TEMPORARY(GEI)
+  ;; ENDIF
 
-  IF KEYWORD_SET(use_GEO) THEN BEGIN
+  ;; IF KEYWORD_SET(use_GEO) THEN BEGIN
 
-     IF KEYWORD_SET(despunDB) THEN BEGIN
-        GEO_file = GEO_file__despun
-     ENDIF
+  ;;    IF KEYWORD_SET(despunDB) THEN BEGIN
+  ;;       GEO_file = GEO_file__despun
+  ;;    ENDIF
         
-     RESTORE,defCoordDir+GEO_file
+  ;;    RESTORE,defCoordDir+GEO_file
 
-     coordName = 'GEO'
-     coordStr  = TEMPORARY(GEO)
-  ENDIF
+  ;;    coordName = 'GEO'
+  ;;    coordStr  = TEMPORARY(GEO)
+  ;; ENDIF
 
-  IF KEYWORD_SET(use_MAG) THEN BEGIN
+  ;; IF KEYWORD_SET(use_MAG) THEN BEGIN
 
-     IF KEYWORD_SET(despunDB) THEN BEGIN
-        MAG_file = MAG_file__despun
-     ENDIF
+  ;;    IF KEYWORD_SET(despunDB) THEN BEGIN
+  ;;       MAG_file = MAG_file__despun
+  ;;    ENDIF
         
-     RESTORE,defCoordDir+MAG_file
+  ;;    RESTORE,defCoordDir+MAG_file
 
-     coordName = 'MAG'
-     coordStr  = TEMPORARY(MAG)
+  ;;    coordName = 'MAG'
+  ;;    coordStr  = TEMPORARY(MAG)
+  ;; ENDIF
+
+  ;; ;;Make sure we have SDT coords loaded if nothing else has been requested
+  ;; IF ~(KEYWORD_SET(just_CDBTime) AND KEYWORD_SET(noMem)) THEN BEGIN
+  ;;    IF ~(KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_GEI) OR KEYWORD_SET(use_GEO) OR KEYWORD_SET(use_MAG)) THEN BEGIN
+  ;;       IF STRUPCASE((*pDBStruct).info.coords) NE 'SDT' THEN BEGIN
+  ;;          use_SDT = 1
+  ;;       ENDIF 
+  ;;    ENDIF
+
+  ;;    IF KEYWORD_SET(use_SDT) THEN BEGIN
+
+  ;;       RESTORE,defCoordDir+SDT_file
+
+  ;;       coordName = 'SDT'
+  ;;       coordStr  = TEMPORARY(SDT)
+
+  ;;    ENDIF
+
+  ;;    IF N_ELEMENTS(coordName) GT 0 THEN BEGIN
+  ;;       ALFDB_SWITCH_COORDS, $
+  ;;          (*pDBStruct), $
+  ;;          coordStr, $
+  ;;          coordName, $
+  ;;          SUCCESS=success
+  ;;    ENDIF
+
+  ;;    IF KEYWORD_SET(use_lng) THEN BEGIN
+  ;;       index = -1
+  ;;       STR_ELEMENT,(*pDBStruct),'lng',INDEX=index
+  ;;       IF index NE -1 THEN BEGIN
+  ;;          flip = WHERE((*pDBStruct).lng LT 0.)
+  ;;          IF flip[0] NE -1 THEN BEGIN
+  ;;             (*pDBStruct).lng[flip] += 360.
+  ;;          ENDIF
+  ;;       ENDIF
+  ;;    ENDIF
+
   ENDIF
-
-  ;;Make sure we have SDT coords loaded if nothing else has been requested
-  IF ~(KEYWORD_SET(just_CDBTime) AND KEYWORD_SET(noMem)) THEN BEGIN
-     IF ~(KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_GEI) OR KEYWORD_SET(use_GEO) OR KEYWORD_SET(use_MAG)) THEN BEGIN
-        IF STRUPCASE((*pDBStruct).info.coords) NE 'SDT' THEN BEGIN
-           use_SDT = 1
-        ENDIF 
-     ENDIF
-
-     IF KEYWORD_SET(use_SDT) THEN BEGIN
-
-        RESTORE,defCoordDir+SDT_file
-
-        coordName = 'SDT'
-        coordStr  = TEMPORARY(SDT)
-
-     ENDIF
-
-     IF N_ELEMENTS(coordName) GT 0 THEN BEGIN
-        ALFDB_SWITCH_COORDS, $
-           (*pDBStruct), $
-           coordStr, $
-           coordName, $
-           SUCCESS=success
-     ENDIF
-
-     IF KEYWORD_SET(use_lng) THEN BEGIN
-        index = -1
-        STR_ELEMENT,(*pDBStruct),'lng',INDEX=index
-        IF index NE -1 THEN BEGIN
-           flip = WHERE((*pDBStruct).lng LT 0.)
-           IF flip[0] NE -1 THEN BEGIN
-              (*pDBStruct).lng[flip] += 360.
-           ENDIF
-        ENDIF
-     ENDIF
 
      ;; IF KEYWORD_SET(get_good_i) THEN good_i = GET_CHASTON_IND((*pDBStruct),HEMI='BOTH')
-     IF ARG_PRESENT(good_i) THEN BEGIN
+  IF ARG_PRESENT(good_i) THEN BEGIN
 
-        SET_ALFVENDB_PLOT_DEFAULTS, $
-           ORBRANGE=orbRange, $
-           ALTITUDERANGE=altitudeRange, $
-           CHARERANGE=charERange, $
-           POYNTRANGE=poyntRange, $
-           SAMPLE_T_RESTRICTION=sample_t_restriction, $
-           INCLUDE_32HZ=include_32Hz, $
-           DISREGARD_SAMPLE_T=disregard_sample_t, $
-           /DONT_BLACKBALL_MAXIMUS, $
-           ;; DONT_BLACKBALL_FASTLOC=dont_blackball_fastloc, $
-           MINMLT=minM, $
-           MAXMLT=maxM, $
-           BINMLT=binM, $
-           SHIFTMLT=shiftM, $
-           MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
-           HEMI=hemi__good_i, $
-           NORTH=north, $
-           SOUTH=south, $
-           BOTH_HEMIS=both_hemis, $
-           DAYSIDE=dayside, $
-           NIGHTSIDE=nightside, $
-           EQUAL_AREA_BINNING=EA_binning, $
-           DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
-           REVERSE_LSHELL=reverse_lShell, $
-           MIN_MAGCURRENT=minMC, $
-           MAX_NEGMAGCURRENT=maxNegMC, $
-           HWMAUROVAL=HwMAurOval, $
-           HWMKPIND=HwMKpInd, $
-           MASKMIN=maskMin, $
-           THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
-           DESPUNDB=despunDB, $
-           COORDINATE_SYSTEM=coordinate_system, $
-           USE_AACGM_COORDS=use_AACGM, $
-           USE_MAG_COORDS=use_MAG, $
-           ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
-           MIMC_STRUCT=MIMC_struct, $
-           RESET_STRUCT=reset, $
-           _EXTRA=e
+     SET_ALFVENDB_PLOT_DEFAULTS, $
+        ORBRANGE=orbRange, $
+        ALTITUDERANGE=altitudeRange, $
+        CHARERANGE=charERange, $
+        POYNTRANGE=poyntRange, $
+        SAMPLE_T_RESTRICTION=sample_t_restriction, $
+        INCLUDE_32HZ=include_32Hz, $
+        DISREGARD_SAMPLE_T=disregard_sample_t, $
+        /DONT_BLACKBALL_MAXIMUS, $
+        ;; DONT_BLACKBALL_FASTLOC=dont_blackball_fastloc, $
+        MINMLT=minM, $
+        MAXMLT=maxM, $
+        BINMLT=binM, $
+        SHIFTMLT=shiftM, $
+        MINILAT=minI,MAXILAT=maxI,BINILAT=binI, $
+        HEMI=hemi__good_i, $
+        NORTH=north, $
+        SOUTH=south, $
+        BOTH_HEMIS=both_hemis, $
+        DAYSIDE=dayside, $
+        NIGHTSIDE=nightside, $
+        EQUAL_AREA_BINNING=EA_binning, $
+        DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
+        REVERSE_LSHELL=reverse_lShell, $
+        MIN_MAGCURRENT=minMC, $
+        MAX_NEGMAGCURRENT=maxNegMC, $
+        HWMAUROVAL=HwMAurOval, $
+        HWMKPIND=HwMKpInd, $
+        MASKMIN=maskMin, $
+        THIST_MASK_BINS_BELOW_THRESH=tHist_mask_bins_below_thresh, $
+        DESPUNDB=despunDB, $
+        COORDINATE_SYSTEM=coordinate_system, $
+        USE_AACGM_COORDS=use_AACGM, $
+        USE_MAG_COORDS=use_MAG, $
+        ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+        MIMC_STRUCT=MIMC_struct, $
+        RESET_STRUCT=reset, $
+        _EXTRA=e
 
-        
-        good_i = GET_CHASTON_IND( $
-                 (*pDBStruct), $
-                 ;; MIN_MAGCURRENT=minMC, $
-                 ;; MAX_NEGMAGCURRENT=maxNegMC, $
-                 ;; INCLUDE_32HZ=include_32Hz, $
-                 ;; HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH', $
-                 ;; DESPUNDB=despunDB, $
-                 DBTIMES=cdbTime, $
-                 ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
-                 MIMC_STRUCT=MIMC_struct, $
-                 RESET_GOOD_INDS=KEYWORD_SET(swap_DBs))
+     
+     good_i = GET_CHASTON_IND( $
+              (*pDBStruct), $
+              ;; MIN_MAGCURRENT=minMC, $
+              ;; MAX_NEGMAGCURRENT=maxNegMC, $
+              ;; INCLUDE_32HZ=include_32Hz, $
+              ;; HEMI=KEYWORD_SET(hemi__good_i) ? hemi__good_i : 'BOTH', $
+              ;; DESPUNDB=despunDB, $
+              DBTIMES=cdbTime, $
+              ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+              MIMC_STRUCT=MIMC_struct, $
+              RESET_GOOD_INDS=KEYWORD_SET(swap_DBs))
 
-        MAXIMUS__good_i = good_i
-
-     ENDIF
+     MAXIMUS__good_i = good_i
 
   ENDIF
+
+  ;; ENDIF
 
   IF ~KEYWORD_SET(noMem) THEN BEGIN
      MAXIMUS__maximus               = TEMPORARY(*pDBStruct)

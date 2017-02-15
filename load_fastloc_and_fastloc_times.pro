@@ -297,10 +297,13 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   IF ~KEYWORD_SET(just_fastLoc) AND KEYWORD_SET(loadFL) THEN BEGIN
 
      IF N_ELEMENTS(fastloc_times) EQ 0 OR KEYWORD_SET(force_load_times) THEN BEGIN
+
         IF KEYWORD_SET(force_load_times) THEN BEGIN
            PRINTF,lun,"Forcing load, whether or not we already have times..."
         ENDIF
+
         IF FILE_TEST(DBDir+DB_tFile) THEN RESTORE,DBDir+DB_tFile
+
         IF fastloc_times EQ !NULL THEN BEGIN
            IF KEYWORD_SET(fastLoc_has_times) THEN BEGIN
               fastLoc_times = fastLoc.x
@@ -313,46 +316,65 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
         pDB__delta_t = PTR_NEW(fastLoc_delta_t)
 
+        FASTDBS__DELTA_SWITCHER,dbStruct, $
+                                OUT_WIDTH_MEASURE=width_measure, $
+                                DBDIR=DBDir, $
+                                LOAD_DELTA_T=load_delta_t, $
+                                LOAD_DELTA_ILAT_NOT_DELTA_T=load_dILAT, $
+                                LOAD_DELTA_ANGLE_FOR_WIDTH_TIME=load_dAngle, $
+                                LOAD_DELTA_X_FOR_WIDTH_TIME=load_dx, $
+                                DO_NOT_MAP_DELTA_T=do_not_map_delta_t, $
+                                DILAT_FILE=dILAT_file, $
+                                ;; FOR_ALFDB=alfDB, $
+                                /FOR_FASTLOC_DB
+                                ;; FOR_ESPEC_DB=eSpecDB, $
+                                ;; FOR_ION_DB=ionDB
 
-        delta_stuff = KEYWORD_SET(load_dILAT) + KEYWORD_SET(load_dx) + KEYWORD_SET(load_dAngle)
-        CASE delta_stuff OF
-           0:
-           1: BEGIN
-              dILAT_file = GET_FAST_DB_STRING((*pDBStruct),/FOR_FASTLOC_DB) + '-delta_ilats.sav'
-              RESTORE,DBDir+dILAT_file
-           END
-           ELSE: BEGIN
-              PRINT,"Can't have it all."
-              STOP
-           END
-        ENDCASE
 
-        IF KEYWORD_SET(load_dILAT) THEN BEGIN
-           PRINT,"Replacing fastLoc_delta_t with dILAT ..."
-
-           ;; fastLoc_delta_t           = TEMPORARY(ABS(FLOAT(width_ILAT)))
-           pDB__delta_t              = PTR_NEW(TEMPORARY(ABS(FLOAT(width_ILAT))))
-           do_not_map_delta_t        = 1
-           fastLoc.info.dILAT_not_dt = 1
+        IF N_ELEMENTS(width_measure) GE 0 THEN BEGIN
+           pDB__delta_t = PTR_NEW(TEMPORARY(ABS(width_measure)))
         ENDIF
 
-        IF KEYWORD_SET(load_dAngle) THEN BEGIN
-           PRINT,"Replacing fastLoc_delta_t with dAngle ..."
+        ;; delta_stuff = KEYWORD_SET(load_dILAT) + KEYWORD_SET(load_dx) + KEYWORD_SET(load_dAngle)
+        ;; CASE delta_stuff OF
+        ;;    0:
+        ;;    1: BEGIN
+        ;;       dILAT_file = GET_FAST_DB_STRING((*pDBStruct),/FOR_FASTLOC_DB) + '-delta_ilats.sav'
+        ;;       RESTORE,DBDir+dILAT_file
+        ;;    END
+        ;;    ELSE: BEGIN
+        ;;       PRINT,"Can't have it all."
+        ;;       STOP
+        ;;    END
+        ;; ENDCASE
 
-           ;; fastLoc_delta_t            = TEMPORARY(ABS(FLOAT(width_angle)))
-           pDB__delta_t               = PTR_NEW(TEMPORARY(ABS(FLOAT(width_angle))))
-           do_not_map_delta_t         = 1
-           fastLoc.info.dAngle_not_dt = 1
-        ENDIF
+        ;; IF KEYWORD_SET(load_dILAT) THEN BEGIN
+        ;;    PRINT,"Replacing fastLoc_delta_t with dILAT ..."
 
-        IF KEYWORD_SET(load_dx) THEN BEGIN
-           PRINT,"Replacing fastLoc_delta_t with dx ..."
+        ;;    ;; fastLoc_delta_t           = TEMPORARY(ABS(FLOAT(width_ILAT)))
+        ;;    pDB__delta_t              = PTR_NEW(TEMPORARY(ABS(FLOAT(width_ILAT))))
+        ;;    do_not_map_delta_t        = 1
+        ;;    fastLoc.info.dILAT_not_dt = 1
+        ;; ENDIF
 
-           fastLoc_delta_t           = TEMPORARY(ABS(FLOAT(width_x)))
-           pDB__delta_t              = PTR_NEW(TEMPORARY(ABS(FLOAT(width_x))))
-           ;; do_not_map_delta_t        = 0
-           fastLoc.info.dx_not_dt    = 1
-        ENDIF
+        ;; IF KEYWORD_SET(load_dAngle) THEN BEGIN
+        ;;    PRINT,"Replacing fastLoc_delta_t with dAngle ..."
+
+        ;;    ;; fastLoc_delta_t            = TEMPORARY(ABS(FLOAT(width_angle)))
+        ;;    pDB__delta_t               = PTR_NEW(TEMPORARY(ABS(FLOAT(width_angle))))
+        ;;    do_not_map_delta_t         = 1
+        ;;    fastLoc.info.dAngle_not_dt = 1
+        ;; ENDIF
+
+        ;; IF KEYWORD_SET(load_dx) THEN BEGIN
+        ;;    PRINT,"Replacing fastLoc_delta_t with dx ..."
+
+        ;;    ;; fastLoc_delta_t           = TEMPORARY(ABS(FLOAT(width_x)))
+        ;;    pDB__delta_t              = PTR_NEW(TEMPORARY(ABS(FLOAT(width_x))))
+        ;;    ;; do_not_map_delta_t        = 0
+        ;;    fastLoc.info.dx_not_dt    = 1
+        ;; ENDIF
+
 
         IF KEYWORD_SET(do_not_map_delta_t) THEN BEGIN
            PRINT,'Not mapping delta t for fastLoc ...'
@@ -387,133 +409,152 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   ENDIF
 
   IF ~KEYWORD_SET(just_times) THEN BEGIN
-     IF KEYWORD_SET(coordinate_system) THEN BEGIN
-        CASE STRUPCASE(coordinate_system) OF
-           'AACGM': BEGIN
-              use_AACGM = 1
-              use_GEI   = 0
-              use_GEO   = 0
-              use_MAG   = 0
-              use_SDT   = 0
-           END
-           'GEI'  : BEGIN
-              use_AACGM = 0
-              use_GEI   = 1
-              use_GEO   = 0
-              use_MAG   = 0
-              use_SDT   = 0
-           END
-           'GEO'  : BEGIN
-              use_AACGM = 0
-              use_GEI   = 0
-              use_GEO   = 1
-              use_MAG   = 0
-              use_SDT   = 0
-           END
-           'MAG'  : BEGIN
-              use_AACGM = 0
-              use_GEI   = 0
-              use_GEO   = 0
-              use_MAG   = 1
-              use_SDT   = 0
-           END
-           'SDT'  : BEGIN
-              use_AACGM = 0
-              use_GEI   = 0
-              use_GEO   = 0
-              use_MAG   = 0
-              use_SDT   = 1
-           END
-        ENDCASE
-     ENDIF
 
-     IF KEYWORD_SET(for_eSpec_DBs) AND KEYWORD_SET(use_AACGM) $
-     THEN BEGIN
-        PRINT,'Not set up for this!!' 
-        STOP
-     ENDIF
+     FASTDBS__COORDINATE_SWITCHER, $
+        (*pDBStruct), $
+        COORDINATE_SYSTEM=coordinate_system, $
+        USE_LNG=use_lng, $
+        USE_AACGM_COORDS=use_AACGM, $
+        USE_GEI_COORDS=use_GEI, $
+        USE_GEO_COORDS=use_GEO, $
+        USE_MAG_COORDS=use_MAG, $
+        USE_SDT_COORDS=use_SDT, $
+        DEFCOORDDIR=defCoordDir, $
+        AACGM_FILE=AACGM_file, $
+        GEI_FILE=GEI_file, $
+        GEO_FILE=GEO_file, $
+        MAG_FILE=MAG_file, $
+        SDT_FILE=SDT_file, $
+        NO_MEMORY_LOAD=noMem, $
+        CHANGEDCOORDS=changedCoords
+
+     ;; IF KEYWORD_SET(coordinate_system) THEN BEGIN
+     ;;    CASE STRUPCASE(coordinate_system) OF
+     ;;       'AACGM': BEGIN
+     ;;          use_AACGM = 1
+     ;;          use_GEI   = 0
+     ;;          use_GEO   = 0
+     ;;          use_MAG   = 0
+     ;;          use_SDT   = 0
+     ;;       END
+     ;;       'GEI'  : BEGIN
+     ;;          use_AACGM = 0
+     ;;          use_GEI   = 1
+     ;;          use_GEO   = 0
+     ;;          use_MAG   = 0
+     ;;          use_SDT   = 0
+     ;;       END
+     ;;       'GEO'  : BEGIN
+     ;;          use_AACGM = 0
+     ;;          use_GEI   = 0
+     ;;          use_GEO   = 1
+     ;;          use_MAG   = 0
+     ;;          use_SDT   = 0
+     ;;       END
+     ;;       'MAG'  : BEGIN
+     ;;          use_AACGM = 0
+     ;;          use_GEI   = 0
+     ;;          use_GEO   = 0
+     ;;          use_MAG   = 1
+     ;;          use_SDT   = 0
+     ;;       END
+     ;;       'SDT'  : BEGIN
+     ;;          use_AACGM = 0
+     ;;          use_GEI   = 0
+     ;;          use_GEO   = 0
+     ;;          use_MAG   = 0
+     ;;          use_SDT   = 1
+     ;;       END
+     ;;    ENDCASE
+     ;; ENDIF
+
+     ;; IF KEYWORD_SET(for_eSpec_DBs) AND KEYWORD_SET(use_AACGM) $
+     ;; THEN BEGIN
+     ;;    PRINT,'Not set up for this!!' 
+     ;;    STOP
+     ;; ENDIF
 
 
-     changeCoords = 0B
+     ;; changeCoords = 0B
 
-     IF KEYWORD_SET(use_AACGM) THEN BEGIN
+     ;; IF KEYWORD_SET(use_AACGM) THEN BEGIN
 
-        RESTORE,defCoordDir+AACGM_file
+     ;;    RESTORE,defCoordDir+AACGM_file
 
-        coordName = 'AACGM'
-        coordStr  = TEMPORARY(AACGM)
+     ;;    coordName = 'AACGM'
+     ;;    coordStr  = TEMPORARY(AACGM)
 
-        changeCoords = 1B
-     ENDIF
+     ;;    changeCoords = 1B
+     ;; ENDIF
 
-     IF KEYWORD_SET(use_GEI) THEN BEGIN
+     ;; IF KEYWORD_SET(use_GEI) THEN BEGIN
 
-        RESTORE,defCoordDir+GEI_file
+     ;;    RESTORE,defCoordDir+GEI_file
 
-        coordStr  = TEMPORARY(GEI)
-        coordName = 'GEI'
+     ;;    coordStr  = TEMPORARY(GEI)
+     ;;    coordName = 'GEI'
 
-        changeCoords = 1B
-     ENDIF
+     ;;    changeCoords = 1B
+     ;; ENDIF
 
-     IF KEYWORD_SET(use_GEO) THEN BEGIN
+     ;; IF KEYWORD_SET(use_GEO) THEN BEGIN
 
-        RESTORE,defCoordDir+GEO_file
+     ;;    RESTORE,defCoordDir+GEO_file
 
-        coordStr  = TEMPORARY(GEO)
-        coordName = 'GEO'
+     ;;    coordStr  = TEMPORARY(GEO)
+     ;;    coordName = 'GEO'
 
-        changeCoords = 1B
-     ENDIF
+     ;;    changeCoords = 1B
+     ;; ENDIF
 
-     IF KEYWORD_SET(use_MAG) THEN BEGIN
+     ;; IF KEYWORD_SET(use_MAG) THEN BEGIN
 
-        RESTORE,defCoordDir+MAG_file
+     ;;    RESTORE,defCoordDir+MAG_file
 
-        coordName = 'MAG'
-        coordStr  = TEMPORARY(MAG)
+     ;;    coordName = 'MAG'
+     ;;    coordStr  = TEMPORARY(MAG)
 
-        changeCoords = 1B
-     ENDIF
+     ;;    changeCoords = 1B
+     ;; ENDIF
 
-     ;;Make sure we have SDT coords loaded if nothing else has been requested
-     IF ~(KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_MAG) OR KEYWORD_SET(use_GEO)) THEN BEGIN
-        IF STRUPCASE((*pDBStruct).info.coords) NE 'SDT' THEN BEGIN
-           use_SDT = 1
-        ENDIF 
-     ENDIF
+     ;; ;;Make sure we have SDT coords loaded if nothing else has been requested
+     ;; IF ~(KEYWORD_SET(use_AACGM) OR KEYWORD_SET(use_MAG) OR KEYWORD_SET(use_GEO)) THEN BEGIN
+     ;;    IF STRUPCASE((*pDBStruct).info.coords) NE 'SDT' THEN BEGIN
+     ;;       use_SDT = 1
+     ;;    ENDIF 
+     ;; ENDIF
 
-     IF KEYWORD_SET(use_SDT) THEN BEGIN
+     ;; IF KEYWORD_SET(use_SDT) THEN BEGIN
 
-        RESTORE,defCoordDir+SDT_file
+     ;;    RESTORE,defCoordDir+SDT_file
 
-        coordName = 'SDT'
-        coordStr  = TEMPORARY(SDT)
+     ;;    coordName = 'SDT'
+     ;;    coordStr  = TEMPORARY(SDT)
 
-        changeCoords = 1B
-     ENDIF
+     ;;    changeCoords = 1B
+     ;; ENDIF
 
-     IF changeCoords THEN BEGIN
-        ALFDB_SWITCH_COORDS, $
-           (*pDBStruct), $
-           coordStr,coordName, $
-           SUCCESS=success
+     ;; IF changeCoords THEN BEGIN
+     ;;    ALFDB_SWITCH_COORDS, $
+     ;;       (*pDBStruct), $
+     ;;       coordStr,coordName, $
+     ;;       SUCCESS=success
 
-        changedCoords = KEYWORD_SET(success)
-     ENDIF
+     ;;    changedCoords = KEYWORD_SET(success)
+     ;; ENDIF
 
-     IF KEYWORD_SET(use_lng) THEN BEGIN
-        index = -1
-        STR_ELEMENT,(*pDBStruct),'lng',INDEX=index
-        IF index NE -1 THEN BEGIN
-           flip = WHERE((*pDBStruct).lng LT 0.)
-           IF flip[0] NE -1 THEN BEGIN
-              (*pDBStruct).lng[flip] += 360.
-           ENDIF
-        ENDIF
-     ENDIF
+     ;; IF KEYWORD_SET(use_lng) THEN BEGIN
+     ;;    index = -1
+     ;;    STR_ELEMENT,(*pDBStruct),'lng',INDEX=index
+     ;;    IF index NE -1 THEN BEGIN
+     ;;       flip = WHERE((*pDBStruct).lng LT 0.)
+     ;;       IF flip[0] NE -1 THEN BEGIN
+     ;;          (*pDBStruct).lng[flip] += 360.
+     ;;       ENDIF
+     ;;    ENDIF
+     ;; ENDIF
 
-     IF KEYWORD_SET(changeCoords) AND ~KEYWORD_SET(changedCoords) THEN STOP
+     ;; IF KEYWORD_SET(changeCoords) AND ~KEYWORD_SET(changedCoords) THEN STOP
 
      IF KEYWORD_SET(changedCoords) THEN BEGIN
         ;; LOAD_MAXIMUS_AND_CDBTIME,maximus,/CHECK_DB
@@ -523,15 +564,6 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
               TAG_EXIST(MAXIMUS__maximus,'coords'): BEGIN
 
                  ;;Get coords from the proper DB
-                 ;; IF KEYWORD_SET(loadFL) THEN BEGIN
-                 ;;    flCoords    = fastLoc.info.coords
-                 ;; ENDIF ELSE BEGIN
-                 ;;    IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-                 ;;       flCoords = FL_eSpec__fastLoc.info.coords
-                 ;;    ENDIF ELSE BEGIN
-                 ;;       flCoords = FL__fastLoc.info.coords
-                 ;;    ENDELSE
-                 ;; ENDELSE
                  flCoords = (*pDBStruct).info.coords
 
                  IF STRLOWCASE(flCoords) NE $
@@ -548,6 +580,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
            ENDCASE
         ENDIF 
      ENDIF
+
   ENDIF
   
   ;;Now put 'em in
