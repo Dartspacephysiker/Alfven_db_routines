@@ -161,7 +161,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
 
   ;;We have more uncorrupted data for the eSpec DB, you know
   CASE 1 OF
-     KEYWORD_SET(alfDB_plot_struct.for_eSpec_DBs): BEGIN
+     (KEYWORD_SET(alfDB_plot_struct.for_eSpec_DBs) OR KEYWORD_SET(alfDB_plot_struct.for_ion_DBs)): BEGIN
         IF N_ELEMENTS(latest_UTC) EQ 0 THEN BEGIN
            ;; latest_UTC   = STR_TO_TIME('2001-12-31/23:59:59.999')
            latest_UTC   = STR_TO_TIME('2002-10-25/00:13:21')

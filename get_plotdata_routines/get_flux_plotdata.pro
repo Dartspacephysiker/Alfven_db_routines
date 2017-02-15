@@ -68,14 +68,15 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                       GET_CHAREE=get_ChareE, $
                       GET_CHARIE=get_chariE, $
                       GET_MAGC=get_magC, $
-                      EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
-                      ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
+                      ;; EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
+                      ;; ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                       IFLUX_ION_DATA=iFlux_ion_data, $
                       INUMFLUX_ION_DATA=iNumFlux_ion_data, $
                       INDICES__ESPEC=indices__eSpec, $
                       INDICES__ION=indices__ion, $
-                      ION_DELTA_T=ion_delta_t, $
-                      ESPEC_MLTSILATS=eSpec_MLTsILATs, $
+                      ;; ION_DELTA_T=ion_delta_t, $
+                      ;; ION_MLTSILATS=ion_MLTsILATs, $
+                      ;; ESPEC_MLTSILATS=eSpec_MLTsILATs, $
                       ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                       DO_PLOT_I_INSTEAD_OF_HISTOS=do_plot_i_instead_of_histos, $
                       PRINT_MAX_AND_MIN=print_mandm, $
@@ -118,15 +119,19 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
   ENDIF
 
   ;;Don't mod everyone's plot indices
+  for_eSpec        = BYTE(KEYWORD_SET(indices__eSpec))
+  for_ion          = BYTE(KEYWORD_SET(indices__ion))
+  for_e_or_i       = for_eSpec OR for_ion
   CASE 1 OF
-     KEYWORD_SET(indices__eSpec): BEGIN
-        tmp_i = indices__eSpec
+     for_eSpec: BEGIN
+        tmp_i      = indices__eSpec
      END
-     KEYWORD_SET(indices__ion): BEGIN
-        tmp_i = indices__ion
+     for_ion: BEGIN
+        tmp_i      = indices__ion
+        for_ion    = 1
      END
      ELSE: BEGIN
-        tmp_i = plot_i
+        tmp_i      = plot_i
      END
   ENDCASE
 
@@ -291,7 +296,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            tmpFluxPlotType  = 'eSpec' + (STRMATCH(fluxPlotType,'*2009*') ? '-2009' : '')
            H2DStr.title     = title__eSpec_ind_10
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           for_eSpec      = 1
+           ;; for_eSpec      = 1
            ;; inData           = eFlux_eSpec_data
            inData           = NEWELL__eSpec.jee
            can_div_by_w_x   = 0
@@ -525,8 +530,8 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            tmpFluxPlotType  = 'eSpec' + (STRMATCH(fluxPlotType,'*2009*') ? '-2009' : '')
            H2DStr.title     = title__eSpec_esa_nFlux
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           for_eSpec      = 1
-           tmp_i            = indices__eSpec
+           ;; for_eSpec      = 1
+           ;; tmp_i            = indices__eSpec
            ;; inData           = eNumFlux_eSpec_data
            inData           = NEWELL__eSpec.je
            can_div_by_w_x   = 0
@@ -850,19 +855,27 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Ji_ion"): BEGIN
-           tmpFluxPlotType  = 'Ji_nAlf'
-           H2DStr.title  = title__eSpec_ind_18
-           ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           for_eSpec      = 1
-           tmp_i            = indices__ion
-           ;; inData           = iNumFlux_ion_data
-           inData           = NEWELL_I__ion.ji
+           tmpFluxPlotType        = 'Ji_ion'
+           CASE 1 OF
+              KEYWORD_SET(NEWELL_I__ion.info.is_downgoing): BEGIN
+                 H2DStr.title     = title__ion_flux__downgoing
+                 H2DStr.grossFac  = 1.D24
+                 H2DStr.gUnits    = 'E+24'
+              END
+              ELSE: BEGIN
+                 H2DStr.title     = title__ion_flux
+                 H2DStr.grossFac  = 1.D22
+                 H2DStr.gUnits    = 'E+22'
+              END
+           ENDCASE
+           ;;NOTE: microCoul_per_m2__to_num_per_cm2 EQ 1. / 1.6e-9
+           for_ion                = 1
+           ;; tmp_i               = indices__ion
+           ;; inData              = iNumFlux_ion_data
+           inData                 = NEWELL_I__ion.ji
 
            can_div_by_w_x   = 0
            can_mlt_by_w_x   = 0
-
-           H2DStr.grossFac       = 1.D22
-           H2DStr.gUnits         = 'E+22'
 
            IF KEYWORD_SET(alfDB_plot_struct.ion__junk_alfven_candidates) THEN BEGIN
               dataname += '-candidates_removed'
@@ -888,22 +901,33 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            ENDIF
         END
         STRUPCASE(fluxPlotType) EQ STRUPCASE("Jei_ion"): BEGIN
-           tmpFluxPlotType  = 'Jei_nAlf'
-           H2DStr.title  = 'Ion Energy Flux (non-' + alficStr + ')'
-           ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           for_eSpec      = 1
-           tmp_i            = indices__ion
-           inData           = iFlux_ion_data
-           can_div_by_w_x   = 0
-           can_mlt_by_w_x   = 1
+           tmpFluxPlotType  = 'Jei_ion'
+           ;; H2DStr.title  = 'Ion Energy Flux (non-' + alficStr + ')'
+           CASE 1 OF
+              KEYWORD_SET(NEWELL_I__ion.info.is_downgoing): BEGIN
+                 H2DStr.title     = title__ion_eFlux__downgoing
+                 H2DStr.grossFac  = 1e9
+                 H2DStr.gUnits    = 'GW'
+              END
+              ELSE: BEGIN
+                 H2DStr.title     = title__ion_eFlux
+                 H2DStr.grossFac  = 1e9
+                 H2DStr.gUnits    = 'GW'
+              END
+           ENDCASE
+           ;; H2DStr.title        = 'Ion Energy Flux (mW/m!U2!N)'
+           ;;NOTE: microCoul_per_m2__to_num_per_cm2  EQ 1. / 1.6e-9
+           ;; for_ion                = 1
+           ;; tmp_i                  = indices__ion
+           ;; inData              = iFlux_ion_data
+           inData                 = NEWELL_I__ion.jei
+           can_div_by_w_x         = 0
+           can_mlt_by_w_x         = 1
 
-           H2DStr.grossFac  = 1e9
-           H2DStr.gUnits    = 'GW'
-
-           IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
+           IF KEYWORD_SET(alfDB_plot_struct.ion__junk_alfven_candidates) THEN BEGIN
               dataname += '-candidates_removed'
            ENDIF ELSE BEGIN
-              IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
+              IF KEYWORD_SET(alfDB_plot_struct.ion__all_fluxes) THEN BEGIN
                  dataname += '-all_fluxes'
               ENDIF
            ENDELSE
@@ -993,8 +1017,8 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            tmpFluxPlotType  = 'eSpec' + (STRMATCH(fluxPlotType,'*2009*') ? '-2009' : '')           
            H2DStr.title     = title__eSpec_charEE
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           for_eSpec      = 1
-           tmp_i            = indices__eSpec
+           ;; for_eSpec        = 1
+           ;; tmp_i            = indices__eSpec
            ;; inData           = eNumFlux_eSpec_data
            inData           = ABS(NEWELL__eSpec.jee/NEWELL__eSpec.je)*6.242*1.0e11
            can_div_by_w_x   = 0
@@ -1022,13 +1046,24 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   ENDIF
 
   IF KEYWORD_SET(get_ChariE) THEN BEGIN
-     H2DStr.title           = title__alfDB_ind_19
-     dataName               = 'charIE'
+  
      H2DStr.labelFormat     = fluxPlotChariCBLabelFormat
      H2DStr.logLabels       = logChariLabels
      H2DStr.do_plotIntegral = Charie_do_plotIntegral
      H2DStr.do_midCBLabel   = Charie_do_midCBLabel
-     inData                 = maximus.char_ion_energy
+
+     CASE 1 OF
+        for_ion: BEGIN
+           H2DStr.title     = title__alfDB_ind_19
+           dataName         = 'ion_charIE'
+           inData           = NEWELL_i__ion.charE
+        END
+        ELSE: BEGIN
+           H2DStr.title     = title__alfDB_ind_19
+           dataName         = 'charIE'
+           inData           = maximus.char_ion_energy
+        END
+     ENDCASE
 
      can_div_by_w_x         = 0
      can_mlt_by_w_x         = 0
@@ -1296,13 +1331,19 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
   ;;Is this going to be a time-averaged plot?
   IF KEYWORD_SET(do_timeAvg_fluxQuantities) AND ~KEYWORD_SET(cant_timeAvg) THEN BEGIN
-     IF KEYWORD_SET(for_eSpec) THEN BEGIN
-        inData        = inData * NEWELL__delta_t
-     ENDIF ELSE BEGIN
-        inData        = inData * maximus.width_time 
-     ENDELSE
+     CASE 1 OF
+        KEYWORD_SET(for_eSpec): BEGIN
+           inData     = inData * NEWELL__delta_t
+        END
+        KEYWORD_SET(for_ion): BEGIN
+           inData     = inData * NEWELL_I__delta_t
+        END
+        ELSE: BEGIN
+           inData     = inData * maximus.width_time 
+        END
+     ENDCASE
 
-     dataName         = 'tAvgd_' + dataName
+     dataName        = 'tAvgd_' + dataName
 
   ENDIF
 
@@ -1327,77 +1368,30 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
      dataName         = 'orbAvgd_' + dataName
   ENDIF
 
-  ;; IF KEYWORD_SET(Newell_the_cusp) THEN BEGIN
-  ;;    PRINT,'Newelling the cusp ...'
-
-  ;;    CASE 1 OF
-  ;;       KEYWORD_SET(for_eSpec): BEGIN
-  ;;          tempChare  = NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11
-  ;;          tmp_i      = CGSETDIFFERENCE( $
-  ;;                       tmp_i, $
-  ;;                       WHERE((NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11) LT 300 ) AND $
-  ;;                       (NEWELL__eSpec.MLT                                LT 14.5)   AND $
-  ;;                       (NEWELL__eSpec.MLT                                GT 9.5), $
-  ;;                       COUNT=nTmp, $
-  ;;                       NORESULT=-1)
-           
-  ;;       END
-  ;;       ELSE: BEGIN
-  ;;          tmp_i      = CGSETDIFFERENCE( $
-  ;;                       tmp_i, $
-  ;;                       WHERE((maximus.max_chare_losscone LT 300) AND $
-  ;;                             (maximus.MLT                LT 14.5)  AND $
-  ;;                             (maximus.MLT                GT 9.5)), $
-  ;;                       COUNT=nTmp, $
-  ;;                       NORESULT=-1)
-  ;;       END
-  ;;    ENDCASE
-  ;; ENDIF
-
-  ;;According to the Newell et al. [2009] strategy, kill obs. with characteristic energy < 300 eV if they lie between 9.5 and 14.5 MLT
-  ;; IF KEYWORD_SET(diffuse_everywhar) THEN BEGIN
-  ;;    PRINT,'Diffusing everywhar ...'
-
-  ;;    CASE 1 OF
-  ;;       KEYWORD_SET(for_eSpec): BEGIN
-  ;;          tempChare  = NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11
-  ;;          tmp_i      = CGSETDIFFERENCE( $
-  ;;                       tmp_i, $
-  ;;                       WHERE((NEWELL__eSpec.jee/NEWELL__eSpec.je*6.242*1.0e11) LT 300 ) AND $
-  ;;                       (NEWELL__eSpec.MLT                                LT 14.5)   AND $
-  ;;                       (NEWELL__eSpec.MLT                                GT 9.5), $
-  ;;                       COUNT=nTmp, $
-  ;;                       NORESULT=-1)
-           
-  ;;       END
-  ;;       ELSE: BEGIN
-  ;;          tmp_i      = CGSETDIFFERENCE( $
-  ;;                       tmp_i, $
-  ;;                       WHERE((maximus.max_chare_losscone LT 300) AND $
-  ;;                             (maximus.MLT                LT 14.5)  AND $
-  ;;                             (maximus.MLT                GT 9.5)), $
-  ;;                       COUNT=nTmp, $
-  ;;                       NORESULT=-1)
-  ;;       END
-  ;;    ENDCASE
-  ;; ENDIF
-
   ;;Update inData, others
   inData              = inData[tmp_i]
 
   ;;fix MLTs
-  IF KEYWORD_SET(eSpec_MLTsILATs) THEN BEGIN
-     mlts             = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,MIMC_struct.shiftM, $
-                                           IN_MLTS=(KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL__eSpec.lng : NEWELL__eSpec.mlt)[tmp_i], $
-                                           SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
-  ENDIF ELSE BEGIN
-     mlts             = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,MIMC_struct.shiftM,SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
-  ENDELSE
-  IF KEYWORD_SET(eSpec_MLTsILATs) THEN BEGIN
-     ilats            = NEWELL__eSpec.ilat[tmp_i]
-  ENDIF ELSE BEGIN
-     ilats            = (KEYWORD_SET(MIMC_struct.do_lShell) ? maximus.lshell : maximus.ilat)[tmp_i]
-  ENDELSE
+  CASE 1 OF
+     ;; KEYWORD_SET(eSpec_MLTsILATs): BEGIN
+     for_eSpec: BEGIN
+        mlts   = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,MIMC_struct.shiftM, $
+                                    IN_MLTS=(KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL__eSpec.lng : NEWELL__eSpec.mlt)[tmp_i], $
+                                    SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
+        ilats  = NEWELL__eSpec.ilat[tmp_i]
+     END
+     ;; KEYWORD_SET(ion_MLTsILATs): BEGIN
+     for_ion: BEGIN
+        mlts   = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,MIMC_struct.shiftM, $
+                                    IN_MLTS=(KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL_I__ion.lng : NEWELL_I__ion.mlt)[tmp_i], $
+                                    SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
+        ilats  = NEWELL_I__ion.ilat[tmp_i]
+     END
+     ELSE: BEGIN
+        mlts   = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,MIMC_struct.shiftM,SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
+        ilats  = (KEYWORD_SET(MIMC_struct.do_lShell) ? maximus.lshell : maximus.ilat)[tmp_i]
+     END
+  ENDCASE
 
   IF KEYWORD_SET(H2DStr.both_hemis) THEN ilats = ABS(ilats)
 
@@ -1464,7 +1458,7 @@ MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
            ENDIF
 
            PROBOCCURRENCE_AND_TIMEAVG_SANITY_CHECK,H2DStr, $
-                                                   KEYWORD_SET(for_eSpec) ? eSpec_tHistDenominator : tHistDenominator, $
+                                                   KEYWORD_SET(for_e_or_i) ? eSpec_tHistDenominator : tHistDenominator, $
                                                    outH2DBinsMLT, $
                                                    outH2DBinsILAT, $
                                                    H2DFluxN, $
@@ -1473,7 +1467,7 @@ MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
 
            ;;junked all those WHERE(H2DStr.data GT 0) as of 2016/04/23
            H2DStr.data[WHERE(ABS(H2DStr.data) GT 0)] = H2DStr.data[WHERE(ABS(H2DStr.data) GT 0)]/ $
-                                                  (KEYWORD_SET(for_eSpec) ? eSpec_tHistDenominator : $
+                                                  (KEYWORD_SET(for_e_or_i) ? eSpec_tHistDenominator : $
                                                    tHistDenominator)[WHERE(ABS(H2DStr.data) GT 0)]
            ;; H2DStr.data[hEv_nz_i] = H2DStr.data[hEv_nz_i]/tHistDenominator[hEv_nz_i]
 
@@ -1876,9 +1870,10 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   H2DStr.name          = dataName
   out_h2dMask          = h2dMask
 
-  IF KEYWORD_SET(for_eSpec) THEN BEGIN
+  IF for_e_or_i THEN BEGIN
      H2DStr.is_AlfDB   = 0B
-     H2DStr.is_eSpecDB = 1B
+     H2DStr.is_eSpecDB = BYTE(KEYWORD_SET(for_eSpec))
+     H2DStr.is_ionDB   = BYTE(KEYWORD_SET(for_ion  ))
      H2DStr.mask       = h2dMask
      H2DStr.hasMask    = 1
 

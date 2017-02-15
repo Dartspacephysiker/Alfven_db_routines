@@ -48,7 +48,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    ESPEC__MLTSILATS=eSpec__MLTsILATs, $
    ;; FOR_ION_DB=for_ion_DB, $
    ION__MLTSILATS=ion__MLTsILATs, $
-   ION_DELTA_T=ion_delta_t, $
+   ;; ION_DELTA_T=ion_delta_t, $
    PPLOTS=pPlots, $
    LOGPFPLOT=logPfPlot, $
    ABSPFLUX=absPflux, $
@@ -913,7 +913,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              CB_DIVFACTOR=CB_divFactor, $
                              EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                              INDICES__ESPEC=indices__eSpec, $
-                             ESPEC_MLTSILATS=eSpec__MLTsILATs, $
+                             ;; ESPEC_MLTSILATS=eSpec__MLTsILATs, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -1152,7 +1152,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              CB_DIVFACTOR=CB_divFactor, $
                              ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                              INDICES__ESPEC=indices__eSpec, $
-                             ESPEC_MLTSILATS=eSpec__MLTsILATs, $
+                             ;; ESPEC_MLTSILATS=eSpec__MLTsILATs, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -1306,12 +1306,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
      ENDIF ELSE BEGIN
         tmpH2DFluxN           = H2DFluxN
-        tmphEv_nz_i  = hEv_nz_i
+        tmphEv_nz_i           = hEv_nz_i
         tmpH2DMask            = H2DStrArr[KEYWORD_SET(nPlots)].data
      ENDELSE
 
      FOR i=0,N_ELEMENTS(iFluxPlotType)-1 DO BEGIN
-        fluxPlotType = iFluxPlotType[i]
+        fluxPlotType          = iFluxPlotType[i]
 
         CASE N_ELEMENTS(noPosIFlux) OF
            0:   noPosFlux     = !NULL
@@ -1378,8 +1378,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
                           IFLUX_ION_DATA=iFlux_ion_data, $
                           INUMFLUX_ION_DATA=iNumFlux_ion_data, $
                           INDICES__ION=indices__ion, $
-                          ION_DELTA_T=ion_delta_t, $
-                          ESPEC_MLTSILATS=ion__MLTsILATs, $
+                          ;; ION_DELTA_T=ion_delta_t, $
+                          ;; ESPEC_MLTSILATS=ion__MLTsILATs, $
                           ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                           OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
@@ -1662,7 +1662,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_charEPlots), $
                              INDICES__ESPEC=indices__eSpec, $
                              EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
-                             ESPEC_MLTSILATS=eSpec__MLTsILATs, $
+                             ;; ESPEC_MLTSILATS=eSpec__MLTsILATs, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              ;; NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
                              ;; BROADBAND_EVERYWHAR=fluxPlots__broadband_everywhar, $
@@ -1748,6 +1748,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        NOPOSFLUX=noPosChariE, $
                        NONEGFLUX=noNegChariE, $
                        ABSFLUX=absChariE, $
+                       INDICES__ION=indices__ion, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logChariEPlot)), $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $

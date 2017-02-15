@@ -26,7 +26,7 @@ FUNCTION GET_PASIS_VARS_FNAME,NEED_FASTLOC_I=need_fastLoc_i
                         'eSpec-'
      END
      KEYWORD_SET(PASIS__alfDB_plot_struct.for_ion_DBs): BEGIN
-        PASISpref    += (KEYWORD_SET(alfDB_plot_struct.ion__downgoing) ? 'down_' : '') + $
+        PASISpref    += (KEYWORD_SET(PASIS__alfDB_plot_struct.ion__downgoing) ? 'down_' : '') + $
                         'ion-'
      END
      ELSE: BEGIN

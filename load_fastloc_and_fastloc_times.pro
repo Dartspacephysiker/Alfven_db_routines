@@ -331,7 +331,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                 ;; FOR_ION_DB=ionDB
 
 
-        IF N_ELEMENTS(width_measure) GE 0 THEN BEGIN
+        IF N_ELEMENTS(width_measure) GT 0 THEN BEGIN
            pDB__delta_t = PTR_NEW(TEMPORARY(ABS(width_measure)))
         ENDIF
 

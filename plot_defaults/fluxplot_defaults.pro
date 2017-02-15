@@ -173,12 +173,16 @@ title__alfDB_ind_49                  = alficStr + ' Poynting Flux (' + energyFlu
 ;; title__eSpec_ind_18     = 'Non-' + alficStr + ' Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
 ;; title__eSpec_ion_energy = 'Non-' + alficStr + ' Upward Ion Energy Flux (' + numFluxStr + ')' + ionosphString   ;Specialty
 
-title__eSpec_ind_10     = 'Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString ;"Eflux_Losscone_Integ"
-title__eSpec_esa_nFlux  = 'Loss-cone e!U-!N Flux (' + numFluxStr + ')' + ionosphString    ;"ESA_Number_flux"
-title__eSpec_ind_18     = 'Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
-title__eSpec_ion_energy = 'Upward Ion Energy Flux (' + numFluxStr + ')' + ionosphString   ;Specialty
+title__eSpec_ind_10         = 'Loss-cone e!U-!N Flux (' + energyFluxStr + ')' + ionosphString ;"Eflux_Losscone_Integ"
+title__eSpec_esa_nFlux      = 'Loss-cone e!U-!N Flux (' + numFluxStr + ')' + ionosphString    ;"ESA_Number_flux"
+title__ion_flux             = 'Upward Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
+title__ion_eFlux            = 'Upward Ion Energy Flux (' + numFluxStr + ')' + ionosphString   ;Specialty
+title__ion_charE            = 'Ion Characteristic Energy (' + charEUnitString + ')' + scAltString   ;Specialty
+title__ion_flux__downgoing  = 'Precip. Ion Flux (' + numFluxStr + ')' + ionosphString          ;"Integ_Up"
+title__ion_eFlux__downgoing = 'Precip. Ion Energy Flux (' + numFluxStr + ')' + ionosphString   ;Specialty
+title__ion_charE__downgoing = 'Precip. Ion Characteristic Energy (' + charEUnitString + ')' + scAltString   ;Specialty
 
-title__eSpec_charEE                = 'Electron Characteristic Energy (' + charEUnitString + ') ' + scAltString
+title__eSpec_charEE         = 'Electron Characteristic Energy (' + charEUnitString + ') ' + scAltString
 
 ;;The eSpec guys
 title__eSpec_ind_10__grossRate = 'e!U-!N Energy Deposition, every type (' + energyGrossStr + ')' + ionosphString      ;"for_eSpec eSpec stuff

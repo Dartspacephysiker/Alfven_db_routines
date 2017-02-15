@@ -90,8 +90,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    ION__DOWNGOING=ion__downgoing, $
    ION_FLUX_PLOTS=ion_flux_plots, $
    ION__JUNK_ALFVEN_CANDIDATES=ion__junk_alfven_candidates, $
+   ION__ALL_FLUXES=ion__all_fluxes, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
-   ESPEC__NO_MAXIMUS=no_maximus, $
+   ESPEC__NO_MAXIMUS=eSpec__no_maximus, $
    ESPEC__UPGOING=eSpec__upgoing, $
    ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
    ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
@@ -324,6 +325,41 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      ;;    ENDCASE
      ;; ENDIF
   ENDIF
+
+  ;; IF KEYWORD_SET(for_ion_DBs) THEN BEGIN
+  ;;    IF KEYWORD_SET(ionPlots) THEN BEGIN
+  ;;       iFluxPlotType           = 'eFlux_eSpec' + $
+  ;;                                 ;; ( KEYWORD_SET(eSpec__Newell_2009_interp) ? $
+  ;;                                 ;;   '-2009' : '' )
+  ;;    ENDIF
+
+  ;;    IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
+  ;;       eNumFlPlotType          = 'eNumFlux_eSpec' + $
+  ;;                                 ( KEYWORD_SET(eSpec__Newell_2009_interp) ? $
+  ;;                                   '-2009' : '' )
+  ;;    ENDIF
+
+  ;;    IF KEYWORD_SET(charEPlots) OR KEYWORD_SET(eSpec__newellPlot_probOccurrence) THEN BEGIN
+  ;;       charEType               = 'charE_eSpec' + $
+  ;;                                 ( KEYWORD_SET(eSpec__Newell_2009_interp) ? $
+  ;;                                   '-2009' : '' )
+  ;;    ENDIF
+
+  ;;    ;; IF KEYWORD_SET(ionPlots) THEN BEGIN
+  ;;    ;;    CASE 1 OF
+  ;;    ;;       STRUPCASE(iFluxPlotType) EQ 'ENERGY': BEGIN
+  ;;    ;;          iFluxPlotType     = 'JEi_eSpec' + $
+  ;;    ;;                              ( KEYWORD_SET(ion__Newell_2009_interp) ? $
+  ;;    ;;                                '-2009' : '' )
+  ;;    ;;       END
+  ;;    ;;       ELSE: BEGIN
+  ;;    ;;          iFluxPlotType     = 'Ji_eSpec' + $
+  ;;    ;;                              ( KEYWORD_SET(ion__Newell_2009_interp) ? $
+  ;;    ;;                                '-2009' : '' )
+  ;;    ;;       END
+  ;;    ;;    ENDCASE
+  ;;    ;; ENDIF
+  ;; ENDIF
 
   IF (KEYWORD_SET(nEventPerOrbPlot) OR KEYWORD_SET(nEventPerMinPlot) ) AND NOT KEYWORD_SET(nPlots) THEN BEGIN
      print,"Can't do nEventPerOrbPlot without nPlots!!"
@@ -615,8 +651,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          ion__downgoing                    : 0B, $
                          ion_flux_plots                    : 0B, $
                          ion__junk_alfven_candidates       : 0B, $
+                         ion__all_fluxes                   : 0B, $
                          for_eSpec_DBs                     : 0B, $
-                         no_maximus                        : 0B, $
+                         eSpec__no_maximus                 : 0B, $
                          eSpec__upgoing                    : 0B, $
                          eSpec_flux_plots                  : 0B, $
                          eSpec__junk_alfven_candidates     : 0B, $
@@ -1101,6 +1138,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(ion__no_maximus) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'ion__no_maximus', $
                     BYTE(ion__no_maximus),/ADD_REPLACE
+        STR_ELEMENT,alfDB_plot_struct,'no_maximus', $
+                    BYTE(ion__no_maximus),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(ion_flux_plots) GT 0 THEN BEGIN
@@ -1118,15 +1157,22 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(ion__junk_alfven_candidates),/ADD_REPLACE
      ENDIF
 
+     IF N_ELEMENTS(ion__all_fluxes) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'ion__all_fluxes', $
+                    BYTE(ion__all_fluxes),/ADD_REPLACE
+     ENDIF
+
      ;;**ELECTRONS**
      IF N_ELEMENTS(for_eSpec_DBs) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'for_eSpec_DBs', $
                     BYTE(for_eSpec_DBs),/ADD_REPLACE
      ENDIF
 
-     IF N_ELEMENTS(no_maximus) GT 0 THEN BEGIN
+     IF N_ELEMENTS(eSpec__no_maximus) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'eSpec__no_maximus', $
+                    BYTE(eSpec__no_maximus),/ADD_REPLACE
         STR_ELEMENT,alfDB_plot_struct,'no_maximus', $
-                    BYTE(no_maximus),/ADD_REPLACE
+                    BYTE(eSpec__no_maximus),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(eSpec_flux_plots) GT 0 THEN BEGIN

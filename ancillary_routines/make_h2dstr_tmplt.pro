@@ -85,6 +85,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                 dont_mask_me    : 0B, $
                 is_alfDB        : 1B, $
                 is_eSpecDB      : 0B, $
+                is_ionDB        : 0B, $
                 is_fastLocDB    : 0B}
 
   RETURN,h2dStr_tmplt

@@ -156,7 +156,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    ION__DOWNGOING=ion__downgoing, $
    ION_FLUX_PLOTS=ion_flux_plots, $
    ION__JUNK_ALFVEN_CANDIDATES=ion__junk_alfven_candidates, $
-   ESPEC__NO_MAXIMUS=no_maximus, $
+   ION__ALL_FLUXES=ion__all_fluxes, $
+   ESPEC__NO_MAXIMUS=eSpec__no_maximus, $
    ESPEC__UPGOING=eSpec__upgoing, $
    ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
    ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
@@ -296,10 +297,12 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
                     OR KEYWORD_SET(numOrbLim) $
                     OR KEYWORD_SET(eSpec__t_probOccurrence)
 
+  no_maximus      = KEYWORD_SET(eSpec__no_maximus) OR KEYWORD_SET(ion__no_maximus) OR KEYWORD_SET(no_maximus)
+
   for_eSpec_DBs   = (KEYWORD_SET(eSpec_flux_plots    ) $
                      OR KEYWORD_SET(eSpec__newellPlot_probOccurrence) $
                      OR KEYWORD_SET(eSpec__t_probOccurrence         ) $
-                     OR KEYWORD_SET(no_maximus                      ))
+                     OR KEYWORD_SET(eSpec__no_maximus               ))
 
   for_ion_DBs     = (KEYWORD_SET(ion_flux_plots                     ) $ 
                      OR KEYWORD_SET(ion__t_probOccurrence           ) $
@@ -428,8 +431,9 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      ION__DOWNGOING=ion__downgoing, $
      ION_FLUX_PLOTS=ion_flux_plots, $
      ION__JUNK_ALFVEN_CANDIDATES=ion__junk_alfven_candidates, $
+     ION__ALL_FLUXES=ion__all_fluxes, $
      FOR_ESPEC_DBS=for_eSpec_DBs, $
-     ESPEC__NO_MAXIMUS=no_maximus, $
+     ESPEC__NO_MAXIMUS=eSpec__no_maximus, $
      ESPEC__UPGOING=eSpec__upgoing, $
      ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
      ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
