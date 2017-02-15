@@ -2,6 +2,7 @@
 PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                           FOR_MAXIMUS=for_maximus, $
                           FOR_ESPEC_DBS=for_eSpec_DBs, $
+                          FOR_IONS=for_ions, $
                           IN_INDS=in_inds, $
                           IN_MLTS=in_mlts, $
                           IN_ILATS=in_ilats, $
@@ -48,8 +49,10 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
   
   COMPILE_OPT IDL2
   @common__newell_espec.pro
+  @common__newell_ion_db.pro
 
-  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+  elOrIon = KEYWORD_SET(for_eSpec_DBs) OR KEYWORD_SET(for_ions)
+  IF (elOrIon) THEN BEGIN
      @common__fastloc_espec_vars.pro
   ENDIF ELSE BEGIN
      @common__fastloc_vars.pro
@@ -61,6 +64,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
 
   H2D_ii__alfDB    = WHERE(H2DStrArr[varploth2dinds].is_alfDB    ,nAlfDB  )
   H2D_ii__eSpec    = WHERE(H2DStrArr[varploth2dinds].is_eSpecDB  ,nESpec  )
+  H2D_ii__ion      = WHERE(H2DStrArr[varploth2dinds].is_ionDB    ,nIon    )
   H2D_ii__fastLoc  = WHERE(H2DStrArr[varploth2dinds].is_fastLocDB,nFastLoc)
 
   nLoops           = 0
@@ -75,6 +79,12 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
   IF nESpec GT 0 THEN BEGIN
      ;; nThisLoop    = [nThisLoop,nESpec]
      loopType     = [loopType,1]
+     nLoops++
+  ENDIF
+
+  IF nIon GT 0 THEN BEGIN
+     ;; nThisLoop    = [nThisLoop,nESpec]
+     loopType     = [loopType,3]
      nLoops++
   ENDIF
 
@@ -106,17 +116,25 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
         END
         2: BEGIN
            dbInds       = fastLocInds
-           tmpTimes     = (KEYWORD_SET(for_eSpec_DBs) ? FASTLOC_E__times : FASTLOC__times)
+           tmpTimes     = (elOrIon ? FASTLOC_E__times : FASTLOC__times)
            tmpVarH2D_i  = varPlotH2DInds[H2D_ii__fastLoc]
            tmpVarRaw_i  = varPlotRawInds[H2D_ii__fastLoc]
            send_DB      = 0
            nVarInds     = nFastLoc
         END
+        3: BEGIN
+           dbInds       = in_inds
+           tmpVarH2D_i  = varPlotH2DInds[H2D_ii__ion]
+           tmpVarRaw_i  = varPlotRawInds[H2D_ii__ion]
+           send_DB      = 0
+           nVarInds     = nIon
+        END
      ENDCASE
 
-     IF (loopType[k] EQ 1) OR (loopType[k] EQ 2) THEN BEGIN 
+     ;; IF (loopType[k] EQ 1) OR (loopType[k] EQ 2) THEN BEGIN 
+     IF loopType[k] GT 0 THEN BEGIN
 
-        ;;if eSpec [loopType == 1] or fastLoc [loopType == 2], we have stuff
+        ;;if eSpec [loopType == 1] or fastLoc [loopType == 2] or ion [loopType == 3], we have stuff
         haveStuff       = 1
 
         CASE loopType[k] OF
@@ -138,6 +156,11 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                  END
               ENDCASE
               tmpILATs  = (KEYWORD_SET(for_eSpec_DBs) ? FL_E__fastLoc : FL__fastLoc).ilat
+           END
+           3: BEGIN
+              tmpInds   = in_inds
+              tmpMLTs   = (KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL_I__ion.lng : NEWELL_I__ion.mlt)
+              tmpILATs  = NEWELL_I__ion.ilat
            END
         ENDCASE
      ENDIF ELSE BEGIN
@@ -197,6 +220,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
            FOR_MAXIMUS=loopType[k] EQ 0, $
            FOR_ESPEC_DBS=loopType[k] EQ 1, $
            FOR_FASTLOC_DBS=loopType[k] EQ 2, $
+           FOR_ION_DBS=loopType[k] EQ 3, $
            DBTIMES=tmpTimes, $
            IMF_STRUCT=IMF_struct, $
            ALFDB_PLOT_STRUCT=alfDB_plot_struct, $

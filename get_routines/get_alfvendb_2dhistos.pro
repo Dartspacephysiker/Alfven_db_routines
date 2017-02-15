@@ -2294,9 +2294,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
      GET_VARIANCE_PLOTDATA,MAXIMUS__maximus,plot_i, $
                            FOR_MAXIMUS=~KEYWORD_SET(no_maximus), $
-                           FOR_ESPEC_DBS=KEYWORD_SET(no_maximus), $
-                           IN_INDS=indices__eSpec, $
-                           IN_MLTS=eSpec__MLTsILATs, $
+                           ;; FOR_ESPEC_DBS=KEYWORD_SET(no_maximus), $
+                           FOR_ESPEC_DBS=for_eSpecs, $
+                           FOR_IONS=for_ions, $
+                           IN_INDS=KEYWORD_SET(no_maximus) ? $
+                           (KEYWORD_SET(for_eSpecs) ? indices__eSpec : indices__ion) : !NULL, $
+                           IN_MLTS=(KEYWORD_SET(for_eSpecs) ? eSpec__MLTsILATs : ions__MLTsILATs), $
                            ;; IN_ILATS=eSpec__ilats, $
                            FASTLOCINDS=fastLocInterped_i, $
                            H2DSTRARR=H2DStrArr, $

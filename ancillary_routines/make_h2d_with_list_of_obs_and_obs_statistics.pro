@@ -6,6 +6,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
    FOR_MAXIMUS=for_maximus, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
    FOR_FASTLOC_DBS=for_fastLoc_DBs, $
+   FOR_ION_DBS=for_ion_DBs, $
    DBTIMES=dbTimes, $
    ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
    IMF_STRUCT=IMF_struct, $
@@ -69,11 +70,15 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   ENDIF
 
   @common__newell_espec.pro
+  @common__newell_ion_db.pro
+
+  elOrIon = KEYWORD_SET(alfDB_plot_struct.for_eSpec_DBs) OR KEYWORD_SET(alfDB_plot_struct.for_ion_DBs)
+
   IF KEYWORD_SET(for_fastLoc_DBs) THEN BEGIN
      @common__fastloc_espec_vars.pro
      @common__fastloc_vars.pro
 
-     IF KEYWORD_SET(alfDB_plot_struct.for_eSpec_DBs) THEN BEGIN
+     IF elOrIon THEN BEGIN
         FLTMP      = FL_E__fastLoc
         FLTMPTIMES = FASTLOC_E__times
      ENDIF ELSE BEGIN
@@ -116,13 +121,30 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   ENDIF
 
   IF N_ELEMENTS(dataTitle) GT 0 THEN dTitle = dataName ELSE dTitle = 'Observation'
-  IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
-     dTitle = 'eSpec_DB'
-  ENDIF
+  CASE 1 OF
+     KEYWORD_SET(for_eSpec_DBs): BEGIN
+        dTitle = 'eSpec_DB'
+        first  = "eFlux"   
+        second = "eNumFlux"
+        third  = "charE"   
 
-  IF KEYWORD_SET(for_fastLoc_DBs) THEN BEGIN
-     dTitle = 'fastLoc_DB'
-  ENDIF
+     END
+     KEYWORD_SET(for_fastLoc_DBs): BEGIN
+        dTitle = 'fastLoc_DB'
+     END
+     KEYWORD_SET(for_ion_DBs): BEGIN
+        dTitle = 'ion_DB'
+        first  = "iFlux"   
+        second = "iNumFlux"
+        third  = "charIE"   
+     END
+     ELSE: BEGIN
+        dTitle = ''
+        first  =  dTitle
+        second = "charE"
+        third  = "eFlux"
+     END
+  ENDCASE
 
   ;;No silly, extraneous info
   dTitle = dTitle.Replace('Abs--','')
@@ -213,9 +235,9 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                   'A0,T121,A0)', $
                   "MLT","ILAT","Time","Orbit","Alt", $
                   ;; "pFlux","charE","eFlux","Bx","By", $
-                  (KEYWORD_SET(for_eSpec_DBs) ? "eFlux"    :  dTitle), $
-                  (KEYWORD_SET(for_eSpec_DBs) ? "eNumFlux" : "charE"), $
-                  (KEYWORD_SET(for_eSpec_DBs) ? "charE"    : "eFlux"), $
+                  first, $
+                  second, $
+                  third, $
                   "Bx","By","Bz","NEvents" ;"Dst"
 
            ;; PRINTF,textLun,FORMAT='("MLT",T10,"ILAT",T20,"Time",T47,"Orbit",T56,"Alt",T65,A0,T74,A0,T85,A0,T97,A0,T108)', $
@@ -265,6 +287,13 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                     tempAlts  = FLTMP.alt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
 
                  END
+                 KEYWORD_SET(for_ion_DBs): BEGIN
+                    tempMLTs  = NEWELL_I__ion.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempILATs = NEWELL_I__ion.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempTimes = NEWELL_I__ion.x[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempOrbs  = NEWELL_I__ion.orbit[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                    tempAlts  = NEWELL_I__ion.alt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                 END
                  ELSE: BEGIN
                     tempMLTs  = dbStruct.mlt[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
                     tempILATs = dbStruct.ilat[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
@@ -295,21 +324,28 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                     CASE 1 OF
                        KEYWORD_SET(output__orb_avg_obs): BEGIN
                           ;;CAREFUL!! for_eSpec_DBs and alfDB_plot_struct.for_eSpec_DBs do not mean the same thing in this routine!!!
-                          tempUTC           = (KEYWORD_SET(for_eSpec_DBs) ? NEWELL__eSpec.x : dbTimes) $
+                          tempUTC           = (KEYWORD_SET(for_eSpec_DBs) ? NEWELL__eSpec.x : $
+                                               (KEYWORD_SET(FOR_ion_DBs) ? NEWELL_I__ion.x : dbTimes)) $
                                               [dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
                           CASE 1 OF
                              KEYWORD_SET(for_maximus): BEGIN
-                                tempChare         = dbStruct.max_chare_losscone[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                                tempCharE         = dbStruct.max_chare_losscone[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
                                 tempeFlux         = dbStruct.elec_energy_flux[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
                              END
                              KEYWORD_SET(for_fastLoc_DBs): BEGIN
-                                tempChare         = MAKE_ARRAY(N_ELEMENTS((tempH2D_lists_with_inds[i,j])[0]),VALUE=0B,/BYTE)
+                                tempCharE         = MAKE_ARRAY(N_ELEMENTS((tempH2D_lists_with_inds[i,j])[0]),VALUE=0B,/BYTE)
                                 tempeFlux         = MAKE_ARRAY(N_ELEMENTS((tempH2D_lists_with_inds[i,j])[0]),VALUE=0B,/BYTE)
                              END
                              KEYWORD_SET(for_eSpec_DBs): BEGIN
                                 tempeFlux         = NEWELL__eSpec.jee[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
                                 tempeNumFlux      = NEWELL__eSpec.je[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                                tempChare         = tempeFlux/tempeNumFlux*6.242*1.0e11
+                                tempCharE         = tempeFlux/tempeNumFlux*6.242*1.0e11
+                             END
+                             KEYWORD_SET(for_ion_DBs): BEGIN
+                                tempeFlux         = NEWELL_I__ion.jei[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                                tempeNumFlux      = NEWELL_I__ion.ji[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                                tempCharE         = NEWELL_I__ion.charE[dBStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                                ;; tempCharE         = tempeFlux/tempeNumFlux*6.242*1.0e11
                              END
                              ELSE: BEGIN
 
@@ -334,14 +370,16 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                                 (KEYWORD_SET(do_timeAvg_fluxQuantities) AND N_ELEMENTS(tHistDenominator) GT 0): BEGIN
                                    tmptempObs   = TOTAL(tempObs  [tmpTmpInds])/tHistDenominator[i,j]
                                    tmptempeFlux = TOTAL(tempeFlux[tmpTmpInds])/tHistDenominator[i,j]
-                                   IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+                                   ;; IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+                                   IF KEYWORD_SET(elOrIon) THEN BEGIN
                                       tmptempeNumFlux = TOTAL(tempeNumFlux[tmpTmpInds])/tHistDenominator[i,j]
                                    ENDIF
                                 END
                                 ELSE: BEGIN
                                    tmptempObs   = 10.^(MEAN(ALOG10(tempObs  [tmpTmpInds])))
                                    tmptempeFlux = 10.^(MEAN(ALOG10(tempeFlux[tmpTmpInds])))
-                                   IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+                                   ;; IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+                                   IF KEYWORD_SET(elOrIon) THEN BEGIN
                                       tmptempeNumFlux = 10.^(MEAN(ALOG10(tempeNumFlux[tmpTmpInds])))
                                    ENDIF
                                 END
@@ -353,7 +391,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                              tmptempUTC     = MEAN(tempUTC  [tmpTmpInds])
                              junk           = MIN(ABS(tempUTC[tmpTmpInds]-tmptempUTC),minInd)
                              tmpTempTimes   = tempTimes[tmpTmpInds[minInd]]
-                             tmptempChare   = MEDIAN(tempChare[tmpTmpInds])        
+                             tmptempCharE   = MEDIAN(tempCharE[tmpTmpInds])        
 
                              tmpIMFinds          = IMFinds[tmpTmpInds]  
                              tmptempIMFBx        = MEAN(tempIMFBx       [tmpTmpInds]) 
@@ -367,9 +405,12 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                                     'G-9.3,T74,G-8.2,T85,G-8.2,T94,F-7.3,T103,F-7.3,T112,' + $
                                     'F-7.3,T121,I0)', $ ; THIS ONE FOR DST--> F-7.3)', $ ;,T130,I0)', $
                                     tmpTempMLTs,tmpTempILATs,tmpTempTimes,tmpTempOrb,tmpTempAlts, $
-                                    (KEYWORD_SET(for_eSpec_DBs) ? tmptempeFlux     : tmpTempObs  ), $
-                                    (KEYWORD_SET(for_eSpec_DBs) ? tmptempeNumFlux  : tmpTempChare), $
-                                    (KEYWORD_SET(for_eSpec_DBs) ? tmptempChare     : tmpTempeFlux), $
+                                    ;; (KEYWORD_SET(for_eSpec_DBs) ? tmptempeFlux     : tmpTempObs  ), $
+                                    ;; (KEYWORD_SET(for_eSpec_DBs) ? tmptempeNumFlux  : tmpTempChare), $
+                                    ;; (KEYWORD_SET(for_eSpec_DBs) ? tmptempChare     : tmpTempeFlux), $
+                                    (elOrIon ? tmptempeFlux     : tmpTempObs  ), $
+                                    (elOrIon ? tmptempeNumFlux  : tmpTempCharE), $
+                                    (elOrIon ? tmptempCharE     : tmpTempeFlux), $
                                     tmpTempIMFBx,tmpTempIMFBy,tmpTempIMFBz, $
                                     nTmpTmp
                           ENDFOR
@@ -377,7 +418,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                        END
                        ELSE: BEGIN
                           tempUTC           = dbTimes[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
-                          tempChare         = dbStruct.max_chare_losscone[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
+                          tempCharE         = dbStruct.max_chare_losscone[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
                           tempeFlux         = dbStruct.elec_energy_flux[dbStruct_inds[(tempH2D_lists_with_inds[i,j])[0]]]
 
                           IMFinds           = VALUE_CLOSEST2(C_OMNI__mag_UTC,tempUTC)
@@ -392,7 +433,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
                                     'F-9.3,T74,F-8.2,T85,F-7.3,T94,F-7.3,T103,F-7.3,T112,' + $
                                     'F-7.3)', $
                                     tempMLTs[iObs],tempILATs[iObs],tempTimes[iObs],tempOrbs[iObs],tempAlts[iObs], $
-                                    tempObs[iObs],tempChare[iObs],tempeFlux[iObs],tempIMFBx[iObs],tempIMFBy[iObs], $
+                                    tempObs[iObs],tempCharE[iObs],tempeFlux[iObs],tempIMFBx[iObs],tempIMFBy[iObs], $
                                     tempIMFBz[iObs]
 
                              ;; PRINT,'Tdiff: ' + STRCOMPRESS(C_OMNI__mag_UTC[IMFinds[iObs]]-tempUTC[iObs],/REMOVE_ALL) + ' s'
