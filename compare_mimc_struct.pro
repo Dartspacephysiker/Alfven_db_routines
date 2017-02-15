@@ -1,10 +1,14 @@
 ;;12/07/16
-PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESET=DBs_reset
+PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2, $
+                        INDS_RESET=inds_reset, $
+                        DBS_RESET=DBs_reset, $
+                        PLOTS_RESET=plots_reset
 
   COMPILE_OPT IDL2
 
-  inds_reset = 0B
-  DBS_reset  = 0B
+  inds_reset  = 0B
+  DBS_reset   = 0B
+  plots_reset = 0B
 
   IF MIMC_struct1.minMC NE MIMC_struct2.minMC THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"minMC", $
@@ -21,13 +25,27 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
   IF MIMC_struct1.minM NE MIMC_struct2.minM THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"minM", $
            MIMC_struct1.minM,MIMC_struct2.minM
-     inds_reset = 1B
+     inds_reset  = 1B
+     plots_reset = 1B
   ENDIF
 
   IF MIMC_struct1.maxM NE MIMC_struct2.maxM THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"maxM", $
            MIMC_struct1.maxM,MIMC_struct2.maxM
-     inds_reset = 1B
+     inds_reset  = 1B
+     plots_reset = 1B
+  ENDIF
+
+  IF MIMC_struct1.binM NE MIMC_struct2.binM THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"binM", $
+           MIMC_struct1.binM,MIMC_struct2.binM
+     plots_reset = 1B
+  ENDIF
+
+  IF MIMC_struct1.binI NE MIMC_struct2.binI THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"binI", $
+           MIMC_struct1.binI,MIMC_struct2.binI
+     plots_reset = 1B
   ENDIF
 
   exist1 = -1
@@ -38,7 +56,8 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
      IF MIMC_struct1.minLng NE MIMC_struct2.minLng THEN BEGIN
         PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"minLng", $
               MIMC_struct1.minLng,MIMC_struct2.minLng
-        inds_reset = 1B
+        inds_reset  = 1B
+        plots_reset = 1B
      ENDIF
   ENDIF
 
@@ -50,14 +69,16 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2,INDS_RESET=inds_reset,DBS_RESE
      IF MIMC_struct1.maxLng NE MIMC_struct2.maxLng THEN BEGIN
         PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"maxLng", $
               MIMC_struct1.maxLng,MIMC_struct2.maxLng
-        inds_reset = 1B
+        inds_reset  = 1B
+        plots_reset = 1B
      ENDIF
   ENDIF
   
   IF MIMC_struct1.minI NE MIMC_struct2.minI THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"minI", $
            MIMC_struct1.minI,MIMC_struct2.minI
-     inds_reset = 1B
+     inds_reset  = 1B
+     plots_reset = 1B
   ENDIF
 
   IF MIMC_struct1.maxI NE MIMC_struct2.maxI THEN BEGIN
