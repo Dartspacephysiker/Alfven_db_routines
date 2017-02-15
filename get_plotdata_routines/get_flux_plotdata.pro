@@ -869,7 +869,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
               END
            ENDCASE
            ;;NOTE: microCoul_per_m2__to_num_per_cm2 EQ 1. / 1.6e-9
-           for_ion                = 1
+           ;; for_ion                = 1
            ;; tmp_i               = indices__ion
            ;; inData              = iNumFlux_ion_data
            inData                 = NEWELL_I__ion.ji

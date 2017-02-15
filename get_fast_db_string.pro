@@ -7,6 +7,12 @@ FUNCTION GET_FAST_DB_STRING,DBStruct, $
 
   COMPILE_OPT IDL2
 
+  IF KEYWORD_SET(eSpecDB) AND KEYWORD_SET(ionDB) THEN BEGIN
+     IS_STRUCT_ION_OR_ESPEC,DBStruct,is_ion,/QUIET
+     ionDB   = is_ion
+     eSpecDB = ~is_ion
+  ENDIF
+
   brokeBack = 1
   WHILE brokeBack DO BEGIN
      CASE 1 OF
@@ -32,13 +38,16 @@ FUNCTION GET_FAST_DB_STRING,DBStruct, $
               alfDB = 1 
            ENDIF ELSE BEGIN
               IS_STRUCT_ION_OR_ESPEC,DBStruct,is_ion,/QUIET
-              IF ~is_ion THEN BEGIN
+              IF is_ion THEN BEGIN
+                 ionDB = 1
+              ENDIF ELSE BEGIN
                  IF TAG_EXIST(DBStruct,"mono") THEN BEGIN
                     eSpecDB = 1
                  ENDIF ELSE BEGIN
-                    STOP
+                    fastLocDB = STRMATCH(STRUPCASE(DBStruct.info.DB_dir),'*FASTLOC*')
+                    IF ~fastLOCDB THEN STOP
                  ENDELSE
-              ENDIF
+              ENDELSE
            ENDELSE
         END
      ENDCASE
