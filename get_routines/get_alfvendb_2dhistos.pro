@@ -228,12 +228,13 @@ PRO GET_ALFVENDB_2DHISTOS, $
   for_ions               = N_ELEMENTS(iFlux_ion_data  ) GT 0 OR N_ELEMENTS(iNumFlux_ion_data  ) GT 0
   for_eSpecs             = N_ELEMENTS(eFlux_eSpec_data) GT 0 OR N_ELEMENTS(eNumFlux_eSpec_data) GT 0
 
-  IF KEYWORD_SET(indices__ion) THEN BEGIN
-     ESPEC__SLAP_OFF_THOSE_HUGE_ONES,NEWELL_I__ion, $
-                                     ;; FOR_ESPEC_DBS=~is_ion, $
-                                     /FOR_ION_DBS, $
-                                     GOOD_I=indices__ion
-  ENDIF
+  ;; IF KEYWORD_SET(indices__ion) THEN BEGIN
+  ;;    ESPEC__SLAP_OFF_THOSE_HUGE_ONES,NEWELL_I__ion, $
+  ;;                                    ;; FOR_ESPEC_DBS=~is_ion, $
+  ;;                                    /FOR_ION_DBS, $
+  ;;                                    GOOD_I=indices__ion
+  ;; ENDIF
+  indices__ion = indices__ion[WHERE(ABS(NEWELL_I__ion.charE[indices__ion]) GE 100)]
 
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are

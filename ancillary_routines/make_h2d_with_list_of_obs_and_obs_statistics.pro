@@ -153,7 +153,8 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
   IF KEYWORD_SET(output_textFile) THEN BEGIN
      PRINTF,lun,"Creating obs/orb file: " + outDir + outFileName
 
-     IF FILE_TEST(outDir+outFileName) AND KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     ;; IF FILE_TEST(outDir+outFileName) AND KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
+     IF FILE_TEST(outDir+outFileName) AND elOrIon THEN BEGIN
         PRINTF,lun,'H2D_list_with_obs file already exists: ' + outDir+outFileName + '. Skipping ...'
         skip = 1
      ENDIF
