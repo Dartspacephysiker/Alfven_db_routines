@@ -310,12 +310,12 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                        NOPOSFLUX=noPosF, $
                        NONEGFLUX=noNegF, $
                        ABSFLUX=absF, $
-                       EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
-                       ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
+                       ;; EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
+                       ;; ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                        ;; IFLUX_ESPEC_DATA=iFlux_eSpec_data, $
                        ;; INUMFLUX_ESPEC_DATA=iNumFlux_eSpec_data, $
                        INDICES__ESPEC=KEYWORD_SET(for_eSpec_DBs) ? tmp_i : indices__eSpec, $
-                       ESPEC_MLTSILATS=eSpec_MLTsILATs, $
+                       ;; ESPEC_MLTSILATS=eSpec_MLTsILATs, $
                        ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=logP, $
