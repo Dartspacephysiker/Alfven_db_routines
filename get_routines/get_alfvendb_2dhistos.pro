@@ -234,7 +234,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;;                                    /FOR_ION_DBS, $
   ;;                                    GOOD_I=indices__ion
   ;; ENDIF
-  indices__ion = indices__ion[WHERE(ABS(NEWELL_I__ion.charE[indices__ion]) GE 100)]
+  ;; indices__ion = indices__ion[WHERE(ABS(NEWELL_I__ion.charE[indices__ion]) GE 500)]
 
   ;;########Flux_N and Mask########
   ;;First, histo to show where events are
