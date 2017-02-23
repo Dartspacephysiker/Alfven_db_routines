@@ -3,3 +3,5 @@
 
 #No text output
 txtoutput/
+#Not plots dir
+plots/
