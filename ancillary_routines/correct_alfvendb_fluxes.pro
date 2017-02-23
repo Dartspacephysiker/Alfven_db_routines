@@ -103,6 +103,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
                             MAP_WIDTH_T_TO_IONOS=map_width_t, $
                             MAP_WIDTH_X_TO_IONOS=map_width_x, $
                             MAP_SQRT_FLUXES=map_sqrt_fluxes, $
+                            MAPRATIO=in_mapRatio, $
                             QUIET=quiet, $
                             LUN=lun
 
@@ -124,13 +125,25 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      map_width_t                   = 1
   ENDIF
   
-  load_mapRatioDB                  =  KEYWORD_SET(map_heavies     ) OR $
-                                      KEYWORD_SET(map_pflux       ) OR $
-                                      KEYWORD_SET(map_ionflux     ) OR $
-                                      KEYWORD_SET(map_width_t     ) OR $
-                                      KEYWORD_SET(map_width_x     ) OR $
-                                      KEYWORD_SET(map_mag_current ) OR $
-                                      KEYWORD_SET(map_esa_current )
+  have_mapRatio                    = ISA(in_mapRatio)
+  IF have_mapRatio THEN BEGIN
+     CASE SIZE(in_mapRatio,/TYPE) OF
+        8: BEGIN
+           mapRatio                = in_mapRatio
+        END
+        ELSE: BEGIN
+           mapRatio                = {ratio:in_mapRatio}
+        END
+     ENDCASE
+  ENDIF
+  load_mapRatioDB                  =  (KEYWORD_SET(map_heavies     ) OR $
+                                       KEYWORD_SET(map_pflux       ) OR $
+                                       KEYWORD_SET(map_ionflux     ) OR $
+                                       KEYWORD_SET(map_width_t     ) OR $
+                                       KEYWORD_SET(map_width_x     ) OR $
+                                       KEYWORD_SET(map_mag_current ) OR $
+                                       KEYWORD_SET(map_esa_current )) AND $
+                                      ~(have_mapRatio)
 
 
   IS_STRUCT_ALFVENDB_OR_FASTLOC,maximus,is_maximus
@@ -348,7 +361,7 @@ PRO CORRECT_ALFVENDB_FLUXES,maximus, $
      pfluxest                     = DOUBLE((maximus.delta_e)*(maximus.delta_b*1e-9))/(2.D*mu_0) ;rm factor of 1e-3 from E-field since we want mW/m^2
 
      CASE 1 OF
-        KEYWORD_SET(chastDB): BEGIN
+        (KEYWORD_SET(chastDB) OR ~TAG_EXIST(maximus,'pFluxEst')): BEGIN
            maximus                = CREATE_STRUCT(maximus,'pFluxEst',pFluxEst)
         END
         ELSE: BEGIN
