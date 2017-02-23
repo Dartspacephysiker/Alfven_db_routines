@@ -2,6 +2,7 @@
 *~
 
 #No text output
-txtoutput/
+txtOutput/
+
 #Not plots dir
 plots/
