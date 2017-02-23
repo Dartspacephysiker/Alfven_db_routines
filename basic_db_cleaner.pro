@@ -5,6 +5,7 @@
 ;; 2016/01/13 New USING_HEAVIES keyword for times when TEAMS data are coming into play
 FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
                           CLEAN_NANS_AND_INFINITIES=clean_nans_and_infinities, $
+                          CLEAN_THESE_INDS=clean_these_inds, $
                           SAMPLE_T_RESTRICTION=sample_t_restriction, $
                           INCLUDE_32Hz=include_32Hz, $
                           DISREGARD_SAMPLE_T=disregard_sample_t, $
@@ -37,22 +38,32 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
      dbTags = TAG_NAMES(dbStruct)
      IF is_maximus THEN BEGIN
         IF KEYWORD_SET(do_ChastDB) THEN BEGIN
-           clean_these_inds = [INDGEN(21),28]
+           IF ~KEYWORD_SET(clean_these_inds) THEN BEGIN
+              clean_these_inds = [INDGEN(21),28]
+           ENDIF
         ENDIF ELSE BEGIN
            IF KEYWORD_SET(using_heavies) THEN BEGIN
               PRINTF,lun,'Cleaning heavies!'
-              clean_these_inds = [INDGEN(33),48,49]
+              IF ~KEYWORD_SET(clean_these_inds) THEN BEGIN
+                 clean_these_inds = [INDGEN(33),48,49]
+              ENDIF
            ENDIF ELSE BEGIN
-              clean_these_inds = [INDGEN(26),32,48,49]
+              IF ~KEYWORD_SET(clean_these_inds) THEN BEGIN
+                 clean_these_inds = [INDGEN(26),32,48,49]
+              ENDIF
            ENDELSE
         ENDELSE
 
         IF KEYWORD_SET(do_lshell) THEN BEGIN
            PRINTF,lun,'Cleaning L-shell!'
-           clean_these_inds = [clean_these_inds,50]
+           IF ~KEYWORD_SET(clean_these_inds) THEN BEGIN
+              clean_these_inds = [clean_these_inds,50]
+           ENDIF
         ENDIF
      ENDIF ELSE BEGIN
-        clean_these_inds = INDGEN(N_ELEMENTS(dbTags)-TAG_EXIST(dbStruct,'coords'))
+        IF ~KEYWORD_SET(clean_these_inds) THEN BEGIN
+           clean_these_inds = INDGEN(N_ELEMENTS(dbTags)-TAG_EXIST(dbStruct,'coords'))
+        ENDIF
      ENDELSE
      
      FOR i = 0,N_ELEMENTS(clean_these_inds)-1 DO BEGIN
@@ -77,7 +88,7 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
                  PRINTF,lun,FORMAT='("NaNs/infs in ",A20,T40,": ",I0)',dbTags[clean_these_inds[i]],nLost
               ENDIF
            ENDIF ELSE BEGIN
-              PRINTF,lun,"Lost all indices to " + mTags[clean_these_inds[i]] + "!"
+              PRINTF,lun,"Lost all indices to " + dbTags[clean_these_inds[i]] + "!"
            ENDELSE
         ENDELSE
      ENDFOR
