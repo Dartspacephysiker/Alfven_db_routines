@@ -219,13 +219,15 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;Now restore 'em
   ;; LOAD_NOAA_AND_BRETT_DBS_AND_QI,stormStruct,DB_BRETT=stormFile,DBDIR=stormDir
-  LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
-                           DB_TFILE=DB_tFile, $
-                           DBDIR=DBDir, $
-                           DBFILE=DBFile, $
-                           DO_DESPUNDB=do_despunDB, $
-                           USING_HEAVIES=using_heavies
-
+  IF ~KEYWORD_SET(only_OMNI_plots) THEN BEGIN
+     LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
+                              DB_TFILE=DB_tFile, $
+                              DBDIR=DBDir, $
+                              DBFILE=DBFile, $
+                              DO_DESPUNDB=do_despunDB, $
+                              USING_HEAVIES=using_heavies
+  ENDIF
+  
   IF ~use_SYMH AND ~use_AE AND ~omni_Quantity AND N_ELEMENTS(OMNI_quantities_to_plot) EQ 0 THEN BEGIN
      LOAD_DST_AE_DBS,dst,ae,DST_AE_DIR=DST_AEDir,DST_AE_FILE=DST_AEFile
      do_DST = 1 

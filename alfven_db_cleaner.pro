@@ -34,6 +34,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
                            USING_HEAVIES=using_heavies, $
                            INCLUDE_32HZ=include_32Hz, $
                            DISREGARD_SAMPLE_T=disregard_sample_t, $
+                           CLEAN_THESE_INDS=clean_these_inds, $
                            LUN=lun
 
   COMPILE_OPT idl2
@@ -54,6 +55,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
   n_events = N_ELEMENTS(maximus.orbit)
   good_i   = BASIC_DB_CLEANER(maximus,DO_CHASTDB=is_chastDB, $
                               /CLEAN_NANS_AND_INFINITIES, $
+                              CLEAN_THESE_INDS=clean_these_inds, $
                               SAMPLE_T_RESTRICTION=sample_t_restriction, $
                               INCLUDE_32Hz=include_32Hz, $
                               DISREGARD_SAMPLE_T=disregard_sample_t, $
