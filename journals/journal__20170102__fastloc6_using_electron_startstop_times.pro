@@ -2,7 +2,7 @@
 ;;Just waiting for the day when I get all of the Je_time stuff un-duped so I can pull the trigger here
 PRO JOURNAL__20170102__FASTLOC6_USING_ELECTRON_STARTSTOP_TIMES
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   startOrb = 500
   stopOrb  = 25007

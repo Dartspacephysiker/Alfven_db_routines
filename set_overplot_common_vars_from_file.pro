@@ -1,7 +1,7 @@
 ;;12/03/16
 PRO SET_OVERPLOT_COMMON_VARS_FROM_FILE,overplot_file
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   @common__overplot_vars.pro
   

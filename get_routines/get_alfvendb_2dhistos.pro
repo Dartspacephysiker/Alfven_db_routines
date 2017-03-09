@@ -207,7 +207,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    _EXTRA=e, $
    LUN=lun
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   @common__maximus_vars.pro
   @common__fastloc_vars.pro

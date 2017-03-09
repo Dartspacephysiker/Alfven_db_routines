@@ -33,7 +33,7 @@ PRO GET_PROB_OCCURRENCE_PLOTDATA,dbStruct,plot_i,tHistDenominator, $
                                  LUN=lun
 
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
   
   @orbplot_tplot_defaults.pro
 

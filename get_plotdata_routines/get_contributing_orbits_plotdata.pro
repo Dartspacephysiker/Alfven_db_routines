@@ -23,7 +23,7 @@ PRO GET_CONTRIBUTING_ORBITS_PLOTDATA,dbStruct,plot_i, $
                                      DATANAME=dataName, $
                                      PRINT_MAX_AND_MIN=print_mandm, $
                                      LUN=lun
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 

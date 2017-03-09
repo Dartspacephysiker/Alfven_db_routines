@@ -9,7 +9,7 @@ PRO GET_ELEC_FLUX_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM,BINM=binM,MINI=min
                            LOGAVGPLOT=logAvgPlot, $
                            WRITEHDF5=writeHDF5,WRITEASCII=writeASCII,SQUAREPLOT=squarePlot,SAVERAW=saveRaw
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$

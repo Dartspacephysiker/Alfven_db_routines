@@ -1,7 +1,7 @@
 ;;06/04/16
 PRO CATEGORIZE_ALL_SPECTRA_NEAR_ALFVEN_EVENTS
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   despun                        = 0
   killed_befs_afts              = 1

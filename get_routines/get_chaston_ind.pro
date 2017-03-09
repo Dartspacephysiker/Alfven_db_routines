@@ -29,7 +29,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
                          MIMC_STRUCT=MIMC_struct, $
                          DONT_LOAD_IN_MEMORY=nonMem
                          
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
  
   @common__mlt_ilat_magc_etc.pro
 

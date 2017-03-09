@@ -17,7 +17,7 @@ PRO FASTDBS__DELTA_SWITCHER, $
    DELTA_STUFF=delta_stuff
 
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   fileSuff = '-delta_ilats.sav'
 

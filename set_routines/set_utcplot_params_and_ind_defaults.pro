@@ -46,7 +46,7 @@ PRO SET_UTCPLOT_PARAMS_AND_IND_DEFAULTS,ORBRANGE=orbRange, ALTITUDERANGE=altitud
                                     PARAMSTRING=paramString, $
                                     LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
   ;;***********************************************
   ;;You know

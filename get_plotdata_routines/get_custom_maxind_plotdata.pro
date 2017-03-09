@@ -51,7 +51,7 @@ PRO GET_CUSTOM_MAXIND_PLOTDATA,maximus,plot_i,custom_maxInd, $
                                FANCY_PLOTNAMES=fancy_plotNames, $
                                LUN=lun
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;;The loaded defaults take advantage of KEYWORD_SET(fancy_plotNames)
   @fluxplot_defaults.pro

@@ -10,7 +10,7 @@ PRO PRINT_ALFVENDB_PLOTSUMMARY, $
    PARAMSTR_LIST=paramString_list, $
    LUN=lun
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   PRINTF,lun,""
   PRINTF,lun,"**********DATA SUMMARY**********"

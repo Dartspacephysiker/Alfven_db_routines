@@ -36,7 +36,7 @@ PRO SIMPLE_H2DPLOTTER_STEREOGRAPHIC,h2dStr, $
                                     OUT_H2D_DATA=h2dData, $
                                     _EXTRA=e
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   @ploth2d_stereographic_defaults.pro
 

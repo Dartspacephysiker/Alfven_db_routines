@@ -1,6 +1,6 @@
 PRO JOURNAL__20161003__GET_FASTLOC_STUFF_IN_GEO_COORDS__INC_32HZ
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   fastLocFile      = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05.sav'
   fastLocTFile     = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--times.sav'

@@ -70,7 +70,7 @@ PRO  GET_FASTLOC_INDS,,CLOCKSTR=clockStr, $
                       DONT_LOAD_IN_MEMORY=nonMem, $
                       LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;;Defined here, in GET_FASTLOC_INDS_IMF_CONDS_V2, in GET_FASTLOC_INDS_UTC_RANGE, and in GET_CHASTON_INDS
   COMMON FL_VARS,FL_fastLoc,FASTLOC__times,FASTLOC__delta_t, $

@@ -8,7 +8,7 @@ FUNCTION GET_MAGC_INDS,maximus,minMC,maxNegMC, $
                        QUIET=quiet, $
                        LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 

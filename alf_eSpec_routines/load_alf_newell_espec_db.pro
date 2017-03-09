@@ -8,7 +8,7 @@ PRO LOAD_ALF_NEWELL_ESPEC_DB,eSpec,alf_i__good_eSpec,good_eSpec_i, $
                              DONT_LOAD_IN_MEMORY=nonMem, $
                              LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;;This common block is defined ONLY here, GET_ESPEC_ION_DB_IND, and in GET_H2D_NEWELLS__EACH_TYPE
   IF ~KEYWORD_SET(nonMem) THEN BEGIN

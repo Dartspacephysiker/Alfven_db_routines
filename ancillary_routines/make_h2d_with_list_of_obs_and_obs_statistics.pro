@@ -36,7 +36,7 @@ PRO MAKE_H2D_WITH_LIST_OF_OBS_AND_OBS_STATISTICS,dbStruct_obsArr, $
    DBSTR_INDS=dbStruct_inds, $
    LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   COMMON H2D_LIST_OF_INDS,HLOI__H2D_lists_with_inds,HLOI__nInds,HLOI__nMLT,HLOI__nILAT,HLOI__H2D_binCenters
 

@@ -37,7 +37,7 @@ FUNCTION ALFVEN_DB_CLEANER,maximus,IS_CHASTDB=is_chastDB, $
                            CLEAN_THESE_INDS=clean_these_inds, $
                            LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;;If not lun, just send to stdout
   IF NOT KEYWORD_SET(lun) THEN lun = -1

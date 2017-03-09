@@ -3,7 +3,7 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
                            DONT_TRASH_BAD_ORBITS=keepJunk, $
                            SERIOUSLY__NOJUNK=seriously__noJunk
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 

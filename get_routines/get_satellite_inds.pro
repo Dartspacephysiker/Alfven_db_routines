@@ -1,6 +1,6 @@
 FUNCTION GET_SATELLITE_INDS,maximus,satellite,LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   defSatellite = 'OMNI'
 

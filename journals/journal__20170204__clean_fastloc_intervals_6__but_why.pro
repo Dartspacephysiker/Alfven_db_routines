@@ -2,7 +2,7 @@
 ;;Why should this have to be cleaned??
 PRO JOURNAL__20170204__CLEAN_FASTLOC_INTERVALS_6__BUT_WHY
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   DefDBDir      = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals6/'
   defDBFile     = 'fastLoc_intervals6--20170204--500-24507--Je_times.sav'

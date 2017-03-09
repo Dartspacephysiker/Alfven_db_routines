@@ -3,7 +3,7 @@
 ;;it appears there are no duplicates in the Newell files. That's just what we want to hear.
 PRO JOURNAL__20160531__CHECK_NEWELL_FILES_FOR_DUPES
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   firstOrb                = 500
   lastOrb                 = 13680

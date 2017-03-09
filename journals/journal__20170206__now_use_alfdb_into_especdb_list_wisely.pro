@@ -1,7 +1,7 @@
 ;;02/06/17
 PRO JOURNAL__20170206__NOW_USE_ALFDB_INTO_ESPECDB_LIST_WISELY
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   outDir           = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
   alfIntoeSpecFile = 'Dartdb_20151222--500-16361_inc_lower_lats--alfs_into_20170203_eSpecDB.sav'

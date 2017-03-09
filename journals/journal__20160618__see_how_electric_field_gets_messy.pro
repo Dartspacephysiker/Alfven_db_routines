@@ -3,7 +3,7 @@
 ; I use everything up to Nov 3, 1999.
 PRO JOURNAL__20160618__SEE_HOW_ELECTRIC_FIELD_GETS_MESSY
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   LOAD_MAXIMUS_AND_CDBTIME,maximus,/DO_DESPUNDB
 

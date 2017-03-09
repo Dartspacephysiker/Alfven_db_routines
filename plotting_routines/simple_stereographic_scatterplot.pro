@@ -32,7 +32,7 @@ PRO SIMPLE_STEREOGRAPHIC_SCATTERPLOT,lons,lats, $
                                      INIT_MAP_PROJ_AND_RETURN=init_map_proj_and_return, $
                                      _EXTRA=e
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;; Defaults
   lun             = -1

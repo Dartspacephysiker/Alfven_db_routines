@@ -47,7 +47,7 @@ PRO GET_VARIANCE_PLOTDATA,dbStruct,maxInds, $
                           H2D_NONZERO_NEV_I=hEv_nz_i, $
                           LUN=lun
   
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
   @common__newell_espec.pro
   @common__newell_ion_db.pro
 

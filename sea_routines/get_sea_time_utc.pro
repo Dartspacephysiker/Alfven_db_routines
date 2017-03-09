@@ -15,7 +15,7 @@ PRO GET_SEA_TIME_UTC,NEPOCHS=nEpochs, $
                      ;; SEASTRUCT_INDS=seaStruct_inds, $ ; outs
                      RANDOMTIMES=randomTimes
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF KEYWORD_SET(use_dartdb_start_enddate) THEN BEGIN
      startDate=str_to_time(maximus.time[0])

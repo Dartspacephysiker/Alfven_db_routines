@@ -26,7 +26,7 @@ FUNCTION FASTLOC_CLEANER,fastLoc, $
                          DISREGARD_SAMPLE_T=disregard_sample_t, $
                          LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;;If not lun, just send to stdout
   IF NOT KEYWORD_SET(lun) THEN lun = -1

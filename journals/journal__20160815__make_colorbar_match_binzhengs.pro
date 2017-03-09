@@ -1,7 +1,7 @@
 ;2016/08/15 Just like it says
 PRO JOURNAL__20160815__MAKE_COLORBAR_MATCH_BINZHENGS
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   LOADCT,83 ;Rainbow, but with purples trimmed at bottom and blue and red both stretched a bit
 

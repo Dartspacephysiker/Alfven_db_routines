@@ -1,7 +1,7 @@
 ;;2016/10/01 Ryan McGranaghan has brought to my attention that I ought to be checking out the NEXT thing
 PRO JOURNAL__20161001__CONVERT_ALL_NOTDESPUN_ALFDB_ILATS_TO_MLATS
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   orig_routineName = 'JOURNAL__20161001__CONVERT_ALL_NOTDESPUN_ALFDB_ILATS_TO_MLATS'
 

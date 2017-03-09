@@ -19,7 +19,7 @@ PRO PLOT_FAST_ORBIT_FROM_FASTLOC,orbit, $
 
 
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF ~KEYWORD_SET(hemi)   THEN hemi = hemi
 

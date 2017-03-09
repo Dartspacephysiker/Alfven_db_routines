@@ -1,7 +1,7 @@
 ;;10/05/16
 PRO JOURNAL__20161005__INSERT_32HZ_STUFF_INTO_FASTLOC
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   balderdash = '/SPENCEdata/Research/database/FAST/ephemeris/'
   geomagfile = 'fastLoc_intervals4--500-16361--below_aur_oval--20160505--noDupes--samp_t_le_0.05--GEO_and_MAG_coords.sav'

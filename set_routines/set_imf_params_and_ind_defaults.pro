@@ -123,7 +123,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
    _EXTRA=e, $
    LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
   IF N_ELEMENTS(lun) EQ 0 THEN BEGIN
      lun = -1                   ;stdout
   ENDIF

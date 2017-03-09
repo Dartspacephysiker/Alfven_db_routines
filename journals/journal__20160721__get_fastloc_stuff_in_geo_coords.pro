@@ -1,6 +1,6 @@
 PRO JOURNAL__20160721__GET_FASTLOC_STUFF_IN_GEO_COORDS
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   fastLocFile          = 'fastLoc_intervals4--500-16361--trimmed--sample_freq_le_0.01.sav'
   fastLocTFile         = 'Dartdb_20160508--502-16361_despun--cdbtime--noDupes--refreshed_2500-3599_plus_bonus_and_10210-16361.sav'

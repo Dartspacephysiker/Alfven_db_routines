@@ -7,7 +7,7 @@ PRO LOAD_MAPPING_RATIO_DB,mapRatio, $
                           QUIET=quiet, $
                           LUN=lun
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1         ;stdout
 

@@ -9,7 +9,7 @@ PRO PRINT_ORBIT_DETAILS_FROM_ORBSTRARR_LIST__OR__PLOT_I,to_be_examined,maximus, 
    OUT_PARSED=out_parsed, $
    QUIET=quiet
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   CASE SIZE(to_be_examined,/TYPE) OF
      11: BEGIN

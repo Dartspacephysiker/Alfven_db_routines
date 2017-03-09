@@ -6,7 +6,7 @@ PRO CHECK_FOR_NEW_IND_CONDS, $
    IMF_STRUCT=IMF_struct, $
    LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;; COMMON MLT_ILAT_MAGC_ETC
   @common__mlt_ilat_magc_etc.pro

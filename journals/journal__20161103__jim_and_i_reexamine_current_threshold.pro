@@ -1,7 +1,7 @@
 ;;2016/11/03 But why have the current threshold at +/- 10 microA/m^2?
 PRO JOURNAL__20161103__JIM_AND_I_REEXAMINE_CURRENT_THRESHOLD
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   show_allSide   = 0
   show_dayside   = 1

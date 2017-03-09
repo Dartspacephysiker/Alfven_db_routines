@@ -1,7 +1,7 @@
 ;;12/08/16
 PRO JOURNAL__20161208__SEE_STARTSTOP_TIMES_HAS_PROBLEMS
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   inDir   = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
   inFile  = 'alfven_startstop_maxJ_times--500-16361_inc_lower_lats--burst_1000-16361.sav'

@@ -1,7 +1,7 @@
 ;;05/26/16
 FUNCTION MAKE_ESPEC_DB_FOR_ALFVEN_DB,cdbTime,orbArr,OUT_DIFFS=out_diffs,OUT_MISSING=out_missing
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   maxDiff          = 10.0 ;max allowable difference between spec and event
   badVal           = -9999

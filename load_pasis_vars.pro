@@ -6,7 +6,7 @@ FUNCTION LOAD_PASIS_VARS, $
    REMAKE_PREVIOUS_PLOT_I_LISTS_IF_EXISTING=remake_prev_plot_file, $
    VERBOSE=verbose
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   @common__pasis_lists.pro
 

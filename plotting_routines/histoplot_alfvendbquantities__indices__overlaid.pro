@@ -112,7 +112,7 @@ PRO HISTOPLOT_ALFVENDBQUANTITIES__INDICES__OVERLAID, $
 EPOCHPLOT_COLORNAMES=epochPlot_colorNames,SCATTEROUTPREFIX=scatterOutPrefix, $
                               RANDOMTIMES=randomTimes
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   @utcplot_defaults.pro
 

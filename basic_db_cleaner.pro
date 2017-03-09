@@ -14,7 +14,7 @@ FUNCTION BASIC_DB_CLEANER,dbStruct,LUN=lun, $
                           DO_CHASTDB=do_ChastDB, $
                           FOR_ESPEC_DBS=for_eSpec_dbs
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
   n_events = N_ELEMENTS(dbStruct.orbit)

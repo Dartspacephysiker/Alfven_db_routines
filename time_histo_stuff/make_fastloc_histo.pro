@@ -42,7 +42,7 @@ PRO MAKE_FASTLOC_HISTO,FASTLOC_STRUCT=fastLoc, $
                        OUTDIR=outDir, $
                        OUTPUT_TEXTFILE=output_textFile,LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
 
   ;def outputs

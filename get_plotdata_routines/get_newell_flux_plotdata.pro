@@ -87,7 +87,7 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                              KEEPME=keepMe, $
                              LUN=lun
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   @common__newell_espec.pro
   @common__newell_alf.pro

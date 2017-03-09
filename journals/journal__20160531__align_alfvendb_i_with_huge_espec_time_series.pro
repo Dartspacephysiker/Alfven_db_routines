@@ -3,7 +3,7 @@
 ;;indicating that life is good.
 PRO JOURNAL__20160531__ALIGN_ALFVENDB_I_WITH_HUGE_ESPEC_TIME_SERIES
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   ;;Stuff for eSpec database
   todayStr                  = GET_TODAY_STRING(/DO_YYYYMMDD_FMT)

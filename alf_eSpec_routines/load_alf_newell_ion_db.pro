@@ -8,7 +8,7 @@ PRO LOAD_ALF_NEWELL_ION_DB, $ ;iSpec, $
    DONT_LOAD_IN_MEMORY=nonMem, $
    LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;;This common block is defined ONLY here and in GET_H2D_NEWELLS__EACH_TYPE
   IF ~KEYWORD_SET(nonMem) THEN BEGIN

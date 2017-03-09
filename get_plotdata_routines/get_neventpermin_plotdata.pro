@@ -15,7 +15,7 @@ PRO GET_NEVENTPERMIN_PLOTDATA,THISTDENOMINATOR=tHistDenominator, $
                               DATANAME=dataName,DATARAWPTR=dataRawPtr, $
                               LUN=lun
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
      ;h2dStr(0) is automatically the n_events histo whenever either nEventPerOrbPlot or nEventPerMinPlot keywords are set.
      ;This makes h2dStr(1) the mask histo.

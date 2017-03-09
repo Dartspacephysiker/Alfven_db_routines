@@ -1,6 +1,6 @@
 PRO ALFDB_SWITCH_COORDS,dbStruct,coordStr,coordName,SUCCESS=success
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
 
   success = 0B

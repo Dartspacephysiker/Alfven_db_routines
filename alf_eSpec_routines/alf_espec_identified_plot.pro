@@ -21,7 +21,7 @@ FUNCTION ALF_ESPEC_IDENTIFIED_PLOT,eSpec, $
                                    PLOTDIR=plotDir, $
                                    CLOSE_WINDOW_AFTER_SAVE=close_window_after_save
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
 
   names              = ['Mono','Broad','Diffuse']

@@ -1,7 +1,7 @@
 ;2016/04/29
 PRO JOURNAL__20160429__SUPERPOSED_SEASONS_NEVENTS__PRELIM
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   binSize_days                  = 5
   binSize                       = LONG64(binSize_days)*24*60*60

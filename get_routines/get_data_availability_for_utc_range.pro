@@ -14,7 +14,7 @@ PRO GET_DATA_AVAILABILITY_FOR_UTC_RANGE,T1=t1,T2=t2, $
                                         PRINT_DATA_AVAILABILITY=print_data_availability, $
                                         VERBOSE=verbose,DEBUG=debug
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF KEYWORD_SET(verbose) THEN BEGIN
      PRINT,'GET_DATA_AVAILABILITY_FOR_UTC_RANGE'

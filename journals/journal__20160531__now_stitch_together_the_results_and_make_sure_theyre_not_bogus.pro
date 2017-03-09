@@ -1,7 +1,7 @@
 ;;05/31/16
 PRO JOURNAL__20160531__NOW_STITCH_TOGETHER_THE_RESULTS_AND_MAKE_SURE_THEYRE_NOT_BOGUS
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   despun                    = 1
 

@@ -16,7 +16,7 @@ PRO GET_ORBIT_FREQUENCY_PLOTDATA,maximus,MINM=minM,MAXM=maxM, $
                                  DIV_ORBCONTRIB_BY_ORBTOT=div_orbContrib_by_orbTot, $
                                  DATANAME=dataName
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(tmplt_h2dStr) EQ 0 THEN $
      tmplt_h2dStr = MAKE_H2DSTR_TMPLT(BIN1=binM,BIN2=(KEYWORD_SET(DO_lshell) ? binL : binI),$

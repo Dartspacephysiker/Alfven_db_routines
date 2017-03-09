@@ -59,7 +59,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           INTLUN=intLun, $
                           _EXTRA=e
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF KEYWORD_SET(alfDB_plot_struct.EA_binning) THEN BEGIN
 

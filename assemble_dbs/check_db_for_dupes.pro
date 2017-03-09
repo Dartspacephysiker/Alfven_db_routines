@@ -5,7 +5,7 @@
 PRO CHECK_DB_FOR_DUPES,cdbTime,out_dupe_i, $
                        LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun=-1 ;stdout
 

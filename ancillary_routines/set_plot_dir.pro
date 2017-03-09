@@ -13,7 +13,7 @@ PRO SET_PLOT_DIR,plotDir, $
                  VERBOSE=verbose, $
                  LUN=lun
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   defStormPlotDir     = '/SPENCEdata/Research/Satellites/FAST/storms_Alfvens/plots/'
   defSW_IMFPlotDir    = '/SPENCEdata/Research/Satellites/FAST/OMNI_FAST/plots/'

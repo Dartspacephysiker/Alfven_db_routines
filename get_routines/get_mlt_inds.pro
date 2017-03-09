@@ -10,7 +10,7 @@ FUNCTION GET_MLT_INDS,dbStruct,minM,maxM, $
                       USE_LNG=use_Lng, $
                       LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun=-1 ;;stdout
 

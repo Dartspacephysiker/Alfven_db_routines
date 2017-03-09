@@ -17,7 +17,7 @@ PRO MAKE_H2D_WITH_LIST_OF_INDS_FOR_EACH_BIN,dbStruct,dbStruct_inds, $
    RESET_H2D_LISTS_WITH_INDS=reset_H2D_lists_with_inds, $
    LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   DEBUG = 1
 

@@ -1,7 +1,7 @@
 ;;2016/07/21 Ryan McGranaghan has brought to my attention that I ought to be checking out the NEXT thing
 PRO JOURNAL__20161003__CONVERT_ALL_FASTLOCDB_ILATS_TO_MLATS__INC_32HZ
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   orig_routineName = 'JOURNAL__20160721__CONVERT_ALL_FASTLOCDB_ILATS_TO_MLATS'
 

@@ -5,7 +5,7 @@
 ;;we don't allow any FACs with width_t ≥ 2.5 s to be considered Alfvénic.
 PRO JOURNAL__20170201__CUSP__MAX_FAC_AMPLITUDES__HIGH_ALT__SHOW_BILL
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   pMaxFAC  = 1
   pMeanFAC = 1

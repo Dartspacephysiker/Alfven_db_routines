@@ -11,7 +11,7 @@ PRO REARRANGE_H2DSTRARR_LIST_INTO_LIKE_PLOTS,h2dStrArr_list,dataNameArr_list,dat
    OUT_NEW_PARAMSTRING_LIST=new_paramString_list, $
    OUT_MASK_H2DSTRARR=out_mask_h2dStrArr
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;;First, how many plots here?
   nConditions              = N_ELEMENTS(h2dStrArr_list)

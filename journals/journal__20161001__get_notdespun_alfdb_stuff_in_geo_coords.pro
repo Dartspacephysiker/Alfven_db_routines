@@ -2,7 +2,7 @@
 ;This is the first step. Next is JOURNAL__20161001__CONVERT_ALL_NOTDESPUN_ALFDB_ILATS_TO_MLATS, and last is JOURNAL__20161001__CONVERT_ALFDB_NOTDESPUN_ILATS_TO_AACGM.
 PRO JOURNAL__20161001__GET_NOTDESPUN_ALFDB_STUFF_IN_GEO_COORDS
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   maxFile          = 'Dartdb_20151222--500-16361_inc_lower_lats--burst_1000-16361--w_Lshell--correct_pFlux--maximus.sav'
   maxTFile         = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--cdbtime.sav'

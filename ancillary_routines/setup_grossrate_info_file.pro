@@ -4,7 +4,7 @@ PRO SETUP_GROSSRATE_INFO_FILE,grossRate_info_file, $
                               GROSSLUN=grossLun, $
                               LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
 

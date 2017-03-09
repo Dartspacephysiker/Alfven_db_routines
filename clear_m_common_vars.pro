@@ -1,6 +1,6 @@
 PRO CLEAR_M_COMMON_VARS
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   @common__maximus_vars.pro
 

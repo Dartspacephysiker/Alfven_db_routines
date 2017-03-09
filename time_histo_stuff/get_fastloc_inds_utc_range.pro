@@ -53,7 +53,7 @@ PRO GET_FASTLOC_INDS_UTC_RANGE,fastLocInterped_i, $
 
 
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;;Defined here, in GET_FASTLOC_INDS_IMF_CONDS_V2, and in GET_CHASTON_INDS
   @common__fastloc_vars.pro

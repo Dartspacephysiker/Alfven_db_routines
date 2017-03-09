@@ -43,7 +43,7 @@ PRO LOAD_MAXIMUS_AND_CDBTIME,maximus,cdbTime, $
                              NO_MEMORY_LOAD=noMem, $
                              LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;;GET_CHASTON_IND is the other routine with this block!
   @common__maximus_vars.pro

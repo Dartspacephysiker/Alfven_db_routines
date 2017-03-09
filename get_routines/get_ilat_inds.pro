@@ -13,7 +13,7 @@ FUNCTION GET_ILAT_INDS,maximus,minI,maxI,hemi, $
                        DIRECT_MLTS=direct_MLTs, $
                        LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun=-1 ;;stdout
 

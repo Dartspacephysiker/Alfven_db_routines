@@ -1,7 +1,7 @@
 ;;2017/02/04
 PRO JOURNAL__20170208__OMNI_TIMES_TO_STRINGS
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   check_if_exists         = 1
   dry_run                 = 0

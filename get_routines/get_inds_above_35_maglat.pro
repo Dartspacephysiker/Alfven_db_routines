@@ -6,7 +6,7 @@ PRO GET_INDS_ABOVE_35_MAGLAT,dBStruct,good_i, $
                              FOR_FASTLOC_DB=for_fastLoc_DB, $
                              FOR_ION_DB=for_ion_DB
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   IF N_ELEMENTS(good_i) EQ 0 THEN BEGIN
      good_i = LINDGEN(N_ELEMENTS(dBStruct.orbit))

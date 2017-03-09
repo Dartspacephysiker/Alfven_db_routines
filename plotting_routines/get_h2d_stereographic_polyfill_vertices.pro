@@ -8,7 +8,7 @@ FUNCTION GET_H2D_STEREOGRAPHIC_POLYFILL_VERTICES,lons,lats, $
    MOREPOINTS=morePoints, $
    DEBUG=debug
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF KEYWORD_SET(morePoints) THEN BEGIN
      lonBinSplit             = 4.0

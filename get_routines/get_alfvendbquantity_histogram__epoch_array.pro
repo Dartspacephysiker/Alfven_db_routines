@@ -39,7 +39,7 @@ PRO GET_ALFVENDBQUANTITY_HISTOGRAM__EPOCH_ARRAY,alf_t_arr,alf_y_arr,HISTOTYPE=hi
    PRINT_MAXIND_SEA__STAT_TYPE=print_maxInd__statType, $
    LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;for printing stats
   ;; epoch_stats_ranges            = [[-60,0],[0,10],[10,20],[20,30],[30,40],[40,60]] ;pre-storm, 10 hours after commencement, and 10-20 hours after

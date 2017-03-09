@@ -28,7 +28,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
    DEBUG=debug, $
    LUN=lun
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun  = -1
 

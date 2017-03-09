@@ -18,7 +18,7 @@ FUNCTION GET_FASTDB_OUTLIER_INDICES,dbStruct, $
                                     ADD_SUSPECTED=add_suspected
   
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   IF ~( KEYWORD_SET(for_eSpec) OR $
         KEYWORD_SET(for_data_array) OR $

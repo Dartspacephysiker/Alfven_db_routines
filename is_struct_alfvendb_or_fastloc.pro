@@ -3,7 +3,7 @@ PRO IS_STRUCT_ALFVENDB_OR_FASTLOC,dbStruct, $
                                   QUIET=quiet, $
                                   LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1   ;stdout
 

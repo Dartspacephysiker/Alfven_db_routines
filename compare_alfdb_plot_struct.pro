@@ -4,7 +4,7 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
                               INDS_RESET=inds_reset, $
                               DBS_RESET=DBs_reset
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   inds_reset  = 0B
   DBs_reset   = 0B

@@ -342,7 +342,7 @@ PRO PLOT_ALFVEN_STATS_UTC_RANGES,maximus,T1_ARR=t1_arr,T2_ARR=t2_arr,$
                                  VERBOSE=verbose, $
                                  _EXTRA = e
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
   !EXCEPT=0                     ;Do report errors, please
   
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1

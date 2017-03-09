@@ -1,7 +1,7 @@
 ;;02/04/17
 PRO JOURNAL__20170204__ALIGN_ALFDB_WITH_ESPEC_DB_TO_GET_PRECIP_TYPE_ASSOC_W_IAWS
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   startStop_file   = '/SPENCEdata/software/sdt/batch_jobs/saves_output_etc/20160520--get_Newell_identification/alfven_startstop_times--500-16361_inc_lower_lats--burst_1000-16361.sav'
 

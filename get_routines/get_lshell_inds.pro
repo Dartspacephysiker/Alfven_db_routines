@@ -6,7 +6,7 @@ FUNCTION GET_LSHELL_INDS,maximus, $
                          N_NOT_LSHELL=n_not_lshell, $
                          LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun=-1 ;;stdout
 

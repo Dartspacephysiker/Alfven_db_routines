@@ -2,7 +2,7 @@
 ;;Looping makes it much faster
 PRO JOURNAL__20170102__MAKE_MAPRATIO_DB_FOR_ESPEC_GIGANTE
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   @common__newell_espec.pro
 

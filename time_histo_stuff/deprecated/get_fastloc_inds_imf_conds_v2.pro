@@ -58,7 +58,7 @@ PRO GET_FASTLOC_INDS_IMF_CONDS_V2,fastLocInterped_i, $
                                   OUT_FASTLOC_TIMES=out_fastLoc_times, $
                                   FOR_ESPEC_DBS=for_eSpec_DBs
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;;Common blocks
 

@@ -8,7 +8,7 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                                CUSTOM_TSTRINGS_TO_KILL=customTKillStrings, $
                                CUSTOM_TRANGES_TO_KILL=customTKillRanges
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   PRINT,"Trashing terrible orbits"
   nGStart = N_ELEMENTS(good_i)

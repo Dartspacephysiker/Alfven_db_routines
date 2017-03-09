@@ -2,7 +2,7 @@
 ;;K, now we're going to overlay mean and median FAC amplitudes
 PRO JOURNAL__20170201__CUSP__MEAN_AND_MEDIAN_FAC_AMPLITUDES__SHOW_BILL,I_FINAL=i_final
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   pMeanFAC = [1,0,0,0]
   pMedFAC  = [0,1,0,0]

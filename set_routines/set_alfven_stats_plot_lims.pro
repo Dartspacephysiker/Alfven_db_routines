@@ -88,7 +88,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
    _EXTRA=e, $
    RESET_STRUCT=reset
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;; defENumFlPlotRange        = [1e5,1e9]
 

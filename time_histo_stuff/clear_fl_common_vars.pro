@@ -1,6 +1,6 @@
 PRO CLEAR_FL_COMMON_VARS
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   @common__fastloc_vars.pro
   ;; COMMON FL_VARS

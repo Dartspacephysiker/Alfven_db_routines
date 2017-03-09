@@ -83,7 +83,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                       FANCY_PLOTNAMES=fancy_plotNames, $
                       LUN=lun
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   for_pres = 1
 

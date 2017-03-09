@@ -21,7 +21,7 @@ PRO GET_NEVENTS_PER_ORBIT_PLOTDATA,maximus,plot_i,MINM=minM,MAXM=maxM, $
                                    LUN=lun
                                    
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
 

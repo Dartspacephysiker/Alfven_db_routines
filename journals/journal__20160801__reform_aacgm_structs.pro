@@ -1,7 +1,7 @@
 ;;07/31/16
 PRO JOURNAL__20160801__REFORM_AACGM_STRUCTS
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   outDir            = '/SPENCEdata/Research/database/FAST/ephemeris/'
 

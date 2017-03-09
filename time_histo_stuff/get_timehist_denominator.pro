@@ -25,7 +25,7 @@ FUNCTION GET_TIMEHIST_DENOMINATOR, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
    LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
      @common__fastloc_espec_vars.pro

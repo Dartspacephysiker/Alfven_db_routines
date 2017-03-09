@@ -7,7 +7,7 @@ PRO SAVE_ALFVENDB_INDICES, $
    IMF_STRUCT=IMF_struct, $
    MIMC_STRUCT=MIMC_struct
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;; test = 0
   ;; STR_ELEMENT,IMF_struct,'paramString_list',test

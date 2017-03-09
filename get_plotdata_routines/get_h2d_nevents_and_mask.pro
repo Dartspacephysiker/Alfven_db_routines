@@ -17,7 +17,7 @@ PRO GET_H2D_NEVENTS_AND_MASK,maximus,plot_i, $
                              PRINT_MANDM=print_mAndM, $
                              LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
 

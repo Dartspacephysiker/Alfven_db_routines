@@ -183,7 +183,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    DO_NOT_SET_DEFAULTS=do_not_set_defaults, $
    _EXTRA=e
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1 ;stdout
 
   IF N_ELEMENTS(saveDir) EQ 0 THEN BEGIN 

@@ -2,7 +2,7 @@
 ;;
 PRO JOURNAL__20160708__GET_INDS_IN_EACH_MLT_ILAT_BIN_SO_WE_CAN_INSPECT_PFLUX_DISTS
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   PRINT,"Unfinished! You decided it was a better use of time to investigate the J-V relationship for kappa-distributed electrons and get something off to Chris today."
   STOP

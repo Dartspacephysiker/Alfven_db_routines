@@ -3,7 +3,7 @@
 ;;using it at all). So I need to see if things are salvageable.
 PRO JOURNAL__20160611__SEE_IF_ESPECS_ARE_SALVAGEABLE_DESPITE_SC_POT_DEBACLE
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   orbit          = 500
   orbStr         = STRCOMPRESS(orbit,/REMOVE_ALL)

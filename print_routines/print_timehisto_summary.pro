@@ -27,7 +27,7 @@ PRO PRINT_TIMEHISTO_SUMMARY,fastLoc,good_i, $
                             DO_IMF_CONDS=do_IMF_conds, $
                             HOYDIA=hoyDia,MASKMIN=maskMin,LUN=lun
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   PRINTF,lun,""
   PRINTF,lun,"**********FASTLOC TIMEHISTO SUMMARY**********"

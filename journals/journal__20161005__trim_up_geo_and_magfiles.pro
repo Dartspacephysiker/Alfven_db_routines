@@ -1,7 +1,7 @@
 ;;10/05/16
 PRO JOURNAL__20161005__TRIM_UP_GEO_AND_MAGFILES
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   balderdash = '/SPENCEdata/Research/database/FAST/ephemeris/'
   geomagfile = 'Dartdb_20151222--500-16361_inc_lower_lats--maximus--GEO_and_MAG_coords.sav'

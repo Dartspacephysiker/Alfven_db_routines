@@ -2,7 +2,7 @@
 ;;In order to recreate a figure
 PRO JOURNAL__20160802__MAKE_MAPRATIO_DB_FOR_CHASTDB
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
   
   outDir    = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
   outFile   = 'mapratio_for_chastDB--20160802.dat'

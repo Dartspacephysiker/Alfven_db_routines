@@ -3,7 +3,7 @@ PRO LOAD_EQUAL_AREA_BINNING_STRUCT,EA, $
                                    HEMI=hemi, $
                                    FORCE_LOAD=force_load
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   @common__ea_binning.pro
 

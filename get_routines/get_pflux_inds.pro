@@ -1,6 +1,6 @@
 FUNCTION GET_PFLUX_INDS,dbStruct,minpFlux,maxpFlux,LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   pflux_i=WHERE(dbStruct.pFluxEst GE minpFlux AND dbStruct.pFluxEst LE maxpFlux,NCOMPLEMENT=n_pFlux_outside_range)
   

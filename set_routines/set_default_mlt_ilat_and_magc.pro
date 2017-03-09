@@ -38,7 +38,7 @@ PRO SET_DEFAULT_MLT_ILAT_AND_MAGC,MINMLT=minM, $
                                   _EXTRA=e, $
                                   LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(MIMC_struct) GT 0 THEN BEGIN
      PRINT,'Repopulating MLT/ILAT/MAGC variables using MIMC struct ...'

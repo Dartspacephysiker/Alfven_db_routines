@@ -2,7 +2,7 @@
 ;;Looping makes it much faster
 PRO JOURNAL__20161205__MAKE_MAPRATIO_DB_FOR_FASTLOC5__FOR_ESPEC
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   @common__fastloc_espec_vars.pro
 

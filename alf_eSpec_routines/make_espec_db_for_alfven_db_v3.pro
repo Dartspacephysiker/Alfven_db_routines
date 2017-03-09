@@ -6,7 +6,7 @@ FUNCTION MAKE_ESPEC_DB_FOR_ALFVEN_DB_V3,winnowed_file,winnowed_dir, $
                                         JE_OUT=je_out, $
                                         JEE_OUT=jee_out
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   Newell_DB_dir    = '/SPENCEdata/software/sdt/batch_jobs/Alfven_study/20160520--get_Newell_identification_for_Alfven_events--NOT_despun/Newell_batch_output/'
   Newell_filePref  = 'Newell_et_al_identification_of_electron_spectra--ions_included--Orbit_'

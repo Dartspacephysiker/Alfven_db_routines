@@ -8,7 +8,7 @@ FUNCTION GET_CHARE_INDS,dbStruct,minCharE,maxCharE, $
                         FOR_ION_DB=for_ion_DB, $
                         LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   dbType = 'char. energy'
   CASE 1 OF

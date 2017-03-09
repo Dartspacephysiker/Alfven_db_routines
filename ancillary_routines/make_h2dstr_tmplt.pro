@@ -15,7 +15,7 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                            CB_FORCE_OOBLOW=cb_force_oobLow, $
                            NCUSTOMINTEGRALS=nCustomIntegrals
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;;Everyone needs 'em
   b1       = (N_ELEMENTS(b1in)   GT 0) ? b1in    : 1L

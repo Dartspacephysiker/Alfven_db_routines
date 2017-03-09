@@ -3,7 +3,7 @@ PRO HOW_MANY_ORBITS_WITH_DATA_BETWEEN,dbStruct,minOrb,maxOrb, $
                                       PRINT_ORBS=print_orbs, $
                                       LUN=inLun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   lun             = N_ELEMENTS(inLun)  GT 0 ? inLun : -1
 

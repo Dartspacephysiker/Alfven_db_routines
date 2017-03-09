@@ -170,7 +170,7 @@ PRO SUPERPOSE_SEA_TIMES_ALFVENDBQUANTITIES, $
    PDF_OUTPUT=pdf_output
   
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   dataDir='/SPENCEdata/Research/database/'
 

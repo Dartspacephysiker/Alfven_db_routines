@@ -284,7 +284,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    LUN=lun
    
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   need_fastLoc_i  = KEYWORD_SET(nEventPerMinPlot) $
                     OR KEYWORD_SET(probOccurrencePlot) $

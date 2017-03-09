@@ -246,7 +246,7 @@ PRO PLOT_ALFVEN_STATS_INDS_LIST,maximus,MAXIMUS_INDS=maximus_inds,FASTLOC_INDS=f
                                 VERBOSE=verbose, $
                                 _EXTRA = e
   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
   !EXCEPT=0                     ;Do report errors, please
   
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1

@@ -4,7 +4,7 @@
 ;;First, we want to make sure the data are OK.
 PRO JOURNAL__20161122__CONVERT_THE_REMAINING_FASTLOC_INDS_TO_AACGM
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   get_GEI_coords         = 0
   do_GEO_MAG_conversions = 0

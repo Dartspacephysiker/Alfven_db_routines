@@ -12,7 +12,7 @@ PRO GET_CUSTOM_MAXIND_ANCILLARIES,custom_range,log_custom,custom_title,custom_da
                                   RESET_COUNTERS=reset_counters
                                   
                                   
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   COMMON CUSTMAX__nameless_customData_count,CUSTMAX__nameless_customTitle_count,CUSTMAX__index
 

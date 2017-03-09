@@ -9,7 +9,7 @@ FUNCTION MAKE_ESPEC_DB_FOR_ALFVEN_DB_V2,cdbTime,orbArr,firstOrb,lastOrb, $
                                         ONLY_PRODUCE_MISSING_ORB_OUTPUT=only_missing_output, $
                                         OUT_MISSING_ORB_ARR=missingOrbArr
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   PRINT,"STOP. You know this thing shouldn't be used, right? I'm not even sure how it behaves, since I ultimately have used _V3 of this code to do any meaningful work."
   STOP

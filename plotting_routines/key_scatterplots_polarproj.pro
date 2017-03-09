@@ -78,7 +78,7 @@ PRO KEY_SCATTERPLOTS_POLARPROJ,MAXIMUS=maximus, $
                                OUT_MAP=out_map, $
                                _EXTRA = e
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   ;; Defaults
   defMinI = 60

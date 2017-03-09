@@ -4,7 +4,7 @@ PRO COMPARE_MIMC_STRUCT,MIMC_struct1,MIMC_struct2, $
                         DBS_RESET=DBs_reset, $
                         PLOTS_RESET=plots_reset
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   inds_reset  = 0B
   DBS_reset   = 0B

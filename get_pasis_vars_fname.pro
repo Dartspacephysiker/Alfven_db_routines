@@ -1,7 +1,7 @@
 ;;12/11/16
 FUNCTION GET_PASIS_VARS_FNAME,NEED_FASTLOC_I=need_fastLoc_i
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   @common__pasis_lists.pro
   

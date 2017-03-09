@@ -12,7 +12,7 @@ PRO LOAD_ALF_ESPEC_DB_AND_HASH,out_alf_eSpec_stats,out_alf_specIdent_hash, $
      ALF_ESPEC__dbFile,ALF_ESPEC__dbTimesFile, $
      ALF_ESPEC__RECALCULATE
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun           = -1         ;stdout
 

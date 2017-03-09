@@ -12,7 +12,7 @@ PRO GET_TOTAL_ORBITS_PLOTDATA,dbStruct,MINM=minM,MAXM=maxM, $
                               UNIQUEORBS_I=uniqueOrbs_i,H2D_NONZERO_ALLORB_I=h2d_nonZero_allOrb_i, $
                               LUN=lun
 
-  COMPILE_OPT idl2
+  COMPILE_OPT idl2,strictarrsubs
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 

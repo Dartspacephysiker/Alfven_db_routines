@@ -5,7 +5,7 @@ PRO SAVE_PASIS_VARS, $
    NEED_FASTLOC_I=need_fastLoc_i, $
    VERBOSE=verbose
 
-  COMPILE_OPT IDL2
+  COMPILE_OPT IDL2,STRICTARRSUBS
 
   @common__pasis_lists.pro
 
