@@ -17,6 +17,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                            HEMI=hemi, $
                            CLOCKSTR=clockStr, $
                            NO_COLORBAR=no_colorbar, $
+                           GRIDCOLOR=gridColor, $
                            SUPPRESS_THICKGRID=suppress_thickGrid, $
                            SUPPRESS_THINGRID=suppress_thinGrid, $
                            SUPPRESS_GRIDLABELS=suppress_gridLabels, $
@@ -498,6 +499,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        CB_POSITION=cb_position, $
                                        CB_INFO=cb_info, $
                                        /NO_DISPLAY, $
+                                       GRIDCOLOR=gridColor, $
                                        SUPPRESS_THICKGRID=suppress_tg, $
                                        SUPPRESS_THINGRID=suppress_tnG, $
                                        SUPPRESS_GRIDLABELS=suppress_gl, $
@@ -544,6 +546,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                           CB_POSITION=cb_position, $
                                           CB_INFO=op_cb_info, $
                                           /NO_DISPLAY, $
+                                          GRIDCOLOR=gridColor, $
                                           SUPPRESS_THICKGRID=suppress_tg, $
                                           SUPPRESS_THINGRID=suppress_tnG, $
                                           SUPPRESS_GRIDLABELS=suppress_gl, $
@@ -628,7 +631,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
 
                  cb_info.vertical = 1
                  cb_info.position = cb_position
-                 cb_info.charsize = 0.75
+                 ;; cb_info.charsize = 0.75
 
                  IF KEYWORD_SET(plotH2D_contour) THEN BEGIN
                     customCT = N_ELEMENTS(contour__CTIndex) GT 0
@@ -670,7 +673,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                             POSITION=cb_info.POSITION, $
                             TEXTTHICK=cb_info.TEXTTHICK, $
                             VERTICAL=cb_info.VERTICAL, $
-                            CHARSIZE=cb_info.CHARSIZE*1.3, $
+                            CHARSIZE=cb_info.CHARSIZE, $
                             TICKLEN=cb_info.TICKLEN
 
                  IF KEYWORD_SET(oplotStr) THEN BEGIN
@@ -683,7 +686,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
 
                     op_cb_info.vertical = 1
                     op_cb_info.position = op_cb_position
-                    op_cb_info.charsize = 0.75
+                    ;; op_cb_info.charsize = 0.75
 
                     LOADCT, $
                        3, $
@@ -705,7 +708,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                POSITION=op_cb_info.POSITION, $
                                TEXTTHICK=op_cb_info.TEXTTHICK, $
                                VERTICAL=op_cb_info.VERTICAL, $
-                               CHARSIZE=op_cb_info.CHARSIZE*1.3, $
+                               CHARSIZE=op_cb_info.CHARSIZE, $
                                TICKLEN=op_cb_info.TICKLEN
 
                  ENDIF
@@ -837,6 +840,7 @@ PRO PLOT_ALFVENDB_2DHISTOS,H2DSTRARR=h2dStrArr, $
                                        MAP_POSITION=map_position, $
                                        /NO_DISPLAY, $
                                        CB_POSITION=cb_position, $
+                                       GRIDCOLOR=gridColor, $
                                        SUPPRESS_THICKGRID=suppress_thickGrid, $
                                        SUPPRESS_THINGRID=suppress_thinGrid, $
                                        SUPPRESS_GRIDLABELS=suppress_gridLabels, $

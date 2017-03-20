@@ -916,7 +916,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              NONEGFLUX=noNegFlux, $
                              ABSFLUX=absFlux, $
                              CB_DIVFACTOR=CB_divFactor, $
-                             EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
+                             ;; EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                              INDICES__ESPEC=indices__eSpec, $
                              ;; ESPEC_MLTSILATS=eSpec__MLTsILATs, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
@@ -1041,7 +1041,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     NONEGFLUX=noNegFlux, $
                                     ABSFLUX=absFlux, $
                                     CB_DIVFACTOR=CB_divFactor, $
-                                    ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
+                                    ;; ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                                     INDICES__ESPEC=indices__eSpec, $
                                     COMB_ACCELERATED=Newell__comb_accelerated, $
                                     ESPEC_MLTSILATS=eSpec__MLTsILATs, $
@@ -1155,7 +1155,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              NONEGFLUX=noNegFlux, $
                              ABSFLUX=absFlux, $
                              CB_DIVFACTOR=CB_divFactor, $
-                             ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
+                             ;; ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                              INDICES__ESPEC=indices__eSpec, $
                              ;; ESPEC_MLTSILATS=eSpec__MLTsILATs, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
@@ -1666,7 +1666,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              PLOTRANGE=plotRange, $
                              PLOTAUTOSCALE=KEYWORD_SET(alfDB_plotLim_struct.autoscale_fluxPlots) OR KEYWORD_SET(autoscale_charEPlots), $
                              INDICES__ESPEC=indices__eSpec, $
-                             EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
+                             ;; EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                              ;; ESPEC_MLTSILATS=eSpec__MLTsILATs, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              ;; NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $

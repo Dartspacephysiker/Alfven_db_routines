@@ -113,44 +113,44 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         ;; is_noRestrict = 1
 
         ;;fastLoc 5--is it any better?
-        ;; DefDBDir      = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals5/'
-        ;; defDBFile     = 'fastLoc_intervals5--20161129--500-16361--Je_times.sav'
-        ;; defDB_tFile   = 'fastLoc_intervals5--20161129--500-16361--Je_times--time_and_delta_t.sav'
-        ;; DB_date       = '20161129'
-        ;; DB_version    = 'v0.0'
-        ;; DB_extras     = 'no_TIME_tag/no_interval_startstop'
-        ;; is_128Hz      = 0
-        ;; is_noRestrict = 1
-        ;; fastLoc_has_times = 1
-
-        ;; AACGM_file    = 'fastLoc_intervals5--20161129--500-16361--Je_times--AACGM_coords.sav'
-        ;; GEI_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-GEI.sav'
-        ;; GEO_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-GEO.sav'
-        ;; MAG_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-MAG.sav'
-        ;; SDT_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-SDT.sav'
-
-        ;; mapRatDir     = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
-        ;; mapRatFile    = 'mapratio_for_fastLoc_intervals5--20161129--500-16361--Je_times.sav'
-
-
-        ;;fastLoc 6--is it any better?
-        DefDBDir      = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals6/'
-        defDBFile     = 'fastLoc_intervals6--20170208--500-25007--Je_times.sav'
-        defDB_tFile   = 'fastLoc_intervals6--20170208--500-25007--Je_times--time_and_delta_t.sav'
-        DB_date       = '20170208'
+        DefDBDir      = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals5/'
+        defDBFile     = 'fastLoc_intervals5--20161129--500-16361--Je_times.sav'
+        defDB_tFile   = 'fastLoc_intervals5--20161129--500-16361--Je_times--time_and_delta_t.sav'
+        DB_date       = '20161129'
         DB_version    = 'v0.0'
         DB_extras     = 'no_TIME_tag/no_interval_startstop'
         is_128Hz      = 0
         is_noRestrict = 1
         fastLoc_has_times = 1
 
-        GEI_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop-GEI.sav'
-        GEO_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop-GEO.sav'
-        MAG_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop-MAG.sav'
-        SDT_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop-SDT.sav'
+        AACGM_file    = 'fastLoc_intervals5--20161129--500-16361--Je_times--AACGM_coords.sav'
+        GEI_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-GEI.sav'
+        GEO_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-GEO.sav'
+        MAG_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-MAG.sav'
+        SDT_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-SDT.sav'
 
-        mapRatDir     = defDBDir
-        mapRatFile    = 'fastLoc_intervals6--20170208--500-25007--Je_times--mapRatio.sav'
+        mapRatDir     = '/SPENCEdata/Research/database/FAST/dartdb/saves/mapratio_dbs/'
+        mapRatFile    = 'mapratio_for_fastLoc_intervals5--20161129--500-16361--Je_times.sav'
+
+
+        ;;fastLoc 6--is it any better?
+        ;; DefDBDir      = '/SPENCEdata/Research/database/FAST/ephemeris/fastLoc_intervals6/'
+        ;; defDBFile     = 'fastLoc_intervals6--20170208--500-25007--Je_times.sav'
+        ;; defDB_tFile   = 'fastLoc_intervals6--20170208--500-25007--Je_times--time_and_delta_t.sav'
+        ;; DB_date       = '20170208'
+        ;; DB_version    = 'v0.0'
+        ;; DB_extras     = 'no_TIME_tag/no_interval_startstop'
+        ;; is_128Hz      = 0
+        ;; is_noRestrict = 1
+        ;; fastLoc_has_times = 1
+
+        ;; GEI_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop-GEI.sav'
+        ;; GEO_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop-GEO.sav'
+        ;; MAG_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop-MAG.sav'
+        ;; SDT_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop-SDT.sav'
+
+        ;; mapRatDir     = defDBDir
+        ;; mapRatFile    = 'fastLoc_intervals6--20170208--500-25007--Je_times--mapRatio.sav'
 
         defCoordDir   = defDBDir + 'alternate_coords/'
 

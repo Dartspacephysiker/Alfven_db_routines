@@ -148,11 +148,23 @@ FUNCTION LOAD_PASIS_VARS, $
      IF compare_IMF_struct THEN BEGIN
 
         comp =  COMPARE_STRUCT(PASIS__IMF_struct,IMF_struct,EXCEPT=['clock_i'])
-        IF comp.nDiff GT 0 THEN BEGIN
+        CASE N_ELEMENTS(comp) OF
+           1: BEGIN
+              IF comp.nDiff GT 0 THEN BEGIN
 
-           STOP
+                 STOP
 
-        ENDIF
+              ENDIF
+           END
+           ELSE: BEGIN
+              IF (WHERE(comp[*].nDiff GT 0))[0] NE -1 THEN BEGIN
+
+                 STOP
+
+              ENDIF
+           END
+        ENDCASE
+
      ENDIF
 
 

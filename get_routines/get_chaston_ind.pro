@@ -550,6 +550,7 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
 
         ;;Don't use befStartTimes, because exclusion of the first 10 seconds of ESA data was built in to ALFVEN_STATS_5.
         timeMe  = VALUE_CLOSEST2(junkTimes,(*pDBTimes))
+        IF (WHERE(timeMe EQ -1))[0] NE -1 THEN timeMe[WHERE(timeMe EQ -1)] = 0
         likee = WHERE(ABS(junkTimes[timeMe]-(*pDBTimes)) GE 2.6,nLikee)
         IF nLikee NE 0 THEN BEGIN
            nGood  = N_ELEMENTS(good_i)

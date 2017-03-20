@@ -37,6 +37,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                           SUPPRESS_MLT_NAME=suppress_MLT_name, $
                           SUPPRESS_ILAT_NAME=suppress_ILAT_name, $
                           SUPPRESS_TITLES=suppress_titles, $
+                          GRIDCOLOR=gridColor, $
                           LABELS_FOR_PRESENTATION=labels_for_presentation, $
                           CB_FORCE_OOBLOW=cb_force_ooblow, $
                           CB_FORCE_OOBHIGH=cb_force_oobhigh, $
@@ -187,9 +188,6 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   yScale           = (map_position[3]-map_position[1])/(defH2DMapPosition[3]-defH2DMapPosition[1])
   charScale        = (xScale*yScale)^(1./2.)
   gridScale        = (xScale*yScale)^(1./1.)
-
-  presentationBLOWITUP = 1.3
-
 
   IF ~KEYWORD_SET(overplot) THEN BEGIN
      CGMAP_SET,centerLat,centerLon,STEREOGRAPHIC=stereographic, $
@@ -731,7 +729,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDELSE
 
   IF KEYWORD_SET(stereographic) THEN BEGIN
-     IF (binI GT 3.0) AND ~(KEYWORD_SET(overplot) OR KEYWORD_SET(suppress_thinGrid)) THEN BEGIN
+     ;; IF (binI GT 3.0) AND ~(KEYWORD_SET(overplot) OR KEYWORD_SET(suppress_thinGrid)) THEN BEGIN
+     IF (binI GT 3.0) AND ~(KEYWORD_SET(suppress_thinGrid)) THEN BEGIN
         CGMAP_GRID, CLIP_TEXT=1, $
                     /NOCLIP, $
                     LINESTYLE=0, $
@@ -761,12 +760,13 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   ;;add thicker grid to a few latitude lines
   ;; IF temp.shift1 LT 0.0001 THEN BEGIN
-  IF KEYWORD_SET(stereographic) AND ~(KEYWORD_SET(suppress_thickGrid) OR KEYWORD_SET(overplot)) THEN BEGIN
+  ;; IF KEYWORD_SET(stereographic) AND ~(KEYWORD_SET(suppress_thickGrid) OR KEYWORD_SET(overplot)) THEN BEGIN
+  IF KEYWORD_SET(stereographic) AND ~(KEYWORD_SET(suppress_thickGrid)) THEN BEGIN
      CGMAP_GRID, CLIP_TEXT=1, $
                  /NOCLIP, $
                  THICK=((!D.Name EQ 'PS') ? defGridBoldLineThick_PS : defGridBoldLineThick)*gridScale,$
                  LINESTYLE=defBoldGridLineStyle, $
-                 COLOR=defGridColor, $
+                 COLOR=KEYWORD_SET(gridColor) ? gridColor : defGridColor, $
                  ;; LATDELTA=(KEYWORD_SET(do_lShell) ? !NULL : defBoldLatDelta), $
                  LONDELTA=defBoldLonDelta, $
                  LONS=gridLons, $
@@ -783,13 +783,14 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
      IF KEYWORD_SET(mirror) THEN lonLabel      = -1.0 * lonLabel ;mirror dat
   ENDELSE
 
-  IF KEYWORD_SET(stereographic) AND ~(KEYWORD_SET(suppress_gridLabels) OR KEYWORD_SET(overplot)) THEN BEGIN
+  ;; IF KEYWORD_SET(stereographic) AND ~(KEYWORD_SET(suppress_gridLabels) OR KEYWORD_SET(overplot)) THEN BEGIN
+  IF KEYWORD_SET(stereographic) AND ~(KEYWORD_SET(suppress_gridLabels)) THEN BEGIN
 
      IF KEYWORD_SET(wholeCap) THEN BEGIN
         factor                    = 6.0
         mltSites                  = (INDGEN((maxM-minM)/factor)*factor+minM)
         mltName                   = KEYWORD_SET(suppress_MLT_name) ? '' : " MLT"
-        lonNames                  = [string(minM,format=lonLabelFormat) + mltName, $
+        lonNames                  = [STRING(minM,FORMAT=lonLabelFormat) + mltName, $
                                      STRING(mltSites[1:-1], $
                                             format=lonLabelFormat)]
 
@@ -801,7 +802,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ;;    gridLatNames        = -1.0 * gridLatNames
         ;; ENDIF
 
-        gridLatNames              = STRING(gridLatNames,format=latLabelFormat)
+        gridLatNames              = STRING(gridLatNames,FORMAT=latLabelFormat)
         tmpInd                    = KEYWORD_SET(mirror) ? -1 : 0
         gridLatNames[tmpInd]      = gridLatNames[tmpInd] + $
                                     ( KEYWORD_SET(suppress_ILAT_name) ? '' : $
@@ -847,7 +848,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                   ALIGNMENT=0.5, $
                   CHARSIZE=(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : defCharSize_grid)*charScale
            CGTEXT,MEAN([map_position[2],map_position[0]]), $
-                  map_position[3]-0.005*yScale, $
+                  (map_position[3]-0.005*yScale) < 0.983, $
                   '12',/NORMAL, $
                   COLOR=MLTColor, $
                   ALIGNMENT=0.5, $
@@ -860,7 +861,7 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                   ALIGNMENT=0.5, $
                   CHARSIZE=(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : defCharSize_grid)*charScale
            ;; CGTEXT,map_position[0]-0.03*xScale, $
-           CGTEXT,map_position[0]-0.015*xScale, $
+           CGTEXT,(map_position[0]-0.015*xScale) > 0.011, $
                   MEAN([map_position[3],map_position[1]])-0.015*yScale, $
                   '18', $
                   /NORMAL, $
@@ -870,7 +871,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
         ENDIF
 
         ;;ILATs
-        IF KEYWORD_SET(stereographic) AND ~(KEYWORD_SET(suppress_ILAT_labels) OR KEYWORD_SET(overplot)) THEN BEGIN
+        ;; IF KEYWORD_SET(stereographic) AND ~(KEYWORD_SET(suppress_ILAT_labels) OR KEYWORD_SET(overplot)) THEN BEGIN
+        IF KEYWORD_SET(stereographic) AND ~(KEYWORD_SET(suppress_ILAT_labels)) THEN BEGIN
            ILATColor              = defGridTextColor
            ILAT_longitude         = 45
            ILAT_longitude         = 80
@@ -1097,6 +1099,8 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
   ENDELSE
 
   ;;Want this if we aren't overplotting
+  ;; cbCharScale                     = (KEYWORD_SET(no_colorBar) OR KEYWORD_SET(overplot)) ? 1.0 : charScale
+  cbCharScale                     = charScale
   CB_Info                         = { $
                                     NCOLORS:nCBColors, $
                                     ;; NCOLORS:nCBColors, $
@@ -1107,12 +1111,13 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                                     RANGE:cbRange, $
                                     TITLE:N_ELEMENTS(cbTitle) GT 0 ? cbTitle : '', $
                                     TLOCATION:cbTLocation, $
-                                    TCHARSIZE:KEYWORD_SET(labels_for_presentation) ? charSize_plotTitle_pres : cbTCharSize*charScale,$
+                                    ;; TCHARSIZE:KEYWORD_SET(labels_for_presentation) ? charSize_plotTitle_pres : cbTCharSize*charScale,$
+                                    TCHARSIZE:(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : defCharSize_grid)*cbCharScale,$
                                     POSITION:KEYWORD_SET(cb_position) ? cb_position : $
                                     (KEYWORD_SET(labels_for_presentation) ? cbPosition_pres : cbPosition), $
                                     TEXTTHICK:cbTextThick, $
                                     VERTICAL:cbVertical, $
-                                    CHARSIZE:(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : cbTCharSize)*charScale,$
+                                    CHARSIZE:(KEYWORD_SET(labels_for_presentation) ? charSize_cbLabel_pres : defCharSize_grid)*cbCharScale, $
                                     TICKLEN:0.5}
 
   IF KEYWORD_SET(plotH2D_contour) THEN BEGIN
