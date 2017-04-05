@@ -25,6 +25,8 @@ PRO SET_PLOT_DIR,plotDir, $
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
+  IF N_ELEMENTS(verbose) EQ 0 THEN verbose = 1
+
   proceed                     = KEYWORD_SET(for_storms)   + KEYWORD_SET(for_sw_imf)   + $
                                 KEYWORD_SET(for_alfvendb) + KEYWORD_SET(customDir)    + $
                                 KEYWORD_SET(for_sdt)      + KEYWORD_SET(for_eSpec_db) + $
