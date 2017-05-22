@@ -41,6 +41,9 @@ PRO SAVE_PASIS_VARS, $
                    ;; 'PASIS__ion__MLTs,PASIS__ion__ILATs,'
                    'PASIS__ion__MLTs,'
      END
+     KEYWORD_SET(PASIS__alfDB_plot_struct.for_sWay_DB): BEGIN
+        saveStr += 'PASIS__indices__sWay_list,'
+     END
      ELSE: BEGIN
         saveStr += 'PASIS__plot_i_list,'
      END

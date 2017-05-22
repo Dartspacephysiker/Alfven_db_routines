@@ -103,6 +103,22 @@ FUNCTION LOAD_PASIS_VARS, $
         PASIS__iNumFlux_ion_data   = 1
         PASIS__ion__MLTs           = 1
      END
+     KEYWORD_SET(alfdb_plot_struct.for_sWay_DB): BEGIN
+        IF (N_ELEMENTS(PASIS__paramString_list        ) EQ 0) OR $
+           (N_ELEMENTS(PASIS__paramString             ) EQ 0) OR $
+           ;; (N_ELEMENTS(PASIS__fastLocInterped_i_list  ) EQ 0) OR $
+           (N_ELEMENTS(PASIS__indices__sWay_list     ) EQ 0) OR $
+           ;; ((N_ELEMENTS(PASIS__iFlux_ion_data       ) EQ 0) AND $
+           ;;  (N_ELEMENTS(PASIS__iNumFlux_ion_data    ) EQ 0)) OR $
+           (N_ELEMENTS(PASIS__alfDB_plot_struct       ) EQ 0) OR $
+           (N_ELEMENTS(PASIS__IMF_struct              ) EQ 0) OR $
+           (N_ELEMENTS(PASIS__MIMC_struct             ) EQ 0) $
+        THEN BEGIN
+           PRINT,"EMMMCCCEEEE!"
+           STOP
+        ENDIF
+
+     END
      ELSE: BEGIN
         IF N_ELEMENTS(PASIS__paramString_list        ) EQ 0  OR $
            N_ELEMENTS(PASIS__paramString             ) EQ 0  OR $
@@ -204,6 +220,12 @@ FUNCTION LOAD_PASIS_VARS, $
         get_ion_i             = 0
      ENDIF ELSE BEGIN
         get_ion_i             = 1
+     ENDELSE
+
+     IF (N_ELEMENTS(PASIS__indices__sWay_list) GT 0) THEN BEGIN
+        get_sWay_i            = 0
+     ENDIF ELSE BEGIN
+        get_sWay_i            = 1
      ENDELSE
 
      IF N_ELEMENTS(PASIS__fastLocInterped_i_list) GT 0 THEN BEGIN

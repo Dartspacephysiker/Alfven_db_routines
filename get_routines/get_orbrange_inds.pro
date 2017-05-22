@@ -1,7 +1,8 @@
 FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
                            DBTIMES=DBTimes, $ ;in case we'd like to trash some time ranges
                            DONT_TRASH_BAD_ORBITS=keepJunk, $
-                           SERIOUSLY__NOJUNK=seriously__noJunk
+                           ;; SERIOUSLY__NOJUNK=seriously__noJunk, $
+                           FOR_SWAY_DB=for_sWay_DB
 
   COMPILE_OPT idl2,strictarrsubs
 
@@ -23,9 +24,14 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
   ENDIF ELSE BEGIN
 
      ;; IF ~KEYWORD_SET(seriously__noJunk) THEN BEGIN
+     IF KEYWORD_SET(for_sWay_DB) THEN BEGIN
+
+        customKill         = 1640 ;Spiky pFlux everythang
+
+     ENDIF ELSE BEGIN
         customKillRanges   = [ $
-                             [744,751], $ ;2017/01/21 These orbits are piping-hot garbage. They are red-hot, featureless wastes of disk space
-                             [753,756], $ ;2017/01/21 These orbits are piping-hot garbage. They are red-hot, featureless wastes of disk space
+                             [744,751], $   ;2017/01/21 These orbits are piping-hot garbage. They are red-hot, featureless wastes of disk space
+                             [753,756], $   ;2017/01/21 These orbits are piping-hot garbage. They are red-hot, featureless wastes of disk space
                              [1031,1035], $ ;;Believe me, these orbits are bad for everyone
                              [1038,1040], $
                              [1042,1045], $
@@ -53,9 +59,9 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
                               7833 $
                               ;; 8276 $ ;;This guy is bad for IMF stuff, but good for storms
                              ] ;;2017/01/21 Truly a bunch of noise and worthless measurements
-                              ;; 12471, $ ;2017/01/21 Give the boy a try
-                              ;; 13214,13785, $ ;2017/01/21 Give the boy a try
-                              ;; 14297] ;2017/01/21 Give the boy a try
+        ;; 12471, $ ;2017/01/21 Give the boy a try
+        ;; 13214,13785, $ ;2017/01/21 Give the boy a try
+        ;; 14297] ;2017/01/21 Give the boy a try
 
         customTKillStrings = [ $
                              ['1996-12-08/' + ['01:52:20','01:52:40']], $ ;orb 1175 REAL badness (not picked up by transitions) 2017/01/21 
@@ -148,6 +154,8 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
                              ['1999-09-02/' + ['15:59:20','16:09:35']], $ ;orb 12000 badness (good burst data)
                              ['1999-09-29/' + ['20:58:52','20:59:02']]  $ ;orb 12297 REAL badness 2017/01/21 (no burst data)
                              ]
+
+     ENDELSE
 
         ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs, $
                                          DBTIMES=DBTimes, $

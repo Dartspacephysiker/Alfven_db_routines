@@ -1,6 +1,7 @@
 ;;11/25/16
 PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                             FOR_ALFDB=for_alfDB, $
+                            FOR_SWAY_DB=for_swayDB, $
                             FOR_FASTLOC=for_fastLoc, $
                             DB_DIR=DB_dir, $
                             DB_DATE=DB_date, $
@@ -33,6 +34,19 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                 dx_not_dt        : 0B, $
                 for_eSpecDB      : 0B, $
                 coords           : 'SDT'}
+     END
+     KEYWORD_SET(for_swayDB): BEGIN
+        dbNavn = 'Strangeway_bands'
+        
+        info   = dbStruct.info
+
+        STR_ELEMENT,info,'coords','SDT',/ADD_REPLACE
+        STR_ELEMENT,info,'DB_Dir',DB_dir,/ADD_REPLACE
+        STR_ELEMENT,info,'DB_Date',DB_date,/ADD_REPLACE
+        STR_ELEMENT,info,'DB_version',DB_version,/ADD_REPLACE
+        STR_ELEMENT,info,'DB_extras',DB_extras,/ADD_REPLACE
+
+
      END
      ELSE: BEGIN
         dbNavn = 'maximus'
@@ -87,18 +101,28 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
 
   ;;Now see whether to replace or just append the thing
   STR_ELEMENT,dbStruct,"info",INDEX=infoIndex
-  IF infoIndex LT 0 THEN BEGIN
-     dbStruct = CREATE_STRUCT(dbStruct,"info",info)
-  ENDIF ELSE BEGIN
-     ;; STR_ELEMENT,dbStruct.info,'converted',INDEX=convIndex
-     ;; IF convIndex LT 0 THEN BEGIN
-     ;;    tmpInfo = dbStruct.info
-     ;;    tmpInfo = CREATE_STRUCT(TEMPORARY(info),tmpInfo)
-     ;;    STR_ELEMENT,dbStruct,'info',TEMPORARY(tmpInfo),/ADD_REPLACE
-     ;; ENDIF ELSE BEGIN
-     PRINT,dbNavn + " appears to have 'info' already! You may care to inspect."
-     STOP
-     ;; ENDELSE
-  ENDELSE
+  CASE 1 OF
+     infoIndex LT 0: BEGIN
+        dbStruct = CREATE_STRUCT(dbStruct,"info",info)
+     END
+     KEYWORD_SET(for_swayDB): BEGIN
+
+        STR_ELEMENT,dbStruct,'info',info,/ADD_REPLACE
+
+     END
+     ELSE: BEGIN
+
+        ;; STR_ELEMENT,dbStruct.info,'converted',INDEX=convIndex
+        ;; IF convIndex LT 0 THEN BEGIN
+        ;;    tmpInfo = dbStruct.info
+        ;;    tmpInfo = CREATE_STRUCT(TEMPORARY(info),tmpInfo)
+        ;;    STR_ELEMENT,dbStruct,'info',TEMPORARY(tmpInfo),/ADD_REPLACE
+        ;; ENDIF ELSE BEGIN
+        PRINT,dbNavn + " appears to have 'info' already! You may care to inspect."
+        STOP
+        ;; ENDELSE
+
+     END
+  ENDCASE
 
 END

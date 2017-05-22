@@ -11,6 +11,7 @@ PRO FASTDBS__DELTA_SWITCHER, $
    MAP_SQRT_FLUXES=map_sqrt_fluxes, $
    DILAT_FILE=dILAT_file, $
    FOR_ALFDB=alfDB, $
+   FOR_SWAY_DB=swayDB, $
    FOR_FASTLOC_DB=fastLocDB, $
    FOR_ESPEC_DB=eSpecDB, $
    FOR_ION_DB=ionDB, $
@@ -26,6 +27,9 @@ PRO FASTDBS__DELTA_SWITCHER, $
   CASE 1 OF
      KEYWORD_SET(alfDB): BEGIN
         DBNavn = 'alfDB'
+     END
+     KEYWORD_SET(swayDB): BEGIN
+        DBNavn = 'swayDB'
      END
      KEYWORD_SET(fastLocDB): BEGIN
         DBNavn = 'fastLocDB'

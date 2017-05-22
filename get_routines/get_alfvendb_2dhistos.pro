@@ -46,6 +46,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NO_MAXIMUS=no_maximus, $
    ;; FOR_ESPEC_DB=for_eSpec_DB, $
    ESPEC__MLTSILATS=eSpec__MLTsILATs, $
+   FOR_SWAY_DB=for_sWay_DB, $
    ;; FOR_ION_DB=for_ion_DB, $
    ION__MLTSILATS=ion__MLTsILATs, $
    ;; ION_DELTA_T=ion_delta_t, $
@@ -213,6 +214,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   @common__fastloc_vars.pro
   @common__newell_espec.pro
   @common__newell_ion_db.pro
+  @common__strangeway_bands.pro
 
   ;;set up variance plot inds
   varPlotRawInds         = !NULL
@@ -227,6 +229,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   for_ions               = N_ELEMENTS(iFlux_ion_data  ) GT 0 OR N_ELEMENTS(iNumFlux_ion_data  ) GT 0
   for_eSpecs             = N_ELEMENTS(eFlux_eSpec_data) GT 0 OR N_ELEMENTS(eNumFlux_eSpec_data) GT 0
+  ;; for_sWay               = N_ELEMENTS(eFlux_eSpec_data) GT 0 OR N_ELEMENTS(eNumFlux_eSpec_data) GT 0
 
   ;; IF KEYWORD_SET(indices__ion) THEN BEGIN
   ;;    ESPEC__SLAP_OFF_THOSE_HUGE_ONES,NEWELL_I__ion, $
@@ -247,6 +250,10 @@ PRO GET_ALFVENDB_2DHISTOS, $
         for_ions: BEGIN
            in_MLTS  = (KEYWORD_SET(MIMC_struct.use_Lng) ? NEWELL_I__ion.lng : NEWELL_I__ion.mlt)[indices__ion]
            in_ILATS = NEWELL_I__ion.ilat[indices__ion]
+        END
+        for_sWay_DB: BEGIN
+           in_MLTS   = SWAY__DB.mlt
+           in_ILATS  = SWAY__DB.ilat
         END
      ENDCASE
 

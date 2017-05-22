@@ -2,6 +2,7 @@
 PRO PLOT_ALFVEN_STATS__SETUP, $
    FOR_ESPEC_DBS=for_eSpec_DBs, $
    FOR_ION_DBS=for_ion_DBs, $
+   FOR_SWAY_DB=for_sway_DB, $
    NEED_FASTLOC_I=need_fastLoc_i, $
    USE_STORM_STUFF=use_storm_stuff, $
    AE_STUFF=ae_stuff, $    
@@ -60,6 +61,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    CHAREPLOTS=charEPlots, $
    CHARETYPE=charEType, $
    CHARIEPLOTS=chariEPlots, $
+   SWAY_PLOTTYPE=sway_plotType, $
    MAGCPLOTS=magCPlots, $
    ABSCHARE=absCharE, $
    ABSCHARIE=absCharie, $
@@ -102,6 +104,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
    LOG_NEWELLPLOT=log_newellPlot, $
    LOG_NOWEPCOPLOT=log_nowepcoPlot, $
+   LOG_SWAYPLOT=log_swayPlot, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
    FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
@@ -238,6 +241,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $
    AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
    AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
+   SWAYPLOT_AUTOSCALE=swayPlot_autoScale, $
    ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
    ORBCONTRIB_NOMASK=orbContrib_noMask, $
    NEVENTPERORBAUTOSCALE=nEventPerOrbAutoscale, $
@@ -272,6 +276,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    THISTDENOMPLOTRANGE=tHistDenomPlotRange, $
    TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
    TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
+   SWAYPLOTRANGE=swayPlotRange, $
    ;; CONTOUR__LEVELS=contour__levels, $
    ;; CONTOUR__PERCENT=contour__percent, $
    ;; OVERPLOT_FILE=overplot_file, $
@@ -308,6 +313,9 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
                      OR KEYWORD_SET(ion__t_probOccurrence           ) $
                      OR KEYWORD_SET(ion__no_maximus                 ))
   
+  for_sway_DB     = (KEYWORD_SET(for_sway_DB                        ) $
+                     OR KEYWORD_SET(sway_plotType                   ))
+
   use_storm_stuff = KEYWORD_SET(nonStorm        ) + $
                     KEYWORD_SET(mainPhase       ) + $
                     KEYWORD_SET(recoveryPhase   ) + $
@@ -444,6 +452,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      ESPEC__REMOVE_OUTLIERS=eSpec__remove_outliers, $
      ESPEC__NEWELLPLOT_PROBOCCURRENCE=eSpec__newellPlot_probOccurrence, $
      ESPEC__T_PROBOCCURRENCE=eSpec__t_probOccurrence, $
+     FOR_SWAY_DB=for_sway_DB, $
+     SWAY_PLOTTYPE=sway_plotType, $
      USE_STORM_STUFF=use_storm_stuff, $
      NONSTORM=nonStorm, $
      RECOVERYPHASE=recoveryPhase, $
@@ -614,6 +624,9 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
      ESPEC__NEWELL_PLOTRANGE=eSpec__newell_plotRange, $
      ESPEC__T_PROBOCC_PLOTRANGE=eSpec__t_probOcc_plotRange, $
+     LOG_SWAYPLOT=log_swayPlot, $
+     SWAYPLOT_AUTOSCALE=swayPlot_autoScale, $
+     SWAYPLOTRANGE=swayPlotRange, $
      TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
      LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
      TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $

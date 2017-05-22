@@ -20,6 +20,8 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
    CHARIEPLOTRANGE=chariEPlotRange, $
    LOGMAGCPLOT=logMagCPlot, $
    MAGCPLOTRANGE=magCPlotRange, $
+   LOG_SWAYPLOT=log_swayPlot, $
+   SWAYPLOTRANGE=swayPlotRange, $
    CBEFDIVFAC=cbEFDivFac, $
    CBENUMFLDIVFAC=cbENumFlDivFac, $
    CBPFDIVFAC=CBPFDivFac, $
@@ -79,6 +81,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
    NEWELLPLOT_NORMALIZE=newellPlot_normalize, $
    ESPEC__NEWELL_PLOTRANGE=eSpec__newell_plotRange, $
    ESPEC__T_PROBOCC_PLOTRANGE=eSpec__t_probOcc_plotRange, $
+   SWAYPLOT_AUTOSCALE=swayPlot_autoScale, $
    TIMEAVGD_PFLUXRANGE=timeAvgd_pFluxRange, $
    LOGTIMEAVGD_PFLUX=logTimeAvgd_PFlux, $
    TIMEAVGD_EFLUXMAXRANGE=timeAvgd_eFluxMaxRange, $
@@ -179,7 +182,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
   deftHistDenomPlotRange	 = [0,100   ]
   deftimeAvgd_eFluxMaxRange      = [0,1.0   ]
   deftimeAvgd_pFluxRange         = [0,1.0   ]
-
+  defswayPlotRange               = [0,10    ]
 
   deflogNEventsPlot	      = 0B
   defnEventsPlotAutoscale     = 0B
@@ -219,6 +222,8 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
   defnewellPlot_normalize     = 0B
   deflogTimeAvgd_PFlux        = 0B
   deflogTimeAvgd_EFluxMax     = 0B
+  deflogSwayPlot	      = 0B
+  defSwayPlot_autoscale       = 0B
   defall_logPlots	      = 0B
 
   alfDB_plotLim_struct = { $
@@ -244,6 +249,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          tHistDenomPlotRange         : deftHistDenomPlotRange        , $
                          timeAvgd_eFluxMaxRange      : deftimeAvgd_eFluxMaxRange     , $
                          timeAvgd_pFluxRange         : deftimeAvgd_pFluxRange        , $
+                         swayPlotRange               : defswayPlotRange              , $
                          logNEventsPlot              : deflogNEventsPlot	     , $
                          nEventsPlotAutoscale        : defnEventsPlotAutoscale       , $
                          nEventsPlotNormalize        : defnEventsPlotNormalize       , $
@@ -282,6 +288,8 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          newellPlot_normalize        : defnewellPlot_normalize       , $
                          logTimeAvgd_PFlux           : deflogTimeAvgd_PFlux	     , $
                          logTimeAvgd_EFluxMax        : deflogTimeAvgd_EFluxMax       , $
+                         logSwayPlot                 : deflogSwayPlot                , $
+                         swayPlot_autoscale          : defSwayPlot_autoscale         , $
                          all_logPlots                : defall_logPlots               , $ 
                          absCharE                    : 0B                            , $
                          absCharie                   : 0B                            , $
@@ -464,6 +472,13 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
      STR_ELEMENT,alfDB_plotLim_struct, $
                  'timeAvgd_pFluxRange', $
                  timeAvgd_pFluxRange, $
+                 /ADD_REPLACE
+  ENDIF
+  
+  IF KEYWORD_SET(swayPlotRange) THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'swayPlotRange', $
+                 swayPlotRange, $
                  /ADD_REPLACE
   ENDIF
   
@@ -744,6 +759,20 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  /ADD_REPLACE
   ENDIF
   
+  IF N_ELEMENTS(logSwayPlot) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'logSwayPlot', $
+                 BYTE(logSwayPlot), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(swayPlot_autoscale) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'swayPlot_autoscale', $
+                 BYTE(swayPlot_autoscale), $
+                 /ADD_REPLACE
+  ENDIF
+
   IF N_ELEMENTS(all_logPlots) GT 0 THEN BEGIN
      STR_ELEMENT,alfDB_plotLim_struct, $
                  'all_logPlots', $
