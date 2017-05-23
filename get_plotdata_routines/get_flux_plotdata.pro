@@ -1140,7 +1140,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            unitString       = EFieldString
 
            CASE STRUPCASE(sWay_structNavn[1]) OF
-              'alongV': BEGIN
+              'ALONGV': BEGIN
                  H2DStr.title = title__sWay_eAlongV
               END
            ENDCASE

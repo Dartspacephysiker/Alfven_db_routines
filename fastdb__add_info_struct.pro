@@ -40,26 +40,42 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
         
         info   = dbStruct.info
 
-        STR_ELEMENT,info,'coords','SDT',/ADD_REPLACE
-        STR_ELEMENT,info,'DB_Dir',DB_dir,/ADD_REPLACE
-        STR_ELEMENT,info,'DB_Date',DB_date,/ADD_REPLACE
-        STR_ELEMENT,info,'DB_version',DB_version,/ADD_REPLACE
-        STR_ELEMENT,info,'DB_extras',DB_extras,/ADD_REPLACE
-        STR_ELEMENT,info,'tag_names',TAG_NAMES_R(dbStruct),/ADD_REPLACE
+        IF (WHERE(STRUPCASE(TAG_NAMES(info)) EQ 'has_been_infoed'))[0] EQ -1 THEN BEGIN
 
-        STR_ELEMENT,info,'tag_names_l0',TAG_NAMES(dbStruct),/ADD_REPLACE
-        tag_names_l1 = LIST()
-        FOR k=0,N_ELEMENTS(TAG_NAMES(dbStruct))-1 DO BEGIN
+           is_mapped = {dB    : 0, $
+                        e     : 0, $
+                        pFlux : 0}
 
-           IF SIZE(dbStruct.(k),/TYPE) EQ 8 THEN BEGIN
-              tag_names_l1.Add,TAG_NAMES(dbStruct.(k))
-           ENDIF ELSE BEGIN
-              tag_names_l1.Add,''
-           ENDELSE
+           is_scaled = {dB    : 1, $ ;nT
+                        e     : 1, $ ;mV/m
+                        pFlux : 0}   ;SHOULD be mW/m^2, but isn't
 
-        ENDFOR
 
-        STR_ELEMENT,info,'tag_names_l1',tag_names_l1,/ADD_REPLACE
+           STR_ELEMENT,info,'coords','SDT',/ADD_REPLACE
+           STR_ELEMENT,info,'DB_Dir',DB_dir,/ADD_REPLACE
+           STR_ELEMENT,info,'DB_Date',DB_date,/ADD_REPLACE
+           STR_ELEMENT,info,'DB_version',DB_version,/ADD_REPLACE
+           STR_ELEMENT,info,'DB_extras',DB_extras,/ADD_REPLACE
+           STR_ELEMENT,info,'is_mapped',TEMPORARY(is_mapped),/ADD_REPLACE
+           STR_ELEMENT,info,'is_scaled',TEMPORARY(is_scaled),/ADD_REPLACE
+           STR_ELEMENT,info,'has_been_infoed',1B,/ADD_REPLACE
+           STR_ELEMENT,info,'tag_names',TAG_NAMES_R(dbStruct),/ADD_REPLACE
+
+           STR_ELEMENT,info,'tag_names_l0',TAG_NAMES(dbStruct),/ADD_REPLACE
+           tag_names_l1 = LIST()
+           FOR k=0,N_ELEMENTS(TAG_NAMES(dbStruct))-1 DO BEGIN
+
+              IF SIZE(dbStruct.(k),/TYPE) EQ 8 THEN BEGIN
+                 tag_names_l1.Add,TAG_NAMES(dbStruct.(k))
+              ENDIF ELSE BEGIN
+                 tag_names_l1.Add,''
+              ENDELSE
+
+           ENDFOR
+
+           STR_ELEMENT,info,'tag_names_l1',tag_names_l1,/ADD_REPLACE
+
+        ENDIF
 
      END
      ELSE: BEGIN

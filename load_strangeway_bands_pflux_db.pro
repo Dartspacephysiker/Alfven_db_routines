@@ -214,8 +214,26 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
 
   IF correct_fluxes AND ~KEYWORD_SET(just_time) THEN BEGIN
 
-     (*pDBStruct).pflux.b.DC *= (*pDBStruct).magRatio
-     (*pDBStruct).pflux.b.AC *= (*pDBStruct).magRatio
+     IF ~(*pDBStruct).info.is_scaled.pFlux THEN BEGIN
+
+        ;; (*pDBStruct).pflux.b.DC *= 1D-9
+        ;; (*pDBStruct).pflux.b.AC *= 1D-9
+
+        ;; (*pDBStruct).pflux.p.DC *= 1D-9
+        ;; (*pDBStruct).pflux.p.AC *= 1D-9
+
+        (*pDBStruct).info.is_scaled.pFlux = 1B
+
+     ENDIF
+     
+     IF ~(*pDBStruct).info.is_mapped.pFlux THEN BEGIN
+
+        (*pDBStruct).pflux.b.DC *= (*pDBStruct).magRatio
+        (*pDBStruct).pflux.b.AC *= (*pDBStruct).magRatio
+
+        (*pDBStruct).info.is_mapped.pFlux = 1B
+
+     ENDIF
 
      ;; CORRECT_ALFVENDB_FLUXES,(*pDBStruct), $
      ;;                         MAP_ESA_CURRENT_TO_IONOS=~KEYWORD_SET(do_not_map_esa_current) $
