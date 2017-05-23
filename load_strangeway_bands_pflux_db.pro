@@ -126,8 +126,6 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
         ;; IF KEYWORD_SET(use_GEO) THEN BEGIN
         ;; geo = leMaitre.ephem
         ;; ENDIF
-        ;; leMaitre.info.despun         = KEYWORD_SET(despunDB)
-        ;; leMaitre.info.is_chastDB     = KEYWORD_SET(chastDB) ;SWAY__is_chastDB
         ;; leMaitre.info.using_heavies  = KEYWORD_SET(using_heavies)
 
         ;; ENDIF

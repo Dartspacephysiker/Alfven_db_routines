@@ -1103,10 +1103,12 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
   IF KEYWORD_SET(get_sWay) THEN BEGIN
      dataName               = 
-     H2DStr.labelFormat     = fluxPlotEPlotCBLabelFormat
-     H2DStr.logLabels       = logeFluxLabels
-     H2DStr.do_plotIntegral = eFlux_do_plotIntegral
-     H2DStr.do_midCBLabel   = eFlux_do_midCBLabel
+     H2DStr.labelFormat     = fluxPlotSWayCBLabelFormat
+     H2DStr.logLabels       = logSWayLabels
+     H2DStr.do_plotIntegral = sWay_do_plotIntegral
+     H2DStr.do_midCBLabel   = sWay_do_midCBLabel
+
+     IF 
 
      CASE 1 OF
         STRUPCASE(fluxplottype) EQ STRUPCASE("Integ"): BEGIN

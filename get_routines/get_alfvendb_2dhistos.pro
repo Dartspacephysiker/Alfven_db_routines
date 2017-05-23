@@ -2017,7 +2017,46 @@ PRO GET_ALFVENDB_2DHISTOS, $
            2:   plotRange     = sWayPlotRange[*,i]
         ENDCASE
 
+        ;;Are we supposed to do AC and DC? Finne ut
+        splitter = STRSPLIT(fluxPlotType,'.',/EXTRACT)
+        nSplit   = N_ELEMENTS(splitter)
+        CASE nSplit OF
+           1: BEGIN
+              PRINT,"Ce suffit pas!"
+              STOP
+           END
+           2: BEGIN
+              firstInd  = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB)) EQ STRUPCASE(splitter[0]))
+              IF firstInd EQ -1 THEN STOP
+              secInd    = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd)) EQ STRUPCASE(splitter[1]))  
+              IF secInd EQ -1 THEN STOP
+              thirdInd  = [WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ 'AC'), $
+                           WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ 'DC')]
+              IF (WHERE(thirdInd EQ -1))[0] NE -1 THEN STOP
+
+           END
+           3: BEGIN
+              firstInd  = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB)) EQ STRUPCASE(splitter[0]))
+              IF firstInd EQ -1 THEN STOP
+              secInd    = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd)) EQ STRUPCASE(splitter[1]))  
+              IF secInd EQ -1 THEN STOP
+              thirdInd  = [WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ splitter[2])]
+              IF (WHERE(thirdInd EQ -1))[0] NE -1 THEN STOP
+
+              sWay_structNavn = 
+
+           END
+        ENDCASE
+
+        nSub = N_ELEMENTS(thirdInd)
+
+        FOR kk=0,nSub-1 DO BEGIN
+           
+           sWay_structInds = [firstInd,secInd,thirdInd[kk]]
+           sWay_structNavn = [firstInd,secInd,thirdInd[kk]]
+
         GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_SWAY, $
+                          SWAY_STRUCTINDS=sWay_structInds, $
                           ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                           IMF_STRUCT=IMF_struct, $
                           MIMC_STRUCT=MIMC_struct, $
