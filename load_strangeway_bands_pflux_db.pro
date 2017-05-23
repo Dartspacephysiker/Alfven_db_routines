@@ -110,6 +110,8 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
         RESTORE,DBDir+DBFile
         RESTORE,DBDir+DBEphemFile
 
+        leMaitre = CREATE_STRUCT(TEMPORARY(ephem),'dB',leMaitre.db,'e',leMaitre.e,'pFlux',leMaitre.pFlux,'info',leMaitre.info)
+
         FASTDB__ADD_INFO_STRUCT,leMaitre, $
                                 /FOR_SWAY_DB, $
                                 DB_DIR=DBDir, $
@@ -117,10 +119,7 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
                                 DB_VERSION=DB_version, $
                                 DB_EXTRAS=DB_extras, $
                                 DB__INTO_ESPEC_FILE=DB__into_eSpec_file
-
         
-        leMaitre = CREATE_STRUCT(TEMPORARY(ephem),'dB',leMaitre.db,'e',leMaitre.e,'pFlux',leMaitre.pFlux,'info',leMaitre.info)
-
         ;; STOP
 
         ;; IF KEYWORD_SET(use_GEO) THEN BEGIN
@@ -243,7 +242,6 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
      PRINTF,lun,"Not correcting fluxes in leMaitre ..."
   ENDELSE
 
-
   IF ~KEYWORD_SET(just_time) THEN BEGIN
 
      FASTDBS__COORDINATE_SWITCHER, $
@@ -306,7 +304,6 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
         MIMC_STRUCT=MIMC_struct, $
         RESET_STRUCT=reset, $
         _EXTRA=e
-
      
      good_i = GET_CHASTON_IND( $
               (*pDBStruct), $

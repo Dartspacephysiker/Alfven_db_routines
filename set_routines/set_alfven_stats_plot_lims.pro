@@ -197,6 +197,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
   deflogENumFlPlot	      = 0B
   deflogIfPlot                = 0B
   deflogMagCPlot              = 0B
+  deflog_sWayPlot             = 0B
   deflogOxyfPlot	      = 0B
   deflogPFPlot                = 0B
   defcbEFDivFac               = 1.0
@@ -264,6 +265,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          logENumFlPlot               : deflogENumFlPlot              , $
                          logIfPlot                   : deflogIfPlot		     , $
                          logMagCPlot                 : deflogMagCPlot                , $
+                         log_sWayPlot                : deflog_sWayPlot               , $
                          logOxyfPlot                 : deflogOxyfPlot                , $
                          logPFPlot                   : deflogPFPlot                  , $
                          cbEFDivFac                  : defcbEFDivFac                 , $
@@ -554,10 +556,10 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  /ADD_REPLACE
   ENDIF
   
-  IF N_ELEMENTS(logOxyfPlot) GT 0 THEN BEGIN
+  IF N_ELEMENTS(log_sWayPlot) GT 0 THEN BEGIN
      STR_ELEMENT,alfDB_plotLim_struct, $
-                 'logOxyfPlot', $
-                 BYTE(logOxyfPlot), $
+                 'log_sWayPlot', $
+                 BYTE(log_sWayPlot), $
                  /ADD_REPLACE
   ENDIF
   

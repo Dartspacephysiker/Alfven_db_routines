@@ -59,7 +59,8 @@ scAltString_pub              = ', at FAST altitude'
 
 eFieldString                 = 'mV/m'
 BFieldString                 = 'nT'
-
+sWay_DC                      = '[DC]'
+sWay_AC                      = '[AC]'
 ;; IF KEYWORD_SET(fancy_plotNames) THEN BEGIN
 ;;    scString                     = scAltString_pub
 ;;    ionosString                  = ionosphString_pub
@@ -199,13 +200,29 @@ title__eSpec_ind_18__grossRate = ' Upward Ion Flux (' + numGrossStr + ')' + iono
 
 
 ;;The sWay guys
-title__sWay_eAlongV         = 'E along v'
-title__sWay_bp              = 'B!Dperp!N'
-title__sWay_bv              = 'B!Dv!N'
-title__sWay_bb              = 'B!DB!N'
-title__sWay_Pp              = 'S!Dperp!N'
-title__sWay_Pv              = 'S!Dv!N'
-title__sWay_Pb              = 'S!DB!N'
+;; title__sWay_eAlongV_DC      = 'E!Dalong v!N' + ' ' + sWay_DC + ' (' + EFieldString  + ')'
+;; title__sWay_bp_DC           = 'B!Dperp!N'    + ' ' + sWay_DC + ' (' + BFieldString  + ')'
+;; title__sWay_bv_DC           = 'B!Dv!N'       + ' ' + sWay_DC + ' (' + BFieldString  + ')'
+;; title__sWay_bb_DC           = 'B!DB!N'       + ' ' + sWay_DC + ' (' + BFieldString  + ')'
+;; title__sWay_Pp_DC           = 'S!Dperp!N'    + ' ' + sWay_DC + ' (' + energyFluxStr + ')'
+;; title__sWay_Pv_DC           = 'S!Dv!N'       + ' ' + sWay_DC + ' (' + energyFluxStr + ')'
+;; title__sWay_Pb_DC           = 'S!DB!N'       + ' ' + sWay_DC + ' (' + energyFluxStr + ')'
+
+;; title__sWay_eAlongV_AC      = 'E!Dalong v!N' + ' ' + sWay_AC + ' (' + EFieldString  + ')'
+;; title__sWay_bp_AC           = 'B!Dperp!N'    + ' ' + sWay_AC + ' (' + BFieldString  + ')'
+;; title__sWay_bv_AC           = 'B!Dv!N'       + ' ' + sWay_AC + ' (' + BFieldString  + ')'
+;; title__sWay_bb_AC           = 'B!DB!N'       + ' ' + sWay_AC + ' (' + BFieldString  + ')'
+;; title__sWay_Pp_AC           = 'S!Dperp!N'    + ' ' + sWay_AC + ' (' + energyFluxStr + ')'
+;; title__sWay_Pv_AC           = 'S!Dv!N'       + ' ' + sWay_AC + ' (' + energyFluxStr + ')'
+;; title__sWay_Pb_AC           = 'S!DB!N'       + ' ' + sWay_AC + ' (' + energyFluxStr + ')'
+title__sWay_eAlongV      = 'E!Dalong v!N'
+title__sWay_bp           = 'B!Dperp!N'   
+title__sWay_bv           = 'B!Dv!N'      
+title__sWay_bb           = 'B!DB!N'      
+title__sWay_Pp           = 'S!Dperp!N'   
+title__sWay_Pv           = 'S!Dv!N'      
+title__sWay_Pb           = 'S!DB!N'      
+
 
 ;; use these for regexp additions: ^([[:alnum:]]+)
 ;; eFlux

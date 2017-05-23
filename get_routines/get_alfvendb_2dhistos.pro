@@ -260,8 +260,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
            in_ILATS = NEWELL_I__ion.ilat[indices__ion]
         END
         for_sWay_DB: BEGIN
-           in_MLTS   = SWAY__DB.mlt
-           in_ILATS  = SWAY__DB.ilat
+           in_MLTS   = SWAY__DB.mlt[plot_i]
+           in_ILATS  = SWAY__DB.ilat[plot_i]
         END
      ENDCASE
 
@@ -1969,35 +1969,35 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   IF KEYWORD_SET(for_sWay_DB) THEN BEGIN
 
-     FOR k=0,N_ELEMENTS(sWay_plotType)-1 DO BEGIN
+     FOR i=0,N_ELEMENTS(sWay_plotType)-1 DO BEGIN
 
         fluxPlotType          = sWay_PlotType[i]
 
-        CASE N_ELEMENTS(noPosIFlux) OF
+        CASE N_ELEMENTS(noPos_sWay) OF
            0:   noPosFlux     = !NULL
            1:   noPosFlux     = noPos_sWay
            ELSE: noPosFlux    = noPos_sWay[i]
         ENDCASE
 
-        CASE N_ELEMENTS(noNegIFlux) OF
+        CASE N_ELEMENTS(noNeg_sWay) OF
            0:   noNegFlux     = !NULL
            1:   noNegFlux     = noNeg_sWay
            ELSE: noNegFlux    = noNeg_sWay[i]
         ENDCASE
 
-        CASE N_ELEMENTS(absIFlux) OF
+        CASE N_ELEMENTS(abs_sWay) OF
            0:   absFlux       = !NULL
            1:   absFlux       = abs_sWay
            ELSE: absFlux      = abs_sWay[i]
         ENDCASE
 
-        CASE N_ELEMENTS(cbIFDivFac) OF
+        CASE N_ELEMENTS(cbSWayDivFac) OF
            0:   cb_divFactor  = !NULL
            1:   cb_divFactor  = cbSWayDivFac
            ELSE: cb_divFactor = cbSWayDivFac[i]
         ENDCASE
 
-        CASE N_ELEMENTS(logIfPlot) OF
+        CASE N_ELEMENTS(log_sWayPlot) OF
            0:   logPlot       = !NULL
            1:   logPlot       = log_sWayPlot
            ELSE: logPlot      = log_sWayPlot[i]
@@ -2028,7 +2028,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
            2: BEGIN
               firstInd  = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB)) EQ STRUPCASE(splitter[0]))
               IF firstInd EQ -1 THEN STOP
-              secInd    = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd)) EQ STRUPCASE(splitter[1]))  
+              secInd    = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd))) EQ STRUPCASE(splitter[1]))
               IF secInd EQ -1 THEN STOP
               thirdInd  = [WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ 'AC'), $
                            WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ 'DC')]
@@ -2038,13 +2038,10 @@ PRO GET_ALFVENDB_2DHISTOS, $
            3: BEGIN
               firstInd  = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB)) EQ STRUPCASE(splitter[0]))
               IF firstInd EQ -1 THEN STOP
-              secInd    = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd)) EQ STRUPCASE(splitter[1]))  
+              secInd    = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd))) EQ STRUPCASE(splitter[1]))
               IF secInd EQ -1 THEN STOP
-              thirdInd  = [WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ splitter[2])]
+              thirdInd  = [WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ STRUPCASE(splitter[2]))]
               IF (WHERE(thirdInd EQ -1))[0] NE -1 THEN STOP
-
-              sWay_structNavn = 
-
            END
         ENDCASE
 
@@ -2053,66 +2050,81 @@ PRO GET_ALFVENDB_2DHISTOS, $
         FOR kk=0,nSub-1 DO BEGIN
            
            sWay_structInds = [firstInd,secInd,thirdInd[kk]]
-           sWay_structNavn = [firstInd,secInd,thirdInd[kk]]
+           sWay_structNavn = [SWAY__DB.info.tag_names_l0[firstInd], $
+                              SWAY__DB.info.tag_names_l1[firstInd,secInd], $
+                              (TAG_NAMES(SWAY__DB.(firstInd).(secInd)))[thirdInd[kk]]]
 
-        GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_SWAY, $
-                          SWAY_STRUCTINDS=sWay_structInds, $
-                          ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
-                          IMF_STRUCT=IMF_struct, $
-                          MIMC_STRUCT=MIMC_struct, $
-                          OUTH2DBINSMLT=outH2DBinsMLT, $
-                          OUTH2DBINSILAT=outH2DBinsILAT, $
-                          OUTH2DBINSLSHELL=outH2DBinsLShell, $
-                          FLUXPLOTTYPE=fluxPlotType, $
-                          PLOTRANGE=plotRange, $
-                          PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(swayPlot_autoScale), $
-                          ;; NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
-                          ;; BROADBAND_EVERYWHAR=fluxPlots__broadband_everywhar, $
-                          ;; DIFFUSE_EVERYWHAR=fluxPlots__diffuse_everywhar, $
-                          REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
-                          REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
-                          NOPOSFLUX=noPosFlux, $
-                          NONEGFLUX=noNegFlux, $
-                          ABSFLUX=absFlux, $
-                          CB_DIVFACTOR=CB_divFactor, $
-                          ;; EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
-                          ;; INDICES__ESPEC=indices__eSpec, $
-                          ;; ESPEC_MLTSILATS=eSpec__MLTsILATs, $
-                          ;; ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
-                          OUT_REMOVED_II=out_removed_ii, $
-                          LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
-                          DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
-                          DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
-                          DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
-                          GROSSRATE__H2D_AREAS=h2dAreas, $
-                          DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
-                          GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
-                          GROSSRATE__CENTERS_MLT=centersMLT, $
-                          GROSSRATE__CENTERS_ILAT=centersILAT, $
-                          GROSSCONVFACTOR=grossConvFactor, $
-                          WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
-                          GROSSLUN=grossLun, $
-                          SHOW_INTEGRALS=show_integrals, $
-                          THISTDENOMINATOR=tHistDenominator, $
-                          DIVIDE_BY_WIDTH_X=divide_by_width_x, $
-                          MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
-                          MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
-                          H2DPROBOCC=H2DProbOcc, $
-                          H2DSTR=h2dStr, $
-                          TMPLT_H2DSTR=tmplt_h2dStr, $
-                          H2D_NONZERO_NEV_I=tmphEv_nz_i, $
-                          H2DFLUXN=tmpH2DFluxN, $
-                          H2DMASK=tmpH2DMask, $
-                          OUT_H2DMASK=out_h2dMask, $
-                          DATANAME=dataName, $
-                          DATARAWPTR=dataRawPtr, $
-                          MEDHISTOUTDATA=medHistOutData, $
-                          MEDHISTOUTTXT=medHistOutTxt, $
-                          MEDHISTDATADIR=txtOutputDir, $
-                          DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
-                          ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
-                          FANCY_PLOTNAMES=fancy_plotNames
+           GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_SWAY, $
+                             SWAY_STRUCTINDS=sWay_structInds, $
+                             SWAY_STRUCTNAVN=sWay_structNavn, $
+                             ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
+                             IMF_STRUCT=IMF_struct, $
+                             MIMC_STRUCT=MIMC_struct, $
+                             OUTH2DBINSMLT=outH2DBinsMLT, $
+                             OUTH2DBINSILAT=outH2DBinsILAT, $
+                             OUTH2DBINSLSHELL=outH2DBinsLShell, $
+                             FLUXPLOTTYPE=fluxPlotType, $
+                             PLOTRANGE=plotRange, $
+                             PLOTAUTOSCALE=KEYWORD_SET(autoscale_fluxPlots) OR KEYWORD_SET(swayPlot_autoScale), $
+                             ;; NEWELL_THE_CUSP=fluxPlots__Newell_the_cusp, $
+                             ;; BROADBAND_EVERYWHAR=fluxPlots__broadband_everywhar, $
+                             ;; DIFFUSE_EVERYWHAR=fluxPlots__diffuse_everywhar, $
+                             REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
+                             REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
+                             NOPOSFLUX=noPosFlux, $
+                             NONEGFLUX=noNegFlux, $
+                             ABSFLUX=absFlux, $
+                             CB_DIVFACTOR=CB_divFactor, $
+                             ;; EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
+                             ;; INDICES__ESPEC=indices__eSpec, $
+                             ;; ESPEC_MLTSILATS=eSpec__MLTsILATs, $
+                             ;; ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
+                             OUT_REMOVED_II=out_removed_ii, $
+                             LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
+                             DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
+                             DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
+                             DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
+                             GROSSRATE__H2D_AREAS=h2dAreas, $
+                             DO_GROSSRATE_WITH_LONG_WIDTH=do_grossRate_with_long_width, $
+                             GROSSRATE__H2D_LONGWIDTHS=h2dLongWidths, $
+                             GROSSRATE__CENTERS_MLT=centersMLT, $
+                             GROSSRATE__CENTERS_ILAT=centersILAT, $
+                             GROSSCONVFACTOR=grossConvFactor, $
+                             WRITE_GROSSRATE_INFO_TO_THIS_FILE=grossRate_info_file, $
+                             GROSSLUN=grossLun, $
+                             SHOW_INTEGRALS=show_integrals, $
+                             THISTDENOMINATOR=tHistDenominator, $
+                             DIVIDE_BY_WIDTH_X=divide_by_width_x, $
+                             MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
+                             MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
+                             H2DPROBOCC=H2DProbOcc, $
+                             H2DSTR=h2dStr, $
+                             TMPLT_H2DSTR=tmplt_h2dStr, $
+                             H2D_NONZERO_NEV_I=hEv_nz_i, $
+                             H2DFLUXN=H2DFluxN, $
+                             H2DMASK=H2DStrArr[KEYWORD_SET(nPlots)].data, $
+                             OUT_H2DMASK=out_h2dMask, $
+                             DATANAME=dataName, $
+                             DATARAWPTR=dataRawPtr, $
+                             MEDHISTOUTDATA=medHistOutData, $
+                             MEDHISTOUTTXT=medHistOutTxt, $
+                             MEDHISTDATADIR=txtOutputDir, $
+                             DIV_FLUXPLOTS_BY_APPLICABLE_ORBS=div_fluxPlots_by_applicable_orbs, $
+                             ORBCONTRIB_H2DSTR_FOR_DIVISION=h2dContribOrbStr, $
+                             FANCY_PLOTNAMES=fancy_plotNames
 
+
+           H2DStrArr             = [H2DStrArr,h2dStr] 
+           IF keepMe THEN BEGIN 
+              dataNameArr        = [dataNameArr,dataName] 
+              dataRawPtrArr      = [dataRawPtrArr,dataRawPtr] 
+              varPlotH2DInds     = [varPlotH2DInds,N_ELEMENTS(H2DStrArr)-1]
+              varPlotRawInds     = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
+              removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
+              ;;varplotiskeepInds  = [varPlotIsKeepInds,0]
+           ENDIF
+
+        ENDFOR
 
      ENDFOR
 

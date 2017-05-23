@@ -794,6 +794,33 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
 
                  ENDFOR
 
+                 ;;StrangewayLims
+                 ;;FLOAT(N_ELEMENTS(WHERE(ALOG10(ABS(sway__db.e.alongv.dc)) GE 3)))/N_ELEMENTS(sway__db.e.alongv.dc)*100.
+                 ;; 0.23166740
+
+                 ;;FLOAT(N_ELEMENTS(WHERE(ALOG10(ABS(sway__db.e.alongv.ac)) GE 3)))/N_ELEMENTS(sway__db.e.alongv.dc)*100.
+                 ;; 0.11114024
+
+                 ;; badGuy_i = WHERE(ALOG10(ABS(sway__db.e.alongv.dc)) GE 4)
+                 ;; uniqBads = SWAY__DB.orbit[badGuy_i[UNIQ(sway__db.orbit[badGuy_i])]]
+                 ;; PRINT,uniqBads
+
+                 ;;There's a little horn here
+                 ;; this = WHERE(ALOG10(ABS(sway__DB.db.p.dc)) GE 2.7 AND ALOG10(ABS(sway__DB.db.p.dc)) LE 2.8)
+                 ;; uniqOrbs = SWAY__DB.orbit[this[UNIQ(SWAY__DB.orbit[this])]]
+                 ;; FOR k=0,N_ELEMENTS(uniqOrbs)-1 DO BEGIN & orb = uniqOrbs[k] & ind = WHERE(SWAY__DB.orbit EQ orb) & PRINT,orb,', ',N_ELEMENTS(WHERE(ABS(ALOG10(SWAY__DB.dB.P.DC[ind])) GE 2.7 AND ABS(ALOG10(SWAY__DB.dB.P.DC[ind])) LE 2.8)) & ENDFOR
+
+                 eAlongVDCLim = 1D3
+                 eAlongVACLim = 1D3
+                 dBPACLim     = 1D3
+                 dBPDCLim     = 10.^(2.7)
+
+                 cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(ABS( (*pDBStruct).e.alongV.DC) LE eAlongVDCLim),COUNT=nClean)
+                 cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(ABS( (*pDBStruct).e.alongV.AC) LE eAlongVACLim),COUNT=nClean)
+                 cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(ABS( (*pDBStruct).dB.P.AC    ) LE dBPACLim    ),COUNT=nClean)
+
+                 ;; FLOAT(N_ELEMENTS(WHERE(ALOG10(ABS(sway__db.db.p.ac)) GE 3)))/N_ELEMENTS(sway__db.e.alongv.dc)*100.
+
                  PRINT,"N clean SWAY inds: ",N_ELEMENTS(cleaned_i)
 
               END

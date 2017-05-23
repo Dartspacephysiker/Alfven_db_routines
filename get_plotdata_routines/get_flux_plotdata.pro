@@ -69,6 +69,8 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                       GET_CHARIE=get_chariE, $
                       GET_MAGC=get_magC, $
                       GET_SWAY=get_sWay, $
+                      SWAY_STRUCTINDS=sWay_structInds, $
+                      SWAY_STRUCTNAVN=sWay_structNavn, $
                       ;; EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                       ;; ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                       IFLUX_ION_DATA=iFlux_ion_data, $
@@ -1102,158 +1104,72 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   ENDIF
 
   IF KEYWORD_SET(get_sWay) THEN BEGIN
-     dataName               = 
+     dataName               = STRJOIN(sWay_structNavn,'_')
      H2DStr.labelFormat     = fluxPlotSWayCBLabelFormat
      H2DStr.logLabels       = logSWayLabels
      H2DStr.do_plotIntegral = sWay_do_plotIntegral
      H2DStr.do_midCBLabel   = sWay_do_midCBLabel
 
-     IF 
+     can_div_by_w_x         = 0
+     can_mlt_by_w_x         = 1
 
-     CASE 1 OF
-        STRUPCASE(fluxplottype) EQ STRUPCASE("Integ"): BEGIN
-           tmpFluxPlotType  = 'Intg'
-           H2DStr.title     = title__alfDB_ind_09
-           inData           = maximus.integ_elec_energy_flux
-           can_div_by_w_x   = 1
-           can_mlt_by_w_x   = 0
+     inData                 = SWAY__DB.(sWay_structInds[0]).(sWay_structInds[1]).(sWay_structInds[2])
 
-           H2DStr.grossFac  = 1e9
-           H2DStr.gUnits    = 'bro'
+     ACDCString             = sWay_structNavn[2]
+
+     CASE STRUPCASE(sWay_structNavn[0]) OF
+        'DB': BEGIN
+
+           unitString       = BFieldString
+
+           CASE STRUPCASE(sWay_structNavn[1]) OF
+              'B': BEGIN
+                 H2DStr.title  = title__sWay_bb
+              END
+              'P': BEGIN
+                 H2DStr.title  = title__sWay_bp
+              END
+              'V': BEGIN
+                 H2DStr.title  = title__sWay_bv
+              END
+           ENDCASE
+
         END
-        STRUPCASE(fluxplottype) EQ STRUPCASE("eflux_losscone_integ"): BEGIN
-           tmpFluxPlotType  = 'LC_intg'
-           H2DStr.title     = title__alfDB_ind_10
-           inData           = maximus.eflux_losscone_integ
-           can_div_by_w_x   = 1
-           can_mlt_by_w_x   = 0
-           IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
-              H2DStr.title  = title__alfDB_ind_10__div_by_width_x
-              ;; dataName     += '__div_by_width_x'
-              ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
-              ;;                       DESPUNDB=maximus.info.despun
-              ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
-              H2DStr.grossFac  = 1e9
-              H2DStr.gUnits    = 'GW'
+        'E': BEGIN
 
-           ENDIF
+           unitString       = EFieldString
 
-           IF KEYWORD_SET(do_timeAvg_fluxQuantities) AND ~KEYWORD_SET(for_pres) THEN BEGIN
-              H2DStr.title  = title__alfDB_ind_10 + '(time-averaged)'
-           ENDIF
+           CASE STRUPCASE(sWay_structNavn[1]) OF
+              'alongV': BEGIN
+                 H2DStr.title = title__sWay_eAlongV
+              END
+           ENDCASE
 
-           IF KEYWORD_SET(grossRateMe) THEN BEGIN
-              CASE 1 OF
-                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
-                    H2DStr.title   = title__alfDB_ind_10_grossRate + '(long. wid.)'
-                    H2DAreaConvFac = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
-                 END
-                 ELSE: BEGIN
-                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
-                       H2DStr.title = title__alfDB_ind_10_grossRate
-                    ENDIF
-                    H2DAreaConvFac  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
-                 END
-              ENDCASE
-           ENDIF
         END
-        STRUPCASE(fluxplottype) EQ STRUPCASE("total_eflux_integ"): BEGIN
+        'PFLUX': BEGIN
 
-           tmpFluxPlotType  = 'tot_intg'
-           H2DStr.title     = title__alfDB_ind_11
-           inData           = maximus.total_eflux_integ
-           can_div_by_w_x   = 1
-           can_mlt_by_w_x   = 0
+           unitString       = energyFluxStr
 
-           IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+           CASE STRUPCASE(sWay_structNavn[1]) OF
+              'B': BEGIN
+                 H2DStr.title  = title__sWay_Pb
+              END
+              'P': BEGIN
+                 H2DStr.title  = title__sWay_Pp
+              END
+              'V': BEGIN
+                 H2DStr.title  = title__sWay_Pv
+              END
+           ENDCASE
 
-              H2DStr.grossFac  = 1e9
-              H2DStr.gUnits    = 'GW'
-           
-              H2DStr.title     = title__alfDB_ind_11__div_by_width_x
-           ENDIF
-
-           IF KEYWORD_SET(do_timeAvg_fluxQuantities) AND ~KEYWORD_SET(for_pres) THEN BEGIN
-              H2DStr.title  = title__alfDB_ind_11 + '(time-averaged)'
-           ENDIF
-
-           IF KEYWORD_SET(grossRateMe) THEN BEGIN
-              CASE 1 OF
-                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
-                    H2DStr.title   = title__alfDB_ind_11_grossRate + '(long. wid.)'
-                    H2DAreaConvFac = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
-                 END
-                 ELSE: BEGIN
-                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
-                       H2DStr.title = title__alfDB_ind_11_grossRate
-                    ENDIF
-                    H2DAreaConvFac  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
-                 END
-              ENDCASE
-           ENDIF
         END
-        STRUPCASE(fluxplottype) EQ STRUPCASE("Max"): BEGIN
-           tmpFluxPlotType  = 'Max'
-           H2DStr.title     = title__alfDB_ind_08
-           inData           = maximus.elec_energy_flux
-           can_div_by_w_x   = 0
-           can_mlt_by_w_x   = 1
-
-           H2DStr.grossFac  = 1e9
-           H2DStr.gUnits    = 'GW'
-
-           IF KEYWORD_SET(grossRateMe) THEN BEGIN
-              CASE 1 OF
-                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
-                    H2DStr.title   = title__alfDB_ind_08_grossRate + '(long. wid.)'
-                    H2DAreaConvFac = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
-                 END
-                 ELSE: BEGIN
-                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
-                       H2DStr.title = title__alfDB_ind_08_grossRate
-                    ENDIF
-                    H2DAreaConvFac  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
-                 END
-              ENDCASE
-           ENDIF
-        END
-        ((STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_eSpec")) OR $
-           (STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_eSpec-2009"))): BEGIN
-           tmpFluxPlotType  = 'eSpec' + (STRMATCH(fluxPlotType,'*2009*') ? '-2009' : '')
-           H2DStr.title     = title__eSpec_ind_10
-           ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
-           ;; for_eSpec      = 1
-           ;; inData           = eFlux_eSpec_data
-           inData           = NEWELL__eSpec.jee
-           can_div_by_w_x   = 0
-           can_mlt_by_w_x   = 1
-
-           H2DStr.grossFac  = 1e9
-           H2DStr.gUnits    = 'GW'
-
-           IF KEYWORD_SET(grossRateMe) THEN BEGIN
-              CASE 1 OF
-                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
-                    H2DStr.title   = title__eSpec_ind_10__grossRate + '(long. wid.)'
-                    H2DAreaConvFac = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
-                 END
-                 ELSE: BEGIN
-                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
-                       H2DStr.title = title__eSpec_ind_10__grossRate
-                    ENDIF
-                    H2DAreaConvFac  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
-                 END
-              ENDCASE
-           ENDIF
-           IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
-              dataname += '-candidates_removed'
-           ENDIF ELSE BEGIN
-              IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
-                 dataname += '-all_fluxes'
-              ENDIF
-           ENDELSE
+        ELSE: BEGIN
+           STOP
         END
      ENDCASE
+
+     H2DStr.title          += ' [' + ACDCString + '] (' + unitString + ')'
+
   ENDIF
 
   ;;Update grossRateMe
@@ -1270,17 +1186,18 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   IF N_ELEMENTS(WHERE(FINITE(inData[tmp_i]))) NE N_ELEMENTS(tmp_i) THEN BEGIN
      ;; finite_ii              =  WHERE(FINITE(inData[tmp_i]),COMPLEMENT=rmTmp_ii, $
      ;;                                 NCOMPLEMENT=nRem)
-     finite_i               =  WHERE(FINITE(inData),COMPLEMENT=rmTmp_i, $
+     finite_i               = WHERE(FINITE(inData),COMPLEMENT=rmTmp_i, $
                                      NCOMPLEMENT=nRem)
+     rmTmp_ii               = WHERE(~FINITE(inData[tmp_i]))
      
      IF finite_i[0] NE -1 THEN BEGIN
         ;; PRINT,"BAD DATA: " + STRCOMPRESS(nRem,/REMOVE_ALL)
-        junk_i              = CGSETDIFFERENCE(tmp_i,finite_i,POSITIONS=rmTmp_ii,NORESULT=-1)
+        ;; junk_i              = CGSETDIFFERENCE(tmp_i,finite_i,POSITIONS=rmTmp_ii,NORESULT=-1)
         tmp_i               = CGSETINTERSECTION(tmp_i,finite_i,COUNT=nFinite)
         ;; tmp_i               = tmp_i[finite_ii]
      ENDIF
 
-     IF junk_i[0] NE -1 THEN BEGIN
+     IF rmTmp_ii[0] NE -1 THEN BEGIN
         removed_ii          = [removed_ii,TEMPORARY(rmTmp_ii)]
      ENDIF
 
@@ -1292,21 +1209,23 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
         posStr              = 'NoP-'
         PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(tmp_i)
         ;; lt_ii                =  WHERE(inData[tmp_i] LT 0.,COMPLEMENT=rmTmp_ii)
-        lt_i                =  WHERE(inData LT 0.,COMPLEMENT=rmTmp_i)
+        lt_i                = WHERE(inData LT 0.,COMPLEMENT=rmTmp_i)
+        rmTmp_ii            = WHERE(inData[tmp_i] GE 0.)
 
         ;; IF lt_ii[0] NE -1 THEN BEGIN
         IF lt_i[0] NE -1 THEN BEGIN
 
            ;; tmp_i            = tmp_i[lt_ii]
-           junk_i           = CGSETDIFFERENCE(tmp_i,lt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
+           ;; junk_i           = CGSETDIFFERENCE(tmp_i,lt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
            tmp_i            = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
+
            ;; tmp_i            = tmp_i[lt_ii]
            ;; PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(tmp_i)
            PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",nNeg
            inData           = ABS(inData)
         ENDIF
 
-        IF junk_i[0] NE -1 THEN BEGIN
+        IF rmTmp_ii[0] NE -1 THEN BEGIN
            removed_ii          = [removed_ii,TEMPORARY(rmTmp_ii)]
         ENDIF
 
@@ -1319,17 +1238,18 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
      negStr                 = 'NoN-'
      PRINTF,lun,"N elements in " + dataName + " before junking neg vals: ",N_ELEMENTS(tmp_i)
      ;; gt_ii                   =  WHERE(inData[tmp_i] GT 0.,COMPLEMENT=rmTmp_ii)
-     gt_i                   =  WHERE(inData GT 0.,COMPLEMENT=rmTmp_i)
+     gt_i                   = WHERE(inData GT 0.,COMPLEMENT=rmTmp_i)
+     rmTmp_ii               = WHERE(inData[tmp_i] LE 0.)
      IF gt_i[0] NE -1 THEN BEGIN
 
-        junk_i           = CGSETDIFFERENCE(tmp_i,gt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
+        ;; junk_i           = CGSETDIFFERENCE(tmp_i,gt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
         tmp_i            = CGSETINTERSECTION(tmp_i,gt_i,COUNT=nPos)
         ;; tmp_i               = tmp_i[gt_ii]
         ;; PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",N_ELEMENTS(tmp_i)
         PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",nPos
      ENDIF
 
-     IF junk_i[0] NE -1 THEN BEGIN
+     IF rmTmp_ii[0] NE -1 THEN BEGIN
         removed_ii          = [removed_ii,TEMPORARY(rmTmp_ii)]
      ENDIF
 
@@ -1338,23 +1258,22 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
      posStr                 = 'NoP-'
      PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(tmp_i)
 
-     ;; lt_ii                   =  WHERE(inData[tmp_i] LT 0.,COMPLEMENT=rmTmp_ii)
+     lt_i                    =  WHERE(inData        LT 0.,COMPLEMENT=rmTmp_i)
+     rmTmp_ii                =  WHERE(inData[tmp_i] GE 0.)
 
-     lt_i                    =  WHERE(inData LT 0.,COMPLEMENT=rmTmp_i)
-     ;; IF lt_ii[0] NE -1 THEN BEGIN
      IF lt_i[0] NE -1 THEN BEGIN
 
         ;; tmp_i               = tmp_i[lt_ii]
         ;; PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(tmp_i)
 
-        junk_i           = CGSETDIFFERENCE(tmp_i,lt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
+        ;; junk_i           = CGSETDIFFERENCE(tmp_i,lt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
         tmp_i            = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
 
         PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",nNeg
         inData           = ABS(inData)
      ENDIF
 
-     IF junk_i[0] NE -1 THEN BEGIN
+     IF rmTmp_ii[0] NE -1 THEN BEGIN
         removed_ii          = [removed_ii,TEMPORARY(rmTmp_ii)]
      ENDIF
 
@@ -1550,6 +1469,12 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
                                     SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
         ilats  = NEWELL_I__ion.ilat[tmp_i]
      END
+     for_sWay: BEGIN
+        mlts   = SHIFT_MLTS_FOR_H2D(!NULL,!NULL,MIMC_struct.shiftM, $
+                                    IN_MLTS=(KEYWORD_SET(MIMC_struct.use_Lng) ? SWAY__DB.lng : SWAY__DB.mlt)[tmp_i], $
+                                    SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
+        ilats  = SWAY__DB.ilat[tmp_i]
+     END
      ELSE: BEGIN
         mlts   = SHIFT_MLTS_FOR_H2D(maximus,tmp_i,MIMC_struct.shiftM,SHIFTM_IS_SHIFTLNG=MIMC_struct.use_Lng)
         ilats  = (KEYWORD_SET(MIMC_struct.do_lShell) ? maximus.lshell : maximus.ilat)[tmp_i]
@@ -1674,9 +1599,9 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),
                                        ilats,$
                                        (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) OR KEYWORD_SET(tmpLogAvg) ? ALOG10(DOUBLE(inData)) : DOUBLE(inData)),$
                                        MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
-MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                       MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
                                        MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
-MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+                                       MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                        BINSIZE1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
                                        BINSIZE2=(KEYWORD_SET(MIMC_struct.do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
                                        OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 

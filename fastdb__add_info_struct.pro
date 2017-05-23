@@ -47,17 +47,19 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
         STR_ELEMENT,info,'DB_extras',DB_extras,/ADD_REPLACE
         STR_ELEMENT,info,'tag_names',TAG_NAMES_R(dbStruct),/ADD_REPLACE
 
-        STR_ELEMENT,info,'tag_names_l1',TAG_NAMES(dbStruct),/ADD_REPLACE
-        tag_names_l2 = LIST()
+        STR_ELEMENT,info,'tag_names_l0',TAG_NAMES(dbStruct),/ADD_REPLACE
+        tag_names_l1 = LIST()
         FOR k=0,N_ELEMENTS(TAG_NAMES(dbStruct))-1 DO BEGIN
 
            IF SIZE(dbStruct.(k),/TYPE) EQ 8 THEN BEGIN
-              tag_names_l2.Add,TAG_NAMES(dbStruct.(k))
+              tag_names_l1.Add,TAG_NAMES(dbStruct.(k))
            ENDIF ELSE BEGIN
-              tag_names_l2.Add,''
+              tag_names_l1.Add,''
            ENDELSE
 
         ENDFOR
+
+        STR_ELEMENT,info,'tag_names_l1',tag_names_l1,/ADD_REPLACE
 
      END
      ELSE: BEGIN

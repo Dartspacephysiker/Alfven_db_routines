@@ -26,8 +26,8 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
      ;; IF ~KEYWORD_SET(seriously__noJunk) THEN BEGIN
      IF KEYWORD_SET(for_sWay_DB) THEN BEGIN
 
-        customKill         = 1640 ;Spiky pFlux everythang
-
+        customKill         = [1640, $ ;Spiky pFlux everythang
+                              3273]
      ENDIF ELSE BEGIN
         customKillRanges   = [ $
                              [744,751], $   ;2017/01/21 These orbits are piping-hot garbage. They are red-hot, featureless wastes of disk space
