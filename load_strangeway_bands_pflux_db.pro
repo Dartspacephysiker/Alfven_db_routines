@@ -50,12 +50,16 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
   DefDBDir             = '/SPENCEdata/software/sdt/batch_jobs/saves_output_etc/Strangeway_5bands/'
   defCoordDir          = DefDBDir + 'alternate_coords/'
 
-  ;;commented out 2016/01/07 while checking out the despun database
-  DefDBFile            = 'Strangeway_5bands__orbs_1436-5382_EESAItvl.sav'
-  DefDBEphemFile       = 'Strangeway_5bands__orbs_1436-5382_EESAItvl__ephem.sav'
-  DefDBEphemExtFile    = 'Strangeway_5bands__orbs_1436-5382_EESAItvl__ephem_extended.sav'
+  ;; orbRangeStr          = '1436-5382'
+  ;; DB_date              = '20170522'
+
+  orbRangeStr          = '1000-9936'
+  DB_date              = '20170523'
+
+  DefDBFile            = 'Strangeway_5bands__orbs_' + orbRangeStr + '_EESAItvl.sav'
+  DefDBEphemFile       = 'Strangeway_5bands__orbs_' + orbRangeStr + '_EESAItvl__ephem.sav'
+  DefDBEphemExtFile    = 'Strangeway_5bands__orbs_' + orbRangeStr + '_EESAItvl__ephem_extended.sav'
   ;; DefDB_tFile          = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--cdbtime.sav'
-  DB_date              = '20170522'
   DB_version           = 'v0.0'
   DB_extras            = ''
 
