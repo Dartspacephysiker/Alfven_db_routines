@@ -226,7 +226,7 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
 
      ENDIF
      
-     IF ~(*pDBStruct).info.is_mapped.pFlux THEN BEGIN
+     IF ~(*pDBStruct).info.is_mapped.pFlux AND ~KEYWORD_SET(do_not_map_pflux) THEN BEGIN
 
         (*pDBStruct).pflux.b.DC *= (*pDBStruct).magRatio
         (*pDBStruct).pflux.b.AC *= (*pDBStruct).magRatio
