@@ -28,6 +28,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
    CBIFDIVFAC=cbIFDivFac, $
    CBCHAREDIVFAC=cbCharEDivFac, $
    CBMAGCDIVFAC=CBMagCDivFac, $
+   CBSWAYDIVFAC=cbSWayDivFac, $
    ABSCHARE=absCharE, $
    ABSCHARIE=absCharie, $
    ABSEFLUX=abseflux, $
@@ -36,6 +37,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
    ABSMAGC=absMagC, $
    ABSOXYFLUX=absOxyFlux, $
    ABSPFLUX=absPflux, $
+   ABS_SWAY=abs_sWay, $
    NONEGCHARE=noNegCharE, $
    NONEGCHARIE=noNegCharie, $
    NONEGEFLUX=noNegEflux, $
@@ -44,6 +46,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
    NONEGMAGC=noNegMagC, $
    NONEGOXYFLUX=noNegOxyFlux, $
    NONEGPFLUX=noNegPflux, $
+   NONEG_SWAY=noNeg_sWay, $
    NOPOSCHARE=noPosCharE, $
    NOPOSCHARIE=noPosCharie, $
    NOPOSEFLUX=noPosEFlux, $
@@ -52,6 +55,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
    NOPOSMAGC=noPosMagC, $
    NOPOSOXYFLUX=noPosOxyFlux, $
    NOPOSPFLUX=noPosPflux, $
+   NOPOS_SWAY=noPos_sWay, $
    AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    ORBCONTRIBRANGE=orbContribRange, $
    ORBCONTRIBAUTOSCALE=orbContribAutoscale, $
@@ -198,6 +202,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
   defcbEFDivFac               = 1.0
   defcbENumFlDivFac           = 1.0
   DefCBPFdivFac               = 1.0
+  DefCBSWayDivFac             = 1.0
   defcbIFDivFac               = 1.0
   defcbCharEDivFac            = 1.0
   DefCBMagCDivFac             = 1.0
@@ -264,6 +269,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          cbEFDivFac                  : defcbEFDivFac                 , $
                          cbENumFlDivFac              : defcbENumFlDivFac             , $
                          CBPFdivFac                  : DefCBPFdivFac                 , $
+                         cbSWayDivFac                : DefCBSWayDivFac               , $
                          cbIFDivFac                  : defcbIFDivFac                 , $
                          cbCharEDivFac               : defcbCharEDivFac              , $
                          CBMagCDivFac                : DefCBMagCDivFac               , $
@@ -299,6 +305,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          absMagC                    : 0B                            , $
                          absOxyFlux                  : 0B                            , $
                          absPflux                    : 0B                            , $
+                         abs_sWay                    : 0B                            , $
                          noNegCharE                  : 0B                            , $
                          noNegCharie                 : 0B                            , $
                          noNegEflux                  : 0B                            , $
@@ -307,6 +314,7 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          noNegMagC                  : 0B                            , $
                          noNegOxyFlux                : 0B                            , $
                          noNegPflux                  : 0B                            , $
+                         noNeg_sWay                  : 0B                            , $
                          noPosCharE                  : 0B                            , $
                          noPosCharie                 : 0B                            , $
                          noPosEFlux                  : 0B                            , $
@@ -314,7 +322,8 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                          noPosIflux                  : 0B                            , $
                          noPosMagC                  : 0B                            , $
                          noPosOxyFlux                : 0B                            , $
-                         noPosPflux                  : 0B                            }
+                         noPosPflux                  : 0B                            , $
+                         noPos_sWay                  : 0B                            }
 
   ;; IF N_ELEMENTS(alfDB_plotLim_struct) GT 0 AND ~KEYWORD_SET(reset) THEN BEGIN
   ;;    PRINT,"Already have an alfDB_plotLim_struct! Returning ..."
@@ -589,6 +598,13 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  /ADD_REPLACE
   ENDIF
 
+  IF N_ELEMENTS(CBSwayDivFac) GT 0 THEN BEGIN
+     STR_ELEMENT,AlfDB_PlotLim_Struct, $
+                 'CBSwayDivFac', $
+                 CBSwayDivFac, $
+                 /ADD_REPLACE
+  ENDIF
+
   
   IF N_ELEMENTS(cbIFDivFac) GT 0 THEN BEGIN
      STR_ELEMENT,alfDB_plotLim_struct, $
@@ -596,7 +612,6 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  cbIFDivFac, $
                  /ADD_REPLACE
   ENDIF
-
   
   IF N_ELEMENTS(cbCharEDivFac) GT 0 THEN BEGIN
      STR_ELEMENT,alfDB_plotLim_struct, $
@@ -836,6 +851,13 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  /ADD_REPLACE
   ENDIF
 
+  IF N_ELEMENTS(abs_SWay) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'abs_SWay', $
+                 BYTE(abs_SWay), $
+                 /ADD_REPLACE
+  ENDIF
+
   IF N_ELEMENTS(noNegCharE) GT 0 THEN BEGIN
      STR_ELEMENT,alfDB_plotLim_struct, $
                  'noNegCharE', $
@@ -889,6 +911,13 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
      STR_ELEMENT,alfDB_plotLim_struct, $
                  'noNegPflux', $
                  BYTE(noNegPflux), $
+                 /ADD_REPLACE
+  ENDIF
+
+  IF N_ELEMENTS(noNeg_sWay) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noNeg_sWay', $
+                 BYTE(noNeg_sWay), $
                  /ADD_REPLACE
   ENDIF
 
@@ -948,6 +977,12 @@ PRO SET_ALFVEN_STATS_PLOT_LIMS, $
                  /ADD_REPLACE
   ENDIF
 
+  IF N_ELEMENTS(noPos_sWay) GT 0 THEN BEGIN
+     STR_ELEMENT,alfDB_plotLim_struct, $
+                 'noPos_sWay', $
+                 BYTE(noPos_sWay), $
+                 /ADD_REPLACE
+  ENDIF
 
   
 END

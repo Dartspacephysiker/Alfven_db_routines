@@ -71,6 +71,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    ABSMAGC=absMagC, $
    ABSOXYFLUX=absOxyFlux, $
    ABSPFLUX=absPflux, $
+   ABS_SWAY=abs_sWay, $
    NONEGCHARE=noNegCharE, $
    NONEGCHARIE=noNegCharie, $
    NONEGEFLUX=noNegEflux, $
@@ -79,6 +80,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    NONEGMAGC=noNegMagC, $
    NONEGOXYFLUX=noNegOxyFlux, $
    NONEGPFLUX=noNegPflux, $
+   NONEG_SWAY=noNeg_sWay, $
    NOPOSCHARE=noPosCharE, $
    NOPOSCHARIE=noPosCharie, $
    NOPOSEFLUX=noPosEFlux, $
@@ -87,6 +89,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    NOPOSMAGC=noPosMagC, $
    NOPOSOXYFLUX=noPosOxyFlux, $
    NOPOSPFLUX=noPosPflux, $
+   NOPOS_SWAY=noPos_sWay, $
    LOGCHAREPLOT=logCharEPlot, $
    LOGCHARIEPLOT=logChariePlot, $
    LOGEFPLOT=logEfPlot, $
@@ -579,6 +582,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      ABSMAGC=absMagC, $
      ABSOXYFLUX=absOxyFlux, $
      ABSPFLUX=absPflux, $
+     ABS_SWAY=abs_sWay, $
      NONEGCHARE=noNegCharE, $
      NONEGCHARIE=noNegCharie, $
      NONEGEFLUX=noNegEflux, $
@@ -587,6 +591,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      NONEGMAGC=noNegMagC, $
      NONEGOXYFLUX=noNegOxyFlux, $
      NONEGPFLUX=noNegPflux, $
+     NONEG_SWAY=noNeg_sWay, $
      NOPOSCHARE=noPosCharE, $
      NOPOSCHARIE=noPosCharie, $
      NOPOSEFLUX=noPosEFlux, $
@@ -595,6 +600,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      NOPOSMAGC=noPosMagC, $
      NOPOSOXYFLUX=noPosOxyFlux, $
      NOPOSPFLUX=noPosPflux, $
+     NOPOS_SWAY=noPos_sWay, $
      AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
      ORBCONTRIBRANGE=orbContribRange, $
      ORBCONTRIBAUTOSCALE=orbContribAutoscale, $

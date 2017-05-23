@@ -68,6 +68,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                       GET_CHAREE=get_ChareE, $
                       GET_CHARIE=get_chariE, $
                       GET_MAGC=get_magC, $
+                      GET_SWAY=get_sWay, $
                       ;; EFLUX_ESPEC_DATA=eFlux_eSpec_data, $
                       ;; ENUMFLUX_ESPEC_DATA=eNumFlux_eSpec_data, $
                       IFLUX_ION_DATA=iFlux_ion_data, $
@@ -92,6 +93,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
   @common__newell_espec.pro
   @common__newell_ion_db.pro
+  @common__strangeway_bands.pro
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
   IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
@@ -100,13 +102,14 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
 
   IF N_ELEMENTS(update_h2d_mask) EQ 0 THEN update_h2d_mask = 1
 
-  IF KEYWORD_SET(get_eFlux) THEN nDataz++
-  IF KEYWORD_SET(get_eNumFlux) THEN nDataz++
-  IF KEYWORD_SET(get_pFlux) THEN nDataz++
-  IF KEYWORD_SET(get_iFlux) THEN nDataz++
-  IF KEYWORD_SET(get_ChareE) THEN nDataz++
-  IF KEYWORD_SET(get_ChariE) THEN nDataz++
-  IF KEYWORD_SET(get_magC)   THEN nDataz++
+  IF KEYWORD_SET(get_eFlux    ) THEN nDataz++
+  IF KEYWORD_SET(get_eNumFlux ) THEN nDataz++
+  IF KEYWORD_SET(get_pFlux    ) THEN nDataz++
+  IF KEYWORD_SET(get_iFlux    ) THEN nDataz++
+  IF KEYWORD_SET(get_ChareE   ) THEN nDataz++
+  IF KEYWORD_SET(get_ChariE   ) THEN nDataz++
+  IF KEYWORD_SET(get_magC     ) THEN nDataz++
+  IF KEYWORD_SET(get_sWay     ) THEN nDataz++
 
   IF nDataz GT 1 THEN BEGIN
      IF KEYWORD_SET(get_eFlux) AND KEYWORD_SET(get_pFlux) THEN BEGIN
@@ -122,6 +125,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
   for_eSpec        = BYTE(KEYWORD_SET(indices__eSpec))
   for_ion          = BYTE(KEYWORD_SET(indices__ion))
   for_e_or_i       = for_eSpec OR for_ion
+  for_sWay         = BYTE(KEYWORD_SET(get_sWay))
   CASE 1 OF
      for_eSpec: BEGIN
         tmp_i      = indices__eSpec
@@ -1095,6 +1099,159 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
      can_div_by_w_x          = 0
      can_mlt_by_w_x          = 1
+  ENDIF
+
+  IF KEYWORD_SET(get_sWay) THEN BEGIN
+     dataName               = 
+     H2DStr.labelFormat     = fluxPlotEPlotCBLabelFormat
+     H2DStr.logLabels       = logeFluxLabels
+     H2DStr.do_plotIntegral = eFlux_do_plotIntegral
+     H2DStr.do_midCBLabel   = eFlux_do_midCBLabel
+
+     CASE 1 OF
+        STRUPCASE(fluxplottype) EQ STRUPCASE("Integ"): BEGIN
+           tmpFluxPlotType  = 'Intg'
+           H2DStr.title     = title__alfDB_ind_09
+           inData           = maximus.integ_elec_energy_flux
+           can_div_by_w_x   = 1
+           can_mlt_by_w_x   = 0
+
+           H2DStr.grossFac  = 1e9
+           H2DStr.gUnits    = 'bro'
+        END
+        STRUPCASE(fluxplottype) EQ STRUPCASE("eflux_losscone_integ"): BEGIN
+           tmpFluxPlotType  = 'LC_intg'
+           H2DStr.title     = title__alfDB_ind_10
+           inData           = maximus.eflux_losscone_integ
+           can_div_by_w_x   = 1
+           can_mlt_by_w_x   = 0
+           IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+              H2DStr.title  = title__alfDB_ind_10__div_by_width_x
+              ;; dataName     += '__div_by_width_x'
+              ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
+              ;;                       DESPUNDB=maximus.info.despun
+              ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
+              H2DStr.grossFac  = 1e9
+              H2DStr.gUnits    = 'GW'
+
+           ENDIF
+
+           IF KEYWORD_SET(do_timeAvg_fluxQuantities) AND ~KEYWORD_SET(for_pres) THEN BEGIN
+              H2DStr.title  = title__alfDB_ind_10 + '(time-averaged)'
+           ENDIF
+
+           IF KEYWORD_SET(grossRateMe) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    H2DStr.title   = title__alfDB_ind_10_grossRate + '(long. wid.)'
+                    H2DAreaConvFac = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+                 END
+                 ELSE: BEGIN
+                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+                       H2DStr.title = title__alfDB_ind_10_grossRate
+                    ENDIF
+                    H2DAreaConvFac  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 END
+              ENDCASE
+           ENDIF
+        END
+        STRUPCASE(fluxplottype) EQ STRUPCASE("total_eflux_integ"): BEGIN
+
+           tmpFluxPlotType  = 'tot_intg'
+           H2DStr.title     = title__alfDB_ind_11
+           inData           = maximus.total_eflux_integ
+           can_div_by_w_x   = 1
+           can_mlt_by_w_x   = 0
+
+           IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
+
+              H2DStr.grossFac  = 1e9
+              H2DStr.gUnits    = 'GW'
+           
+              H2DStr.title     = title__alfDB_ind_11__div_by_width_x
+           ENDIF
+
+           IF KEYWORD_SET(do_timeAvg_fluxQuantities) AND ~KEYWORD_SET(for_pres) THEN BEGIN
+              H2DStr.title  = title__alfDB_ind_11 + '(time-averaged)'
+           ENDIF
+
+           IF KEYWORD_SET(grossRateMe) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    H2DStr.title   = title__alfDB_ind_11_grossRate + '(long. wid.)'
+                    H2DAreaConvFac = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+                 END
+                 ELSE: BEGIN
+                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+                       H2DStr.title = title__alfDB_ind_11_grossRate
+                    ENDIF
+                    H2DAreaConvFac  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 END
+              ENDCASE
+           ENDIF
+        END
+        STRUPCASE(fluxplottype) EQ STRUPCASE("Max"): BEGIN
+           tmpFluxPlotType  = 'Max'
+           H2DStr.title     = title__alfDB_ind_08
+           inData           = maximus.elec_energy_flux
+           can_div_by_w_x   = 0
+           can_mlt_by_w_x   = 1
+
+           H2DStr.grossFac  = 1e9
+           H2DStr.gUnits    = 'GW'
+
+           IF KEYWORD_SET(grossRateMe) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    H2DStr.title   = title__alfDB_ind_08_grossRate + '(long. wid.)'
+                    H2DAreaConvFac = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+                 END
+                 ELSE: BEGIN
+                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+                       H2DStr.title = title__alfDB_ind_08_grossRate
+                    ENDIF
+                    H2DAreaConvFac  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 END
+              ENDCASE
+           ENDIF
+        END
+        ((STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_eSpec")) OR $
+           (STRUPCASE(fluxPlotType) EQ STRUPCASE("eFlux_eSpec-2009"))): BEGIN
+           tmpFluxPlotType  = 'eSpec' + (STRMATCH(fluxPlotType,'*2009*') ? '-2009' : '')
+           H2DStr.title     = title__eSpec_ind_10
+           ;;NOTE: microCoul_per_m2__to_num_per_cm2 = 1. / 1.6e-9
+           ;; for_eSpec      = 1
+           ;; inData           = eFlux_eSpec_data
+           inData           = NEWELL__eSpec.jee
+           can_div_by_w_x   = 0
+           can_mlt_by_w_x   = 1
+
+           H2DStr.grossFac  = 1e9
+           H2DStr.gUnits    = 'GW'
+
+           IF KEYWORD_SET(grossRateMe) THEN BEGIN
+              CASE 1 OF
+                 KEYWORD_SET(do_grossRate_with_long_width): BEGIN
+                    H2DStr.title   = title__eSpec_ind_10__grossRate + '(long. wid.)'
+                    H2DAreaConvFac = 1 ;Lengths given in km, but we need them in m. To junk 'milli' prefix in mW, we get a net factor of 1
+                 END
+                 ELSE: BEGIN
+                    IF KEYWORD_SET(do_grossRate_fluxQuantities) THEN BEGIN
+                       H2DStr.title = title__eSpec_ind_10__grossRate
+                    ENDIF
+                    H2DAreaConvFac  = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
+                 END
+              ENDCASE
+           ENDIF
+           IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
+              dataname += '-candidates_removed'
+           ENDIF ELSE BEGIN
+              IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
+                 dataname += '-all_fluxes'
+              ENDIF
+           ENDELSE
+        END
+     ENDCASE
   ENDIF
 
   ;;Update grossRateMe
