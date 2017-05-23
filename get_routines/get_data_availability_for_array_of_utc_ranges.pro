@@ -8,6 +8,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
    DBSTRUCT=dbStruct, $
    DBTIMES=dbTimes, $
    FOR_ESPEC_DB=for_eSpec_db, $
+   FOR_SWAY_DB=for_sWay_db, $
    FOR_OMNI_DB=for_OMNI_db, $
    DO_NOT_MAKE_ORB_INFO=no_orb_info, $
    RESTRICT_W_THESEINDS=restrict, $
@@ -40,10 +41,18 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
   CASE 1 OF
      KEYWORD_SET(for_eSpec_db): BEGIN
         ;;Use for_eSpec_db             = 2 here to indicate that conversion has already happened
-        IF KEYWORD_SET(for_eSpec_db) AND ( (for_eSpec_db) NE 2) THEN BEGIN
+        IF for_eSpec_db NE 2 THEN BEGIN
            dbTimes                     = N_ELEMENTS(dbStruct) GT 0 ? dbStruct.x : dbTimes
            for_eSpec_db                = 2
            dbString                    = 'eSpec'
+        ENDIF
+     END
+     KEYWORD_SET(for_sWay_db): BEGIN
+        ;;Use for_eSpec_db EQ 2 here to indicate that conversion has already happened
+        IF for_sWay_db) NE 2 THEN BEGIN
+           dbTimes                     = N_ELEMENTS(dbStruct) GT 0 ? dbStruct.time : dbTimes
+           for_sWay_db                 = 2
+           dbString                    = 'sWay'
         ENDIF
      END
      KEYWORD_SET(for_OMNI_db): BEGIN
