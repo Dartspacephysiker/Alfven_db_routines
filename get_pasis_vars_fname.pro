@@ -30,7 +30,7 @@ FUNCTION GET_PASIS_VARS_FNAME,NEED_FASTLOC_I=need_fastLoc_i
                         'ion-'
      END
      KEYWORD_SET(PASIS__alfDB_plot_struct.for_sWay_DB): BEGIN
-        PASISpref    += 'sWay-'
+        PASISpref    += 'sWay-' + (PASIS__alfDB_plot_struct.sWay_use_8Hz_DB ? '8HzDB-' : '')
      END
      ELSE: BEGIN
         PASISpref    += 'alfDB-'

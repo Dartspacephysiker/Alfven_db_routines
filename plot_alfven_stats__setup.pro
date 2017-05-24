@@ -62,6 +62,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    CHARETYPE=charEType, $
    CHARIEPLOTS=chariEPlots, $
    SWAY_PLOTTYPE=sway_plotType, $
+   ;; SWAY_USE_8HZ_DB=sWay_use_8Hz_DB, $
    MAGCPLOTS=magCPlots, $
    ABSCHARE=absCharE, $
    ABSCHARIE=absCharie, $
@@ -456,6 +457,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      ESPEC__NEWELLPLOT_PROBOCCURRENCE=eSpec__newellPlot_probOccurrence, $
      ESPEC__T_PROBOCCURRENCE=eSpec__t_probOccurrence, $
      FOR_SWAY_DB=for_sway_DB, $
+     SWAY_USE_8HZ_DB=sWay_use_8Hz_DB, $
+     SWAY_MAXMAGFLAG=sWay_maxMagFlag, $
      SWAY_PLOTTYPE=sway_plotType, $
      USE_STORM_STUFF=use_storm_stuff, $
      NONSTORM=nonStorm, $

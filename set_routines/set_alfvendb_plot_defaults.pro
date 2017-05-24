@@ -103,8 +103,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    ESPEC__REMOVE_OUTLIERS=eSpec__remove_outliers, $
    ESPEC__NEWELLPLOT_PROBOCCURRENCE=eSpec__newellPlot_probOccurrence, $
    ESPEC__T_PROBOCCURRENCE=t_ProbOccurrence, $
-   FOR_SWAY_DB=for_sway_DB, $
-   SWAY_PLOTTYPE=sway_plotType, $
+   FOR_SWAY_DB=for_sWay_DB, $
+   SWAY_USE_8HZ_DB=sWay_use_8Hz_DB, $
+   SWAY_MAXMAGFLAG=sWay_maxMagFlag, $
+   SWAY_PLOTTYPE=sWay_plotType, $
    USE_STORM_STUFF=use_storm_stuff, $
    NONSTORM=nonStorm, $
    RECOVERYPHASE=recoveryPhase, $
@@ -666,8 +668,10 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          eSpec__remove_outliers            : 0B, $
                          eSpec__newellPlot_probOccurrence  : 0B, $
                          t_probOccurrence                  : 0B, $
-                         for_sway_DB                       : 0B, $
-                         sway_plotType                     : '', $
+                         for_sWay_DB                       : 0B, $
+                         sWay_use_8Hz_DB                   : 0B, $
+                         sWay_maxMagFlag                   : 0B, $
+                         sWay_plotType                     : '', $
                          orbContribPlot                    : 0B, $
                          orbTotPlot                        : 0B, $
                          orbFreqPlot                       : 0B, $
@@ -1229,14 +1233,39 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(t_probOccurrence),/ADD_REPLACE
      ENDIF
 
-     IF N_ELEMENTS(for_sway_DB) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'for_sway_DB', $
-                    BYTE(for_sway_DB),/ADD_REPLACE
+     IF N_ELEMENTS(for_sWay_DB) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'for_sWay_DB', $
+                    BYTE(for_sWay_DB),/ADD_REPLACE
      ENDIF
 
-     IF N_ELEMENTS(sway_plotType) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'sway_plotType', $
-                    sway_plotType,/ADD_REPLACE
+     IF N_ELEMENTS(sWay_use_8Hz_DB) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'sWay_use_8Hz_DB', $
+                    sWay_use_8Hz_DB,/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(sWay_maxMagFlag) GT 0 THEN BEGIN
+
+        IF ~KEYWORD_SET(alfDB_plot_struct.sWay_use_8Hz_DB) THEN BEGIN
+           PRINT,"Ummm, you can't do that. You need the 8-Hz DB."
+           STOP
+        ENDIF
+        
+        STR_ELEMENT,alfDB_plot_struct,'sWay_maxMagFlag', $
+                    sWay_maxMagFlag,/ADD_REPLACE
+
+     ENDIF
+
+     IF N_ELEMENTS(sWay_plotType) GT 0 THEN BEGIN
+
+        IF ((WHERE(STRUPCASE(sWay_plotType) EQ '*ACHIGH'))[0] NE -1) AND $
+           ~alfDB_plotStruct.sWay_use_8Hz_DB                             $
+        THEN BEGIN
+           PRINT,"Ummm, you can't do that. You need the 8-Hz DB."
+           STOP
+        ENDIF
+
+        STR_ELEMENT,alfDB_plot_struct,'sWay_plotType', $
+                    sWay_plotType,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(orbContribPlot) GT 0 THEN BEGIN

@@ -56,6 +56,7 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
            STR_ELEMENT,info,'DB_Date',DB_date,/ADD_REPLACE
            STR_ELEMENT,info,'DB_version',DB_version,/ADD_REPLACE
            STR_ELEMENT,info,'DB_extras',DB_extras,/ADD_REPLACE
+           STR_ELEMENT,info,'is_8Hz_DB',0B,/ADD_REPLACE
            STR_ELEMENT,info,'is_mapped',TEMPORARY(is_mapped),/ADD_REPLACE
            STR_ELEMENT,info,'is_scaled',TEMPORARY(is_scaled),/ADD_REPLACE
            STR_ELEMENT,info,'has_been_infoed',1B,/ADD_REPLACE

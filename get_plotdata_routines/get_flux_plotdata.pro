@@ -1117,6 +1117,8 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
      ACDCString             = sWay_structNavn[2]
 
+     tmpFluxPlotType        = SWAY__DB.info.is_8Hz_DB ? '8Hz' : ''
+
      CASE STRUPCASE(sWay_structNavn[0]) OF
         'DB': BEGIN
 

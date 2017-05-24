@@ -2031,7 +2031,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
               secInd    = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd))) EQ STRUPCASE(splitter[1]))
               IF secInd EQ -1 THEN STOP
               thirdInd  = [WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ 'AC'), $
-                           WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ 'DC')]
+                           WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ 'DC'), $
+                           WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ 'ACHIGH')]
               IF (WHERE(thirdInd EQ -1))[0] NE -1 THEN STOP
 
            END

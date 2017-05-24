@@ -722,6 +722,15 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
               END
               KEYWORD_SET(get_sWay_i): BEGIN
 
+                 IF KEYWORD_SET(alfDB_plot_struct.sWay_maxMagFlag) THEN BEGIN
+                      ;;How to use magFlags, you wonder? Like'is:
+                    theseVals = VALUE_LOCATE(SWAY__DB.magFlags.x,SWAY__DB.time)
+
+                    STOP
+
+                 ENDIF
+
+
                  cleaned_i = LINDGEN(N_ELEMENTS((*pDBStruct).time))
 
                  ;; WHERE(FINITE(SWAY__DB.time))

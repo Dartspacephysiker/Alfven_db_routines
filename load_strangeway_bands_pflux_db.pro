@@ -3,6 +3,7 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
                                    GOOD_I=good_i, $
                                    DBDir=DBDir, $
                                    DBFile=DBFile, $
+                                   USE_8HZ_DB=use_8Hz_DB, $
                                    ;; DB_TFILE=DB_tFile, $
                                    CORRECT_FLUXES=correct_fluxes, $
                                    DO_NOT_MAP_PFLUX=do_not_map_pflux, $
@@ -62,6 +63,16 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
   ;; DefDB_tFile          = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--cdbtime.sav'
   DB_version           = 'v0.0'
   DB_extras            = ''
+
+  IF KEYWORD_SET(use_8Hz_DB) THEN BEGIN
+
+     PRINT,"Sorry, don't have that yet!"
+     STOP
+
+  ENDIF
+
+  ;;How to use magFlags, you wonder? Like'is:
+  ;; theseVals = VALUE_LOCATE(leMaitre.magFlags.x,leMaitre.time)
 
   ;; DB__into_eSpec_file  = 'Dartdb_20151222--500-16361_inc_lower_lats--max_magCurrent_time_alfs_into_20170203_eSpecDB.sav'
   ;; DB__into_eSpec_file  = 'Dartdb_20151222--500-16361_inc_lower_lats--max_magCurrent_time_alfs_into_20170203_eSpecDB__good_i.sav'
@@ -124,6 +135,11 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
                                 DB_EXTRAS=DB_extras, $
                                 DB__INTO_ESPEC_FILE=DB__into_eSpec_file
         
+        ;; IF KEYWORD_SET(use_8Hz_DB) THEN BEGIN
+        ;;    leMaitre.info.is_8Hz_DB = 1B
+        ;; ENDIF
+        leMaitre.info.is_8Hz_DB = BYTE(KEYWORD_SET(use_8Hz_DB))
+
         ;; STOP
 
         ;; IF KEYWORD_SET(use_GEO) THEN BEGIN
@@ -232,8 +248,26 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
      
      IF ~(*pDBStruct).info.is_mapped.pFlux AND ~KEYWORD_SET(do_not_map_pflux) THEN BEGIN
 
-        (*pDBStruct).pflux.b.DC *= (*pDBStruct).magRatio
-        (*pDBStruct).pflux.b.AC *= (*pDBStruct).magRatio
+        CASE 1 OF
+           KEYWORD_SET(use_8Hz_DB): BEGIN
+
+              FOR k=0,7 DO BEGIN
+
+                 (*pDBStruct).pflux.b.DC[k,*]     *= (*pDBStruct).magRatio
+                 (*pDBStruct).pflux.b.AC[k,*]     *= (*pDBStruct).magRatio
+                 (*pDBStruct).pflux.b.ACHigh[k,*] *= (*pDBStruct).magRatio
+
+              ENDFOR
+
+           END
+           ELSE: BEGIN
+
+              (*pDBStruct).pflux.b.DC *= (*pDBStruct).magRatio
+              (*pDBStruct).pflux.b.AC *= (*pDBStruct).magRatio
+
+           END
+        ENDCASE           
+           
 
         (*pDBStruct).info.is_mapped.pFlux = 1B
 
