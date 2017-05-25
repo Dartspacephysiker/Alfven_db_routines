@@ -49,7 +49,7 @@ PRO GET_DATA_AVAILABILITY_FOR_ARRAY_OF_UTC_RANGES, $
      END
      KEYWORD_SET(for_sWay_db): BEGIN
         ;;Use for_eSpec_db EQ 2 here to indicate that conversion has already happened
-        IF for_sWay_db) NE 2 THEN BEGIN
+        IF for_sWay_db NE 2 THEN BEGIN
            dbTimes                     = N_ELEMENTS(dbStruct) GT 0 ? dbStruct.time : dbTimes
            for_sWay_db                 = 2
            dbString                    = 'sWay'

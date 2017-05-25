@@ -1258,7 +1258,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(sWay_plotType) GT 0 THEN BEGIN
 
         IF ((WHERE(STRUPCASE(sWay_plotType) EQ '*ACHIGH'))[0] NE -1) AND $
-           ~alfDB_plotStruct.sWay_use_8Hz_DB                             $
+           ~alfDB_plot_struct.sWay_use_8Hz_DB                             $
         THEN BEGIN
            PRINT,"Ummm, you can't do that. You need the 8-Hz DB."
            STOP

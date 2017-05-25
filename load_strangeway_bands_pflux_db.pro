@@ -48,7 +48,7 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
   ENDIF
 
   ;; DefDBDir             = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
-  DefDBDir             = '/SPENCEdata/software/sdt/batch_jobs/saves_output_etc/Strangeway_5bands/'
+  DefDBDir             = '/SPENCEdata/software/sdt/batch_jobs/saves_output_etc/Strangeway_2bands/'
   defCoordDir          = DefDBDir + 'alternate_coords/'
 
   ;; orbRangeStr          = '1436-5382'
@@ -57,9 +57,9 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
   orbRangeStr          = '1000-9936'
   DB_date              = '20170523'
 
-  DefDBFile            = 'Strangeway_5bands__orbs_' + orbRangeStr + '_EESAItvl.sav'
-  DefDBEphemFile       = 'Strangeway_5bands__orbs_' + orbRangeStr + '_EESAItvl__ephem.sav'
-  DefDBEphemExtFile    = 'Strangeway_5bands__orbs_' + orbRangeStr + '_EESAItvl__ephem_extended.sav'
+  DefDBFile            = 'Strangeway_2bands__orbs_' + orbRangeStr + '_EESAItvl.sav'
+  DefDBEphemFile       = 'Strangeway_2bands__orbs_' + orbRangeStr + '_EESAItvl__ephem.sav'
+  DefDBEphemExtFile    = 'Strangeway_2bands__orbs_' + orbRangeStr + '_EESAItvl__ephem_extended.sav'
   ;; DefDB_tFile          = 'Dartdb_20150814--500-16361_inc_lower_lats--burst_1000-16361--cdbtime.sav'
   DB_version           = 'v0.0'
   DB_extras            = ''
@@ -122,10 +122,11 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
 
         PRINT,'Loading Strangeway DB ...'
         
-        RESTORE,DBDir+DBFile
         RESTORE,DBDir+DBEphemFile
 
-        leMaitre = CREATE_STRUCT(TEMPORARY(ephem),'dB',leMaitre.db,'e',leMaitre.e,'pFlux',leMaitre.pFlux,'info',leMaitre.info)
+        RESTORE,DBDir+DBFile
+        ;; leMaitre = CREATE_STRUCT(TEMPORARY(ephem),'dB',leMaitre.db,'e',leMaitre.e,'pFlux',leMaitre.pFlux,'info',leMaitre.info)
+        leMaitre = CREATE_STRUCT(TEMPORARY(ephem),TEMPORARY(leMaitre))
 
         FASTDB__ADD_INFO_STRUCT,leMaitre, $
                                 /FOR_SWAY_DB, $

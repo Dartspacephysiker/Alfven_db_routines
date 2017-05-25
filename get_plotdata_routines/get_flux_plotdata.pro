@@ -1151,6 +1151,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
         'PFLUX': BEGIN
 
            unitString       = energyFluxStr
+           H2DAreaConvFac   = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
 
            CASE STRUPCASE(sWay_structNavn[1]) OF
               'B': BEGIN

@@ -42,27 +42,6 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
 
         IF (WHERE(STRUPCASE(TAG_NAMES(info)) EQ 'has_been_infoed'))[0] EQ -1 THEN BEGIN
 
-           is_mapped = {dB    : 0, $
-                        e     : 0, $
-                        pFlux : 0}
-
-           is_scaled = {dB    : 1, $ ;nT
-                        e     : 1, $ ;mV/m
-                        pFlux : 0}   ;SHOULD be mW/m^2, but isn't
-
-
-           STR_ELEMENT,info,'coords','SDT',/ADD_REPLACE
-           STR_ELEMENT,info,'DB_Dir',DB_dir,/ADD_REPLACE
-           STR_ELEMENT,info,'DB_Date',DB_date,/ADD_REPLACE
-           STR_ELEMENT,info,'DB_version',DB_version,/ADD_REPLACE
-           STR_ELEMENT,info,'DB_extras',DB_extras,/ADD_REPLACE
-           STR_ELEMENT,info,'is_8Hz_DB',0B,/ADD_REPLACE
-           STR_ELEMENT,info,'is_mapped',TEMPORARY(is_mapped),/ADD_REPLACE
-           STR_ELEMENT,info,'is_scaled',TEMPORARY(is_scaled),/ADD_REPLACE
-           STR_ELEMENT,info,'has_been_infoed',1B,/ADD_REPLACE
-           STR_ELEMENT,info,'tag_names',TAG_NAMES_R(dbStruct),/ADD_REPLACE
-
-           STR_ELEMENT,info,'tag_names_l0',TAG_NAMES(dbStruct),/ADD_REPLACE
            tag_names_l1 = LIST()
            FOR k=0,N_ELEMENTS(TAG_NAMES(dbStruct))-1 DO BEGIN
 
@@ -74,7 +53,54 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
 
            ENDFOR
 
-           STR_ELEMENT,info,'tag_names_l1',tag_names_l1,/ADD_REPLACE
+
+        info  = { $             ;converted        : 0B, $
+                ;; corrected_fluxes : 0B, $
+                ;; corrected_string : '', $
+                ;; is_reduced       : BYTE(KEYWORD_SET(reduce_dbSize)), $
+                DB_dir                  : '', $
+                DB_date                 : '', $
+                DB_version              : '', $
+                DB_extras               : '', $
+                is_32Hz                 : 0B, $
+                is_128Hz                : 0B, $
+                is_noRestrict           : 0B, $
+                is_mapped               : {dB    : 0, $
+                                           e     : 0, $
+                                           pFlux : 0}, $
+                is_scaled               : {dB    : 1, $ ;nT
+                                           e     : 1, $ ;mV/m
+                                           pFlux : 0}, $ ;SHOULD be mW/m^2, but isn't
+                is_8Hz_DB               : 0B, $
+                dILAT_not_dt            : 0B, $
+                dAngle_not_dt           : 0B, $
+                dx_not_dt               : 0B, $
+                coords                  : 'SDT', $
+                full_pFlux              : dbStruct.info.full_pFlux, $
+                decimate_EB_calc_pFlux  : dBStruct.info.decimate_EB_calc_pFlux, $
+                include_E_near_B        : dBStruct.info.include_E_near_B, $
+                eField_fit_variables    : dBStruct.info.eField_fit_variables, $
+                skipDSP                 : dBStruct.info.skipDSP, $
+                originating_routine     : dBStruct.info.originating_routine, $
+                date                    : dBStruct.info.date, $
+                interp_4Hz_to_1s        : dBStruct.info.interp_4Hz_to_1s, $
+                tag_names               : TAG_NAMES_R(dbStruct), $
+                tag_names_l0            : TAG_NAMES(dbStruct), $
+                tag_names_l1            : TEMPORARY(tag_names_l1), $
+                has_been_infoed         : 1B}
+
+           ;; STR_ELEMENT,info,'DB_Dir',DB_dir,/ADD_REPLACE
+           ;; STR_ELEMENT,info,'DB_Date',DB_date,/ADD_REPLACE
+           ;; STR_ELEMENT,info,'DB_version',DB_version,/ADD_REPLACE
+           ;; STR_ELEMENT,info,'DB_extras',DB_extras,/ADD_REPLACE
+           ;; STR_ELEMENT,info,'is_8Hz_DB',0B,/ADD_REPLACE
+           ;; STR_ELEMENT,info,'is_mapped',TEMPORARY(is_mapped),/ADD_REPLACE
+           ;; STR_ELEMENT,info,'is_scaled',TEMPORARY(is_scaled),/ADD_REPLACE
+           ;; STR_ELEMENT,info,'has_been_infoed',1B,/ADD_REPLACE
+           ;; STR_ELEMENT,info,'tag_names',TAG_NAMES_R(dbStruct),/ADD_REPLACE
+
+           ;; STR_ELEMENT,info,'tag_names_l0',TAG_NAMES(dbStruct),/ADD_REPLACE
+           ;; STR_ELEMENT,info,'tag_names_l1',tag_names_l1,/ADD_REPLACE
 
         ENDIF
 
