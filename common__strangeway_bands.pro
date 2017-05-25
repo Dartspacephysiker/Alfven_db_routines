@@ -7,4 +7,5 @@ COMMON SWAY_VARS, $
    SWAY__DBDir, $
    SWAY__HAVE_GOOD_I, $
    SWAY__good_i, $
+   SWAY__cleaned_i, $
    SWAY__RECALCULATE

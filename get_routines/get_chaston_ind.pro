@@ -62,8 +62,10 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
 
   ;;;;;;;;;;;;;;;
   ;;Check whether this is a maximus or fastloc struct
+  had_DBStruct = 0
   IF KEYWORD_SET(dbStruct) THEN BEGIN
-     pDBStruct = PTR_NEW(dbStruct)
+     pDBStruct = PTR_NEW(TEMPORARY(dbStruct))
+     had_DBStruct = 1
      IF N_ELEMENTS(DBTimes) GT 0 THEN BEGIN 
         pDBTimes = PTR_NEW(DBTimes)
      ENDIF
@@ -238,9 +240,9 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
               ENDELSE
            END
            KEYWORD_SET(get_sWay_i): BEGIN
-              IF N_ELEMENTS(SWAY__DB) NE 0 THEN BEGIN
-                 pDBStruct        = PTR_NEW(SWAY__DB     )
+              IF N_ELEMENTS(SWAY__DB) NE 0 AND ~had_DBStruct THEN BEGIN
                  pDBTimes         = PTR_NEW(SWAY__DB.time)
+                 pDBStruct        = PTR_NEW(TEMPORARY(SWAY__DB))
                  ;; fastloc_delta_t  = FASTLOC_E__delta_t
                  dbFile           = SWAY__dbFile
                  ;; dbTimesFile      = __dbTimesFile
@@ -722,115 +724,119 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
               END
               KEYWORD_SET(get_sWay_i): BEGIN
 
-                 IF KEYWORD_SET(alfDB_plot_struct.sWay_maxMagFlag) THEN BEGIN
-                      ;;How to use magFlags, you wonder? Like'is:
-                    theseVals = VALUE_LOCATE(SWAY__DB.magFlags.x,SWAY__DB.time)
+                 cleaned_i = STRANGEWAY_DB_CLEANER(*pDBStruct, $
+                                                   MAXMAGFLAG=maxMagFlag)
 
-                    STOP
+                 ;; IF KEYWORD_SET(alfDB_plot_struct.sWay_maxMagFlag) THEN BEGIN
+                 ;;      ;;How to use magFlags, you wonder? Like'is:
+                 ;;    theseVals = VALUE_LOCATE(SWAY__DB.magFlags.x,SWAY__DB.time)
 
-                 ENDIF
+                 ;;    STOP
+
+                 ;; ENDIF
 
 
-                 cleaned_i = LINDGEN(N_ELEMENTS((*pDBStruct).time))
+                 ;; cleaned_i = LINDGEN(N_ELEMENTS((*pDBStruct).time))
 
-                 ;; WHERE(FINITE(SWAY__DB.time))
+                 ;; ;; WHERE(FINITE(SWAY__DB.time))
 
-                 nSubTags = [0, $ ;time
-                             0, $ ;orbit
-                             0, $ ;alt
-                             0, $ ;mlt
-                             0, $ ;ilat
-                             0, $ ;magRatio
-                             3, $ ;dB
-                             1, $ ;e
-                             3, $ ;pFlux
-                             -1]
+                 ;; nSubTags = [0, $ ;time
+                 ;;             0, $ ;orbit
+                 ;;             0, $ ;alt
+                 ;;             0, $ ;mlt
+                 ;;             0, $ ;ilat
+                 ;;             0, $ ;magRatio
+                 ;;             3, $ ;dB
+                 ;;             1, $ ;e
+                 ;;            -1, $ ;ptcl
+                 ;;             3, $ ;pFlux
+                 ;;             -1]
 
-                 FOR k=0,N_ELEMENTS(TAG_NAMES(SWAY__DB))-1 DO BEGIN
+                 ;; FOR k=0,N_ELEMENTS(TAG_NAMES(*pDBStruct))-1 DO BEGIN
 
-                    PRINT,"SWAYCLEAN: TAG #",k
+                 ;;    PRINT,"SWAYCLEAN: TAG #",k
 
-                    ;; shouldContinue = 0
-                    CASE nSubTags[k] OF
-                       -1: BEGIN
-                          ;; shouldContinue = 1
-                       END
-                       0: BEGIN
-                          cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(FINITE((*pDBStruct).(k))),COUNT=nClean)
-                       END
-                       ELSE: BEGIN
+                 ;;    ;; shouldContinue = 0
+                 ;;    CASE nSubTags[k] OF
+                 ;;       -1: BEGIN
+                 ;;          ;; shouldContinue = 1
+                 ;;       END
+                 ;;       0: BEGIN
+                 ;;          cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(FINITE((*pDBStruct).(k))),COUNT=nClean)
+                 ;;       END
+                 ;;       ELSE: BEGIN
 
-                          FOR kk=0,nSubTags[k]-1 DO BEGIN
+                 ;;          FOR kk=0,nSubTags[k]-1 DO BEGIN
 
-                             CASE SIZE( (*pDBStruct).(k).(kk),/TYPE) OF
-                                8: BEGIN
+                 ;;             CASE SIZE( (*pDBStruct).(k).(kk),/TYPE) OF
+                 ;;                8: BEGIN
 
-                                   tmpTagNames = TAG_NAMES( (*pDBStruct).(k).(kk) )
+                 ;;                   tmpTagNames = TAG_NAMES( (*pDBStruct).(k).(kk) )
                                    
-                                   ACTag       = WHERE(STRUPCASE(tmpTagNames) EQ 'AC') 
-                                   DCTag       = WHERE(STRUPCASE(tmpTagNames) EQ 'DC') 
+                 ;;                   ACTag       = WHERE(STRUPCASE(tmpTagNames) EQ 'AC') 
+                 ;;                   DCTag       = WHERE(STRUPCASE(tmpTagNames) EQ 'DC') 
 
-                                   IF ACTag[0] NE -1 THEN BEGIN
+                 ;;                   IF ACTag[0] NE -1 THEN BEGIN
 
-                                      cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(FINITE((*pDBStruct).(k).(kk).(ACTag))),COUNT=nClean)
+                 ;;                      cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(FINITE((*pDBStruct).(k).(kk).(ACTag))),COUNT=nClean)
 
-                                      IF nClean LE 10 THEN STOP
+                 ;;                      IF nClean LE 10 THEN STOP
 
-                                   ENDIF
+                 ;;                   ENDIF
 
-                                   IF DCTag[0] NE -1 THEN BEGIN
+                 ;;                   IF DCTag[0] NE -1 THEN BEGIN
 
-                                      cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(FINITE((*pDBStruct).(k).(kk).(DCTag))),COUNT=nClean)
+                 ;;                      cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(FINITE((*pDBStruct).(k).(kk).(DCTag))),COUNT=nClean)
 
-                                      IF nClean LE 10 THEN STOP
+                 ;;                      IF nClean LE 10 THEN STOP
 
-                                   ENDIF
+                 ;;                   ENDIF
 
-                                END
-                                ELSE: BEGIN
+                 ;;                END
+                 ;;                ELSE: BEGIN
 
-                                   ;; STOP
+                 ;;                   ;; STOP
 
-                                END
-                             ENDCASE
+                 ;;                END
+                 ;;             ENDCASE
 
-                          ENDFOR
+                 ;;          ENDFOR
 
-                       END
-                    ENDCASE
+                 ;;       END
+                 ;;    ENDCASE
 
-                    IF nClean LE 10 THEN STOP
+                 ;;    IF nClean LE 10 THEN STOP
 
-                 ENDFOR
+                 ;; ENDFOR
 
-                 ;;StrangewayLims
-                 ;;FLOAT(N_ELEMENTS(WHERE(ALOG10(ABS(sway__db.e.alongv.dc)) GE 3)))/N_ELEMENTS(sway__db.e.alongv.dc)*100.
-                 ;; 0.23166740
+                 ;; ;;StrangewayLims
+                 ;; ;;FLOAT(N_ELEMENTS(WHERE(ALOG10(ABS(sway__db.e.alongv.dc)) GE 3)))/N_ELEMENTS(sway__db.e.alongv.dc)*100.
+                 ;; ;; 0.23166740
 
-                 ;;FLOAT(N_ELEMENTS(WHERE(ALOG10(ABS(sway__db.e.alongv.ac)) GE 3)))/N_ELEMENTS(sway__db.e.alongv.dc)*100.
-                 ;; 0.11114024
+                 ;; ;;FLOAT(N_ELEMENTS(WHERE(ALOG10(ABS(sway__db.e.alongv.ac)) GE 3)))/N_ELEMENTS(sway__db.e.alongv.dc)*100.
+                 ;; ;; 0.11114024
 
-                 ;; badGuy_i = WHERE(ALOG10(ABS(sway__db.e.alongv.dc)) GE 4)
-                 ;; uniqBads = SWAY__DB.orbit[badGuy_i[UNIQ(sway__db.orbit[badGuy_i])]]
-                 ;; PRINT,uniqBads
+                 ;; ;; badGuy_i = WHERE(ALOG10(ABS(sway__db.e.alongv.dc)) GE 4)
+                 ;; ;; uniqBads = SWAY__DB.orbit[badGuy_i[UNIQ(sway__db.orbit[badGuy_i])]]
+                 ;; ;; PRINT,uniqBads
 
-                 ;;There's a little horn here
-                 ;; this = WHERE(ALOG10(ABS(sway__DB.db.p.dc)) GE 2.7 AND ALOG10(ABS(sway__DB.db.p.dc)) LE 2.8)
-                 ;; uniqOrbs = SWAY__DB.orbit[this[UNIQ(SWAY__DB.orbit[this])]]
-                 ;; FOR k=0,N_ELEMENTS(uniqOrbs)-1 DO BEGIN & orb = uniqOrbs[k] & ind = WHERE(SWAY__DB.orbit EQ orb) & PRINT,orb,', ',N_ELEMENTS(WHERE(ABS(ALOG10(SWAY__DB.dB.P.DC[ind])) GE 2.7 AND ABS(ALOG10(SWAY__DB.dB.P.DC[ind])) LE 2.8)) & ENDFOR
+                 ;; ;;There's a little horn here
+                 ;; ;; this = WHERE(ALOG10(ABS(sway__DB.db.p.dc)) GE 2.7 AND ALOG10(ABS(sway__DB.db.p.dc)) LE 2.8)
+                 ;; ;; uniqOrbs = SWAY__DB.orbit[this[UNIQ(SWAY__DB.orbit[this])]]
+                 ;; ;; FOR k=0,N_ELEMENTS(uniqOrbs)-1 DO BEGIN & orb = uniqOrbs[k] & ind = WHERE(SWAY__DB.orbit EQ orb) & PRINT,orb,', ',N_ELEMENTS(WHERE(ABS(ALOG10(SWAY__DB.dB.P.DC[ind])) GE 2.7 AND ABS(ALOG10(SWAY__DB.dB.P.DC[ind])) LE 2.8)) & ENDFOR
 
-                 eAlongVDCLim = 1D3
-                 eAlongVACLim = 1D3
-                 dBPACLim     = 1D3
-                 dBPDCLim     = 10.^(2.7)
+                 ;; eAlongVDCLim = 1D3
+                 ;; eAlongVACLim = 1D3
+                 ;; dBPACLim     = 1D3
+                 ;; dBPDCLim     = 10.^(2.7)
 
-                 cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(ABS( (*pDBStruct).e.alongV.DC) LE eAlongVDCLim),COUNT=nClean)
-                 cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(ABS( (*pDBStruct).e.alongV.AC) LE eAlongVACLim),COUNT=nClean)
-                 cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(ABS( (*pDBStruct).dB.P.AC    ) LE dBPACLim    ),COUNT=nClean)
+                 ;; cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(ABS( (*pDBStruct).e.alongV.DC) LE eAlongVDCLim),COUNT=nClean)
+                 ;; cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(ABS( (*pDBStruct).e.alongV.AC) LE eAlongVACLim),COUNT=nClean)
+                 ;; cleaned_i = CGSETINTERSECTION(cleaned_i,WHERE(ABS( (*pDBStruct).dB.P.AC    ) LE dBPACLim    ),COUNT=nClean)
 
-                 ;; FLOAT(N_ELEMENTS(WHERE(ALOG10(ABS(sway__db.db.p.ac)) GE 3)))/N_ELEMENTS(sway__db.e.alongv.dc)*100.
+                 ;; ;; FLOAT(N_ELEMENTS(WHERE(ALOG10(ABS(sway__db.db.p.ac)) GE 3)))/N_ELEMENTS(sway__db.e.alongv.dc)*100.
 
-                 PRINT,"N clean SWAY inds: ",N_ELEMENTS(cleaned_i)
+                 ;; PRINT,"N clean SWAY inds: ",N_ELEMENTS(cleaned_i)
 
               END
               ELSE: BEGIN
@@ -965,8 +971,6 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
   ;; SAVE,good_i,FILENAME=good_i_file
   ;; STOP
   
-  RETURN, good_i
-
   IF KEYWORD_SET(nonMem) THEN BEGIN
 
      CASE 1 OF
@@ -992,6 +996,29 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
         END
      ENDCASE
 
+  ENDIF ELSE BEGIN
+
+     CASE 1 OF
+        had_DBStruct: BEGIN
+
+           DBStruct = TEMPORARY(*pDBStruct)
+
+        END
+        KEYWORD_SET(get_sWay_i): BEGIN
+
+           SWAY__DB = TEMPORARY(*pDBStruct)
+
+        END
+     ENDCASE
+
+  ENDELSE
+
+  IF had_DBStruct THEN BEGIN
+
+     PTR_FREE,pDBStruct
+
   ENDIF
+
+  RETURN, good_i
 
 END
