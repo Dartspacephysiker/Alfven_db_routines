@@ -66,8 +66,15 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
 
   IF KEYWORD_SET(use_8Hz_DB) THEN BEGIN
 
-     PRINT,"Sorry, don't have that yet!"
-     STOP
+     orbRangeStr       = '1436-5382'
+     DB_date           = '20170526'
+
+     DefDBDir          = '/SPENCEdata/software/sdt/batch_jobs/saves_output_etc/Strangeway_3bands/'
+     DefDBFile         = 'Strangeway_3bands--also_E_near_B__orbs_' + orbRangeStr + '_EESAItvl.sav'
+     
+
+     ;; PRINT,"Sorry, don't have that yet!"
+     ;; STOP
 
   ENDIF
 
@@ -139,7 +146,8 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
         ;; IF KEYWORD_SET(use_8Hz_DB) THEN BEGIN
         ;;    leMaitre.info.is_8Hz_DB = 1B
         ;; ENDIF
-        leMaitre.info.is_8Hz_DB = BYTE(KEYWORD_SET(use_8Hz_DB))
+        leMaitre.info.is_8Hz_DB   = BYTE(KEYWORD_SET(use_8Hz_DB))
+        leMaitre.info.have_ACHigh = TAG_EXIST(leMaitre.dB.p,'ACHIGH')
 
         ;; STOP
 

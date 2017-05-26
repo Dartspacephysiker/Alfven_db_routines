@@ -72,6 +72,7 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                                            e     : 1, $ ;mV/m
                                            pFlux : 0}, $ ;SHOULD be mW/m^2, but isn't
                 is_8Hz_DB               : 0B, $
+                have_ACHigh             : 0B, $
                 dILAT_not_dt            : 0B, $
                 dAngle_not_dt           : 0B, $
                 dx_not_dt               : 0B, $
