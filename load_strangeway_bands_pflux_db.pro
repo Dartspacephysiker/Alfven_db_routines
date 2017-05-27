@@ -9,7 +9,7 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
                                    USE_8HZ__LOAD_PFLUX=use_8Hz__load_pFlux, $
                                    USE_8HZ__LOAD_MAGFLAGS=use_8Hz__load_magFlags, $
                                    USE_8HZ__LOAD_PTCL=use_8Hz__load_ptcl, $
-                                   USE_8HZ__LOAD_EPHEM=use_8Hz__load_ephem, $
+                                   ;; USE_8HZ__LOAD_EPHEM=use_8Hz__load_ephem, $
                                    USE_8HZ__SWAY_PLOTTYPE=use_8Hz__sWay_plotType, $
                                    ;; DB_TFILE=DB_tFile, $
                                    CORRECT_FLUXES=correct_fluxes, $
@@ -73,8 +73,8 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
 
   IF KEYWORD_SET(use_8Hz_DB) THEN BEGIN
 
-     orbRangeStr              = '1436-5382'
-     DB_date                  = '20170526'
+     ;; orbRangeStr              = '1436-5382'
+     ;; DB_date                  = '20170526'
 
      orbRangeStr              = '1000-7705'
      DB_date                  = '20170527'
@@ -99,16 +99,21 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
      dBSWayStruct             = 'dB'      
      eFieldSWayStruct         = 'e'  
      magFlagsSWayStruct       = 'magFlags'
-     ptclSWayStruct           = 'pFlux'   
+     ptclSWayStruct           = 'ptcl'   
      pFluxSWayStruct          = 'pFlux'   
      ephemSWayStruct          = 'ephem'   
 
-     IF N_ELEMENTS(SWAY__8Hz_varsToLoad) EQ 0 THEN BEGIN
-        SWAY__8Hz_NVarsToLoad = 0
-        SWAY__8Hz_varsToLoad  = !NULL
-        SWAY8StructNames      = !NULL
-        SWAY8FilSuffs         = !NULL
+     IF N_ELEMENTS(SWAY__8Hz_varsToLoad) NE 0 THEN BEGIN
+        PRINT,"Did this screw up last time? This should be an empty var ..."
+        PRINT,"NVars to load: ",SWAY__8Hz_NVarsToLoad
+        PRINT,"Vars to load: ",SWAY__8Hz_varsToLoad
      ENDIF
+     ;; IF N_ELEMENTS(SWAY__8Hz_varsToLoad) EQ 0 THEN BEGIN
+     SWAY__8Hz_NVarsToLoad = 0
+     SWAY__8Hz_varsToLoad  = !NULL
+     SWAY8StructNames      = !NULL
+     SWAY8FilSuffs         = !NULL
+     ;; ENDIF
 
      IF N_ELEMENTS(SWAY__8Hz_varsLoaded) EQ 0 THEN BEGIN
         SWAY__8Hz_NVarsLoaded = 0
@@ -126,12 +131,12 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
         use_8Hz__load_ptcl   = (WHERE(STRMATCH(STRUPCASE(use_8Hz__sWay_plotType),'PTCL*' )))[0] NE -1
         use_8Hz__load_dB     = (WHERE(STRMATCH(STRUPCASE(use_8Hz__sWay_plotType),'DB*'   )))[0] NE -1
         use_8Hz__load_eField = (WHERE(STRMATCH(STRUPCASE(use_8Hz__sWay_plotType),'E.*'   )))[0] NE -1
-        use_8Hz__load_ephem  = 1
-        
      ENDIF
 
+     use_8Hz__load_ephem     = 1
+        
      IF KEYWORD_SET(use_8Hz__load_ptcl) THEN BEGIN
-        IF SIZE(SWAY__8Hz_ptcl,/TYPE) EQ 8 THEN BEGIN
+        IF SIZE(SWAY__8Hz_ptcl,/TYPE) EQ 8 AND ~KEYWORD_SET(force_load) THEN BEGIN
 
         ENDIF ELSE BEGIN
            SWAY__8Hz_varsToLoad  = [SWAY__8Hz_varsToLoad,ptclSWayVarName]
@@ -142,7 +147,7 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
      ENDIF
 
      IF KEYWORD_SET(use_8Hz__load_pFlux) THEN BEGIN
-        IF SIZE(SWAY__8Hz_pFlux,/TYPE) EQ 8 THEN BEGIN
+        IF SIZE(SWAY__8Hz_pFlux,/TYPE) EQ 8 AND ~KEYWORD_SET(force_load) THEN BEGIN
 
         ENDIF ELSE BEGIN
            SWAY__8Hz_varsToLoad  = [SWAY__8Hz_varsToLoad,pFluxSWayVarName]
@@ -153,7 +158,7 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
      ENDIF
 
      IF KEYWORD_SET(use_8Hz__load_dB) THEN BEGIN
-        IF SIZE(SWAY__8Hz_dB,/TYPE) EQ 8 THEN BEGIN
+        IF SIZE(SWAY__8Hz_dB,/TYPE) EQ 8 AND ~KEYWORD_SET(force_load) THEN BEGIN
 
         ENDIF ELSE BEGIN
            SWAY__8Hz_varsToLoad  = [SWAY__8Hz_varsToLoad,dBSWayVarName]
@@ -164,7 +169,7 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
      ENDIF
 
      IF KEYWORD_SET(use_8Hz__load_eField) THEN BEGIN
-        IF SIZE(SWAY__8Hz_eField,/TYPE) EQ 8 THEN BEGIN
+        IF SIZE(SWAY__8Hz_eField,/TYPE) EQ 8 AND ~KEYWORD_SET(force_load) THEN BEGIN
 
         ENDIF ELSE BEGIN
            SWAY__8Hz_varsToLoad  = [SWAY__8Hz_varsToLoad,eFieldSWayVarName]
@@ -175,7 +180,7 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
      ENDIF
 
      IF KEYWORD_SET(use_8Hz__load_magFlags) THEN BEGIN
-        IF SIZE(SWAY__8Hz_magFlags,/TYPE) EQ 8 THEN BEGIN
+        IF SIZE(SWAY__8Hz_magFlags,/TYPE) EQ 8 AND ~KEYWORD_SET(force_load) THEN BEGIN
 
         ENDIF ELSE BEGIN
            SWAY__8Hz_varsToLoad  = [SWAY__8Hz_varsToLoad,magFlagsSWayVarName]
@@ -186,8 +191,9 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
      ENDIF
 
      IF KEYWORD_SET(use_8Hz__load_ephem) THEN BEGIN
-        IF SIZE(SWAY__8Hz_ephem,/TYPE) EQ 8 THEN BEGIN
-
+        ;; IF SIZE(SWAY__8Hz_ephem,/TYPE) EQ 8 ~KEYWORD_SET(force_load) THEN BEGIN
+        IF SIZE(SWAY__DB,/TYPE) EQ 8 AND ~KEYWORD_SET(force_load) THEN BEGIN
+           ;; leMaitre              = TEMPORARY(SWAY__DB)
         ENDIF ELSE BEGIN
            SWAY__8Hz_varsToLoad  = [SWAY__8Hz_varsToLoad,ephemSWayVarName]
            SWAY__8Hz_NVarsToLoad++
@@ -256,16 +262,13 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
 
   IF shouldLoad THEN BEGIN
 
-     IF FILE_TEST(DBDir+DBFile) THEN BEGIN
-
-        ;; IF ~KEYWORD_SET(just_time) THEN BEGIN
-
-        PRINT,'Loading Strangeway DB ...'
-        
         CASE 1 OF
            KEYWORD_SET(use_8Hz_DB): BEGIN
 
               WHILE SWAY__8Hz_NVarsToLoad GT 0 DO BEGIN
+
+                 ;; PRINT,"Loading " + SWAY__8Hz_varsToLoad[0] + ' ...'
+                 PRINT,"Loading " + SWAY8StructNames[0] + ' ...'
 
                  thisFile             = STRSPLIT(defDBFile,'.sav',/REGEX,/EXTRACT) + '-' + SWAY8FilSuffs[0] + '.sav'
 
@@ -288,8 +291,23 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
                     END
                  ENDCASE
                  
-                 SWAY__8Hz_varsLoaded = [SWAY__8Hz_varsLoaded,SWAY__8Hz_varsToLoad[0]]
-                 SWAY__8Hz_NVarsLoaded++
+                 IF STRUPCASE(SWAY8StructNames[0]) NE 'EPHEM' THEN BEGIN
+                    PRINT,"Swap " + SWAY8StructNames[0] + " to " + SWAY__8Hz_varsToLoad[0]
+                    execStr2             = SWAY__8Hz_varsToLoad[0] + ' = TEMPORARY(' + SWAY8StructNames[0] + ')'
+                    bro                  = EXECUTE(execStr2)
+                    IF ~bro THEN STOP
+                 ENDIF
+
+                 checkSomeMore = N_ELEMENTS(SWAY__8Hz_varsLoaded) GT 0
+                 IF checkSomeMore THEN BEGIN
+                    IF (WHERE(STRUPCASE(SWAY__8Hz_varsLoaded) EQ SWAY__8Hz_varsToLoad[0]))[0] EQ -1 THEN BEGIN
+                       SWAY__8Hz_varsLoaded = [SWAY__8Hz_varsLoaded,SWAY__8Hz_varsToLoad[0]]
+                       SWAY__8Hz_NVarsLoaded++
+                    ENDIF
+                 ENDIF ELSE BEGIN
+                       SWAY__8Hz_varsLoaded = [SWAY__8Hz_varsToLoad[0]]
+                       SWAY__8Hz_NVarsLoaded++
+                 ENDELSE
 
                  CASE SWAY__8Hz_NVarsToLoad OF
                     1: BEGIN
@@ -307,33 +325,47 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
 
               ENDWHILE
 
+              IF N_ELEMENTS(ephem) GT 0 THEN BEGIN
+                 leMaitre                   = TEMPORARY(ephem)
+              ENDIF
+
            END
            ELSE: BEGIN
 
-              RESTORE,DBDir+DBEphemFile
-              RESTORE,DBDir+DBFile
-              ;; leMaitre = CREATE_STRUCT(TEMPORARY(ephem),'dB',leMaitre.db,'e',leMaitre.e,'pFlux',leMaitre.pFlux,'info',leMaitre.info)
-              leMaitre = CREATE_STRUCT(TEMPORARY(ephem),TEMPORARY(leMaitre))
+              IF FILE_TEST(DBDir+DBFile) THEN BEGIN
+
+                 ;; IF ~KEYWORD_SET(just_time) THEN BEGIN
+
+                 PRINT,'Loading Strangeway DB ...'
+                 
+                 RESTORE,DBDir+DBEphemFile
+                 RESTORE,DBDir+DBFile
+                 ;; leMaitre = CREATE_STRUCT(TEMPORARY(ephem),'dB',leMaitre.db,'e',leMaitre.e,'pFlux',leMaitre.pFlux,'info',leMaitre.info)
+                 leMaitre = CREATE_STRUCT(TEMPORARY(ephem),TEMPORARY(leMaitre))
+
+              ENDIF
 
            END
         ENDCASE
 
+        IF ~TAG_EXIST(leMaitre.info,'has_been_infoed') THEN BEGIN
+
+           FASTDB__ADD_INFO_STRUCT,leMaitre, $
+                                   /FOR_SWAY_DB, $
+                                   DB_DIR=DBDir, $
+                                   DB_DATE=DB_date, $
+                                   DB_VERSION=DB_version, $
+                                   DB_EXTRAS=DB_extras, $
+                                   DB__INTO_ESPEC_FILE=DB__into_eSpec_file
            
+           ;; IF KEYWORD_SET(use_8Hz_DB) THEN BEGIN
+           ;;    leMaitre.info.is_8Hz_DB = 1B
+           ;; ENDIF
+           leMaitre.info.is_8Hz_DB   = BYTE(KEYWORD_SET(use_8Hz_DB))
+           ;; leMaitre.info.have_ACHigh = TAG_EXIST(leMaitre.dB.p,'ACHIGH')
+           leMaitre.info.have_ACHigh = leMaitre.info.is_8Hz_DB
 
-
-        FASTDB__ADD_INFO_STRUCT,leMaitre, $
-                                /FOR_SWAY_DB, $
-                                DB_DIR=DBDir, $
-                                DB_DATE=DB_date, $
-                                DB_VERSION=DB_version, $
-                                DB_EXTRAS=DB_extras, $
-                                DB__INTO_ESPEC_FILE=DB__into_eSpec_file
-        
-        ;; IF KEYWORD_SET(use_8Hz_DB) THEN BEGIN
-        ;;    leMaitre.info.is_8Hz_DB = 1B
-        ;; ENDIF
-        leMaitre.info.is_8Hz_DB   = BYTE(KEYWORD_SET(use_8Hz_DB))
-        leMaitre.info.have_ACHigh = TAG_EXIST(leMaitre.dB.p,'ACHIGH')
+        ENDIF
 
         ;; STOP
 
@@ -343,8 +375,6 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
         ;; leMaitre.info.using_heavies  = KEYWORD_SET(using_heavies)
 
         ;; ENDIF
-
-     ENDIF
 
      IF leMaitre EQ !NULL AND ~KEYWORD_SET(just_time) THEN BEGIN
         PRINT,"Couldn't load leMaitre!"
@@ -446,25 +476,35 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
         CASE 1 OF
            KEYWORD_SET(use_8Hz_DB): BEGIN
 
-              FOR k=0,7 DO BEGIN
+              IF N_ELEMENTS(SWAY__8Hz_pFlux) GT 0 THEN BEGIN
+                 PRINT,"Mapping sWay 8-Hz pFlux ..."
+                 
+                 SWAY__8Hz_pFlux.b.DC         *= (*pDBStruct).magRatio
 
-                 (*pDBStruct).pflux.b.DC[k,*]     *= (*pDBStruct).magRatio
-                 (*pDBStruct).pflux.b.AC[k,*]     *= (*pDBStruct).magRatio
-                 (*pDBStruct).pflux.b.ACHigh[k,*] *= (*pDBStruct).magRatio
+                 FOR k=0,7 DO BEGIN
 
-              ENDFOR
+                    SWAY__8Hz_pFlux.b.AC[k,*]     *= (*pDBStruct).magRatio
+                    SWAY__8Hz_pFlux.b.ACHigh[k,*] *= (*pDBStruct).magRatio
+
+                 ENDFOR
+
+                 (*pDBStruct).info.is_mapped.pFlux = 1B
+
+              ENDIF
 
            END
            ELSE: BEGIN
 
+              PRINT,"Mapping sWay pFlux ..."
+
               (*pDBStruct).pflux.b.DC *= (*pDBStruct).magRatio
               (*pDBStruct).pflux.b.AC *= (*pDBStruct).magRatio
+
+              (*pDBStruct).info.is_mapped.pFlux = 1B
 
            END
         ENDCASE           
            
-
-        (*pDBStruct).info.is_mapped.pFlux = 1B
 
      ENDIF
 

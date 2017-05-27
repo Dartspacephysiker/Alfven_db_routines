@@ -262,8 +262,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
         for_sWay_DB: BEGIN
            CASE 1 OF
               alfDB_plot_struct.sWay_use_8Hz_DB: BEGIN
-                 in_MLTS   = SWAY__8Hz_ephem.mlt[plot_i]
-                 in_ILATS  = SWAY__8Hz_ephem.ilats[plot_i]
+                 in_MLTS   = SWAY__DB.mlt[plot_i]
+                 in_ILATS  = SWAY__DB.ilat[plot_i]
               END
               ELSE: BEGIN
                  in_MLTS   = SWAY__DB.mlt[plot_i]
@@ -2027,15 +2027,19 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
         ;;Are we supposed to do AC and DC? Finne ut
 
+        splitter = STRSPLIT(fluxPlotType,'.',/EXTRACT)
+        nSplit   = N_ELEMENTS(splitter)
         IF ~KEYWORD_SET(alfDB_plot_struct.sWay_use_8Hz_DB) THEN BEGIN
-           splitter = STRSPLIT(fluxPlotType,'.',/EXTRACT)
-           nSplit   = N_ELEMENTS(splitter)
+
            CASE nSplit OF
               1: BEGIN
+
                  PRINT,"Ce suffit pas!"
                  STOP
+
               END
               2: BEGIN
+
                  firstInd  = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB)) EQ STRUPCASE(splitter[0]))
                  IF firstInd EQ -1 THEN STOP
                  secInd    = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd))) EQ STRUPCASE(splitter[1]))
@@ -2047,26 +2051,88 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
               END
               3: BEGIN
+
                  firstInd  = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB)) EQ STRUPCASE(splitter[0]))
                  IF firstInd EQ -1 THEN STOP
                  secInd    = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd))) EQ STRUPCASE(splitter[1]))
                  IF secInd EQ -1 THEN STOP
                  thirdInd  = [WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ STRUPCASE(splitter[2]))]
                  IF (WHERE(thirdInd EQ -1))[0] NE -1 THEN STOP
+
               END
            ENDCASE
-        ENDIF
 
-        nSub = N_ELEMENTS(thirdInd)
+           nSub = N_ELEMENTS(thirdInd)
+
+        ENDIF ELSE BEGIN
+
+           CASE STRUPCASE(splitter[0]) OF
+              'PFLUX': BEGIN
+                 sWayVar = 'SWAY__8Hz_pFlux'
+              END
+              'DB': BEGIN
+                 sWayVar = 'SWAY__8Hz_dB'
+              END
+              'E': BEGIN
+                 sWayVar = 'SWAY__8Hz_eField'
+              END
+           ENDCASE
+
+           CASE nSplit OF
+              1: BEGIN
+
+                 PRINT,"Ce suffit pas!"
+                 STOP
+
+              END
+              2: BEGIN
+
+                 execStr = 'firstInd  = WHERE(STRUPCASE(TAG_NAMES(' + sWayVar + ')) EQ STRUPCASE(splitter[1]))'
+                 bro     = EXECUTE(execStr)
+                 IF ~bro THEN STOP
+                 IF firstInd EQ -1 THEN STOP
+
+                 execStr = 'secInd  = [WHERE(STRUPCASE(TAG_NAMES(' + sWayVar + $
+                           '.(firstInd))) EQ "AC"),WHERE(STRUPCASE(TAG_NAMES(' + sWayVar + $
+                           '.(firstInd))) EQ "DC"),WHERE(STRUPCASE(TAG_NAMES(' + sWayVar + $
+                           '.(firstInd))) EQ "ACHIGH")]'
+                 bro     = EXECUTE(execStr)
+                 IF ~bro THEN STOP
+                 IF (WHERE(secInd EQ -1))[0] NE -1 THEN STOP
+
+              END
+              3: BEGIN
+
+                 execStr = 'firstInd  = WHERE(STRUPCASE(TAG_NAMES(' + sWayVar + ')) EQ STRUPCASE(splitter[1]))'
+                 bro     = EXECUTE(execStr)
+                 IF ~bro THEN STOP
+                 IF firstInd EQ -1 THEN STOP
+
+                 execStr = 'secInd  = [WHERE(STRUPCASE(TAG_NAMES(' + sWayVar + '.(firstInd))) EQ STRUPCASE(splitter[2]))]'
+                 bro     = EXECUTE(execStr)
+                 IF ~bro THEN STOP
+                 IF (WHERE(secInd EQ -1))[0] NE -1 THEN STOP
+
+              END
+           ENDCASE
+
+           nSub = N_ELEMENTS(secInd)
+
+        ENDELSE
 
         FOR kk=0,nSub-1 DO BEGIN
            
-        IF ~KEYWORD_SET(alfDB_plot_struct.sWay_use_8Hz_DB) THEN BEGIN
-           sWay_structInds = [firstInd,secInd,thirdInd[kk]]
-           sWay_structNavn = [SWAY__DB.info.tag_names_l0[firstInd], $
-                              SWAY__DB.info.tag_names_l1[firstInd,secInd], $
-                              (TAG_NAMES(SWAY__DB.(firstInd).(secInd)))[thirdInd[kk]]]
-        ENDIF
+           IF ~KEYWORD_SET(alfDB_plot_struct.sWay_use_8Hz_DB) THEN BEGIN
+              sWay_structInds = [firstInd,secInd,thirdInd[kk]]
+              sWay_structNavn = [SWAY__DB.info.tag_names_l0[firstInd], $
+                                 SWAY__DB.info.tag_names_l1[firstInd,secInd], $
+                                 (TAG_NAMES(SWAY__DB.(firstInd).(secInd)))[thirdInd[kk]]]
+           ENDIF ELSE BEGIN
+              sWay_structInds = [firstInd,secInd[kk]]
+              execStr         = 'sWay_structNavn = STRJOIN([sWayVar,(TAG_NAMES(' + sWayVar + '))[firstInd],(TAG_NAMES(' + sWayVar + '.(firstInd)))[secInd[kk]]],".")'
+              bro             = EXECUTE(execStr)
+              IF ~bro THEN STOP
+           ENDELSE
 
            GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_SWAY, $
                              SWAY_STRUCTINDS=sWay_structInds, $

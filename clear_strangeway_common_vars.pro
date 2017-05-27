@@ -23,7 +23,7 @@ PRO CLEAR_STRANGEWAY_COMMON_VARS
   SWAY__8Hz_eField      = !NULL
   SWAY__8Hz_magFlags    = !NULL
   SWAY__8Hz_pFlux       = !NULL
-  SWAY__8Hz_ephem       = !NULL
+  ;; SWAY__8Hz_ephem       = !NULL
   SWAY__RECALCULATE     = !NULL
 
 END

@@ -724,7 +724,8 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
               END
               KEYWORD_SET(get_sWay_i): BEGIN
 
-                 cleaned_i = STRANGEWAY_DB_CLEANER(*pDBStruct, $
+                 cleaned_i = STRANGEWAY_DB_CLEANER((*pDBStruct), $
+                                                   IS_8HZ_DB=(*pDBStruct).info.is_8Hz_DB, $
                                                    MAXMAGFLAG=maxMagFlag)
 
                  ;; IF KEYWORD_SET(alfDB_plot_struct.sWay_maxMagFlag) THEN BEGIN

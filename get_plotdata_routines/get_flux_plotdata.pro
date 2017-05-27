@@ -1104,7 +1104,6 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   ENDIF
 
   IF KEYWORD_SET(get_sWay) THEN BEGIN
-     dataName               = STRJOIN(sWay_structNavn,'_')
      H2DStr.labelFormat     = fluxPlotSWayCBLabelFormat
      H2DStr.logLabels       = logSWayLabels
      H2DStr.do_plotIntegral = sWay_do_plotIntegral
@@ -1113,14 +1112,33 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
      can_div_by_w_x         = 0
      can_mlt_by_w_x         = 1
 
-     inData                 = SWAY__DB.(sWay_structInds[0]).(sWay_structInds[1]).(sWay_structInds[2])
+     IF KEYWORD_SET(SWAY__DB.info.is_8Hz_DB) THEN BEGIN
 
-     ACDCString             = sWay_structNavn[2]
+        dataName            = STRJOIN(STRSPLIT(sWay_structNavn,'.',/EXTRACT),'_')
+        execStr = 'inData   = ' + sWay_structNavn
+        bro                 = EXECUTE(execStr)
+        IF ~bro THEN STOP
+        ACDCString          = (STRSPLIT(sWay_structNavn,'.',/EXTRACT))[2]
 
-     tmpFluxPlotType        = SWAY__DB.info.is_8Hz_DB ? '8Hz' : ''
+        tmpFluxPlotType     = '8Hz'
 
-     CASE STRUPCASE(sWay_structNavn[0]) OF
-        'DB': BEGIN
+        IF STRMATCH(STRUPCASE(ACDCString),'AC*') AND (N_ELEMENTS(SIZE(inData,/DIMENSIONS)) EQ 2) THEN BEGIN
+           theseVars        = ARRAY_INDICES(inData,FIX(8 * RANDOMU(seed,N_ELEMENTS(inData[0,*]))) + LINDGEN(N_ELEMENTS(inData[0,*]))*8L)
+           inData           = REFORM(inData[theseVars[0,*],theseVars[1,*]])
+        ENDIF
+
+     ENDIF ELSE BEGIN
+
+        dataName            = STRJOIN(sWay_structNavn,'_')
+        inData              = SWAY__DB.(sWay_structInds[0]).(sWay_structInds[1]).(sWay_structInds[2])
+        ACDCString          = sWay_structNavn[2]
+
+        tmpFluxPlotType     =  ''
+
+     ENDELSE
+
+     CASE 1 OF
+        STRMATCH(STRUPCASE(sWay_structNavn[0]),'*DB*'): BEGIN
 
            unitString       = BFieldString
 
@@ -1137,7 +1155,8 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            ENDCASE
 
         END
-        'E': BEGIN
+        ;; 'E': BEGIN
+        STRMATCH(STRUPCASE(sWay_structNavn[0]),'*E*'): BEGIN
 
            unitString       = EFieldString
 
@@ -1148,12 +1167,15 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            ENDCASE
 
         END
-        'PFLUX': BEGIN
+        STRMATCH(STRUPCASE(sWay_structNavn[0]),'*PFLUX*'): BEGIN
+        ;; 'PFLUX': BEGIN
 
            unitString       = energyFluxStr
            H2DAreaConvFac   = 1e3 ;Areas are given in km^2, but we need them in m^2 (less a factor of 10^3 to junk 'milli' prefix on mW)
 
-           CASE STRUPCASE(sWay_structNavn[1]) OF
+           tester           = (KEYWORD_SET(SWAY__DB.info.is_8Hz_DB) ? (STRSPLIT(sWay_structNavn,'.',/EXTRACT)) : sWay_structNavn)[1]
+
+           CASE STRUPCASE(tester) OF
               'B': BEGIN
                  H2DStr.title  = title__sWay_Pb
               END
