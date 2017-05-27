@@ -10,6 +10,7 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
                                    USE_8HZ__LOAD_MAGFLAGS=use_8Hz__load_magFlags, $
                                    USE_8HZ__LOAD_PTCL=use_8Hz__load_ptcl, $
                                    USE_8HZ__LOAD_EPHEM=use_8Hz__load_ephem, $
+                                   USE_8HZ__SWAY_PLOTTYPE=use_8Hz__sWay_plotType, $
                                    ;; DB_TFILE=DB_tFile, $
                                    CORRECT_FLUXES=correct_fluxes, $
                                    DO_NOT_MAP_PFLUX=do_not_map_pflux, $
@@ -112,6 +113,21 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
      IF N_ELEMENTS(SWAY__8Hz_varsLoaded) EQ 0 THEN BEGIN
         SWAY__8Hz_NVarsLoaded = 0
         SWAY__8Hz_varsLoaded  = !NULL
+     ENDIF
+
+     IF KEYWORD_SET(use_8Hz__sWay_plotType) THEN BEGIN
+
+        IF SIZE(use_8Hz__sWay_plotType,/TYPE) NE 7 THEN BEGIN
+           PRINT,"Supposed to provide a string, dimwit. You know, like pFlux.B.DC or dB.P.ACHigh or E.nearB.AC"
+           STOP
+        ENDIF
+
+        use_8Hz__load_pFlux  = (WHERE(STRMATCH(STRUPCASE(use_8Hz__sWay_plotType),'PFLUX*')))[0] NE -1
+        use_8Hz__load_ptcl   = (WHERE(STRMATCH(STRUPCASE(use_8Hz__sWay_plotType),'PTCL*' )))[0] NE -1
+        use_8Hz__load_dB     = (WHERE(STRMATCH(STRUPCASE(use_8Hz__sWay_plotType),'DB*'   )))[0] NE -1
+        use_8Hz__load_eField = (WHERE(STRMATCH(STRUPCASE(use_8Hz__sWay_plotType),'E.*'   )))[0] NE -1
+        use_8Hz__load_ephem  = 1
+        
      ENDIF
 
      IF KEYWORD_SET(use_8Hz__load_ptcl) THEN BEGIN

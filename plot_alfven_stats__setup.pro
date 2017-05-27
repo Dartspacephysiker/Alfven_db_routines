@@ -62,7 +62,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    CHARETYPE=charEType, $
    CHARIEPLOTS=chariEPlots, $
    SWAY_PLOTTYPE=sway_plotType, $
-   ;; SWAY_USE_8HZ_DB=sWay_use_8Hz_DB, $
+   SWAY_USE_8HZ_DB=sWay_use_8Hz_DB, $
    MAGCPLOTS=magCPlots, $
    ABSCHARE=absCharE, $
    ABSCHARIE=absCharie, $
