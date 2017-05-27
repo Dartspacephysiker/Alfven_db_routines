@@ -326,7 +326,7 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
               ENDWHILE
 
               IF N_ELEMENTS(ephem) GT 0 THEN BEGIN
-                 leMaitre                   = TEMPORARY(ephem)
+                 SWAY__DB                   = TEMPORARY(ephem)
               ENDIF
 
            END
@@ -341,16 +341,16 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
                  RESTORE,DBDir+DBEphemFile
                  RESTORE,DBDir+DBFile
                  ;; leMaitre = CREATE_STRUCT(TEMPORARY(ephem),'dB',leMaitre.db,'e',leMaitre.e,'pFlux',leMaitre.pFlux,'info',leMaitre.info)
-                 leMaitre = CREATE_STRUCT(TEMPORARY(ephem),TEMPORARY(leMaitre))
+                 SWAY__DB = CREATE_STRUCT(TEMPORARY(ephem),TEMPORARY(leMaitre))
 
               ENDIF
 
            END
         ENDCASE
 
-        IF ~TAG_EXIST(leMaitre.info,'has_been_infoed') THEN BEGIN
+        IF ~TAG_EXIST(SWAY__DB.info,'has_been_infoed') THEN BEGIN
 
-           FASTDB__ADD_INFO_STRUCT,leMaitre, $
+           FASTDB__ADD_INFO_STRUCT,SWAY__DB, $
                                    /FOR_SWAY_DB, $
                                    DB_DIR=DBDir, $
                                    DB_DATE=DB_date, $
@@ -361,27 +361,27 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
            ;; IF KEYWORD_SET(use_8Hz_DB) THEN BEGIN
            ;;    leMaitre.info.is_8Hz_DB = 1B
            ;; ENDIF
-           leMaitre.info.is_8Hz_DB   = BYTE(KEYWORD_SET(use_8Hz_DB))
-           ;; leMaitre.info.have_ACHigh = TAG_EXIST(leMaitre.dB.p,'ACHIGH')
-           leMaitre.info.have_ACHigh = leMaitre.info.is_8Hz_DB
+           SWAY__DB.info.is_8Hz_DB   = BYTE(KEYWORD_SET(use_8Hz_DB))
+           ;; SWAY__DB.info.have_ACHigh = TAG_EXIST(SWAY__DB.dB.p,'ACHIGH')
+           SWAY__DB.info.have_ACHigh = SWAY__DB.info.is_8Hz_DB
 
         ENDIF
 
         ;; STOP
 
         ;; IF KEYWORD_SET(use_GEO) THEN BEGIN
-        ;; geo = leMaitre.ephem
+        ;; geo = SWAY__DB.ephem
         ;; ENDIF
-        ;; leMaitre.info.using_heavies  = KEYWORD_SET(using_heavies)
+        ;; SWAY__DB.info.using_heavies  = KEYWORD_SET(using_heavies)
 
         ;; ENDIF
 
-     IF leMaitre EQ !NULL AND ~KEYWORD_SET(just_time) THEN BEGIN
-        PRINT,"Couldn't load leMaitre!"
+     IF SWAY__DB EQ !NULL AND ~KEYWORD_SET(just_time) THEN BEGIN
+        PRINT,"Couldn't load SWAY__DB!"
         STOP
      ENDIF
 
-     pDBStruct                         = PTR_NEW(TEMPORARY(leMaitre)) 
+     pDBStruct                         = PTR_NEW(TEMPORARY(SWAY__DB)) 
 
   ENDIF ELSE BEGIN
 

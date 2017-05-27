@@ -1142,7 +1142,9 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
            unitString       = BFieldString
 
-           CASE STRUPCASE(sWay_structNavn[1]) OF
+           tester           = (KEYWORD_SET(SWAY__DB.info.is_8Hz_DB) ? (STRSPLIT(sWay_structNavn,'.',/EXTRACT)) : sWay_structNavn)[1]
+
+           CASE STRUPCASE(tester) OF
               'B': BEGIN
                  H2DStr.title  = title__sWay_bb
               END
