@@ -1115,12 +1115,16 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
      IF KEYWORD_SET(SWAY__DB.info.is_8Hz_DB) THEN BEGIN
 
         dataName            = STRJOIN(STRSPLIT(sWay_structNavn,'.',/EXTRACT),'_')
-        execStr = 'inData   = ' + sWay_structNavn
-        bro                 = EXECUTE(execStr)
-        IF ~bro THEN STOP
+        tmpFluxPlotType     = '8Hz'
         ACDCString          = (STRSPLIT(sWay_structNavn,'.',/EXTRACT))[2]
 
-        tmpFluxPlotType     = '8Hz'
+        IF sWay_structInds[1] EQ 10 THEN BEGIN
+           execStr = 'inData = ' + sWay_structNavn.Replace('ACBoth','ACHigh') + ' + ' + sWay_structNavn.Replace('ACBoth','AC')
+        ENDIF ELSE BEGIN
+           execStr = 'inData = ' + sWay_structNavn
+           bro              = EXECUTE(execStr)
+           IF ~bro THEN STOP
+        ENDELSE
 
         IF STRMATCH(STRUPCASE(ACDCString),'AC*') AND (N_ELEMENTS(SIZE(inData,/DIMENSIONS)) EQ 2) THEN BEGIN
            theseVars        = ARRAY_INDICES(inData,FIX(8 * RANDOMU(seed,N_ELEMENTS(inData[0,*]))) + LINDGEN(N_ELEMENTS(inData[0,*]))*8L)
@@ -1130,10 +1134,10 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
      ENDIF ELSE BEGIN
 
         dataName            = STRJOIN(sWay_structNavn,'_')
-        inData              = SWAY__DB.(sWay_structInds[0]).(sWay_structInds[1]).(sWay_structInds[2])
+        tmpFluxPlotType     =  ''
         ACDCString          = sWay_structNavn[2]
 
-        tmpFluxPlotType     =  ''
+        inData              = SWAY__DB.(sWay_structInds[0]).(sWay_structInds[1]).(sWay_structInds[2])
 
      ENDELSE
 
