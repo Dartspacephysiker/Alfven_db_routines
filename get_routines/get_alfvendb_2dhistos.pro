@@ -2056,7 +2056,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
                  IF firstInd EQ -1 THEN STOP
                  secInd    = WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd))) EQ STRUPCASE(splitter[1]))
                  IF secInd EQ -1 THEN STOP
-                 thirdInd  = [WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ STRUPCASE(splitter[2]))]
+                 
+                 IF STRUPCASE(splitter[2]) EQ 'ACBOTH' THEN BEGIN
+                    thirdInd  = 10
+                 ENDIF ELSE BEGIN
+                    thirdInd  = [WHERE(STRUPCASE(TAG_NAMES(SWAY__DB.(firstInd).(secInd))) EQ STRUPCASE(splitter[2]))]
+                 ENDELSE
                  IF (WHERE(thirdInd EQ -1))[0] NE -1 THEN STOP
 
               END
@@ -2108,9 +2113,14 @@ PRO GET_ALFVENDB_2DHISTOS, $
                  IF ~bro THEN STOP
                  IF firstInd EQ -1 THEN STOP
 
-                 execStr = 'secInd  = [WHERE(STRUPCASE(TAG_NAMES(' + sWayVar + '.(firstInd))) EQ STRUPCASE(splitter[2]))]'
-                 bro     = EXECUTE(execStr)
-                 IF ~bro THEN STOP
+                 IF (STRUPCASE(splitter))[2] EQ 'ACBOTH' THEN BEGIN
+                    secInd = 10
+                 ENDIF ELSE BEGIN
+                    execStr  = 'secInd  = [WHERE(STRUPCASE(TAG_NAMES(' + sWayVar + '.(firstInd))) EQ STRUPCASE(splitter[2]))]'
+                    bro      = EXECUTE(execStr)
+                    IF ~bro THEN STOP
+                 ENDELSE
+
                  IF (WHERE(secInd EQ -1))[0] NE -1 THEN STOP
 
               END
@@ -2129,7 +2139,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                  (TAG_NAMES(SWAY__DB.(firstInd).(secInd)))[thirdInd[kk]]]
            ENDIF ELSE BEGIN
               sWay_structInds = [firstInd,secInd[kk]]
-              execStr         = 'sWay_structNavn = STRJOIN([sWayVar,(TAG_NAMES(' + sWayVar + '))[firstInd],(TAG_NAMES(' + sWayVar + '.(firstInd)))[secInd[kk]]],".")'
+              execStr         = 'sWay_structNavn = STRJOIN([sWayVar,(TAG_NAMES(' + sWayVar $
+                                + '))[firstInd],(TAG_NAMES(' + sWayVar $
+                                + '.(firstInd)))[secInd[kk]]],".")'
               bro             = EXECUTE(execStr)
               IF ~bro THEN STOP
            ENDELSE
