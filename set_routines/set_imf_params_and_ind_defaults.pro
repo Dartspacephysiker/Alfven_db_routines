@@ -110,6 +110,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
    RESOLUTION_DELAY=delay_res, $
    BINOFFSET_DELAY=binOffset_delay, $
    STABLEIMF=stableIMF, $
+   IMF_ALLOWABLE_STREAK_DT=IMF_allowable_streak_dt, $
    SMOOTHWINDOW=smoothWindow, $
    INCLUDENOCONSECDATA=includeNoConsecData, $
    EARLIEST_UTC=earliest_UTC, $
@@ -140,6 +141,9 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
   defIncludeNoConsecData = 0    ;Setting this to 1 includes Chaston data for which  
                                 ;there's no way to calculate IMF stability
                                 ;Only valid for stableIMF GE 1
+
+  defIMF_allowable_streak_dt = 0
+
   defCheckBothWays       = 0          
   
   defBx_over_ByBz_Lim    = 0    ;Set this to the max ratio of Bx / SQRT(By*By + Bz*Bz)
@@ -208,6 +212,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
 
   IF N_ELEMENTS(stableIMF           ) EQ 0 THEN BEGIN
      stableIMF              = defStableIMF ;Set to a time (in minutes) over which IMF stability is required
+  ENDIF
+
+  IF N_ELEMENTS(IMF_allowable_streak_dt) EQ 0 THEN BEGIN
+     IMF_allowable_streak_dt = defIMF_allowable_streak_dt ;Set to a time (in minutes) over which IMF stability is required
   ENDIF
 
   IF N_ELEMENTS(includeNoConsecData ) EQ 0 THEN BEGIN
@@ -811,6 +819,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
 
      IF N_ELEMENTS(stableIMF) GT 0 THEN BEGIN
         STR_ELEMENT,IMF_struct,'stableIMF',FLOAT(stableIMF),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(stableIMF) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'IMF_allowable_streak_dt',FLOAT(IMF_allowable_streak_dt),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(smoothWindow) GT 0 THEN BEGIN

@@ -235,6 +235,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    RESOLUTION_DELAY=delay_res, $
    BINOFFSET_DELAY=binOffset_delay, $
    STABLEIMF=stableIMF, $
+   IMF_ALLOWABLE_STREAK_DT=IMF_allowable_streak_dt, $
    SMOOTHWINDOW=smoothWindow, $
    INCLUDENOCONSECDATA=includeNoConsecData, $
    EARLIEST_UTC=earliest_UTC, $
@@ -534,6 +535,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      RESOLUTION_DELAY=delay_res, $
      BINOFFSET_DELAY=binOffset_delay, $
      STABLEIMF=stableIMF, $
+     IMF_ALLOWABLE_STREAK_DT=IMF_allowable_streak_dt, $
      SMOOTHWINDOW=smoothWindow, $
      INCLUDENOCONSECDATA=includeNoConsecData, $
      EARLIEST_UTC=earliest_UTC, $
