@@ -1122,9 +1122,9 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            execStr = 'inData = ' + sWay_structNavn.Replace('ACBoth','ACHigh') + ' + ' + sWay_structNavn.Replace('ACBoth','AC')
         ENDIF ELSE BEGIN
            execStr = 'inData = ' + sWay_structNavn
-           bro              = EXECUTE(execStr)
-           IF ~bro THEN STOP
         ENDELSE
+        bro              = EXECUTE(execStr)
+        IF ~bro THEN STOP
 
         IF STRMATCH(STRUPCASE(ACDCString),'AC*') AND (N_ELEMENTS(SIZE(inData,/DIMENSIONS)) EQ 2) THEN BEGIN
            theseVars        = ARRAY_INDICES(inData,FIX(8 * RANDOMU(seed,N_ELEMENTS(inData[0,*]))) + LINDGEN(N_ELEMENTS(inData[0,*]))*8L)
@@ -1215,17 +1215,13 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
   removed_ii                = !NULL
   IF N_ELEMENTS(WHERE(FINITE(inData[tmp_i]))) NE N_ELEMENTS(tmp_i) THEN BEGIN
-     ;; finite_ii              =  WHERE(FINITE(inData[tmp_i]),COMPLEMENT=rmTmp_ii, $
-     ;;                                 NCOMPLEMENT=nRem)
      finite_i               = WHERE(FINITE(inData),COMPLEMENT=rmTmp_i, $
                                      NCOMPLEMENT=nRem)
-     rmTmp_ii               = WHERE(~FINITE(inData[tmp_i]))
+     rmTmp_ii               = WHERE(~FINITE(inData[tmp_i]),nRem)
      
      IF finite_i[0] NE -1 THEN BEGIN
-        ;; PRINT,"BAD DATA: " + STRCOMPRESS(nRem,/REMOVE_ALL)
-        ;; junk_i              = CGSETDIFFERENCE(tmp_i,finite_i,POSITIONS=rmTmp_ii,NORESULT=-1)
+        PRINT,"BAD DATA: " + STRCOMPRESS(nRem,/REMOVE_ALL)
         tmp_i               = CGSETINTERSECTION(tmp_i,finite_i,COUNT=nFinite)
-        ;; tmp_i               = tmp_i[finite_ii]
      ENDIF
 
      IF rmTmp_ii[0] NE -1 THEN BEGIN
@@ -1239,19 +1235,13 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
      IF KEYWORD_SET(noPosFlux) THEN BEGIN
         posStr              = 'NoP-'
         PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(tmp_i)
-        ;; lt_ii                =  WHERE(inData[tmp_i] LT 0.,COMPLEMENT=rmTmp_ii)
         lt_i                = WHERE(inData LT 0.,COMPLEMENT=rmTmp_i)
-        rmTmp_ii            = WHERE(inData[tmp_i] GE 0.)
+        rmTmp_ii            = WHERE(inData[tmp_i] GE 0.,nRem)
 
-        ;; IF lt_ii[0] NE -1 THEN BEGIN
         IF lt_i[0] NE -1 THEN BEGIN
 
-           ;; tmp_i            = tmp_i[lt_ii]
-           ;; junk_i           = CGSETDIFFERENCE(tmp_i,lt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
            tmp_i            = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
 
-           ;; tmp_i            = tmp_i[lt_ii]
-           ;; PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(tmp_i)
            PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",nNeg
            inData           = ABS(inData)
         ENDIF
@@ -1268,15 +1258,11 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   IF KEYWORD_SET(noNegFlux) THEN BEGIN
      negStr                 = 'NoN-'
      PRINTF,lun,"N elements in " + dataName + " before junking neg vals: ",N_ELEMENTS(tmp_i)
-     ;; gt_ii                   =  WHERE(inData[tmp_i] GT 0.,COMPLEMENT=rmTmp_ii)
      gt_i                   = WHERE(inData GT 0.,COMPLEMENT=rmTmp_i)
      rmTmp_ii               = WHERE(inData[tmp_i] LE 0.)
      IF gt_i[0] NE -1 THEN BEGIN
 
-        ;; junk_i           = CGSETDIFFERENCE(tmp_i,gt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
-        tmp_i            = CGSETINTERSECTION(tmp_i,gt_i,COUNT=nPos)
-        ;; tmp_i               = tmp_i[gt_ii]
-        ;; PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",N_ELEMENTS(tmp_i)
+        tmp_i               = CGSETINTERSECTION(tmp_i,gt_i,COUNT=nPos)
         PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",nPos
      ENDIF
 
@@ -1289,19 +1275,15 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
      posStr                 = 'NoP-'
      PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(tmp_i)
 
-     lt_i                    =  WHERE(inData        LT 0.,COMPLEMENT=rmTmp_i)
-     rmTmp_ii                =  WHERE(inData[tmp_i] GE 0.)
+     lt_i                   =  WHERE(inData        LT 0.,COMPLEMENT=rmTmp_i)
+     rmTmp_ii               =  WHERE(inData[tmp_i] GE 0.)
 
      IF lt_i[0] NE -1 THEN BEGIN
 
-        ;; tmp_i               = tmp_i[lt_ii]
-        ;; PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",N_ELEMENTS(tmp_i)
-
-        ;; junk_i           = CGSETDIFFERENCE(tmp_i,lt_i,POSITIONS=rmTmp_ii,NORESULT=-1)
-        tmp_i            = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
+        tmp_i               = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
 
         PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",nNeg
-        inData           = ABS(inData)
+        inData              = ABS(inData)
      ENDIF
 
      IF rmTmp_ii[0] NE -1 THEN BEGIN

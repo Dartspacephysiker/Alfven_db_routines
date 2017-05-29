@@ -2133,22 +2133,32 @@ PRO GET_ALFVENDB_2DHISTOS, $
         FOR kk=0,nSub-1 DO BEGIN
            
            IF KEYWORD_SET(alfDB_plot_struct.sWay_use_8Hz_DB) THEN BEGIN
+
               sWay_structInds = [firstInd,secInd[kk]]
+
               IF secInd[kk] EQ 10 THEN BEGIN
-                 execStr         = 'sWay_structNavn = STRJOIN([sWayVar,(TAG_NAMES(' + sWayVar $
-                                   + '))[firstInd],"ACBoth"],".")'
+
+                 execStr      = 'sWay_structNavn = STRJOIN([sWayVar,(TAG_NAMES(' + sWayVar $
+                                + '))[firstInd],"ACBoth"],".")'
+
               ENDIF ELSE BEGIN
-                 execStr         = 'sWay_structNavn = STRJOIN([sWayVar,(TAG_NAMES(' + sWayVar $
-                                   + '))[firstInd],(TAG_NAMES(' + sWayVar $
-                                   + '.(firstInd)))[secInd[kk]]],".")'
-                 bro             = EXECUTE(execStr)
-                 IF ~bro THEN STOP
+
+                 execStr      = 'sWay_structNavn = STRJOIN([sWayVar,(TAG_NAMES(' + sWayVar $
+                                + '))[firstInd],(TAG_NAMES(' + sWayVar $
+                                + '.(firstInd)))[secInd[kk]]],".")'
+
               ENDELSE
+
+              bro             = EXECUTE(execStr)
+              IF ~bro THEN STOP
+
            ENDIF ELSE BEGIN
+
               sWay_structInds = [firstInd,secInd,thirdInd[kk]]
               sWay_structNavn = [SWAY__DB.info.tag_names_l0[firstInd], $
                                  SWAY__DB.info.tag_names_l1[firstInd,secInd], $
                                  (TAG_NAMES(SWAY__DB.(firstInd).(secInd)))[thirdInd[kk]]]
+
            ENDELSE
 
            GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_SWAY, $
