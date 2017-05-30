@@ -228,6 +228,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    OMNI_COORDS=omni_Coords, $
    DELAY=delay, $
    MULTIPLE_DELAYS=multiple_delays, $
+   ADD_NIGHT_DELAY=add_night_delay, $
    MULTIPLE_IMF_CLOCKANGLES=multiple_IMF_clockAngles, $
    OUT_EXECUTING_MULTIPLES=executing_multiples, $
    OUT_MULTIPLES=multiples, $
@@ -528,6 +529,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      OMNI_COORDS=omni_Coords, $
      DELAY=delay, $
      MULTIPLE_DELAYS=multiple_delays, $
+     ADD_NIGHT_DELAY=add_night_delay, $
      MULTIPLE_IMF_CLOCKANGLES=multiple_IMF_clockAngles, $
      OUT_EXECUTING_MULTIPLES=executing_multiples, $
      OUT_MULTIPLES=multiples, $

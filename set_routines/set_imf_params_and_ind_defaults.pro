@@ -104,6 +104,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
    OMNI_COORDS=OMNI_coords, $
    DELAY=delay, $
    MULTIPLE_DELAYS=multiple_delays, $
+   ADD_NIGHT_DELAY=add_night_delay, $
    OUT_EXECUTING_MULTIPLES=executing_multiples, $
    OUT_MULTIPLES=multiples, $
    OUT_MULTISTRING=multiString, $
@@ -136,6 +137,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
   defOMNI_Coords         = "GSM"  ; either "GSE" or "GSM"
 
   defDelay               = 900
+  defAdd_night_delay     = 0
 
   defstableIMF           = 0S   ;Set to a time (in minutes) over which IMF stability is required
   defIncludeNoConsecData = 0    ;Setting this to 1 includes Chaston data for which  
@@ -203,9 +205,15 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
                                 ;Bin recommends something like 11min
   ENDIF
   
+  IF N_ELEMENTS(add_night_delay) EQ 0 THEN BEGIN
+     add_night_delay        = defAdd_Night_Delay ;Delay to add to nightside (since it takes longer for stuff to register over there, you know)
+                                
+  ENDIF
+
   IF ~KEYWORD_SET(delay_res) THEN BEGIN
      delay_res              = 120
   ENDIF
+
   IF N_ELEMENTS(binOffset_delay     ) EQ 0 THEN BEGIN
      binOffset_delay        = 0 
   ENDIF
@@ -504,14 +512,19 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         delayResStr             = ""
      ENDELSE
 
-     IF N_ELEMENTS(binOffset_delay) GT 0 THEN BEGIN
+     IF add_night_delay NE 0 THEN BEGIN
+        addNightStr             = STRING(FORMAT='("_",F0.1,"ntDel")',add_night_delay/60.) 
+     ENDIF ELSE BEGIN
+        addNightStr             = ''
+     ENDELSE
+     
+     IF binOffset_delay NE 0 THEN BEGIN
         delBinOffStr            = STRING(FORMAT='("_",F0.1,"Ofst")',binOffset_delay/60.) 
-        ;; delBinOffStr            = ""
      ENDIF ELSE BEGIN
         delBinOffStr            = ""
      ENDELSE
      
-     delayStr                   = delayStr + delayResStr + delBinOffStr
+     delayStr                   = delayStr + delayResStr + addNightStr + delBinOffStr
 
      IF KEYWORD_SET(smoothWindow) THEN BEGIN
         smoothStr               = '_' + strtrim(smoothWindow,2)+"sm" 
@@ -536,7 +549,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            multiples            = delay
            multiString          = "IMF_delays"
            FOR iDel=0,N_ELEMENTS(multiples)-1 DO BEGIN
-              OMNIparamStr_list.add,OMNIparamStr+'-'+omniStr+clockOutStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
+              OMNIparamStr_list.add,OMNIparamStr+'-'+omniStr+clockOutStr+"_"+STRTRIM(stableIMF,2)+"stable"+smoothStr+delayStr[iDel]+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr+tConeMinStr+tConeMaxStr
            ENDFOR
         ENDIF
@@ -544,7 +557,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         IF KEYWORD_SET(multiple_IMF_clockAngles) THEN BEGIN
            multiples            = clockStr
            ;; multiString       = "IMF_clock angles"
-           multiString          = OMNIparamStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
+           multiString          = OMNIparamStr+"_"+STRTRIM(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
                                   byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr+tConeMinStr+tConeMaxStr
            IF N_ELEMENTS(clockStr) EQ 8 THEN BEGIN
               multiString_suff  = '-Ring'
@@ -555,7 +568,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
 
            FOR iClock=0,N_ELEMENTS(multiples)-1 DO BEGIN
               OMNIparamStr_list.add,OMNIparamStr+'-'+omniStr+clockOutStr[iClock]+"_"+ $
-                 strtrim(stableIMF,2)+"stable"+smoothStr+delayStr+$
+                 STRTRIM(stableIMF,2)+"stable"+smoothStr+delayStr+$
                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr+tConeMinStr+tConeMaxStr
 
               IF ~KEYWORD_SET(multiString_suff) THEN BEGIN
@@ -566,7 +579,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
 
         IF KEYWORD_SET(multiple_B_conds) THEN BEGIN
            multiples            = byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr+tConeMinStr+tConeMaxStr
-           multiString          = OMNIparamStr+"_"+strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]
+           multiString          = OMNIparamStr+"_"+STRTRIM(stableIMF,2)+"stable"+smoothStr+delayStr[0]
            IF KEYWORD_SET(multiString_suff) THEN BEGIN
               multiString       = multiString + multiString_suff
            ENDIF ELSE BEGIN
@@ -576,7 +589,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
            FOR iClock=0,N_ELEMENTS(multiples)-1 DO BEGIN
               OMNIparamStr_list.add,OMNIparamStr+'-'+omniStr+clockOutStr[iClock]+"_"+ $
                  STRTRIM(stableIMF,2)+"stable"+smoothStr+delayStr+$
-                 byMinStr[iClock]+byMaxStr[iClock]+bzMinStr[iClock]+bzMaxStr[iClock]+btMinStr[iClock]+btMaxStr[iClock]+bxMinStr[iClock]+bxMaxStr[iClock]+bx_over_by_ratio_minStr[iClock]+bx_over_by_ratio_maxStr[iClock]+tConeMinStr[iClock]+tConeMaxStr[iClock]
+                 byMinStr[iClock]+byMaxStr[iClock]+bzMinStr[iClock]+bzMaxStr[iClock] + $
+                 btMinStr[iClock]+btMaxStr[iClock]+bxMinStr[iClock]+bxMaxStr[iClock] + $
+                 bx_over_by_ratio_minStr[iClock]+bx_over_by_ratio_maxStr[iClock] + $
+                 tConeMinStr[iClock]+tConeMaxStr[iClock]
 
               IF ~KEYWORD_SET(multiString_suff) THEN BEGIN
                  multiString    = multiString+'_'+clockStr[iClock]
@@ -601,8 +617,9 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      ENDIF ELSE BEGIN
         executing_multiples     = 0
         OMNIparamStr             = OMNIparamStr+'-'+omniStr+clockOutStr+"_"+ $
-                                  strtrim(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
-                                  byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr+tConeMinStr+tConeMaxStr
+                                  STRTRIM(stableIMF,2)+"stable"+smoothStr+delayStr[0]+$
+                                   byMinStr+byMaxStr+bzMinStr+bzMaxStr+btMinStr+btMaxStr+bxMinStr+bxMaxStr+$
+                                   bx_over_by_ratio_minStr+bx_over_by_ratio_maxStr+tConeMinStr+tConeMaxStr
         OMNIparamStr_list.add,OMNIparamStr
      ENDELSE
   ENDELSE
@@ -792,6 +809,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
 
      IF N_ELEMENTS(delay) GT 0 THEN BEGIN
         STR_ELEMENT,IMF_struct,'delay',FLOAT(delay),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(add_night_delay) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'add_night_delay',FLOAT(add_night_delay),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(multiple_delays) GT 0 THEN BEGIN
