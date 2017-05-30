@@ -76,11 +76,14 @@ PRO LOAD_STRANGEWAY_BANDS_PFLUX_DB,leMaitre,times, $
      ;; orbRangeStr              = '1436-5382'
      ;; DB_date                  = '20170526'
 
-     orbRangeStr              = '1000-7705'
-     DB_date                  = '20170527'
+     ;; orbRangeStr              = '1000-7705'
+     ;; DB_date                  = '20170527'
+
+     orbRangeStr              = '1000-9936'
+     DB_date                  = '20170529'
 
      DefDBDir                 = '/SPENCEdata/software/sdt/batch_jobs/saves_output_etc/Strangeway_3bands/'
-     DefDBFile                = 'Strangeway_3bands--also_E_near_B__orbs_' + orbRangeStr + '_EESAItvl.sav'
+     DefDBFile                = 'Strangeway_3bands--also_E_near_B__orbs_' + orbRangeStr + '_EESAItvl-v0.sav'
      
      dBSuff                   = 'dB'
      eFieldSuff               = 'eField'

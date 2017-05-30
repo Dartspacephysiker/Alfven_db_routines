@@ -858,11 +858,11 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
               END
            ENDCASE
 
-        ENDIF
-
-        good_i                      = CGSETINTERSECTION( $
+           good_i                   = CGSETINTERSECTION( $
                                       good_i, $
                                       cleaned_i) 
+
+        ENDIF
 
 
      ENDELSE
