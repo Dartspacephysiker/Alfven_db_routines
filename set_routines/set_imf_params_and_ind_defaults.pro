@@ -210,8 +210,8 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
                                 
   ENDIF
 
-  IF ~KEYWORD_SET(delay_res) THEN BEGIN
-     delay_res              = 120
+  IF N_ELEMENTS(delay_res) EQ 0 THEN BEGIN
+     delay_res              = 0
   ENDIF
 
   IF N_ELEMENTS(binOffset_delay     ) EQ 0 THEN BEGIN
@@ -506,7 +506,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      ENDIF ELSE BEGIN
         delayStr                = ""
      ENDELSE
-     IF N_ELEMENTS(delay_res) GT 0 THEN BEGIN
+     IF delay_res NE 0 THEN BEGIN
         delayResStr             = STRING(FORMAT='("_",F0.1,"Res")',delay_res/60.)
      ENDIF ELSE BEGIN
         delayResStr             = ""
