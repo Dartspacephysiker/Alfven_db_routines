@@ -6,13 +6,18 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                                CUSTOM_ORBS_TO_KILL=customKill, $
                                CUSTOM_ORBRANGES_TO_KILL=customKillRanges, $
                                CUSTOM_TSTRINGS_TO_KILL=customTKillStrings, $
-                               CUSTOM_TRANGES_TO_KILL=customTKillRanges
+                               CUSTOM_TRANGES_TO_KILL=customTKillRanges, $
+                               REMAKE_TRASHORB_FILES=remake_trashOrb_files
 
   COMPILE_OPT IDL2,STRICTARRSUBS
+
+  dirForAlle = '/SPENCEdata/Research/database/temps/'
 
   PRINT,"Trashing terrible orbits"
   nGStart = N_ELEMENTS(good_i)
   nBTot   = 0
+
+  ;; remake_trashOrb_files       = N_ELEMENTS(remake_trashOrb_files) GT 0 ? remake_trashOrb_files : 0
 
   IF KEYWORD_SET(customKill) THEN BEGIN
      individual_blackballOrbs = customKill
@@ -255,65 +260,249 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                           ['1999-09-02/' + ['15:59:20','16:09:35']], $ ;orb 12000 badness (good burst data)
                           ['1999-09-29/' + ['20:58:52','20:59:02']]  $ ;orb 12297 REAL badness 2017/01/21 (no burst data)
                           ]
-
-
-
   ENDELSE
 
   IF N_ELEMENTS(blackballOrb_ranges) GT 0 THEN BEGIN
-     FOR k=0,N_ELEMENTS(blackballOrb_ranges[0,*])-1 DO BEGIN
-        opener = STRING(FORMAT='("Blacked orbits ",I0,"–",I0,T30," : ")',blackballOrb_ranges[0,k],blackballOrb_ranges[1,k])
 
-        blackBall_ii = WHERE(dbStruct.orbit[good_i] GE blackballOrb_ranges[0,k] AND dbStruct.orbit[good_i] LE blackballOrb_ranges[1,k], $
-                             nBlackBall, $
-                             COMPLEMENT=keeper_ii, $
+     ;;See if we have somesing first
+     blackballFile = dirForAlle + GET_FAST_DB_STRING(dbStruct) + '-blackballOrbRanges.sav'
+
+     goAhead = 1
+     IF FILE_TEST(blackballFile) AND ~KEYWORD_SET(remake_trashOrb_files) THEN BEGIN
+        PRINT,'Restoring blackballFile: ' + blackballFile + ' ...'
+        RESTORE,blackballFile
+        IF ARRAY_EQUAL(blackballOrb_ranges,RblackballOrb_ranges) THEN BEGIN
+           ;; blackBall_ii        = TEMPORARY(rblackBall_ii       )
+           ;; keeper_ii           = TEMPORARY(rkeeper_ii          )
+           blackBall_i         = TEMPORARY(rblackBall_i        )
+           keeper_i            = TEMPORARY(rkeeper_i           )
+           nKeeper             = TEMPORARY(rNKeeper            )
+           nBlackball          = TEMPORARY(rNBlackball         )
+
+           goAhead             = 0
+
+        ENDIF
+     ENDIF
+
+     IF goAhead OR KEYWORD_SET(remake_trashOrb_files) THEN BEGIN
+
+        sort_i              = SORT(REFORM(blackballOrb_ranges[0,*]))
+        blackballOrb_ranges = [blackballOrb_ranges[0,sort_i],blackballOrb_ranges[1,sort_i]]
+
+        ;; firstInd = VALUE_LOCATE(blackballOrb_ranges[0,*],dbStruct.orbit[good_i])
+        firstInd = VALUE_LOCATE(blackballOrb_ranges[0,*],dbStruct.orbit)
+        ;; firstInd = firstInd[WHERE(firstInd GE 0)]
+        firstInd = firstInd > 0
+        orbGaps  = REFORM(blackballOrb_ranges[1,*]-blackballOrb_ranges[0,*])
+
+        ;; blackBall_ii = WHERE(( (REFORM(blackballOrb_ranges[0,*]))[firstInd] LE dbStruct.orbit[good_i]                      ) AND $
+        ;;                      ( (dbStruct.orbit[good_i] - (REFORM(blackballOrb_ranges[0,*]))[firstInd]) LE (REFORM(orbGaps))[firstInd]), $
+        blackBall_i = WHERE(( (REFORM(blackballOrb_ranges[0,*]))[firstInd] LE dbStruct.orbit                      ) AND $
+                             ( (dbStruct.orbit - (REFORM(blackballOrb_ranges[0,*]))[firstInd]) LE (REFORM(orbGaps))[firstInd]), $
+                             nBlackball, $
+                             COMPLEMENT=keeper_i, $
                              NCOMPLEMENT=nKeeper)
+        blackBall_i2 = WHERE( ( ( (REFORM(blackballOrb_ranges[0,*]))[firstInd] - dbStruct.orbit) LE 0 ) AND $
+                             ( ( (REFORM(blackballOrb_ranges[1,*]))[firstInd] - dbStruct.orbit) GE 0 ), $
+                             nBlackball2, $
+                             COMPLEMENT=keeper_i2, $
+                             NCOMPLEMENT=nKeeper2)
 
-        IF nBlackBall GT 0 THEN BEGIN
-           nGood   = N_ELEMENTS(good_i)
-           nBTot  += nBlackBall
+        ;; rblackBall_ii        = TEMPORARY(blackBall_ii       )
+        ;; rkeeper_ii           = keeper_ii
+        ;; rblackBall_i         = TEMPORARY(blackBall_i       )
+        rblackBall_i         = blackBall_i
+        rkeeper_i            = keeper_i
+        rNKeeper             = nKeeper
+        rNBlackball          = nBlackball
+        rblackballOrb_ranges = blackballOrb_ranges
+        PRINT,"Saving blackballOrbRange stuff to " + blackballFile + ' ...'
+        ;; SAVE,rblackBall_ii,rkeeper_ii,rNKeeper,rNBlackball,rblackballOrb_ranges,FILENAME=blackballFile
+        SAVE,rblackBall_i,rkeeper_i,rNKeeper,rNBlackball,rblackballOrb_ranges,FILENAME=blackballFile
+        ;; rkeeper_ii           = !NULL
+        rblackBall_i         = !NULL
+        rkeeper_i            = !NULL
+        rNKeeper             = !NULL
+        rNBlackball          = !NULL
+     ENDIF
 
-           good_i  = good_i[keeper_ii]
-           ;; good_i  = CGSETDIFFERENCE(good_i,blackBall_i,NORESULT=-1,COUNT=count)
-           IF good_i[0] EQ -1 THEN BEGIN
-              PRINT,opener+"We've killed every orbit!"
-              broken = 1
-              BREAK
-           ENDIF
-           PRINT,opener+'Junked ' + STRCOMPRESS(nGood-nKeeper,/REMOVE_ALL) + ' blackballed events ...'
-        ENDIF ELSE BEGIN
-           PRINT,opener+"No baddies found in this case ..."
-        ENDELSE
-     ENDFOR
+     IF nBlackball GT 0 THEN BEGIN
+        nGood   = N_ELEMENTS(good_i)
+        ;; nBTot  += nBlackball
+
+        ;; good_i  = good_i[keeper_ii]
+        ;; good_i  = CGSETINTERSECTION(good_i,keeper_i,COUNT=nKeeper,NORESULT=-1)
+        good_i  = CGSETDIFFERENCE(good_i,blackball_i,COUNT=nKeeper,NORESULT=-1)
+        nBTot  += nBlackball
+
+        ;;If we enter this bit of code, the files were just remade and we should see if life is sane
+        IF goAhead OR KEYWORD_SET(remake_trashOrb_files) THEN BEGIN
+
+           death   = 0
+           FOR k=0,N_ELEMENTS(blackballOrb_ranges[0,*])-1 DO BEGIN
+
+              howMany   = N_ELEMENTS(WHERE(dbStruct.orbit[good_i] GE blackballOrb_ranges[0,k] AND $
+                                           dbStruct.orbit[good_i] LE blackballOrb_ranges[1,k], $
+                                           /NULL))
+              letEmKnow = STRING(FORMAT='("Blacked orbits ",I0,"–",I0,T30," : ")', $
+                                 blackballOrb_ranges[0,k], $
+                                 blackballOrb_ranges[1,k])
+              ;; IF howMany GT 0 THEN BEGIN
+              PRINT,FORMAT='(A0,I0)',letEmKnow,howMany
+              ;; ENDIF ELSE BEGIN
+              death += howMany GT 0
+           ENDFOR
+           IF death GT 0 THEN STOP
+
+        ENDIF
+
+
+
+        ;; good_i  = CGSETDIFFERENCE(good_i,blackBall_i,NORESULT=-1,COUNT=count)
+        IF good_i[0] EQ -1 THEN BEGIN
+           PRINT,opener+"We've killed every orbit!"
+           broken = 1
+           ;; BREAK
+        ENDIF
+        opener = ''
+        PRINT,opener+'Junked ' + STRCOMPRESS(nGood-nKeeper,/REMOVE_ALL) + ' blackballed events ...'
+     ENDIF ELSE BEGIN
+        PRINT,opener+"No baddies found in this case ..."
+     ENDELSE
+
+        ;; FOR k=0,N_ELEMENTS(blackballOrb_ranges[0,*])-1 DO BEGIN
+        ;;    opener = STRING(FORMAT='("Blacked orbits ",I0,"–",I0,T30," : ")',blackballOrb_ranges[0,k],blackballOrb_ranges[1,k])
+
+        ;;    blackBall_ii = WHERE(dbStruct.orbit[good_i] GE blackballOrb_ranges[0,k] AND dbStruct.orbit[good_i] LE blackballOrb_ranges[1,k], $
+        ;;                         nBlackball, $
+        ;;                         COMPLEMENT=keeper_ii, $
+        ;;                         NCOMPLEMENT=nKeeper)
+
+        ;;    IF nBlackball GT 0 THEN BEGIN
+        ;;       nGood   = N_ELEMENTS(good_i)
+        ;;       nBTot  += nBlackball
+
+        ;;       good_i  = good_i[keeper_ii]
+        ;;       ;; good_i  = CGSETDIFFERENCE(good_i,blackBall_i,NORESULT=-1,COUNT=count)
+        ;;       IF good_i[0] EQ -1 THEN BEGIN
+        ;;          PRINT,opener+"We've killed every orbit!"
+        ;;          broken = 1
+        ;;          BREAK
+        ;;       ENDIF
+        ;;       PRINT,opener+'Junked ' + STRCOMPRESS(nGood-nKeeper,/REMOVE_ALL) + ' blackballed events ...'
+        ;;    ENDIF ELSE BEGIN
+        ;;       PRINT,opener+"No baddies found in this case ..."
+        ;;    ENDELSE
+        ;; ENDFOR
 
      IF KEYWORD_SET(broken) THEN STOP
 
   ENDIF
 
-  FOR k=0,N_ELEMENTS(individual_blackballOrbs)-1 DO BEGIN
-     opener = STRING(FORMAT='("Blackball orbit ",I0,T30," : ")',individual_blackballOrbs[k])
+  IF N_ELEMENTS(individual_blackballOrbs) GT 0 THEN BEGIN
 
-     ;; blackBall_i = WHERE(dbStruct.orbit EQ individual_blackballOrbs[k],nBlackBall)
-     blackBall_ii = WHERE(dbStruct.orbit[good_i] EQ individual_blackballOrbs[k],nBlackBall, $
-                          COMPLEMENT=keeper_ii, $
-                          NCOMPLEMENT=nKeeper)
+     ;;See if we have somesing first
+     blackballFile = dirForAlle + GET_FAST_DB_STRING(dbStruct) + '-individualBlackballOrbs.sav'
 
-     IF nBlackBall GT 0 THEN BEGIN
+     goAhead = 1
+     IF FILE_TEST(blackballFile) AND ~KEYWORD_SET(remake_trashOrb_files) THEN BEGIN
+        PRINT,'Restoring blackballFile: ' + blackballFile + ' ...'
+        RESTORE,blackballFile
+        IF ARRAY_EQUAL(individual_blackballOrbs,rindividual_blackballOrbs) THEN BEGIN
+           ;; blackBall_ii        = TEMPORARY(rblackBall_ii       )
+           ;; keeper_ii           = TEMPORARY(rkeeper_ii          )
+           blackBall_i         = TEMPORARY(rblackBall_i        )
+           keeper_i            = TEMPORARY(rkeeper_i           )
+           nKeeper             = TEMPORARY(rNKeeper            )
+           nBlackball          = TEMPORARY(rNBlackball         )
+
+           goAhead             = 0
+
+        ENDIF
+     ENDIF
+
+     IF goAhead OR KEYWORD_SET(remake_trashOrb_files) THEN BEGIN
+
+        individual_blackballOrbs = individual_blackballOrbs[SORT(individual_blackballOrbs)]
+        ;; firstInd = VALUE_LOCATE(individual_blackballOrbs,dbStruct.orbit[good_i])
+        firstInd = VALUE_LOCATE(individual_blackballOrbs,dbStruct.orbit)
+        ;; firstInd = firstInd[WHERE(firstInd GE 0)] ;;BADDD line
+        firstInd = firstInd > 0
+
+        ;; blackBall_ii = WHERE((individual_blackballOrbs[firstInd]-dbStruct.orbit[good_i]) EQ 0, $
+        blackBall_i  = WHERE((individual_blackballOrbs[firstInd]-dbStruct.orbit) EQ 0, $
+                             nBlackball, $
+                             ;; COMPLEMENT=keeper_ii, $
+                             COMPLEMENT=keeper_i, $
+                             NCOMPLEMENT=nKeeper)
+
+        ;; rblackBall_ii             = TEMPORARY(blackBall_ii            )
+        ;; rblackBall_i              = TEMPORARY(blackBall_i             )
+        ;; rkeeper_ii                = keeper_ii
+        rblackBall_i              = blackBall_i
+        rkeeper_i                 = keeper_i
+        rNKeeper                  = nKeeper
+        rNBlackball               = nBlackball
+        rindividual_blackballOrbs = TEMPORARY(individual_blackballOrbs)
+        PRINT,"Saving individualBlackballOrb stuff to " + blackballFile + ' ...'
+        ;; SAVE,rblackBall_ii,rkeeper_ii,rNKeeper,rNBlackball,rindividual_blackballOrbs,FILENAME=blackballFile
+        SAVE,rblackBall_i,rkeeper_i,rNKeeper,rNBlackball,rindividual_blackballOrbs,FILENAME=blackballFile
+        ;; rkeeper_ii           = !NULL
+        rblackBall_i              = !NULL
+        rkeeper_i                 = !NULL
+        rNKeeper                  = !NULL
+        rNBlackball               = !NULL
+
+     ENDIF
+
+     IF nBlackball GT 0 THEN BEGIN
         nGood   = N_ELEMENTS(good_i)
-        nBTot  += nBlackBall
+        nBTot  += nBlackball
 
         ;; good_i  = CGSETDIFFERENCE(good_i,blackBall_i,NORESULT=-1,COUNT=count)
-        good_i  = good_i[keeper_ii]
+        ;; good_i  = good_i[keeper_ii]
+        ;; good_i  = CGSETINTERSECTION(good_i,keeper_i,COUNT=nKeeper,NORESULT=-1)
+        good_i  = CGSETDIFFERENCE(good_i,blackball_i,COUNT=nKeeper,NORESULT=-1)
         IF good_i[0] EQ -1 THEN BEGIN
            PRINT,opener+"We've killed every orbit!"
            broken = 1
-           BREAK
+           ;; BREAK
         ENDIF
         PRINT,opener+'Junked ' + STRCOMPRESS(nGood-nKeeper,/REMOVE_ALL) + ' blackballed events ...'
      ENDIF ELSE BEGIN
         PRINT,opener+"No baddies found in this case ..."
      ENDELSE
-  ENDFOR  
+
+     ;; FOR k=0,N_ELEMENTS(individual_blackballOrbs)-1 DO BEGIN
+
+
+     ;;    opener = STRING(FORMAT='("Blackball orbit ",I0,T30," : ")',individual_blackballOrbs[k])
+
+     ;;    ;; blackBall_i = WHERE(dbStruct.orbit EQ individual_blackballOrbs[k],nBlackball)
+     ;;    blackBall_ii = WHERE(dbStruct.orbit[good_i] EQ individual_blackballOrbs[k],nBlackball, $
+     ;;                         COMPLEMENT=keeper_ii, $
+     ;;                         NCOMPLEMENT=nKeeper)
+
+     ;;    IF nBlackball GT 0 THEN BEGIN
+     ;;       nGood   = N_ELEMENTS(good_i)
+     ;;       nBTot  += nBlackball
+
+     ;;       ;; good_i  = CGSETDIFFERENCE(good_i,blackBall_i,NORESULT=-1,COUNT=count)
+     ;;       good_i  = good_i[keeper_ii]
+     ;;       IF good_i[0] EQ -1 THEN BEGIN
+     ;;          PRINT,opener+"We've killed every orbit!"
+     ;;          broken = 1
+     ;;          BREAK
+     ;;       ENDIF
+     ;;       PRINT,opener+'Junked ' + STRCOMPRESS(nGood-nKeeper,/REMOVE_ALL) + ' blackballed events ...'
+     ;;    ENDIF ELSE BEGIN
+     ;;       PRINT,opener+"No baddies found in this case ..."
+     ;;    ENDELSE
+
+     ;; ENDFOR
+     
+
+  ENDIF
 
   IF KEYWORD_SET(broken) THEN STOP
 
@@ -337,34 +526,107 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
         customTimes = !NULL
      ENDELSE
 
-     FOR k=0,N_ELEMENTS(customTimes[0,*])-1 DO BEGIN
+     ;;Do we have stuff?
+     ;;See if we have somesing first
+     blackballFile = dirForAlle + GET_FAST_DB_STRING(dbStruct) + '-blackballCustomTimes.sav'
 
-        opener       = STRING(FORMAT='("Blackball tRange ",A-23,"-",A-23," : ")', $
-                              TIME_TO_STR(customTimes[0,k],/MS), $
-                              TIME_TO_STR(customTimes[1,k],/MS))
+     goAhead = 1
+     IF FILE_TEST(blackballFile) AND ~KEYWORD_SET(remake_trashOrb_files) THEN BEGIN
+        PRINT,'Restoring blackballFile: ' + blackballFile + ' ...'
+        RESTORE,blackballFile
+        IF ARRAY_EQUAL(customTimes,rCustomTimes) THEN BEGIN
+           ;; blackBall_ii        = TEMPORARY(rblackBall_ii       )
+           ;; keeper_ii           = TEMPORARY(rkeeper_ii          )
+           blackBall_i         = TEMPORARY(rblackBall_i        )
+           keeper_i            = TEMPORARY(rkeeper_i           )
+           nKeeper             = TEMPORARY(rNKeeper            )
+           nBlackball          = TEMPORARY(rNBlackball         )
 
-        blackBall_ii = WHERE(((use_x ? DBStruct.x : DBTimes)[good_i] GE customTimes[0,k]) AND $
-                             ((use_x ? DBStruct.x : DBTimes)[good_i] LE customTimes[1,k]), $
-                             nBlackBall, $
-                             COMPLEMENT=keeper_ii, $
+           goAhead             = 0
+
+        ENDIF
+     ENDIF
+
+     IF goAhead OR KEYWORD_SET(remake_trashOrb_files) THEN BEGIN
+
+        sort_i       = SORT(REFORM(customTimes[0,*]))
+        customTimes  = [customTimes[0,sort_i],customTimes[1,sort_i]]
+
+        ;; firstInd     = VALUE_LOCATE(customTimes[0,*],(use_x ? DBStruct.x : DBTimes)[good_i])
+        firstInd     = VALUE_LOCATE(customTimes[0,*],(use_x ? DBStruct.x : DBTimes))
+        ;; firstInd     = firstInd[WHERE(firstInd GE 0)] ;NO!!!
+        firstInd     = firstInd > 0
+        tGaps        = REFORM(customTimes[1,*]-customTimes[0,*])
+        ;; blackBall_ii = WHERE(( (REFORM(customTimes[0,*]))[firstInd] LE (use_x ? DBStruct.x : DBTimes)[good_i]                      ) AND $
+        ;;                      ( ( (use_x ? DBStruct.x : DBTimes)[good_i] - (REFORM(customTimes[0,*]))[firstInd]) LE tGaps[firstInd]), $
+        blackBall_i  = WHERE(( (REFORM(customTimes[0,*]))[firstInd] LE (use_x ? DBStruct.x : DBTimes)                      ) AND $
+                             ( ( (use_x ? DBStruct.x : DBTimes) - (REFORM(customTimes[0,*]))[firstInd]) LE tGaps[firstInd]), $
+                             nBlackball, $
+                             ;; COMPLEMENT=keeper_ii, $
+                             COMPLEMENT=keeper_i, $
                              NCOMPLEMENT=nKeeper)
 
-        IF nBlackBall GT 0 THEN BEGIN
-           nGood     = N_ELEMENTS(good_i)
-           nBTot    += nBlackBall
+           ;; blackBall_ii = WHERE(((use_x ? DBStruct.x : DBTimes)[good_i] GE customTimes[0,k]) AND $
+           ;;                      ((use_x ? DBStruct.x : DBTimes)[good_i] LE customTimes[1,k]), $
+           ;;                      nBlackball, $
+           ;;                      COMPLEMENT=keeper_ii, $
+           ;;                      NCOMPLEMENT=nKeeper)
+           
 
-           good_i    = good_i[keeper_ii]
-           IF good_i[0] EQ -1 THEN BEGIN
-              PRINT,opener+"We've killed everything!"
-              broken = 1
-              BREAK
-           ENDIF
-           PRINT,opener+'Junked ' + STRCOMPRESS(nGood-nKeeper,/REMOVE_ALL) + ' blackballed events ...'
-        ENDIF ELSE BEGIN
-           PRINT,opener+"No baddies found in this case ..."
-        ENDELSE
-        
-     ENDFOR
+        ;; FOR k=0,N_ELEMENTS(customTimes[0,*])-1 DO BEGIN
+
+        ;;    opener       = STRING(FORMAT='("Blackball tRange ",A-23,"-",A-23," : ")', $
+        ;;                          TIME_TO_STR(customTimes[0,k],/MS), $
+        ;;                          TIME_TO_STR(customTimes[1,k],/MS))
+
+        ;;    blackBall_ii = WHERE(((use_x ? DBStruct.x : DBTimes)[good_i] GE customTimes[0,k]) AND $
+        ;;                         ((use_x ? DBStruct.x : DBTimes)[good_i] LE customTimes[1,k]), $
+        ;;                         nBlackball, $
+        ;;                         COMPLEMENT=keeper_ii, $
+        ;;                         NCOMPLEMENT=nKeeper)
+           
+        ;; ENDFOR
+
+        ;; rblackBall_ii             = TEMPORARY(blackBall_ii)
+        ;; rkeeper_ii                = keeper_ii
+        ;; rblackBall_i              = TEMPORARY(blackBall_i)
+        rblackBall_i              = blackBall_i
+        rkeeper_i                 = keeper_i
+        rNKeeper                  = nKeeper
+        rNBlackball               = nBlackball
+        rCustomTimes              = TEMPORARY(customTimes)
+        PRINT,"Saving customTimeBlackballStuff stuff to " + blackballFile + ' ...'
+        ;; SAVE,rblackBall_ii,rkeeper_ii,rNKeeper,rNBlackball,rCustomTimes,FILENAME=blackballFile
+        ;; rkeeper_ii           = !NULL
+        SAVE,rblackBall_i,rkeeper_i,rNKeeper,rNBlackball,rCustomTimes,FILENAME=blackballFile
+        rkeeper_i            = !NULL
+        rNKeeper             = !NULL
+        rNBlackball          = !NULL
+
+     ENDIF
+
+     IF nBlackball GT 0 THEN BEGIN
+        nGood     = N_ELEMENTS(good_i)
+        nBTot    += nBlackball
+
+        ;; good_i    = good_i[keeper_ii]
+        good_i  = CGSETINTERSECTION(good_i,keeper_i,COUNT=nKeeper,NORESULT=-1)
+        ;; good_i    = good_i[keeper_ii]
+        IF good_i[0] EQ -1 THEN BEGIN
+           PRINT,opener+"We've killed everything!"
+           broken = 1
+           ;; BREAK
+        ENDIF
+        PRINT,opener+'Junked ' + STRCOMPRESS(nGood-nKeeper,/REMOVE_ALL) + ' blackballed events ...'
+     ENDIF ELSE BEGIN
+        PRINT,opener+"No baddies found in this case ..."
+     ENDELSE
+
+  ENDIF
+
+  IF KEYWORD_SET(remake_trashOrb_files) THEN BEGIN
+     PRINT,"Switching off REMAKE_TRASHORB_FILES ..."
+     remake_trashOrb_files = 0
   ENDIF
 
   IF KEYWORD_SET(broken) THEN STOP
