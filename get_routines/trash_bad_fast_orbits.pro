@@ -17,7 +17,7 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
   nGStart = N_ELEMENTS(good_i)
   nBTot   = 0
 
-  ;; remake_trashOrb_files       = N_ELEMENTS(remake_trashOrb_files) GT 0 ? remake_trashOrb_files : 0
+  ;; remake_trashOrb_files       = N_ELEMENTS(remake_trashOrb_files) GT 0 ? remake_trashOrb_files : 1
 
   IF KEYWORD_SET(customKill) THEN BEGIN
      individual_blackballOrbs = customKill
@@ -336,27 +336,25 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
         nBTot  += nBlackball
 
         ;;If we enter this bit of code, the files were just remade and we should see if life is sane
-        IF goAhead OR KEYWORD_SET(remake_trashOrb_files) THEN BEGIN
+        ;; IF goAhead OR KEYWORD_SET(remake_trashOrb_files) THEN BEGIN
 
-           death   = 0
-           FOR k=0,N_ELEMENTS(blackballOrb_ranges[0,*])-1 DO BEGIN
+        ;;    death   = 0
+        ;;    FOR k=0,N_ELEMENTS(blackballOrb_ranges[0,*])-1 DO BEGIN
 
-              howMany   = N_ELEMENTS(WHERE(dbStruct.orbit[good_i] GE blackballOrb_ranges[0,k] AND $
-                                           dbStruct.orbit[good_i] LE blackballOrb_ranges[1,k], $
-                                           /NULL))
-              letEmKnow = STRING(FORMAT='("Blacked orbits ",I0,"–",I0,T30," : ")', $
-                                 blackballOrb_ranges[0,k], $
-                                 blackballOrb_ranges[1,k])
-              ;; IF howMany GT 0 THEN BEGIN
-              PRINT,FORMAT='(A0,I0)',letEmKnow,howMany
-              ;; ENDIF ELSE BEGIN
-              death += howMany GT 0
-           ENDFOR
-           IF death GT 0 THEN STOP
+        ;;       howMany   = N_ELEMENTS(WHERE(dbStruct.orbit[good_i] GE blackballOrb_ranges[0,k] AND $
+        ;;                                    dbStruct.orbit[good_i] LE blackballOrb_ranges[1,k], $
+        ;;                                    /NULL))
+        ;;       letEmKnow = STRING(FORMAT='("Blacked orbits ",I0,"–",I0,T30," : ")', $
+        ;;                          blackballOrb_ranges[0,k], $
+        ;;                          blackballOrb_ranges[1,k])
+        ;;       ;; IF howMany GT 0 THEN BEGIN
+        ;;       PRINT,FORMAT='(A0,I0)',letEmKnow,howMany
+        ;;       ;; ENDIF ELSE BEGIN
+        ;;       death += howMany GT 0
+        ;;    ENDFOR
+        ;;    IF death GT 0 THEN STOP
 
-        ENDIF
-
-
+        ;; ENDIF
 
         ;; good_i  = CGSETDIFFERENCE(good_i,blackBall_i,NORESULT=-1,COUNT=count)
         IF good_i[0] EQ -1 THEN BEGIN
