@@ -69,9 +69,11 @@ PRO FASTDBS__COORDINATE_SWITCHER, $
   PRINT,"UNDER CONSTRUCTION"
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   IF KEYWORD_SET(use_AACGM) THEN BEGIN
-     PRINT,"I know. I already did."
 
-     ;; PRINT,'Using AACGM lat, MLT, and alt ...'
+     PRINT,'Using AACGM lat, MLT, and alt ...'
+
+     ;; PRINT,"I know. I already did."
+     RESTORE,defCoordDir+AACGM_file
 
      coordStr  = TEMPORARY(AACGM)
      coordName = 'AACGM'
