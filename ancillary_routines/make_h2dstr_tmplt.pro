@@ -13,7 +13,9 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
                            BOTH_HEMIS=both_hemis, $
                            CB_FORCE_OOBHIGH=cb_force_oobHigh, $
                            CB_FORCE_OOBLOW=cb_force_oobLow, $
-                           NCUSTOMINTEGRALS=nCustomIntegrals
+                           NCUSTOMINTEGRALS=nCustomIntegrals, $
+                           VAR__EACH_BIN=var__each_bin, $
+                           VAR__DISTTYPE=var__distType
 
   COMPILE_OPT idl2,strictarrsubs
 
@@ -52,42 +54,63 @@ FUNCTION MAKE_H2DSTR_TMPLT,MIN1=min1in,MIN2=min2in, $
      END
   ENDCASE
 
-  h2dStr_tmplt={data            :  h2dDatTmplt, $
-                name            :  '', $
-                title           :  "Template for 2D hist structure", $
-                lim             :  DBLARR(2), $
-                shift1          :  s1, $
-                shift2          :  s2, $
-                is_logged       :  0B, $
-                avgType         :  '', $
-                is_fluxdata     :  0B, $
-                labelFormat     :  '', $
-                do_midCBLabel   :  0B, $
-                logLabels       :  0B, $
-                do_posNeg_cb    :  0B, $
-                cb_divFactor    : 1.0, $
-                do_plotIntegral :  0B, $
-                do_timeAvg      :  BYTE(KEYWORD_SET(do_timeAvg_fluxQuantities)), $
-                do_grossRate    :  BYTE(KEYWORD_SET(do_grossRate_fluxQuantities)), $
-                grossIntegrals  : {day:0.D, $
-                                   night:0.D, $
-                                   total:0.D, $
-                                   custom:(KEYWORD_SET(nCustomIntegrals) ? MAKE_ARRAY(nCustomIntegrals,VALUE=0.D) : 0.D)}, $
-                grossFac        : 1.D, $
-                gUnits          :  '', $
-                gAreas          : h2dDatTmplt, $
-                ;; grossConvFactor : h2dDatTmplt, $
-                both_hemis      : BYTE(KEYWORD_SET(both_hemis)), $
-                force_oobHigh   : BYTE(KEYWORD_SET(cb_force_oobHigh)), $
-                force_oobLow    : BYTE(KEYWORD_SET(cb_force_oobLow)), $
-                mask            : h2dMaskTmplt, $
-                hasMask         : 0B, $
-                dont_mask_me    : 0B, $
-                is_alfDB        : 1B, $
-                is_eSpecDB      : 0B, $
-                is_ionDB        : 0B, $
-                is_sWayDB       : 0B, $
-                is_fastLocDB    : 0B}
+  h2dStr_tmplt = {data            :  h2dDatTmplt, $
+                  name            :  '', $
+                  title           :  "Template for 2D hist structure", $
+                  lim             :  DBLARR(2), $
+                  shift1          :  s1, $
+                  shift2          :  s2, $
+                  is_logged       :  0B, $
+                  avgType         :  '', $
+                  is_fluxdata     :  0B, $
+                  labelFormat     :  '', $
+                  do_midCBLabel   :  0B, $
+                  logLabels       :  0B, $
+                  do_posNeg_cb    :  0B, $
+                  cb_divFactor    : 1.0, $
+                  do_plotIntegral :  0B, $
+                  do_timeAvg      :  BYTE(KEYWORD_SET(do_timeAvg_fluxQuantities)), $
+                  do_grossRate    :  BYTE(KEYWORD_SET(do_grossRate_fluxQuantities)), $
+                  grossIntegrals  : {day:0.D, $
+                                     night:0.D, $
+                                     total:0.D, $
+                                     custom:(KEYWORD_SET(nCustomIntegrals) ? MAKE_ARRAY(nCustomIntegrals,VALUE=0.D) : 0.D)}, $
+                  grossFac        : 1.D, $
+                  gUnits          :  '', $
+                  gAreas          : h2dDatTmplt, $
+                  ;; grossConvFactor : h2dDatTmplt, $
+                  both_hemis      : BYTE(KEYWORD_SET(both_hemis)), $
+                  force_oobHigh   : BYTE(KEYWORD_SET(cb_force_oobHigh)), $
+                  force_oobLow    : BYTE(KEYWORD_SET(cb_force_oobLow)), $
+                  mask            : h2dMaskTmplt, $
+                  hasMask         : 0B, $
+                  dont_mask_me    : 0B, $
+                  is_alfDB        : 1B, $
+                  is_eSpecDB      : 0B, $
+                  is_ionDB        : 0B, $
+                  is_sWayDB       : 0B, $
+                  is_fastLocDB    : 0B, $
+                  do_varianceCalc : KEYWORD_SET(var__each_bin)}
+
+  IF KEYWORD_SET(var__each_bin) THEN BEGIN
+
+     varStruct = {var             : h2dDatTmplt, $
+                  ;; logVar          : h2dDatTmplt, $
+                  density         : LONG(h2dDatTmplt), $
+                  distType        : KEYWORD_SET(var__distType) ? var__distType : 'norm'}
+
+     STR_ELEMENT,h2dStr_tmplt,'var',TEMPORARY(varStruct),/ADD_REPLACE
+
+  ENDIF;;  ELSE BEGIN
+
+  ;;    varStruct = !NULL
+
+  ;; ENDELSE
+
+  ;; IF N_ELEMENTS(varStruct) GT 0 THEN BEGIN
+
+
+  ;; ENDIF
 
   RETURN,h2dStr_tmplt
 

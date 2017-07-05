@@ -28,6 +28,7 @@ PRO GET_FLUX_PLOTDATA,maximus,plot_i, $
                       ABSFLUX=absFlux, $
                       OUT_REMOVED_II=out_removed_ii, $
                       LOGFLUXPLOT=logFluxPlot, $
+                      CALCVARIANCE=calcVariance, $
                       CB_DIVFACTOR=cb_divFactor, $
                       DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                       MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
@@ -184,7 +185,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   ENDIF
 
   IF KEYWORD_SET(get_eFlux) THEN BEGIN
-     dataName               = "eFlux"
+     baseName               = "eFlux"
      H2DStr.labelFormat     = fluxPlotEPlotCBLabelFormat
      H2DStr.logLabels       = logeFluxLabels
      H2DStr.do_plotIntegral = eFlux_do_plotIntegral
@@ -209,7 +210,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            can_mlt_by_w_x   = 0
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
               H2DStr.title  = title__alfDB_ind_10__div_by_width_x
-              ;; dataName     += '__div_by_width_x'
+              ;; baseName     += '__div_by_width_x'
               ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
               ;;                       DESPUNDB=maximus.info.despun
               ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
@@ -326,10 +327,10 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
               ENDCASE
            ENDIF
            IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
-              dataname += '-candidates_removed'
+              baseName += '-candidates_removed'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
-                 dataname += '-all_fluxes'
+                 baseName += '-all_fluxes'
               ENDIF
            ENDELSE
         END
@@ -337,7 +338,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   ENDIF
 
   IF KEYWORD_SET(get_eNumFlux) THEN BEGIN
-     dataName               = "eNumFl"
+     baseName               = "eNumFl"
      H2DStr.labelFormat     = fluxPlotColorBarLabelFormat
      H2DStr.logLabels       = logeNumFluxLabels
      H2DStr.do_plotIntegral = eNumFlux_do_plotIntegral
@@ -389,7 +390,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
               H2DStr.grossFac  = 1e9
               H2DStr.gUnits    = 'GW'
 
-              ;; dataName     += '__div_by_width_x'
+              ;; baseName     += '__div_by_width_x'
               ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
               ;;                       DESPUNDB=maximus.info.despun
               ;; magFieldFactor = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
@@ -547,10 +548,10 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            H2DStr.gUnits    = 'E+25'
 
            IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
-              dataname += '-candidates_removed'
+              baseName += '-candidates_removed'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
-                 dataname += '-all_fluxes'
+                 baseName += '-all_fluxes'
               ENDIF
            ENDELSE
 
@@ -683,7 +684,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
         ENDCASE
      ENDIF
      
-     dataName               = KEYWORD_SET(sum_eFlux_and_pFlux) ? "eF_pF" : "pF"
+     baseName               = KEYWORD_SET(sum_eFlux_and_pFlux) ? "eF_pF" : "pF"
      H2DStr.labelFormat     = fluxPlotPPlotCBLabelFormat
      ;; H2DStr.logLabels       = logPFluxLabels
      H2DStr.logLabels       = 0
@@ -704,7 +705,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
   IF KEYWORD_SET(get_iFlux) THEN BEGIN
      ;; H2DStr.title= "Ion Flux (ergs/cm!U2!N-s)"
-     dataName               = "iflux" 
+     baseName               = "iflux" 
      H2DStr.labelFormat     = fluxPlotColorBarLabelFormat
      H2DStr.logLabels       = logiFluxLabels
      H2DStr.do_plotIntegral = iFlux_do_plotIntegral
@@ -732,7 +733,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
               magFieldFactor             = 1.0D
               inData                     = ((indata/magFieldFactor)/maximus.width_x)
               already_divided_by_width_x = 1
-              ;; dataName     += '__div_by_width_x'
+              ;; baseName     += '__div_by_width_x'
               ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
               ;;                       DESPUNDB=maximus.info.despun
               ;; magFieldFactor        = SQRT(mapRatio.ratio) ;This scales width_x to the ionosphere
@@ -812,7 +813,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            IF KEYWORD_SET(divide_by_width_x) THEN BEGIN
 
               H2DStr.title  = title__alfDB_ind_18__div_by_width_x
-              ;; dataName     += '__div_by_width_x'
+              ;; baseName     += '__div_by_width_x'
 
               ;;OOOOOH no you don't. Alreay handled by AS5
               ;; LOAD_MAPPING_RATIO_DB,mapRatio, $
@@ -884,10 +885,10 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            can_mlt_by_w_x   = 0
 
            IF KEYWORD_SET(alfDB_plot_struct.ion__junk_alfven_candidates) THEN BEGIN
-              dataname += '-candidates_removed'
+              baseName += '-candidates_removed'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(alfDB_plot_struct.ion__all_fluxes) THEN BEGIN
-                 dataname += '-all_fluxes'
+                 baseName += '-all_fluxes'
               ENDIF
            ENDELSE
 
@@ -931,10 +932,10 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            can_mlt_by_w_x         = 1
 
            IF KEYWORD_SET(alfDB_plot_struct.ion__junk_alfven_candidates) THEN BEGIN
-              dataname += '-candidates_removed'
+              baseName += '-candidates_removed'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(alfDB_plot_struct.ion__all_fluxes) THEN BEGIN
-                 dataname += '-all_fluxes'
+                 baseName += '-all_fluxes'
               ENDIF
            ENDELSE
 
@@ -996,7 +997,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   ENDIF
 
   IF KEYWORD_SET(get_ChareE) THEN BEGIN
-     dataName               = 'charEE'
+     baseName               = 'charEE'
      H2DStr.labelFormat     = fluxPlotChareCBLabelFormat
      H2DStr.logLabels       = logChareLabels
      H2DStr.do_plotIntegral = Charee_do_plotIntegral
@@ -1034,10 +1035,10 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            H2DStr.gUnits    = ''
 
            IF KEYWORD_SET(alfDB_plot_struct.eSpec__junk_alfven_candidates) THEN BEGIN
-              dataname += '-cndidts_rmd'
+              baseName += '-cndidts_rmd'
            ENDIF ELSE BEGIN
               IF KEYWORD_SET(alfDB_plot_struct.eSpec__all_fluxes) THEN BEGIN
-                 dataname += '-all_fluxes'
+                 baseName += '-all_fluxes'
               ENDIF
            ENDELSE
 
@@ -1061,12 +1062,12 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
      CASE 1 OF
         for_ion: BEGIN
            H2DStr.title     = title__alfDB_ind_19
-           dataName         = 'ion_charIE'
+           baseName         = 'ion_charIE'
            inData           = NEWELL_i__ion.charE
         END
         ELSE: BEGIN
            H2DStr.title     = title__alfDB_ind_19
-           dataName         = 'charIE'
+           baseName         = 'charIE'
            inData           = maximus.char_ion_energy
         END
      ENDCASE
@@ -1087,7 +1088,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
   IF KEYWORD_SET(get_magC) THEN BEGIN
      H2DStr.title            = title__alfDB_ind_06
-     dataName                = 'magC'
+     baseName                = 'magC'
      H2DStr.labelFormat      = fluxPlotMagCCBLabelFormat
      H2DStr.logLabels        = logMagCLabels
      H2DStr.do_plotIntegral  = MagC_do_plotIntegral
@@ -1114,7 +1115,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
      IF KEYWORD_SET(SWAY__DB.info.is_8Hz_DB) THEN BEGIN
 
-        dataName            = STRJOIN(STRSPLIT(sWay_structNavn,'.',/EXTRACT),'_')
+        baseName            = STRJOIN(STRSPLIT(sWay_structNavn,'.',/EXTRACT),'_')
         tmpFluxPlotType     = '8Hz'
         ACDCString          = (STRSPLIT(sWay_structNavn,'.',/EXTRACT))[2]
 
@@ -1133,7 +1134,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
      ENDIF ELSE BEGIN
 
-        dataName            = STRJOIN(sWay_structNavn,'_')
+        baseName            = STRJOIN(sWay_structNavn,'_')
         tmpFluxPlotType     =  ''
         ACDCString          = sWay_structNavn[2]
 
@@ -1230,11 +1231,11 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
   ENDIF
   IF KEYWORD_SET(absFlux)THEN BEGIN
-     PRINTF,lun,"N pos elements in " + dataName + " data: ",N_ELEMENTS(where(inData[tmp_i] GT 0.))
-     PRINTF,lun,"N neg elements in " + dataName + " data: ",N_ELEMENTS(where(inData[tmp_i] LT 0.))
+     PRINTF,lun,"N pos elements in " + baseName + " data: ",N_ELEMENTS(where(inData[tmp_i] GT 0.))
+     PRINTF,lun,"N neg elements in " + baseName + " data: ",N_ELEMENTS(where(inData[tmp_i] LT 0.))
      IF KEYWORD_SET(noPosFlux) THEN BEGIN
         posStr              = 'NoP-'
-        PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(tmp_i)
+        PRINTF,lun,"N elements in " + baseName + " before junking pos vals: ",N_ELEMENTS(tmp_i)
         lt_i                = WHERE(inData LT 0.,COMPLEMENT=rmTmp_i)
         rmTmp_ii            = WHERE(inData[tmp_i] GE 0.,nRem)
 
@@ -1242,7 +1243,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
            tmp_i            = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
 
-           PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",nNeg
+           PRINTF,lun,"N elements in " + baseName + " after junking pos vals: ",nNeg
            inData           = ABS(inData)
         ENDIF
 
@@ -1257,13 +1258,13 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   ENDIF
   IF KEYWORD_SET(noNegFlux) THEN BEGIN
      negStr                 = 'NoN-'
-     PRINTF,lun,"N elements in " + dataName + " before junking neg vals: ",N_ELEMENTS(tmp_i)
+     PRINTF,lun,"N elements in " + baseName + " before junking neg vals: ",N_ELEMENTS(tmp_i)
      gt_i                   = WHERE(inData GT 0.,COMPLEMENT=rmTmp_i)
      rmTmp_ii               = WHERE(inData[tmp_i] LE 0.)
      IF gt_i[0] NE -1 THEN BEGIN
 
         tmp_i               = CGSETINTERSECTION(tmp_i,gt_i,COUNT=nPos)
-        PRINTF,lun,"N elements in " + dataName + " after junking neg vals: ",nPos
+        PRINTF,lun,"N elements in " + baseName + " after junking neg vals: ",nPos
      ENDIF
 
      IF rmTmp_ii[0] NE -1 THEN BEGIN
@@ -1273,7 +1274,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   ENDIF
   IF KEYWORD_SET(noPosFlux) AND ~KEYWORD_SET(absFlux) THEN BEGIN
      posStr                 = 'NoP-'
-     PRINTF,lun,"N elements in " + dataName + " before junking pos vals: ",N_ELEMENTS(tmp_i)
+     PRINTF,lun,"N elements in " + baseName + " before junking pos vals: ",N_ELEMENTS(tmp_i)
 
      lt_i                   =  WHERE(inData        LT 0.,COMPLEMENT=rmTmp_i)
      rmTmp_ii               =  WHERE(inData[tmp_i] GE 0.)
@@ -1282,7 +1283,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
         tmp_i               = CGSETINTERSECTION(tmp_i,lt_i,COUNT=nNeg)
 
-        PRINTF,lun,"N elements in " + dataName + " after junking pos vals: ",nNeg
+        PRINTF,lun,"N elements in " + baseName + " after junking pos vals: ",nNeg
         inData              = ABS(inData)
      ENDIF
 
@@ -1298,7 +1299,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   ENDIF
 
   absnegslogStr             = absStr + negStr + posStr + logStr
-  dataName                  = STRTRIM(absnegslogStr,2)+dataName + $
+  dataName                  = STRTRIM(absnegslogStr,2)+baseName + $
                               (KEYWORD_SET(tmpFluxPlotType) ? '_' + tmpFluxPlotType : '')
   ;; H2DStr.title              = absnegslogStr + H2DStr.title
 
@@ -1496,6 +1497,31 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
   IF KEYWORD_SET(H2DStr.both_hemis) THEN ilats = ABS(ilats)
 
+  make_txt_files = 0
+  IF KEYWORD_SET(make_txt_files) THEN BEGIN
+
+     useIt = KEYWORD_SET(tmpFluxPlotType) ? tmpFluxPlotType : baseName
+     OPENW,mylun,'width_t_and_' + useIt + '_dayside_ns.txt',/GET_LUN
+     PRINTF,mylun,'mlt,ilat,width_t,' + useIt + ',wid_x_' + useIt
+
+     dayInds = WHERE(mlts GE 6  AND mlts LT 18)
+     ;; nightInds  = WHERE(mlts GE 18 OR  mlts LT 6)
+
+     FOR k=0,N_ELEMENTS(dayInds)-1 DO BEGIN
+        PRINTF,myLun,FORMAT='(F0.1,",",F0.1,",",F0.7,",",F0.7,",",F0.7)', $
+               mlts[dayInds[k]], $
+               ilats[dayInds[k]], $
+               maximus.width_time[tmp_i[dayInds[k]]], $
+               inData[dayInds[k]]/maximus.width_time[tmp_i[dayInds[k]]], $
+               inData[dayInds[k]]
+     ENDFOR
+
+     CGHISTOPLOT,alog10(indata/maximus.width_time[tmp_i]),OUTPUT=useIt+'.png',TITLE=useIt+'_dayside_ns'
+
+     CLOSE,mylun
+
+  ENDIF
+
   IF KEYWORD_SET(do_plot_i_instead_of_histos) THEN BEGIN
      H2DStr.data.add,inData
      hEv_nz_i      = LINDGEN(N_ELEMENTS(inData))
@@ -1526,30 +1552,48 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
                                      PLOT_I=tmp_i, $
                                      EQUAL_AREA_BINNING=alfDB_plot_struct.EA_binning) 
            
-           IF KEYWORD_SET(medHistOutTxt) THEN MEDHISTANALYZER,INFILE=medHistDatFile,outFile=medHistDataDir + dataName + "medhist.txt"
+           IF KEYWORD_SET(medHistOutTxt) THEN MEDHISTANALYZER,INFILE=medHistDatFile,OUTFILE=medHistDataDir + dataName + "medhist.txt"
         END
         KEYWORD_SET(do_timeAvg_fluxQuantities) AND ~KEYWORD_SET(cant_timeAvg): BEGIN
 
            CASE 1 OF
               KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
+
                  H2DStr.data = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                           ilats,$
                                                           (KEYWORD_SET(alfDB_plot_struct.do_logAvg_the_timeAvg) ? ALOG10(DOUBLE(inData)) : DOUBLE(inData)),$
-                                                          MIN1=MIMC_struct.minM,MIN2=(KEYWORD_SET(do_lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
-                                                          MAX1=MIMC_struct.maxM,MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
-                                                          OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+                                                          MIN1=MIMC_struct.minM, $
+                                                          MIN2=(KEYWORD_SET(do_lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                                          MAX1=MIMC_struct.maxM, $
+                                                          MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+                                                          OBIN1=outH2DBinsMLT, $
+                                                          OBIN2=outH2DBinsILAT, $
+                                                          DENSITY=density)
+
               END
               ELSE: BEGIN
+
                  H2DStr.data = HIST2D(mlts, $
                                       ilats,$
                                       (KEYWORD_SET(alfDB_plot_struct.do_logAvg_the_timeAvg) ? ALOG10(inData) : inData),$
                                       MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
-MIN2=(KEYWORD_SET(do_lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                      MIN2=(KEYWORD_SET(do_lshell) ? MIMC_struct.minL : MIMC_struct.minI),$
                                       MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
-MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+                                      MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                       BINSIZE1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
                                       BINSIZE2=(KEYWORD_SET(do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
-                                      OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+                                      OBIN1=outH2DBinsMLT, $
+                                      OBIN2=outH2DBinsILAT, $
+                                      DENSITY=density, $
+                                      CALCVARIANCE=calcVariance, $
+                                      VAR__WEIGHTSARELOGGED=var__weightsAreLogged, $
+                                      OUT_VARIANCE=h2dTimeVar)
+
+                 IF KEYWORD_SET(calcVariance) THEN BEGIN
+                    H2DStr.var.var = TEMPORARY(h2dTimeVar)
+                    H2DStr.var.density = TEMPORARY(density)
+                 ENDIF
+                 
               END
            ENDCASE
 
@@ -1566,8 +1610,7 @@ MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                                    dataName, $
                                                    h2dMask
 
-           ;;junked all those WHERE(H2DStr.data GT 0) as of 2016/04/23
-           H2DStr.data[WHERE(ABS(H2DStr.data) GT 0)] = H2DStr.data[WHERE(ABS(H2DStr.data) GT 0)]/ $
+           H2DStr.data[WHERE(ABS(H2DStr.data) GT 0)] = H2DStr.data[WHERE(ABS(H2DStr.data) GT 0)] / $
                                                   (KEYWORD_SET(for_e_or_i) ? eSpec_tHistDenominator : $
                                                    tHistDenominator)[WHERE(ABS(H2DStr.data) GT 0)]
            ;; H2DStr.data[hEv_nz_i] = H2DStr.data[hEv_nz_i]/tHistDenominator[hEv_nz_i]
@@ -1598,26 +1641,36 @@ MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
         ELSE: BEGIN
            CASE 1 OF
               KEYWORD_SET(alfDB_plot_struct.EA_binning): BEGIN
+
                  H2DStr.data  = HIST2D__EQUAL_AREA_BINNING(mlts, $
                                                            ilats,$
-                                                           (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) OR KEYWORD_SET(tmpLogAvg) ? ALOG10(DOUBLE(inData)) : DOUBLE(inData)),$
+                                                           (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) OR KEYWORD_SET(tmpLogAvg) ? $
+                                                            ALOG10(DOUBLE(inData)) : DOUBLE(inData)),$
                                                            MIN1=MIMC_struct.minM, $
-MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
+                                                           MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
                                                            MAX1=MIMC_struct.maxM, $
-MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+                                                           MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                                            OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+
               END
               ELSE: BEGIN
+
                  H2DStr.data  = HIST2D(mlts, $
                                        ilats,$
-                                       (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) OR KEYWORD_SET(tmpLogAvg) ? ALOG10(DOUBLE(inData)) : DOUBLE(inData)),$
+                                       (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) OR KEYWORD_SET(tmpLogAvg) ? $
+                                        ALOG10(DOUBLE(inData)) : DOUBLE(inData)),$
                                        MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
                                        MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
                                        MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
                                        MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                        BINSIZE1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
                                        BINSIZE2=(KEYWORD_SET(MIMC_struct.do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
-                                       OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT) 
+                                       OBIN1=outH2DBinsMLT, $
+                                       OBIN2=outH2DBinsILAT, $
+                                       DENSITY=density, $
+                                       CALCVARIANCE=calcVariance, $
+                                       OUT_VARIANCE=calcVars) 
+
               END
            ENDCASE
            
@@ -1647,6 +1700,34 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),
            
         END
      ENDCASE
+
+     ;;Variances??
+     ;; IF KEYWORD_SET(calcVariance) THEN BEGIN
+
+        ;; means = HIST2D(mlts, $
+        ;;                ilats,$
+        ;;                (KEYWORD_SET(alfDB_plot_struct.logAvgPlot) OR KEYWORD_SET(tmpLogAvg) ? ALOG10(DOUBLE(inData)) : DOUBLE(inData)),$
+        ;;                MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+        ;;                MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
+        ;;                MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+        ;;                MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+        ;;                BINSIZE1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+        ;;                BINSIZE2=(KEYWORD_SET(MIMC_struct.do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
+        ;;                OBIN1=outH2DBinsMLT, $
+        ;;                OBIN2=outH2DBinsILAT) 
+
+        ;; vars = HIST2D_VARIANCE(mlts, $
+        ;;                        ilats,$
+        ;;                        means,$
+        ;;                        MIN1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.minLng : MIMC_struct.minM), $
+        ;;                        MIN2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.minL : MIMC_struct.minI),$
+        ;;                        MAX1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.maxLng : MIMC_struct.maxM), $
+        ;;                        MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
+        ;;                        BINSIZE1=(KEYWORD_SET(MIMC_struct.use_Lng) ? MIMC_struct.binLng : MIMC_struct.binM), $
+        ;;                        BINSIZE2=(KEYWORD_SET(MIMC_struct.do_lshell) ? MIMC_struct.binL : MIMC_struct.binI),$
+        ;;                        OBIN1=outH2DBinsMLT,OBIN2=outH2DBinsILAT)
+
+     ;; ENDIF
 
      ;; nz_h2dDat_i = WHERE(ABS(H2DStr.data) GT 0)
      nz_h2dDat_i = hEv_nz_i
@@ -1776,6 +1857,9 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_lShell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
         dayInds    = WHERE((centersMLT GE 6*15  AND centersMLT LT 18*15) AND ~h2dMask)
         nightInds  = WHERE((centersMLT GE 18*15 OR  centersMLT LT 6*15 ) AND ~h2dMask)
+
+        ;; dayInds    = WHERE(mlts GE 6  AND mlts LT 18)
+        ;; nightInds  = WHERE(mlts GE 18 OR  mlts LT 6)
 
         ;;Only make changes to H2DStr.data if it has been explicitly requested
         CASE 1 OF

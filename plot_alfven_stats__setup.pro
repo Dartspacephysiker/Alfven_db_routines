@@ -109,6 +109,15 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    LOG_NEWELLPLOT=log_newellPlot, $
    LOG_NOWEPCOPLOT=log_nowepcoPlot, $
    LOG_SWAYPLOT=log_swayPlot, $
+   ;; CALCVAR_EFLUX=calcVar_Eflux, $
+   ;; CALCVAR_ENUMFL=calcVar_ENumFl, $
+   ;; CALCVAR__SWAY=calcVar__sWay, $
+   ;; CALCVAR_PFLUX=calcVar_Pflux, $
+   ;; CALCVAR_IFLUX=calcVar_Iflux, $
+   ;; CALCVAR_OXYFLUX=calcVar_OxyFlux, $
+   ;; CALCVAR_CHARE=calcVar_CharE, $
+   ;; CALCVAR_CHARIE=calcVar_Charie, $
+   ;; CALCVAR_MAGC=calcVar_MagC, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
    FLUXPLOTS__ADD_SUSPECT_OUTLIERS=fluxPlots__add_suspect_outliers, $
@@ -290,6 +299,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    ;; OVERPLOT_CONTOUR__LEVELS=op_contour__levels, $
    ;; OVERPLOT_CONTOUR__PERCENT=op_contour__percent, $
    ;; OVERPLOT_PLOTRANGE=op_plotRange, $        
+   ;; VAR__EACH_BIN=var__each_bin, $
+   ;; VAR__DISTTYPE=var__distType, $
    _REF_EXTRA=e, $
    RESET_STRUCT=reset, $
    LUN=lun
@@ -488,6 +499,8 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      ;; OVERPLOT_CONTOUR__LEVELS=op_contour__levels, $
      ;; OVERPLOT_CONTOUR__PERCENT=op_contour__percent, $
      ;; OVERPLOT_PLOTRANGE=op_plotRange, $        
+     ;; VAR__EACH_BIN=var__each_bin, $
+     ;; VAR__DISTTYPE=var__distType, $
      RESET_STRUCT=reset, $
      _EXTRA=e
 

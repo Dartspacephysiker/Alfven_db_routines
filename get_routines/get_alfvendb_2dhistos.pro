@@ -101,6 +101,15 @@ PRO GET_ALFVENDB_2DHISTOS, $
    NOPOSMAGC=noPosMagC, $
    MAGCPLOTRANGE=MagCPlotRange, $
    CBMAGCDIVFAC=CBMagCDivFac, $
+   CALCVAR_EFLUX=calcVar_Eflux, $
+   CALCVAR_ENUMFL=calcVar_ENumFl, $
+   CALCVAR__SWAY=calcVar__sWay, $
+   CALCVAR_PFLUX=calcVar_Pflux, $
+   CALCVAR_IFLUX=calcVar_Iflux, $
+   CALCVAR_OXYFLUX=calcVar_OxyFlux, $
+   CALCVAR_CHARE=calcVar_CharE, $
+   CALCVAR_CHARIE=calcVar_Charie, $
+   CALCVAR_MAGC=calcVar_MagC, $
    AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -180,6 +189,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    VAR__REL_TO_MEAN_VARIANCE=var__rel_to_mean_variance, $
    VAR__DO_STDDEV_INSTEAD=var__do_stddev_instead, $
    VAR__AUTOSCALE=var__autoscale, $
+   VAR__EACH_BIN=var__each_bin, $
    PLOT_CUSTOM_MAXIND=plot_custom_maxInd, $
    CUSTOM_MAXINDS=custom_maxInds, $
    CUSTOM_MAXIND_RANGE=custom_maxInd_range, $
@@ -213,6 +223,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    HAVE_PREVIOUS_ESPEC_THISTO=have_prev_eSpec_tHistos, $
    IN_THISTDENOMINATOR=tHistDenominator, $
    IN_ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
+   PLOTDIR=plotDir, $
    _EXTRA=e, $
    LUN=lun
   
@@ -230,6 +241,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
   removed_ii_listarr     = !NULL
   ;; varPlotIsKeepInds      = !NULL
   grossConvFactorArr     = !NULL
+  doVariancePlot         = !NULL
 
   IF N_ELEMENTS(lun) EQ 0 THEN lun = -1
 
@@ -804,6 +816,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
            absFlux            = N_ELEMENTS(absEFlux)   GT 0 ? absEFlux   : !NULL
            cb_divFactor       = N_ELEMENTS(cbEFDivFac) GT 0 ? cbEFDivFac : !NULL
            logPlot            = N_ELEMENTS(logEfPlot)  GT 0 ? logEfPlot  : !NULL
+           calcVariance       = N_ELEMENTS(calcVar_Eflux) GT 0 ? calcVar_Eflux  : !NULL
 
            GET_NEWELL_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_EFLUX, $
                                     ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -831,6 +844,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
+                                    CALCVARIANCE=calcVariance, $
                                     DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                     DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                                     DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -906,6 +920,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
               ELSE: cb_divFactor = cbEFDivFac[i]
            ENDCASE
 
+           CASE N_ELEMENTS(calcVar_Eflux) OF 
+              0:  calcVariance = !NULL
+              1:  calcVariance = calcVar_Eflux
+              ELSE: calcVariance = calcVar_Eflux[i]
+           ENDCASE
+
            dims                  = SIZE(ePlotRange,/DIMENSIONS)
            CASE N_ELEMENTS(dims) OF 
               0:   plotRange     = !NULL
@@ -945,6 +965,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
+                             CALCVARIANCE=calcVariance, $
                              DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                              DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                              DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -988,6 +1009,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
               varPlotRawInds  = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
               removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
               ;;varplotiskeepInds = [varPlotIsKeepInds,0]
+              IF KEYWORD_SET(TEMPORARY(calcVariance)) THEN BEGIN
+                 doVariancePlot = [doVariancePlot,N_ELEMENTS(H2DStrArr)-1]
+              ENDIF
            ENDIF 
 
            IF KEYWORD_SET(do_grossRate_fluxQuantities) $
@@ -1044,7 +1068,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
            absFlux            = N_ELEMENTS(absENumFl)      GT 0 ? absENumFl      : !NULL
            cb_divFactor       = N_ELEMENTS(cbENumFlDivFac) GT 0 ? cbENumFlDivFac : !NULL
            logPlot            = N_ELEMENTS(logENumFlPlot)  GT 0 ? logENumFlPlot  : !NULL
-
+           calcVariance       = N_ELEMENTS(calcVar_ENumFl) GT 0 ? calcVar_ENumFl : !NULL           
+           
            GET_NEWELL_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_ENUMFLUX, $
                                     ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                                     IMF_STRUCT=IMF_struct, $
@@ -1071,6 +1096,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
+                                    CALCVARIANCE=calcVariance, $
                                     DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                     DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                                     DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -1145,6 +1171,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
               ELSE: logPlot      = logENumFlPlot[i]
            ENDCASE
 
+           CASE N_ELEMENTS(calcVar_ENumFl) OF 
+              0:  calcVariance = !NULL
+              1:  calcVariance = calcVar_ENumFl
+              ELSE: calcVariance = calcVar_ENumFl[i]
+           ENDCASE
+
            dims                  = SIZE(eNumFlPlotRange,/DIMENSIONS)
            CASE N_ELEMENTS(dims) OF 
               0:   plotRange     = !NULL
@@ -1184,6 +1216,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
+                             CALCVARIANCE=calcVariance, $
                              DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                              DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                              DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -1225,7 +1258,10 @@ PRO GET_ALFVENDB_2DHISTOS, $
               varPlotH2DInds     = [varPlotH2DInds,N_ELEMENTS(H2DStrArr)-1]
               varPlotRawInds     = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
               removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
-              ;;varplotiskeepInds  = [varPlotIsKeepInds,0]                 
+              IF KEYWORD_SET(TEMPORARY(calcVariance)) THEN BEGIN
+                 doVariancePlot = [doVariancePlot,N_ELEMENTS(H2DStrArr)-1]
+              ENDIF
+
            ENDIF 
            
            IF KEYWORD_SET(do_grossRate_fluxQuantities) $
@@ -1239,6 +1275,13 @@ PRO GET_ALFVENDB_2DHISTOS, $
   
   ;;########Poynting Flux########
   IF KEYWORD_SET(pplots) THEN BEGIN
+
+     CASE N_ELEMENTS(calcVar_Pflux) OF 
+        0:  calcVariance = !NULL
+        1:  calcVariance = calcVar_Pflux
+        ELSE: calcVariance = calcVar_Pflux[i]
+     ENDCASE
+  
      GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,$
                        /GET_PFLUX, $
                        ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
@@ -1260,6 +1303,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        CB_DIVFACTOR=CBPFdivFac, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPfPlot)), $
+                       CALCVARIANCE=calcVariance, $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                        DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                        DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -1301,7 +1345,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
         varPlotH2DInds     = [varPlotH2DInds,N_ELEMENTS(H2DStrArr)-1]
         varPlotRawInds     = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
         removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
-        ;;varplotiskeepInds  = [varPlotIsKeepInds,0]
+        IF KEYWORD_SET(TEMPORARY(calcVariance)) THEN BEGIN
+           doVariancePlot = [doVariancePlot,N_ELEMENTS(H2DStrArr)-1]
+        ENDIF
      ENDIF  
      
      IF KEYWORD_SET(do_grossRate_fluxQuantities) $
@@ -1371,6 +1417,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
            ELSE: logPlot      = logIfPlot[i]
         ENDCASE
 
+        CASE N_ELEMENTS(calcVar_Iflux) OF 
+           0:  calcVariance = !NULL
+           1:  calcVariance = calcVar_Iflux
+           ELSE: calcVariance = calcVar_Iflux[i]
+        ENDCASE  
+
         dims                  = SIZE(iPlotRange,/DIMENSIONS)
         CASE N_ELEMENTS(dims) OF 
            0:   plotRange     = !NULL
@@ -1411,6 +1463,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                           ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                           OUT_REMOVED_II=out_removed_ii, $
                           LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
+                          CALCVARIANCE=calcVariance, $
                           DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                           DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                           DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -1452,7 +1505,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
            varPlotH2DInds     = [varPlotH2DInds,N_ELEMENTS(H2DStrArr)-1]
            varPlotRawInds     = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
            removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
-           ;;varplotiskeepInds  = [varPlotIsKeepInds,0]
+           IF KEYWORD_SET(TEMPORARY(calcVariance)) THEN BEGIN
+              doVariancePlot = [doVariancePlot,N_ELEMENTS(H2DStrArr)-1]
+           ENDIF
         ENDIF  
         
         IF KEYWORD_SET(do_grossRate_fluxQuantities) $
@@ -1465,6 +1520,13 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   ;;########OXY FLUX########
   IF KEYWORD_SET(oxyPlots) THEN BEGIN
+
+     CASE N_ELEMENTS(calcVar_OxyFlux) OF 
+        0:  calcVariance = !NULL
+        1:  calcVariance = calcVar_OxyFlux
+        ELSE: calcVariance = calcVar_OxyFlux[i]
+     ENDCASE
+
      GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_OXYFLUX, $
                        ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                        IMF_STRUCT=IMF_struct, $
@@ -1485,6 +1547,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        ABSFLUX=absOxyFlux, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logOxyfPlot)), $
+                       CALCVARIANCE=calcVariance, $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                        DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                        DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -1526,7 +1589,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
         varPlotH2DInds      = [varPlotH2DInds,N_ELEMENTS(H2DStrArr)-1]
         varPlotRawInds      = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
         removed_ii_listArr  = [removed_ii_listArr,LIST(out_removed_ii)]
-        ;;varPlotIsKeepInds   = [varPlotIsKeepInds,0]
+        IF KEYWORD_SET(TEMPORARY(calcVariance)) THEN BEGIN
+           doVariancePlot = [doVariancePlot,N_ELEMENTS(H2DStrArr)-1]
+        ENDIF
      ENDIF  
      
      IF KEYWORD_SET(do_grossRate_fluxQuantities) $
@@ -1580,7 +1645,8 @@ PRO GET_ALFVENDB_2DHISTOS, $
            absFlux            = N_ELEMENTS(absCharE)      GT 0 ? absCharE      : !NULL
            cb_divFactor       = N_ELEMENTS(cbCharEDivFac) GT 0 ? cbCharEDivFac : !NULL
            logPlot            = N_ELEMENTS(logCharEPlot)  GT 0 ? logCharEPlot  : !NULL
-
+           calcVariance       = N_ELEMENTS(calcVar_CharE) GT 0 ? calcVar_CharE  : !NULL
+           
            GET_NEWELL_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_CHAREE, $
                                     ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                                     IMF_STRUCT=IMF_struct, $
@@ -1607,6 +1673,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                     ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                                     OUT_REMOVED_II=out_removed_ii, $
                                     LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
+                                    CALCVARIANCE=calcVariance, $
                                     DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                                     DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                                     DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -1665,6 +1732,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
               ELSE: logPlot      = logCharEPlot[i]
            ENDCASE
 
+           CASE N_ELEMENTS(calcVar_CharE) OF 
+              0:  calcVariance = !NULL
+              1:  calcVariance = calcVar_CharE
+              ELSE: calcVariance = calcVar_CharE[i]
+           ENDCASE  
+
            dims                  = SIZE(charEPlotRange,/DIMENSIONS)
            CASE N_ELEMENTS(dims) OF 
               0:   plotRange     = !NULL
@@ -1703,6 +1776,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              CB_DIVFACTOR=cbCharEDivFac, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
+                             CALCVARIANCE=calcVariance, $
                              DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                              DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                              DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -1744,7 +1818,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
               varPlotH2DInds      = [varPlotH2DInds,N_ELEMENTS(H2DStrArr)-1]
               varPlotRawInds      = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
               removed_ii_listArr  = [removed_ii_listArr,LIST(out_removed_ii)]
-              ;;varplotiskeepInds   = [varPlotIsKeepInds,0]
+              IF KEYWORD_SET(TEMPORARY(calcVariance)) THEN BEGIN
+                 doVariancePlot = [doVariancePlot,N_ELEMENTS(H2DStrArr)-1]
+              ENDIF
            ENDIF  
            
            IF KEYWORD_SET(do_grossRate_fluxQuantities) $
@@ -1759,6 +1835,13 @@ PRO GET_ALFVENDB_2DHISTOS, $
   
   ;;########CHARACTERISTIC ION ENERGY########
   IF KEYWORD_SET(chariEPlots) THEN BEGIN
+
+     CASE N_ELEMENTS(calcVar_Charie) OF 
+        0:  calcVariance = !NULL
+        1:  calcVariance = calcVar_Charie
+        ELSE: calcVariance = calcVar_Charie[i]
+     ENDCASE
+
      GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_CHARIE, $
                        ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                        IMF_STRUCT=IMF_struct, $
@@ -1780,6 +1863,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logChariEPlot)), $
+                       CALCVARIANCE=calcVariance, $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                        DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                        DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -1821,7 +1905,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
         varPlotH2DInds      = [varPlotH2DInds,N_ELEMENTS(H2DStrArr)-1]
         varPlotRawInds      = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
         removed_ii_listArr  = [removed_ii_listArr,LIST(out_removed_ii)]
-        ;;varplotiskeepInds   = [varPlotIsKeepInds,0]
+        IF KEYWORD_SET(TEMPORARY(calcVariance)) THEN BEGIN
+           doVariancePlot = [doVariancePlot,N_ELEMENTS(H2DStrArr)-1]
+        ENDIF
      ENDIF  
      
      IF KEYWORD_SET(do_grossRate_fluxQuantities) $
@@ -1833,6 +1919,13 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   ;;########CHARACTERISTIC ION ENERGY########
   IF KEYWORD_SET(magCPlots) THEN BEGIN
+
+     CASE N_ELEMENTS(calcVar_MagC) OF 
+        0:  calcVariance = !NULL
+        1:  calcVariance = calcVar_MagC
+        ELSE: calcVariance = calcVar_MagC[i]
+     ENDCASE
+
      GET_FLUX_PLOTDATA,MAXIMUS__maximus,plot_i,/GET_MAGC, $
                        ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                        IMF_STRUCT=IMF_struct, $
@@ -1853,6 +1946,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        CB_DIVFACTOR=CBMagCDivFac, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logMagCPlot)), $
+                       CALCVARIANCE=calcVariance, $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                        DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                        DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -1894,7 +1988,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
         varPlotH2DInds      = [varPlotH2DInds,N_ELEMENTS(H2DStrArr)-1]
         varPlotRawInds      = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
         removed_ii_listArr  = [removed_ii_listArr,LIST(out_removed_ii)]
-        ;;varplotiskeepInds   = [varPlotIsKeepInds,0]
+        IF KEYWORD_SET(TEMPORARY(calcVariance)) THEN BEGIN
+           doVariancePlot = [doVariancePlot,N_ELEMENTS(H2DStrArr)-1]
+        ENDIF
      ENDIF  
      
      IF KEYWORD_SET(do_grossRate_fluxQuantities) $
@@ -1934,6 +2030,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
      IF keepMe THEN BEGIN 
         dataNameArr       = [dataNameArr,dataNames] 
         dataRawPtrArr     = [dataRawPtrArr,dataRawPtrs] 
+        IF KEYWORD_SET(TEMPORARY(calcVariance)) THEN BEGIN
+           doVariancePlot = [doVariancePlot,N_ELEMENTS(H2DStrArr)-1]
+        ENDIF
      ENDIF
 
   ENDIF
@@ -1971,6 +2070,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
      IF keepMe THEN BEGIN 
         dataNameArr       = [dataNameArr,dataNames] 
         dataRawPtrArr     = [dataRawPtrArr,dataRawPtrs] 
+        IF KEYWORD_SET(TEMPORARY(calcVariance)) THEN BEGIN
+           doVariancePlot = [doVariancePlot,N_ELEMENTS(H2DStrArr)-1]
+        ENDIF
      ENDIF
 
   ENDIF
@@ -2011,6 +2113,12 @@ PRO GET_ALFVENDB_2DHISTOS, $
            ELSE: logPlot      = log_sWayPlot[i]
         ENDCASE
 
+        CASE N_ELEMENTS(calcVar__sWay) OF 
+           0:  calcVariance = !NULL
+           1:  calcVariance = calcVar__sWay
+           ELSE: calcVariance = calcVar__sWay[i]
+        ENDCASE
+        
         dims                  = SIZE(sWayPlotRange,/DIMENSIONS)
         CASE N_ELEMENTS(dims) OF 
            0:   plotRange     = !NULL
@@ -2188,6 +2296,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                              ;; ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logPlot)), $
+                             CALCVARIANCE=calcVariance, $
                              DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                              DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                              DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -2228,7 +2337,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
               varPlotH2DInds     = [varPlotH2DInds,N_ELEMENTS(H2DStrArr)-1]
               varPlotRawInds     = [varPlotRawInds,N_ELEMENTS(dataRawPtrArr)-1]
               removed_ii_listArr = [removed_ii_listArr,LIST(out_removed_ii)]
-              ;;varplotiskeepInds  = [varPlotIsKeepInds,0]
+              IF KEYWORD_SET(TEMPORARY(calcVariance)) THEN BEGIN
+                 doVariancePlot = [doVariancePlot,N_ELEMENTS(H2DStrArr)-1]
+              ENDIF
            ENDIF
 
         ENDFOR
@@ -2316,6 +2427,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logefPlot) $
                                     OR KEYWORD_SET(summed_eFlux_pFlux_logPlot) ), $
+                       CALCVARIANCE=calcVar_pFlux, $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                        DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                        DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -2370,6 +2482,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=(KEYWORD_SET(all_logPlots) OR KEYWORD_SET(logefPlot) $
                                     OR KEYWORD_SET(summed_eFlux_pFlux_logPlot) ), $
+                       ;; CALCVARIANCE=calcVariance, $
                        DO_TIMEAVG_FLUXQUANTITIES=do_timeAvg_fluxQuantities, $
                        DO_LOGAVG_THE_TIMEAVG=do_logavg_the_timeAvg, $
                        DO_GROSSRATE_FLUXQUANTITIES=do_grossRate_fluxQuantities, $
@@ -2509,6 +2622,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
                                    CB_DIVFACTOR=CB_divFactor, $
                                    OUT_REMOVED_II=out_removed_ii, $
                                    LOGPLOT=log_custom, $
+                                   ;; CALCVARIANCE=calcVar_custom, $
                                    DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                                    MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                                    MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
@@ -2549,6 +2663,9 @@ PRO GET_ALFVENDB_2DHISTOS, $
         IF keepMe THEN BEGIN 
            dataNameArr=[dataNameArr,dataName] 
            dataRawPtrArr=[dataRawPtrArr,dataRawPtr] 
+           IF KEYWORD_SET(TEMPORARY(calcVariance)) THEN BEGIN
+              doVariancePlot = [doVariancePlot,N_ELEMENTS(H2DStrArr)-1]
+           ENDIF
         ENDIF
         
         IF KEYWORD_SET(do_grossRate_fluxQuantities) $
@@ -2571,6 +2688,27 @@ PRO GET_ALFVENDB_2DHISTOS, $
   ;; ENDFOR
 
   IF N_ELEMENTS(print_mandm) EQ 0 THEN print_mandm = 1
+
+  IF N_ELEMENTS(doVariancePlot) GT 0 THEN BEGIN
+
+     FOR k=0,N_ELEMENTS(doVariancePlot)-1 DO BEGIN
+        H2DStrTmp = H2DStrArr[doVariancePlot[k]]
+        
+        this = SCATTERPLOT(REFORM(H2DStrTmp.var.density,N_ELEMENTS(H2DStrTmp.var.density)), $
+                           REFORM(H2DStrTmp.var.var/(H2DStrTmp.data)^2,N_ELEMENTS(H2DStrTmp.var.density)), $
+                           TITLE=H2DStrTmp.title, $
+                           YTITLE='E[(X-$\mu$)!U2!N]/E[X]!U2!N', $
+                           XTITLE='N obs', $
+                           XLOG=1, $
+                           YLOG=1, $
+                           /BUFFER)
+
+        this.Save,plotDir+paramStr+'_variance__'+H2DStrTmp.name+'.png'
+
+        this.delete
+     ENDFOR
+     
+  ENDIF
 
   IF KEYWORD_SET(add_variance_plots) OR KEYWORD_SET(only_variance_plots) OR KEYWORD_SET(write_obsArr_textFile) THEN BEGIN
 
