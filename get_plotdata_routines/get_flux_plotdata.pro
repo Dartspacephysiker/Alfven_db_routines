@@ -1501,7 +1501,12 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
   IF KEYWORD_SET(make_txt_files) THEN BEGIN
 
      useIt = KEYWORD_SET(tmpFluxPlotType) ? tmpFluxPlotType : baseName
-     OPENW,mylun,'width_t_and_' + useIt + '_dayside_ns.txt',/GET_LUN
+
+     txtSuff  = '_dayside_rp'
+     ;; txtSuff  = '_dayside_ns'
+     txtFName = 'width_t_and_' + useIt + '__magc1_-1_' + txtSuff + '.txt'
+     mylun = 34
+     OPENW,mylun,txtFName
      PRINTF,mylun,'mlt,ilat,width_t,' + useIt + ',wid_x_' + useIt
 
      dayInds = WHERE(mlts GE 6  AND mlts LT 18)
@@ -1516,9 +1521,12 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
                inData[dayInds[k]]
      ENDFOR
 
-     CGHISTOPLOT,alog10(indata/maximus.width_time[tmp_i]),OUTPUT=useIt+'.png',TITLE=useIt+'_dayside_ns'
+     CGHISTOPLOT,ALOG10(indata/maximus.width_time[tmp_i]), $
+                 OUTPUT=STRJOIN([STRSPLIT(txtFName,'.txt',/EXTRACT,/REGEX),'png'],'.'), $
+                 TITLE=useIt+txtSuff
 
      CLOSE,mylun
+     FREE_LUN,mylun
 
   ENDIF
 
@@ -1587,12 +1595,8 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
                                       DENSITY=density, $
                                       CALCVARIANCE=calcVariance, $
                                       VAR__WEIGHTSARELOGGED=var__weightsAreLogged, $
+                                      NORMALIZE_VARIANCE=normalize_variance, $
                                       OUT_VARIANCE=h2dTimeVar)
-
-                 IF KEYWORD_SET(calcVariance) THEN BEGIN
-                    H2DStr.var.var = TEMPORARY(h2dTimeVar)
-                    H2DStr.var.density = TEMPORARY(density)
-                 ENDIF
                  
               END
            ENDCASE
@@ -1610,10 +1614,23 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
                                                    dataName, $
                                                    h2dMask
 
-           H2DStr.data[WHERE(ABS(H2DStr.data) GT 0)] = H2DStr.data[WHERE(ABS(H2DStr.data) GT 0)] / $
-                                                  (KEYWORD_SET(for_e_or_i) ? eSpec_tHistDenominator : $
-                                                   tHistDenominator)[WHERE(ABS(H2DStr.data) GT 0)]
+           H2DStr.data[WHERE(density GT 0)] = H2DStr.data[WHERE(density GT 0)] / $
+                                                       (KEYWORD_SET(for_e_or_i) ? eSpec_tHistDenominator : $
+                                                        tHistDenominator)[WHERE(density GT 0)]
            ;; H2DStr.data[hEv_nz_i] = H2DStr.data[hEv_nz_i]/tHistDenominator[hEv_nz_i]
+
+           IF KEYWORD_SET(calcVariance) THEN BEGIN
+
+              H2DStr.var.var = TEMPORARY(h2dTimeVar)
+              
+              ;; H2DStr.var.var[WHERE(density GT 0)] = H2DStr.var.var[WHERE(density GT 0)] / $
+              ;;                                          (KEYWORD_SET(for_e_or_i) ? eSpec_tHistDenominator^2 : $
+              ;;                                           tHistDenominator^2)[WHERE(density GT 0)]
+
+              H2DStr.var.density = TEMPORARY(density)
+
+           ENDIF
+
 
         END
         (KEYWORD_SET(alfDB_plot_struct.maxPlot) OR KEYWORD_SET(alfDB_plot_struct.minPlot)): BEGIN
@@ -1669,6 +1686,8 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
                                        OBIN2=outH2DBinsILAT, $
                                        DENSITY=density, $
                                        CALCVARIANCE=calcVariance, $
+                                       VAR__WEIGHTSARELOGGED=var__weightsAreLogged, $
+                                       NORMALIZE_VARIANCE=normalize_variance, $
                                        OUT_VARIANCE=calcVars) 
 
               END
@@ -1729,7 +1748,7 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
 
      ;; ENDIF
 
-     ;; nz_h2dDat_i = WHERE(ABS(H2DStr.data) GT 0)
+     ;; nz_h2dDat_i = WHERE(density GT 0)
      nz_h2dDat_i = hEv_nz_i
      IF KEYWORD_SET(multiply_fluxes_by_probOccurrence) THEN BEGIN
         PRINT,'Multiplying by probability of occurrence!'

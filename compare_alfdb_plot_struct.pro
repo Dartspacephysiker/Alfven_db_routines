@@ -392,6 +392,27 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
            matchArr        = [matchArr,tmpComp.field]
         ENDIF
 
+        IF STRMATCH(tmpComp.field,STRUPCASE('*CALCVAR_EFLUX*')) THEN BEGIN
+           ;; DBs_reset      += 0B
+           ;; inds_reset     += 0B
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
+        IF STRMATCH(tmpComp.field,STRUPCASE('*CALCVAR_IFLUX*')) THEN BEGIN
+           ;; DBs_reset      += 0B
+           ;; inds_reset     += 0B
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+        
+        IF STRMATCH(tmpComp.field,STRUPCASE('*CALCVAR_MAGC*')) THEN BEGIN
+           ;; DBs_reset      += 0B
+           ;; inds_reset     += 0B
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
         IF KEYWORD_SET(dontStop) THEN BEGIN
            ;; PRINT,'Not stopping!'
         ENDIF ELSE BEGIN

@@ -223,6 +223,7 @@ PRO GET_ALFVENDB_2DHISTOS, $
    HAVE_PREVIOUS_ESPEC_THISTO=have_prev_eSpec_tHistos, $
    IN_THISTDENOMINATOR=tHistDenominator, $
    IN_ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
+   OUT_H2DSTR_VARPLOT_I=doVariancePlot, $
    PLOTDIR=plotDir, $
    _EXTRA=e, $
    LUN=lun
@@ -2691,22 +2692,39 @@ PRO GET_ALFVENDB_2DHISTOS, $
 
   IF N_ELEMENTS(doVariancePlot) GT 0 THEN BEGIN
 
-     FOR k=0,N_ELEMENTS(doVariancePlot)-1 DO BEGIN
-        H2DStrTmp = H2DStrArr[doVariancePlot[k]]
-        
-        this = SCATTERPLOT(REFORM(H2DStrTmp.var.density,N_ELEMENTS(H2DStrTmp.var.density)), $
-                           REFORM(H2DStrTmp.var.var/(H2DStrTmp.data)^2,N_ELEMENTS(H2DStrTmp.var.density)), $
-                           TITLE=H2DStrTmp.title, $
-                           YTITLE='E[(X-$\mu$)!U2!N]/E[X]!U2!N', $
-                           XTITLE='N obs', $
-                           XLOG=1, $
-                           YLOG=1, $
-                           /BUFFER)
+     SpenceCares = 0
+     IF SpenceCares THEN BEGIN
 
-        this.Save,plotDir+paramStr+'_variance__'+H2DStrTmp.name+'.png'
+        FOR k=0,N_ELEMENTS(doVariancePlot)-1 DO BEGIN
+           H2DStrTmp = H2DStrArr[doVariancePlot[k]]
+           
+           nHere   = N_ELEMENTS(H2DStrTmp.var.density)
+           nz_i    = WHERE(H2DStrTmp.var.density GT 0,nNZero)
 
-        this.delete
-     ENDFOR
+           IF nNZero EQ 0 THEN BEGIN
+              PRINT,"Bad luck!"
+              CONTINUE
+           ENDIF
+
+           tmpDens = (REFORM(H2DStrTmp.var.density,nHere))[nz_i]
+           ;; tmpCV   = (SQRT(REFORM(H2DStrTmp.var.var,nHere))/H2DStrTmp.data)[nz_i]
+           tmpCV   = (REFORM(H2DStrTmp.var.var,nHere))[nz_i]
+
+           this = SCATTERPLOT(tmpDens, $
+                              tmpCV, $
+                              TITLE=H2DStrTmp.title, $
+                              YTITLE='SQRT(E[(X-$\mu$)!U2!N]) / $\mu$', $
+                              XTITLE='N', $
+                              XLOG=1, $
+                              YLOG=1, $
+                              /BUFFER)
+
+           this.Save,plotDir+paramStr+'_variance__'+H2DStrTmp.name+'.png'
+
+           this.delete
+        ENDFOR
+
+     ENDIF
      
   ENDIF
 
