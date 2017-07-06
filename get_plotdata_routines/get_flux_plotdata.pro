@@ -1576,7 +1576,11 @@ MAX2=(KEYWORD_SET(MIMC_struct.do_Lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),
                                                           MAX2=(KEYWORD_SET(do_lshell) ? MIMC_struct.maxL : MIMC_struct.maxI),$
                                                           OBIN1=outH2DBinsMLT, $
                                                           OBIN2=outH2DBinsILAT, $
-                                                          DENSITY=density)
+                                                          DENSITY=density, $
+                                                          CALCVARIANCE=calcVariance, $
+                                                          VAR__WEIGHTSARELOGGED=var__weightsAreLogged, $
+                                                          NORMALIZE_VARIANCE=normalize_variance, $
+                                                          OUT_VARIANCE=h2dTimeVar)
 
               END
               ELSE: BEGIN
