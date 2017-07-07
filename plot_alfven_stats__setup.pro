@@ -343,7 +343,6 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
                     KEYWORD_SET(use_AU) + $
                     KEYWORD_SET(use_AL)
 
-
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;DEFAULTS, DEFAULT STRUCTS
   SET_ALFVENDB_PLOT_DEFAULTS, $

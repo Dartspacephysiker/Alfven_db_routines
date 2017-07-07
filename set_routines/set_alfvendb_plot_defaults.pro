@@ -71,15 +71,15 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    CHARETYPE=charEType, $
    CHARIEPLOTS=chariEPlots, $
    MAGCPLOTS=magCPlots, $
-   CALCVAR_EFLUX=calcVar_Eflux, $
-   CALCVAR_ENUMFL=calcVar_ENumFl, $
-   CALCVAR__SWAY=calcVar__sWay, $
-   CALCVAR_PFLUX=calcVar_Pflux, $
-   CALCVAR_IFLUX=calcVar_Iflux, $
-   CALCVAR_OXYFLUX=calcVar_OxyFlux, $
-   CALCVAR_CHARE=calcVar_CharE, $
-   CALCVAR_CHARIE=calcVar_Charie, $
-   CALCVAR_MAGC=calcVar_MagC, $
+   ;; CALCVAR_EFLUX=calcVar_Eflux, $
+   ;; CALCVAR_ENUMFL=calcVar_ENumFl, $
+   ;; CALCVAR__SWAY=calcVar__sWay, $
+   ;; CALCVAR_PFLUX=calcVar_Pflux, $
+   ;; CALCVAR_IFLUX=calcVar_Iflux, $
+   ;; CALCVAR_OXYFLUX=calcVar_OxyFlux, $
+   ;; CALCVAR_CHARE=calcVar_CharE, $
+   ;; CALCVAR_CHARIE=calcVar_Charie, $
+   ;; CALCVAR_MAGC=calcVar_MagC, $
    ;; AUTOSCALE_FLUXPLOTS=autoscale_fluxPlots, $
    FLUXPLOTS__REMOVE_OUTLIERS=fluxPlots__remove_outliers, $
    FLUXPLOTS__REMOVE_LOG_OUTLIERS=fluxPlots__remove_log_outliers, $
@@ -188,8 +188,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    OVERPLOT_CONTOUR__CTBOTTOM=op_contour__CTBottom, $
    OVERPLOT_PLOTRANGE=op_plotRange, $
    ;; HOYDIA=hoyDia, $
-   VAR__EACH_BIN=var__each_bin, $
-   VAR__DISTTYPE=var__distType, $
+   ;; VAR__EACH_BIN=var__each_bin, $
+   ;; VAR__DISTTYPE=var__distType, $
+   VAROPT=varOpt, $
    LUN=lun, $
    DONT_CORRECT_ILATS=dont_correct_ilats, $
    MIMC_STRUCT=MIMC_struct, $
@@ -647,15 +648,15 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          charEPlots                        : 0B, $
                          chariEPlots                       : 0B, $
                          magCPlots                         : 0B, $
-                         calcVar_Eflux                     : 0B, $
-                         calcVar_ENumFl                    : 0B, $
-                         calcVar__sWay                     : 0B, $
-                         calcVar_Pflux                     : 0B, $
-                         calcVar_Iflux                     : 0B, $
-                         calcVar_OxyFlux                   : 0B, $
-                         calcVar_CharE                     : 0B, $
-                         calcVar_Charie                    : 0B, $
-                         calcVar_MagC                      : 0B, $
+                         ;; calcVar_Eflux                     : 0B, $
+                         ;; calcVar_ENumFl                    : 0B, $
+                         ;; calcVar__sWay                     : 0B, $
+                         ;; calcVar_Pflux                     : 0B, $
+                         ;; calcVar_Iflux                     : 0B, $
+                         ;; calcVar_OxyFlux                   : 0B, $
+                         ;; calcVar_CharE                     : 0B, $
+                         ;; calcVar_Charie                    : 0B, $
+                         ;; calcVar_MagC                      : 0B, $
                          ;; autoscale_fluxPlots               : 0B, $
                          fluxPlots__remove_outliers        : 0B, $
                          fluxPlots__remove_log_outliers    : 0B, $
@@ -749,8 +750,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          multiple_AE                       : 0B, $
                          ae_stuff                          : 0B, $
                          use_storm_stuff                   : 0B, $
-                         var__each_bin                     : 0B, $
-                         var__distType                     : 'norm' $
+                         ;; var__each_bin                     : 0B, $
+                         ;; var__distType                     : 'norm', $
+                         varOpt                            : PAS__VAROPT_INIT() $
                          }
 
      IF KEYWORD_SET(use_storm_stuff) THEN BEGIN
@@ -1089,50 +1091,50 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     BYTE(magCPlots),/ADD_REPLACE
      ENDIF
 
-     IF N_ELEMENTS(calcVar_Eflux) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'calcVar_Eflux', $
-        BYTE(calcVar_Eflux),/ADD_REPLACE
-     ENDIF
+     ;; IF N_ELEMENTS(calcVar_Eflux) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,alfDB_plot_struct,'calcVar_Eflux', $
+     ;;    BYTE(calcVar_Eflux),/ADD_REPLACE
+     ;; ENDIF
   
-     IF N_ELEMENTS(calcVar_ENumFl) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'calcVar_ENumFl', $
-        BYTE(calcVar_ENumFl),/ADD_REPLACE
-     ENDIF
+     ;; IF N_ELEMENTS(calcVar_ENumFl) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,alfDB_plot_struct,'calcVar_ENumFl', $
+     ;;    BYTE(calcVar_ENumFl),/ADD_REPLACE
+     ;; ENDIF
      
-     IF N_ELEMENTS(calcVar__sWay) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'calcVar__sWay', $
-                    BYTE(calcVar__sWay),/ADD_REPLACE
-     ENDIF
+     ;; IF N_ELEMENTS(calcVar__sWay) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,alfDB_plot_struct,'calcVar__sWay', $
+     ;;                BYTE(calcVar__sWay),/ADD_REPLACE
+     ;; ENDIF
      
-     IF N_ELEMENTS(calcVar_Pflux) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'calcVar_Pflux', $
-                    BYTE(calcVar_Pflux),/ADD_REPLACE
-     ENDIF
+     ;; IF N_ELEMENTS(calcVar_Pflux) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,alfDB_plot_struct,'calcVar_Pflux', $
+     ;;                BYTE(calcVar_Pflux),/ADD_REPLACE
+     ;; ENDIF
      
-     IF N_ELEMENTS(calcVar_Iflux) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'calcVar_Iflux', $
-                    BYTE(calcVar_Iflux),/ADD_REPLACE
-     ENDIF
+     ;; IF N_ELEMENTS(calcVar_Iflux) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,alfDB_plot_struct,'calcVar_Iflux', $
+     ;;                BYTE(calcVar_Iflux),/ADD_REPLACE
+     ;; ENDIF
      
-     IF N_ELEMENTS(calcVar_OxyFlux) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'calcVar_OxyFlux', $
-                    BYTE(calcVar_OxyFlux),/ADD_REPLACE
-     ENDIF
+     ;; IF N_ELEMENTS(calcVar_OxyFlux) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,alfDB_plot_struct,'calcVar_OxyFlux', $
+     ;;                BYTE(calcVar_OxyFlux),/ADD_REPLACE
+     ;; ENDIF
 
-     IF N_ELEMENTS(calcVar_CharE) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'calcVar_CharE', $
-                    BYTE(calcVar_CharE),/ADD_REPLACE
-     ENDIF
+     ;; IF N_ELEMENTS(calcVar_CharE) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,alfDB_plot_struct,'calcVar_CharE', $
+     ;;                BYTE(calcVar_CharE),/ADD_REPLACE
+     ;; ENDIF
      
-     IF N_ELEMENTS(calcVar_Charie) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'calcVar_Charie', $
-                    BYTE(calcVar_Charie),/ADD_REPLACE
-     ENDIF
+     ;; IF N_ELEMENTS(calcVar_Charie) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,alfDB_plot_struct,'calcVar_Charie', $
+     ;;                BYTE(calcVar_Charie),/ADD_REPLACE
+     ;; ENDIF
 
-     IF N_ELEMENTS(calcVar_MagC) GT 0 THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'calcVar_MagC', $
-                    BYTE(calcVar_MagC),/ADD_REPLACE
-     ENDIF
+     ;; IF N_ELEMENTS(calcVar_MagC) GT 0 THEN BEGIN
+     ;;    STR_ELEMENT,alfDB_plot_struct,'calcVar_MagC', $
+     ;;                BYTE(calcVar_MagC),/ADD_REPLACE
+     ;; ENDIF
 
      ;; IF N_ELEMENTS(autoscale_fluxPlots) GT 0 THEN BEGIN
      ;;    STR_ELEMENT,alfDB_plot_struct,'autoscale_fluxPlots', $
@@ -1753,22 +1755,56 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                     hoyDia,/ADD_REPLACE
      ENDIF
 
-     IF KEYWORD_SET(var__each_bin) THEN BEGIN
-        STR_ELEMENT,alfDB_plot_struct,'var__each_bin', $
-                    var__each_bin,/ADD_REPLACE
-     ENDIF
+     ;; IF KEYWORD_SET(var__each_bin) THEN BEGIN
+     ;;    STR_ELEMENT,alfDB_plot_struct,'var__each_bin', $
+     ;;                var__each_bin,/ADD_REPLACE
+     ;; ENDIF
 
-     IF KEYWORD_SET(var__distType) THEN BEGIN
+     ;; IF KEYWORD_SET(var__distType) THEN BEGIN
 
-        IF STRUPCASE(var__distType) NE 'NORM' AND $
-           STRUPCASE(var__distType) NE 'LOGNORM'  $
-        THEN BEGIN
-           PRINT,"Must use 'norm' or 'lognorm' for calculating variance! It's all I know!!"
-           STOP
-        ENDIF
 
-        STR_ELEMENT,alfDB_plot_struct,'var__distType', $
-                    var__distType,/ADD_REPLACE
+
+     ;;    STR_ELEMENT,alfDB_plot_struct,'var__distType', $
+     ;;                var__distType,/ADD_REPLACE
+     ;; ENDIF
+
+     IF KEYWORD_SET(varOpt) THEN BEGIN
+
+        diff = COMPARE_STRUCT(alfDB_plot_struct.varOpt, $
+                              varOpt, $
+                              EXCEPT=['bro'])
+
+        tmpVarOpt = alfDB_plot_struct.varOpt
+        FOREACH diffStr,diff DO BEGIN
+
+           PRINT,diffStr.field
+
+           fieldNavn = (STRSPLIT(diffStr.field,'.',/EXTRACT))[0]
+           IF STRUPCASE(fieldNavn) EQ 'VAR__DISTTYPE' THEN BEGIN
+
+              IF STRUPCASE(fieldNavn) NE 'NORM'    AND $
+                 STRUPCASE(fieldNavn) NE 'LOGNORM' AND $
+                 STRUPCASE(fieldNavn) NE '' $
+              THEN BEGIN
+                 PRINT,"Must use 'norm' or 'lognorm' for calculating variance! It's all I know!!"
+                 STOP
+              ENDIF
+
+           ENDIF
+
+           STR_ELEMENT,tmpVarOpt, $
+                       fieldNavn, $
+                       varOpt.(diffStr.tag_num_B), $
+                       /ADD_REPLACE
+
+
+        ENDFOREACH
+
+        STR_ELEMENT,alfDB_plot_struct,'varOpt',TEMPORARY(tmpVarOpt),/ADD_REPLACE
+
+        ;; STR_ELEMENT,alfDB_plot_struct,'varOpt', $
+        ;;             varOpt,/ADD_REPLACE
+
      ENDIF
 
   ENDIF
