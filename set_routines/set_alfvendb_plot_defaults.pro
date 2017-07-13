@@ -123,6 +123,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    ALL_STORM_PHASES=all_storm_phases, $
    DSTCUTOFF=dstCutoff, $
    SMOOTH_DST=smooth_dst, $
+   TRASH_SSC_INDS=trash_ssc_inds, $
    USE_MOSTRECENT_DST_FILES=use_mostRecent_Dst_files, $
    AE_STUFF=ae_stuff, $
    USE_AE=use_ae, $
@@ -766,7 +767,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                    all_storm_phases          : 0B  , $
                    dstCutoff                 : -20 , $
                    smooth_dst                : 0B  , $
-                   use_mostRecent_Dst_files  : 0B}
+                   use_mostRecent_Dst_files  : 0B  , $
+                   trash_SSC_inds            : 0B}
 
 
         IF N_ELEMENTS(nonStorm) GT 0 THEN BEGIN
@@ -805,6 +807,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         IF N_ELEMENTS(use_mostRecent_Dst_files) GT 0 THEN BEGIN
            STR_ELEMENT,storm_opt,'use_mostRecent_Dst_files', $
                        use_mostRecent_Dst_files,/ADD_REPLACE
+        ENDIF
+
+        IF N_ELEMENTS(trash_SSC_inds) GT 0 THEN BEGIN
+           STR_ELEMENT,storm_opt,'trash_SSC_inds', $
+                       trash_SSC_inds,/ADD_REPLACE
         ENDIF
 
         STR_ELEMENT,alfDB_plot_struct,'storm_opt',storm_opt,/ADD_REPLACE

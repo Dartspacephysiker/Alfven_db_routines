@@ -190,6 +190,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    ALL_STORM_PHASES=all_storm_phases, $
    DSTCUTOFF=dstCutoff, $
    SMOOTH_DST=smooth_dst, $
+   TRASH_SSC_INDS=trash_ssc_inds, $
    USE_MOSTRECENT_DST_FILES=use_mostRecent_Dst_files, $
    USE_AE=use_ae, $
    USE_AU=use_au, $
@@ -479,6 +480,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      ALL_STORM_PHASES=all_storm_phases, $
      DSTCUTOFF=dstCutoff, $
      SMOOTH_DST=smooth_dst, $
+     TRASH_SSC_INDS=trash_ssc_inds, $
      USE_MOSTRECENT_DST_FILES=use_mostRecent_Dst_files, $
      AE_STUFF=ae_stuff, $
      USE_AE=use_ae, $

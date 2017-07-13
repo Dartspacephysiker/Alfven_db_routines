@@ -14,9 +14,9 @@ PRO TRASH_EVENTS_NEAR_SSC,dbStruct,good_i, $
   dirForAlle = '/SPENCEdata/Research/database/temps/'
 
   ;; kill all before minutesBef minutes
-  minutesBef = 15
+  minutesBef = 30
   ;; kill all before minutesAft minutes
-  minutesAft = 45
+  minutesAft = 60
 
   ;; remake_trashSSC_files       = N_ELEMENTS(remake_trashSSC_files) GT 0 ? remake_trashSSC_files : 1
 

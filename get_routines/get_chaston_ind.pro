@@ -540,20 +540,20 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
         ENDELSE
      ENDIF
 
-     trash_SSC_inds = 1
-     IF KEYWORD_SET(trash_SSC_inds) THEN BEGIN
+     ;; trash_SSC_inds = 1
+     IF KEYWORD_SET(alfDB_plot_struct.storm_opt.trash_SSC_inds) THEN BEGIN
         ;; notSSC_i = TRASH_EVENTS_NEAR_SSC(*pDBStruct,region_i, $
         TRASH_EVENTS_NEAR_SSC,*pDBStruct,region_i, $
                               DBTIMES=(*pDBTimes), $
                               REMAKE_TRASHSSC_FILES=remake_trashSSC_files
                                        ;; REMAKE_TRASHSSC_FILES=remake_trashSSC_files)
 
-        IF notSSC_i[0] NE -1 THEN BEGIN
-           region_i          = CGSETINTERSECTION(region_i,notSSC_i)
-        ENDIF ELSE BEGIN
-           PRINTF,lun,'The whole world is one huge storm commencement!'
-           STOP
-        ENDELSE
+        ;; IF notSSC_i[0] NE -1 THEN BEGIN
+        ;;    region_i          = CGSETINTERSECTION(region_i,notSSC_i)
+        ;; ENDIF ELSE BEGIN
+        ;;    PRINTF,lun,'The whole world is one huge storm commencement!'
+        ;;    STOP
+        ;; ENDELSE
 
      ENDIF
 
