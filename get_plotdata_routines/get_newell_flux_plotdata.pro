@@ -33,6 +33,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                              ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                              OUT_REMOVED_II=out_removed_ii, $
                              LOGFLUXPLOT=logFluxPlot, $
+                             CALCVARIANCE=calcVariance, $
+                             VAROPT=varOpt, $
                              DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                              MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
                              MULTIPLY_FLUXES_BY_PROBOCCURRENCE=multiply_fluxes_by_probOccurrence, $
@@ -319,6 +321,8 @@ PRO GET_NEWELL_FLUX_PLOTDATA,maximus,plot_i, $
                        ESPEC_THISTDENOMINATOR=eSpec_tHistDenominator, $
                        OUT_REMOVED_II=out_removed_ii, $
                        LOGFLUXPLOT=logP, $
+                       CALCVARIANCE=calcVariance, $
+                       VAROPT=varOpt, $
                        CB_DIVFACTOR=cbDF, $
                        DIVIDE_BY_WIDTH_X=divide_by_width_x, $
                        MULTIPLY_BY_WIDTH_X=multiply_by_width_x, $
