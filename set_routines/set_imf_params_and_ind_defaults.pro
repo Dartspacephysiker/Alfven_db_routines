@@ -105,6 +105,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
    DELAY=delay, $
    MULTIPLE_DELAYS=multiple_delays, $
    ADD_NIGHT_DELAY=add_night_delay, $
+   FIXED_NIGHT_DELAY=fixed_night_delay, $
    OUT_EXECUTING_MULTIPLES=executing_multiples, $
    OUT_MULTIPLES=multiples, $
    OUT_MULTISTRING=multiString, $
@@ -138,6 +139,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
 
   defDelay               = 900
   defAdd_night_delay     = 0
+  defFixed_night_delay   = 0
 
   defstableIMF           = 0S   ;Set to a time (in minutes) over which IMF stability is required
   defIncludeNoConsecData = 0    ;Setting this to 1 includes Chaston data for which  
@@ -207,6 +209,11 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
   
   IF N_ELEMENTS(add_night_delay) EQ 0 THEN BEGIN
      add_night_delay        = defAdd_Night_Delay ;Delay to add to nightside (since it takes longer for stuff to register over there, you know)
+                                
+  ENDIF
+
+  IF N_ELEMENTS(fixed_night_delay) EQ 0 THEN BEGIN
+     fixed_night_delay      = defFixed_Night_Delay ;Delay to add to nightside (since it takes longer for stuff to register over there, you know)
                                 
   ENDIF
 
@@ -518,6 +525,13 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
         addNightStr             = ''
      ENDELSE
      
+     IF fixed_night_delay NE 0 THEN BEGIN
+        addNightStr             = STRING(FORMAT='("_",F0.1,"ntDel_fix")',fixed_night_delay/60.) 
+     ENDIF ELSE BEGIN
+        addNightStr             = ''
+     ENDELSE
+     
+
      IF binOffset_delay NE 0 THEN BEGIN
         delBinOffStr            = STRING(FORMAT='("_",F0.1,"Ofst")',binOffset_delay/60.) 
      ENDIF ELSE BEGIN
@@ -813,6 +827,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
 
      IF N_ELEMENTS(add_night_delay) GT 0 THEN BEGIN
         STR_ELEMENT,IMF_struct,'add_night_delay',FLOAT(add_night_delay),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(fixed_night_delay) GT 0 THEN BEGIN
+        STR_ELEMENT,IMF_struct,'fixed_night_delay',FLOAT(fixed_night_delay),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(multiple_delays) GT 0 THEN BEGIN

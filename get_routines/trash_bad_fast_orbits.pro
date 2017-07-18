@@ -331,8 +331,8 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
         ;; nBTot  += nBlackball
 
         ;; good_i  = good_i[keeper_ii]
-        ;; good_i  = CGSETINTERSECTION(good_i,keeper_i,COUNT=nKeeper,NORESULT=-1)
-        good_i  = CGSETDIFFERENCE(good_i,blackball_i,COUNT=nKeeper,NORESULT=-1)
+        good_i  = CGSETINTERSECTION(good_i,keeper_i,COUNT=nKeeper,NORESULT=-1)
+        ;; good_i  = CGSETDIFFERENCE(good_i,blackball_i,COUNT=nKeeper,NORESULT=-1)
         nBTot  += nBlackball
 
         ;;If we enter this bit of code, the files were just remade and we should see if life is sane
