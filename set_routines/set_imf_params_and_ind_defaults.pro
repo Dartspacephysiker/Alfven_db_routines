@@ -209,12 +209,10 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
   
   IF N_ELEMENTS(add_night_delay) EQ 0 THEN BEGIN
      add_night_delay        = defAdd_Night_Delay ;Delay to add to nightside (since it takes longer for stuff to register over there, you know)
-                                
   ENDIF
 
   IF N_ELEMENTS(fixed_night_delay) EQ 0 THEN BEGIN
      fixed_night_delay      = defFixed_Night_Delay ;Delay to add to nightside (since it takes longer for stuff to register over there, you know)
-                                
   ENDIF
 
   IF N_ELEMENTS(delay_res) EQ 0 THEN BEGIN
@@ -528,7 +526,7 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
      IF fixed_night_delay NE 0 THEN BEGIN
         addNightStr             = STRING(FORMAT='("_",F0.1,"ntDel_fix")',fixed_night_delay/60.) 
      ENDIF ELSE BEGIN
-        addNightStr             = ''
+        addNightStr             = N_ELEMENTS(addNightStr) GT 0 ? addNightStr : ''
      ENDELSE
      
 
