@@ -25,7 +25,7 @@ PRO GET_INDS_ABOVE_35_MAGLAT,dBStruct,good_i, $
      RETURN
   ENDIF
 
-  dir  = DBStruct.info.DB_Dir+(KEYWORD_SET(FOR_eSpec_DB) ? '../' : '') + 'alternate_coords/'
+  dir  = DBStruct.info.DB_Dir+(KEYWORD_SET(for_eSpec_DB) ? '../' : '') + 'alternate_coords/'
   fil  = DBStr+fSuff
   IF FILE_TEST(dir+fil) THEN BEGIN
      RESTORE,dir+fil
@@ -40,7 +40,7 @@ PRO GET_INDS_ABOVE_35_MAGLAT,dBStruct,good_i, $
         MAG_lat_GT_35_i = WHERE(ABS(MAG.lat) GT 35)
         PRINT,"Saving >35° MAG lat file ..."
         SAVE,MAG_lat_GT_35_i,FILENAME=dir+fil
-     ENDIF
+     ENDIF ELSE STOP
 
   ENDELSE
 

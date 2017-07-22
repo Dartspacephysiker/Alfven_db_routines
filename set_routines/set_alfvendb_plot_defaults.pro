@@ -579,7 +579,8 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
   paramString = paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
                 MIMC_struct.hemi+despunStr+coordStr+MCStr+bonusStr+sampTStr+ $
                 lShellStr+plotMedOrAvg+$
-                maskStr+tMaskStr+EABinStr+inc_burstStr+polarContStr+paramStrSuffix
+                ;; maskStr+tMaskStr+EABinStr+inc_burstStr+polarContStr+paramStrSuffix
+                maskStr+tMaskStr+EABinStr+inc_burstStr+paramStrSuffix
 
   ;;Shouldn't be leftover, unused params from batch call
   ;; IF ISA(e) THEN BEGIN

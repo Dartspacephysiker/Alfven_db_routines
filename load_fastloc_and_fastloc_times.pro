@@ -124,6 +124,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         fastLoc_has_times = 1
 
         AACGM_file    = 'fastLoc_intervals5--20161129--500-16361--Je_times--AACGM_coords.sav'
+        AACGM_file    = 'fastLoc_intervals5-AACGM.sav'
         GEI_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-GEI.sav'
         GEO_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-GEO.sav'
         MAG_file      = 'fastLoc_intervals5--20161129--500-16361--Je_times-MAG.sav'
@@ -263,36 +264,34 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      END
   ENDCASE
 
-     ;; IF N_ELEMENTS(fastLoc) EQ 0 OR KEYWORD_SET(force_load_fastLoc) THEN BEGIN
-     IF KEYWORD_SET(loadFL) OR KEYWORD_SET(force_load_fastLoc) THEN BEGIN
-        IF KEYWORD_SET(force_load_fastLoc) THEN BEGIN
-           PRINTF,lun,"Forcing load, whether or not we already have fastLoc..."
-        ENDIF
-        IF FILE_TEST(DBDir+DBFile) THEN RESTORE,DBDir+DBFile
-        IF fastLoc EQ !NULL THEN BEGIN
-           PRINT,"Couldn't load fastLoc!"
-           STOP
-        ENDIF
+  ;; IF N_ELEMENTS(fastLoc) EQ 0 OR KEYWORD_SET(force_load_fastLoc) THEN BEGIN
+  IF KEYWORD_SET(loadFL) OR KEYWORD_SET(force_load_fastLoc) THEN BEGIN
+     IF KEYWORD_SET(force_load_fastLoc) THEN BEGIN
+        PRINTF,lun,"Forcing load, whether or not we already have fastLoc..."
+     ENDIF
+     IF FILE_TEST(DBDir+DBFile) THEN RESTORE,DBDir+DBFile
+     IF fastLoc EQ !NULL THEN BEGIN
+        PRINT,"Couldn't load fastLoc!"
+        STOP
+     ENDIF
 
-        FASTDB__ADD_INFO_STRUCT,fastLoc, $
-                                /FOR_FASTLOC, $
-                                DB_DIR=DBDir, $
-                                DB_DATE=DB_date, $
-                                DB_VERSION=DB_version, $
-                                DB_EXTRAS=DB_extras
+     FASTDB__ADD_INFO_STRUCT,fastLoc, $
+                             /FOR_FASTLOC, $
+                             DB_DIR=DBDir, $
+                             DB_DATE=DB_date, $
+                             DB_VERSION=DB_version, $
+                             DB_EXTRAS=DB_extras
 
-        fastLoc.info.is_32Hz       = KEYWORD_SET(include_32Hz)
-        fastLoc.info.is_128Hz      = KEYWORD_SET(is_128Hz)
-        fastLoc.info.is_noRestrict = KEYWORD_SET(is_noRestrict)
-        fastLoc.info.for_eSpecDB   = KEYWORD_SET(for_eSpec_DBs)
+     fastLoc.info.is_32Hz       = KEYWORD_SET(include_32Hz)
+     fastLoc.info.is_128Hz      = KEYWORD_SET(is_128Hz)
+     fastLoc.info.is_noRestrict = KEYWORD_SET(is_noRestrict)
+     fastLoc.info.for_eSpecDB   = KEYWORD_SET(for_eSpec_DBs)
 
-        pDBStruct                  = PTR_NEW(fastLoc)
+     pDBStruct                  = PTR_NEW(fastLoc)
 
-     ENDIF ELSE BEGIN
-        PRINTF,lun,"There is already a fastLoc struct loaded! Not loading " + DBFile
-     ENDELSE
-     
-
+  ENDIF ELSE BEGIN
+     PRINTF,lun,"There is already a fastLoc struct loaded! Not loading " + DBFile
+  ENDELSE
 
   IF ~KEYWORD_SET(just_fastLoc) AND KEYWORD_SET(loadFL) THEN BEGIN
 
@@ -306,7 +305,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
         IF fastloc_times EQ !NULL THEN BEGIN
            IF KEYWORD_SET(fastLoc_has_times) THEN BEGIN
-              fastLoc_times = fastLoc.x
+              fastLoc_times = (*pDBStruct).x
            ENDIF ELSE BEGIN
               PRINT,"Couldn't load fastloc_times!"
               STOP
@@ -379,7 +378,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         IF KEYWORD_SET(do_not_map_delta_t) THEN BEGIN
            PRINT,'Not mapping delta t for fastLoc ...'
         ENDIF ELSE BEGIN
-           IF ~fastLoc.info.is_mapped THEN BEGIN
+           IF ~(*pDBStruct).info.is_mapped THEN BEGIN
               IF FILE_TEST(mapRatDir+mapRatFile) THEN BEGIN
                  PRINT,"Mapping fastLoc delta-ts to 100 km ..."
                  RESTORE,mapRatDir+mapRatFile
@@ -393,7 +392,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                        (*pDB__delta_t)  = (*pDB__delta_t)/SQRT((TEMPORARY(mapRatio)).ratio)
                     END
                  ENDCASE
-                 fastLoc.info.is_mapped = 1B
+                 (*pDBStruct).info.is_mapped = 1B
               ENDIF ELSE BEGIN
                  PRINT,"Can't map fastLoc delta-ts to 100 km! mapRatio DB doesn't exist .."
                  STOP
