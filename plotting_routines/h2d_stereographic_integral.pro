@@ -1,4 +1,4 @@
-PRO H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
+PRO H2D_STEREOGRAPHIC_INTEGRAL,H2DStr,lonsLats, $
                                ALFDB_PLOT_STRUCT=alfDB_plot_struct, $
                                EQUAL_AREA_BINNING=EA_binning, $
                                H2D_MASKED=h2d_masked, $
@@ -18,10 +18,10 @@ PRO H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
   nLons              = N_ELEMENTS(lonsLats[*,0,0,0])+1
   
   ;Initialize integrals for each hemi
-  dawnIntegral       = (h2dStr.is_fluxData) ? DOUBLE(0.0) : 0L
-  duskIntegral       = (h2dStr.is_fluxData) ? DOUBLE(0.0) : 0L
-  dayIntegral        = (h2dStr.is_fluxData) ? DOUBLE(0.0) : 0L
-  nightIntegral      = (h2dStr.is_fluxData) ? DOUBLE(0.0) : 0L
+  dawnIntegral       = (H2DStr.is_fluxData) ? DOUBLE(0.0) : 0L
+  duskIntegral       = (H2DStr.is_fluxData) ? DOUBLE(0.0) : 0L
+  dayIntegral        = (H2DStr.is_fluxData) ? DOUBLE(0.0) : 0L
+  nightIntegral      = (H2DStr.is_fluxData) ? DOUBLE(0.0) : 0L
 
   ;;Initialize area avgs for each hemi
   dawnArea            = DOUBLE(0.0)
@@ -148,18 +148,18 @@ PRO H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
               ;; THEN BEGIN
               IF ctrLon[j] GE 180 $
               THEN BEGIN
-                 duskIntegral += (h2dStr.is_logged) ? $
-                                 10.^h2dStr.data[j] : h2dStr.data[j]
-                 duskArea      += h2dStr.gAreas[j]
+                 duskIntegral += ((H2DStr.is_logged) ? $
+                                  10.^H2DStr.data[j] : H2DStr.data[j]) * H2DStr.gAreas[j] 
+                 duskArea      += H2DStr.gAreas[j]
               ENDIF ELSE BEGIN
                  ;; IF tempLons[0] LE 180 AND $
                  ;;    tempLons[-1] LE 180 $
                  ;; THEN BEGIN
                  IF ctrLon[j] GE 0 $
                  THEN BEGIN
-                    dawnIntegral += (h2dStr.is_logged) ? $
-                                    10.^h2dStr.data[j] : h2dStr.data[j]
-                    dawnArea      += h2dStr.gAreas[j]
+                    dawnIntegral += ((H2DStr.is_logged) ? $
+                                    10.^H2DStr.data[j] : H2DStr.data[j]) * H2DStr.gAreas[j] 
+                    dawnArea      += H2DStr.gAreas[j]
                  ENDIF
               ENDELSE
 
@@ -169,18 +169,18 @@ PRO H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
               IF (ctrLon[j] LE 90 ) OR $
                  (ctrLon[j] GT 270)    $
               THEN BEGIN
-                 nightIntegral   += (h2dStr.is_logged) ? $
-                                    10.^h2dStr.data[j] : h2dStr.data[j]
-                 nightArea        += h2dStr.gAreas[j]
+                 nightIntegral   += ((H2DStr.is_logged) ? $
+                                    10.^H2DStr.data[j] : H2DStr.data[j]) * H2DStr.gAreas[j] 
+                 nightArea        += H2DStr.gAreas[j]
               ENDIF ELSE BEGIN
                  ;; IF (tempLons[0] GE 90  AND tempLons[-1] GE 90 ) AND $
                  ;;    (tempLons[0] LE 270 AND tempLons[-1] LE 270)    $
                  IF (ctrLon[j] GT 90 ) AND $
                     (ctrLon[j] LE 270)    $
                  THEN BEGIN
-                    dayIntegral  += (h2dStr.is_logged) ? $
-                                    10.^h2dStr.data[j] : h2dStr.data[j]
-                    dayArea        += h2dStr.gAreas[j]
+                    dayIntegral  += ((H2DStr.is_logged) ? $
+                                    10.^H2DStr.data[j] : H2DStr.data[j]) * H2DStr.gAreas[j] 
+                    dayArea        += H2DStr.gAreas[j]
                  ENDIF
               ENDELSE
 
@@ -190,6 +190,8 @@ PRO H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
 
      END
      ELSE: BEGIN
+
+        grateMe_i   = WHERE(~h2d_masked,nGrate)
         FOR j=0, nLats-2 DO BEGIN 
            FOR i=0, nLons-2 DO BEGIN 
 
@@ -202,32 +204,32 @@ PRO H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
                  IF tempLons[0] GE 180 AND $
                     tempLons[-1] GE 180 $
                  THEN BEGIN
-                    duskIntegral += (h2dStr.is_logged) ? $
-                                    10.^h2dStr.data[i,j] : h2dStr.data[i,j]
-                    duskArea      += h2dStr.gAreas[i,j]
+                    duskIntegral += ((H2DStr.is_logged) ? $
+                                    10.^H2DStr.data[i,j] : H2DStr.data[i,j]) * H2DStr.gAreas[j] 
+                    duskArea      += H2DStr.gAreas[i,j]
                  ENDIF ELSE BEGIN
                     IF tempLons[0] LE 180 AND $
                        tempLons[-1] LE 180 $
                     THEN BEGIN
-                       dawnIntegral += (h2dStr.is_logged) ? $
-                                       10.^h2dStr.data[i,j] : h2dStr.data[i,j]
-                       dawnArea      += h2dStr.gAreas[i,j]
+                       dawnIntegral += ((H2DStr.is_logged) ? $
+                                       10.^H2DStr.data[i,j] : H2DStr.data[i,j]) * H2DStr.gAreas[j] 
+                       dawnArea      += H2DStr.gAreas[i,j]
                     ENDIF
                  ENDELSE
 
                  IF (tempLons[0] LE 90  AND tempLons[-1] LE 90 ) OR $
                     (tempLons[0] GE 270 AND tempLons[-1] GE 270)    $
                  THEN BEGIN
-                    nightIntegral   += (h2dStr.is_logged) ? $
-                                       10.^h2dStr.data[i,j] : h2dStr.data[i,j]
-                    nightArea        += h2dStr.gAreas[i,j]
+                    nightIntegral   += ((H2DStr.is_logged) ? $
+                                       10.^H2DStr.data[i,j] : H2DStr.data[i,j]) * H2DStr.gAreas[j] 
+                    nightArea        += H2DStr.gAreas[i,j]
                  ENDIF ELSE BEGIN
                     IF (tempLons[0] GE 90  AND tempLons[-1] GE 90 ) AND $
                        (tempLons[0] LE 270 AND tempLons[-1] LE 270)    $
                     THEN BEGIN
-                       dayIntegral  += (h2dStr.is_logged) ? $
-                                       10.^h2dStr.data[i,j] : h2dStr.data[i,j]
-                       dayArea       += h2dStr.gAreas[i,j]
+                       dayIntegral  += ((H2DStr.is_logged) ? $
+                                       10.^H2DStr.data[i,j] : H2DStr.data[i,j]) * H2DStr.gAreas[j] 
+                       dayArea       += H2DStr.gAreas[i,j]
                     ENDIF
                  ENDELSE
 
@@ -239,70 +241,85 @@ PRO H2D_STEREOGRAPHIC_INTEGRAL,h2dStr,lonsLats, $
   ENDCASE
 
 
-  IF h2dStr.is_logged THEN BEGIN
-     integral        = ALOG10(TOTAL(10.0^(h2dStr.data[WHERE(~h2d_masked)])))
+  IF H2DStr.is_logged THEN BEGIN
+     integral        = ALOG10(TOTAL(10.0^(H2DStr.data[grateMe_i])))
      absIntegral     = integral
      dawnIntegral    = ALOG10(dawnIntegral)
      duskIntegral    = ALOG10(duskIntegral)
      dayIntegral     = ALOG10(dayIntegral)
      nightIntegral   = ALOG10(nightIntegral)
   ENDIF ELSE BEGIN
-     integral        = TOTAL(h2dStr.data[WHERE(~h2d_masked)])
-     absIntegral     = TOTAL(ABS(h2dStr.data[WHERE(~h2d_masked)]))
+     integral        = TOTAL(H2DStr.data[grateMe_i] * H2DStr.gAreas[grateMe_i])
+     absIntegral     = TOTAL(ABS(H2DStr.data[grateMe_i] * H2DStr.gAreas[grateMe_i]))
   ENDELSE     
 
-     IF KEYWORD_SET(output_integral_txt) THEN BEGIN
-        ;; OPENW,intlun,integralFile,/GET_LUN,/APPEND
+  H2DAreaConvFac     = 1
+  IF H2DStr.gUnits EQ 'E+25' THEN BEGIN
+     H2DAreaConvFac  = 1e10
+  ENDIF
+  IF H2DStr.gUnits EQ 'GW' THEN BEGIN
+     H2DAreaConvFac  = 1e3
+  ENDIF
 
-        ;; labFormat    = STRMID(h2dStr.labelFormat, $
-        ;;                       1, $
-        ;;                       STRPOS(h2dStr.labelFormat,')',/REVERSE_SEARCH)-1)
-        labFormat    = 'G0.4'
+  integral      *= H2DAreaConvFac
+  absIntegral   *= H2DAreaConvFac
+  dawnIntegral  *= H2DAreaConvFac
+  duskIntegral  *= H2DAreaConvFac
+  dayIntegral   *= H2DAreaConvFac
+  nightIntegral *= H2DAreaConvFac
 
-        PRINTF,intLun,''
-        PRINTF,intLun,FORMAT='(" Total ",T15,":",T20,'+labFormat+')',integral
-        PRINTF,intLun,FORMAT='("|Total|",T15,":",T20,'+labFormat+')',integral
-        PRINTF,intLun,''
-        PRINTF,intLun,FORMAT='("Dayside",T15,":",T20,'+labFormat+')',dayIntegral
-        PRINTF,intLun,FORMAT='("Nightside",T15,":",T20,'+labFormat+')',nightIntegral
-        PRINTF,intLun,''
-        PRINTF,intLun,FORMAT='("Dawnside",T15,":",T20,'+labFormat+')',dawnIntegral
-        PRINTF,intLun,FORMAT='("Duskside",T15,":",T20,'+labFormat+')',duskIntegral
-        PRINTF,intLun,''
+  IF KEYWORD_SET(output_integral_txt) THEN BEGIN
+     ;; OPENW,intlun,integralFile,/GET_LUN,/APPEND
 
-        ;; CLOSE,intLun
-        ;; FREE_LUN,intLun
-     ENDIF
+     ;; labFormat    = STRMID(H2DStr.labelFormat, $
+     ;;                       1, $
+     ;;                       STRPOS(H2DStr.labelFormat,')',/REVERSE_SEARCH)-1)
+     labFormat    = 'G0.4'
 
-     IF KEYWORD_SET(output_integral_sav) THEN BEGIN
-        IF FILE_TEST(integralSavFile) THEN BEGIN
-           ;; PRINT,'Restoring ' + integralSavFile + ' ...'
-           RESTORE,integralSavFile
+     PRINTF,intLun,''
+     PRINTF,intLun,FORMAT='(" Total ",T15,":",T20,'+labFormat+')',integral
+     PRINTF,intLun,FORMAT='("|Total|",T15,":",T20,'+labFormat+')',integral
+     PRINTF,intLun,''
+     PRINTF,intLun,FORMAT='("Dayside",T15,":",T20,'+labFormat+')',dayIntegral
+     PRINTF,intLun,FORMAT='("Nightside",T15,":",T20,'+labFormat+')',nightIntegral
+     PRINTF,intLun,''
+     PRINTF,intLun,FORMAT='("Dawnside",T15,":",T20,'+labFormat+')',dawnIntegral
+     PRINTF,intLun,FORMAT='("Duskside",T15,":",T20,'+labFormat+')',duskIntegral
+     PRINTF,intLun,''
 
-           hemiIntegs = {name:hemiIntegs.name, $
-                         integrals:{day:[hemiIntegs.integrals.day,dayIntegral], $
-                                    night:[hemiIntegs.integrals.night,nightIntegral], $
-                                    dawn:[hemiIntegs.integrals.dawn,dawnIntegral], $
-                                    dusk:[hemiIntegs.integrals.dusk,duskIntegral]}, $
-                         area:{day:[hemiIntegs.area.day,dayArea], $
-                               night:[hemiIntegs.area.night,nightArea], $
-                               dawn:[hemiIntegs.area.dawn,dawnArea], $
-                               dusk:[hemiIntegs.area.dusk,duskArea]}}
-        ENDIF ELSE BEGIN
-           hemiIntegs = {name:h2dStr.name, $
-                         integrals:{day:dayIntegral, $
-                                    night:nightIntegral, $
-                                    dawn:dawnIntegral, $
-                                    dusk:duskIntegral}, $
-                         area:{day:dayArea, $
-                               night:nightArea, $
-                               dawn:dawnArea, $
-                               dusk:duskArea}}
+     ;; CLOSE,intLun
+     ;; FREE_LUN,intLun
+  ENDIF
 
-        ENDELSE
-        
-        ;; PRINT,'Saving ' + integralSavFile + '...'
-        SAVE,hemiIntegs,FILENAME=integralSavFile
-     ENDIF
+  IF KEYWORD_SET(output_integral_sav) THEN BEGIN
+     IF FILE_TEST(integralSavFile) THEN BEGIN
+        ;; PRINT,'Restoring ' + integralSavFile + ' ...'
+        RESTORE,integralSavFile
+
+        hemiIntegs = {name:hemiIntegs.name, $
+                      integrals:{day:[hemiIntegs.integrals.day,dayIntegral], $
+                                 night:[hemiIntegs.integrals.night,nightIntegral], $
+                                 dawn:[hemiIntegs.integrals.dawn,dawnIntegral], $
+                                 dusk:[hemiIntegs.integrals.dusk,duskIntegral]}, $
+                      area:{day:[hemiIntegs.area.day,dayArea], $
+                            night:[hemiIntegs.area.night,nightArea], $
+                            dawn:[hemiIntegs.area.dawn,dawnArea], $
+                            dusk:[hemiIntegs.area.dusk,duskArea]}}
+     ENDIF ELSE BEGIN
+        hemiIntegs = {name:H2DStr.name, $
+                      integrals:{day:dayIntegral, $
+                                 night:nightIntegral, $
+                                 dawn:dawnIntegral, $
+                                 dusk:duskIntegral}, $
+                      area:{day:dayArea, $
+                            night:nightArea, $
+                            dawn:dawnArea, $
+                            dusk:duskArea}}
+
+     ENDELSE
+     
+     ;; PRINT,'Saving ' + integralSavFile + '...'
+     SAVE,hemiIntegs,FILENAME=integralSavFile
+  ENDIF
 
 END

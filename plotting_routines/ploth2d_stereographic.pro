@@ -714,6 +714,10 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
                                 INTEGSAVFILE=integralSavFile, $
                                 INTLUN=intLun
 
+     temp.grossIntegrals.total = integral
+     temp.grossIntegrals.day   = dayIntegral
+     temp.grossIntegrals.night = nightIntegral
+
   ENDIF
 
   ;;******************************
