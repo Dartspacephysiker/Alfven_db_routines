@@ -344,11 +344,11 @@ PRO PLOTH2D_STEREOGRAPHIC,temp,ancillaryData, $
 
   ;;binary matrix to tell us where masked values are
   CASE 1 OF
-     temp.hasMask: BEGIN
-        h2dMaskData  = temp.mask
-     END
      KEYWORD_SET(h2dMask): BEGIN
         h2dMaskData  = h2dMask.data
+     END
+     temp.hasMask: BEGIN
+        h2dMaskData  = temp.mask
      END
      ELSE: BEGIN
         nPlots       = N_ELEMENTS(h2dStrArr)-1 ;Subtract one since last array is the mask
