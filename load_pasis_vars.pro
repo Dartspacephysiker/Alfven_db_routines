@@ -4,6 +4,7 @@ FUNCTION LOAD_PASIS_VARS, $
    SAVEDIR=dir, $
    NEED_FASTLOC_I=need_fastLoc_i, $
    REMAKE_PREVIOUS_PLOT_I_LISTS_IF_EXISTING=remake_prev_plot_file, $
+   PREV_PLOT__SKIP_EXISTING=prev_plot__skip_existing, $
    VERBOSE=verbose
 
   COMPILE_OPT IDL2,STRICTARRSUBS
