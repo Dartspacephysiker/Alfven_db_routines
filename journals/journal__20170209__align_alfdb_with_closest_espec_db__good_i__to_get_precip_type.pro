@@ -7,7 +7,8 @@ PRO JOURNAL__20170209__ALIGN_ALFDB_WITH_CLOSEST_ESPEC_DB__GOOD_I__TO_GET_PRECIP_
 
   outDir           = '/SPENCEdata/Research/database/FAST/dartdb/saves/'
   ;; tooBigDiffFile = 'Dartdb_20151222--500-16361_inc_lower_lats--alfs_way_separated_from_eesa_obs.sav'
-  alfIntoeSpecFile = 'Dartdb_20151222--500-16361_inc_lower_lats--max_magCurrent_time_alfs_into_20170203_eSpecDB__good_i.sav'
+  ;; alfIntoeSpecFile = 'Dartdb_20151222--500-16361_inc_lower_lats--max_magCurrent_time_alfs_into_20170203_eSpecDB__good_i.sav'
+  alfIntoeSpecFile = 'Dartdb_20151222--500-16361_inc_lower_lats--max_magCurrent_time_alfs_into_20160607_eSpecDB__good_i.sav'
 
   @common__newell_espec.pro
   IF N_ELEMENTS(NEWELL__eSpec) EQ 0 THEN BEGIN

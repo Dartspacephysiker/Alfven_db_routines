@@ -122,7 +122,7 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
   IF alf_into_eSpecDB.eSpec_info.DB_date NE (*peSpecDB).info.DB_date THEN BEGIN
      PRINT,"Mismatching eSpecDBs, je crois ..."
      PRINT,FORMAT='(A0,T25,": ",A0)',"alfDB_into_eSpecDB eSpecDB_date",alf_into_eSpecDB.eSpec_info.DB_date
-     PRINT,FORMAT='(A0,T25,": ",A0)',"alfDB DB_date",(*peSpecDB).info.DB_date
+     PRINT,FORMAT='(A0,T25,": ",A0)',"eSpec DB_date",(*peSpecDB).info.DB_date
 
      IF hadMaximus THEN BEGIN
         maximus           = TEMPORARY(*pAlfDB)
