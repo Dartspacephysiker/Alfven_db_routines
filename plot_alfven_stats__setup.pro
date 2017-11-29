@@ -176,6 +176,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    ESPEC__NO_MAXIMUS=eSpec__no_maximus, $
    ESPEC__UPGOING=eSpec__upgoing, $
    ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
+   ESPEC__GIGANTE_DB=eSpec__gigante_DB, $
    ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
    ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
    ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
@@ -461,6 +462,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      ESPEC__NO_MAXIMUS=eSpec__no_maximus, $
      ESPEC__UPGOING=eSpec__upgoing, $
      ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
+     ESPEC__GIGANTE_DB=eSpec__gigante_DB, $
      ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
      ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
      ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $

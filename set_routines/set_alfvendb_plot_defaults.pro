@@ -104,6 +104,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    ESPEC__NO_MAXIMUS=eSpec__no_maximus, $
    ESPEC__UPGOING=eSpec__upgoing, $
    ESPEC_FLUX_PLOTS=eSpec_flux_plots, $
+   ESPEC__GIGANTE_DB=eSpec__gigante_DB, $
    ESPEC__JUNK_ALFVEN_CANDIDATES=eSpec__junk_alfven_candidates, $
    ESPEC__ALL_FLUXES=eSpec__all_fluxes, $
    ESPEC__NEWELL_2009_INTERP=eSpec__Newell_2009_interp, $
@@ -683,6 +684,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                          eSpec__no_maximus                 : 0B, $
                          eSpec__upgoing                    : 0B, $
                          eSpec_flux_plots                  : 0B, $
+                         eSpec__gigante_DB                 : 0B, $
                          eSpec__junk_alfven_candidates     : 0B, $
                          eSpec__all_fluxes                 : 0B, $
                          eSpec__Newell_2009_interp         : 0B, $
@@ -1268,6 +1270,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(eSpec__upgoing) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'eSpec__upgoing', $
                     BYTE(eSpec__upgoing),/ADD_REPLACE
+     ENDIF
+
+     IF N_ELEMENTS(eSpec__gigante_DB) GT 0 THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'eSpec__gigante_DB', $
+                    BYTE(eSpec__gigante_DB),/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(eSpec__junk_alfven_candidates) GT 0 THEN BEGIN
