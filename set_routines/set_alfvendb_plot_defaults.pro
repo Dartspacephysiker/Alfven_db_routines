@@ -798,9 +798,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         ENDIF
 
         IF N_ELEMENTS(all_storm_phases) GT 0 THEN BEGIN
-           STR_ELEMENT,storm_opt, $
-                       (KEYWORD_SET(use_katus_storm_phases) ? 'katusPhases' : 'all_storm_phases'), $
-                       all_storm_phases,/ADD_REPLACE
+           STR_ELEMENT,storm_opt,'all_storm_phases',all_storm_phases,/ADD_REPLACE
         ENDIF
 
         IF N_ELEMENTS(dstCutoff) GT 0 THEN BEGIN
