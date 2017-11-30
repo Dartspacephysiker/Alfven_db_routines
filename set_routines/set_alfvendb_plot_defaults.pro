@@ -126,6 +126,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    SMOOTH_DST=smooth_dst, $
    TRASH_SSC_INDS=trash_ssc_inds, $
    USE_MOSTRECENT_DST_FILES=use_mostRecent_Dst_files, $
+   USE_KATUS_STORM_PHASES=use_katus_storm_phases, $
    AE_STUFF=ae_stuff, $
    USE_AE=use_ae, $
    USE_AU=use_au, $
@@ -771,6 +772,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                    dstCutoff                 : -20 , $
                    smooth_dst                : 0B  , $
                    use_mostRecent_Dst_files  : 0B  , $
+                   use_katus_storm_phases    : 0B  , $
                    trash_SSC_inds            : 0B}
 
 
@@ -796,7 +798,9 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         ENDIF
 
         IF N_ELEMENTS(all_storm_phases) GT 0 THEN BEGIN
-           STR_ELEMENT,storm_opt,'all_storm_phases',all_storm_phases,/ADD_REPLACE
+           STR_ELEMENT,storm_opt, $
+                       (KEYWORD_SET(use_katus_storm_phases) ? 'katusPhases' : 'all_storm_phases'), $
+                       all_storm_phases,/ADD_REPLACE
         ENDIF
 
         IF N_ELEMENTS(dstCutoff) GT 0 THEN BEGIN
@@ -812,6 +816,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                        use_mostRecent_Dst_files,/ADD_REPLACE
         ENDIF
 
+        IF N_ELEMENTS(use_katus_storm_phases) GT 0 THEN BEGIN
+           STR_ELEMENT,storm_opt,'use_katus_storm_phases', $
+                       use_katus_storm_phases,/ADD_REPLACE
+        ENDIF
+
         IF N_ELEMENTS(trash_SSC_inds) GT 0 THEN BEGIN
            STR_ELEMENT,storm_opt,'trash_SSC_inds', $
                        trash_SSC_inds,/ADD_REPLACE
@@ -820,13 +829,30 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'storm_opt',storm_opt,/ADD_REPLACE
 
         IF KEYWORD_SET(all_storm_phases) THEN BEGIN
-           multiples           = ["nStorm","mPhase","rPhase"]
-           multiString         = "-allPhases"
-           executing_multiples = 1
-           alfDB_plot_struct.executing_multiples = 1
-           alfDB_plot_struct.multiString         = multiString
-           STR_ELEMENT,alfDB_plot_struct,'multiples',multiples,/ADD_REPLACE
-        ENDIF
+           IF KEYWORD_SET(use_katus_storm_phases) THEN BEGIN
+              CASE use_katus_storm_phases OF
+                 1: BEGIN
+                    multiples     = ["init","mPhase","rPhase"]
+                    multiString   = '-katusPhases1'
+                 END
+                 2: BEGIN
+                    multiples     = ["init","earlyMP","lateMP","earlyRP","lateRP"]
+                    multiString   = '-katusPhases2'
+                 END
+              ENDCASE
+
+        ENDIF ELSE BEGIN
+
+           multiples     = ["nonstorm","mPhase","rPhase"]
+           multiString   = '-allPhases'
+
+	ENDELSE
+
+        executing_multiples = 1
+        alfDB_plot_struct.executing_multiples = 1
+        alfDB_plot_struct.multiString         = multiString
+        STR_ELEMENT,alfDB_plot_struct,'multiples',multiples,/ADD_REPLACE
+
      ENDIF
 
      IF KEYWORD_SET(ae_stuff) THEN BEGIN

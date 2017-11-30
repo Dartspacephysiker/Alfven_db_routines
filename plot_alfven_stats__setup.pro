@@ -193,6 +193,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    SMOOTH_DST=smooth_dst, $
    TRASH_SSC_INDS=trash_ssc_inds, $
    USE_MOSTRECENT_DST_FILES=use_mostRecent_Dst_files, $
+   USE_KATUS_STORM_PHASES=use_katus_storm_phases, $
    USE_AE=use_ae, $
    USE_AU=use_au, $
    USE_AL=use_al, $
@@ -484,6 +485,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      SMOOTH_DST=smooth_dst, $
      TRASH_SSC_INDS=trash_ssc_inds, $
      USE_MOSTRECENT_DST_FILES=use_mostRecent_Dst_files, $
+     USE_KATUS_STORM_PHASES=use_katus_storm_phases, $
      AE_STUFF=ae_stuff, $
      USE_AE=use_ae, $
      USE_AU=use_au, $
