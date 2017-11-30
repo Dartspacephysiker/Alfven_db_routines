@@ -765,15 +765,15 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
         STR_ELEMENT,alfDB_plot_struct,'use_storm_stuff',use_storm_stuff,/ADD_REPLACE
 
         storm_opt = { $
-                   nonStorm                  : 0B  , $
-                   recoveryPhase             : 0B  , $
-                   mainPhase                 : 0B  , $
-                   all_storm_phases          : 0B  , $
-                   dstCutoff                 : -20 , $
-                   smooth_dst                : 0B  , $
-                   use_mostRecent_Dst_files  : 0B  , $
-                   use_katus_storm_phases    : 0B  , $
-                   trash_SSC_inds            : 0B}
+                    nonStorm                  : 0B  , $
+                    recoveryPhase             : 0B  , $
+                    mainPhase                 : 0B  , $
+                    all_storm_phases          : 0B  , $
+                    dstCutoff                 : -20 , $
+                    smooth_dst                : 0B  , $
+                    use_mostRecent_Dst_files  : 0B  , $
+                    use_katus_storm_phases    : 0B  , $
+                    trash_SSC_inds            : 0B}
 
 
         IF N_ELEMENTS(nonStorm) GT 0 THEN BEGIN
@@ -841,17 +841,19 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                  END
               ENDCASE
 
-        ENDIF ELSE BEGIN
+           ENDIF ELSE BEGIN
 
-           multiples     = ["nonstorm","mPhase","rPhase"]
-           multiString   = '-allPhases'
+              multiples     = ["nonstorm","mPhase","rPhase"]
+              multiString   = '-allPhases'
 
-	ENDELSE
+           ENDELSE
 
-        executing_multiples = 1
-        alfDB_plot_struct.executing_multiples = 1
-        alfDB_plot_struct.multiString         = multiString
-        STR_ELEMENT,alfDB_plot_struct,'multiples',multiples,/ADD_REPLACE
+           executing_multiples = 1
+           alfDB_plot_struct.executing_multiples = 1
+           alfDB_plot_struct.multiString         = multiString
+           STR_ELEMENT,alfDB_plot_struct,'multiples',multiples,/ADD_REPLACE
+
+        ENDIF
 
      ENDIF
 
@@ -1622,6 +1624,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
 
         stdFriends = SIZE(tmpStruct.(0),/DIMENSIONS)
         FOR k=0,nTags-1 DO BEGIN
+
            IF (WHERE(STRUPCASE(tmpTags[k]) EQ STRUPCASE(validTags)))[0] EQ -1 THEN BEGIN
               PRINT,"Invalid tag: ",tmpTags[k]
               STOP
