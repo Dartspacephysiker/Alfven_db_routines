@@ -128,10 +128,10 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
               is_gigante    = 1
               fastLoc_has_times = 1
 
-              GEI_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop-GEI.sav'
-              GEO_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop-GEO.sav'
-              MAG_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop-MAG.sav'
-              SDT_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop-SDT.sav'
+              GEI_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop--gigante-GEI.sav'
+              GEO_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop--gigante-GEO.sav'
+              MAG_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop--gigante-MAG.sav'
+              SDT_file      = 'fastLocDB-20170208_v0_0--no_TIME_tag--no_interval_startstop--gigante-SDT.sav'
 
               mapRatDir     = defDBDir
               mapRatFile    = 'fastLoc_intervals6--20170208--500-25007--Je_times--mapRatio.sav'
