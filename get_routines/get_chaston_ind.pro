@@ -540,6 +540,45 @@ FUNCTION GET_CHASTON_IND,dbStruct,lun, $
         ENDELSE
      ENDIF
 
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;
+     ;;Limits on season?
+     test = !NULL
+     STR_ELEMENT,alfDB_plot_struct,'restrict_by_season',test
+     IF STRLEN(test) NE 0 THEN $
+        IF (WHERE(STRMATCH(['spring','summer','fall','winter'], $
+                           test, $
+                           /FOLD_CASE) EQ 1))[0] NE -1 $
+        THEN BEGIN
+
+        season_i = GET_SEASON_INDS( $
+                   (*pDBTimes), $
+                   SPRING=STRMATCH('spring',test,/FOLD_CASE), $
+                   SUMMER=STRMATCH('summer',test,/FOLD_CASE), $
+                   FALL=STRMATCH('fall',test,/FOLD_CASE), $
+                   WINTER=STRMATCH('winter',test,/FOLD_CASE), $
+                   ;; ALL_SEASONS=all_seasons, $
+                   HEMI=MIMC__hemi, $
+                   USE_JULDAY=use_julDay, $
+                   QUIET=quiet)
+
+        IF season_i[0] NE -1 THEN BEGIN
+           nRegion           = N_ELEMENTS(region_i)
+           region_i          = CGSETINTERSECTION(region_i, $
+                                                 TEMPORARY(season_i), $
+                                                 COUNT=nKept)
+           PRINT,"Lost " + STRCOMPRESS(nRegion - nKept,/REMOVE_ALL) + $
+                 ' inds to ' + test + 'time ...'
+        ENDIF ELSE BEGIN
+           PRINTF,lun,'No orbs matching provided season (' + $
+                  test + ')!'
+           STOP
+        ENDELSE
+
+     ENDIF ELSE BEGIN
+        PRINT,"Bogus: " + STRCOMPRESS(test)
+        STOP
+     ENDELSE
+
      ;; trash_SSC_inds = 1
      IF KEYWORD_SET(alfDB_plot_struct.use_storm_stuff) THEN IF alfDB_plot_struct.storm_opt.trash_SSC_inds THEN BEGIN
         ;; notSSC_i = TRASH_EVENTS_NEAR_SSC(*pDBStruct,region_i, $

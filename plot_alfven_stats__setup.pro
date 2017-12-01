@@ -255,6 +255,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
    LATEST_UTC=latest_UTC, $
    EARLIEST_JULDAY=earliest_julDay, $
    LATEST_JULDAY=latest_julDay, $
+   RESTRICT_BY_SEASON=restrict_by_season, $
    NEVENTSPLOTAUTOSCALE=nEventsPlotAutoscale, $
    NEVENTSPLOTNORMALIZE=nEventsPlotNormalize, $
    AUTOSCALE_ENUMFLPLOTS=autoscale_eNumFlplots, $
@@ -370,6 +371,7 @@ PRO PLOT_ALFVEN_STATS__SETUP, $
      BOTH_HEMIS=both_hemis, $
      DAYSIDE=dayside, $
      NIGHTSIDE=nightside, $
+     RESTRICT_BY_SEASON=restrict_by_season, $
      EQUAL_AREA_BINNING=EA_binning, $
      DO_LSHELL=do_lShell,MINLSHELL=minL,MAXLSHELL=maxL,BINLSHELL=binL, $
      REVERSE_LSHELL=reverse_lShell, $

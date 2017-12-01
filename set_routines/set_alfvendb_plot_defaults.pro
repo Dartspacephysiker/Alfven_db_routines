@@ -54,6 +54,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
    BOTH_HEMIS=both_hemis, $
    DAYSIDE=dayside, $
    NIGHTSIDE=nightside, $
+   RESTRICT_BY_SEASON=restrict_by_season, $
    NPLOTS=nPlots, $
    EPLOTS=ePlots, $
    NEWELLPLOTS=NewellPlots, $
@@ -329,56 +330,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
                                     '-2009' : '' )
      ENDIF
 
-     ;; IF KEYWORD_SET(ionPlots) THEN BEGIN
-     ;;    CASE 1 OF
-     ;;       STRUPCASE(iFluxPlotType) EQ 'ENERGY': BEGIN
-     ;;          iFluxPlotType     = 'JEi_eSpec' + $
-     ;;                              ( KEYWORD_SET(ion__Newell_2009_interp) ? $
-     ;;                                '-2009' : '' )
-     ;;       END
-     ;;       ELSE: BEGIN
-     ;;          iFluxPlotType     = 'Ji_eSpec' + $
-     ;;                              ( KEYWORD_SET(ion__Newell_2009_interp) ? $
-     ;;                                '-2009' : '' )
-     ;;       END
-     ;;    ENDCASE
-     ;; ENDIF
   ENDIF
-
-  ;; IF KEYWORD_SET(for_ion_DBs) THEN BEGIN
-  ;;    IF KEYWORD_SET(ionPlots) THEN BEGIN
-  ;;       iFluxPlotType           = 'eFlux_eSpec' + $
-  ;;                                 ;; ( KEYWORD_SET(eSpec__Newell_2009_interp) ? $
-  ;;                                 ;;   '-2009' : '' )
-  ;;    ENDIF
-
-  ;;    IF KEYWORD_SET(eNumFlPlots) THEN BEGIN
-  ;;       eNumFlPlotType          = 'eNumFlux_eSpec' + $
-  ;;                                 ( KEYWORD_SET(eSpec__Newell_2009_interp) ? $
-  ;;                                   '-2009' : '' )
-  ;;    ENDIF
-
-  ;;    IF KEYWORD_SET(charEPlots) OR KEYWORD_SET(eSpec__newellPlot_probOccurrence) THEN BEGIN
-  ;;       charEType               = 'charE_eSpec' + $
-  ;;                                 ( KEYWORD_SET(eSpec__Newell_2009_interp) ? $
-  ;;                                   '-2009' : '' )
-  ;;    ENDIF
-
-  ;;    ;; IF KEYWORD_SET(ionPlots) THEN BEGIN
-  ;;    ;;    CASE 1 OF
-  ;;    ;;       STRUPCASE(iFluxPlotType) EQ 'ENERGY': BEGIN
-  ;;    ;;          iFluxPlotType     = 'JEi_eSpec' + $
-  ;;    ;;                              ( KEYWORD_SET(ion__Newell_2009_interp) ? $
-  ;;    ;;                                '-2009' : '' )
-  ;;    ;;       END
-  ;;    ;;       ELSE: BEGIN
-  ;;    ;;          iFluxPlotType     = 'Ji_eSpec' + $
-  ;;    ;;                              ( KEYWORD_SET(ion__Newell_2009_interp) ? $
-  ;;    ;;                                '-2009' : '' )
-  ;;    ;;       END
-  ;;    ;;    ENDCASE
-  ;;    ;; ENDIF
-  ;; ENDIF
 
   IF (KEYWORD_SET(nEventPerOrbPlot) OR KEYWORD_SET(nEventPerMinPlot) ) AND NOT KEYWORD_SET(nPlots) THEN BEGIN
      print,"Can't do nEventPerOrbPlot without nPlots!!"
@@ -405,7 +357,7 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      PRINT, "medHistOutTxt is enabled, but medHistOutData is not!"
      print, "Enabling medHistOutData, since corresponding output is necessary for medHistOutTxt"
      WAIT, 0.5
-     ;; IF ~KEYWORD_SET(medHistDataDir) THEN medHistDataDir = defMedHistDataDir
+
      medHistOutData = 1
   ENDIF
 
@@ -577,9 +529,20 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      polarContStr += '-kde'
   ENDIF
 
+  saisonStr = ''
+  IF N_ELEMENTS(restrict_by_season) GT 0 THEN $
+     IF (WHERE(STRMATCH(['spring','summer','fall','winter'], $
+                           restrict_by_season, $
+                        /FOLD_CASE) EQ 1))[0] NE -1 $
+     THEN BEGIN
+     
+     saisonStr = '-' + STRUPCASE(STRMID(restrict_by_season,0,2))
+
+  ENDIF
+
   ;; paramString=hoyDia+'-'+paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
   paramString = paramStrPrefix+(paramStrPrefix EQ "" ? "" : '-') + $
-                MIMC_struct.hemi+despunStr+coordStr+MCStr+bonusStr+sampTStr+ $
+                MIMC_struct.hemi+saisonStr+despunStr+coordStr+MCStr+bonusStr+sampTStr+ $
                 lShellStr+plotMedOrAvg+$
                 ;; maskStr+tMaskStr+EABinStr+inc_burstStr+polarContStr+paramStrSuffix
                 maskStr+tMaskStr+EABinStr+inc_burstStr+paramStrSuffix
@@ -961,6 +924,11 @@ PRO SET_ALFVENDB_PLOT_DEFAULTS, $
      IF N_ELEMENTS(numOrbLim) GT 0 THEN BEGIN
         STR_ELEMENT,alfDB_plot_struct,'numOrbLim', $
                     numOrbLim,/ADD_REPLACE
+     ENDIF
+
+     IF KEYWORD_SET(restrict_by_season) THEN BEGIN
+        STR_ELEMENT,alfDB_plot_struct,'restrict_by_season', $
+                    restrict_by_season,/ADD_REPLACE
      ENDIF
 
      IF N_ELEMENTS(dont_blackball_maximus) GT 0 THEN BEGIN
