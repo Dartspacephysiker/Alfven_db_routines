@@ -8,7 +8,8 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
    DONT_MAP_TO_100KM=no_mapping, $
    DO_NOT_MAP_FLUXES=do_not_map_fluxes, $
    DO_NOT_MAP_DELTA_T=do_not_map_delta_t, $
-   USE_2000KM_FILE=use_2000km_file
+   USE_2000KM_FILE=use_2000km_file, $
+   GIGANTE_ESPECDB=gigante_eSpecDB
 
 
   COMPILE_OPT IDL2,STRICTARRSUBS
@@ -82,7 +83,8 @@ FUNCTION MAKE_NEWELL_IDENT_STRUCT_FOR_ALFDB__FROM_FILE, $
            DO_NOT_MAP_FLUXES=do_not_map_fluxes, $
            DO_NOT_MAP_DELTA_T=do_not_map_delta_t, $
            USE_2000KM_FILE=use_2000km_file, $
-           /LOAD_CHARE
+           /LOAD_CHARE, $
+           GIGANTE=gigante_eSpecDB
      ENDIF
         peSpecDB  = PTR_NEW(TEMPORARY(NEWELL__eSpec))
   ENDELSE
