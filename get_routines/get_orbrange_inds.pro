@@ -1,6 +1,7 @@
 FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
                            DBTIMES=DBTimes, $ ;in case we'd like to trash some time ranges
                            DONT_TRASH_BAD_ORBITS=keepJunk, $
+                           KEEP_TRASHINDS_ON_TAP=keep_trashInds_on_tap, $
                            ;; SERIOUSLY__NOJUNK=seriously__noJunk, $
                            FOR_SWAY_DB=for_sWay_DB
 
@@ -20,7 +21,7 @@ FUNCTION GET_ORBRANGE_INDS,dbStruct,minOrb,maxOrb,LUN=lun, $
   PRINTF,lun,FORMAT='("N outside orb range",T30,":",T35,I0)',n_not_orb
 
   IF ~KEYWORD_SET(keepJunk) THEN BEGIN
-     ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs)
+     ind_orbs = TRASH_BAD_FAST_ORBITS(dbStruct,ind_orbs,KEEP_ON_TAP=keep_trashInds_on_tap)
   ENDIF ELSE BEGIN
 
      ;; IF ~KEYWORD_SET(seriously__noJunk) THEN BEGIN

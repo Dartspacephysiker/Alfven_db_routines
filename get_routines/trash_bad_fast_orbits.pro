@@ -7,15 +7,40 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
                                CUSTOM_ORBRANGES_TO_KILL=customKillRanges, $
                                CUSTOM_TSTRINGS_TO_KILL=customTKillStrings, $
                                CUSTOM_TRANGES_TO_KILL=customTKillRanges, $
-                               REMAKE_TRASHORB_FILES=remake_trashOrb_files
+                               REMAKE_TRASHORB_FILES=remake_trashOrb_files, $
+                               KEEP_ON_TAP=keep_on_tap
 
   COMPILE_OPT IDL2,STRICTARRSUBS
+
+  COMMON ORBTRASHER,notTrash_i
 
   dirForAlle = '/SPENCEdata/Research/database/temps/'
 
   PRINT,"Trashing terrible orbits"
   nGStart = N_ELEMENTS(good_i)
   nBTot   = 0
+
+  needToRecalc = 1
+  IF KEYWORD_SET(keep_on_tap) THEN BEGIN
+     IF N_ELEMENTS(notTrash_i) EQ 0 THEN BEGIN
+
+        notTrash_i   = LINDGEN(N_ELEMENTS(dbStruct.orbit))
+
+     ENDIF ELSE BEGIN
+
+        PRINT,"Using on-tap notTrash_i to junk bad orbit stuff ..."
+        nGood  = N_ELEMENTS(good_i)
+        good_i = CGSETINTERSECTION(good_i,notTrash_i,COUNT=nKeeper)
+
+        PRINT,'Junked ' + STRCOMPRESS(nGood-nKeeper,/REMOVE_ALL) + ' blackballers ...'
+
+        needToRecalc = 0
+
+     ENDELSE
+
+  ENDIF ELSE needToRecalc = 1
+
+  IF needToRecalc THEN BEGIN
 
   ;; remake_trashOrb_files       = N_ELEMENTS(remake_trashOrb_files) GT 0 ? remake_trashOrb_files : 1
 
@@ -335,6 +360,11 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
         ;; good_i  = CGSETDIFFERENCE(good_i,blackball_i,COUNT=nKeeper,NORESULT=-1)
         nBTot  += nBlackball
 
+        IF KEYWORD_SET(keep_on_tap) THEN BEGIN
+           notTrash_i = CGSETINTERSECTION(notTrash_i,keeper_i,COUNT=nNotTrash)
+        ENDIF
+
+
         ;;If we enter this bit of code, the files were just remade and we should see if life is sane
         ;; IF goAhead OR KEYWORD_SET(remake_trashOrb_files) THEN BEGIN
 
@@ -467,6 +497,11 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
            ;; BREAK
         ENDIF
         PRINT,opener+'Junked ' + STRCOMPRESS(nGood-nKeeper,/REMOVE_ALL) + ' blackballed events ...'
+
+        IF KEYWORD_SET(keep_on_tap) THEN BEGIN
+           notTrash_i = CGSETDIFFERENCE(notTrash_i,blackball_i,COUNT=nNotTrash)
+        ENDIF
+
      ENDIF ELSE BEGIN
         PRINT,opener+"No baddies found in this case ..."
      ENDELSE
@@ -616,6 +651,11 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
            ;; BREAK
         ENDIF
         PRINT,opener+'Junked ' + STRCOMPRESS(nGood-nKeeper,/REMOVE_ALL) + ' blackballed events ...'
+
+        IF KEYWORD_SET(keep_on_tap) THEN BEGIN
+           notTrash_i = CGSETINTERSECTION(notTrash_i,keeper_i,COUNT=nNotTrash)
+        ENDIF
+
      ENDIF ELSE BEGIN
         PRINT,opener+"No baddies found in this case ..."
      ENDELSE
@@ -625,6 +665,8 @@ FUNCTION TRASH_BAD_FAST_ORBITS,dbStruct,good_i, $
   IF KEYWORD_SET(remake_trashOrb_files) THEN BEGIN
      PRINT,"Switching off REMAKE_TRASHORB_FILES ..."
      remake_trashOrb_files = 0
+  ENDIF
+
   ENDIF
 
   IF KEYWORD_SET(broken) THEN STOP
