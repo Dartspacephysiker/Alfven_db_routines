@@ -8,6 +8,9 @@ FUNCTION GET_MLT_INDS,dbStruct,minM,maxM, $
                       N_OUTSIDE_MLT=n_outside_MLT, $
                       DIRECT_MLTS=direct_mlts, $
                       USE_LNG=use_Lng, $
+                      GET_COMPLEMENT_INDS=get_complement_inds, $
+                      NOTMLT_I=notMlt_i, $
+                      NNOTMLT=nNotMlt, $
                       LUN=lun
 
   COMPILE_OPT idl2,strictarrsubs
@@ -76,7 +79,9 @@ FUNCTION GET_MLT_INDS,dbStruct,minM,maxM, $
 
         mltStr = 'nightside'
 
-        mlt_i = WHERE(mlts LE 6.0 OR mlts GE 18.0,n_mlt,NCOMPLEMENT=n_outside_MLT)
+        mlt_i = WHERE(mlts LE 6.0 OR mlts GE 18.0,n_mlt, $
+                      COMPLEMENT=notMlt_i, $
+                      NCOMPLEMENT=n_outside_MLT)
         
      END
      KEYWORD_SET(dawnSector): BEGIN
@@ -119,12 +124,12 @@ FUNCTION GET_MLT_INDS,dbStruct,minM,maxM, $
            PRINTF,lun,"GET_MLT_INDS: minM and maxM together make no sense! (minM + 24) is less than maxM!"
            STOP
         ENDIF
-        tmp_i_1 = WHERE( mlts GE (dminM[k]+24),n_tmp1 )
+        tmp_i_1 = WHERE( mlts GE (dminM[k]+24),n_tmp1)
         tmp_i_2 = WHERE( mlts LE dmaxM[k],n_tmp2)
 
-        wherecheck,tmp_i_1,tmp_i_2
-        n_tmp = n_tmp1 + n_tmp2
-        tmp_i = CGSETUNION(tmp_i_1,tmp_i_2) 
+        WHERECHECK,tmp_i_1,tmp_i_2
+        n_tmp    = n_tmp1 + n_tmp2
+        tmp_i    = CGSETUNION(tmp_i_1   ,tmp_i_2) 
 
         PRINTF,lun,FORMAT='("N events in MLT range",T30,":",T35,I0)',n_tmp
      ENDIF ELSE BEGIN
@@ -148,6 +153,10 @@ FUNCTION GET_MLT_INDS,dbStruct,minM,maxM, $
   IF mlt_i[0] EQ -1 THEN BEGIN
      PRINTF,lun,'No MLT entries found for the specified MLT range!'
      STOP
+  ENDIF
+
+  IF KEYWORD_SET(get_complement_inds) THEN BEGIN
+     notMlt_i = CGSETDIFFERENCE(LINDGEN(N_ELEMENTS(mlts)),mlt_i,COUNT=nNotMlt)
   ENDIF
 
   PRINTF,lun,FORMAT='("n events for ",A0,T30,":",T35,I0)',mltStr,n_mlt
