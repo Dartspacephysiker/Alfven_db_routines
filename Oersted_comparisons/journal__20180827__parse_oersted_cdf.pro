@@ -9,8 +9,16 @@ PRO JOURNAL__20180827__PARSE_OERSTED_CDF
   ;; file = 'dms_19970201_12e.001.nc'
   ;; outFile = 'dms_19970201_12e.001.sav'
 
-  file = 'ml990907.cdf'
-  outFile = 'oersted-ml990907.sav'
+  ;; file = 'ml990907.cdf'
+  ;; outFile = 'oersted-ml990907.sav'
+
+  ;; date = '990907'
+
+  ;; Such money Alf waves for this day
+  ;; Run JOURNAL__20180829__FOERSTE_TING_FOERSTE__FIND_FAST_IAW_EVENTS_FOR_POSSIBLE_CONJUNCTIONS with cleanEm=1 to convince yourself, hey?
+  date = '991015'
+  file = 'ml' + date + '.cdf'
+  outFile = 'oersted-ml' + date + '.sav'
 
   IF FILE_TEST(dir+outFile) THEN BEGIN
 

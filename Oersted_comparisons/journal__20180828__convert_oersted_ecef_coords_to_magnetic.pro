@@ -36,10 +36,15 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
 
   outDir           = '/SPENCEdata/Research/database/Oersted/'
 
-  inFile           = 'oersted-ml990907.sav'
-  timeStrFile      = 'oersted-ml990907.sav-timeStr.sav'
-  outFile          = 'oersted-ml990907-parsedCoordinates.sav'
+  ;; inFile           = 'oersted-ml990907.sav'
+  ;; timeStrFile      = 'oersted-ml990907-timeStr.sav'
+  ;; outFile          = 'oersted-ml990907-parsedCoordinates.sav'
 
+  ;; Such money Alfveners for this conj with FAST
+  date         = '991015'
+  inFile       = 'oersted-ml' + date + '.sav'
+  timeStrFile  = 'oersted-ml' + date + '-timeStr.sav'
+  outFile      = 'oersted-ml' + date + '-parseCoordinates.sav'
 
   RESTORE,outDir+inFile
 
@@ -166,12 +171,13 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
   GEI2VDH_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   ;; Get initial velocity
+  ;; Put angular components in RADIANS for GEOPACK routines, som krevde
   pos_r_GEO0       = DOUBLE(oersted.ecef.r[0]    )*1000.D
-  pos_theta_GEO0   = DOUBLE(oersted.ecef.theta[0])
-  pos_phi_GEO0     = DOUBLE(oersted.ecef.phi[0]  )
+  pos_theta_GEO0   = DOUBLE(oersted.ecef.theta[0]);*!DTOR
+  pos_phi_GEO0     = DOUBLE(oersted.ecef.phi[0]  );*!DTOR
   pos_r_GEO1       = DOUBLE(oersted.ecef.r[1]    )*1000.D
-  pos_theta_GEO1   = DOUBLE(oersted.ecef.theta[1])
-  pos_phi_GEO1     = DOUBLE(oersted.ecef.phi[1]  )
+  pos_theta_GEO1   = DOUBLE(oersted.ecef.theta[1]);*!DTOR
+  pos_phi_GEO1     = DOUBLE(oersted.ecef.phi[1]  );*!DTOR
 
   dt0              = oersted.time[1]-oersted.time[0]
 
@@ -187,8 +193,8 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
   FOR i=0,nTot-1 DO BEGIN
      GEOPACK_RECALC_08,YearArr[i],MonthArr[i],DayArr[i],HourArr[i],MinArr[i],SecArr[i],/DATE
 
-     ;;do that dance (in m)
-     ;; Here's why:
+     ;;Convert everything to meters.
+     ;; Here's why (execute these lines down to PRINT,renu2.ecef[...]):
      ;; outDir_RENU           = '/SPENCEdata/Research/database/RENU2/'
      ;; inFile_RENU           = 'RENU2_GPS.sav'
      ;; timeStrFile_RENU      = 'RENU2_GPS--timeStr.sav'
@@ -196,9 +202,10 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
      ;; RESTORE,outdir_renu+infile_renu
      ;; PRINT,renu2.ecef.position.x[0],renu2.ecef.position.y[0],renu2.ecef.position.z[0]
 
+     ;; Put angular components in RADIANS for GEOPACK routines, som krevde
      pos_r_GEO       = DOUBLE(oersted.ecef.r[i]    )*1000.D
-     pos_theta_GEO   = DOUBLE(oersted.ecef.theta[i])
-     pos_phi_GEO     = DOUBLE(oersted.ecef.phi[i]  )
+     pos_theta_GEO   = DOUBLE(oersted.ecef.theta[i]);*!DTOR
+     pos_phi_GEO     = (DOUBLE(oersted.ecef.phi[i]  ) + 360.D) MOD 360.D;*!DTOR
 
      tmpPos_GEO_sph  = DOUBLE([pos_r_GEO,pos_theta_GEO,pos_phi_GEO])
 
@@ -236,7 +243,14 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
      GEOPACK_SPHCAR_08,pos_x_GEI,pos_y_GEI,pos_z_GEI, $
                        pos_r_GEI,pos_theta_GEI,pos_phi_GEI,/TO_SPHERE,/DEGREE
      GEOPACK_SPHCAR_08,tmpPos_GEO[0],tmpPos_GEO[1],tmpPos_GEO[2], $
-                       pos_r_GEO,pos_theta_GEO,pos_phi_GEO,/TO_SPHERE,/DEGREE
+                       pos_r_GEO2,pos_theta_GEO2,pos_phi_GEO2,/TO_SPHERE,/DEGREE
+     diffR = (pos_r_GEO2-pos_r_GEO)/pos_r_GEO
+     diffTheta = (pos_theta_GEO2-pos_theta_GEO)/pos_theta_GEO
+     diffPhi = (pos_phi_GEO2-pos_phi_GEO)/pos_phi_GEO
+
+     ;; A check on the conversion
+     IF ABS(diffR) GT 0.001 OR ABS(diffTheta) GT 0.001 OR ABS(diffPhi) GT 0.001 THEN STOP
+
      GEOPACK_SPHCAR_08,pos_x_GSM,pos_y_GSM,pos_z_GSM, $
                        pos_r_GSM,pos_theta_GSM,pos_phi_GSM,/TO_SPHERE,/DEGREE
      GEOPACK_SPHCAR_08,pos_x_MAG,pos_y_MAG,pos_z_MAG, $
@@ -380,18 +394,21 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
                            /FROM_GEO,/TO_MAG,EPOCH=time_epoch[i]
 
      ;;GEO to NED (North-East-Down)
-     GEOPACK_GEODGEO_08,pos_r_GEO/1000.,pos_theta_GEO,h,xmu,/TO_GEODETIC
-     tmpLambda              = pos_phi_GEO*!DTOR
-     tmpPhi                 = xmu
+     ;; xmu: "Geodetic latitude" (fra GEOPACK 2008 dokumentasjon)
+     GEOPACK_GEODGEO_08,pos_r_GEO/1000.,pos_theta_GEO,h,xmu,/TO_GEODETIC,/DEGREE
 
      alt_GEO[i]             = h
-     lat_GEO[i]             = xmu*!RADEG
+     lat_GEO[i]             = xmu
 
-     ;;**Get colatitude (refTheta) and altitude in GEO coordinates for geodetic reference altitude (sea level)
-     GEOPACK_GEODGEO_08,0.D,tmpPhi, $
-                        refAlt_GEO,refTheta_GEO,/TO_GEOCENTRIC ;/TO_GEODETIC (see GEOPACK_2008 documentation, or type GEOPACK_HELP)
-     GEOPACK_SPHCAR_08,refAlt_GEO,refTheta_GEO,tmpLambda, $
-                       refAlt_x,refAlt_y,refAlt_z,/TO_RECT
+     ;; Ørsted altitude ranges from 650–875 km, so h GT 1000 is a clear varselskilt
+     IF h GT 1000 THEN STOP
+     
+     ;;**Get colatitude (refTheta) and altitude in GEO coordinates from geodetic
+     ;; reference altitude (sea level, or 0.D) and geodetic latitude (xmu)
+     GEOPACK_GEODGEO_08,0.D,xmu, $
+                        refAlt_GEO,refTheta_GEO,/TO_GEOCENTRIC,/DEGREE ;/TO_GEODETIC (see GEOPACK_2008 documentation, or type GEOPACK_HELP)
+     GEOPACK_SPHCAR_08,refAlt_GEO,refTheta_GEO,pos_phi_GEO, $
+                       refAlt_x,refAlt_y,refAlt_z,/TO_RECT,/DEGREE
 
      tmpGEODRef              = [refAlt_x,refAlt_y,refAlt_z]
      tmpNEDRefPos_GEO        = [tmpPos_GEO[0]-tmpGEODRef[0],tmpPos_GEO[1]-tmpGEODRef[1],tmpPos_GEO[2]-tmpGEODRef[2]]
@@ -400,9 +417,9 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
 
      ;;**First, Get vector pointing east in GEO coordinates
      ;;  Later we'll transform to GEI coordinates with GEO2GEI_arr
-     GEOPACK_BSPCAR_08,refTheta_GEO,tmpLambda, $
+     GEOPACK_BSPCAR_08,refTheta_GEO,pos_phi_GEO, $
                        0.D,0.D,1.D, $
-                       eEast_x_GEO,eEast_y_GEO,eEast_z_GEO
+                       eEast_x_GEO,eEast_y_GEO,eEast_z_GEO,/DEGREE
      eEast_Car_GEO           = [TEMPORARY(eEast_x_GEO),TEMPORARY(eEast_y_GEO),TEMPORARY(eEast_z_GEO)]
 
      ;;**Also, vector along magnetic pole (northward) in GEI coordinates, which is H_hat (if normalized) in VDH system
@@ -447,6 +464,9 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
      GEO2MAG_coord[*,*,i]    = [[mag_x0,mag_y0,mag_z0], $
                                 [mag_x1,mag_y1,mag_z1], $
                                 [mag_x2,mag_y2,mag_z2]]
+
+     tmpLambda              = pos_phi_GEO*!DTOR
+     tmpPhi                 = xmu*!DTOR
      GEO2NED_coord[*,*,i]    = [[-SIN(tmpPhi)*COS(tmpLambda),-SIN(tmpPhi)*SIN(tmpLambda),COS(tmpPhi)], $
                                 [-SIN(tmpLambda)            ,COS(tmpLambda)             ,0.D         ], $
                                 [-COS(tmpPhi)*COS(tmpLambda),-COS(tmpPhi)*SIN(tmpLambda),-SIN(tmpPhi)]]
@@ -494,41 +514,6 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
      vel_VDH_arr[*,i]        = GEI2VDH_vec[*,*,i]    # vel_GEI_arr[*,i]
      IGRF_VDH_arr[*,i]       = GEI2VDH_vec[*,*,i]    # IGRF_GEI_arr[*,i]
      B_VDH_arr[*,i]          = GEI2VDH_vec[*,*,i]    # B_GEI_arr[*,i]
-
-     ;;Convert Cartesian vector transform matrices to spherical vector transform matrices
-     ;; GEOPACK_BCARSP_08,mag_x0,mag_y0,mag_z0, $
-     ;; GEOPACK_BCARSP_08,pos_x_MAG,pos_y_MAG,pos_z_MAG, $
-     ;;                   ;; GEOPACK_BCARSP_08,ident[0,0],ident[0,1],ident[0,2], $
-     ;;                   ;; GEO2MAG_vec[0,0,i],GEO2MAG_vec[0,1,i],GEO2MAG_vec[0,2,i], $
-     ;;                   ident[0,0],ident[0,1],ident[0,2], $
-     ;;                   magVSph_r0,magVSph_theta0,magVSph_phi0
-     ;; ;; GEOPACK_BCARSP_08,mag_x1,mag_y1,mag_z1, $
-     ;; GEOPACK_BCARSP_08,pos_x_MAG,pos_y_MAG,pos_z_MAG, $
-     ;;                   ;; GEOPACK_BCARSP_08,ident[1,0],ident[1,1],ident[1,2], $
-     ;;                   ;; GEO2MAG_vec[1,0,i],GEO2MAG_vec[1,1,i],GEO2MAG_vec[1,2,i], $
-     ;;                   ident[1,0],ident[1,1],ident[1,2], $
-     ;;                   magVSph_r1,magVSph_theta1,magVSph_phi1
-     ;; ;; GEOPACK_BCARSP_08,mag_x2,mag_y2,mag_z2, $
-     ;; GEOPACK_BCARSP_08,pos_x_MAG,pos_y_MAG,pos_z_MAG, $
-     ;;                   ;; GEOPACK_BCARSP_08,ident[2,0],ident[2,1],ident[2,2], $
-     ;;                   ;; GEO2MAG_vec[2,0,i],GEO2MAG_vec[2,1,i],GEO2MAG_vec[2,2,i], $
-     ;;                   ident[2,0],ident[2,1],ident[2,2], $
-     ;;                   magVSph_r2,magVSph_theta2,magVSph_phi2
-
-     ;; GEO2MAG_sphV[*,*,i]     = [[magVSph_r0,magVSph_theta0,magVSph_phi0], $
-     ;;                            [magVSph_r1,magVSph_theta1,magVSph_phi1], $
-     ;;                            [magVSph_r2,magVSph_theta2,magVSph_phi2]]
-
-
-
-     ;;Now update spherical coordinate transform matrices
-     ;; GEOPACK_SPHCAR_08,mag_x0,mag_y0,mag_z0,mag_r0,mag_theta0,mag_phi0,/TO_SPHERE,/DEGREE
-     ;; GEOPACK_SPHCAR_08,mag_x1,mag_y1,mag_z1,mag_r1,mag_theta1,mag_phi1,/TO_SPHERE,/DEGREE
-     ;; GEOPACK_SPHCAR_08,mag_x2,mag_y2,mag_z2,mag_r2,mag_theta2,mag_phi2,/TO_SPHERE,/DEGREE
-
-     ;; GEO2MAG_sphC[*,*,i]     = [[mag_r0,mag_theta0,mag_phi0], $
-     ;;                            [mag_r1,mag_theta1,mag_phi1], $
-     ;;                            [mag_r2,mag_theta2,mag_phi2]]
 
      ;;... And, TESTS. These should come out the same:
      GEOPACK_BSPCAR_08  ,pos_theta_MAG,pos_phi_MAG, $
@@ -769,14 +754,16 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;Save it
+  STOP
+
   PRINT,'Saving ' + outDir + outFile + '...'
   save,coords,FILENAME=outDir+outFile
 
   PRINT,"Did it!"
 
-  geocarmagnitude   = SQRT(oersted.ecef.position.x*oersted.ecef.position.x+ $
-                           oersted.ecef.position.y*oersted.ecef.position.y+ $
-                           oersted.ecef.position.z*oersted.ecef.position.z)
+  ;; geocarmagnitude   = SQRT(oersted.ecef.position.x*oersted.ecef.position.x+ $
+  ;;                          oersted.ecef.position.y*oersted.ecef.position.y+ $
+  ;;                          oersted.ecef.position.z*oersted.ecef.position.z)
   geocarmagnit2     = SQRT(pos.geo.car.x*pos.geo.car.x+pos.geo.car.y*pos.geo.car.y+pos.geo.car.z*pos.geo.car.z)
   ;; geosphmagnitude  = SQRT(geo.sph.r*geo.sph.r+geo.sph.theta*geo.sph.theta+geo.sph.phi*geo.sph.phi)
   geosphmagnitude   = pos.geo.sph.r
@@ -801,23 +788,7 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
 
   ;;Supposedly the magnetic field is primarily contained in the X-Z (V-H) plane for VDH coordinates. Can we verify that?
 
-  plots             = PLOT(oersted.time.flight,GEOSph_arr2[*,2],XTITLE='Time (s)',YTITLE='Alt (km)')
-  CGHISTOPLOT,90.-geosph_arr[0,*]
-  CGHISTOPLOT,geosph_arr[1,*]
-  CGHISTOPLOT,90.-magsph_arr[0,*]
-  CGHISTOPLOT,coords.mag.sph.theta
-  CGHISTOPLOT,coords.mag.lon
-  CGHISTOPLOT,coords.mag.lat
-  CGHISTOPLOT,coords.geo.lat
-  CGHISTOPLOT,oersted.lat
-  CGHISTOPLOT,coords.geo.lon
-  CGHISTOPLOT,oersted.long
-  CGHISTOPLOT,oersted.ecef.position.x
-  CGHISTOPLOT,coords.geo.car.x
-  diffposcarx = coords.geo.car.x-oersted.ecef.position.x
-  saywhat     = where(ABS(coords.geo.car.x-oersted.ecef.position.x) GT 0.1)
-  CGHISTOPLOT,vel.geo.sph.r
-  CGHISTOPLOT,vel.geo.sph.theta
-  CGHISTOPLOT,vel.geo.sph.r
+  plots             = PLOT(oersted.time,GEOSph_arr2[*,2],XTITLE='Time (s)',YTITLE='Alt (km)')
+  
 
 END
