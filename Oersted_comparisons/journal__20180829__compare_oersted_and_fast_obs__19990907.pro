@@ -1,30 +1,39 @@
 ;2018/08/29
 ;; INGENTING HER!
+;; 20180830 I know that something is wrong with my FAST coord conversions (see JOURNAL__20180830__COMPARE_MY_FAST_COORD_CONVERSIONS_WITH_SDT_OUTPUT), so hold off on FAST-Ørsted comparison 
 PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
 
   COMPILE_OPT IDL2,STRICTARRSUBS
 
-  outDir           = '/SPENCEdata/Research/database/Oersted/'
+  @common__maximus_vars.pro  
+  @tplot_com
 
-  ;; inFile           = 'oersted-ml990907.sav'
-  ;; timeStrFile      = 'oersted-ml990907.sav-timeStr.sav'
-  ;; outFile          = 'oersted-ml990907-parsedCoordinates.sav'
+  outDir          = '/SPENCEdata/Research/database/Oersted/'
+
+  ;; inFile       = 'oersted-ml990907.sav'
+  ;; timeStrFile  = 'oersted-ml990907.sav-timeStr.sav'
+  ;; outFile      = 'oersted-ml990907-parsedCoordinates.sav'
 
 
   ;; date         = '990907'
   ;; FASTorbit    = 12049
 
   ;; Such money Alfveners for this conj with FAST
-  date         = '991015'
-  FASTorbit    = 12464
+  date            = '991015'
+  FASTorbit       = 12464
 
-  inFile       = 'oersted-ml' + date + '.sav'
-  timeStrFile  = 'oersted-ml' + date + '-timeStr.sav'
-  outFile      = 'oersted-ml' + date + '-parseCoordinates.sav'
+  inFile          = 'oersted-ml' + date + '.sav'
+  timeStrFile     = 'oersted-ml' + date + '-timeStr.sav'
+  outFile         = 'oersted-ml' + date + '-parseCoordinates.sav'
 
+  FASTdir         = outDir
+  FASTfile        = "FAST_dbFac-orb_"+STRING(FORMAT='(I0)',FASTorbit)+".sav"
+  FASTCoordFile   = "FAST_dbFac-orb_"+STRING(FORMAT='(I0)',FASTorbit)+"-converted_coords.sav"
 
   RESTORE,outDir+inFile
   RESTORE,outDir+outFile
+
+  oerstCoord      = TEMPORARY(coords)
 
   CASE FASTorbit OF
      12049: BEGIN
@@ -40,7 +49,10 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
   t2 = S2T(interestingTider[1])
   tWow = S2T(maxInteressant)
 
-  @common__maximus_vars.pro  
+  ;; Get stuff X minutes before and after conjunction
+  zoomMin = 0.5
+  t1Zoom = tWow-zoomMin*60
+  t2Zoom = tWow+zoomMin*60
 
   LOAD_MAXIMUS_AND_CDBTIME
 
@@ -50,14 +62,126 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
 
   PRINT,maximus__maximus.time[FASTi]
 
+  ;; Load up the magnetic field stuff
+
+  IF FILE_TEST(FASTdir+FASTfile) THEN BEGIN
+
+     PRINT,"Restoring " + FASTfile + " ..."
+
+     RESTORE,FASTdir+FASTfile
+
+     IF ~FILE_TEST(FASTdir+FASTCoordFile) THEN BEGIN
+        PRINT,"Have you done the necessaries with JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES??"
+        STOP
+     ENDIF
+
+     PRINT,"Restoring " + FASTCoordfile + " ..."
+
+     RESTORE,FASTdir+FASTCoordFile
+
+     FASTcoord = TEMPORARY(coords)
+
+  ENDIF ELSE BEGIN
+
+     ;; GET FAST MAG DATA
+     UCLA_MAG_DESPIN,TW_MAT=tw_mat,ORBIT=orbit,SPIN_AXIS=spin_axis,DELTA_PHI=delta_phi,/QUIET
+     ;;FAC system 1 (ripped from UCLA_MAG_DESPIN)
+     ;;   "Field-aligned coordinates defined as:   "
+     ;;   "z-along B, y-east (BxR), x-nominally out"
+     ;; GET_DATA,'dB_fac_v',DATA=data
+     GET_DATA,'dB_fac',DATA=data
+
+     ;; 'B_gei'      Smoothed and deglitched field in GEI coordinates
+     GET_DATA,'B_gei',DATA=Bgei
+
+     FASTB_GEI = {time : Bgei.x, $
+                  x    : Bgei.y[*,0], $
+                  y    : Bgei.y[*,1], $
+                  z    : Bgei.y[*,2]}
+
+     GET_FA_ORBIT,data.x,/TIME_ARRAY,STRUC=ephem,/NO_STORE,/ALL
+
+     db_fac = {time : data.x, $
+               orbit : ephem.orbit, $
+               alt   : ephem.alt, $
+               ilat  : ephem.ilat, $
+               mlt   : ephem.mlt, $
+               gse   : {pos : ephem.fa_pos, $
+                        vel : ephem.fa_vel}, $
+               lat   : ephem.lat, $
+               lng   : ephem.lng, $
+               bfoot : ephem.bfoot, $
+               b_model : ephem.b_model, $
+               o     : REFORM(data.y[*,0]), $
+               e     : REFORM(data.y[*,1]), $
+               b     : REFORM(data.y[*,2])}
+
+     PRINT,"Saving " + FASTfile + " ..."
+     SAVE,db_fac,FASTB_GEI,FILENAME=FASTdir+FASTfile
+
+  ENDELSE
+
+  ctNum            = 43         ;better. no oceans of green
+
+  red              = (ctNum EQ 43) ? 235 : 250
+  darkRed          = 250
+  green            = 130
+  blue             = 90
+  maxwell          = 50
+  black            = 10
+  poiple           = 40
+  violet           = 60
+  hvit             = 255
+
+  ;; rgb=[6,4,2]
+  varName = 'dB_fac'
+  STORE_DATA,varName,DATA={x: db_fac.time, $
+                           y: [[db_fac.o],[db_fac.e],[db_fac.b]]}
+  OPTIONS,varName,'labels',['o','e','b']
+  OPTIONS,varName,'colors',[red,green,blue]
+  OPTIONS,varName,'tplot_routine','mplot'
+  OPTIONS,varName,'ytitle',"FAST delta-B"
+  tPltVars = N_ELEMENTS(tPltVars) EQ 0 ? varName : [varName,tPltVars]
+
+  varName = 'Oer_fac'
+  STORE_DATA,varName,DATA={x: oersted.time, $
+                           y: [[oerstCoord.bdiff.fac.car.o],[oerstCoord.bdiff.fac.car.e],[oerstCoord.bdiff.fac.car.b]]}
+  OPTIONS,varName,'labels',['o','e','b']
+  OPTIONS,varName,'colors',[red,green,blue]
+  OPTIONS,varName,'tplot_routine','mplot'
+  OPTIONS,varName,'ytitle',"Oersted delta-B"
+  tPltVars = N_ELEMENTS(tPltVars) EQ 0 ? varName : [varName,tPltVars]
+
+  varName = "FASTMLT"
+  STORE_DATA,varName,DATA={x:db_fac.time,y:db_fac.mlt}
+  barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+
+  varName = "FASTILAT"
+  STORE_DATA,varName,DATA={x:db_fac.time,y:db_fac.ilat}
+  barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+
+  varName = "FASTALT"
+  STORE_DATA,varName,DATA={x:db_fac.time,y:db_fac.alt}
+  barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+
+  OerMLT = ((oerstCoord.pos.gsm.sph.phi+180.) MOD 360.)/15.
+  varName = 'OerMLT'
+  STORE_DATA,varName,DATA={x:oersted.time,y:OerMLT}
+  barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+
+  varName = 'OerMLAT'
+  STORE_DATA,varName,DATA={x:oersted.time,y:oerstCoord.pos.mag.lat}
+  barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+
+  varName = 'OerALT'
+  STORE_DATA,varName,DATA={x:oersted.time,y:oerstCoord.pos.geo.alt}
+  barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+
+  ;; Plot it
+  LOADCT2,ctNum
+  TPLOT,tPltVars,TRANGE=[t1Zoom,t2Zoom],VAR=barVars
+
   STOP
-
-  ;; GET FAST MAG DATA
-  UCLA_MAG_DESPIN
-
-  UCLA_MAG_DESPIN,TW_MAT=tw_mat,ORBIT=orbit,SPIN_AXIS=spin_axis,DELTA_PHI=delta_phi,/QUIET
-  ;; GET_DATA,'dB_fac_v',DATA=data
-  GET_DATA,'dB_fac',DATA=data
 
 
 END
