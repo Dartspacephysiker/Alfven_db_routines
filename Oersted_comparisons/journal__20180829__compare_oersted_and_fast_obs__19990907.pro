@@ -10,6 +10,10 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
 
   outDir          = '/SPENCEdata/Research/database/Oersted/'
 
+  nyeVei          = 1
+  gamleVei        = 0
+  reflect_about_tid = 1
+
   ;; inFile       = 'oersted-ml990907.sav'
   ;; timeStrFile  = 'oersted-ml990907.sav-timeStr.sav'
   ;; outFile      = 'oersted-ml990907-parsedCoordinates.sav'
@@ -50,7 +54,7 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
   tWow = S2T(maxInteressant)
 
   ;; Get stuff X minutes before and after conjunction
-  zoomMin = 0.5
+  zoomMin = 2
   t1Zoom = tWow-zoomMin*60
   t2Zoom = tWow+zoomMin*60
 
@@ -101,20 +105,20 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
 
      GET_FA_ORBIT,data.x,/TIME_ARRAY,STRUC=ephem,/NO_STORE,/ALL
 
-     db_fac = {time : data.x, $
-               orbit : ephem.orbit, $
-               alt   : ephem.alt, $
-               ilat  : ephem.ilat, $
-               mlt   : ephem.mlt, $
-               gse   : {pos : ephem.fa_pos, $
-                        vel : ephem.fa_vel}, $
-               lat   : ephem.lat, $
-               lng   : ephem.lng, $
-               bfoot : ephem.bfoot, $
-               b_model : ephem.b_model, $
-               o     : REFORM(data.y[*,0]), $
-               e     : REFORM(data.y[*,1]), $
-               b     : REFORM(data.y[*,2])}
+     db_fac = {time          : data.x, $
+               orbit         : ephem.orbit, $
+               alt           : ephem.alt, $
+               ilat          : ephem.ilat, $
+               mlt           : ephem.mlt, $
+               gei           : {pos : ephem.fa_pos, $
+                                vel : ephem.fa_vel}, $
+               lat           : ephem.lat, $
+               lng           : ephem.lng, $
+               bfoot         : ephem.bfoot, $
+               b_model       : ephem.b_model, $
+               o             : REFORM(data.y[*,0]), $
+               e             : REFORM(data.y[*,1]), $
+               b             : REFORM(data.y[*,2])}
 
      PRINT,"Saving " + FASTfile + " ..."
      SAVE,db_fac,FASTB_GEI,FILENAME=FASTdir+FASTfile
@@ -133,24 +137,139 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
   violet           = 60
   hvit             = 255
 
-  ;; rgb=[6,4,2]
-  varName = 'dB_fac'
-  STORE_DATA,varName,DATA={x: db_fac.time, $
-                           y: [[db_fac.o],[db_fac.e],[db_fac.b]]}
-  OPTIONS,varName,'labels',['o','e','b']
-  OPTIONS,varName,'colors',[red,green,blue]
-  OPTIONS,varName,'tplot_routine','mplot'
-  OPTIONS,varName,'ytitle',"FAST delta-B"
-  tPltVars = N_ELEMENTS(tPltVars) EQ 0 ? varName : [varName,tPltVars]
+  fastO = db_fac.o
+  fastE = db_fac.e
+  fastB = db_fac.b
 
-  varName = 'Oer_fac'
-  STORE_DATA,varName,DATA={x: oersted.time, $
-                           y: [[oerstCoord.bdiff.fac.car.o],[oerstCoord.bdiff.fac.car.e],[oerstCoord.bdiff.fac.car.b]]}
-  OPTIONS,varName,'labels',['o','e','b']
-  OPTIONS,varName,'colors',[red,green,blue]
-  OPTIONS,varName,'tplot_routine','mplot'
-  OPTIONS,varName,'ytitle',"Oersted delta-B"
-  tPltVars = N_ELEMENTS(tPltVars) EQ 0 ? varName : [varName,tPltVars]
+  fastO = fastCoord.bDiff.fac.car.o
+  fastE = fastCoord.bDiff.fac.car.e
+  fastB = fastCoord.bDiff.fac.car.b
+  
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; gamle vei
+  IF KEYWORD_SET(gamleVei) THEN BEGIN
+
+     varName = 'dB_fac'
+     STORE_DATA,varName,DATA={x: db_fac.time, $
+                              y: [[fastO],[fastE],[fastB]]}
+     OPTIONS,varName,'labels',['o','e','b']
+     OPTIONS,varName,'colors',[red,green,blue]
+     OPTIONS,varName,'tplot_routine','mplot'
+     OPTIONS,varName,'ytitle',"FAST delta-B"
+     tPltVars = N_ELEMENTS(tPltVars) EQ 0 ? varName : [tPltVars,varName]
+
+     varName = 'Oer_fac'
+     STORE_DATA,varName,DATA={x: oersted.time, $
+                              y: [[oerstCoord.bdiff.fac.car.o],[oerstCoord.bdiff.fac.car.e],[oerstCoord.bdiff.fac.car.b]]}
+     OPTIONS,varName,'labels',['o','e','b']
+     OPTIONS,varName,'colors',[red,green,blue]
+     OPTIONS,varName,'tplot_routine','mplot'
+     OPTIONS,varName,'ytitle',"Oersted delta-B"
+     tPltVars = N_ELEMENTS(tPltVars) EQ 0 ? varName : [tPltVars,varName]
+
+  ENDIF
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Nye vei
+  IF KEYWORD_SET(nyeVei) THEN BEGIN
+     varName = 'dB_facShift'
+     indFAST_t1Zoom = VALUE_CLOSEST2(db_fac.time,t1Zoom,/CONSTRAINED)
+     dbFacArr = [[fastO-fastO[indFAST_t1Zoom]], $
+                 [fastE-fastE[indFAST_t1Zoom]], $
+                 [fastB-fastB[indFAST_t1Zoom]]]
+     STORE_DATA,varName,DATA={x: db_fac.time, $
+                              y: dbFacArr}
+     OPTIONS,varName,'labels',['o','e','b']
+     OPTIONS,varName,'colors',[red,green,blue]
+     OPTIONS,varName,'tplot_routine','mplot'
+     OPTIONS,varName,'ytitle',"FAST delta-B!C(shift)"
+     tPltVars = N_ELEMENTS(tPltVars) EQ 0 ? varName : [tPltVars,varName]
+
+     varName = 'Oer_facShift'
+     indOer_t1Zoom = VALUE_CLOSEST2(oersted.time,t1Zoom,/CONSTRAINED)
+     dbFacOerArr = [[oerstCoord.bdiff.fac.car.o-oerstCoord.bdiff.fac.car.o[indOer_t1Zoom]], $
+                    [oerstCoord.bdiff.fac.car.e-oerstCoord.bdiff.fac.car.e[indOer_t1Zoom]], $
+                    [oerstCoord.bdiff.fac.car.b-oerstCoord.bdiff.fac.car.b[indOer_t1Zoom]]]
+     STORE_DATA,varName,DATA={x: oersted.time, $
+                              y: dbFacOerArr}
+     OPTIONS,varName,'labels',['o','e','b']
+     OPTIONS,varName,'colors',[red,green,blue]
+     OPTIONS,varName,'tplot_routine','mplot'
+     OPTIONS,varName,'ytitle',"Oersted delta-B!C(shift)"
+     tPltVars = N_ELEMENTS(tPltVars) EQ 0 ? varName : [tPltVars,varName]
+
+  ENDIF
+
+  IF KEYWORD_SET(reflect_about_tid) THEN BEGIN
+
+     nOer = N_ELEMENTS(oerstCoord.bdiff.fac.car.o)
+     ;; nFAST = N_ELEMENTS(fastE)
+
+     iWowOer  = VALUE_CLOSEST2(oersted.time,tWow,/CONSTRAINED)
+     iT1Oer = VALUE_CLOSEST2(oersted.time,t1Zoom,/ONLY_LE)
+     iT2Oer = VALUE_CLOSEST2(oersted.time,t2Zoom,/ONLY_GE)
+
+     nAfter = iT2Oer-iWowOer
+     nBef   = iWowOer-iT1Oer
+     nShift = nAfter > nBef
+     
+     ;; iWowFAST = VALUE_CLOSEST2(db_fac.time,tWow,/CONSTRAINED)
+
+     ;; iOer = REVERSE([iT1Oer:iT2Oer:1])
+     iOer = [(iWowOer-nShift>0):(iWowOer+nShift<(nOer-1)):1]
+     iOerR = REVERSE(iOer)
+
+     oerstCoord.bdiff.fac.car.o[iOer] = oerstCoord.bdiff.fac.car.o[iOerR]
+     oerstCoord.bdiff.fac.car.e[iOer] = oerstCoord.bdiff.fac.car.e[iOerR]
+     oerstCoord.bdiff.fac.car.b[iOer] = oerstCoord.bdiff.fac.car.b[iOerR]
+
+     indOer_t1Zoom = VALUE_CLOSEST2(oersted.time,t1Zoom,/CONSTRAINED)
+     oSubtr = oerstCoord.bdiff.fac.car.o[indOer_t1Zoom]
+     eSubtr = oerstCoord.bdiff.fac.car.e[indOer_t1Zoom]
+     bSubtr = oerstCoord.bdiff.fac.car.b[indOer_t1Zoom]
+
+     varName = 'dB_facShift'
+     indFAST_t1Zoom = VALUE_CLOSEST2(db_fac.time,t1Zoom,/CONSTRAINED)
+     dbFacArr = [[fastO-fastO[indFAST_t1Zoom]], $
+                 [fastE-fastE[indFAST_t1Zoom]], $
+                 [fastB-fastB[indFAST_t1Zoom]]]
+     STORE_DATA,varName,DATA={x: db_fac.time, $
+                              y: dbFacArr}
+     OPTIONS,varName,'labels',['o','e','b']
+     OPTIONS,varName,'colors',[red,green,blue]
+     OPTIONS,varName,'tplot_routine','mplot'
+     OPTIONS,varName,'ytitle',"FAST delta-B!C(shift)"
+     tPltVars = N_ELEMENTS(tPltVars) EQ 0 ? varName : [tPltVars,varName]
+
+     varName = 'Oer_facShiftRev'
+     dbFacOerArr = [[oerstCoord.bdiff.fac.car.o-oSubtr], $
+                    [oerstCoord.bdiff.fac.car.e-eSubtr], $
+                    [oerstCoord.bdiff.fac.car.b-bSubtr]]
+     STORE_DATA,varName,DATA={x: oersted.time, $
+                              y: dbFacOerArr}
+     OPTIONS,varName,'labels',['o','e','b']
+     OPTIONS,varName,'colors',[red,green,blue]
+     OPTIONS,varName,'tplot_routine','mplot'
+     OPTIONS,varName,'ytitle',"Oersted delta-B!C(shift)"
+     tPltVars = N_ELEMENTS(tPltVars) EQ 0 ? varName : [tPltVars,varName]
+
+     ;; CASE 1 OF
+     ;;    iWowOer EQ 0: BEGIN
+     ;;       STOP
+     ;;    END
+     ;;    iWowOer EQ (nOer-1): BEGIN
+     ;;       STOP
+     ;;    END
+     ;;    ELSE: BEGIN
+           
+     ;;       iBoveOer = [iWowOer:(nOer-1):1]
+     ;;       i    = [iWowOer:(nOer-1):1]
+
+     ;;    END
+     ;; ENDCASE
+
+
+  ENDIF
 
   varName = "FASTMLT"
   STORE_DATA,varName,DATA={x:db_fac.time,y:db_fac.mlt}
@@ -164,10 +283,10 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
   STORE_DATA,varName,DATA={x:db_fac.time,y:db_fac.alt}
   barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
 
-  OerMLT = ((oerstCoord.pos.gsm.sph.phi+180.) MOD 360.)/15.
-  varName = 'OerMLT'
-  STORE_DATA,varName,DATA={x:oersted.time,y:OerMLT}
-  barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+  ;; OerMLT = ((oerstCoord.pos.gsm.sph.phi+180.) MOD 360.)/15.
+  ;; varName = 'OerMLT'
+  ;; STORE_DATA,varName,DATA={x:oersted.time,y:OerMLT}
+  ;; barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
 
   varName = 'OerMLAT'
   STORE_DATA,varName,DATA={x:oersted.time,y:oerstCoord.pos.mag.lat}

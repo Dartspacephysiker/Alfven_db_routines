@@ -153,20 +153,20 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
   GEO2FACV_vec     = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   ;; GEI
-  GEO2GEI_coord    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
   GEO2GEI_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  GEO2GEI_fakeVec  = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   ;; MAG
-  GEO2MAG_coord    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
   GEO2MAG_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  GEO2MAG_fakeVec  = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   ;; GSM
-  GEO2GSM_coord    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
   GEO2GSM_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  GEO2GSM_fakeVec  = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   ;;North-East-Down
-  GEO2NED_coord    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
   GEO2NED_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  GEO2NED_fakeVec  = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   GEI2VDH_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
@@ -305,10 +305,10 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
                            gsm_x2,gsm_y2,gsm_z2, $
                            /FROM_GEO,/TO_GSW,EPOCH=time_epoch[i]
 
-     GEO2GSM_coord[*,*,i] = [[gsm_x0,gsm_y0,gsm_z0], $
+     GEO2GSM_vec[*,*,i] = [[gsm_x0,gsm_y0,gsm_z0], $
                                 [gsm_x1,gsm_y1,gsm_z1], $
                                 [gsm_x2,gsm_y2,gsm_z2]]
-     GEO2GSM_vec[*,*,i]   = INVERT(GEO2GSM_coord[*,*,i])
+     ;; GEO2GSM_fakeVec[*,*,i]   = INVERT(GEO2GSM_vec[*,*,i])
 
      B_GSM_arr[*,i]       = GEO2GSM_vec[*,*,i]    # [b_x_GEO,b_y_GEO,b_z_GEO]
      b_x_GSM              = B_GSM_arr[0,i]
@@ -458,24 +458,24 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
 
            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
      ;;Update arrays of transformation matrices
-     GEO2GEI_coord[*,*,i]    = [[gei_x0,gei_y0,gei_z0], $
+     GEO2GEI_vec[*,*,i]    = [[gei_x0,gei_y0,gei_z0], $
                                 [gei_x1,gei_y1,gei_z1], $
                                 [gei_x2,gei_y2,gei_z2]]
-     GEO2MAG_coord[*,*,i]    = [[mag_x0,mag_y0,mag_z0], $
+     GEO2MAG_vec[*,*,i]    = [[mag_x0,mag_y0,mag_z0], $
                                 [mag_x1,mag_y1,mag_z1], $
                                 [mag_x2,mag_y2,mag_z2]]
 
      tmpLambda              = pos_phi_GEO*!DTOR
      tmpPhi                 = xmu*!DTOR
-     GEO2NED_coord[*,*,i]    = [[-SIN(tmpPhi)*COS(tmpLambda),-SIN(tmpPhi)*SIN(tmpLambda),COS(tmpPhi)], $
+     GEO2NED_vec[*,*,i]    = [[-SIN(tmpPhi)*COS(tmpLambda),-SIN(tmpPhi)*SIN(tmpLambda),COS(tmpPhi)], $
                                 [-SIN(tmpLambda)            ,COS(tmpLambda)             ,0.D         ], $
                                 [-COS(tmpPhi)*COS(tmpLambda),-COS(tmpPhi)*SIN(tmpLambda),-SIN(tmpPhi)]]
 
-     GEO2FACV_vec[*,*,i]     = INVERT([[aHat_GEO],[cHat_GEO],[bHat_GEO]])
-     GEO2FAC_vec[*,*,i]      = INVERT([[oHat_GEO],[eHat_GEO],[bHat_GEO]])
-     GEO2GEI_vec[*,*,i]      = INVERT(GEO2GEI_coord[*,*,i])
-     GEO2MAG_vec[*,*,i]      = INVERT(GEO2MAG_coord[*,*,i])
-     GEO2NED_vec[*,*,i]      = INVERT(GEO2NED_coord[*,*,i])
+     GEO2FACV_vec[*,*,i]     = INVERT([[aHat_GEO],[cHat_GEO],[bHat_GEO]],/DOUBLE)
+     GEO2FAC_vec[*,*,i]      = INVERT([[oHat_GEO],[eHat_GEO],[bHat_GEO]],/DOUBLE)
+     ;; GEO2GEI_fakeVec[*,*,i]      = INVERT(GEO2GEI_vec[*,*,i])
+     ;; GEO2MAG_fakeVec[*,*,i]      = INVERT(GEO2MAG_vec[*,*,i])
+     ;; GEO2NED_fakeVec[*,*,i]      = INVERT(GEO2NED_vec[*,*,i])
 
      ;;get velocity and magnetic field (as a check) in FAC and FACV coordinates
      vel_FAC_arr[*,i]        = GEO2FAC_vec[*,*,i]    # tmpVel_GEO
@@ -497,7 +497,7 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
      vel_MAGSph_arr[*,i]     = [magVSph_r,magVSph_theta,magVSph_phi]
 
 
-     pos_NED_arr[*,i]        = GEO2NED_coord[*,*,i]  # TEMPORARY(tmpNEDRefPos_GEO)
+     pos_NED_arr[*,i]        = GEO2NED_vec[*,*,i]  # TEMPORARY(tmpNEDRefPos_GEO)
      vel_NED_arr[*,i]        = GEO2NED_vec[*,*,i]    # tmpVel_GEO
 
      ;;get velocity and magnetic field in VDH
@@ -564,14 +564,14 @@ PRO JOURNAL__20180828__CONVERT_OERSTED_ECEF_COORDS_TO_MAGNETIC
      IF ABS(DETERM(GEO2FAC_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
      IF ABS(DETERM(GEO2FACV_vec [*,*,i]) - 1.) GT maxDiff THEN STOP
 
-     IF ABS(DETERM(GEO2GEI_coord[*,*,i]) - 1.) GT maxDiff THEN STOP
-     IF ABS(DETERM(GEO2GEI_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
+     IF ABS(DETERM(GEO2GEI_vec[*,*,i]) - 1.) GT maxDiff THEN STOP
+     ;; IF ABS(DETERM(GEO2GEI_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
 
-     IF ABS(DETERM(GEO2MAG_coord[*,*,i]) - 1.) GT maxDiff THEN STOP
-     IF ABS(DETERM(GEO2MAG_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
+     IF ABS(DETERM(GEO2MAG_vec[*,*,i]) - 1.) GT maxDiff THEN STOP
+     ;; IF ABS(DETERM(GEO2MAG_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
 
-     IF ABS(DETERM(GEO2NED_coord[*,*,i]) - 1.) GT maxDiff THEN STOP
-     IF ABS(DETERM(GEO2NED_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
+     IF ABS(DETERM(GEO2NED_vec[*,*,i]) - 1.) GT maxDiff THEN STOP
+     ;; IF ABS(DETERM(GEO2NED_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
 
      IF ABS(DETERM(GEI2VDH_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
 

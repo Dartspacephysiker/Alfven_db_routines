@@ -105,16 +105,6 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
   vel_NED_arr      = MAKE_ARRAY(3,nTot,/DOUBLE)
   vel_VDH_arr      = MAKE_ARRAY(3,nTot,/DOUBLE)
 
-  B_FAC_arr        = MAKE_ARRAY(3,nTot,/DOUBLE)
-  B_FACV_arr       = MAKE_ARRAY(3,nTot,/DOUBLE)
-  B_GEI_arr        = MAKE_ARRAY(3,nTot,/DOUBLE)
-  B_GEO_arr        = MAKE_ARRAY(3,nTot,/DOUBLE)
-  B_GEOSph_arr     = MAKE_ARRAY(3,nTot,/DOUBLE)
-  B_MAG_arr        = MAKE_ARRAY(3,nTot,/DOUBLE)
-  B_MAGSph_arr     = MAKE_ARRAY(3,nTot,/DOUBLE)
-  B_NED_arr        = MAKE_ARRAY(3,nTot,/DOUBLE)
-  B_VDH_arr        = MAKE_ARRAY(3,nTot,/DOUBLE)
- 
   IGRF_FAC_arr     = MAKE_ARRAY(3,nTot,/FLOAT)
   IGRF_GEI_arr     = MAKE_ARRAY(3,nTot,/FLOAT)
   IGRF_GEO_arr     = MAKE_ARRAY(3,nTot,/FLOAT)
@@ -135,35 +125,43 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
   ;;for vector transforms
   ident            = IDENTITY(3,/DOUBLE)
 
+  ;; GEO2FAC_fakeVec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  ;; GEO2FACV_fakeVec     = MAKE_ARRAY(3,3,nTot,/DOUBLE)
   GEO2FAC_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
   GEO2FACV_vec     = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   ;; GEO
-  GSE2GEO_coord    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
-  GSE2GEO_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
-  GEI2GEO_coord    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
-  GEI2GEO_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  ;; GSE2GEO_vec    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  ;; GSE2GEO_fakeVec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+
+  GEI2GEO_vec    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  ;; GEI2GEO_fakeVec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   ;; GEI
-  GEO2GEI_coord    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
-  GEO2GEI_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  GEO2GEI_vec    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  ;; GEO2GEI_fakeVec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   ;; MAG
-  GEO2MAG_coord    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
-  GEO2MAG_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  GEO2MAG_vec    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  ;; GEO2MAG_fakeVec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   ;; GSM
-  GEO2GSM_coord    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
-  GEO2GSM_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  GEO2GSM_vec    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  ;; GEO2GSM_fakeVec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+
+  GSM2GEO_vec    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  ;; GSM2GEO_fakeVec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   ;;North-East-Down
-  GEO2NED_coord    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
-  GEO2NED_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  GEO2NED_vec    = MAKE_ARRAY(3,3,nTot,/DOUBLE)
+  ;; GEO2NED_fakeVec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   GEI2VDH_vec      = MAKE_ARRAY(3,3,nTot,/DOUBLE)
 
   FOR i=0,nTot-1 DO BEGIN
-     GEOPACK_RECALC_08,YearArr[i],MonthArr[i],DayArr[i],HourArr[i],MinArr[i],SecArr[i],/DATE
+     GEOPACK_RECALC_08,YearArr[i],MonthArr[i], $
+                       DayArr[i],HourArr[i],MinArr[i],LONG(SecArr[i]), $
+                       /DATE
 
      ;;Convert everything to meters.
      ;; Here's why (execute these lines down to PRINT,renu2.ecef[...]):
@@ -174,31 +172,31 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
      ;; RESTORE,outdir_renu+infile_renu
      ;; PRINT,renu2.ecef.position.x[0],renu2.ecef.position.y[0],renu2.ecef.position.z[0]
 
-     pos_x_GSE = dB_fac.gse.pos[i,0]
-     pos_y_GSE = dB_fac.gse.pos[i,1]
-     pos_z_GSE = dB_fac.gse.pos[i,2]
+     pos_x_GEI = dB_fac.gei.pos[i,0]*1000.
+     pos_y_GEI = dB_fac.gei.pos[i,1]*1000.
+     pos_z_GEI = dB_fac.gei.pos[i,2]*1000.
 
-     tmpPos_GSE = DOUBLE([pos_x_GSE,pos_y_GSE,pos_z_GSE])*1000.
-     tmpVel_GSE = [dB_fac.gse.vel[i,0],dB_fac.gse.vel[i,1],dB_fac.gse.vel[i,2]]*1000.
+     tmpPos_GEI = DOUBLE([pos_x_GEI,pos_y_GEI,pos_z_GEI])
+     tmpVel_GEI = [dB_fac.gei.vel[i,0],dB_fac.gei.vel[i,1],dB_fac.gei.vel[i,2]]*1000.
 
-     GEOPACK_SPHCAR_08,tmpPos_GSE[0],tmpPos_GSE[1],tmpPos_GSE[2], $
-                       pos_r_GSE,pos_theta_GSE,pos_phi_GSE,/TO_SPH,/DEGREE
+     GEOPACK_SPHCAR_08,tmpPos_GEI[0],tmpPos_GEI[1],tmpPos_GEI[2], $
+                       pos_r_GEI,pos_theta_GEI,pos_phi_GEI,/TO_SPH,/DEGREE
 
      ;; GEOPACK_SPHCAR_08,tmpPos_GEO_sph[0],tmpPos_GEO_sph[1],tmpPos_GEO_sph[2], $
      ;;                   pos_x_GEO,pos_y_GEO,pos_z_GEO,/TO_RECT,/DEGREE
      ;; tmpPos_GEO = [pos_x_GEO,pos_y_GEO,pos_z_GEO]
 
      ;;To GEO
-     GEOPACK_CONV_COORD_08,tmpPos_GSE[0],tmpPos_GSE[1],tmpPos_GSE[2], $
+     GEOPACK_CONV_COORD_08,tmpPos_GEI[0],tmpPos_GEI[1],tmpPos_GEI[2], $
                            pos_x_GEO,pos_y_GEO,pos_z_GEO, $
-                           /FROM_GSE,/TO_GEO,EPOCH=time_epoch[i]
+                           /FROM_GEI,/TO_GEO,EPOCH=time_epoch[i]
 
      tmpPos_GEO = DOUBLE([pos_x_GEO,pos_y_GEO,pos_z_GEO])
 
-     ;;To GEI
-     GEOPACK_CONV_COORD_08,tmpPos_GSE[0],tmpPos_GSE[1],tmpPos_GSE[2], $
-                           pos_x_GEI,pos_y_GEI,pos_z_GEI, $
-                           /FROM_GSE,/TO_GEI,EPOCH=time_epoch[i]
+     ;;To GSE
+     GEOPACK_CONV_COORD_08,tmpPos_GEI[0],tmpPos_GEI[1],tmpPos_GEI[2], $
+                           pos_x_GSE,pos_y_GSE,pos_z_GSE, $
+                           /FROM_GEI,/TO_GSE,EPOCH=time_epoch[i]
 
      ;;To MAG
      GEOPACK_CONV_COORD_08,tmpPos_GEO[0],tmpPos_GEO[1],tmpPos_GEO[2], $
@@ -255,31 +253,6 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
 
      ;; NEED THESE EARLY
      ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-     ;;GSE to GEO
-     GEOPACK_CONV_COORD_08,ident[0,0],ident[0,1],ident[0,2], $
-                           geo_x0,geo_y0,geo_z0, $
-                           /FROM_GSE,/TO_GEO,EPOCH=time_epoch[i]
-
-     GEOPACK_CONV_COORD_08,ident[1,0],ident[1,1],ident[1,2], $
-                           geo_x1,geo_y1,geo_z1, $
-                           /FROM_GSE,/TO_GEO,EPOCH=time_epoch[i]
-
-     GEOPACK_CONV_COORD_08,ident[2,0],ident[2,1],ident[2,2], $
-                           geo_x2,geo_y2,geo_z2, $
-                           /FROM_GSE,/TO_GEO,EPOCH=time_epoch[i]
-
-     GSE2GEO_coord[*,*,i] = [[geo_x0,geo_y0,geo_z0], $
-                                [geo_x1,geo_y1,geo_z1], $
-                                [geo_x2,geo_y2,geo_z2]]
-     GSE2GEO_vec[*,*,i]   = INVERT(GSE2GEO_coord[*,*,i])
-
-     vel_GEO_arr[*,i]     = GSE2GEO_vec[*,*,i]    # tmpVel_GSE
-     tmpVel_GEO           = vel_GEO_arr[*,i]
-
-     ;;Velocity vector in spherical GSE coords
-     GEOPACK_BCARSP_08,tmpPos_GEO[0],tmpPos_GEO[1],tmpPos_GEO[2], $
-                       tmpVel_GEO[0],tmpVel_GEO[1],tmpVel_GEO[2], $
-                       vel_GEO_r,vel_GEO_theta,vel_GEO_phi
 
      ;;GEI to GEO
      GEOPACK_CONV_COORD_08,ident[0,0],ident[0,1],ident[0,2], $
@@ -294,20 +267,54 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
                            geo_x2,geo_y2,geo_z2, $
                            /FROM_GEI,/TO_GEO,EPOCH=time_epoch[i]
 
-     GEI2GEO_coord[*,*,i] = [[geo_x0,geo_y0,geo_z0], $
+     GEI2GEO_vec[*,*,i] = [[geo_x0,geo_y0,geo_z0], $
                              [geo_x1,geo_y1,geo_z1], $
                              [geo_x2,geo_y2,geo_z2]]
-     GEI2GEO_vec[*,*,i]   = INVERT(GEI2GEO_coord[*,*,i])
+     ;; GEI2GEO_fakeVec[*,*,i]   = INVERT(GEI2GEO_vec[*,*,i],/DOUBLE)
 
-     B_GEO_arr[*,i]       = GEI2GEO_vec[*,*,i]    # [b_x_GEI,b_y_GEI,b_z_GEI]
-     b_x_geo              = B_GEO_ARR[0,i]
-     b_y_geo              = B_GEO_ARR[1,i]
-     b_z_geo              = B_GEO_ARR[2,i]
+     ;; B_GEO_arr[*,i]       = GEI2GEO_fakeVec[*,*,i]    # [b_x_GEI,b_y_GEI,b_z_GEI]
+     B_GEO_arr[*,i]       = GEI2GEO_vec[*,*,i]  # [b_x_GEI,b_y_GEI,b_z_GEI]
+     b_x_geo              = B_GEO_arr[0,i]
+     b_y_geo              = B_GEO_arr[1,i]
+     b_z_geo              = B_GEO_arr[2,i]
+
+     ;; tmpFASTIGRFToGEO     = GEI2GEO_fakeVec[*,*,i] # REFORM(db_fac.B_model[i,*])
+     ;; tmpFASTIGRFToGEO2    = GEI2GEO_vec[*,*,i] # REFORM(db_fac.B_model[i,*])
+
+     ;; vel_GEO_arr[*,i]     = GEI2GEO_fakeVec[*,*,i]    # tmpVel_GEI
+     vel_GEO_arr[*,i]     = GEI2GEO_vec[*,*,i]  # tmpVel_GEI
+     ;; tmpVel_GEO           = vel_GEO_arr[*,i]
 
      ;;B vector in spherical GEO coords
      GEOPACK_BCARSP_08,tmpPos_GEO[0],tmpPos_GEO[1],tmpPos_GEO[2], $
                        b_x_GEO,b_y_GEO,b_z_GEO, $
                        b_r_GEO,b_theta_GEO,b_phi_GEO
+
+     ;;Velocity vector in spherical GEO coords
+     GEOPACK_BCARSP_08,tmpPos_GEO[0],tmpPos_GEO[1],tmpPos_GEO[2], $
+                       vel_GEO_arr[0,i],vel_GEO_arr[1,i],vel_GEO_arr[2,i], $
+                       vel_GEO_r,vel_GEO_theta,vel_GEO_phi
+
+     ;;GSM to GEO
+     GEOPACK_CONV_COORD_08,ident[0,0],ident[0,1],ident[0,2], $
+                           geo_x0,geo_y0,geo_z0, $
+                           /FROM_GSW,/TO_GEO,EPOCH=time_epoch[i]
+
+     GEOPACK_CONV_COORD_08,ident[1,0],ident[1,1],ident[1,2], $
+                           geo_x1,geo_y1,geo_z1, $
+                           /FROM_GSW,/TO_GEO,EPOCH=time_epoch[i]
+
+     GEOPACK_CONV_COORD_08,ident[2,0],ident[2,1],ident[2,2], $
+                           geo_x2,geo_y2,geo_z2, $
+                           /FROM_GSW,/TO_GEO,EPOCH=time_epoch[i]
+
+     GSM2GEO_vec[*,*,i] = [[geo_x0,geo_y0,geo_z0], $
+                             [geo_x1,geo_y1,geo_z1], $
+                             [geo_x2,geo_y2,geo_z2]]
+     ;; GSM2GEO_fakeVec[*,*,i]   = INVERT(GSM2GEO_vec[*,*,i],/DOUBLE)
+
+     ;; tmpGSMIGRFToGEO      = GSM2GEO_fakeVec[*,*,i] # [bIGRF_x_GSM,bIGRF_y_GSM,bIGRF_z_GSM]
+     ;; tmpGSMIGRFToGEO      = GSM2GEO_vec[*,*,i] # [bIGRF_x_GSM,bIGRF_y_GSM,bIGRF_z_GSM]
 
      ;;GEO to GSM
      GEOPACK_CONV_COORD_08,ident[0,0],ident[0,1],ident[0,2], $
@@ -322,10 +329,10 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
                            gsm_x2,gsm_y2,gsm_z2, $
                            /FROM_GEO,/TO_GSW,EPOCH=time_epoch[i]
 
-     GEO2GSM_coord[*,*,i] = [[gsm_x0,gsm_y0,gsm_z0], $
-                                [gsm_x1,gsm_y1,gsm_z1], $
-                                [gsm_x2,gsm_y2,gsm_z2]]
-     GEO2GSM_vec[*,*,i]   = INVERT(GEO2GSM_coord[*,*,i])
+     GEO2GSM_vec[*,*,i] = [[gsm_x0,gsm_y0,gsm_z0], $
+                           [gsm_x1,gsm_y1,gsm_z1], $
+                           [gsm_x2,gsm_y2,gsm_z2]]
+     ;; GEO2GSM_fakeVec[*,*,i]   = INVERT(GEO2GSM_vec[*,*,i],/DOUBLE)
 
      ;;GEO to MAG
      GEOPACK_CONV_COORD_08,ident[0,0],ident[0,1],ident[0,2], $
@@ -340,7 +347,7 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
                            mag_x2,mag_y2,mag_z2, $
                            /FROM_GEO,/TO_MAG,EPOCH=time_epoch[i]
 
-     GEO2MAG_coord[*,*,i]    = [[mag_x0,mag_y0,mag_z0], $
+     GEO2MAG_vec[*,*,i]    = [[mag_x0,mag_y0,mag_z0], $
                                 [mag_x1,mag_y1,mag_z1], $
                                 [mag_x2,mag_y2,mag_z2]]
 
@@ -357,24 +364,24 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
                            gei_x2,gei_y2,gei_z2, $
                            /FROM_GEO,/TO_GEI,EPOCH=time_epoch[i]
 
-     GEO2GEI_coord[*,*,i]    = [[gei_x0,gei_y0,gei_z0], $
+     GEO2GEI_vec[*,*,i]    = [[gei_x0,gei_y0,gei_z0], $
                                 [gei_x1,gei_y1,gei_z1], $
                                 [gei_x2,gei_y2,gei_z2]]
 
+     ;; B_GSM_arr[*,i]       = GEO2GSM_fakeVec[*,*,i]    # [b_x_GEO,b_y_GEO,b_z_GEO]
      B_GSM_arr[*,i]       = GEO2GSM_vec[*,*,i]    # [b_x_GEO,b_y_GEO,b_z_GEO]
-     b_x_GSM              = B_GSM_arr[0,i]
-     b_y_GSM              = B_GSM_arr[1,i]
-     b_z_GSM              = B_GSM_arr[2,i]
+     ;; b_x_GSM              = B_GSM_arr[0,i]
+     ;; b_y_GSM              = B_GSM_arr[1,i]
+     ;; b_z_GSM              = B_GSM_arr[2,i]
      ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
      ;; Alternate shot at measured B
      GEOPACK_BCARSP_08  ,pos_gsm_xyz_R_E[0],pos_gsm_xyz_R_E[1],pos_gsm_xyz_R_E[2], $
-                         b_x_GSM,b_y_GSM,b_z_GSM, $
+                         B_GSM_arr[0,i],B_GSM_arr[1,i],B_GSM_arr[2,i], $
                          b_r_GSM,b_theta_GSM,b_phi_GSM
 
      ;;Dipole, please?
-     GEOPACK_DIP_08,pos_gsm_xyz_R_E[1],pos_gsm_xyz_R_E[1],pos_gsm_xyz_R_E[2], $
+     GEOPACK_DIP_08,pos_gsm_xyz_R_E[0],pos_gsm_xyz_R_E[1],pos_gsm_xyz_R_E[2], $
                     bIGRF_x_GSM_dip,bIGRF_y_GSM_dip,bIGRF_z_GSM_dip, $
                     EPOCH=time_epoch[i] ;,/DEGREE
 
@@ -391,7 +398,7 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
      pos_GSMSph_arr[*,i]     = [pos_theta_GSM,pos_phi_GSM,pos_r_GSM]
      pos_MAGSph_arr[*,i]     = [pos_theta_MAG,pos_phi_MAG,pos_r_MAG]
 
-     vel_GEO_arr[*,i]        = [tmpVel_GEO[0],tmpVel_GEO[1],tmpVel_GEO[2]]
+     ;; vel_GEO_arr[*,i]        = [tmpVel_GEO[0],tmpVel_GEO[1],tmpVel_GEO[2]] ;Updated above, you see
      vel_GEOSph_arr[*,i]     = [vel_GEO_r,vel_GEO_theta,vel_GEO_phi]
 
      ;; IGRF
@@ -406,8 +413,9 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
      B_GEO_sphArr[*,i]    = [b_theta_GEO,b_phi_GEO,b_r_GEO]
      B_GSM_sphArr[*,i]    = [b_theta_GSM,b_phi_GSM,b_r_GSM]
      ;;Update Meas
-     B_GEO_arr[*,i]       = [b_x_GEO,b_y_GEO,b_z_GEO]
-     B_GSM_arr[*,i]       = [b_x_GSM,b_y_GSM,b_z_GSM]
+     ;; This is done above
+     ;; B_GEO_arr[*,i]       = [b_x_GEO,b_y_GEO,b_z_GEO]
+     ;; B_GSM_arr[*,i]       = [b_x_GSM,b_y_GSM,b_z_GSM]
 
      ;;Where is magnetic center of earth?
      GEOPACK_CONV_COORD_08,0D,0D,0D, $
@@ -420,17 +428,14 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
 
      ;;GEO to NED (North-East-Down)
      ;; xmu: "Geodetic latitude" (fra GEOPACK 2008 dokumentasjon)
-     GEOPACK_GEODGEO_08,pos_r_GEO/1000.,pos_theta_GEO,h,xmu,/TO_GEODETIC,/DEGREE
+     GEOPACK_GEODGEO_08,pos_r_GEO/1000.D,pos_theta_GEO*1.D,h,xmu,/TO_GEODETIC,/DEGREE
 
      alt_GEO[i]             = h
      lat_GEO[i]             = xmu
 
-     ;; FAST altitude ranges from 300–4200 km, so h GT 5000 is a clear varselskilt
-     IF h GT 5000 THEN STOP
-     
      ;;**Get colatitude (refTheta) and altitude in GEO coordinates from geodetic
      ;; reference altitude (sea level, or 0.D) and geodetic latitude (xmu)
-     GEOPACK_GEODGEO_08,0.D,xmu, $
+     GEOPACK_GEODGEO_08,0.D,xmu*1.D, $
                         refAlt_GEO,refTheta_GEO,/TO_GEOCENTRIC,/DEGREE ;/TO_GEODETIC (see GEOPACK_2008 documentation, or type GEOPACK_HELP)
      GEOPACK_SPHCAR_08,refAlt_GEO,refTheta_GEO,pos_phi_GEO, $
                        refAlt_x,refAlt_y,refAlt_z,/TO_RECT,/DEGREE
@@ -461,7 +466,7 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
      dHat_GEI                = CROSSP_NORMED(hHat_GEI,rPosHat_Car_GEI)
      vHat_GEI                = CROSSP_NORMED(dHat_GEI,hHat_GEI)
 
-           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
      ;;Field-aligned coordinate systems
 
      ;;FAC system 1 (ripped from UCLA_MAG_DESPIN)
@@ -477,7 +482,7 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
      ;;   "Field-aligned velocity-based coordinates defined as: "
      ;;   "z-along B, y-cross track (BxV), x-along track ((BxV)xB)."
 
-     vHat_GEO                = VNORMALIZE(tmpVel_GEO)
+     vHat_GEO                = VNORMALIZE(vel_GEO_arr[*,i])
      cHat_GEO                = CROSSP_NORMED(bHat_GEO,vHat_GEO)       ;cross-track unit vector (or yHat)
      aHat_GEO                = CROSSP_NORMED(cHat_GEO,bHat_GEO)       ;along-track unit vector (or xHat)
 
@@ -486,41 +491,54 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
 
      tmpLambda              = pos_phi_GEO*!DTOR
      tmpPhi                 = xmu*!DTOR
-     GEO2NED_coord[*,*,i]    = [[-SIN(tmpPhi)*COS(tmpLambda),-SIN(tmpPhi)*SIN(tmpLambda),COS(tmpPhi)], $
+     GEO2NED_vec[*,*,i]    = [[-SIN(tmpPhi)*COS(tmpLambda),-SIN(tmpPhi)*SIN(tmpLambda),COS(tmpPhi)], $
                                 [-SIN(tmpLambda)            ,COS(tmpLambda)             ,0.D         ], $
                                 [-COS(tmpPhi)*COS(tmpLambda),-COS(tmpPhi)*SIN(tmpLambda),-SIN(tmpPhi)]]
 
-     GEO2FACV_vec[*,*,i]     = INVERT([[aHat_GEO],[cHat_GEO],[bHat_GEO]])
-     GEO2FAC_vec[*,*,i]      = INVERT([[oHat_GEO],[eHat_GEO],[bHat_GEO]])
-     GEO2GEI_vec[*,*,i]      = INVERT(GEO2GEI_coord[*,*,i])
-     GEO2MAG_vec[*,*,i]      = INVERT(GEO2MAG_coord[*,*,i])
-     GEO2NED_vec[*,*,i]      = INVERT(GEO2NED_coord[*,*,i])
+     ;; These ones DO need to be inverted
+     GEO2FACV_vec[*,*,i]     = INVERT([[aHat_GEO],[cHat_GEO],[bHat_GEO]],/DOUBLE)
+     GEO2FAC_vec[*,*,i]      = INVERT([[oHat_GEO],[eHat_GEO],[bHat_GEO]],/DOUBLE)
+
+
+     ;; GEO2GEI_fakeVec[*,*,i]      = INVERT(GEO2GEI_vec[*,*,i],/DOUBLE)
+     ;; GEO2MAG_fakeVec[*,*,i]      = INVERT(GEO2MAG_vec[*,*,i],/DOUBLE)
+     ;; GEO2NED_fakeVec[*,*,i]      = INVERT(GEO2NED_vec[*,*,i],/DOUBLE)
 
      ;;get velocity and magnetic field (as a check) in FAC and FACV coordinates
-     vel_FAC_arr[*,i]        = GEO2FAC_vec[*,*,i]    # tmpVel_GEO
-     vel_FACV_arr[*,i]       = GEO2FACV_vec[*,*,i]   # tmpVel_GEO
+     ;; vel_FAC_arr[*,i]        = GEO2FAC_fakeVec[*,*,i]    # vel_GEO_arr[*,i]
+     ;; vel_FACV_arr[*,i]       = GEO2FACV_fakeVec[*,*,i]   # vel_GEO_arr[*,i]
+     vel_FAC_arr[*,i]        = GEO2FAC_vec[*,*,i]    # vel_GEO_arr[*,i]
+     vel_FACV_arr[*,i]       = GEO2FACV_vec[*,*,i]   # vel_GEO_arr[*,i]
 
+     ;; IGRF_FAC_arr[*,i]       = GEO2FAC_fakeVec[*,*,i]    # [bIGRF_x_GEO,bIGRF_y_GEO,bIGRF_z_GEO]
+     ;; B_FAC_arr[*,i]          = GEO2FAC_fakeVec[*,*,i]    # [b_x_GEO,b_y_GEO,b_z_GEO]
      IGRF_FAC_arr[*,i]       = GEO2FAC_vec[*,*,i]    # [bIGRF_x_GEO,bIGRF_y_GEO,bIGRF_z_GEO]
      B_FAC_arr[*,i]          = GEO2FAC_vec[*,*,i]    # [b_x_GEO,b_y_GEO,b_z_GEO]
 
      ;;get velocity and magnetic field in GEI coordinates
-     vel_GEI_arr[*,i]        = GEO2GEI_vec[*,*,i]    # tmpVel_GEO
+     ;; vel_GEI_arr[*,i]        = GEO2GEI_fakeVec[*,*,i]    # vel_GEO_arr[*,i]
+     ;; IGRF_GEI_arr[*,i]       = GEO2GEI_fakeVec[*,*,i]    # [bIGRF_x_GEO,bIGRF_y_GEO,bIGRF_z_GEO]
+     ;; B_GEI_arr[*,i]          = GEO2GEI_fakeVec[*,*,i]    # [b_x_GEO,b_y_GEO,b_z_GEO]
+     vel_GEI_arr[*,i]        = GEO2GEI_vec[*,*,i]    # vel_GEO_arr[*,i]
      IGRF_GEI_arr[*,i]       = GEO2GEI_vec[*,*,i]    # [bIGRF_x_GEO,bIGRF_y_GEO,bIGRF_z_GEO]
      B_GEI_arr[*,i]          = GEO2GEI_vec[*,*,i]    # [b_x_GEO,b_y_GEO,b_z_GEO]
 
      ;;get velocity in MAG coordinates (Cartesian and spherical)
-     vel_MAG_arr[*,i]        = GEO2MAG_vec[*,*,i]    # tmpVel_GEO
+     ;; vel_MAG_arr[*,i]        = GEO2MAG_fakeVec[*,*,i]    # vel_GEO_arr[*,i]
+     vel_MAG_arr[*,i]        = GEO2MAG_vec[*,*,i]    # vel_GEO_arr[*,i]
      GEOPACK_BCARSP_08,pos_x_MAG,pos_y_MAG,pos_z_MAG, $
                        vel_MAG_arr[0,i],vel_MAG_arr[1,i],vel_MAG_arr[2,i], $
                        magVSph_r,magVSph_theta,magVSph_phi
      vel_MAGSph_arr[*,i]     = [magVSph_r,magVSph_theta,magVSph_phi]
 
 
-     pos_NED_arr[*,i]        = GEO2NED_coord[*,*,i]  # TEMPORARY(tmpNEDRefPos_GEO)
-     vel_NED_arr[*,i]        = GEO2NED_vec[*,*,i]    # tmpVel_GEO
+     pos_NED_arr[*,i]        = GEO2NED_vec[*,*,i]  # TEMPORARY(tmpNEDRefPos_GEO)
+     ;; vel_NED_arr[*,i]        = GEO2NED_fakeVec[*,*,i]    # vel_GEO_arr[*,i]
+     vel_NED_arr[*,i]        = GEO2NED_vec[*,*,i]    # vel_GEO_arr[*,i]
 
      ;;get velocity and magnetic field in VDH
 
+     ;; eEast_Car_GEI           = GEO2GEI_fakeVec[*,*,i]    # eEast_Car_GEO
      eEast_Car_GEI           = GEO2GEI_vec[*,*,i]    # eEast_Car_GEO
      ;; IF (TRANSPOSE(dHat_GEI) # eEast_Car_GEI) LT 0 THEN BEGIN
      IF DOTP(dHat_GEI,eEast_Car_GEI) LT 0 THEN BEGIN
@@ -528,8 +546,12 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
         vHat_GEI            *= (-1D)
      ENDIF
 
+     ;; GEI2VDH_fakeVec[*,*,i]      = [[vHat_GEI],[dHat_GEI],[hHat_GEI]]
      GEI2VDH_vec[*,*,i]      = [[vHat_GEI],[dHat_GEI],[hHat_GEI]]
 
+     ;; vel_VDH_arr[*,i]        = GEI2VDH_fakeVec[*,*,i]    # vel_GEI_arr[*,i]
+     ;; IGRF_VDH_arr[*,i]       = GEI2VDH_fakeVec[*,*,i]    # IGRF_GEI_arr[*,i]
+     ;; B_VDH_arr[*,i]          = GEI2VDH_fakeVec[*,*,i]    # B_GEI_arr[*,i]
      vel_VDH_arr[*,i]        = GEI2VDH_vec[*,*,i]    # vel_GEI_arr[*,i]
      IGRF_VDH_arr[*,i]       = GEI2VDH_vec[*,*,i]    # IGRF_GEI_arr[*,i]
      B_VDH_arr[*,i]          = GEI2VDH_vec[*,*,i]    # B_GEI_arr[*,i]
@@ -543,9 +565,9 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
                          testVelr_MAG,testVeltheta_MAG,testVelphi_MAG
 
 
-     velMagCar_GEO           = SQRT(tmpVel_GEO[0]*tmpVel_GEO[0] + $
-                                    tmpVel_GEO[1]*tmpVel_GEO[1] + $
-                                    tmpVel_GEO[2]*tmpVel_GEO[2])
+     velMagCar_GEO           = SQRT(vel_GEO_arr[0,i]*vel_GEO_arr[0,i] + $
+                                    vel_GEO_arr[1,i]*vel_GEO_arr[1,i] + $
+                                    vel_GEO_arr[2,i]*vel_GEO_arr[2,i])
      velMagSph_GEO           = SQRT(vel_GEO_r*vel_GEO_r + $
                                     vel_GEO_theta*vel_GEO_theta + $
                                     vel_GEO_phi*vel_GEO_phi)
@@ -580,19 +602,21 @@ PRO JOURNAL__20180830__CONVERT_FAST_GSE_POS_AND_GEI_BFIELD_TO_OTHER_COORDINATES
 
      ;;More tests! Determinants.
      maxDiff = 0.001
+     ;; IF ABS(DETERM(GEO2FAC_fakeVec  [*,*,i]) - 1.) GT maxDiff THEN STOP
+     ;; IF ABS(DETERM(GEO2FACV_fakeVec [*,*,i]) - 1.) GT maxDiff THEN STOP
      IF ABS(DETERM(GEO2FAC_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
      IF ABS(DETERM(GEO2FACV_vec [*,*,i]) - 1.) GT maxDiff THEN STOP
 
-     IF ABS(DETERM(GEO2GEI_coord[*,*,i]) - 1.) GT maxDiff THEN STOP
-     IF ABS(DETERM(GEO2GEI_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
+     IF ABS(DETERM(GEO2GEI_vec[*,*,i]) - 1.) GT maxDiff THEN STOP
+     ;; IF ABS(DETERM(GEO2GEI_fakeVec  [*,*,i]) - 1.) GT maxDiff THEN STOP
 
-     IF ABS(DETERM(GEO2MAG_coord[*,*,i]) - 1.) GT maxDiff THEN STOP
-     IF ABS(DETERM(GEO2MAG_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
+     IF ABS(DETERM(GEO2MAG_vec[*,*,i]) - 1.) GT maxDiff THEN STOP
+     ;; IF ABS(DETERM(GEO2MAG_fakeVec  [*,*,i]) - 1.) GT maxDiff THEN STOP
 
-     IF ABS(DETERM(GEO2NED_coord[*,*,i]) - 1.) GT maxDiff THEN STOP
-     IF ABS(DETERM(GEO2NED_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
+     IF ABS(DETERM(GEO2NED_vec[*,*,i]) - 1.) GT maxDiff THEN STOP
+     ;; IF ABS(DETERM(GEO2NED_fakeVec  [*,*,i]) - 1.) GT maxDiff THEN STOP
 
-     IF ABS(DETERM(GEI2VDH_vec  [*,*,i]) - 1.) GT maxDiff THEN STOP
+     ;; IF ABS(DETERM(GEI2VDH_fakeVec  [*,*,i]) - 1.) GT maxDiff THEN STOP
 
      IF (i MOD 100) EQ 0 THEN PRINT,i
 
