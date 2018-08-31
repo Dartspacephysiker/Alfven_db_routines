@@ -1,6 +1,38 @@
 ;2018/08/29
 ;; INGENTING HER!
 ;; 20180830 I know that something is wrong with my FAST coord conversions (see JOURNAL__20180830__COMPARE_MY_FAST_COORD_CONVERSIONS_WITH_SDT_OUTPUT), so hold off on FAST-Ørsted comparison 
+PRO BRORHATCH,FASTlat,FASTdat, $
+              OerLat,OerDat, $
+              fastNavn,OerNavn
+
+  magLatRange = [55,75]
+
+  plotFASTLat = PLOT(FASTlat,FASTdat, $
+                     NAME=fastNavn, $
+                     XRANGE=magLatRange, $
+                     XTITLE='Magnetic latitude (deg)', $
+                     YTITLE='Magnetic field amplitude (nT)', $
+                     COLOR='BLACK')
+
+  plotOerLat = PLOT(OerLat, $
+                    OerDat, $
+                    NAME=OerNavn, $
+                    XRANGE=magLatRange, $
+                    XTITLE='Magnetic latitude (deg)', $
+                    YTITLE='Magnetic field amplitude (nT)', $
+                    COLOR='RED', $
+                    /OVERPLOT)
+
+  plotCrossLat = PLOT(REPLICATE(63.203414,2), $
+                      MINMAX([FASTdat,OerDat]), $
+                      COLOR='GREEN', $
+                      TRANSP=50, $
+                      /OVERPLOT)
+
+  legend = LEGEND(TARGET=[plotFASTLat,plotOerLat])
+
+
+END
 PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
 
   COMPILE_OPT IDL2,STRICTARRSUBS
@@ -8,11 +40,14 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
   @common__maximus_vars.pro  
   @tplot_com
 
-  outDir          = '/SPENCEdata/Research/database/Oersted/'
+  outDir            = '/SPENCEdata/Research/database/Oersted/'
 
-  nyeVei          = 1
-  gamleVei        = 0
-  reflect_about_tid = 1
+  nyeVei            = 0
+  gamleVei          = 0
+  reflect_about_tid = 0
+
+  someSing        = KEYWORD_SET(reflect_about_tid) OR KEYWORD_SET(nyeVei) OR $
+                    KEYWORD_SET(gamleVei) 
 
   ;; inFile       = 'oersted-ml990907.sav'
   ;; timeStrFile  = 'oersted-ml990907.sav-timeStr.sav'
@@ -145,6 +180,29 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
   fastE = fastCoord.bDiff.fac.car.e
   fastB = fastCoord.bDiff.fac.car.b
   
+  ;; Zoom times
+  iT1FAST = VALUE_CLOSEST2(db_fac.time,t1Zoom,/CONSTRAINED)
+  iT1Oer = VALUE_CLOSEST2(oersted.time,t1Zoom,/CONSTRAINED)
+
+  iT2FAST = VALUE_CLOSEST2(db_fac.time,t2Zoom,/CONSTRAINED)
+  iT2Oer = VALUE_CLOSEST2(oersted.time,t2Zoom,/CONSTRAINED)
+
+  indFAST_zoom = [iT1FAST:iT2FAST:1]
+  indOer_zoom  = [iT1Oer:iT2Oer:1]
+
+  ;; U is for 'utvidet'
+  iT1FASTU = VALUE_CLOSEST2(db_fac.time,t1,/CONSTRAINED)
+  iT1OerU = VALUE_CLOSEST2(oersted.time,t1,/CONSTRAINED)
+
+  iT2FASTU = VALUE_CLOSEST2(db_fac.time,t2,/CONSTRAINED)
+  iT2OerU = VALUE_CLOSEST2(oersted.time,t2,/CONSTRAINED)
+
+  indFAST = [iT1FASTU:iT2FASTU:1]
+  indOer  = [iT1OerU:iT2OerU:1]
+
+  ;; Special
+  iWowOer  = VALUE_CLOSEST2(oersted.time,tWow,/CONSTRAINED)
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; gamle vei
   IF KEYWORD_SET(gamleVei) THEN BEGIN
@@ -173,10 +231,9 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
   ;; Nye vei
   IF KEYWORD_SET(nyeVei) THEN BEGIN
      varName = 'dB_facShift'
-     indFAST_t1Zoom = VALUE_CLOSEST2(db_fac.time,t1Zoom,/CONSTRAINED)
-     dbFacArr = [[fastO-fastO[indFAST_t1Zoom]], $
-                 [fastE-fastE[indFAST_t1Zoom]], $
-                 [fastB-fastB[indFAST_t1Zoom]]]
+     dbFacArr = [[fastO-fastO[iT1FAST]], $
+                 [fastE-fastE[iT1FAST]], $
+                 [fastB-fastB[iT1FAST]]]
      STORE_DATA,varName,DATA={x: db_fac.time, $
                               y: dbFacArr}
      OPTIONS,varName,'labels',['o','e','b']
@@ -186,10 +243,10 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
      tPltVars = N_ELEMENTS(tPltVars) EQ 0 ? varName : [tPltVars,varName]
 
      varName = 'Oer_facShift'
-     indOer_t1Zoom = VALUE_CLOSEST2(oersted.time,t1Zoom,/CONSTRAINED)
-     dbFacOerArr = [[oerstCoord.bdiff.fac.car.o-oerstCoord.bdiff.fac.car.o[indOer_t1Zoom]], $
-                    [oerstCoord.bdiff.fac.car.e-oerstCoord.bdiff.fac.car.e[indOer_t1Zoom]], $
-                    [oerstCoord.bdiff.fac.car.b-oerstCoord.bdiff.fac.car.b[indOer_t1Zoom]]]
+
+     dbFacOerArr = [[oerstCoord.bdiff.fac.car.o-oerstCoord.bdiff.fac.car.o[iT1Oer]], $
+                    [oerstCoord.bdiff.fac.car.e-oerstCoord.bdiff.fac.car.e[iT1Oer]], $
+                    [oerstCoord.bdiff.fac.car.b-oerstCoord.bdiff.fac.car.b[iT1Oer]]]
      STORE_DATA,varName,DATA={x: oersted.time, $
                               y: dbFacOerArr}
      OPTIONS,varName,'labels',['o','e','b']
@@ -205,9 +262,8 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
      nOer = N_ELEMENTS(oerstCoord.bdiff.fac.car.o)
      ;; nFAST = N_ELEMENTS(fastE)
 
-     iWowOer  = VALUE_CLOSEST2(oersted.time,tWow,/CONSTRAINED)
-     iT1Oer = VALUE_CLOSEST2(oersted.time,t1Zoom,/ONLY_LE)
-     iT2Oer = VALUE_CLOSEST2(oersted.time,t2Zoom,/ONLY_GE)
+     ;; iT1Oer = VALUE_CLOSEST2(oersted.time,t1Zoom,/ONLY_LE)
+     ;; iT2Oer = VALUE_CLOSEST2(oersted.time,t2Zoom,/ONLY_GE)
 
      nAfter = iT2Oer-iWowOer
      nBef   = iWowOer-iT1Oer
@@ -219,20 +275,22 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
      iOer = [(iWowOer-nShift>0):(iWowOer+nShift<(nOer-1)):1]
      iOerR = REVERSE(iOer)
 
-     oerstCoord.bdiff.fac.car.o[iOer] = oerstCoord.bdiff.fac.car.o[iOerR]
-     oerstCoord.bdiff.fac.car.e[iOer] = oerstCoord.bdiff.fac.car.e[iOerR]
-     oerstCoord.bdiff.fac.car.b[iOer] = oerstCoord.bdiff.fac.car.b[iOerR]
+     tmpO = oerstCoord.bdiff.fac.car.o
+     tmpE = oerstCoord.bdiff.fac.car.e
+     tmpB = oerstCoord.bdiff.fac.car.b
 
-     indOer_t1Zoom = VALUE_CLOSEST2(oersted.time,t1Zoom,/CONSTRAINED)
-     oSubtr = oerstCoord.bdiff.fac.car.o[indOer_t1Zoom]
-     eSubtr = oerstCoord.bdiff.fac.car.e[indOer_t1Zoom]
-     bSubtr = oerstCoord.bdiff.fac.car.b[indOer_t1Zoom]
+     tmpO[iOer] = tmpO[iOerR]
+     tmpE[iOer] = tmpE[iOerR]
+     tmpB[iOer] = tmpB[iOerR]
+
+     oSubtr = tmpO[iT1Oer]
+     eSubtr = tmpE[iT1Oer]
+     bSubtr = tmpB[iT1Oer]
 
      varName = 'dB_facShift'
-     indFAST_t1Zoom = VALUE_CLOSEST2(db_fac.time,t1Zoom,/CONSTRAINED)
-     dbFacArr = [[fastO-fastO[indFAST_t1Zoom]], $
-                 [fastE-fastE[indFAST_t1Zoom]], $
-                 [fastB-fastB[indFAST_t1Zoom]]]
+     dbFacArr = [[fastO-fastO[iT1FAST]], $
+                 [fastE-fastE[iT1FAST]], $
+                 [fastB-fastB[iT1FAST]]]
      STORE_DATA,varName,DATA={x: db_fac.time, $
                               y: dbFacArr}
      OPTIONS,varName,'labels',['o','e','b']
@@ -242,9 +300,9 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
      tPltVars = N_ELEMENTS(tPltVars) EQ 0 ? varName : [tPltVars,varName]
 
      varName = 'Oer_facShiftRev'
-     dbFacOerArr = [[oerstCoord.bdiff.fac.car.o-oSubtr], $
-                    [oerstCoord.bdiff.fac.car.e-eSubtr], $
-                    [oerstCoord.bdiff.fac.car.b-bSubtr]]
+     dbFacOerArr = [[tmpO-oSubtr], $
+                    [tmpE-eSubtr], $
+                    [tmpB-bSubtr]]
      STORE_DATA,varName,DATA={x: oersted.time, $
                               y: dbFacOerArr}
      OPTIONS,varName,'labels',['o','e','b']
@@ -271,36 +329,109 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
 
   ENDIF
 
-  varName = "FASTMLT"
-  STORE_DATA,varName,DATA={x:db_fac.time,y:db_fac.mlt}
-  barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+  IF someSing THEN BEGIN
 
-  varName = "FASTILAT"
-  STORE_DATA,varName,DATA={x:db_fac.time,y:db_fac.ilat}
-  barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+     varName = "FASTMLT"
+     STORE_DATA,varName,DATA={x:db_fac.time,y:db_fac.mlt}
+     barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
 
-  varName = "FASTALT"
-  STORE_DATA,varName,DATA={x:db_fac.time,y:db_fac.alt}
-  barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+     varName = "FASTILAT"
+     STORE_DATA,varName,DATA={x:db_fac.time,y:db_fac.ilat}
+     barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
 
-  ;; OerMLT = ((oerstCoord.pos.gsm.sph.phi+180.) MOD 360.)/15.
-  ;; varName = 'OerMLT'
-  ;; STORE_DATA,varName,DATA={x:oersted.time,y:OerMLT}
-  ;; barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+     varName = "FASTALT"
+     STORE_DATA,varName,DATA={x:db_fac.time,y:db_fac.alt}
+     barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
 
-  varName = 'OerMLAT'
-  STORE_DATA,varName,DATA={x:oersted.time,y:oerstCoord.pos.mag.lat}
-  barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+     ;; OerMLT = ((oerstCoord.pos.gsm.sph.phi+180.) MOD 360.)/15.
+     ;; varName = 'OerMLT'
+     ;; STORE_DATA,varName,DATA={x:oersted.time,y:OerMLT}
+     ;; barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
 
-  varName = 'OerALT'
-  STORE_DATA,varName,DATA={x:oersted.time,y:oerstCoord.pos.geo.alt}
-  barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+     varName = 'OerMLAT'
+     STORE_DATA,varName,DATA={x:oersted.time,y:oerstCoord.pos.mag.lat}
+     barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
 
-  ;; Plot it
-  LOADCT2,ctNum
-  TPLOT,tPltVars,TRANGE=[t1Zoom,t2Zoom],VAR=barVars
+     varName = 'OerALT'
+     STORE_DATA,varName,DATA={x:oersted.time,y:oerstCoord.pos.geo.alt}
+     barVars = N_ELEMENTS(barVars) EQ 0 ? varName : [varName,barVars]
+
+     ;; Plot it
+     LOADCT2,ctNum
+     TPLOT,tPltVars,TRANGE=[t1Zoom,t2Zoom],VAR=barVars
+
+     STOP
+
+  ENDIF
+
+  ;; Also try as a function of magnetic latitude
+  FASTthis   = VALUE_CLOSEST2(db_fac.time,oersted.time,/CONSTRAINED)
+
+  tDiff      = (db_fac.time[FASTthis]-oersted.time)[indOer]
+
+  latDiff    = (fastCoord.pos.mag.lat[FASTthis]-oerstCoord.pos.mag.lat)[indOer]
+
+  minLatDiff = MIN(ABS(latDiff),minLatOerInd)
+
+  PRINT,fastCoord.pos.mag.lat[FASTthis[indOer[minLatOerInd]]]
+  PRINT,oerstCoord.pos.mag.lat[indOer[minLatOerInd]]
+
+  PRINT,(db_fac.time[FASTthis])[indOer[minLatOerInd]]
+
+  ;; STOP
+
+  BRORHATCH,fastCoord.pos.mag.lat[indFAST],fastE[indFAST], $
+            oerstCoord.pos.mag.lat[indOer],oerstCoord.bDiff.fac.car.e[indOer], $
+            "FAST (East)","Oersted (East)"
+
+  BRORHATCH,fastCoord.pos.mag.lat[indFAST],fastO[indFAST], $
+            oerstCoord.pos.mag.lat[indOer],oerstCoord.bDiff.fac.car.o[indOer], $
+            "FAST (Out)","Oersted (Out)"
+
+  BRORHATCH,fastCoord.pos.mag.lat[indFAST],fastB[indFAST], $
+            oerstCoord.pos.mag.lat[indOer],oerstCoord.bDiff.fac.car.b[indOer], $
+            "FAST (Along B)","Oersted (Along B)"
+
+  ;; ........................................
+  ;; plotFASTLat = PLOT(fastCoord.pos.mag.lat[indFAST],fastO[indFAST], $
+  ;;                    NAME="FAST (Out)", $
+  ;;                    XRANGE=magLatRange, $
+  ;;                    XTITLE='Magnetic latitude (deg)', $
+  ;;                    YTITLE='Magnetic field amplitude (nT)', $
+  ;;                    COLOR='BLACK')
+
+  ;; plotOerLat = PLOT(oerstCoord.pos.mag.lat[indOer], $
+  ;;                   oerstCoord.bDiff.fac.car.O[indOer], $
+  ;;                   NAME="Oersted  (Out)", $
+  ;;                   XRANGE=magLatRange, $
+  ;;                   XTITLE='Magnetic latitude (deg)', $
+  ;;                   YTITLE='Magnetic field amplitude (nT)', $
+  ;;                   COLOR='RED', $
+  ;;                   /OVERPLOT)
+
+  ;; legend = LEGEND(TARGET=[plotFASTLat,plotOerLat])
+
+
+  ;; ;; ........................................
+  ;; plotFASTLat = PLOT(fastCoord.pos.mag.lat[indFAST],fastB[indFAST], $
+  ;;                    NAME="FAST (along B)", $
+  ;;                    XRANGE=magLatRange, $
+  ;;                    XTITLE='Magnetic latitude (deg)', $
+  ;;                    YTITLE='Magnetic field amplitude (nT)', $
+  ;;                    COLOR='BLACK')
+
+  ;; plotOerLat = PLOT(oerstCoord.pos.mag.lat[indOer], $
+  ;;                   oerstCoord.bDiff.fac.car.B[indOer], $
+  ;;                   NAME="Oersted  (along B)", $
+  ;;                   XRANGE=magLatRange, $
+  ;;                   XTITLE='Magnetic latitude (deg)', $
+  ;;                   YTITLE='Magnetic field amplitude (nT)', $
+  ;;                   COLOR='RED', $
+  ;;                   /OVERPLOT)
+
+  ;; legend = LEGEND(TARGET=[plotFASTLat,plotOerLat])
+
 
   STOP
-
 
 END
