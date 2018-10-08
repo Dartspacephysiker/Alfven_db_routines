@@ -42,7 +42,7 @@ PRO JOURNAL__20180829__COMPARE_OERSTED_AND_FAST_OBS__19990907
 
   outDir            = '/SPENCEdata/Research/database/Oersted/'
 
-  nyeVei            = 0
+  nyeVei            = 1
   gamleVei          = 0
   reflect_about_tid = 0
 

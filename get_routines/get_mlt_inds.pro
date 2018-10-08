@@ -11,7 +11,8 @@ FUNCTION GET_MLT_INDS,dbStruct,minM,maxM, $
                       GET_COMPLEMENT_INDS=get_complement_inds, $
                       NOTMLT_I=notMlt_i, $
                       NNOTMLT=nNotMlt, $
-                      LUN=lun
+                      LUN=lun, $
+                      BATCH_MODE=batch_mode
 
   COMPILE_OPT idl2,strictarrsubs
 
@@ -141,7 +142,14 @@ FUNCTION GET_MLT_INDS,dbStruct,minM,maxM, $
 
      IF tmp_i[0] EQ -1 THEN BEGIN
         PRINTF,lun,'No MLT entries found for the specified MLT range!'
+
+        IF KEYWORD_SET(batch_mode) THEN BEGIN
+           n_mlt = 0
+           RETURN,-1
+        ENDIF
+
         STOP
+
      ENDIF
 
      mlt_i          = [mlt_i,tmp_i]
