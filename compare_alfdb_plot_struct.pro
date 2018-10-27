@@ -182,6 +182,12 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
      plots_reset += 1B
   ENDIF
 
+  IF alfDB_plot_struct1.eSpec__gigante_DB NE alfDB_plot_struct2.eSpec__gigante_DB THEN BEGIN
+     PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"eSpec__gigante_DB", $
+           alfDB_plot_struct1.eSpec__gigante_DB,alfDB_plot_struct2.eSpec__gigante_DB
+     DBs_reset  += 1B
+  ENDIF
+
   IF alfDB_plot_struct1.eSpec__Newell_2009_interp NE alfDB_plot_struct2.eSpec__Newell_2009_interp THEN BEGIN
      PRINT,FORMAT='("Different values for ",A-20," : ",I0,", ",I0,"! Resetting ...")',"eSpec__Newell_2009_interp", $
            alfDB_plot_struct1.eSpec__Newell_2009_interp,alfDB_plot_struct2.eSpec__Newell_2009_interp
@@ -423,6 +429,41 @@ PRO COMPARE_ALFDB_PLOT_STRUCT,alfDB_plot_struct1, $
         IF STRMATCH(tmpComp.field,STRUPCASE('*RESTRICT_BY_SEASON*')) THEN BEGIN
            ;; DBs_reset      += 0B
            inds_reset     += 1B
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
+        IF STRMATCH(tmpComp.field,STRUPCASE('*eSpec__gigante_DB*')) THEN BEGIN
+           DBs_reset      += 1B
+           ;; inds_reset     += 1B
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
+        IF STRMATCH(tmpComp.field,STRUPCASE('*RESTRICT_BY_SEASON*')) THEN BEGIN
+           ;; DBs_reset      += 0B
+           inds_reset     += 1B
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
+        IF STRMATCH(tmpComp.field,STRUPCASE('*eSpec__final_DB*')) THEN BEGIN
+           DBs_reset      += 1B
+           ;; inds_reset     += 1B
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
+        IF STRMATCH(tmpComp.field,STRUPCASE('*eSpec__final__LCMoms*')) THEN BEGIN
+           DBs_reset      += 1B
+           ;; inds_reset     += 1B
+           dontstop        = 1
+           matchArr        = [matchArr,tmpComp.field]
+        ENDIF
+
+        IF STRMATCH(tmpComp.field,STRUPCASE('*eSpec__final__allAngleMoms*')) THEN BEGIN
+           DBs_reset      += 1B
+           ;; inds_reset     += 1B
            dontstop        = 1
            matchArr        = [matchArr,tmpComp.field]
         ENDIF

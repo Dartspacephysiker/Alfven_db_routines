@@ -29,6 +29,7 @@ PRO FASTDB__ADD_INFO_STRUCT,dbStruct, $
                 is_128Hz         : 0B, $
                 is_noRestrict    : 0B, $
                 is_gigante       : 0B, $
+                is_espec_final   : 0B, $
                 is_mapped        : 0B, $
                 dILAT_not_dt     : 0B, $
                 dAngle_not_dt    : 0B, $

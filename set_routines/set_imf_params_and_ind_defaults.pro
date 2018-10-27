@@ -163,20 +163,27 @@ PRO SET_IMF_PARAMS_AND_IND_DEFAULTS, $
   defAngleLim1           = 45.0
   defAngleLim2           = 135.0
 
-  IF N_ELEMENTS(earliest_UTC) EQ 0 THEN BEGIN
-     earliest_UTC = STR_TO_TIME('1996-10-06/16:26:02.417')
-  ENDIF
-
   ;;We have more uncorrupted data for the eSpec DB, you know
   CASE 1 OF
      (KEYWORD_SET(alfDB_plot_struct.for_eSpec_DBs) OR KEYWORD_SET(alfDB_plot_struct.for_ion_DBs)): BEGIN
+
+        IF N_ELEMENTS(earliest_UTC) EQ 0 THEN BEGIN
+           earliest_UTC = STR_TO_TIME('1996-05-06/16:26:02.417')
+        ENDIF
+
         IF N_ELEMENTS(latest_UTC) EQ 0 THEN BEGIN
            ;; latest_UTC   = STR_TO_TIME('2001-12-31/23:59:59.999')
-           latest_UTC   = STR_TO_TIME('2002-10-25/00:13:21')
+           ;; latest_UTC   = STR_TO_TIME('2002-10-25/00:13:21')
+           latest_UTC   = STR_TO_TIME('2009-10-25/00:13:21')
 
         ENDIF
      END
      ELSE: BEGIN
+
+        IF N_ELEMENTS(earliest_UTC) EQ 0 THEN BEGIN
+           earliest_UTC = STR_TO_TIME('1996-10-06/16:26:02.417')
+        ENDIF
+
         IF N_ELEMENTS(latest_UTC) EQ 0 THEN BEGIN
            latest_UTC   = STR_TO_TIME('1999-11-03/03:20:59.853')
         ENDIF

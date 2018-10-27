@@ -16,6 +16,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
                                    USE_SDT_COORDS=use_SDT, $
                                    FOR_ESPEC_DBS=for_eSpec_DBs, $
                                    FOR_ESPEC__GIGANTE=for_eSpec__gigante, $
+                                   FOR_ESPEC__FINAL_DB=for_eSpec__final_DB, $
                                    ;; CHECK_DB=check_DB, $
                                    JUST_FASTLOC=just_fastLoc, $
                                    JUST_TIMES=just_times, $
@@ -31,6 +32,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
   IF KEYWORD_SET(for_eSpec_DBs) THEN BEGIN
      @common__fastloc_espec_vars.pro
 
+     @common__newell_espec.pro
      ;;As of 2016/12/01, these are they:
      ;; COMMON FL_ESPEC_VARS,FL_eSpec__fastLoc,FASTLOC_E__times,FASTLOC_E__delta_t, $
      ;;    FASTLOC_E__good_i,FASTLOC_E__cleaned_i,FASTLOC_E__HAVE_GOOD_I, $
@@ -135,6 +137,42 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
               mapRatDir     = defDBDir
               mapRatFile    = 'fastLoc_intervals6--20170208--500-25007--Je_times--mapRatio.sav'
+
+           END
+           KEYWORD_SET(for_eSpec__final_DB): BEGIN
+              PRINT,"Using eSpec__final_DB sin allerede eksisterende info!"
+
+              fastLoc = { $
+                        orbit     : NEWELL__eSpec.orbit , $   
+                        x         : NEWELL__eSpec.x     , $    
+                        alt       : NEWELL__eSpec.alt   , $     
+                        mlt       : NEWELL__eSpec.mlt   , $     
+                        ilat      : NEWELL__eSpec.ilat  , $    
+                        sample_t  : NEWELL__delta_t     }
+
+              is_final      = 1
+
+              do_not_map_delta_t = NEWELL__eSpec.info.dt_is_mapped
+
+              DefDBDir      = NEWELL__eSpec.info.DB_dir
+              defDBFile     = 'NEWELL__eSpec'
+              defDB_tFile   = 'NEWELL__eSpec'
+              DB_date       = NEWELL__eSpec.info.DB_date
+              DB_version    = NEWELL__eSpec.info.DB_version
+              DB_extras     = NEWELL__eSpec.info.DB_extras
+              is_128Hz      = 0
+              is_noRestrict = 1
+              fastLoc_has_times = 1
+
+              AACGM_file    = "BLAH"
+              AACGM_file    = "BLAH"
+              GEI_file      = "BLAH"
+              GEO_file      = "BLAH"
+              MAG_file      = "BLAH"
+              SDT_file      = "BLAH"
+
+              mapRatDir     = 'NEWELL__eSpec'
+              mapRatFile    = 'NEWELL__eSpec'
 
            END
            ELSE: BEGIN
@@ -294,7 +332,12 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
      fastLoc.info.is_128Hz      = KEYWORD_SET(is_128Hz)
      fastLoc.info.is_noRestrict = KEYWORD_SET(is_noRestrict)
      fastLoc.info.is_gigante    = KEYWORD_SET(is_gigante)
+     fastLoc.info.is_espec_final= KEYWORD_SET(is_final)
      fastLoc.info.for_eSpecDB   = KEYWORD_SET(for_eSpec_DBs)
+
+     IF KEYWORD_SET(is_final) THEN BEGIN
+        fastLoc.info.is_mapped = NEWELL__eSpec.info.dt_is_mapped
+     ENDIF
 
      pDBStruct                  = PTR_NEW(fastLoc)
 
@@ -322,7 +365,14 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
 
         ENDIF
 
-        pDB__delta_t = PTR_NEW(fastLoc_delta_t)
+        CASE 1 OF
+           KEYWORD_SET(is_final): BEGIN
+              pDB__delta_t = PTR_NEW(NEWELL__eSpec.tDiffs)
+           END
+           ELSE: BEGIN
+              pDB__delta_t = PTR_NEW(fastLoc_delta_t)
+           END
+        ENDCASE
 
         FASTDBS__DELTA_SWITCHER,dbStruct, $
                                 OUT_WIDTH_MEASURE=width_measure, $
@@ -387,25 +437,31 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
         IF KEYWORD_SET(do_not_map_delta_t) THEN BEGIN
            PRINT,'Not mapping delta t for fastLoc ...'
         ENDIF ELSE BEGIN
+
            IF ~(*pDBStruct).info.is_mapped THEN BEGIN
+
               IF FILE_TEST(mapRatDir+mapRatFile) THEN BEGIN
                  PRINT,"Mapping fastLoc delta-ts to 100 km ..."
                  RESTORE,mapRatDir+mapRatFile
-                 ;; fastLoc_delta_t        = fastLoc_delta_t/SQRT((TEMPORARY(mapRatio)).ratio)
-                 CASE 1 OF
-                    LONG(fastloc.info.db_date) GE 20170204: BEGIN
-                       IF N_ELEMENTS(mapRatio) NE N_ELEMENTS(*pDB__delta_t) THEN STOP
-                       (*pDB__delta_t)  = (*pDB__delta_t)/SQRT(TEMPORARY(mapRatio))
-                    END
-                    ELSE: BEGIN
-                       (*pDB__delta_t)  = (*pDB__delta_t)/SQRT((TEMPORARY(mapRatio)).ratio)
-                    END
-                 ENDCASE
-                 (*pDBStruct).info.is_mapped = 1B
+              ENDIF ELSE IF KEYWORD_SET(is_final) THEN BEGIN
+                 mapRatio = NEWELL__eSpec.mapFactor
               ENDIF ELSE BEGIN
                  PRINT,"Can't map fastLoc delta-ts to 100 km! mapRatio DB doesn't exist .."
                  STOP
               ENDELSE
+              
+              ;; fastLoc_delta_t        = fastLoc_delta_t/SQRT((TEMPORARY(mapRatio)).ratio)
+              CASE 1 OF
+                 LONG(fastloc.info.db_date) GE 20170204: BEGIN
+                    IF N_ELEMENTS(mapRatio) NE N_ELEMENTS(*pDB__delta_t) THEN STOP
+                    (*pDB__delta_t)  = (*pDB__delta_t)/SQRT(TEMPORARY(mapRatio))
+                 END
+                 ELSE: BEGIN
+                    (*pDB__delta_t)  = (*pDB__delta_t)/SQRT((TEMPORARY(mapRatio)).ratio)
+                 END
+              ENDCASE
+              (*pDBStruct).info.is_mapped = 1B
+
            ENDIF ELSE BEGIN
               PRINT,"fastLoc delta-ts are already mapped to 100 km ..."
            ENDELSE
@@ -599,7 +655,7 @@ PRO LOAD_FASTLOC_AND_FASTLOC_TIMES,fastLoc,fastloc_times,fastloc_delta_t, $
           KEYWORD_SET(just_times  ))     $ ;AND $
         ;; KEYWORD_SET(loadFL)              $
      THEN BEGIN
-        FL_eSpec__fastLoc       = TEMPORARY(*pDBStruct    )
+        FL_eSpec__fastLoc       = TEMPORARY(*pDBStruct     )
         FASTLOC_E__times        = TEMPORARY(fastLoc_times  )
         FASTLOC_E__delta_t      = TEMPORARY(*pDB__delta_t  )
         FASTLOC_E__dbFile       = TEMPORARY(dbFile         )
