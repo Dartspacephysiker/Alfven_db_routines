@@ -44,7 +44,7 @@ FUNCTION GET_FAST_DB_STRING,DBStruct, $
                  IF TAG_EXIST(DBStruct,"mono") THEN BEGIN
                     eSpecDB = 1
                  ENDIF ELSE BEGIN
-                    fastLocDB = STRMATCH(STRUPCASE(DBStruct.info.DB_dir),'*FASTLOC*')
+                    fastLocDB = STRMATCH(STRUPCASE(DBStruct.info.DB_dir),'*FASTLOC*') OR DBStruct.info.is_eSpec_final
                     IF ~fastLOCDB THEN STOP
                  ENDELSE
               ENDELSE

@@ -44,6 +44,11 @@ PRO GET_INDS_ABOVE_35_MAGLAT,dBStruct,good_i, $
 
   ENDELSE
 
+  IF KEYWORD_SET(faker) THEN BEGIN
+     PRINT,"You've got a fake 'get_inds_above_35_maglat' file."
+     WAIT,2
+  ENDIF
+
   NBef = N_ELEMENTS(good_i)
 
   good_i = CGSETINTERSECTION(good_i,MAG_lat_GT_35_i,COUNT=nAft)

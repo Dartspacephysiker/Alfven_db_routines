@@ -194,7 +194,7 @@ FUNCTION LOAD_PASIS_VARS, $
      ENDIF
 
      IF KEYWORD_SET(inds_reset) OR $
-        KEYWORD_SET(plot_reset) OR $
+        KEYWORD_SET(plotreset) OR $
         KEYWORD_SET(DBs_reset) $
      THEN BEGIN
         PRINT,"Deleting PASIS vars file; it doesn't match ..."
