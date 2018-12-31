@@ -9,6 +9,7 @@ PRO SET_PLOT_DIR,plotDir, $
                  FOR_SINGLE_SC_WVEC=for_ssc_wVec, $
                  ADD_TODAY=add_today, $
                  ADD_SUFF=add_suff, $
+                 PUT_SUFF_BEFORE_TODAY=put_suff_first, $
                  ;; ADD_DIR=add_dir, $
                  VERBOSE=verbose, $
                  LUN=lun
@@ -172,12 +173,29 @@ PRO SET_PLOT_DIR,plotDir, $
   ;; IF KEYWORD_SET(add_today) AND KEYWORD_SET(add_suff) THEN BEGIN
   ;;    plotDir = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT) + '--' + add_suff + '/'
   ;; ENDIF ELSE BEGIN
-  IF KEYWORD_SET(add_today) THEN BEGIN
-     plotDir    = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
-  ENDIF 
-  IF KEYWORD_SET(add_suff) THEN BEGIN
-     plotDir = plotDir + add_suff
-  ENDIF
+  CASE 1 OF
+     KEYWORD_SET(put_suff_first): BEGIN
+
+        IF KEYWORD_SET(add_suff) THEN BEGIN
+           plotDir = plotDir + add_suff
+        ENDIF
+
+        IF KEYWORD_SET(add_today) THEN BEGIN
+           plotDir    = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
+        ENDIF 
+
+     END
+     ELSE: BEGIN
+
+        IF KEYWORD_SET(add_today) THEN BEGIN
+           plotDir    = plotDir + GET_TODAY_STRING(/DO_YYYYMMDD_FMT)
+        ENDIF 
+        IF KEYWORD_SET(add_suff) THEN BEGIN
+           plotDir = plotDir + add_suff
+        ENDIF
+
+     END
+  ENDCASE
   ;; ENDELSE 
 
   ;;add final slash
